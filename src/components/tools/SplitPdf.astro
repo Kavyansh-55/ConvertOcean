@@ -1,0 +1,251 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .pages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: var(--spacing-md);
+    max-height: 350px;
+    overflow-y: auto;
+  }
+  .page-thumb-card {
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 6px;
+    padding: var(--spacing-xs);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+  }
+  .page-thumb-card.selected {
+    border-color: var(--colors-link);
+    box-shadow: 0 0 0 1px var(--colors-link);
+  }
+  .page-thumb-checkbox {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    accent-color: var(--colors-ink);
+    cursor: pointer;
+  }
+  .page-thumb-canvas {
+    width: 80px;
+    height: auto;
+    background: white;
+    border: 1px solid var(--colors-hairline);
+  }
+</style>
+
+<script is:inline src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing file…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">🥞</div>
+  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-secondary">Upload single PDF file (Max 25MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".pdf" />
+</div>
+
+<div id="splitWorkspace" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
+  <div id="pagesGrid" class="pages-grid" style="margin-bottom: var(--spacing-md);"></div>
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
+    <input type="text" id="splitOutputName" class="form-input" style="max-width: 300px;" value="extracted_pages.pdf" />
+    <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
+      <button class="button button-primary" id="btnExtract">Extract Selected Pages</button>
+      <button class="button button-danger" id="btnClear">Clear</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const splitWorkspace = document.getElementById('splitWorkspace');
+    const pagesGrid = document.getElementById('pagesGrid');
+    const splitOutputName = document.getElementById('splitOutputName');
+    const btnExtract = document.getElementById('btnExtract');
+    const btnClear = document.getElementById('btnClear');
+
+    let splitFile = null;
+    let selectedPages = new Set();
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    function handleFile(file) {
+      hideError();
+      showProgress(10, "Loading PDF pages…");
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const bytes = new Uint8Array(e.target.result);
+          const loadingTask = pdfjsLib.getDocument({ data: bytes });
+          const pdf = await loadingTask.promise;
+          
+          splitFile = { name: file.name, bytes: bytes, count: pdf.numPages };
+          splitOutputName.value = file.name.replace(/\.[^/.]+$/, "") + '_extracted.pdf';
+          selectedPages.clear();
+          
+          pagesGrid.innerHTML = '';
+          
+          for(let i = 1; i <= pdf.numPages; i++) {
+            showProgress(Math.round(10 + (i / pdf.numPages) * 90), `Loading preview ${i} of ${pdf.numPages}…`);
+            const page = await pdf.getPage(i);
+            const viewport = page.getViewport({ scale: 0.2 });
+            const canvas = document.createElement('canvas');
+            canvas.className = 'page-thumb-canvas';
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+            
+            const card = document.createElement('div');
+            card.className = 'page-thumb-card';
+            card.innerHTML = `
+              <input type="checkbox" class="page-thumb-checkbox" id="p-chk-${i}" />
+              <span style="font-size:11px; margin-top:4px;">Page ${i}</span>
+            `;
+            card.insertBefore(canvas, card.firstChild);
+            
+            const checkbox = card.querySelector('.page-thumb-checkbox');
+            checkbox.addEventListener('change', () => togglePageSelect(i, card, checkbox));
+            card.addEventListener('click', (evt) => {
+              if (evt.target !== checkbox) {
+                checkbox.checked = !checkbox.checked;
+                togglePageSelect(i, card, checkbox);
+              }
+            });
+            
+            pagesGrid.appendChild(card);
+          }
+          splitWorkspace.style.display = 'block';
+          dropZone.style.display = 'none';
+        } catch(err) {
+          showError("Failed to parse PDF structure.");
+        }
+        hideProgress();
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function togglePageSelect(pageIndex, cardElement, checkboxElement) {
+      if (checkboxElement.checked) {
+        selectedPages.add(pageIndex);
+        cardElement.classList.add('selected');
+      } else {
+        selectedPages.delete(pageIndex);
+        cardElement.classList.remove('selected');
+      }
+    }
+
+    btnExtract.addEventListener('click', async () => {
+      if(selectedPages.size === 0) {
+        showError("Please select at least 1 page.");
+        return;
+      }
+      showProgress(20, "Extracting PDF pages…");
+      try {
+        const doc = await PDFLib.PDFDocument.load(splitFile.bytes);
+        const sub = await PDFLib.PDFDocument.create();
+        const indices = Array.from(selectedPages).sort((a,b)=>a-b).map(x => x - 1);
+        
+        const copied = await sub.copyPages(doc, indices);
+        copied.forEach(p => sub.addPage(p));
+        
+        const outBytes = await sub.save();
+        let name = splitOutputName.value || 'extracted.pdf';
+        if(!name.endsWith('.pdf')) name += '.pdf';
+        window.downloadBlob(new Blob([outBytes], { type: "application/pdf" }), name);
+      } catch(err) {
+        showError("Failed to extract pages.");
+      }
+      hideProgress();
+    });
+
+    btnClear.addEventListener('click', resetFile);
+
+    function resetFile() {
+      splitFile = null;
+      selectedPages.clear();
+      splitWorkspace.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+      hideProgress();
+    }
+  })();
+</script>

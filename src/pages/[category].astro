@@ -1,0 +1,97 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { tools } from '../data/tools';
+
+export function getStaticPaths() {
+  const categories = ['pdf-tools', 'image-tools', 'document-tools', 'spreadsheet-tools', 'ocr-tools', 'business-tools'];
+  return categories.map(category => ({ params: { category } }));
+}
+
+const { category } = Astro.params;
+const { lang = 'en' } = Astro.props;
+
+// Localize links helper
+const relLink = (target: string) => {
+  const cleanTarget = target.startsWith('/') ? target : `/${target}`;
+  if (lang === 'en') return cleanTarget;
+  return `/${lang}${cleanTarget}`;
+};
+
+const categoriesMap: Record<string, { name: string; description: string; icon: string }> = {
+  'pdf-tools': {
+    name: 'PDF Tools',
+    description: 'Merge multiple PDF documents, split ranges, extract pages, and compile documents offline securely.',
+    icon: '📑'
+  },
+  'image-tools': {
+    name: 'Image Tools',
+    description: 'Convert between PNG, JPG, WebP formats, resize and compress images client-side instantly.',
+    icon: '🖼️'
+  },
+  'document-tools': {
+    name: 'Document Tools',
+    description: 'Process raw text files, compile document PDFs, and extract contents client-side.',
+    icon: '📝'
+  },
+  'spreadsheet-tools': {
+    name: 'Spreadsheet Tools',
+    description: 'Inspect CSV and Excel sheets client-side. Convert CSV to JSON, JSON to CSV, XLSX to CSV, or Excel to PDF offline.',
+    icon: '📊'
+  },
+  'ocr-tools': {
+    name: 'OCR Tools',
+    description: 'Private Image-to-Text OCR engine. Extract text from scans, screenshots, receipts, and images locally.',
+    icon: '🔍'
+  },
+  'business-tools': {
+    name: 'Business Tools',
+    description: 'Create professional freelance invoices, calculate taxes, adjust parameters, and compile print-ready PDFs.',
+    icon: '💼'
+  }
+};
+
+const catInfo = categoriesMap[category] || { name: 'File Tools', description: 'Privacy-first browser-based file tools.', icon: '⚡' };
+const filteredTools = tools.filter(t => t.categorySlug === category);
+
+const title = `${catInfo.name} - 100% Private Offline Browser Utilities | ConvertOcean`;
+const description = `${catInfo.description} No uploads. No tracking. Free browser-powered processing.`;
+---
+
+<Layout title={title} description={description} lang={lang} category={catInfo.name} categorySlug={category}>
+  <main class="page-container" style="max-width: 1200px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl);">
+    <div class="page-header" style="text-align: center; margin-bottom: var(--spacing-3xl);">
+      <div style="font-size: 48px; margin-bottom: var(--spacing-sm);">{catInfo.icon}</div>
+      <h1 class="page-title" style="font-size: 38px; font-weight: 600; letter-spacing: -1.5px; color: var(--colors-ink);">{catInfo.name}</h1>
+      <p class="page-description" style="font-size: 16px; color: var(--colors-body); max-width: 600px; margin: var(--spacing-xs) auto 0; line-height: 1.5;">{catInfo.description}</p>
+    </div>
+
+    <hr class="section-divider" style="max-width: 100%; margin-bottom: var(--spacing-2xl); border: 0; height: 1px; background-color: var(--colors-hairline);">
+
+    <div class="tool-grid">
+      {filteredTools.map(tool => (
+        <a href={relLink(`/${tool.slug}/`)} class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">{tool.icon}</div>
+            <h3 class="tool-name">{tool.name}</h3>
+            <p class="tool-description">{tool.description}</p>
+          </div>
+          <div class="tool-action-link">
+            Open Tool
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <!-- Empty State if no tools found -->
+    {filteredTools.length === 0 && (
+      <div style="text-align: center; padding: var(--spacing-3xl) 0; color: var(--colors-mute);">
+        <div style="font-size: 36px; margin-bottom: var(--spacing-sm);">📭</div>
+        <p>No tools are currently active in this category.</p>
+        <a href={relLink('/')} class="button button-secondary" style="margin-top: var(--spacing-md); display: inline-flex;">Back to Homepage</a>
+      </div>
+    )}
+  </main>
+</Layout>

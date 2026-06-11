@@ -1,0 +1,321 @@
+---
+const { slug, name, headline, subtitle } = Astro.props;
+
+// Determine file inputs accept attributes and details
+let acceptMime = ".csv";
+let uploadLabel = "Upload CSV file";
+let targetFormat = "JSON";
+if (slug === 'csv-to-json') {
+  acceptMime = ".csv";
+  uploadLabel = "Upload CSV file (Max 25MB)";
+  targetFormat = "JSON";
+} else if (slug === 'json-to-csv') {
+  acceptMime = ".json";
+  uploadLabel = "Upload JSON file (Max 15MB)";
+  targetFormat = "CSV";
+} else if (slug === 'xlsx-to-csv') {
+  acceptMime = ".xlsx,.xls";
+  uploadLabel = "Upload XLSX or XLS file (Max 25MB)";
+  targetFormat = "CSV";
+} else if (slug === 'csv-to-xlsx') {
+  acceptMime = ".csv";
+  uploadLabel = "Upload CSV file (Max 25MB)";
+  targetFormat = "XLSX";
+} else if (slug === 'json-to-xlsx') {
+  acceptMime = ".json";
+  uploadLabel = "Upload JSON file (Max 15MB)";
+  targetFormat = "XLSX";
+} else if (slug === 'xml-to-json') {
+  acceptMime = ".xml";
+  uploadLabel = "Upload XML file (Max 15MB)";
+  targetFormat = "JSON";
+}
+
+const isJsonOutput = ['csv-to-json', 'xml-to-json'].includes(slug);
+---
+
+<style>
+  .preview-area {
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-md);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    max-height: 300px;
+    overflow: auto;
+    margin-top: var(--spacing-lg);
+  }
+</style>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing file…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">⚙️</div>
+  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-secondary">{uploadLabel}</div>
+  <input type="file" id="fileInput" class="file-input" accept={acceptMime} />
+</div>
+
+<pre id="textPreview" class="preview-area" style="display: none;"></pre>
+
+<div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
+  <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
+  <div class="button-group">
+    <button class="button button-primary" id="btnDownload">Download {targetFormat}</button>
+    <button class="button button-danger" id="btnClear">Clear</button>
+  </div>
+</div>
+
+<script is:inline define:vars={{ slug, targetFormat, isJsonOutput }}>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const textPreview = document.getElementById('textPreview');
+    const actionControls = document.getElementById('actionControls');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnClear = document.getElementById('btnClear');
+
+    let resultData = null;
+    let originalName = '';
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    function handleFile(file) {
+      hideError();
+      originalName = file.name;
+      const reader = new FileReader();
+
+      showProgress(20, "Reading file content…");
+
+      if (slug === 'csv-to-json') {
+        reader.onload = function(e) {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const json = XLSX.utils.sheet_to_json(sheet);
+            resultData = JSON.stringify(json, null, 2);
+            showPreview(resultData);
+          } catch(err) {
+            showError("Failed to convert CSV to JSON.");
+          }
+          hideProgress();
+        };
+        reader.readAsArrayBuffer(file);
+      } else if (slug === 'json-to-csv') {
+        reader.onload = function(e) {
+          try {
+            const rawJson = JSON.parse(e.target.result);
+            const arr = Array.isArray(rawJson) ? rawJson : [rawJson];
+            const ws = XLSX.utils.json_to_sheet(arr);
+            resultData = XLSX.utils.sheet_to_csv(ws);
+            showPreview(resultData);
+          } catch(err) {
+            showError("Failed to parse JSON file content. Make sure it contains valid JSON arrays or objects.");
+          }
+          hideProgress();
+        };
+        reader.readAsText(file);
+      } else if (slug === 'xlsx-to-csv') {
+        reader.onload = function(e) {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            resultData = XLSX.utils.sheet_to_csv(sheet);
+            showPreview(resultData);
+          } catch(err) {
+            showError("Failed to parse Excel workbook sheet.");
+          }
+          hideProgress();
+        };
+        reader.readAsArrayBuffer(file);
+      } else if (slug === 'csv-to-xlsx') {
+        reader.onload = function(e) {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            // Since it was parsed as workbook already, keep it to be written directly
+            resultData = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            showPreview("[Excel binary data loaded ready to download]");
+          } catch(err) {
+            showError("Failed to convert CSV to XLSX.");
+          }
+          hideProgress();
+        };
+        reader.readAsArrayBuffer(file);
+      } else if (slug === 'json-to-xlsx') {
+        reader.onload = function(e) {
+          try {
+            const rawJson = JSON.parse(e.target.result);
+            const arr = Array.isArray(rawJson) ? rawJson : [rawJson];
+            const ws = XLSX.utils.json_to_sheet(arr);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Data");
+            resultData = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            showPreview("[Excel binary data compiled ready to download]");
+          } catch(err) {
+            showError("Failed to convert JSON to XLSX.");
+          }
+          hideProgress();
+        };
+        reader.readAsText(file);
+      } else if (slug === 'xml-to-json') {
+        reader.onload = function(e) {
+          try {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
+            const json = xmlNodeToJson(xmlDoc.documentElement);
+            resultData = JSON.stringify(json, null, 2);
+            showPreview(resultData);
+          } catch(err) {
+            showError("Failed to parse XML syntax trees.");
+          }
+          hideProgress();
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    function xmlNodeToJson(node) {
+      let obj = {};
+      if (node.nodeType === 1) { // element
+        if (node.attributes.length > 0) {
+          obj["@attributes"] = {};
+          for (let j = 0; j < node.attributes.length; j++) {
+            const attribute = node.attributes.item(j);
+            obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+          }
+        }
+      } else if (node.nodeType === 3) { // text
+        return node.nodeValue.trim();
+      }
+      
+      if (node.hasChildNodes()) {
+        for (let i = 0; i < node.childNodes.length; i++) {
+          const item = node.childNodes.item(i);
+          const nodeName = item.nodeName;
+          if (item.nodeType === 3) {
+            const val = item.nodeValue.trim();
+            if (val) return val;
+          } else if (item.nodeType === 1) {
+            if (obj[nodeName] === undefined) {
+              obj[nodeName] = xmlNodeToJson(item);
+            } else {
+              if (typeof(obj[nodeName].push) === "undefined") {
+                const old = obj[nodeName];
+                obj[nodeName] = [];
+                obj[nodeName].push(old);
+              }
+              obj[nodeName].push(xmlNodeToJson(item));
+            }
+          }
+        }
+      }
+      return obj;
+    }
+
+    function showPreview(text) {
+      textPreview.textContent = text.substring(0, 1200) + (text.length > 1200 ? '\n…[truncated preview]' : '');
+      textPreview.style.display = 'block';
+      fileNameDisplay.textContent = originalName;
+      actionControls.style.display = 'flex';
+      dropZone.style.display = 'none';
+    }
+
+    btnDownload.addEventListener('click', () => {
+      const ext = targetFormat.toLowerCase();
+      const outName = originalName.replace(/\.[^/.]+$/, "") + '.' + ext;
+      let blob;
+      if (['xlsx'].includes(ext)) {
+        blob = new Blob([resultData], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      } else if (['json'].includes(ext)) {
+        blob = new Blob([resultData], { type: "application/json;charset=utf-8;" });
+      } else {
+        blob = new Blob([resultData], { type: "text/csv;charset=utf-8;" });
+      }
+      window.downloadBlob(blob, outName, blob.type);
+    });
+
+    btnClear.addEventListener('click', () => {
+      resultData = null;
+      textPreview.style.display = 'none';
+      actionControls.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+    });
+  })();
+</script>

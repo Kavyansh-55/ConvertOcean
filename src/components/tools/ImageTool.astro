@@ -1,0 +1,227 @@
+---
+const { slug, name, headline, subtitle } = Astro.props;
+
+// Determine file inputs accept attribute and output format details
+let acceptMime = "image/*";
+let targetFormat = "PNG";
+if (slug === 'png-to-jpg') {
+  acceptMime = "image/png";
+  targetFormat = "JPG";
+} else if (slug === 'jpg-to-png') {
+  acceptMime = "image/jpeg,image/jpg";
+  targetFormat = "PNG";
+} else if (slug === 'png-to-webp') {
+  acceptMime = "image/png";
+  targetFormat = "WEBP";
+} else if (slug === 'webp-to-png') {
+  acceptMime = "image/webp";
+  targetFormat = "PNG";
+}
+---
+
+<style>
+  .img-preview-box {
+    max-width: 100%;
+    max-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--rounded-md);
+    border: 1px solid var(--colors-hairline);
+    background: #1e1e1e;
+    overflow: hidden;
+    margin-top: var(--spacing-lg);
+  }
+  .img-preview {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+  }
+</style>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing file…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">🖼️</div>
+  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-secondary">Upload image file (Max 15MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept={acceptMime} />
+</div>
+
+<div id="previewBox" class="img-preview-box" style="display: none;">
+  <img id="imgPreview" class="img-preview" alt="Converted Preview" />
+</div>
+
+<div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
+  <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
+  <div class="button-group">
+    <button class="button button-primary" id="btnDownload">Download {targetFormat}</button>
+    <button class="button button-danger" id="btnClear">Clear</button>
+  </div>
+</div>
+
+<script is:inline define:vars={{ slug, targetFormat }}>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const previewBox = document.getElementById('previewBox');
+    const imgPreview = document.getElementById('imgPreview');
+    const actionControls = document.getElementById('actionControls');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnClear = document.getElementById('btnClear');
+
+    let outBlob = null;
+    let originalName = '';
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    function handleFile(file) {
+      hideError();
+      originalName = file.name;
+      const extension = file.name.split('.').pop().toLowerCase();
+
+      // Simple verification
+      if (slug === 'png-to-jpg' && extension !== 'png') {
+        showError("Invalid file type. Please upload a PNG file.");
+        return;
+      }
+      if (slug === 'jpg-to-png' && !['jpg', 'jpeg'].includes(extension)) {
+        showError("Invalid file type. Please upload a JPG or JPEG file.");
+        return;
+      }
+      if (slug === 'png-to-webp' && extension !== 'png') {
+        showError("Invalid file type. Please upload a PNG file.");
+        return;
+      }
+      if (slug === 'webp-to-png' && extension !== 'webp') {
+        showError("Invalid file type. Please upload a WebP file.");
+        return;
+      }
+
+      showProgress(30, "Loading image bytes…");
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          showProgress(70, "Rendering and converting format…");
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          
+          ctx.drawImage(img, 0, 0);
+
+          let mimeType = 'image/png';
+          let outputExt = '.png';
+          if (slug === 'png-to-jpg') {
+            mimeType = 'image/jpeg';
+            outputExt = '.jpg';
+          } else if (slug === 'png-to-webp') {
+            mimeType = 'image/webp';
+            outputExt = '.webp';
+          }
+          
+          canvas.toBlob(blob => {
+            outBlob = blob;
+            imgPreview.src = URL.createObjectURL(blob);
+            previewBox.style.display = 'flex';
+            fileNameDisplay.textContent = file.name;
+            actionControls.style.display = 'flex';
+            dropZone.style.display = 'none';
+            hideProgress();
+          }, mimeType, 0.92);
+        };
+        img.onerror = function() {
+          showError("Failed to parse image data.");
+          hideProgress();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    btnDownload.addEventListener('click', () => {
+      let ext = targetFormat.toLowerCase();
+      if (ext === 'jpg') ext = 'jpg';
+      const outName = originalName.replace(/\.[^/.]+$/, "") + '.' + ext;
+      window.downloadBlob(outBlob, outName, outBlob.type);
+    });
+
+    btnClear.addEventListener('click', () => {
+      outBlob = null;
+      previewBox.style.display = 'none';
+      actionControls.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+    });
+  })();
+</script>

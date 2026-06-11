@@ -1,0 +1,192 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .preview-card {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    min-height: 200px;
+    max-height: 400px;
+    overflow: auto;
+    margin-top: var(--spacing-lg);
+  }
+</style>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing file…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">📊</div>
+  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-secondary">Upload XLS, XLSX, or CSV file (Max 25MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv" />
+</div>
+
+<!-- Preview Panel -->
+<div id="previewCard" class="preview-card" style="display: none;">
+  <div class="preview-header" style="background-color: var(--colors-canvas-soft); border-bottom: 1px solid var(--colors-hairline); padding: var(--spacing-sm) var(--spacing-lg);">
+    <span class="preview-title" style="font-size: 13px; font-weight: 600; color: var(--colors-body); font-family: 'JetBrains Mono', monospace;">SPREADSHEET PREVIEW</span>
+  </div>
+  <div id="previewBody" class="preview-body" style="padding: var(--spacing-lg);"></div>
+</div>
+
+<div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
+  <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
+  <div class="button-group">
+    <button class="button button-primary" id="btnConvert">Convert & Download PDF</button>
+    <button class="button button-danger" id="btnClear">Clear</button>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const previewCard = document.getElementById('previewCard');
+    const previewBody = document.getElementById('previewBody');
+    const actionControls = document.getElementById('actionControls');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const btnConvert = document.getElementById('btnConvert');
+    const btnClear = document.getElementById('btnClear');
+
+    let fileData = null;
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    function handleFile(file) {
+      hideError();
+      showProgress(20, "Parsing Excel sheets…");
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          fileData = { name: file.name, wb: workbook };
+          
+          // Render first sheet
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+          
+          let html = '<table class="preview-table">';
+          html += '<thead><tr>';
+          rows[0].forEach((col, idx) => html += '<th>' + (col || 'Col ' + (idx + 1)) + '</th>');
+          html += '</tr></thead><tbody>';
+          for(let i = 1; i < rows.length; i++) {
+            html += '<tr>';
+            rows[i].forEach(cell => html += '<td>' + String(cell || '') + '</td>');
+            html += '</tr>';
+          }
+          html += '</tbody></table>';
+          
+          previewBody.innerHTML = html;
+          previewCard.style.display = 'flex';
+          fileNameDisplay.textContent = file.name;
+          actionControls.style.display = 'flex';
+          dropZone.style.display = 'none';
+        } catch(err) {
+          showError("Failed to parse sheet data. Please ensure this is a valid CSV/Excel file.");
+        }
+        hideProgress();
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    btnConvert.addEventListener('click', () => {
+      showProgress(40, "Compiling PDF document layout…");
+      const element = previewBody;
+      const opt = {
+        margin:       10,
+        filename:     fileData.name.replace(/\.[^/.]+$/, "") + '.pdf',
+        image:        { type: 'jpeg', quality: 0.95 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      };
+      html2pdf().set(opt).from(element).save().then(() => {
+        hideProgress();
+      }).catch(err => {
+        showError("PDF compilation failed.");
+        hideProgress();
+      });
+    });
+
+    btnClear.addEventListener('click', () => {
+      fileData = null;
+      previewCard.style.display = 'none';
+      actionControls.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+    });
+  })();
+</script>

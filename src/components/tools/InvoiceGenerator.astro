@@ -1,0 +1,651 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  /* Split Screen Workspace specific overrides for invoice builder */
+  .split-workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+  }
+  @media (max-width: 1024px) {
+    .split-workspace {
+      grid-template-columns: 1fr;
+    }
+  }
+  .editor-pane {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+  .preview-pane {
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-lg);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-x: auto;
+  }
+  .form-card {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+  .form-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--colors-mute);
+    border-bottom: 1px solid var(--colors-hairline);
+    padding-bottom: var(--spacing-xs);
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+  }
+  .textarea-input {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid var(--colors-hairline);
+    padding: var(--spacing-sm);
+    font-size: 13px;
+    background-color: var(--colors-canvas);
+    color: var(--colors-ink);
+    outline: none;
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+  }
+  .textarea-input:focus {
+    border-color: var(--colors-ink);
+  }
+  .item-edit-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .item-edit-table th {
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--colors-mute);
+    text-transform: uppercase;
+    padding-bottom: 6px;
+  }
+  .item-edit-row td {
+    padding: var(--spacing-xs) 0;
+  }
+  .item-delete-btn {
+    background: none;
+    border: none;
+    color: var(--colors-error);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0 var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .a4-wrapper {
+    transform-origin: top center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    background-color: #ffffff;
+    color: #171717;
+  }
+  .invoice-pdf-container {
+    width: 700px;
+    min-height: 900px;
+    padding: 40px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #171717;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .invoice-pdf-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #171717;
+    padding-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+  }
+  .pdf-brand-title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -1.2px;
+  }
+  .pdf-doc-type {
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: #888888;
+    text-align: right;
+  }
+  .pdf-meta-text {
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #4d4d4d;
+    margin-top: 4px;
+  }
+  .invoice-pdf-addresses {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-2xl);
+  }
+  .address-col-title {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: #888888;
+    margin-bottom: 6px;
+  }
+  .address-details {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #4d4d4d;
+    white-space: pre-wrap;
+  }
+  .invoice-pdf-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--spacing-2xl);
+  }
+  .invoice-pdf-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #888888;
+    border-bottom: 1px solid #171717;
+    padding: var(--spacing-xs) 6px;
+    text-align: left;
+  }
+  .invoice-pdf-table td {
+    font-size: 12px;
+    padding: 12px 6px;
+    border-bottom: 1px solid #ebebeb;
+    color: #4d4d4d;
+  }
+  .invoice-pdf-table tr:last-child td {
+    border-bottom: 1px solid #171717;
+  }
+  .invoice-pdf-table th.right-align, .invoice-pdf-table td.right-align {
+    text-align: right;
+  }
+  .pdf-summary-block {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--spacing-2xl);
+  }
+  .pdf-totals-table {
+    width: 250px;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .pdf-totals-table td {
+    padding: var(--spacing-xs) 6px;
+    color: #4d4d4d;
+  }
+  .pdf-totals-table tr.grand-total td {
+    font-weight: 600;
+    color: #171717;
+    font-size: 16px;
+    border-top: 2px solid #171717;
+    padding-top: var(--spacing-sm);
+  }
+  .pdf-totals-table td.right-align {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .invoice-pdf-footer {
+    border-top: 1px solid #ebebeb;
+    padding-top: var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .pdf-terms {
+    max-width: 400px;
+    font-size: 11px;
+    color: #888888;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .pdf-thankyou {
+    font-size: 12px;
+    font-weight: 500;
+    color: #171717;
+    font-style: italic;
+  }
+</style>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<div class="split-workspace">
+  <!-- Left panel: Editors and inputs -->
+  <section class="editor-pane">
+    <!-- Card: Meta settings -->
+    <div class="form-card">
+      <div class="form-card-title">Invoice Settings</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="inputInvNo">Invoice Number</label>
+          <input type="text" id="inputInvNo" class="form-input" value="CO-2026-001" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="inputTaxSelect">Tax Configuration</label>
+          <select id="inputTaxSelect" class="select-input">
+            <option value="none">No Tax</option>
+            <option value="GST" selected>GST (18%)</option>
+            <option value="IGST">IGST (18%)</option>
+            <option value="VAT">VAT (15%)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="inputInvDate">Invoice Date</label>
+          <input type="date" id="inputInvDate" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="inputDueDate">Due Date</label>
+          <input type="date" id="inputDueDate" class="form-input" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Vendor details -->
+    <div class="form-card">
+      <div class="form-card-title">From (Vendor / Company)</div>
+      <div class="form-group">
+        <label class="form-label" for="inputVendorName">Billing Entity Name</label>
+        <input type="text" id="inputVendorName" class="form-input" value="Kavya J. Studio" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inputVendorAddress">Address & Contact Info</label>
+        <textarea id="inputVendorAddress" class="textarea-input">12 Developer Lane, Indiranagar&#10;Bengaluru, KA 560038&#10;hello@kavyaj.studio</textarea>
+      </div>
+    </div>
+
+    <!-- Card: Client details -->
+    <div class="form-card">
+      <div class="form-card-title">To (Client Recipient)</div>
+      <div class="form-group">
+        <label class="form-label" for="inputClientName">Client Entity Name</label>
+        <input type="text" id="inputClientName" class="form-input" value="Galactic Group Ltd." />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inputClientAddress">Address & Details</label>
+        <textarea id="inputClientAddress" class="textarea-input">45 Cloud Towers, Tech City&#10;Mumbai, MH 400001&#10;billing@galactic.com</textarea>
+      </div>
+    </div>
+
+    <!-- Card: Line items editor -->
+    <div class="form-card">
+      <div class="form-card-title">Itemized Line Items</div>
+      <table class="item-edit-table" id="itemEditTable">
+        <thead>
+          <tr>
+            <th style="width: 50%;">Description</th>
+            <th style="width: 15%;">Qty</th>
+            <th style="width: 25%;">Rate ($)</th>
+            <th style="width: 10%;"></th>
+          </tr>
+        </thead>
+        <tbody id="itemEditRows">
+        </tbody>
+      </table>
+      <button class="button button-secondary" id="btnAddItem" style="height: 34px; font-size: 13px; margin-top: var(--spacing-xs);">+ Add Line Item</button>
+    </div>
+
+    <!-- Card: Notes/Terms -->
+    <div class="form-card">
+      <div class="form-card-title">Terms & Bank Notes</div>
+      <div class="form-group">
+        <label class="form-label" for="inputTerms">Payment Terms & Instructions</label>
+        <textarea id="inputTerms" class="textarea-input">Bank: HDFC Bank | A/C: 9876543210&#10;IFSC: HDFC0000123&#10;Payment is due within 15 days of invoice date.</textarea>
+      </div>
+    </div>
+
+    <div class="actions-bar" style="margin-bottom: 20px; display: flex; gap: var(--spacing-sm);">
+      <button id="btnDownload" class="button button-primary">Download Invoice PDF</button>
+      <button id="btnClearForm" class="button button-danger">Clear Form</button>
+    </div>
+  </section>
+
+  <!-- Right panel: Interactive PDF sheet display -->
+  <section class="preview-pane" id="previewPane">
+    <div class="a4-wrapper" id="a4Wrapper">
+      <div class="invoice-pdf-container" id="invoicePdfContainer">
+        <!-- Header -->
+        <div class="invoice-pdf-header">
+          <div>
+            <div class="pdf-brand-title" id="pdfVendorTitle">Kavya J. Studio</div>
+            <div class="pdf-meta-text" id="pdfVendorSub">Vendor Billing Profile</div>
+          </div>
+          <div>
+            <div class="pdf-doc-type">Tax Invoice</div>
+            <div class="pdf-meta-text" style="text-align: right;">
+              No: <strong id="pdfInvNo">CO-2026-001</strong><br />
+              Date: <span id="pdfInvDate">--/--/----</span><br />
+              Due Date: <span id="pdfDueDate">--/--/----</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Address Details -->
+        <div class="invoice-pdf-addresses">
+          <div>
+            <div class="address-col-title">Billing Entity (From)</div>
+            <div class="address-details" id="pdfVendorAddr"></div>
+          </div>
+          <div>
+            <div class="address-col-title">Billed Client (To)</div>
+            <div class="address-details" id="pdfClientAddr"></div>
+          </div>
+        </div>
+
+        <!-- Items Table -->
+        <table class="invoice-pdf-table">
+          <thead>
+            <tr>
+              <th style="width: 50%;">Line Description</th>
+              <th style="width: 10%; text-align: right;">Qty</th>
+              <th style="width: 20%; text-align: right;">Unit Rate</th>
+              <th style="width: 20%; text-align: right;">Amount</th>
+            </tr>
+          </thead>
+          <tbody id="pdfTableRows">
+          </tbody>
+        </table>
+
+        <!-- Totals block & Footer layout -->
+        <div style="margin-top: auto;">
+          <div class="pdf-summary-block">
+            <table class="pdf-totals-table">
+              <tr>
+                <td>Subtotal</td>
+                <td class="right-align" id="pdfSubtotal">$0.00</td>
+              </tr>
+              <tr id="pdfTaxRow">
+                <td id="pdfTaxLabel">GST (18%)</td>
+                <td class="right-align" id="pdfTaxAmount">$0.00</td>
+              </tr>
+              <tr class="grand-total">
+                <td>Grand Total</td>
+                <td class="right-align" id="pdfGrandTotal">$0.00</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="invoice-pdf-footer">
+            <div>
+              <div class="address-col-title">Terms & Notes</div>
+              <div class="pdf-terms" id="pdfTerms"></div>
+            </div>
+            <div class="pdf-thankyou">Thank you for your business.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script is:inline>
+  (function() {
+    let invoiceData = {
+      InvNo: "CO-2026-001",
+      InvDate: "",
+      DueDate: "",
+      TaxModel: "GST", 
+      TaxRate: 0.18,
+      VendorName: "Kavya J. Studio",
+      VendorAddress: "12 Developer Lane, Indiranagar\nBengaluru, KA 560038\nhello@kavyaj.studio",
+      ClientName: "Galactic Group Ltd.",
+      ClientAddress: "45 Cloud Towers, Tech City\nMumbai, MH 400001\nbilling@galactic.com",
+      Terms: "Bank: HDFC Bank | A/C: 9876543210\nIFSC: HDFC0000123\nPayment is due within 15 days of invoice date.",
+      LineItems: [
+        { desc: "Advanced Multi-page Web UI Scaffolding", qty: 1, rate: 2500.00 },
+        { desc: "Client-side Performance Optimization Suite", qty: 4, rate: 350.00 }
+      ]
+    };
+
+    const inputInvNo = document.getElementById('inputInvNo');
+    const inputTaxSelect = document.getElementById('inputTaxSelect');
+    const inputInvDate = document.getElementById('inputInvDate');
+    const inputDueDate = document.getElementById('inputDueDate');
+    const inputVendorName = document.getElementById('inputVendorName');
+    const inputVendorAddress = document.getElementById('inputVendorAddress');
+    const inputClientName = document.getElementById('inputClientName');
+    const inputClientAddress = document.getElementById('inputClientAddress');
+    const inputTerms = document.getElementById('inputTerms');
+    const itemEditRows = document.getElementById('itemEditRows');
+    const btnAddItem = document.getElementById('btnAddItem');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnClearForm = document.getElementById('btnClearForm');
+    const previewPane = document.getElementById('previewPane');
+    const a4Wrapper = document.getElementById('a4Wrapper');
+
+    window.addEventListener('load', () => {
+      // Set default dates
+      const today = new Date();
+      invoiceData.InvDate = today.toISOString().substring(0, 10);
+      
+      const due = new Date();
+      due.setDate(today.getDate() + 15);
+      invoiceData.DueDate = due.toISOString().substring(0, 10);
+
+      inputInvDate.value = invoiceData.InvDate;
+      inputDueDate.value = invoiceData.DueDate;
+
+      renderEditorTable();
+      updatePreviewPage();
+      scaleA4Preview();
+    });
+
+    window.addEventListener('resize', scaleA4Preview);
+
+    function scaleA4Preview() {
+      if (!previewPane || !a4Wrapper) return;
+      const paneWidth = previewPane.clientWidth - 40;
+      const scale = paneWidth < 700 ? paneWidth / 700 : 1;
+      a4Wrapper.style.transform = `scale(${scale})`;
+      previewPane.style.minHeight = `${900 * scale + 40}px`;
+    }
+
+    function updatePreviewPage() {
+      document.getElementById('pdfVendorTitle').textContent = invoiceData.VendorName || "Billing Entity";
+      document.getElementById('pdfVendorAddr').textContent = invoiceData.VendorAddress;
+      document.getElementById('pdfClientAddr').textContent = invoiceData.ClientAddress;
+      document.getElementById('pdfInvNo').textContent = invoiceData.InvNo || "INV-000";
+      document.getElementById('pdfInvDate').textContent = formatDate(invoiceData.InvDate);
+      document.getElementById('pdfDueDate').textContent = formatDate(invoiceData.DueDate);
+      document.getElementById('pdfTerms').textContent = invoiceData.Terms;
+
+      const tbody = document.getElementById('pdfTableRows');
+      tbody.innerHTML = '';
+
+      let subtotal = 0;
+      invoiceData.LineItems.forEach(item => {
+        const itemAmount = item.qty * item.rate;
+        subtotal += itemAmount;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.desc || "Line item details"}</td>
+          <td class="right-align">${item.qty}</td>
+          <td class="right-align">$${item.rate.toFixed(2)}</td>
+          <td class="right-align">$${itemAmount.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('pdfSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+      const taxAmount = subtotal * invoiceData.TaxRate;
+      const grandTotal = subtotal + taxAmount;
+
+      const taxRow = document.getElementById('pdfTaxRow');
+      if (invoiceData.TaxModel === 'none') {
+        taxRow.style.display = 'none';
+      } else {
+        taxRow.style.display = 'table-row';
+        document.getElementById('pdfTaxLabel').textContent = `${invoiceData.TaxModel} (${(invoiceData.TaxRate * 100)}%)`;
+        document.getElementById('pdfTaxAmount').textContent = `$${taxAmount.toFixed(2)}`;
+      }
+      document.getElementById('pdfGrandTotal').textContent = `$${grandTotal.toFixed(2)}`;
+    }
+
+    function renderEditorTable() {
+      itemEditRows.innerHTML = '';
+      invoiceData.LineItems.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = 'item-edit-row';
+        tr.innerHTML = `
+          <td>
+            <input type="text" class="form-input" value="${item.desc}" oninput="window.updateLineItem(${index}, 'desc', this.value)">
+          </td>
+          <td>
+            <input type="number" class="form-input" style="padding: 0 6px; text-align: center;" value="${item.qty}" min="1" oninput="window.updateLineItem(${index}, 'qty', this.value)">
+          </td>
+          <td>
+            <input type="number" class="form-input" value="${item.rate}" min="0" step="0.01" oninput="window.updateLineItem(${index}, 'rate', this.value)">
+          </td>
+          <td>
+            <button class="item-delete-btn" onclick="window.deleteLineItem(${index})">×</button>
+          </td>
+        `;
+        itemEditRows.appendChild(tr);
+      });
+    }
+
+    window.updateLineItem = function(index, key, val) {
+      if (key === 'qty') {
+        invoiceData.LineItems[index].qty = parseInt(val) || 1;
+      } else if (key === 'rate') {
+        invoiceData.LineItems[index].rate = parseFloat(val) || 0;
+      } else {
+        invoiceData.LineItems[index].desc = val;
+      }
+      updatePreviewPage();
+    };
+
+    window.deleteLineItem = function(index) {
+      if (invoiceData.LineItems.length > 1) {
+        invoiceData.LineItems.splice(index, 1);
+        renderEditorTable();
+        updatePreviewPage();
+      }
+    };
+
+    btnAddItem.addEventListener('click', () => {
+      invoiceData.LineItems.push({ desc: "New Line Item Details", qty: 1, rate: 0.00 });
+      renderEditorTable();
+      updatePreviewPage();
+    });
+
+    // Inputs listeners
+    inputInvNo.addEventListener('input', (e) => { invoiceData.InvNo = e.target.value; updatePreviewPage(); });
+    inputTaxSelect.addEventListener('change', (e) => {
+      const taxType = e.target.value;
+      invoiceData.TaxModel = taxType;
+      if (taxType === 'GST' || taxType === 'IGST') {
+        invoiceData.TaxRate = 0.18;
+      } else if (taxType === 'VAT') {
+        invoiceData.TaxRate = 0.15;
+      } else {
+        invoiceData.TaxRate = 0;
+      }
+      updatePreviewPage();
+    });
+    inputInvDate.addEventListener('change', (e) => { invoiceData.InvDate = e.target.value; updatePreviewPage(); });
+    inputDueDate.addEventListener('change', (e) => { invoiceData.DueDate = e.target.value; updatePreviewPage(); });
+    inputVendorName.addEventListener('input', (e) => { invoiceData.VendorName = e.target.value; updatePreviewPage(); });
+    inputVendorAddress.addEventListener('input', (e) => { invoiceData.VendorAddress = e.target.value; updatePreviewPage(); });
+    inputClientName.addEventListener('input', (e) => { invoiceData.ClientName = e.target.value; updatePreviewPage(); });
+    inputClientAddress.addEventListener('input', (e) => { invoiceData.ClientAddress = e.target.value; updatePreviewPage(); });
+    inputTerms.addEventListener('input', (e) => { invoiceData.Terms = e.target.value; updatePreviewPage(); });
+
+    function formatDate(dateString) {
+      if (!dateString) return '--/--/----';
+      const parts = dateString.split('-');
+      if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      return dateString;
+    }
+
+    btnDownload.addEventListener('click', () => {
+      const element = document.getElementById('invoicePdfContainer');
+      const clone = element.cloneNode(true);
+      
+      clone.style.transform = 'none';
+      clone.style.position = 'absolute';
+      clone.style.left = '0';
+      clone.style.top = '0';
+      clone.style.zIndex = '-9999';
+      clone.style.width = '794px'; 
+      clone.style.height = 'auto';
+      clone.style.opacity = '1';
+      clone.style.visibility = 'visible';
+      document.body.appendChild(clone);
+
+      const filename = (invoiceData.InvNo || 'invoice') + '_' + (invoiceData.ClientName.replace(/\s+/g, '_').toLowerCase()) + '.pdf';
+      
+      const opt = {
+        margin:       0,
+        filename:     filename,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(clone).save().then(() => {
+        document.body.removeChild(clone);
+      }).catch(err => {
+        console.error("PDF generation error: ", err);
+        document.body.removeChild(clone);
+      });
+    });
+
+    btnClearForm.addEventListener('click', () => {
+      invoiceData.VendorName = "";
+      invoiceData.VendorAddress = "";
+      invoiceData.ClientName = "";
+      invoiceData.ClientAddress = "";
+      invoiceData.InvNo = "";
+      invoiceData.Terms = "";
+      invoiceData.LineItems = [{ desc: "New Line Item Details", qty: 1, rate: 0.00 }];
+      
+      inputVendorName.value = "";
+      inputVendorAddress.value = "";
+      inputClientName.value = "";
+      inputClientAddress.value = "";
+      inputInvNo.value = "";
+      inputTerms.value = "";
+
+      renderEditorTable();
+      updatePreviewPage();
+    });
+  })();
+</script>

@@ -1,0 +1,633 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Converter & Compressor - ConvertOcean</title>
+  <meta name="description" content="Convert and compress image formats (WebP, PNG, JPG, SVG, BMP) fully client-side. Optimize file sizes locally in your browser memory.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/theme.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  <!-- Load JSZip for batch folders downloads -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    .workspace-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-lg);
+    }
+    @media (max-width: 900px) {
+      .workspace-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .slider-input {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 9999px;
+      background: var(--colors-canvas-soft-2);
+      outline: none;
+    }
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--colors-ink);
+      cursor: pointer;
+      border: 2px solid var(--colors-canvas);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .metrics-container {
+      background-color: var(--colors-canvas-soft-2);
+      border-radius: 8px;
+      padding: var(--spacing-md);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-sm);
+      text-align: center;
+    }
+    .metric-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .metric-label {
+      font-size: 11px;
+      color: var(--colors-mute);
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .metric-value {
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .metric-value.savings {
+      color: var(--colors-success);
+    }
+    .preview-display-wrapper {
+      flex: 1;
+      border: 1px dashed var(--colors-hairline);
+      border-radius: 8px;
+      background-color: #1e1e1e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      margin-top: var(--spacing-md);
+      min-height: 250px;
+    }
+    .preview-image {
+      max-width: 100%;
+      max-height: 350px;
+      object-fit: contain;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: none;
+    }
+    .empty-preview {
+      color: var(--colors-mute);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+    .batch-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-sm);
+      background-color: var(--colors-canvas-soft-2);
+      border: 1px solid var(--colors-hairline);
+      border-radius: 6px;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .batch-item:hover {
+      border-color: var(--colors-hairline-strong);
+    }
+    .batch-item-name {
+      font-weight: 600;
+      color: var(--colors-ink);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 180px;
+    }
+    .batch-item-size {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--colors-body);
+      font-size: 11px;
+    }
+    .batch-item-saving {
+      color: var(--colors-success);
+      font-weight: 600;
+    }
+    .batch-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="COcean" />
+  <link rel="manifest" href="/site.webmanifest" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="nav-bar">
+    <a href="/index.html" class="nav-brand">
+      <svg class="brand-logo-svg" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect class="brand-logo-rect" x="2" y="2" width="28" height="28" rx="8" />
+        <path class="brand-logo-path" d="M18 6L9 17H16L14 26L23 15H16L18 6Z" stroke="var(--colors-canvas)" stroke-width="1.2" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="brand-logo-grad" x1="9" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#007cf0"/>
+            <stop offset="50%" stop-color="#7928ca"/>
+            <stop offset="100%" stop-color="#ff0080"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+    </a>
+    
+    <nav class="nav-links">
+      <a href="/index.html" class="nav-link">⚡ Home</a>
+      <a href="/file-converter/" class="nav-link">📄 File Converter</a>
+      <a href="/pdf-tools/" class="nav-link">📑 PDF Tools</a>
+      <a href="/image-tools/" class="nav-link active">🖼️ Image Tools</a>
+      <a href="/spreadsheet-tools/" class="nav-link">📊 Spreadsheets</a>
+      <a href="/ocr-tools/" class="nav-link">🔍 OCR Tools</a>
+      <a href="/business-tools/" class="nav-link">💼 Business Tools</a>
+      <a href="/privacy-first/" class="nav-link">🔒 Privacy First</a>
+    </nav>
+
+    <div class="nav-right-group">
+      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        </svg>
+      </button>
+      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobileNavMenu" class="mobile-nav-menu">
+    <a href="/index.html" class="mobile-nav-link">⚡ Home</a>
+    <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
+    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF Tools</a>
+    <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
+    <a href="/spreadsheet-tools/" class="mobile-nav-link">📊 Spreadsheet Tools</a>
+    <a href="/ocr-tools/" class="mobile-nav-link">🔍 OCR Tools</a>
+    <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
+    <a href="/privacy-first/" class="mobile-nav-link">🔒 Privacy First</a>
+  </div>
+
+  <main class="app-container">
+    <div class="page-header">
+      <h1 class="page-title">Image Tools.</h1>
+      <p class="page-description">Convert PNG, JPG, WebP, SVG, and BMP formats instantly. Compress, resize, and optimize file sizes client-side in seconds.</p>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="errorBanner" class="error-banner">
+      <span>⚠️</span>
+      <span id="errorMessage"></span>
+    </div>
+
+    <!-- Upload Card -->
+    <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">🖼️</div>
+      <div class="upload-text-primary">Drag and drop images here, or click to browse</div>
+      <div class="upload-text-secondary">Supports PNG, JPG, WebP, BMP, and SVG (Max size: 20MB)</div>
+      <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
+    </div>
+
+    <!-- Workspace Layout (hidden by default) -->
+    <div id="workspaceLayout" class="workspace-layout" style="display: none;">
+      <!-- Left Column: Settings and stats -->
+      <div class="card panel-card">
+        <h3 class="panel-section-title">OPTIMIZATION CONFIGURATION</h3>
+        
+        <div class="form-group">
+          <label class="form-label" for="outputFormatSelect">Target Format</label>
+          <select id="outputFormatSelect" class="select-input" onchange="processImage()">
+            <option value="webp">WebP (Highly Compressed)</option>
+            <option value="png">PNG (Lossless)</option>
+            <option value="jpeg">JPG (Standard)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="control-label">
+            <span>Compression Quality</span>
+            <span id="qualityDisplay" class="control-value">80%</span>
+          </div>
+          <input type="range" id="qualitySlider" class="slider-input" min="10" max="100" value="80" oninput="updateSliderDisplay(this.value)">
+        </div>
+
+        <div class="form-group">
+          <div class="control-label">
+            <span>Resize Scale</span>
+            <span id="scaleDisplay" class="control-value">100% (Original)</span>
+          </div>
+          <input type="range" id="scaleSlider" class="slider-input" min="10" max="100" value="100" oninput="updateScaleDisplay(this.value)">
+        </div>
+
+        <hr style="border: 0; height: 1px; background-color: var(--colors-hairline);">
+
+        <!-- Single Image Metrics -->
+        <div id="singleMetrics" class="metrics-container">
+          <div class="metric-box">
+            <span class="metric-label">Original</span>
+            <span id="originalSizeVal" class="metric-value">0 KB</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Optimized</span>
+            <span id="optimizedSizeVal" class="metric-value">0 KB</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Savings</span>
+            <span id="savingsVal" class="metric-value savings">0%</span>
+          </div>
+        </div>
+
+        <!-- Batch List (hidden for single upload) -->
+        <div id="batchContainer" style="display: none;">
+          <h4 style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">BATCH PROCESSING LIST</h4>
+          <div id="batchList" class="batch-list"></div>
+        </div>
+
+        <div class="button-group actions-panel" style="display: flex; gap: var(--spacing-sm);">
+          <button id="btnDownload" class="button button-primary" onclick="downloadOptimized()">Download Optimized File</button>
+          <button id="btnDownloadZip" class="button button-primary" onclick="downloadBatchZip()" style="display: none;">Download Batch ZIP</button>
+          <button class="button button-danger" onclick="resetWorkspace()">Upload Another</button>
+        </div>
+      </div>
+
+      <!-- Right Column: Preview Panel -->
+      <div class="card panel-card" style="justify-content: space-between;">
+        <h3 class="panel-section-title">OPTIMIZED PREVIEW</h3>
+        
+        <div class="preview-display-wrapper">
+          <img id="previewImage" class="preview-image" alt="Optimized Preview">
+          <div id="emptyPreview" class="empty-preview">
+            <span style="font-size: 24px;">🖼️</span>
+            <span>Image loaded. Initializing preview…</span>
+          </div>
+        </div>
+        
+        <div style="font-size: 12px; color: var(--colors-mute); text-align: center; margin-top: var(--spacing-sm);">
+          Preview background is dark to help inspect transparent layouts.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-container">
+      <div class="faq-item">
+        <div class="faq-question">
+          Does ConvertOcean read my photos?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          No. All processing, resizing, and format changes happen inside your browser using HTML5 canvas. The image never leaves your device.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          What is WebP format?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          WebP is a modern web image format developed by Google. It offers superior lossless and lossy compression for images on the web, often saving over 50% in file size compared to PNG or JPG.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/index.html" class="nav-brand" style="margin-bottom: 8px;">
+            <svg class="brand-logo-svg" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect class="brand-logo-rect" x="2" y="2" width="28" height="28" rx="8" />
+              <path class="brand-logo-path" d="M18 6L9 17H16L14 26L23 15H16L18 6Z" stroke="var(--colors-canvas)" stroke-width="1.2" stroke-linejoin="round"/>
+            </svg>
+            <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+          </a>
+          <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">File Converter</span>
+          <div class="footer-links">
+            <a href="/excel-to-pdf/" class="footer-link">Excel to PDF</a>
+            <a href="/csv-to-json/" class="footer-link">CSV to JSON</a>
+            <a href="/json-to-csv/" class="footer-link">JSON to CSV</a>
+            <a href="/xlsx-to-csv/" class="footer-link">XLSX to CSV</a>
+            <a href="/csv-to-xlsx/" class="footer-link">CSV to XLSX</a>
+            <a href="/json-to-xlsx/" class="footer-link">JSON to XLSX</a>
+            <a href="/xml-to-json/" class="footer-link">XML to JSON</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">PDF & Document</span>
+          <div class="footer-links">
+            <a href="/merge-pdf/" class="footer-link">Merge PDF</a>
+            <a href="/split-pdf/" class="footer-link">Split PDF</a>
+            <a href="/txt-to-pdf/" class="footer-link">TXT to PDF</a>
+            <a href="/pdf-to-txt/" class="footer-link">PDF to TXT</a>
+            <a href="/document-tools/" class="footer-link">Document Tools</a>
+            <a href="/spreadsheet-tools/" class="footer-link">Spreadsheet Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Image & OCR</span>
+          <div class="footer-links">
+            <a href="/png-to-jpg/" class="footer-link">PNG to JPG</a>
+            <a href="/jpg-to-png/" class="footer-link">JPG to PNG</a>
+            <a href="/png-to-webp/" class="footer-link">PNG to WebP</a>
+            <a href="/webp-to-png/" class="footer-link">WebP to PNG</a>
+            <a href="/image-to-text/" class="footer-link">Image to Text OCR</a>
+            <a href="/image-tools/" class="footer-link">Image Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Legal & Company</span>
+          <div class="footer-links">
+            <a href="/privacy-first/" class="footer-link">Privacy Policy</a>
+            <a href="/privacy-first/" class="footer-link">Terms of Service</a>
+            <a href="/privacy-first/" class="footer-link">Contact</a>
+            <a href="/sitemap.xml" class="footer-link">Sitemap</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="privacy-disclaimer">
+          <strong>🔒 100% Device-Level Security Guarantee:</strong> Disconnect your internet connection completely and try any tool. It works flawlessly because your files never touch an external server. Everything resides in local sandbox memory and is automatically removed when you close the tab.
+        </p>
+        <p class="copyright">&copy; 2026 ConvertOcean. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/theme.js"></script>
+  <script>
+    // Image Tools Engine Logic
+    let activeFilesList = []; // Array of { id, file, originalSize, optimizedBlob, optimizedSize }
+    let activeIndex = 0; // Current active index in preview panel
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    
+    const workspaceLayout = document.getElementById('workspaceLayout');
+    const previewImage = document.getElementById('previewImage');
+    const emptyPreview = document.getElementById('emptyPreview');
+
+    const outputFormatSelect = document.getElementById('outputFormatSelect');
+    const qualitySlider = document.getElementById('qualitySlider');
+    const qualityDisplay = document.getElementById('qualityDisplay');
+    const scaleSlider = document.getElementById('scaleSlider');
+    const scaleDisplay = document.getElementById('scaleDisplay');
+
+    const singleMetrics = document.getElementById('singleMetrics');
+    const originalSizeVal = document.getElementById('originalSizeVal');
+    const optimizedSizeVal = document.getElementById('optimizedSizeVal');
+    const savingsVal = document.getElementById('savingsVal');
+
+    const batchContainer = document.getElementById('batchContainer');
+    const batchList = document.getElementById('batchList');
+
+    const btnDownload = document.getElementById('btnDownload');
+    const btnDownloadZip = document.getElementById('btnDownloadZip');
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+      if (files.length > 0) handleFileSelects(files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
+      if (files.length > 0) handleFileSelects(files);
+    });
+
+    function handleFileSelects(files) {
+      hideError();
+      activeFilesList = files.map(file => ({
+        id: Date.now() + Math.random().toString(36).substr(2, 9),
+        file: file,
+        originalSize: file.size,
+        optimizedBlob: null,
+        optimizedSize: 0
+      }));
+
+      activeIndex = 0;
+      showWorkspace();
+      
+      if (activeFilesList.length > 1) {
+        batchContainer.style.display = 'block';
+        singleMetrics.style.display = 'none';
+        btnDownload.style.display = 'none';
+        btnDownloadZip.style.display = 'inline-flex';
+      } else {
+        batchContainer.style.display = 'none';
+        singleMetrics.style.display = 'grid';
+        btnDownload.style.display = 'inline-flex';
+        btnDownloadZip.style.display = 'none';
+      }
+
+      processBatch();
+    }
+
+    function showWorkspace() {
+      dropZone.style.display = 'none';
+      workspaceLayout.style.display = 'grid';
+    }
+
+    function resetWorkspace() {
+      activeFilesList = [];
+      fileInput.value = '';
+      workspaceLayout.style.display = 'none';
+      dropZone.style.display = 'flex';
+      hideError();
+    }
+
+    function updateSliderDisplay(val) {
+      qualityDisplay.textContent = `${val}%`;
+      processBatch();
+    }
+
+    function updateScaleDisplay(val) {
+      scaleDisplay.textContent = val === '100' ? '100% (Original)' : `${val}%`;
+      processBatch();
+    }
+
+    async function processBatch() {
+      previewImage.style.display = 'none';
+      emptyPreview.style.display = 'flex';
+
+      for (let i = 0; i < activeFilesList.length; i++) {
+        const item = activeFilesList[i];
+        await processSingleItem(item);
+      }
+
+      renderBatchList();
+      updatePreviewDisplay();
+    }
+
+    function processSingleItem(item) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            const scale = parseInt(scaleSlider.value) / 100;
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            const format = outputFormatSelect.value;
+            const quality = parseInt(qualitySlider.value) / 100;
+
+            let mime = 'image/webp';
+            if (format === 'png') mime = 'image/png';
+            if (format === 'jpeg') mime = 'image/jpeg';
+
+            canvas.toBlob(blob => {
+              item.optimizedBlob = blob;
+              item.optimizedSize = blob.size;
+              resolve();
+            }, mime, quality);
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(item.file);
+      });
+    }
+
+    function renderBatchList() {
+      batchList.innerHTML = '';
+      activeFilesList.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = `batch-item ${index === activeIndex ? 'active' : ''}`;
+        
+        const savings = Math.round(((item.originalSize - item.optimizedSize) / item.originalSize) * 100);
+        const savingsText = savings > 0 ? `-${savings}%` : '0%';
+
+        div.innerHTML = `
+          <div class="batch-item-name">${item.file.name}</div>
+          <div class="batch-item-size">
+            <span>${(item.originalSize / 1024).toFixed(1)} KB</span> ➔ 
+            <span class="batch-item-saving">${(item.optimizedSize / 1024).toFixed(1)} KB (${savingsText})</span>
+          </div>
+        `;
+        div.onclick = () => {
+          activeIndex = index;
+          renderBatchList();
+          updatePreviewDisplay();
+        };
+        batchList.appendChild(div);
+      });
+    }
+
+    function updatePreviewDisplay() {
+      const activeItem = activeFilesList[activeIndex];
+      if (!activeItem || !activeItem.optimizedBlob) return;
+
+      const url = URL.createObjectURL(activeItem.optimizedBlob);
+      previewImage.src = url;
+      previewImage.style.display = 'block';
+      emptyPreview.style.display = 'none';
+
+      if (activeFilesList.length === 1) {
+        originalSizeVal.textContent = `${(activeItem.originalSize / 1024).toFixed(1)} KB`;
+        optimizedSizeVal.textContent = `${(activeItem.optimizedSize / 1024).toFixed(1)} KB`;
+        
+        const savings = Math.round(((activeItem.originalSize - activeItem.optimizedSize) / activeItem.originalSize) * 100);
+        savingsVal.textContent = savings > 0 ? `${savings}%` : '0%';
+      }
+    }
+
+    function downloadOptimized() {
+      const activeItem = activeFilesList[0];
+      if (!activeItem || !activeItem.optimizedBlob) return;
+
+      const format = outputFormatSelect.value;
+      const cleanName = activeItem.file.name.replace(/\.[^/.]+$/, "") + `_optimized.${format}`;
+      downloadBlob(activeItem.optimizedBlob, cleanName);
+    }
+
+    async function downloadBatchZip() {
+      const zip = new JSZip();
+      const format = outputFormatSelect.value;
+
+      activeFilesList.forEach(item => {
+        const cleanName = item.file.name.replace(/\.[^/.]+$/, "") + `_optimized.${format}`;
+        zip.file(cleanName, item.optimizedBlob);
+      });
+
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      downloadBlob(zipBlob, `convert_ocean_batch_${Date.now()}.zip`);
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorBanner.style.display = 'flex';
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

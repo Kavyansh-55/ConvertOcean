@@ -1,0 +1,219 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 6px;
+    font-size: 13px;
+  }
+</style>
+
+<script is:inline src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing files…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">🥞</div>
+  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-secondary">Upload multiple PDF files (Max 25MB each)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".pdf" multiple />
+</div>
+
+<div id="mergeWorkspace" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
+  <div id="fileItemsList" class="file-list" style="margin-bottom: var(--spacing-md);"></div>
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
+    <input type="text" id="mergeOutputName" class="form-input" style="max-width: 300px;" value="merged_document.pdf" />
+    <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
+      <button class="button button-primary" id="btnMerge">Merge & Download</button>
+      <button class="button button-danger" id="btnClear">Clear</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const mergeWorkspace = document.getElementById('mergeWorkspace');
+    const fileItemsList = document.getElementById('fileItemsList');
+    const mergeOutputName = document.getElementById('mergeOutputName');
+    const btnMerge = document.getElementById('btnMerge');
+    const btnClear = document.getElementById('btnClear');
+
+    let mergeFiles = [];
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) processFiles(files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files);
+      if (files.length > 0) processFiles(files);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    function processFiles(files) {
+      hideError();
+      let processed = 0;
+      showProgress(10, "Loading PDF documents…");
+
+      files.forEach(f => {
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          try {
+            const bytes = new Uint8Array(e.target.result);
+            const doc = await PDFLib.PDFDocument.load(bytes);
+            mergeFiles.push({
+              name: f.name,
+              bytes: bytes,
+              pages: doc.getPageCount()
+            });
+            processed++;
+
+            if (processed === files.length) {
+              renderList();
+              hideProgress();
+            }
+          } catch(err) {
+            processed++;
+            showError("Failed to parse " + f.name + ". Please make sure it is a valid PDF.");
+            hideProgress();
+          }
+        };
+        reader.readAsArrayBuffer(f);
+      });
+    }
+
+    function renderList() {
+      fileItemsList.innerHTML = '';
+      mergeFiles.forEach((file, index) => {
+        const div = document.createElement('div');
+        div.className = 'file-item';
+        div.innerHTML = `
+          <span>${file.name} (${file.pages} pages)</span>
+          <button class="icon-btn danger" style="background: none; border: none; cursor: pointer; color: var(--colors-error);" onclick="window.removeMergeFile(${index})">✕</button>
+        `;
+        fileItemsList.appendChild(div);
+      });
+      mergeWorkspace.style.display = 'block';
+      dropZone.style.display = 'none';
+    }
+
+    window.removeMergeFile = function(idx) {
+      mergeFiles.splice(idx, 1);
+      if (mergeFiles.length === 0) {
+        resetFile();
+      } else {
+        renderList();
+      }
+    };
+
+    btnMerge.addEventListener('click', async () => {
+      if (mergeFiles.length < 2) {
+        showError("Please upload at least 2 PDF files.");
+        return;
+      }
+      showProgress(20, "Compiling PDF merging…");
+      try {
+        const mergedPdf = await PDFLib.PDFDocument.create();
+        for (let i = 0; i < mergeFiles.length; i++) {
+          const file = mergeFiles[i];
+          const doc = await PDFLib.PDFDocument.load(file.bytes);
+          const copiedPages = await mergedPdf.copyPages(doc, doc.getPageIndices());
+          copiedPages.forEach(page => mergedPdf.addPage(page));
+        }
+        const mergedBytes = await mergedPdf.save();
+        let name = mergeOutputName.value || 'merged.pdf';
+        if(!name.endsWith('.pdf')) name += '.pdf';
+        window.downloadBlob(new Blob([mergedBytes], { type: "application/pdf" }), name);
+      } catch(err) {
+        showError("Failed to merge PDF files.");
+      }
+      hideProgress();
+    });
+
+    btnClear.addEventListener('click', resetFile);
+
+    function resetFile() {
+      mergeFiles = [];
+      mergeWorkspace.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+      hideProgress();
+    }
+  })();
+</script>

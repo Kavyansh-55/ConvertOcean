@@ -1,0 +1,505 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const { lang = 'en' } = Astro.props;
+
+// Localize links helper
+const relLink = (target: string) => {
+  const cleanTarget = target.startsWith('/') ? target : `/${target}`;
+  if (lang === 'en') return cleanTarget;
+  return `/${lang}${cleanTarget}`;
+};
+
+const title = "ConvertOcean - Free & Private Browser-Based File Tools";
+const description = "Free file tools that run directly in your browser. Convert, compress, merge, split, and process files client-side. No uploads, no accounts, no tracking.";
+---
+
+<Layout title={title} description={description} lang={lang}>
+  <style>
+    /* Homepage Specific CSS */
+    .hero-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-xl);
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-title {
+      font-size: 56px;
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -2.8px;
+      margin-bottom: var(--spacing-md);
+      color: var(--colors-ink);
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 38px;
+        letter-spacing: -1.8px;
+      }
+    }
+
+    .hero-subtitle {
+      font-size: 19px;
+      color: var(--colors-body);
+      max-width: 680px;
+      margin: 0 auto var(--spacing-lg);
+      line-height: 1.6;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      justify-content: center;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .badge-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-4xl);
+    }
+
+    .trust-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      padding: 6px var(--spacing-sm);
+      border-radius: var(--rounded-pill);
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--colors-body);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    /* Trust section */
+    .trust-section {
+      max-width: 1200px;
+      margin: 0 auto var(--spacing-4xl);
+      padding: 0 var(--spacing-lg);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-lg);
+    }
+
+    @media (max-width: 900px) {
+      .trust-section {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .trust-section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .trust-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-lg);
+      text-align: left;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .trust-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--colors-hairline-strong);
+    }
+
+    .trust-icon {
+      font-size: 24px;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .trust-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--colors-ink);
+    }
+
+    .trust-desc {
+      font-size: 13.5px;
+      color: var(--colors-body);
+      line-height: 1.5;
+    }
+
+    /* Popular Tools style */
+    .popular-section {
+      max-width: 1200px;
+      margin: 0 auto var(--spacing-4xl);
+      padding: 0 var(--spacing-lg);
+    }
+
+    .popular-title {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -1.2px;
+      margin-bottom: var(--spacing-xl);
+      color: var(--colors-ink);
+      text-align: center;
+    }
+
+    .popular-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-md);
+    }
+
+    @media (max-width: 990px) {
+      .popular-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .popular-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .popular-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .popular-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-md);
+      text-decoration: none;
+      color: var(--colors-ink);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .popular-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--colors-hairline-strong);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .popular-card-icon {
+      font-size: 20px;
+      width: 36px;
+      height: 36px;
+      background-color: var(--colors-canvas-soft-2);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .popular-card-name {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .section-divider {
+      max-width: 1200px;
+      margin: 0 auto var(--spacing-3xl);
+      border: 0;
+      height: 1px;
+      background-color: var(--colors-hairline);
+    }
+  </style>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-container">
+      <h1 class="hero-title">Free File Tools That Run In Your Browser</h1>
+      <p class="hero-subtitle">Convert, compress, merge, split and process files directly on your device. No uploads. No accounts. No tracking.</p>
+      
+      <div class="hero-cta-group">
+        <a href="#categories" class="button button-primary">Browse Tools</a>
+        <a href={relLink('/privacy-first/')} class="button button-secondary">How Privacy Works</a>
+      </div>
+
+      <div class="badge-container">
+        <div class="trust-badge">🔒 Files Stay On Your Device</div>
+        <div class="trust-badge">⚡ Browser-Powered Processing</div>
+        <div class="trust-badge">🚫 No Server Uploads</div>
+        <div class="trust-badge">🆓 Completely Free</div>
+      </div>
+    </section>
+
+    <!-- Trust Cards Section -->
+    <section class="trust-section">
+      <div class="trust-card">
+        <div class="trust-icon">🔒</div>
+        <h3 class="trust-title">100% Private</h3>
+        <p class="trust-desc">Files are processed locally in your browser. No files are ever sent to a server.</p>
+      </div>
+      <div class="trust-card">
+        <div class="trust-icon">🚫</div>
+        <h3 class="trust-title">No Uploads</h3>
+        <p class="trust-desc">Files never touch our servers. Your data stays entirely in local sandboxed memory.</p>
+      </div>
+      <div class="trust-card">
+        <div class="trust-icon">⚡</div>
+        <h3 class="trust-title">Works Offline</h3>
+        <p class="trust-desc">Many tools continue working without internet. You can convert files offline.</p>
+      </div>
+      <div class="trust-card">
+        <div class="trust-icon">🆓</div>
+        <h3 class="trust-title">Free Forever</h3>
+        <p class="trust-desc">No accounts, no subscriptions, and no tracking. Universal conversion with unlimited use.</p>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- Popular Tools Section -->
+    <section class="popular-section">
+      <h2 class="popular-title">Popular Tools</h2>
+      <div class="popular-grid">
+        <a href={relLink('/pdf-tools/')} class="popular-card">
+          <div class="popular-card-icon">📄</div>
+          <span class="popular-card-name">PDF to Word</span>
+        </a>
+        <a href={relLink('/pdf-tools/')} class="popular-card">
+          <div class="popular-card-icon">📄</div>
+          <span class="popular-card-name">Word to PDF</span>
+        </a>
+        <a href={relLink('/pdf-tools/')} class="popular-card">
+          <div class="popular-card-icon">📊</div>
+          <span class="popular-card-name">PDF to Excel</span>
+        </a>
+        <a href={relLink('/excel-to-pdf/')} class="popular-card">
+          <div class="popular-card-icon">📊</div>
+          <span class="popular-card-name">Excel to PDF</span>
+        </a>
+        <a href={relLink('/csv-to-json/')} class="popular-card">
+          <div class="popular-card-icon">⚙️</div>
+          <span class="popular-card-name">CSV to JSON</span>
+        </a>
+        <a href={relLink('/json-to-csv/')} class="popular-card">
+          <div class="popular-card-icon">⚙️</div>
+          <span class="popular-card-name">JSON to CSV</span>
+        </a>
+        <a href={relLink('/png-to-jpg/')} class="popular-card">
+          <div class="popular-card-icon">🖼️</div>
+          <span class="popular-card-name">PNG to JPG</span>
+        </a>
+        <a href={relLink('/jpg-to-png/')} class="popular-card">
+          <div class="popular-card-icon">🖼️</div>
+          <span class="popular-card-name">JPG to PNG</span>
+        </a>
+        <a href={relLink('/png-to-webp/')} class="popular-card">
+          <div class="popular-card-icon">🖼️</div>
+          <span class="popular-card-name">PNG to WebP</span>
+        </a>
+        <a href={relLink('/webp-to-png/')} class="popular-card">
+          <div class="popular-card-icon">🖼️</div>
+          <span class="popular-card-name">WebP to PNG</span>
+        </a>
+        <a href={relLink('/image-to-text/')} class="popular-card">
+          <div class="popular-card-icon">🔍</div>
+          <span class="popular-card-name">Image to Text OCR</span>
+        </a>
+        <a href={relLink('/merge-pdf/')} class="popular-card">
+          <div class="popular-card-icon">🥞</div>
+          <span class="popular-card-name">Merge PDF</span>
+        </a>
+        <a href={relLink('/split-pdf/')} class="popular-card">
+          <div class="popular-card-icon">🥞</div>
+          <span class="popular-card-name">Split PDF</span>
+        </a>
+        <a href={relLink('/invoice-generator/')} class="popular-card">
+          <div class="popular-card-icon">🧾</div>
+          <span class="popular-card-name">Invoice Generator</span>
+        </a>
+      </div>
+    </section>
+
+    <hr class="section-divider" id="categories">
+
+    <!-- Categories Grid -->
+    <section class="grid-container">
+      <h2 style="font-size: 28px; font-weight: 600; text-align: center; margin-bottom: var(--spacing-xl); letter-spacing: -1.2px;">Browse Tools by Category</h2>
+      <div class="tool-grid">
+        <!-- Card 1: File Converter -->
+        <a href={relLink('/file-converter/')} class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">📄</div>
+            <h3 class="tool-name">Universal File Converter</h3>
+            <p class="tool-description">Convert files between dozens of formats directly inside your browser. Supports documents, spreadsheets, images, and structured data formats.</p>
+          </div>
+          <div class="tool-action-link">
+            Open File Converter
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 2: PDF Tools -->
+        <a href={relLink('/pdf-tools/')} class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🥞</div>
+            <h3 class="tool-name">PDF Tools</h3>
+            <p class="tool-description">Merge multiple PDF documents, split ranges, extract selected pages, and convert PDF sheets to local image formats offline securely.</p>
+          </div>
+          <div class="tool-action-link">
+            Open PDF Tools
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 3: Image Tools -->
+        <a href={relLink('/image-tools/')} class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🖼️</div>
+            <h3 class="tool-name">Image Tools</h3>
+            <p class="tool-description">Convert PNG, JPG, WebP, SVG, and BMP formats instantly. Compress, resize, and optimize file sizes client-side in seconds.</p>
+          </div>
+          <div class="tool-action-link">
+            Open Image Tools
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 4: Document Tools -->
+        <a href={relLink('/document-tools/')} class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">📝</div>
+            <h3 class="tool-name">Document Tools</h3>
+            <p class="tool-description">Process text files, compile document PDFs, convert formatting, and combine rich logs securely inside your local browser tab.</p>
+          </div>
+          <div class="tool-action-link">
+            Open Document Tools
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 5: Spreadsheet Tools -->
+        <a href={relLink('/spreadsheet-tools/')} class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">📊</div>
+            <h3 class="tool-name">Spreadsheet Tools</h3>
+            <p class="tool-description">Inspect CSV and Excel sheets client-side. Convert CSV to JSON, JSON to Excel, XLSX to CSV, or compile reports to PDF offline.</p>
+          </div>
+          <div class="tool-action-link">
+            Open Spreadsheet Tools
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 6: OCR Tools -->
+        <a href={relLink('/ocr-tools/')} class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🔍</div>
+            <h3 class="tool-name">OCR Tools</h3>
+            <p class="tool-description">Private Image-to-Text OCR engine. Extract text from scans, screenshots, receipts, and documents locally without server uploads.</p>
+          </div>
+          <div class="tool-action-link">
+            Open OCR Tools
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 7: Business Tools -->
+        <a href={relLink('/business-tools/')} class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🧾</div>
+            <h3 class="tool-name">Business Tools</h3>
+            <p class="tool-description">Create professional freelance invoices, calculate taxes, adjust parameters, and compile print-ready PDFs. Offline-first workflow.</p>
+          </div>
+          <div class="tool-action-link">
+            Open Business Tools
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Reusable FAQ Component -->
+  <section class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-container">
+      <div class="faq-item">
+        <div class="faq-question">
+          Is this really private?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          Yes. ConvertOcean operates 100% in your browser memory. We do not use servers to process your files. Your files remain on your device, and no data is ever uploaded or sent across the network.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Do files get uploaded?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          No. No server uploads are performed. All parsing, processing, conversion, and exporting happen entirely client-side using JavaScript and WebAssembly compiled engines inside your browser window.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Does it work offline?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          Yes. Once you load the page, the application is cached. You can disconnect from the internet and continue using almost all converters, compression algorithms, splits, merges, and invoice compilers.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          What browsers are supported?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          We support all modern browsers including Google Chrome, Mozilla Firefox, Apple Safari, Microsoft Edge, and mobile browsers (iOS & Android).
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Do I need an account?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          No signup or account registration is required. You don't need to log in to convert, compress, split, or compile files. Every tool is immediately unlocked and completely free.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          How long are files stored?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          Files stay on your device. All data resides in temporary, sandboxed tab memory. Your files are automatically removed when you close the browser tab.
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

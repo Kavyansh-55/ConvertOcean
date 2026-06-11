@@ -1,0 +1,834 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freelance Invoice Generator - ConvertOcean</title>
+  <meta name="description" content="Generate high-value PDF invoices client-side. Live side-by-side editing and real-time GST/VAT calculations with 100% device-level privacy.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/theme.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  <!-- Load html2pdf -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    /* Split Screen Workspace specific overrides for invoice builder */
+    .split-workspace {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 64px);
+    }
+    @media (max-width: 1024px) {
+      .split-workspace {
+        flex-direction: column;
+        height: auto;
+      }
+    }
+    .editor-pane {
+      width: 45%;
+      padding: var(--spacing-lg);
+      overflow-y: auto;
+      border-right: 1px solid var(--colors-hairline);
+      background-color: var(--colors-canvas);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+    @media (max-width: 1024px) {
+      .editor-pane {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--colors-hairline);
+      }
+    }
+    .preview-pane {
+      width: 55%;
+      background-color: var(--colors-canvas-soft-2);
+      padding: var(--spacing-lg);
+      overflow-y: auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    @media (max-width: 1024px) {
+      .preview-pane {
+        width: 100%;
+        padding: var(--spacing-md);
+      }
+    }
+    .form-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: 8px;
+      padding: var(--spacing-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .form-card-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--colors-mute);
+      border-bottom: 1px solid var(--colors-hairline);
+      padding-bottom: var(--spacing-xs);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-sm);
+    }
+    .textarea-input {
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid var(--colors-hairline);
+      padding: var(--spacing-sm);
+      font-size: 13px;
+      background-color: var(--colors-canvas);
+      color: var(--colors-ink);
+      outline: none;
+      resize: vertical;
+      min-height: 60px;
+      font-family: inherit;
+    }
+    .textarea-input:focus {
+      border-color: var(--colors-ink);
+    }
+    .item-edit-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .item-edit-table th {
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--colors-mute);
+      text-transform: uppercase;
+      padding-bottom: 6px;
+    }
+    .item-edit-row td {
+      padding: var(--spacing-xs) 0;
+    }
+    .item-delete-btn {
+      background: none;
+      border: none;
+      color: var(--colors-error);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 0 var(--spacing-xs);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .a4-wrapper {
+      transform-origin: top center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      background-color: #ffffff;
+      color: #171717;
+    }
+    .invoice-pdf-container {
+      width: 794px;
+      min-height: 1000px;
+      padding: 50px;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: #171717;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .invoice-pdf-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 2px solid #171717;
+      padding-bottom: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+    }
+    .pdf-brand-title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -1.2px;
+    }
+    .pdf-doc-type {
+      font-size: 18px;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      color: #888888;
+      text-align: right;
+    }
+    .pdf-meta-text {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #4d4d4d;
+      margin-top: 4px;
+    }
+    .invoice-pdf-addresses {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-xl);
+      margin-bottom: var(--spacing-2xl);
+    }
+    .address-col-title {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      color: #888888;
+      margin-bottom: 6px;
+    }
+    .address-details {
+      font-size: 12px;
+      line-height: 1.6;
+      color: #4d4d4d;
+      white-space: pre-wrap;
+    }
+    .invoice-pdf-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: var(--spacing-2xl);
+    }
+    .invoice-pdf-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      color: #888888;
+      border-bottom: 1px solid #171717;
+      padding: var(--spacing-xs) 6px;
+      text-align: left;
+    }
+    .invoice-pdf-table td {
+      font-size: 12px;
+      padding: 12px 6px;
+      border-bottom: 1px solid #ebebeb;
+      color: #4d4d4d;
+    }
+    .invoice-pdf-table tr:last-child td {
+      border-bottom: 1px solid #171717;
+    }
+    .invoice-pdf-table th.right-align, .invoice-pdf-table td.right-align {
+      text-align: right;
+    }
+    .pdf-summary-block {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: var(--spacing-2xl);
+    }
+    .pdf-totals-table {
+      width: 250px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .pdf-totals-table td {
+      padding: var(--spacing-xs) 6px;
+      color: #4d4d4d;
+    }
+    .pdf-totals-table tr.grand-total td {
+      font-weight: 600;
+      color: #171717;
+      font-size: 16px;
+      border-top: 2px solid #171717;
+      padding-top: var(--spacing-sm);
+    }
+    .pdf-totals-table td.right-align {
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .invoice-pdf-footer {
+      border-top: 1px solid #ebebeb;
+      padding-top: var(--spacing-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .pdf-terms {
+      max-width: 450px;
+      font-size: 11px;
+      color: #888888;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    .pdf-thankyou {
+      font-size: 12px;
+      font-weight: 500;
+      color: #171717;
+      font-style: italic;
+    }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="COcean" />
+  <link rel="manifest" href="/site.webmanifest" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="nav-bar">
+    <a href="/index.html" class="nav-brand">
+      <svg class="brand-logo-svg" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect class="brand-logo-rect" x="2" y="2" width="28" height="28" rx="8" />
+        <path class="brand-logo-path" d="M18 6L9 17H16L14 26L23 15H16L18 6Z" stroke="var(--colors-canvas)" stroke-width="1.2" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="brand-logo-grad" x1="9" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#007cf0"/>
+            <stop offset="50%" stop-color="#7928ca"/>
+            <stop offset="100%" stop-color="#ff0080"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+    </a>
+    
+    <nav class="nav-links">
+      <a href="/index.html" class="nav-link">⚡ Home</a>
+      <a href="/file-converter/" class="nav-link">📄 File Converter</a>
+      <a href="/pdf-tools/" class="nav-link">📑 PDF Tools</a>
+      <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
+      <a href="/spreadsheet-tools/" class="nav-link">📊 Spreadsheets</a>
+      <a href="/ocr-tools/" class="nav-link">🔍 OCR Tools</a>
+      <a href="/business-tools/" class="nav-link">💼 Business Tools</a>
+      <a href="/privacy-first/" class="nav-link">🔒 Privacy First</a>
+    </nav>
+
+    <div class="nav-right-group">
+      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        </svg>
+      </button>
+      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobileNavMenu" class="mobile-nav-menu">
+    <a href="/index.html" class="mobile-nav-link">⚡ Home</a>
+    <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
+    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF Tools</a>
+    <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
+    <a href="/spreadsheet-tools/" class="mobile-nav-link">📊 Spreadsheet Tools</a>
+    <a href="/ocr-tools/" class="mobile-nav-link">🔍 OCR Tools</a>
+    <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
+    <a href="/privacy-first/" class="mobile-nav-link">🔒 Privacy First</a>
+  </div>
+
+  <div class="split-workspace">
+    <!-- Left panel: Editors and inputs -->
+    <section class="editor-pane">
+      <div>
+        <h1 style="font-size: 24px; font-weight: 600; letter-spacing: -0.7px; margin-bottom: 4px;">Invoice Generator.</h1>
+        <p style="font-size: 14px; color: var(--colors-body);">Create professional invoices in seconds. Adjust tax settings, view live previews, and download PDFs client-side.</p>
+      </div>
+
+      <!-- Card: Meta settings -->
+      <div class="form-card">
+        <div class="form-card-title">Invoice Settings</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="inputInvNo">Invoice Number</label>
+            <input type="text" id="inputInvNo" class="form-input" value="CO-2026-001" oninput="updateField('InvNo', this.value)">
+          </div>
+          <div class="form-group">
+            <label for="inputTaxSelect">Tax Configuration</label>
+            <select id="inputTaxSelect" class="select-input" onchange="updateTaxModel(this.value)">
+              <option value="none">No Tax</option>
+              <option value="GST" selected>GST (18%)</option>
+              <option value="IGST">IGST (18%)</option>
+              <option value="VAT">VAT (15%)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="inputInvDate">Invoice Date</label>
+            <input type="date" id="inputInvDate" class="form-input" onchange="updateField('InvDate', this.value)">
+          </div>
+          <div class="form-group">
+            <label for="inputDueDate">Due Date</label>
+            <input type="date" id="inputDueDate" class="form-input" onchange="updateField('DueDate', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Vendor details -->
+      <div class="form-card">
+        <div class="form-card-title">From (Vendor / Company)</div>
+        <div class="form-group">
+          <label for="inputVendorName">Billing Entity Name</label>
+          <input type="text" id="inputVendorName" class="form-input" value="Kavya J. Studio" oninput="updateField('VendorName', this.value)">
+        </div>
+        <div class="form-group">
+          <label for="inputVendorAddress">Address & Contact Info</label>
+          <textarea id="inputVendorAddress" class="textarea-input" oninput="updateField('VendorAddress', this.value)">12 Developer Lane, Indiranagar&#10;Bengaluru, KA 560038&#10;hello@kavyaj.studio</textarea>
+        </div>
+      </div>
+
+      <!-- Card: Client details -->
+      <div class="form-card">
+        <div class="form-card-title">To (Client Recipient)</div>
+        <div class="form-group">
+          <label for="inputClientName">Client Entity Name</label>
+          <input type="text" id="inputClientName" class="form-input" value="Galactic Group Ltd." oninput="updateField('ClientName', this.value)">
+        </div>
+        <div class="form-group">
+          <label for="inputClientAddress">Address & Details</label>
+          <textarea id="inputClientAddress" class="textarea-input" oninput="updateField('ClientAddress', this.value)">45 Cloud Towers, Tech City&#10;Mumbai, MH 400001&#10;billing@galactic.com</textarea>
+        </div>
+      </div>
+
+      <!-- Card: Line items editor -->
+      <div class="form-card">
+        <div class="form-card-title">Itemized Line Items</div>
+        <table class="item-edit-table" id="itemEditTable">
+          <thead>
+            <tr>
+              <th style="width: 50%;">Description</th>
+              <th style="width: 15%;">Qty</th>
+              <th style="width: 25%;">Rate ($)</th>
+              <th style="width: 10%;"></th>
+            </tr>
+          </thead>
+          <tbody id="itemEditRows">
+          </tbody>
+        </table>
+        <button class="button button-secondary" onclick="addNewLineItem()" style="height: 34px; font-size: 13px; margin-top: var(--spacing-xs);">+ Add Line Item</button>
+      </div>
+
+      <!-- Card: Notes/Terms -->
+      <div class="form-card">
+        <div class="form-card-title">Terms & Bank Notes</div>
+        <div class="form-group">
+          <label for="inputTerms">Payment Terms & Instructions</label>
+          <textarea id="inputTerms" class="textarea-input" oninput="updateField('Terms', this.value)">Bank: HDFC Bank | A/C: 9876543210&#10;IFSC: HDFC0000123&#10;Payment is due within 15 days of invoice date.</textarea>
+        </div>
+      </div>
+
+      <div class="actions-bar" style="margin-bottom: 20px;">
+        <button id="btnDownload" class="button button-primary" onclick="exportInvoicePdf()">Download Invoice PDF</button>
+        <button class="button button-danger" onclick="purgeState()">Clear Form</button>
+      </div>
+    </section>
+
+    <!-- Right panel: Interactive PDF sheet display -->
+    <section class="preview-pane" id="previewPane">
+      <div class="a4-wrapper" id="a4Wrapper">
+        <div class="invoice-pdf-container" id="invoicePdfContainer">
+          <!-- Header -->
+          <div class="invoice-pdf-header">
+            <div>
+              <div class="pdf-brand-title" id="pdfVendorTitle">Kavya J. Studio</div>
+              <div class="pdf-meta-text" id="pdfVendorSub">Vendor Billing Profile</div>
+            </div>
+            <div>
+              <div class="pdf-doc-type">Tax Invoice</div>
+              <div class="pdf-meta-text" style="text-align: right;">
+                No: <strong id="pdfInvNo">CO-2026-001</strong><br>
+                Date: <span id="pdfInvDate">--/--/----</span><br>
+                Due Date: <span id="pdfDueDate">--/--/----</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Address Details -->
+          <div class="invoice-pdf-addresses">
+            <div>
+              <div class="address-col-title">Billing Entity (From)</div>
+              <div class="address-details" id="pdfVendorAddr"></div>
+            </div>
+            <div>
+              <div class="address-col-title">Billed Client (To)</div>
+              <div class="address-details" id="pdfClientAddr"></div>
+            </div>
+          </div>
+
+          <!-- Items Table -->
+          <table class="invoice-pdf-table">
+            <thead>
+              <tr>
+                <th style="width: 50%;">Line Description</th>
+                <th style="width: 10%; text-align: right;">Qty</th>
+                <th style="width: 20%; text-align: right;">Unit Rate</th>
+                <th style="width: 20%; text-align: right;">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="pdfTableRows">
+            </tbody>
+          </table>
+
+          <!-- Totals block & Footer layout -->
+          <div style="margin-top: auto;">
+            <div class="pdf-summary-block">
+              <table class="pdf-totals-table">
+                <tr>
+                  <td>Subtotal</td>
+                  <td class="right-align" id="pdfSubtotal">$0.00</td>
+                </tr>
+                <tr id="pdfTaxRow">
+                  <td id="pdfTaxLabel">GST (18%)</td>
+                  <td class="right-align" id="pdfTaxAmount">$0.00</td>
+                </tr>
+                <tr class="grand-total">
+                  <td>Grand Total</td>
+                  <td class="right-align" id="pdfGrandTotal">$0.00</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="invoice-pdf-footer">
+              <div>
+                <div class="address-col-title">Terms & Notes</div>
+                <div class="pdf-terms" id="pdfTerms"></div>
+              </div>
+              <div class="pdf-thankyou">Thank you for your business.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Reusable FAQ Component -->
+  <section class="faq-section" style="margin-top: 40px;">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-container">
+      <div class="faq-item">
+        <div class="faq-question">
+          Can I create invoices for free?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          Yes. The Freelance Invoice Generator is 100% free with no limits on the number of invoices you can create, download, or edit.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Can I export PDF?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          Yes. Clicking "Download Invoice PDF" formats the document to standard A4 printing sizes and triggers an instant download of a standard PDF document.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Is invoice data uploaded?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          No. None of your vendor, client, or financial figures are uploaded to our servers. Everything is processed directly inside your browser sandbox and disappears when you exit the page.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/index.html" class="nav-brand" style="margin-bottom: 8px;">
+            <svg class="brand-logo-svg" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect class="brand-logo-rect" x="2" y="2" width="28" height="28" rx="8" />
+              <path class="brand-logo-path" d="M18 6L9 17H16L14 26L23 15H16L18 6Z" stroke="var(--colors-canvas)" stroke-width="1.2" stroke-linejoin="round"/>
+            </svg>
+            <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+          </a>
+          <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">File Converter</span>
+          <div class="footer-links">
+            <a href="/excel-to-pdf/" class="footer-link">Excel to PDF</a>
+            <a href="/csv-to-json/" class="footer-link">CSV to JSON</a>
+            <a href="/json-to-csv/" class="footer-link">JSON to CSV</a>
+            <a href="/xlsx-to-csv/" class="footer-link">XLSX to CSV</a>
+            <a href="/csv-to-xlsx/" class="footer-link">CSV to XLSX</a>
+            <a href="/json-to-xlsx/" class="footer-link">JSON to XLSX</a>
+            <a href="/xml-to-json/" class="footer-link">XML to JSON</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">PDF & Document</span>
+          <div class="footer-links">
+            <a href="/merge-pdf/" class="footer-link">Merge PDF</a>
+            <a href="/split-pdf/" class="footer-link">Split PDF</a>
+            <a href="/txt-to-pdf/" class="footer-link">TXT to PDF</a>
+            <a href="/pdf-to-txt/" class="footer-link">PDF to TXT</a>
+            <a href="/document-tools/" class="footer-link">Document Tools</a>
+            <a href="/spreadsheet-tools/" class="footer-link">Spreadsheet Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Image & OCR</span>
+          <div class="footer-links">
+            <a href="/png-to-jpg/" class="footer-link">PNG to JPG</a>
+            <a href="/jpg-to-png/" class="footer-link">JPG to PNG</a>
+            <a href="/png-to-webp/" class="footer-link">PNG to WebP</a>
+            <a href="/webp-to-png/" class="footer-link">WebP to PNG</a>
+            <a href="/image-to-text/" class="footer-link">Image to Text OCR</a>
+            <a href="/image-tools/" class="footer-link">Image Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Legal & Company</span>
+          <div class="footer-links">
+            <a href="/privacy-first/" class="footer-link">Privacy Policy</a>
+            <a href="/privacy-first/" class="footer-link">Terms of Service</a>
+            <a href="/privacy-first/" class="footer-link">Contact</a>
+            <a href="/sitemap.xml" class="footer-link">Sitemap</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="privacy-disclaimer">
+          <strong>🔒 100% Device-Level Security Guarantee:</strong> Disconnect your internet connection completely and try any tool. It works flawlessly because your files never touch an external server. Everything resides in local sandbox memory and is automatically removed when you close the tab.
+        </p>
+        <p class="copyright">&copy; 2026 ConvertOcean. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/theme.js"></script>
+  <script>
+    // Invoice State Model
+    let invoiceData = {
+      InvNo: "CO-2026-001",
+      InvDate: "",
+      DueDate: "",
+      TaxModel: "GST", 
+      TaxRate: 0.18,
+      VendorName: "Kavya J. Studio",
+      VendorAddress: "12 Developer Lane, Indiranagar\nBengaluru, KA 560038\nhello@kavyaj.studio",
+      ClientName: "Galactic Group Ltd.",
+      ClientAddress: "45 Cloud Towers, Tech City\nMumbai, MH 400001\nbilling@galactic.com",
+      Terms: "Bank: HDFC Bank | A/C: 9876543210\nIFSC: HDFC0000123\nPayment is due within 15 days of invoice date.",
+      LineItems: [
+        { desc: "Advanced Multi-page Web UI Scaffolding", qty: 1, rate: 2500.00 },
+        { desc: "Client-side Performance Optimization Suite", qty: 4, rate: 350.00 }
+      ]
+    };
+
+    window.addEventListener('load', () => {
+      // Set default dates
+      const today = new Date();
+      invoiceData.InvDate = today.toISOString().substring(0, 10);
+      
+      const due = new Date();
+      due.setDate(today.getDate() + 15);
+      invoiceData.DueDate = due.toISOString().substring(0, 10);
+
+      document.getElementById('inputInvDate').value = invoiceData.InvDate;
+      document.getElementById('inputDueDate').value = invoiceData.DueDate;
+
+      renderEditorTable();
+      updatePreviewPage();
+      scaleA4Preview();
+    });
+
+    window.addEventListener('resize', scaleA4Preview);
+
+    function scaleA4Preview() {
+      const pane = document.getElementById('previewPane');
+      const wrapper = document.getElementById('a4Wrapper');
+      if (!pane || !wrapper) return;
+
+      const paneWidth = pane.clientWidth - 40;
+      const scale = paneWidth < 794 ? paneWidth / 794 : 1;
+      wrapper.style.transform = `scale(${scale})`;
+      pane.style.minHeight = `${1000 * scale + 40}px`;
+    }
+
+    function updateField(key, val) {
+      invoiceData[key] = val;
+      updatePreviewPage();
+    }
+
+    function updateTaxModel(taxType) {
+      invoiceData.TaxModel = taxType;
+      if (taxType === 'GST' || taxType === 'IGST') {
+        invoiceData.TaxRate = 0.18;
+      } else if (taxType === 'VAT') {
+        invoiceData.TaxRate = 0.15;
+      } else {
+        invoiceData.TaxRate = 0;
+      }
+      updatePreviewPage();
+    }
+
+    function renderEditorTable() {
+      const container = document.getElementById('itemEditRows');
+      container.innerHTML = '';
+
+      invoiceData.LineItems.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = 'item-edit-row';
+        tr.innerHTML = `
+          <td>
+            <input type="text" class="form-input" value="${item.desc}" oninput="updateLineItem(${index}, 'desc', this.value)">
+          </td>
+          <td>
+            <input type="number" class="form-input" style="padding: 0 6px; text-align: center;" value="${item.qty}" min="1" oninput="updateLineItem(${index}, 'qty', this.value)">
+          </td>
+          <td>
+            <input type="number" class="form-input" value="${item.rate}" min="0" step="0.01" oninput="updateLineItem(${index}, 'rate', this.value)">
+          </td>
+          <td>
+            <button class="item-delete-btn" onclick="deleteLineItem(${index})">×</button>
+          </td>
+        `;
+        container.appendChild(tr);
+      });
+    }
+
+    function updateLineItem(index, key, val) {
+      if (key === 'qty') {
+        invoiceData.LineItems[index].qty = parseInt(val) || 1;
+      } else if (key === 'rate') {
+        invoiceData.LineItems[index].rate = parseFloat(val) || 0;
+      } else {
+        invoiceData.LineItems[index].desc = val;
+      }
+      updatePreviewPage();
+    }
+
+    function addNewLineItem() {
+      invoiceData.LineItems.push({ desc: "New Line Item Details", qty: 1, rate: 0.00 });
+      renderEditorTable();
+      updatePreviewPage();
+    }
+
+    function deleteLineItem(index) {
+      if (invoiceData.LineItems.length > 1) {
+        invoiceData.LineItems.splice(index, 1);
+        renderEditorTable();
+        updatePreviewPage();
+      }
+    }
+
+    function updatePreviewPage() {
+      document.getElementById('pdfVendorTitle').textContent = invoiceData.VendorName || "Billing Entity";
+      document.getElementById('pdfVendorAddr').textContent = invoiceData.VendorAddress;
+      document.getElementById('pdfClientAddr').textContent = invoiceData.ClientAddress;
+      document.getElementById('pdfInvNo').textContent = invoiceData.InvNo || "INV-000";
+      document.getElementById('pdfInvDate').textContent = formatDate(invoiceData.InvDate);
+      document.getElementById('pdfDueDate').textContent = formatDate(invoiceData.DueDate);
+      document.getElementById('pdfTerms').textContent = invoiceData.Terms;
+
+      const tbody = document.getElementById('pdfTableRows');
+      tbody.innerHTML = '';
+
+      let subtotal = 0;
+      invoiceData.LineItems.forEach(item => {
+        const itemAmount = item.qty * item.rate;
+        subtotal += itemAmount;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.desc || "Line item details"}</td>
+          <td class="right-align">${item.qty}</td>
+          <td class="right-align">$${item.rate.toFixed(2)}</td>
+          <td class="right-align">$${itemAmount.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('pdfSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+      const taxAmount = subtotal * invoiceData.TaxRate;
+      const grandTotal = subtotal + taxAmount;
+
+      const taxRow = document.getElementById('pdfTaxRow');
+      if (invoiceData.TaxModel === 'none') {
+        taxRow.style.display = 'none';
+      } else {
+        taxRow.style.display = 'table-row';
+        document.getElementById('pdfTaxLabel').textContent = `${invoiceData.TaxModel} (${(invoiceData.TaxRate * 100)}%)`;
+        document.getElementById('pdfTaxAmount').textContent = `$${taxAmount.toFixed(2)}`;
+      }
+      document.getElementById('pdfGrandTotal').textContent = `$${grandTotal.toFixed(2)}`;
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return '--/--/----';
+      const parts = dateString.split('-');
+      if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      return dateString;
+    }
+
+    function exportInvoicePdf() {
+      const element = document.getElementById('invoicePdfContainer');
+      const clone = element.cloneNode(true);
+      
+      clone.style.transform = 'none';
+      clone.style.position = 'absolute';
+      clone.style.left = '0';
+      clone.style.top = '0';
+      clone.style.zIndex = '-9999';
+      clone.style.width = '794px'; 
+      clone.style.height = 'auto';
+      clone.style.opacity = '1';
+      clone.style.visibility = 'visible';
+      document.body.appendChild(clone);
+
+      const filename = (invoiceData.InvNo || 'invoice') + '_' + (invoiceData.ClientName.replace(/\s+/g, '_').toLowerCase()) + '.pdf';
+      
+      const opt = {
+        margin:       0,
+        filename:     filename,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(clone).save().then(() => {
+        document.body.removeChild(clone);
+      }).catch(err => {
+        console.error("PDF Export error:", err);
+        if (clone.parentNode) document.body.removeChild(clone);
+      });
+    }
+
+    function purgeState() {
+      invoiceData.InvNo = "";
+      invoiceData.InvDate = "";
+      invoiceData.DueDate = "";
+      invoiceData.TaxModel = "none";
+      invoiceData.TaxRate = 0;
+      invoiceData.VendorName = "";
+      invoiceData.VendorAddress = "";
+      invoiceData.ClientName = "";
+      invoiceData.ClientAddress = "";
+      invoiceData.Terms = "";
+      invoiceData.LineItems = [{ desc: "", qty: 1, rate: 0.00 }];
+
+      document.getElementById('inputInvNo').value = "";
+      document.getElementById('inputInvDate').value = "";
+      document.getElementById('inputDueDate').value = "";
+      document.getElementById('inputTaxSelect').value = "none";
+      document.getElementById('inputVendorName').value = "";
+      document.getElementById('inputVendorAddress').value = "";
+      document.getElementById('inputClientName').value = "";
+      document.getElementById('inputClientAddress').value = "";
+      document.getElementById('inputTerms').value = "";
+
+      renderEditorTable();
+      updatePreviewPage();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .workspace-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+  }
+  @media (max-width: 768px) {
+    .workspace-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .txt-output {
+    width: 100%;
+    min-height: 250px;
+    padding: var(--spacing-md);
+    border-radius: 6px;
+    border: 1px solid var(--colors-hairline);
+    background: var(--colors-canvas-soft-2);
+    color: var(--colors-ink);
+    font-family: inherit;
+    resize: vertical;
+  }
+</style>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing file…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">🔍</div>
+  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-secondary">Upload scan or image (Max 15MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept="image/*" />
+</div>
+
+<div id="workspaceGrid" class="workspace-grid" style="display: none;">
+  <div class="panel-card" style="align-items: center; justify-content: center; background:#1e1e1e;">
+    <img id="imgPreview" style="max-width: 100%; max-height: 250px; object-fit: contain;" alt="OCR Preview" />
+  </div>
+  <div class="panel-card">
+    <textarea id="txtOutput" class="txt-output" readonly placeholder="OCR Text output will generate here…"></textarea>
+    <div class="button-group" style="display: flex; gap: var(--spacing-sm); margin-top: auto;">
+      <button class="button button-primary" id="btnCopy">Copy</button>
+      <button class="button button-secondary" id="btnDownload">Download TXT</button>
+      <button class="button button-danger" id="btnClear">Clear</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const workspaceGrid = document.getElementById('workspaceGrid');
+    const imgPreview = document.getElementById('imgPreview');
+    const txtOutput = document.getElementById('txtOutput');
+    const btnCopy = document.getElementById('btnCopy');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnClear = document.getElementById('btnClear');
+
+    let ocrText = '';
+    let originalName = '';
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    async function handleFile(file) {
+      hideError();
+      originalName = file.name;
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        imgPreview.src = e.target.result;
+        workspaceGrid.style.display = 'grid';
+        dropZone.style.display = 'none';
+        
+        showProgress(10, "Initializing OCR threads…");
+        try {
+          const worker = await Tesseract.createWorker({
+            logger: m => {
+              if (m.status === 'recognizing text') {
+                const pct = Math.round(m.progress * 100);
+                showProgress(pct, `Extracting Text: ${pct}%`);
+              }
+            }
+          });
+          await worker.loadLanguage('eng');
+          await worker.initialize('eng');
+          const { data: { text } } = await worker.recognize(file);
+          
+          ocrText = text;
+          txtOutput.value = text || "No text detected.";
+          await worker.terminate();
+        } catch(err) {
+          showError("Failed to extract characters.");
+        }
+        hideProgress();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    btnCopy.addEventListener('click', () => {
+      navigator.clipboard.writeText(ocrText);
+      alert("Copied to clipboard!");
+    });
+
+    btnDownload.addEventListener('click', () => {
+      const blob = new Blob([ocrText], { type: "text/plain;charset=utf-8;" });
+      window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, "") + '_extracted.txt', "text/plain");
+    });
+
+    btnClear.addEventListener('click', () => {
+      ocrText = '';
+      workspaceGrid.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+      hideProgress();
+    });
+  })();
+</script>

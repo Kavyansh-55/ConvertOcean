@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convert WebP to PNG Online - 100% Private | ConvertOcean</title>
+  <meta name="description" content="Convert WebP images to PNG format client-side in your browser. 100% secure offline tools.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/theme.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  
+  <style>
+    
+      .img-preview-box {
+        max-width: 100%;
+        max-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--rounded-md);
+        border: 1px solid var(--colors-hairline);
+        background: #1e1e1e;
+        overflow: hidden;
+        margin-top: var(--spacing-lg);
+      }
+      .img-preview {
+        max-width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+      }
+    
+  </style>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="COcean" />
+  <link rel="manifest" href="/site.webmanifest" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="nav-bar">
+    <a href="/index.html" class="nav-brand">
+      <svg class="brand-logo-svg" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect class="brand-logo-rect" x="2" y="2" width="28" height="28" rx="8" />
+        <path class="brand-logo-path" d="M18 6L9 17H16L14 26L23 15H16L18 6Z" stroke="var(--colors-canvas)" stroke-width="1.2" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="brand-logo-grad" x1="9" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#007cf0"/>
+            <stop offset="50%" stop-color="#7928ca"/>
+            <stop offset="100%" stop-color="#ff0080"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+    </a>
+    
+    <nav class="nav-links">
+      <a href="/index.html" class="nav-link">⚡ Home</a>
+      <a href="/file-converter/" class="nav-link">📄 File Converter</a>
+      <a href="/pdf-tools/" class="nav-link">📑 PDF Tools</a>
+      <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
+      <a href="/spreadsheet-tools/" class="nav-link">📊 Spreadsheets</a>
+      <a href="/ocr-tools/" class="nav-link">🔍 OCR Tools</a>
+      <a href="/business-tools/" class="nav-link">💼 Business Tools</a>
+      <a href="/privacy-first/" class="nav-link">🔒 Privacy First</a>
+    </nav>
+
+    <div class="nav-right-group">
+      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        </svg>
+      </button>
+      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobileNavMenu" class="mobile-nav-menu">
+    <a href="/index.html" class="mobile-nav-link">⚡ Home</a>
+    <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
+    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF Tools</a>
+    <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
+    <a href="/spreadsheet-tools/" class="mobile-nav-link">📊 Spreadsheet Tools</a>
+    <a href="/ocr-tools/" class="mobile-nav-link">🔍 OCR Tools</a>
+    <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
+    <a href="/privacy-first/" class="mobile-nav-link">🔒 Privacy First</a>
+  </div>
+
+  <main class="app-container">
+    <div class="page-header">
+      <h1 class="page-title">WebP to PNG.</h1>
+      <p class="page-description">Convert WebP images to lossless transparent PNG image files client-side instantly.</p>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="errorBanner" class="error-banner">
+      <span>⚠️</span>
+      <span id="errorMessage"></span>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div id="progressOverlay" class="progress-overlay">
+      <div class="progress-bar-container">
+        <div id="progressBarFill" class="progress-bar-fill"></div>
+      </div>
+      <div id="progressLabel" class="progress-label">Processing file…</div>
+    </div>
+
+    <!-- Upload Card -->
+    <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">🖼️</div>
+      <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+      <div class="upload-text-secondary">Upload WebP image file (Max 15MB)</div>
+      <input type="file" id="fileInput" class="file-input" accept="image/webp" >
+    </div>
+
+    
+      <div id="previewBox" class="img-preview-box" style="display: none;">
+        <img id="imgPreview" class="img-preview" alt="Converted Preview">
+      </div>
+      <div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
+        <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
+        <div class="button-group">
+          <button class="button button-primary" onclick="downloadPng()">Download PNG</button>
+          <button class="button button-danger" onclick="resetFile()">Clear</button>
+        </div>
+      </div>
+    
+
+    <!-- How It Works Section -->
+    <section class="info-section">
+      <h2 style="font-size:22px; font-weight:600; text-align:center; color:var(--colors-ink);">How It Works</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <span class="info-card-step">Step 1</span>
+          <h3 class="info-card-title">Upload File</h3>
+          <p class="info-card-desc">Drag and drop your file into the secure, local browser drop zone card.</p>
+        </div>
+        <div class="info-card">
+          <span class="info-card-step">Step 2</span>
+          <h3 class="info-card-title">Select Format</h3>
+          <p class="info-card-desc">Preview formatting cells and select your custom export requirements.</p>
+        </div>
+        <div class="info-card">
+          <span class="info-card-step">Step 3</span>
+          <h3 class="info-card-title">Convert Locally</h3>
+          <p class="info-card-desc">Process formatting data client-side in browser sandbox. No server uploads.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Use Section -->
+    <section class="info-section" style="margin-top: 20px;">
+      <h2 style="font-size:22px; font-weight:600; text-align:center; color:var(--colors-ink); margin-bottom: var(--spacing-lg);">Why Choose ConvertOcean?</h2>
+      <div class="info-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="info-card">
+          <h3 class="info-card-title">🔒 100% Client-Side Privacy</h3>
+          <p class="info-card-desc">Your private documents never leave your computer. We process all data inside local browser tab sandbox memory.</p>
+        </div>
+        <div class="info-card">
+          <h3 class="info-card-title">⚡ High-Performance Speed</h3>
+          <p class="info-card-desc">Conversions start instantly without waiting for long network file uploads. Zero delay.</p>
+        </div>
+        <div class="info-card">
+          <h3 class="info-card-title">🚫 Free & Unlimited</h3>
+          <p class="info-card-desc">No accounts, no email addresses, no tracking parameters, and no subscription walls.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Tools Section -->
+    <section class="info-section" style="margin-top: 20px;">
+      <h3 style="font-size: 18px; font-weight: 600; color: var(--colors-ink); border-bottom: 1px solid var(--colors-hairline); padding-bottom: 8px;">Related Tools</h3>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); margin-top: var(--spacing-md);">
+        
+    <a href="/excel-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">📊</div>
+      <span class="popular-card-name">EXCEL TO PDF</span>
+    </a>
+  
+
+    <a href="/csv-to-json/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">⚙️</div>
+      <span class="popular-card-name">CSV TO JSON</span>
+    </a>
+  
+
+    <a href="/json-to-csv/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">⚙️</div>
+      <span class="popular-card-name">JSON TO CSV</span>
+    </a>
+  
+
+    <a href="/xlsx-to-csv/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">📊</div>
+      <span class="popular-card-name">XLSX TO CSV</span>
+    </a>
+  
+
+    <a href="/csv-to-xlsx/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">📊</div>
+      <span class="popular-card-name">CSV TO XLSX</span>
+    </a>
+  
+      </div>
+    </section>
+
+    <!-- Reusable FAQ Component -->
+    <section class="faq-section">
+      <h2 class="faq-title">Frequently Asked Questions</h2>
+      <div class="faq-container">
+        <div class="faq-item">
+          <div class="faq-question">
+            Do files get uploaded to a server?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Does it work offline?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Do I need to sign up for an account?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            No. Every converter is immediately unlocked, 100% free, and completely untracked. No signup is required.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Is transparency preserved?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            Yes. The canvas preserves alpha channels so transparency translates smoothly to PNG.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Will the conversion degrade image quality?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            No, PNG is a lossless format, so the original pixels remain pristine.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sitemap Internal Links -->
+    <section class="links-section">
+      <h4 style="font-size: 11px; font-weight:600; text-transform:uppercase; font-family:'JetBrains Mono', monospace; color:var(--colors-mute); margin-bottom:var(--spacing-xs);">Sitemap Conversion Tools</h4>
+      <div class="links-grid">
+        <a href="/excel-to-pdf/" class="seo-link">➔ EXCEL TO PDF</a>
+<a href="/csv-to-json/" class="seo-link">➔ CSV TO JSON</a>
+<a href="/json-to-csv/" class="seo-link">➔ JSON TO CSV</a>
+<a href="/xlsx-to-csv/" class="seo-link">➔ XLSX TO CSV</a>
+<a href="/csv-to-xlsx/" class="seo-link">➔ CSV TO XLSX</a>
+<a href="/json-to-xlsx/" class="seo-link">➔ JSON TO XLSX</a>
+<a href="/xml-to-json/" class="seo-link">➔ XML TO JSON</a>
+<a href="/txt-to-pdf/" class="seo-link">➔ TXT TO PDF</a>
+<a href="/pdf-to-txt/" class="seo-link">➔ PDF TO TXT</a>
+<a href="/png-to-jpg/" class="seo-link">➔ PNG TO JPG</a>
+<a href="/jpg-to-png/" class="seo-link">➔ JPG TO PNG</a>
+<a href="/png-to-webp/" class="seo-link">➔ PNG TO WEBP</a>
+<a href="/webp-to-png/" class="seo-link">➔ WEBP TO PNG</a>
+<a href="/image-to-text/" class="seo-link">➔ IMAGE TO TEXT</a>
+<a href="/merge-pdf/" class="seo-link">➔ MERGE PDF</a>
+<a href="/split-pdf/" class="seo-link">➔ SPLIT PDF</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/index.html" class="nav-brand" style="margin-bottom: 8px;">
+            <svg class="brand-logo-svg" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect class="brand-logo-rect" x="2" y="2" width="28" height="28" rx="8" />
+              <path class="brand-logo-path" d="M18 6L9 17H16L14 26L23 15H16L18 6Z" stroke="var(--colors-canvas)" stroke-width="1.2" stroke-linejoin="round"/>
+            </svg>
+            <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+          </a>
+          <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">File Converter</span>
+          <div class="footer-links">
+            <a href="/excel-to-pdf/" class="footer-link">Excel to PDF</a>
+            <a href="/csv-to-json/" class="footer-link">CSV to JSON</a>
+            <a href="/json-to-csv/" class="footer-link">JSON to CSV</a>
+            <a href="/xlsx-to-csv/" class="footer-link">XLSX to CSV</a>
+            <a href="/csv-to-xlsx/" class="footer-link">CSV to XLSX</a>
+            <a href="/json-to-xlsx/" class="footer-link">JSON to XLSX</a>
+            <a href="/xml-to-json/" class="footer-link">XML to JSON</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">PDF & Document</span>
+          <div class="footer-links">
+            <a href="/merge-pdf/" class="footer-link">Merge PDF</a>
+            <a href="/split-pdf/" class="footer-link">Split PDF</a>
+            <a href="/txt-to-pdf/" class="footer-link">TXT to PDF</a>
+            <a href="/pdf-to-txt/" class="footer-link">PDF to TXT</a>
+            <a href="/document-tools/" class="footer-link">Document Tools</a>
+            <a href="/spreadsheet-tools/" class="footer-link">Spreadsheet Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Image & OCR</span>
+          <div class="footer-links">
+            <a href="/png-to-jpg/" class="footer-link">PNG to JPG</a>
+            <a href="/jpg-to-png/" class="footer-link">JPG to PNG</a>
+            <a href="/png-to-webp/" class="footer-link">PNG to WebP</a>
+            <a href="/webp-to-png/" class="footer-link">WebP to PNG</a>
+            <a href="/image-to-text/" class="footer-link">Image to Text OCR</a>
+            <a href="/image-tools/" class="footer-link">Image Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Legal & Company</span>
+          <div class="footer-links">
+            <a href="/privacy-first/" class="footer-link">Privacy Policy</a>
+            <a href="/privacy-first/" class="footer-link">Terms of Service</a>
+            <a href="/privacy-first/" class="footer-link">Contact</a>
+            <a href="/sitemap.xml" class="footer-link">Sitemap</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="privacy-disclaimer">
+          <strong>🔒 100% Device-Level Security Guarantee:</strong> Disconnect your internet connection completely and try any tool. It works flawlessly because your files never touch an external server. Everything resides in local sandbox memory and is automatically removed when you close the tab.
+        </p>
+        <p class="copyright">&copy; 2026 ConvertOcean. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/theme.js"></script>
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files);
+      if (`webp-to-png` !== 'merge-pdf') {
+        files = files.slice(0, 1);
+      }
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files);
+      if (`webp-to-png` !== 'merge-pdf') {
+        files = files.slice(0, 1);
+      }
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    
+      let pngBlob = null;
+      let originalName = '';
+      function handleFile(file) {
+        originalName = file.name;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.drawImage(img, 0, 0);
+            
+            canvas.toBlob(blob => {
+              pngBlob = blob;
+              document.getElementById('imgPreview').src = URL.createObjectURL(blob);
+              document.getElementById('previewBox').style.display = 'flex';
+              document.getElementById('fileNameDisplay').textContent = file.name;
+              document.getElementById('actionControls').style.display = 'flex';
+              document.getElementById('dropZone').style.display = 'none';
+            }, 'image/png');
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+      function downloadPng() {
+        downloadBlob(pngBlob, originalName.replace(/\.[^/.]+$/, "") + '.png');
+      }
+      function resetFile() {
+        pngBlob = null;
+        document.getElementById('previewBox').style.display = 'none';
+        document.getElementById('actionControls').style.display = 'none';
+        document.getElementById('dropZone').style.display = 'flex';
+        document.getElementById('fileInput').value = '';
+      }
+    
+  </script>
+</body>
+</html>

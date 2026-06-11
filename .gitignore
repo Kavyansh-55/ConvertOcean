@@ -1,0 +1,24 @@
+# Astro build and cache
+.astro/
+dist/
+
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs and editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

@@ -1,0 +1,858 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client-Side PDF Tools (Merge, Split, Extract) - ConvertOcean</title>
+  <meta name="description" content="Merge multiple PDF files, split pages, extract ranges, and convert PDF to images or text. 100% locally in your browser memory.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/theme.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  <!-- Load Libraries securely -->
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+  <style>
+    /* PDF Specific CSS adjustments */
+    .tabs-bar {
+      display: flex;
+      border-bottom: 1px solid var(--colors-hairline);
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-sm);
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--colors-mute);
+      font-size: 14px;
+      font-weight: 600;
+      padding: var(--spacing-xs) 0;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .tab-btn:hover {
+      color: var(--colors-ink);
+    }
+    .tab-btn.active {
+      color: var(--colors-ink);
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: var(--colors-ink);
+    }
+    .file-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: var(--spacing-xs);
+    }
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      background-color: var(--colors-canvas-soft);
+      border: 1px solid var(--colors-hairline);
+      border-radius: 6px;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .file-item:hover {
+      border-color: var(--colors-hairline-strong);
+    }
+    .file-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow: hidden;
+    }
+    .file-item-name {
+      font-weight: 600;
+      color: var(--colors-ink);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 250px;
+    }
+    .file-item-meta {
+      font-size: 11px;
+      color: var(--colors-mute);
+    }
+    .file-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--colors-body);
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .icon-btn:hover {
+      background-color: var(--colors-canvas-soft-2);
+      color: var(--colors-ink);
+    }
+    .icon-btn.danger:hover {
+      background-color: var(--colors-error-soft);
+      color: var(--colors-error);
+    }
+    .pages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: var(--spacing-md);
+      max-height: 480px;
+      overflow-y: auto;
+      padding-bottom: var(--spacing-xs);
+    }
+    .page-thumb-card {
+      background-color: var(--colors-canvas-soft);
+      border: 1px solid var(--colors-hairline);
+      border-radius: 6px;
+      padding: var(--spacing-xs);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .page-thumb-card.selected {
+      border-color: var(--colors-link);
+      box-shadow: 0 0 0 1px var(--colors-link);
+    }
+    .page-thumb-canvas {
+      width: 100px;
+      height: auto;
+      max-height: 140px;
+      object-fit: contain;
+      background-color: white;
+      border: 1px solid var(--colors-hairline);
+      border-radius: 4px;
+      margin-bottom: var(--spacing-xs);
+    }
+    .page-thumb-number {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      color: var(--colors-body);
+    }
+    .page-thumb-checkbox {
+      position: absolute;
+      top: var(--spacing-xs);
+      right: var(--spacing-xs);
+      accent-color: var(--colors-ink);
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="COcean" />
+  <link rel="manifest" href="/site.webmanifest" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="nav-bar">
+    <a href="/index.html" class="nav-brand">
+      <svg class="brand-logo-svg" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect class="brand-logo-rect" x="2" y="2" width="28" height="28" rx="8" />
+        <path class="brand-logo-path" d="M18 6L9 17H16L14 26L23 15H16L18 6Z" stroke="var(--colors-canvas)" stroke-width="1.2" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="brand-logo-grad" x1="9" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#007cf0"/>
+            <stop offset="50%" stop-color="#7928ca"/>
+            <stop offset="100%" stop-color="#ff0080"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+    </a>
+    
+    <nav class="nav-links">
+      <a href="/index.html" class="nav-link">⚡ Home</a>
+      <a href="/file-converter/" class="nav-link">📄 File Converter</a>
+      <a href="/pdf-tools/" class="nav-link active">📑 PDF Tools</a>
+      <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
+      <a href="/spreadsheet-tools/" class="nav-link">📊 Spreadsheets</a>
+      <a href="/ocr-tools/" class="nav-link">🔍 OCR Tools</a>
+      <a href="/business-tools/" class="nav-link">💼 Business Tools</a>
+      <a href="/privacy-first/" class="nav-link">🔒 Privacy First</a>
+    </nav>
+
+    <div class="nav-right-group">
+      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        </svg>
+      </button>
+      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobileNavMenu" class="mobile-nav-menu">
+    <a href="/index.html" class="mobile-nav-link">⚡ Home</a>
+    <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
+    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF Tools</a>
+    <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
+    <a href="/spreadsheet-tools/" class="mobile-nav-link">📊 Spreadsheet Tools</a>
+    <a href="/ocr-tools/" class="mobile-nav-link">🔍 OCR Tools</a>
+    <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
+    <a href="/privacy-first/" class="mobile-nav-link">🔒 Privacy First</a>
+  </div>
+
+  <main class="app-container">
+    <div class="page-header">
+      <h1 class="page-title">PDF Tools.</h1>
+      <p class="page-description">Merge multiple files, extract selected pages, split ranges, or convert PDF pages to local images and text client-side.</p>
+    </div>
+
+    <!-- Mode Selector Tabs -->
+    <div class="tabs-bar">
+      <button id="tabMerge" class="tab-btn active" onclick="switchMode('merge')">Merge PDFs</button>
+      <button id="tabSplit" class="tab-btn" onclick="switchMode('split')">Split/Extract Pages</button>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="errorBanner" class="error-banner">
+      <span>⚠️</span>
+      <span id="errorMessage"></span>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div id="progressOverlay" class="progress-overlay">
+      <div class="progress-bar-container">
+        <div id="progressBarFill" class="progress-bar-fill"></div>
+      </div>
+      <div id="progressLabel" class="progress-label">Processing files…</div>
+    </div>
+
+    <!-- Upload Card -->
+    <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">📑</div>
+      <div id="uploadTextPrimary" class="upload-text-primary">Drag and drop PDF files here, or click to browse</div>
+      <div class="upload-text-secondary">All processes run locally. Files never touch any server.</div>
+      <input type="file" id="fileInput" class="file-input" accept=".pdf" multiple>
+    </div>
+
+    <!-- Workspace Panel -->
+    <div id="workspacePanel" class="workspace-panel" style="display: none;">
+      <!-- Left Card: Content Area -->
+      <div class="card panel-card">
+        <div class="card-title">
+          <span id="workspaceTitle" style="font-weight: 600; font-family: 'JetBrains Mono', monospace;">WORKSPACE</span>
+          <button class="button button-danger" style="height: 28px; font-size: 11px; padding: 0 var(--spacing-sm);" onclick="resetWorkspace()">Clear All</button>
+        </div>
+        
+        <!-- Mode 1: Merge File Queue -->
+        <div id="mergeQueueContainer" style="display: none;">
+          <div id="fileItemsList" class="file-list"></div>
+        </div>
+
+        <!-- Mode 2: Split Thumbnail Grid -->
+        <div id="splitGridContainer" style="display: none;">
+          <div style="font-size: 13px; color: var(--colors-body); margin-bottom: var(--spacing-sm);">
+            Select individual pages below to extract or convert:
+          </div>
+          <div id="pagesGrid" class="pages-grid"></div>
+        </div>
+      </div>
+
+      <!-- Right Card: Sidebar Options & Export -->
+      <div class="card panel-card">
+        <div class="card-title" style="font-weight: 600; font-family: 'JetBrains Mono', monospace;">EXPORT CONFIGURATION</div>
+        
+        <!-- Merge controls -->
+        <div id="mergeControls" class="sidebar-controls" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="mergeOutputName">Merged Filename</label>
+            <input type="text" id="mergeOutputName" class="form-input" value="merged_document.pdf">
+          </div>
+          <button id="btnExecuteMerge" class="button button-primary" onclick="executePdfMerge()">Merge and Download</button>
+        </div>
+
+        <!-- Split controls -->
+        <div id="splitControls" class="sidebar-controls" style="display: none;">
+          <div class="form-group">
+            <label class="form-label">Selected Pages</label>
+            <div id="selectedCountLabel" style="font-size: 14px; font-weight: 600; color: var(--colors-link);">0 pages selected</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="splitOutputName">Output Filename</label>
+            <input type="text" id="splitOutputName" class="form-input" value="extracted_pages.pdf">
+          </div>
+          <button id="btnExecuteSplit" class="button button-primary" onclick="executePdfSplit()">Extract to PDF</button>
+          <button id="btnExecuteImages" class="button button-secondary" onclick="executePdfToImages()" style="margin-top: 6px;">Convert Pages to Images</button>
+          <button id="btnExecuteText" class="button button-secondary" onclick="executePdfToText()" style="margin-top: 6px;">Extract Text (TXT)</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-container">
+      <div class="faq-item">
+        <div class="faq-question">
+          Is it safe to merge my confidential bank statements?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          Yes. Absolutely. Your files never leave your computer. The merge process takes place 100% locally in your browser sandbox memory, ensuring maximum security for sensitive data.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          What is the limit on PDF sizes?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          There are no file size limitations because we do not upload files to a server. Processing limits depend entirely on your local device's memory capacity.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/index.html" class="nav-brand" style="margin-bottom: 8px;">
+            <svg class="brand-logo-svg" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect class="brand-logo-rect" x="2" y="2" width="28" height="28" rx="8" />
+              <path class="brand-logo-path" d="M18 6L9 17H16L14 26L23 15H16L18 6Z" stroke="var(--colors-canvas)" stroke-width="1.2" stroke-linejoin="round"/>
+            </svg>
+            <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+          </a>
+          <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">File Converter</span>
+          <div class="footer-links">
+            <a href="/excel-to-pdf/" class="footer-link">Excel to PDF</a>
+            <a href="/csv-to-json/" class="footer-link">CSV to JSON</a>
+            <a href="/json-to-csv/" class="footer-link">JSON to CSV</a>
+            <a href="/xlsx-to-csv/" class="footer-link">XLSX to CSV</a>
+            <a href="/csv-to-xlsx/" class="footer-link">CSV to XLSX</a>
+            <a href="/json-to-xlsx/" class="footer-link">JSON to XLSX</a>
+            <a href="/xml-to-json/" class="footer-link">XML to JSON</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">PDF & Document</span>
+          <div class="footer-links">
+            <a href="/merge-pdf/" class="footer-link">Merge PDF</a>
+            <a href="/split-pdf/" class="footer-link">Split PDF</a>
+            <a href="/txt-to-pdf/" class="footer-link">TXT to PDF</a>
+            <a href="/pdf-to-txt/" class="footer-link">PDF to TXT</a>
+            <a href="/document-tools/" class="footer-link">Document Tools</a>
+            <a href="/spreadsheet-tools/" class="footer-link">Spreadsheet Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Image & OCR</span>
+          <div class="footer-links">
+            <a href="/png-to-jpg/" class="footer-link">PNG to JPG</a>
+            <a href="/jpg-to-png/" class="footer-link">JPG to PNG</a>
+            <a href="/png-to-webp/" class="footer-link">PNG to WebP</a>
+            <a href="/webp-to-png/" class="footer-link">WebP to PNG</a>
+            <a href="/image-to-text/" class="footer-link">Image to Text OCR</a>
+            <a href="/image-tools/" class="footer-link">Image Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Legal & Company</span>
+          <div class="footer-links">
+            <a href="/privacy-first/" class="footer-link">Privacy Policy</a>
+            <a href="/privacy-first/" class="footer-link">Terms of Service</a>
+            <a href="/privacy-first/" class="footer-link">Contact</a>
+            <a href="/sitemap.xml" class="footer-link">Sitemap</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="privacy-disclaimer">
+          <strong>🔒 100% Device-Level Security Guarantee:</strong> Disconnect your internet connection completely and try any tool. It works flawlessly because your files never touch an external server. Everything resides in local sandbox memory and is automatically removed when you close the tab.
+        </p>
+        <p class="copyright">&copy; 2026 ConvertOcean. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/theme.js"></script>
+  <script>
+    // Initialize PDF.js Worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+    // Global State
+    let currentMode = 'merge'; // 'merge' | 'split'
+    
+    // Merge State
+    let mergeFiles = []; // Array of { id, name, size, bytes }
+    
+    // Split State
+    let splitFile = null; // { name, size, bytes, numPages }
+    let selectedPages = new Set(); // 1-indexed selected page numbers
+
+    // DOM Elements
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const uploadTextPrimary = document.getElementById('uploadTextPrimary');
+
+    const workspacePanel = document.getElementById('workspacePanel');
+    const workspaceTitle = document.getElementById('workspaceTitle');
+    const mergeQueueContainer = document.getElementById('mergeQueueContainer');
+    const splitGridContainer = document.getElementById('splitGridContainer');
+    const fileItemsList = document.getElementById('fileItemsList');
+    const pagesGrid = document.getElementById('pagesGrid');
+
+    const mergeControls = document.getElementById('mergeControls');
+    const splitControls = document.getElementById('splitControls');
+    const selectedCountLabel = document.getElementById('selectedCountLabel');
+    const mergeOutputName = document.getElementById('mergeOutputName');
+    const splitOutputName = document.getElementById('splitOutputName');
+
+    // Tab switching
+    function switchMode(mode) {
+      if (mode === currentMode) return;
+      currentMode = mode;
+      
+      document.getElementById('tabMerge').classList.toggle('active', mode === 'merge');
+      document.getElementById('tabSplit').classList.toggle('active', mode === 'split');
+
+      resetWorkspace();
+
+      if (mode === 'merge') {
+        uploadTextPrimary.textContent = "Drag and drop PDF files here, or click to browse";
+        fileInput.multiple = true;
+      } else {
+        uploadTextPrimary.textContent = "Drag and drop a single PDF file here, or click to browse";
+        fileInput.multiple = false;
+      }
+    }
+
+    // Drag and drop listeners
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const files = Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.pdf'));
+      if (files.length > 0) {
+        handleFiles(files);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files).filter(f => f.name.endsWith('.pdf'));
+      if (files.length > 0) {
+        handleFiles(files);
+      }
+    });
+
+    function handleFiles(files) {
+      hideError();
+      if (currentMode === 'merge') {
+        processMergeFiles(files);
+      } else {
+        processSplitFile(files[0]);
+      }
+    }
+
+    async function processMergeFiles(files) {
+      showProgress(0, "Reading uploaded PDF documents…");
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        try {
+          const bytes = await readFileAsArrayBuffer(file);
+          // Check if valid PDF by loading via pdf-lib
+          const pdfDoc = await PDFLib.PDFDocument.load(bytes);
+          const numPages = pdfDoc.getPageCount();
+
+          mergeFiles.push({
+            id: Date.now() + Math.random().toString(36).substr(2, 9),
+            name: file.name,
+            size: file.size,
+            bytes: bytes,
+            pages: numPages
+          });
+        } catch (err) {
+          showError(`Failed to load "${file.name}". It might be encrypted or corrupt.`);
+        }
+        showProgress(Math.round(((i + 1) / files.length) * 100), `Reading files…`);
+      }
+      hideProgress();
+      renderMergeQueue();
+      if (mergeFiles.length > 0) {
+        showWorkspace();
+      }
+    }
+
+    async function processSplitFile(file) {
+      showProgress(0, "Loading PDF document…");
+      try {
+        const bytes = await readFileAsArrayBuffer(file);
+        const pdfDoc = await PDFLib.PDFDocument.load(bytes);
+        const numPages = pdfDoc.getPageCount();
+
+        splitFile = {
+          name: file.name,
+          size: file.size,
+          bytes: bytes,
+          numPages: numPages
+        };
+        splitOutputName.value = file.name.replace(/\.[^/.]+$/, "") + '_extracted.pdf';
+        
+        selectedPages.clear();
+        updateSelectedCount();
+
+        renderSplitGrid();
+        showWorkspace();
+      } catch (err) {
+        showError("Failed to parse PDF file. The file might be encrypted or corrupt.");
+        hideProgress();
+      }
+    }
+
+    function readFileAsArrayBuffer(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    function renderMergeQueue() {
+      workspaceTitle.textContent = "MERGE PDF QUEUE";
+      fileItemsList.innerHTML = '';
+      
+      mergeFiles.forEach((file, index) => {
+        const item = document.createElement('div');
+        item.className = 'file-item';
+        item.innerHTML = `
+          <div class="file-item-info">
+            <span class="file-item-name">${file.name}</span>
+            <span class="file-item-meta">${(file.size / 1024 / 1024).toFixed(2)} MB • ${file.pages} pages</span>
+          </div>
+          <div class="file-item-actions">
+            <button class="icon-btn" onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+            <button class="icon-btn" onclick="moveItem(${index}, 1)" ${index === mergeFiles.length - 1 ? 'disabled' : ''}>▼</button>
+            <button class="icon-btn danger" onclick="removeMergeFile('${file.id}')">✕</button>
+          </div>
+        `;
+        fileItemsList.appendChild(item);
+      });
+    }
+
+    function moveItem(index, direction) {
+      const target = index + direction;
+      if (target < 0 || target >= mergeFiles.length) return;
+      const temp = mergeFiles[index];
+      mergeFiles[index] = mergeFiles[target];
+      mergeFiles[target] = temp;
+      renderMergeQueue();
+    }
+
+    function removeMergeFile(id) {
+      mergeFiles = mergeFiles.filter(f => f.id !== id);
+      renderMergeQueue();
+      if (mergeFiles.length === 0) {
+        resetWorkspace();
+      }
+    }
+
+    async function renderSplitGrid() {
+      workspaceTitle.textContent = `SPLIT PDF: ${splitFile.name}`;
+      pagesGrid.innerHTML = '';
+      
+      showProgress(10, `Generating thumbnails…`);
+
+      try {
+        const loadingTask = pdfjsLib.getDocument({ data: splitFile.bytes });
+        const pdf = await loadingTask.promise;
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({ scale: 0.25 });
+          
+          const canvas = document.createElement('canvas');
+          canvas.className = 'page-thumb-canvas';
+          const context = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+          const card = document.createElement('div');
+          card.className = 'page-thumb-card';
+          card.innerHTML = `
+            <input type="checkbox" class="page-thumb-checkbox" id="page-chk-${i}" onchange="togglePageSelect(${i})">
+            <span class="page-thumb-number">Page ${i}</span>
+          `;
+          card.insertBefore(canvas, card.firstChild);
+          card.onclick = (e) => {
+            if (e.target.className !== 'page-thumb-checkbox') {
+              const chk = card.querySelector('.page-thumb-checkbox');
+              chk.checked = !chk.checked;
+              togglePageSelect(i);
+            }
+          };
+          pagesGrid.appendChild(card);
+
+          const pct = Math.round(10 + (i / pdf.numPages) * 90);
+          showProgress(pct, `Loading preview page ${i} of ${pdf.numPages}…`);
+        }
+      } catch (err) {
+        console.error(err);
+        showError("Failed to render PDF page previews.");
+      }
+      hideProgress();
+    }
+
+    function togglePageSelect(pageNumber) {
+      const card = pagesGrid.children[pageNumber - 1];
+      const chk = card.querySelector('.page-thumb-checkbox');
+      
+      if (chk.checked) {
+        selectedPages.add(pageNumber);
+        card.classList.add('selected');
+      } else {
+        selectedPages.delete(pageNumber);
+        card.classList.remove('selected');
+      }
+      updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+      selectedCountLabel.textContent = `${selectedPages.size} pages selected`;
+    }
+
+    function showWorkspace() {
+      dropZone.style.display = 'none';
+      workspacePanel.style.display = 'grid';
+
+      if (currentMode === 'merge') {
+        mergeQueueContainer.style.display = 'block';
+        splitGridContainer.style.display = 'none';
+        mergeControls.style.display = 'flex';
+        splitControls.style.display = 'none';
+      } else {
+        mergeQueueContainer.style.display = 'none';
+        splitGridContainer.style.display = 'block';
+        mergeControls.style.display = 'none';
+        splitControls.style.display = 'flex';
+      }
+    }
+
+    function resetWorkspace() {
+      mergeFiles = [];
+      splitFile = null;
+      selectedPages.clear();
+      
+      fileInput.value = '';
+      pagesGrid.innerHTML = '';
+      fileItemsList.innerHTML = '';
+      
+      workspacePanel.style.display = 'none';
+      dropZone.style.display = 'flex';
+      hideError();
+    }
+
+    // Execute PDF Merge
+    async function executePdfMerge() {
+      if (mergeFiles.length < 2) {
+        showError("Please upload at least 2 PDF files to merge.");
+        return;
+      }
+      showProgress(10, "Merging documents client-side…");
+      try {
+        const mergedPdf = await PDFLib.PDFDocument.create();
+        for (let i = 0; i < mergeFiles.length; i++) {
+          const file = mergeFiles[i];
+          const doc = await PDFLib.PDFDocument.load(file.bytes);
+          const copiedPages = await mergedPdf.copyPages(doc, doc.getPageIndices());
+          copiedPages.forEach(page => mergedPdf.addPage(page));
+        }
+
+        const mergedBytes = await mergedPdf.save();
+        let outputName = mergeOutputName.value.trim() || 'merged_document.pdf';
+        if (!outputName.endsWith('.pdf')) outputName += '.pdf';
+
+        downloadBlob(new Blob([mergedBytes], { type: "application/pdf" }), outputName);
+      } catch (err) {
+        showError("Failed to compile PDF structure.");
+        console.error(err);
+      }
+      hideProgress();
+    }
+
+    // Execute PDF Split/Extract
+    async function executePdfSplit() {
+      if (selectedPages.size === 0) {
+        showError("Please select at least 1 page to extract.");
+        return;
+      }
+      showProgress(20, "Extracting pages client-side…");
+      try {
+        const sourcePdf = await PDFLib.PDFDocument.load(splitFile.bytes);
+        const subPdf = await PDFLib.PDFDocument.create();
+        
+        // Convert to sorted array
+        const sortedIndices = Array.from(selectedPages).sort((a, b) => a - b).map(idx => idx - 1);
+        
+        const copiedPages = await subPdf.copyPages(sourcePdf, sortedIndices);
+        copiedPages.forEach(page => subPdf.addPage(page));
+
+        const subBytes = await subPdf.save();
+        let outputName = splitOutputName.value.trim() || 'extracted_pages.pdf';
+        if (!outputName.endsWith('.pdf')) outputName += '.pdf';
+
+        downloadBlob(new Blob([subBytes], { type: "application/pdf" }), outputName);
+      } catch (err) {
+        showError("Failed to split PDF structure.");
+      }
+      hideProgress();
+    }
+
+    // Convert PDF Pages to Images
+    async function executePdfToImages() {
+      if (selectedPages.size === 0) {
+        showError("Please select at least 1 page to render to image.");
+        return;
+      }
+      showProgress(10, "Initializing rendering…");
+      try {
+        const loadingTask = pdfjsLib.getDocument({ data: splitFile.bytes });
+        const pdf = await loadingTask.promise;
+        
+        const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
+        
+        for (let i = 0; i < sortedPages.length; i++) {
+          const pageNum = sortedPages[i];
+          showProgress(Math.round(((i + 1) / sortedPages.length) * 100), `Rendering page ${pageNum}…`);
+          
+          const page = await pdf.getPage(pageNum);
+          const viewport = page.getViewport({ scale: 2.0 }); // High res render
+          
+          const canvas = document.createElement('canvas');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          const context = canvas.getContext('2d');
+
+          await page.render({ canvasContext: context, viewport: viewport }).promise;
+          
+          canvas.toBlob(blob => {
+            downloadBlob(blob, `${splitFile.name.replace(/\.[^/.]+$/, "")}_page_${pageNum}.png`);
+          }, 'image/png');
+        }
+      } catch (err) {
+        showError("Failed to convert PDF pages to images.");
+      }
+      hideProgress();
+    }
+
+    // Extract PDF Text to TXT file
+    async function executePdfToText() {
+      if (selectedPages.size === 0) {
+        showError("Please select at least 1 page to extract text.");
+        return;
+      }
+      showProgress(10, "Extracting text contents…");
+      try {
+        const loadingTask = pdfjsLib.getDocument({ data: splitFile.bytes });
+        const pdf = await loadingTask.promise;
+        
+        const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
+        let extractedText = "";
+
+        for (let i = 0; i < sortedPages.length; i++) {
+          const pageNum = sortedPages[i];
+          const page = await pdf.getPage(pageNum);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map(item => item.str).join(" ");
+          
+          extractedText += `--- Page ${pageNum} ---\n${pageText}\n\n`;
+          showProgress(Math.round(((i + 1) / sortedPages.length) * 100), `Reading page ${pageNum}…`);
+        }
+
+        const blob = new Blob([extractedText], { type: "text/plain;charset=utf-8;" });
+        downloadBlob(blob, `${splitFile.name.replace(/\.[^/.]+$/, "")}_extracted_text.txt`);
+      } catch (err) {
+        showError("Failed to extract text from PDF.");
+      }
+      hideProgress();
+    }
+
+    function showProgress(percentage, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = `${percentage}%`;
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .supported-formats-box {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-xl);
+    margin-top: var(--spacing-2xl);
+  }
+  .formats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+  }
+  @media (max-width: 768px) {
+    .formats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .format-category-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--colors-ink);
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--colors-hairline);
+    padding-bottom: 4px;
+  }
+  .format-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .format-item {
+    font-size: 13.5px;
+    color: var(--colors-body);
+  }
+  .compression-settings {
+    display: flex;
+    gap: var(--spacing-lg);
+    align-items: center;
+    border-left: 1px solid var(--colors-hairline);
+    padding-left: var(--spacing-lg);
+  }
+  @media (max-width: 768px) {
+    .compression-settings {
+      border-left: none;
+      padding-left: 0;
+      border-top: 1px solid var(--colors-hairline);
+      padding-top: var(--spacing-md);
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  .preview-card {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    min-height: 250px;
+    max-height: 500px;
+    overflow: hidden;
+  }
+  .preview-header {
+    background-color: var(--colors-canvas-soft);
+    border-bottom: 1px solid var(--colors-hairline);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .preview-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--colors-body);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .preview-body {
+    flex: 1;
+    overflow: auto;
+    padding: var(--spacing-lg);
+  }
+  .text-preview {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+    color: var(--colors-body);
+  }
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--colors-mute);
+    gap: var(--spacing-sm);
+    text-align: center;
+    padding: var(--spacing-xl) 0;
+  }
+  .sheets-bar {
+    display: none;
+    gap: var(--spacing-xs);
+    overflow-x: auto;
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--colors-hairline);
+  }
+  .sheet-tab {
+    background-color: var(--colors-canvas-soft-2);
+    color: var(--colors-body);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .sheet-tab.active {
+    background-color: var(--colors-ink);
+    color: var(--colors-canvas);
+    border-color: var(--colors-ink);
+  }
+</style>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">📄</div>
+  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-secondary">Supports Excel (.xlsx, .xls), CSV (.csv), and text files (.txt) (Max size: 25MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv,.txt" />
+</div>
+
+<!-- Controls Panel -->
+<div id="controlsPanel" class="controls-panel panel-card" style="display: none; margin-top: var(--spacing-lg);">
+  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: var(--spacing-md);">
+    <div class="file-metadata">
+      <div id="fileName" class="file-name-display" style="font-weight: 600;">document.xlsx</div>
+      <div id="fileSize" class="file-size-display" style="font-family: monospace; font-size: 12px; color: var(--colors-mute);">0.00 MB</div>
+    </div>
+    
+    <!-- Export Options -->
+    <div class="compression-settings" id="compressionSettings">
+      <div class="form-group" id="pdfQualityContainer" style="display: flex; flex-direction: column; gap: 4px;">
+        <div class="control-label" style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; gap: var(--spacing-sm);">
+          <span>PDF Export Quality</span>
+          <span id="pdfQualityVal" style="font-family: monospace; font-weight: 600; color: var(--colors-link);">90%</span>
+        </div>
+        <input type="range" id="pdfQualityRange" min="10" max="100" value="90" style="width: 140px; accent-color: var(--colors-ink); height: 6px; cursor: pointer;" />
+      </div>
+      <label style="font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; color: var(--colors-body);">
+        <input type="checkbox" id="minifyJsonCheck" checked style="accent-color: var(--colors-ink); cursor: pointer; width: 15px; height: 15px;" />
+        <span>Minify/Compress JSON</span>
+      </label>
+    </div>
+
+    <div class="button-group" style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
+      <button id="btnExportPdf" class="button button-primary">Export to PDF</button>
+      <button id="btnExportJson" class="button button-secondary">Export to JSON</button>
+      <button id="btnExportCsv" class="button button-secondary">Export to CSV</button>
+      <button id="btnExportXlsx" class="button button-secondary">Export to XLSX</button>
+      <button id="btnClear" class="button button-danger">Upload Another</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet Tabs Bar -->
+<div id="sheetsBar" class="sheets-bar" style="margin-top: var(--spacing-md);"></div>
+
+<!-- Preview Card -->
+<div class="preview-card" style="margin-top: var(--spacing-lg);">
+  <div class="preview-header">
+    <span class="preview-title">DATA PREVIEW CONTAINER</span>
+    <span id="previewTypeBadge" style="font-family: monospace; font-size: 12px; color: var(--colors-mute);">NO ACTIVE FILE</span>
+  </div>
+  <div id="previewBody" class="preview-body">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-state-icon">📥</div>
+      <div>No file loaded yet</div>
+      <div style="font-size: 13px;">Drag a spreadsheet or text document above to inspect and convert.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Supported Formats Info Section -->
+<section class="supported-formats-box">
+  <h3 style="font-size: 18px; font-weight: 600; color: var(--colors-ink);">Supported Conversion Formats</h3>
+  <p style="font-size: 14px; color: var(--colors-body); margin-top: 4px;">Convert Ocean supports offline, in-browser compilation of the following categories:</p>
+  <div class="formats-grid">
+    <div>
+      <h4 class="format-category-title">Documents</h4>
+      <ul class="format-list">
+        <li class="format-item">TXT (.txt)</li>
+        <li class="format-item">PDF (.pdf)</li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="format-category-title">Spreadsheets</h4>
+      <ul class="format-list">
+        <li class="format-item">XLSX (.xlsx)</li>
+        <li class="format-item">XLS (.xls)</li>
+        <li class="format-item">CSV (.csv)</li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="format-category-title">Images</h4>
+      <ul class="format-list">
+        <li class="format-item">PNG (.png)</li>
+        <li class="format-item">JPG / JPEG</li>
+        <li class="format-item">WEBP (.webp)</li>
+        <li class="format-item">SVG (.svg)</li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="format-category-title">Structured Data</h4>
+      <ul class="format-list">
+        <li class="format-item">JSON (.json)</li>
+        <li class="format-item">XML (.xml)</li>
+        <li class="format-item">CSV (.csv)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function() {
+    const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024; // 25MB
+
+    let activeFileData = {
+      name: "",
+      size: 0,
+      type: "", // 'spreadsheet' | 'text'
+      workbook: null,
+      sheetNames: [],
+      activeSheet: "",
+      textContents: ""
+    };
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const controlsPanel = document.getElementById('controlsPanel');
+    const sheetsBar = document.getElementById('sheetsBar');
+    const previewBody = document.getElementById('previewBody');
+    const previewTypeBadge = document.getElementById('previewTypeBadge');
+    const fileNameDisplay = document.getElementById('fileName');
+    const fileSizeDisplay = document.getElementById('fileSize');
+    const emptyState = document.getElementById('emptyState');
+
+    const btnExportPdf = document.getElementById('btnExportPdf');
+    const btnExportJson = document.getElementById('btnExportJson');
+    const btnExportCsv = document.getElementById('btnExportCsv');
+    const btnExportXlsx = document.getElementById('btnExportXlsx');
+    const btnClear = document.getElementById('btnClear');
+    const pdfQualityRange = document.getElementById('pdfQualityRange');
+    const pdfQualityVal = document.getElementById('pdfQualityVal');
+
+    // Drag-and-drop
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files.length > 0) {
+        handleFileSelect(files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFileSelect(e.target.files[0]);
+      }
+    });
+
+    function handleFileSelect(file) {
+      hideError();
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+        showError(`File is too large (${(file.size / (1024 * 1024)).toFixed(2)} MB). Max supported is 25MB.`);
+        return;
+      }
+
+      const extension = file.name.split('.').pop().toLowerCase();
+      activeFileData.name = file.name;
+      activeFileData.size = file.size;
+
+      fileNameDisplay.textContent = file.name;
+      fileSizeDisplay.textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+
+      const reader = new FileReader();
+
+      if (['xlsx', 'xls', 'csv'].includes(extension)) {
+        activeFileData.type = 'spreadsheet';
+        reader.onload = function(e) {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            activeFileData.workbook = workbook;
+            activeFileData.sheetNames = workbook.SheetNames;
+            activeFileData.activeSheet = workbook.SheetNames[0];
+
+            setupSheetsBar();
+            renderSpreadsheet();
+            showControls();
+          } catch (err) {
+            showError("Failed to parse spreadsheet file.");
+            console.error(err);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else if (extension === 'txt') {
+        activeFileData.type = 'text';
+        reader.onload = function(e) {
+          try {
+            activeFileData.textContents = e.target.result;
+            renderText();
+            showControls();
+          } catch (err) {
+            showError("Failed to read text file.");
+          }
+        };
+        reader.readAsText(file);
+      } else {
+        showError("Unsupported extension. Use .xlsx, .xls, .csv, or .txt.");
+      }
+    }
+
+    function showControls() {
+      dropZone.style.display = 'none';
+      controlsPanel.style.display = 'block';
+      previewTypeBadge.textContent = activeFileData.type.toUpperCase();
+
+      if (activeFileData.type === 'spreadsheet') {
+        btnExportPdf.style.display = 'inline-flex';
+        btnExportJson.style.display = 'inline-flex';
+        btnExportCsv.style.display = 'inline-flex';
+        btnExportXlsx.style.display = 'inline-flex';
+      } else {
+        btnExportPdf.style.display = 'inline-flex';
+        btnExportJson.style.display = 'inline-flex';
+        btnExportCsv.style.display = 'none';
+        btnExportXlsx.style.display = 'inline-flex';
+      }
+    }
+
+    function setupSheetsBar() {
+      sheetsBar.innerHTML = '';
+      if (activeFileData.sheetNames.length > 1) {
+        sheetsBar.style.display = 'flex';
+        activeFileData.sheetNames.forEach(name => {
+          const tab = document.createElement('button');
+          tab.className = `sheet-tab ${name === activeFileData.activeSheet ? 'active' : ''}`;
+          tab.textContent = name;
+          tab.onclick = () => switchSheet(name);
+          sheetsBar.appendChild(tab);
+        });
+      } else {
+        sheetsBar.style.display = 'none';
+      }
+    }
+
+    window.switchSheet = function(sheetName) {
+      activeFileData.activeSheet = sheetName;
+      setupSheetsBar();
+      renderSpreadsheet();
+    };
+
+    function renderSpreadsheet() {
+      const sheet = activeFileData.workbook.Sheets[activeFileData.activeSheet];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+      if (rows.length === 0) {
+        previewBody.innerHTML = `<div class="empty-state">No readable data rows in this sheet.</div>`;
+        return;
+      }
+      let html = '<table class="preview-table">';
+      html += '<thead><tr>';
+      rows[0].forEach((col, idx) => {
+        html += `<th>${col || `Col ${idx + 1}`}</th>`;
+      });
+      html += '</tr></thead><tbody>';
+      for (let i = 1; i < rows.length; i++) {
+        html += '<tr>';
+        rows[i].forEach(cell => {
+          html += `<td>${cell !== undefined && cell !== null ? String(cell) : ""}</td>`;
+        });
+        html += '</tr>';
+      }
+      html += '</tbody></table>';
+      previewBody.innerHTML = html;
+    }
+
+    function renderText() {
+      sheetsBar.style.display = 'none';
+      const pre = document.createElement('pre');
+      pre.className = 'text-preview';
+      pre.textContent = activeFileData.textContents;
+      previewBody.innerHTML = '';
+      previewBody.appendChild(pre);
+    }
+
+    if (pdfQualityRange && pdfQualityVal) {
+      pdfQualityRange.addEventListener('input', (e) => {
+        pdfQualityVal.textContent = `${e.target.value}%`;
+      });
+    }
+
+    btnExportPdf.addEventListener('click', () => {
+      const element = previewBody;
+      const qualityVal = parseInt(pdfQualityRange.value) || 90;
+      const scale = qualityVal < 50 ? 1 : (qualityVal < 80 ? 1.5 : 2);
+      const opt = {
+        margin:       10,
+        filename:     activeFileData.name.replace(/\.[^/.]+$/, "") + '_converted.pdf',
+        image:        { type: 'jpeg', quality: (qualityVal / 100) },
+        html2canvas:  { scale: scale, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: activeFileData.type === 'spreadsheet' ? 'landscape' : 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    });
+
+    btnExportJson.addEventListener('click', () => {
+      let exportObj = {};
+      if (activeFileData.type === 'spreadsheet') {
+        activeFileData.sheetNames.forEach(sheetName => {
+          const sheet = activeFileData.workbook.Sheets[sheetName];
+          exportObj[sheetName] = XLSX.utils.sheet_to_json(sheet);
+        });
+      } else {
+        exportObj = {
+          fileName: activeFileData.name,
+          content: activeFileData.textContents
+        };
+      }
+      const minify = document.getElementById('minifyJsonCheck').checked;
+      const jsonString = minify ? JSON.stringify(exportObj) : JSON.stringify(exportObj, null, 2);
+      const blob = new Blob([jsonString], { type: "application/json;charset=utf-8;" });
+      window.downloadBlob(blob, activeFileData.name.replace(/\.[^/.]+$/, "") + '_converted.json', "application/json");
+    });
+
+    btnExportCsv.addEventListener('click', () => {
+      if (activeFileData.type !== 'spreadsheet') return;
+      const sheet = activeFileData.workbook.Sheets[activeFileData.activeSheet];
+      const csv = XLSX.utils.sheet_to_csv(sheet);
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      window.downloadBlob(blob, activeFileData.name.replace(/\.[^/.]+$/, "") + '_converted.csv', "text/csv");
+    });
+
+    btnExportXlsx.addEventListener('click', () => {
+      let wb;
+      if (activeFileData.type === 'spreadsheet') {
+        wb = activeFileData.workbook;
+      } else {
+        const lines = activeFileData.textContents.split('\n').map(line => [line]);
+        const ws = XLSX.utils.aoa_to_sheet(lines);
+        wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "TextData");
+      }
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([wbout], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      window.downloadBlob(blob, activeFileData.name.replace(/\.[^/.]+$/, "") + '_converted.xlsx', "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    });
+
+    btnClear.addEventListener('click', clearWorkspace);
+
+    function clearWorkspace() {
+      activeFileData.name = "";
+      activeFileData.size = 0;
+      activeFileData.type = "";
+      activeFileData.workbook = null;
+      activeFileData.sheetNames = [];
+      activeFileData.activeSheet = "";
+      activeFileData.textContents = "";
+
+      fileInput.value = "";
+      previewBody.innerHTML = '';
+      previewBody.appendChild(emptyState);
+      previewTypeBadge.textContent = "NO ACTIVE FILE";
+      sheetsBar.innerHTML = '';
+      sheetsBar.style.display = 'none';
+
+      controlsPanel.style.display = 'none';
+      dropZone.style.display = 'flex';
+      hideError();
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+  })();
+</script>

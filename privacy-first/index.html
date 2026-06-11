@@ -1,0 +1,290 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Client-Side Privacy Works - ConvertOcean</title>
+  <meta name="description" content="Learn how ConvertOcean processes your files entirely inside your browser memory. Your files stay on your device. Zero server uploads.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/theme.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  <style>
+    /* Privacy explanation specific CSS */
+    .privacy-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .privacy-lead {
+      font-size: 20px;
+      color: var(--colors-body);
+      line-height: 1.6;
+      margin-bottom: var(--spacing-xl);
+    }
+    .privacy-section-block {
+      margin-bottom: var(--spacing-2xl);
+    }
+    .privacy-section-title {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.6px;
+      margin-bottom: var(--spacing-sm);
+      color: var(--colors-ink);
+    }
+    .privacy-text {
+      font-size: 15.5px;
+      color: var(--colors-body);
+      line-height: 1.7;
+      margin-bottom: var(--spacing-md);
+    }
+    .privacy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-lg);
+      margin: var(--spacing-xl) 0;
+    }
+    @media (max-width: 600px) {
+      .privacy-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .privacy-card-info {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-lg);
+    }
+    .privacy-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      margin-bottom: var(--spacing-xs);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xxs);
+    }
+    .privacy-card-text {
+      font-size: 13.5px;
+      color: var(--colors-body);
+      line-height: 1.6;
+    }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="COcean" />
+  <link rel="manifest" href="/site.webmanifest" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="nav-bar">
+    <a href="/index.html" class="nav-brand">
+      <svg class="brand-logo-svg" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect class="brand-logo-rect" x="2" y="2" width="28" height="28" rx="8" />
+        <path class="brand-logo-path" d="M18 6L9 17H16L14 26L23 15H16L18 6Z" stroke="var(--colors-canvas)" stroke-width="1.2" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="brand-logo-grad" x1="9" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#007cf0"/>
+            <stop offset="50%" stop-color="#7928ca"/>
+            <stop offset="100%" stop-color="#ff0080"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+    </a>
+    
+    <nav class="nav-links">
+      <a href="/index.html" class="nav-link">⚡ Home</a>
+      <a href="/file-converter/" class="nav-link">📄 File Converter</a>
+      <a href="/pdf-tools/" class="nav-link">📑 PDF Tools</a>
+      <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
+      <a href="/spreadsheet-tools/" class="nav-link">📊 Spreadsheets</a>
+      <a href="/ocr-tools/" class="nav-link">🔍 OCR Tools</a>
+      <a href="/business-tools/" class="nav-link">💼 Business Tools</a>
+      <a href="/privacy-first/" class="nav-link active">🔒 Privacy First</a>
+    </nav>
+
+    <div class="nav-right-group">
+      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        </svg>
+      </button>
+      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobileNavMenu" class="mobile-nav-menu">
+    <a href="/index.html" class="mobile-nav-link">⚡ Home</a>
+    <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
+    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF Tools</a>
+    <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
+    <a href="/spreadsheet-tools/" class="mobile-nav-link">📊 Spreadsheet Tools</a>
+    <a href="/ocr-tools/" class="mobile-nav-link">🔍 OCR Tools</a>
+    <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
+    <a href="/privacy-first/" class="mobile-nav-link">🔒 Privacy First</a>
+  </div>
+
+  <main class="app-container">
+    <div class="privacy-container">
+      <div class="page-header">
+        <h1 class="page-title">Privacy First.</h1>
+        <p class="privacy-lead">We believe your private documents and photos belong to you. That is why ConvertOcean processes all your files directly on your device, with zero server uploads.</p>
+      </div>
+
+      <div class="privacy-section-block">
+        <h2 class="privacy-section-title">How browser processing works</h2>
+        <p class="privacy-text">
+          Traditional online file converters force you to upload your files to their external servers. Once uploaded, you lose control over who sees your data, how long it is stored, or if it is analyzed.
+        </p>
+        <p class="privacy-text">
+          ConvertOcean uses modern web technologies to process files differently. Instead of sending files to a server, we run the conversion programs directly inside your browser window. Your files stay on your device and never touch our servers.
+        </p>
+      </div>
+
+      <div class="privacy-grid">
+        <div class="privacy-card-info">
+          <h3 class="privacy-card-title">📁 Your files stay on your device</h3>
+          <p class="privacy-card-text">
+            All data parsing, resizing, stitching, and format changes occur entirely on your local CPU. Your network connection is never used to transmit your document content.
+          </p>
+        </div>
+        <div class="privacy-card-info">
+          <h3 class="privacy-card-title">🗑️ Automatic data removal</h3>
+          <p class="privacy-card-text">
+            Files are processed in a temporary, sandboxed region of your browser's tab memory. Your files are automatically removed when you close the tab.
+          </p>
+        </div>
+      </div>
+
+      <div class="privacy-section-block">
+        <h2 class="privacy-section-title">Benefits of local processing</h2>
+        <p class="privacy-text">
+          By processing files client-side, ConvertOcean provides several major advantages:
+        </p>
+        <ul style="margin-left: 20px; margin-bottom: 20px; line-height: 1.8; color: var(--colors-body);">
+          <li><strong>Absolute Security:</strong> Ideal for confidential bank statements, contracts, IDs, or sensitive client billing info.</li>
+          <li><strong>Zero Upload Times:</strong> No waiting for large files to upload to a remote server. Conversions start instantly.</li>
+          <li><strong>Offline Utility:</strong> Since conversions run locally, many tools continue working without an internet connection.</li>
+          <li><strong>No Registration:</strong> No accounts, no email addresses, and no subscriptions. Start converting immediately.</li>
+        </ul>
+      </div>
+
+      <div class="privacy-section-block">
+        <h2 class="privacy-section-title">Plain English Commitment</h2>
+        <p class="privacy-text">
+          We promise to be open and simple. We do not hide our process behind technical jargon like "Cold Memory Enforcement" or "Purge Protocols." We simply state the facts: your files are processed in local memory, no uploads are performed, and closing the browser tab purges all data.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Reusable FAQ Component -->
+  <section class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-container">
+      <div class="faq-item">
+        <div class="faq-question">
+          Do you collect any data about me?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          No. We do not use analytics scripts, tracking cookies, or user databases. ConvertOcean is a static site serving tools directly to your browser. Your activity is completely invisible to us.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Can I run this offline?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          Yes. Once the page has loaded, you can completely disconnect your internet connection. All engines (including PDF compilers, Image canvas renderers, and OCR text extractors) run locally and offline.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/index.html" class="nav-brand" style="margin-bottom: 8px;">
+            <svg class="brand-logo-svg" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect class="brand-logo-rect" x="2" y="2" width="28" height="28" rx="8" />
+              <path class="brand-logo-path" d="M18 6L9 17H16L14 26L23 15H16L18 6Z" stroke="var(--colors-canvas)" stroke-width="1.2" stroke-linejoin="round"/>
+            </svg>
+            <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+          </a>
+          <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">File Converter</span>
+          <div class="footer-links">
+            <a href="/excel-to-pdf/" class="footer-link">Excel to PDF</a>
+            <a href="/csv-to-json/" class="footer-link">CSV to JSON</a>
+            <a href="/json-to-csv/" class="footer-link">JSON to CSV</a>
+            <a href="/xlsx-to-csv/" class="footer-link">XLSX to CSV</a>
+            <a href="/csv-to-xlsx/" class="footer-link">CSV to XLSX</a>
+            <a href="/json-to-xlsx/" class="footer-link">JSON to XLSX</a>
+            <a href="/xml-to-json/" class="footer-link">XML to JSON</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">PDF & Document</span>
+          <div class="footer-links">
+            <a href="/merge-pdf/" class="footer-link">Merge PDF</a>
+            <a href="/split-pdf/" class="footer-link">Split PDF</a>
+            <a href="/txt-to-pdf/" class="footer-link">TXT to PDF</a>
+            <a href="/pdf-to-txt/" class="footer-link">PDF to TXT</a>
+            <a href="/document-tools/" class="footer-link">Document Tools</a>
+            <a href="/spreadsheet-tools/" class="footer-link">Spreadsheet Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Image & OCR</span>
+          <div class="footer-links">
+            <a href="/png-to-jpg/" class="footer-link">PNG to JPG</a>
+            <a href="/jpg-to-png/" class="footer-link">JPG to PNG</a>
+            <a href="/png-to-webp/" class="footer-link">PNG to WebP</a>
+            <a href="/webp-to-png/" class="footer-link">WebP to PNG</a>
+            <a href="/image-to-text/" class="footer-link">Image to Text OCR</a>
+            <a href="/image-tools/" class="footer-link">Image Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Legal & Company</span>
+          <div class="footer-links">
+            <a href="/privacy-first/" class="footer-link">Privacy Policy</a>
+            <a href="/privacy-first/" class="footer-link">Terms of Service</a>
+            <a href="/privacy-first/" class="footer-link">Contact</a>
+            <a href="/sitemap.xml" class="footer-link">Sitemap</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="privacy-disclaimer">
+          <strong>🔒 100% Device-Level Security Guarantee:</strong> Disconnect your internet connection completely and try any tool. It works flawlessly because your files never touch an external server. Everything resides in local sandbox memory and is automatically removed when you close the tab.
+        </p>
+        <p class="copyright">&copy; 2026 ConvertOcean. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/theme.js"></script>
+</body>
+</html>
