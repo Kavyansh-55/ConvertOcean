@@ -1,0 +1,214 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .text-preview {
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-md);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    max-height: 300px;
+    overflow: auto;
+    margin-top: var(--spacing-lg);
+  }
+</style>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing file…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">📊</div>
+  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-secondary">Upload PDF file (Max 25MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".pdf" />
+</div>
+
+<pre id="textPreview" class="text-preview" style="display: none;"></pre>
+
+<div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
+  <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
+  <div class="button-group">
+    <button class="button button-primary" id="btnDownload">Download XLSX</button>
+    <button class="button button-danger" id="btnClear">Clear</button>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const textPreview = document.getElementById('textPreview');
+    const actionControls = document.getElementById('actionControls');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnClear = document.getElementById('btnClear');
+
+    let parsedRows = [];
+    let originalName = '';
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    async function handleFile(file) {
+      hideError();
+      originalName = file.name;
+      showProgress(10, "Extracting PDF text structures…");
+      try {
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          try {
+            const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(e.target.result) });
+            const pdf = await loadingTask.promise;
+            parsedRows = [];
+
+            for (let i = 1; i <= pdf.numPages; i++) {
+              showProgress(Math.round(10 + (i / pdf.numPages) * 85), `Aligning columns on page ${i}…`);
+              const page = await pdf.getPage(i);
+              const textContent = await page.getTextContent();
+              
+              // Group text items by similar Y coordinate (representing rows)
+              const yMap = {};
+              textContent.items.forEach(item => {
+                const y = Math.round(item.transform[5]); // Y coordinate
+                const text = item.str.trim();
+                if (!text) return;
+                
+                // Allow a small tolerance for row grouping (e.g. 5 units)
+                let foundY = Object.keys(yMap).find(key => Math.abs(Number(key) - y) < 5);
+                if (foundY === undefined) {
+                  yMap[y] = [{ x: item.transform[4], str: text }];
+                } else {
+                  yMap[foundY].push({ x: item.transform[4], str: text });
+                }
+              });
+
+              // Sort rows from top to bottom
+              const sortedYKeys = Object.keys(yMap).map(Number).sort((a,b) => b - a);
+              sortedYKeys.forEach(y => {
+                // Sort columns inside row from left to right
+                const rowItems = yMap[y].sort((a,b) => a.x - b.x);
+                parsedRows.push(rowItems.map(item => item.str));
+              });
+              
+              // Add spacer between pages
+              parsedRows.push([`--- Page ${i} Spacer ---`]);
+            }
+
+            // Show text preview
+            const textPreviewLines = parsedRows.slice(0, 15).map(r => r.join("\t")).join("\n");
+            textPreview.textContent = textPreviewLines + (parsedRows.length > 15 ? "\n…[truncated preview]" : "");
+            textPreview.style.display = 'block';
+            fileNameDisplay.textContent = file.name;
+            actionControls.style.display = 'flex';
+            dropZone.style.display = 'none';
+          } catch(err) {
+            showError("Failed to align spreadsheet rows in PDF.");
+          }
+          hideProgress();
+        };
+        reader.readAsArrayBuffer(file);
+      } catch(err) {
+        showError("Initialization error.");
+        hideProgress();
+      }
+    }
+
+    btnDownload.addEventListener('click', () => {
+      showProgress(40, "Compiling Excel workbook…");
+      try {
+        const ws = XLSX.utils.aoa_to_sheet(parsedRows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "PDF Data");
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([wbout], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, "") + '.xlsx', "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      } catch(err) {
+        showError("Excel compilation failed.");
+      }
+      hideProgress();
+    });
+
+    btnClear.addEventListener('click', () => {
+      parsedRows = [];
+      textPreview.style.display = 'none';
+      actionControls.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+    });
+  })();
+</script>

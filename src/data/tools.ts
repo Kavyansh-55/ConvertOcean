@@ -548,6 +548,22 @@ export const tools: ToolData[] = [
       { question: 'Does it work offline?', answer: 'Yes. The PowerPoint zip structure is parsed directly inside the browser memory.' }
     ],
     relatedTools: ['word-to-pdf', 'txt-to-pdf', 'excel-to-pdf']
+  },
+  {
+    slug: 'pdf-to-excel',
+    name: 'PDF to Excel',
+    title: 'Convert PDF to Excel Online - 100% Private | ConvertOcean',
+    description: 'Convert PDF files to formatted Excel worksheets (.xlsx) offline in your browser. 100% device-level security with no server uploads.',
+    headline: 'PDF to Excel.',
+    subtitle: 'Extract tables and aligned cell grids from PDF files and download them as Excel workbooks locally.',
+    icon: '📊',
+    category: 'Spreadsheet Tools',
+    categorySlug: 'spreadsheet-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. Once loaded, the extraction and Excel compiler run 100% offline.' }
+    ],
+    relatedTools: ['excel-to-pdf', 'csv-to-xlsx', 'json-to-xlsx']
   }
 ];
 
