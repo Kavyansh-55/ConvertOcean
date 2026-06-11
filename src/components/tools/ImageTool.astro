@@ -16,6 +16,21 @@ if (slug === 'png-to-jpg') {
 } else if (slug === 'webp-to-png') {
   acceptMime = "image/webp";
   targetFormat = "PNG";
+} else if (slug === 'jpg-to-webp') {
+  acceptMime = "image/jpeg,image/jpg";
+  targetFormat = "WEBP";
+} else if (slug === 'webp-to-jpg') {
+  acceptMime = "image/webp";
+  targetFormat = "JPG";
+} else if (slug === 'svg-to-png') {
+  acceptMime = "image/svg+xml";
+  targetFormat = "PNG";
+} else if (slug === 'svg-to-jpg') {
+  acceptMime = "image/svg+xml";
+  targetFormat = "JPG";
+} else if (slug === 'svg-to-webp') {
+  acceptMime = "image/svg+xml";
+  targetFormat = "WEBP";
 }
 ---
 
@@ -166,6 +181,18 @@ if (slug === 'png-to-jpg') {
         showError("Invalid file type. Please upload a WebP file.");
         return;
       }
+      if (slug === 'jpg-to-webp' && !['jpg', 'jpeg'].includes(extension)) {
+        showError("Invalid file type. Please upload a JPG or JPEG file.");
+        return;
+      }
+      if (slug === 'webp-to-jpg' && extension !== 'webp') {
+        showError("Invalid file type. Please upload a WebP file.");
+        return;
+      }
+      if (['svg-to-png', 'svg-to-jpg', 'svg-to-webp'].includes(slug) && extension !== 'svg') {
+        showError("Invalid file type. Please upload an SVG file.");
+        return;
+      }
 
       showProgress(30, "Loading image bytes…");
       const reader = new FileReader();
@@ -182,10 +209,10 @@ if (slug === 'png-to-jpg') {
 
           let mimeType = 'image/png';
           let outputExt = '.png';
-          if (slug === 'png-to-jpg') {
+          if (['png-to-jpg', 'webp-to-jpg', 'svg-to-jpg'].includes(slug)) {
             mimeType = 'image/jpeg';
             outputExt = '.jpg';
-          } else if (slug === 'png-to-webp') {
+          } else if (['png-to-webp', 'jpg-to-webp', 'svg-to-webp'].includes(slug)) {
             mimeType = 'image/webp';
             outputExt = '.webp';
           }

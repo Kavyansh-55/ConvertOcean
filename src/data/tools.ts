@@ -292,5 +292,262 @@ export const tools: ToolData[] = [
       { question: 'Is invoice data uploaded?', answer: 'No. None of your vendor, client, or financial figures are uploaded to our servers. Everything is processed directly inside your browser sandbox and disappears when you exit the page.' }
     ],
     relatedTools: ['excel-to-pdf', 'csv-to-json', 'json-to-csv', 'xlsx-to-csv']
+  },
+  {
+    slug: 'xls-to-pdf',
+    name: 'XLS to PDF',
+    title: 'Convert XLS to PDF Online - 100% Private | ConvertOcean',
+    description: 'Convert legacy Excel XLS files to high-fidelity PDF documents in your browser. 100% private, offline, and free.',
+    headline: 'XLS to PDF.',
+    subtitle: 'Convert XLS Excel sheets directly to clean PDF sheets client-side.',
+    icon: '📊',
+    category: 'Spreadsheet Tools',
+    categorySlug: 'spreadsheet-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['excel-to-pdf', 'xls-to-csv', 'xlsx-to-csv', 'csv-to-pdf']
+  },
+  {
+    slug: 'csv-to-pdf',
+    name: 'CSV to PDF',
+    title: 'Convert CSV to PDF Online - 100% Private | ConvertOcean',
+    description: 'Convert CSV spreadsheets to print-ready PDF files directly in your browser. 100% private with no server uploads.',
+    headline: 'CSV to PDF.',
+    subtitle: 'Compile flat CSV documents into printable PDF formats locally on your device.',
+    icon: '📊',
+    category: 'Spreadsheet Tools',
+    categorySlug: 'spreadsheet-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['excel-to-pdf', 'csv-to-json', 'json-to-csv', 'csv-to-xlsx']
+  },
+  {
+    slug: 'xlsx-to-json',
+    name: 'XLSX to JSON',
+    title: 'Convert XLSX to JSON Online - 100% Private | ConvertOcean',
+    description: 'Convert XLSX Excel sheets to structured JSON arrays offline in your browser. 100% device-level privacy.',
+    headline: 'XLSX to JSON.',
+    subtitle: 'Upload modern Excel workbooks (.xlsx) and compile them into clean JSON text client-side.',
+    icon: '⚙️',
+    category: 'Spreadsheet Tools',
+    categorySlug: 'spreadsheet-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['csv-to-json', 'xlsx-to-csv', 'json-to-xlsx']
+  },
+  {
+    slug: 'xls-to-json',
+    name: 'XLS to JSON',
+    title: 'Convert XLS to JSON Online - 100% Private | ConvertOcean',
+    description: 'Convert legacy Excel XLS files to JSON format offline in your browser. 100% secure client-side tools.',
+    headline: 'XLS to JSON.',
+    subtitle: 'Transform legacy Excel sheets (.xls) into standard JSON objects arrays locally.',
+    icon: '⚙️',
+    category: 'Spreadsheet Tools',
+    categorySlug: 'spreadsheet-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['csv-to-json', 'xls-to-csv', 'xlsx-to-json']
+  },
+  {
+    slug: 'xls-to-csv',
+    name: 'XLS to CSV',
+    title: 'Convert XLS to CSV Online - 100% Private | ConvertOcean',
+    description: 'Convert legacy Excel XLS files to CSV format client-side instantly. Zero server uploads.',
+    headline: 'XLS to CSV.',
+    subtitle: 'Compile XLS spreadsheets into standard comma-separated text (.csv) locally.',
+    icon: '📊',
+    category: 'Spreadsheet Tools',
+    categorySlug: 'spreadsheet-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['xlsx-to-csv', 'xls-to-json', 'xls-to-pdf']
+  },
+  {
+    slug: 'xml-to-csv',
+    name: 'XML to CSV',
+    title: 'Convert XML to CSV Online - 100% Private | ConvertOcean',
+    description: 'Convert XML files to CSV spreadsheets offline in your browser. 100% secure client-side data converter.',
+    headline: 'XML to CSV.',
+    subtitle: 'Transform nested XML data structures into simple comma-separated tables client-side.',
+    icon: '⚙️',
+    category: 'Spreadsheet Tools',
+    categorySlug: 'spreadsheet-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['xml-to-json', 'json-to-csv', 'xlsx-to-csv']
+  },
+  {
+    slug: 'xml-to-xlsx',
+    name: 'XML to XLSX',
+    title: 'Convert XML to XLSX Online - 100% Private | ConvertOcean',
+    description: 'Convert XML data to Microsoft Excel XLSX sheets offline. 100% browser-level privacy.',
+    headline: 'XML to XLSX.',
+    subtitle: 'Compile nested XML documents into standard Excel spreadsheets (.xlsx) locally.',
+    icon: '📊',
+    category: 'Spreadsheet Tools',
+    categorySlug: 'spreadsheet-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['xml-to-json', 'json-to-xlsx', 'csv-to-xlsx']
+  },
+  {
+    slug: 'jpg-to-webp',
+    name: 'JPG to WebP',
+    title: 'Convert JPG to WebP Online - 100% Private | ConvertOcean',
+    description: 'Convert JPG/JPEG images to next-generation WebP format in your browser. 100% private and free.',
+    headline: 'JPG to WebP.',
+    subtitle: 'Convert JPEG images to highly compressed WebP formats client-side.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['png-to-webp', 'webp-to-jpg', 'jpg-to-png']
+  },
+  {
+    slug: 'webp-to-jpg',
+    name: 'WebP to JPG',
+    title: 'Convert WebP to JPG Online - 100% Private | ConvertOcean',
+    description: 'Convert modern WebP images to standard JPG format client-side. Fast, secure, and offline capable.',
+    headline: 'WebP to JPG.',
+    subtitle: 'Convert modern WebP images back into standard compressed JPG format locally.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['webp-to-png', 'jpg-to-webp', 'png-to-jpg']
+  },
+  {
+    slug: 'svg-to-png',
+    name: 'SVG to PNG',
+    title: 'Convert SVG to PNG Online - 100% Private | ConvertOcean',
+    description: 'Convert vector SVG files to transparent PNG images in your browser. 100% private and free.',
+    headline: 'SVG to PNG.',
+    subtitle: 'Rasterize vector SVG files into transparent PNG format client-side.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['svg-to-jpg', 'svg-to-webp', 'png-to-jpg']
+  },
+  {
+    slug: 'svg-to-jpg',
+    name: 'SVG to JPG',
+    title: 'Convert SVG to JPG Online - 100% Private | ConvertOcean',
+    description: 'Convert SVG vector graphics to compressed JPG format client-side. 100% browser-level security.',
+    headline: 'SVG to JPG.',
+    subtitle: 'Convert vector SVG files into high-quality JPG images locally.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['svg-to-png', 'svg-to-webp', 'jpg-to-png']
+  },
+  {
+    slug: 'svg-to-webp',
+    name: 'SVG to WebP',
+    title: 'Convert SVG to WebP Online - 100% Private | ConvertOcean',
+    description: 'Convert vector SVG files to highly compressed WebP format in your browser. 100% private and free.',
+    headline: 'SVG to WebP.',
+    subtitle: 'Compile SVG vector images into modern WebP format client-side.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['svg-to-png', 'svg-to-jpg', 'png-to-webp']
+  },
+  {
+    slug: 'word-to-pdf',
+    name: 'Word to PDF',
+    title: 'Convert Word to PDF Online - 100% Private | ConvertOcean',
+    description: 'Convert Word document files (.docx) to print-ready PDF files in your browser. 100% private and offline-capable.',
+    headline: 'Word to PDF.',
+    subtitle: 'Convert Word documents (.docx) to PDF locally on your device.',
+    icon: '📝',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. The converter loads mammoth.js locally into the browser memory sandbox.' }
+    ],
+    relatedTools: ['pdf-to-word', 'docx-to-txt', 'txt-to-pdf']
+  },
+  {
+    slug: 'pdf-to-word',
+    name: 'PDF to Word',
+    title: 'Convert PDF to Word Online - 100% Private | ConvertOcean',
+    description: 'Convert PDF documents to editable Microsoft Word files (.doc) offline in your browser. Zero server uploads.',
+    headline: 'PDF to Word.',
+    subtitle: 'Extract PDF text and compile it into an editable Word document format client-side.',
+    icon: '📄',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. Once loaded, the extraction and compiling run 100% offline.' }
+    ],
+    relatedTools: ['word-to-pdf', 'pdf-to-txt', 'txt-to-pdf']
+  },
+  {
+    slug: 'docx-to-txt',
+    name: 'Word to TXT',
+    title: 'Convert Word to TXT Online - 100% Private | ConvertOcean',
+    description: 'Extract raw text nodes from Word document files (.docx) client-side. 100% private and offline capable.',
+    headline: 'Word to TXT.',
+    subtitle: 'Extract text from Word documents and download them as plain text files locally.',
+    icon: '📝',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. The extraction engine processes elements directly in local memory.' }
+    ],
+    relatedTools: ['word-to-pdf', 'pdf-to-txt', 'txt-to-pdf']
+  },
+  {
+    slug: 'pptx-to-pdf',
+    name: 'PowerPoint to PDF',
+    title: 'Convert PowerPoint to PDF Online - 100% Private | ConvertOcean',
+    description: 'Convert PowerPoint slide presentations (.pptx) to PDF sheets offline in your browser. 100% secure client-side converter.',
+    headline: 'PowerPoint to PDF.',
+    subtitle: 'Extract slides outline text and compile it to printable PDF files locally.',
+    icon: '📊',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. The PowerPoint zip structure is parsed directly inside the browser memory.' }
+    ],
+    relatedTools: ['word-to-pdf', 'txt-to-pdf', 'excel-to-pdf']
   }
 ];
+

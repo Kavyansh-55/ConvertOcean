@@ -11,6 +11,9 @@ import ImageToText from '../components/tools/ImageToText.astro';
 import MergePdf from '../components/tools/MergePdf.astro';
 import SplitPdf from '../components/tools/SplitPdf.astro';
 import InvoiceGenerator from '../components/tools/InvoiceGenerator.astro';
+import WordTool from '../components/tools/WordTool.astro';
+import PdfToWord from '../components/tools/PdfToWord.astro';
+import PptxTool from '../components/tools/PptxTool.astro';
 
 export function getStaticPaths() {
   return tools.map(t => ({ params: { tool: t.slug } }));
@@ -49,7 +52,11 @@ const toolsMap: Record<string, any> = {
   'image-to-text': ImageToText,
   'merge-pdf': MergePdf,
   'split-pdf': SplitPdf,
-  'invoice-generator': InvoiceGenerator
+  'invoice-generator': InvoiceGenerator,
+  'word-to-pdf': WordTool,
+  'pdf-to-word': PdfToWord,
+  'docx-to-txt': WordTool,
+  'pptx-to-pdf': PptxTool
 };
 
 const ToolComponent = toolsMap[toolData.slug];

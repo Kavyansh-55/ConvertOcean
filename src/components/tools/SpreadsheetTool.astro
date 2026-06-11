@@ -29,9 +29,29 @@ if (slug === 'csv-to-json') {
   acceptMime = ".xml";
   uploadLabel = "Upload XML file (Max 15MB)";
   targetFormat = "JSON";
+} else if (slug === 'xlsx-to-json') {
+  acceptMime = ".xlsx";
+  uploadLabel = "Upload XLSX file (Max 25MB)";
+  targetFormat = "JSON";
+} else if (slug === 'xls-to-json') {
+  acceptMime = ".xls";
+  uploadLabel = "Upload XLS file (Max 25MB)";
+  targetFormat = "JSON";
+} else if (slug === 'xls-to-csv') {
+  acceptMime = ".xls";
+  uploadLabel = "Upload XLS file (Max 25MB)";
+  targetFormat = "CSV";
+} else if (slug === 'xml-to-csv') {
+  acceptMime = ".xml";
+  uploadLabel = "Upload XML file (Max 15MB)";
+  targetFormat = "CSV";
+} else if (slug === 'xml-to-xlsx') {
+  acceptMime = ".xml";
+  uploadLabel = "Upload XML file (Max 15MB)";
+  targetFormat = "XLSX";
 }
 
-const isJsonOutput = ['csv-to-json', 'xml-to-json'].includes(slug);
+const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json'].includes(slug);
 ---
 
 <style>
@@ -160,7 +180,7 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json'].includes(slug);
 
       showProgress(20, "Reading file content…");
 
-      if (slug === 'csv-to-json') {
+      if (['csv-to-json', 'xlsx-to-json', 'xls-to-json'].includes(slug)) {
         reader.onload = function(e) {
           try {
             const data = new Uint8Array(e.target.result);
@@ -170,7 +190,7 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json'].includes(slug);
             resultData = JSON.stringify(json, null, 2);
             showPreview(resultData);
           } catch(err) {
-            showError("Failed to convert CSV to JSON.");
+            showError("Failed to convert file to JSON.");
           }
           hideProgress();
         };
@@ -189,7 +209,7 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json'].includes(slug);
           hideProgress();
         };
         reader.readAsText(file);
-      } else if (slug === 'xlsx-to-csv') {
+      } else if (['xlsx-to-csv', 'xls-to-csv'].includes(slug)) {
         reader.onload = function(e) {
           try {
             const data = new Uint8Array(e.target.result);
@@ -208,7 +228,6 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json'].includes(slug);
           try {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
-            // Since it was parsed as workbook already, keep it to be written directly
             resultData = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
             showPreview("[Excel binary data loaded ready to download]");
           } catch(err) {
@@ -243,6 +262,40 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json'].includes(slug);
             showPreview(resultData);
           } catch(err) {
             showError("Failed to parse XML syntax trees.");
+          }
+          hideProgress();
+        };
+        reader.readAsText(file);
+      } else if (slug === 'xml-to-csv') {
+        reader.onload = function(e) {
+          try {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
+            const json = xmlNodeToJson(xmlDoc.documentElement);
+            const arr = Array.isArray(json) ? json : [json];
+            const ws = XLSX.utils.json_to_sheet(arr);
+            resultData = XLSX.utils.sheet_to_csv(ws);
+            showPreview(resultData);
+          } catch(err) {
+            showError("Failed to convert XML to CSV.");
+          }
+          hideProgress();
+        };
+        reader.readAsText(file);
+      } else if (slug === 'xml-to-xlsx') {
+        reader.onload = function(e) {
+          try {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
+            const json = xmlNodeToJson(xmlDoc.documentElement);
+            const arr = Array.isArray(json) ? json : [json];
+            const ws = XLSX.utils.json_to_sheet(arr);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Data");
+            resultData = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            showPreview("[Excel binary data compiled from XML ready to download]");
+          } catch(err) {
+            showError("Failed to convert XML to XLSX.");
           }
           hideProgress();
         };

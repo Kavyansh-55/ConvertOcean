@@ -1,0 +1,235 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+
+let acceptMime = ".docx";
+let uploadLabel = "Upload Word Document (.docx) (Max 15MB)";
+let targetFormat = "PDF";
+if (slug === 'docx-to-txt') {
+  targetFormat = "TXT";
+}
+---
+
+<style>
+  .preview-card {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    min-height: 250px;
+    max-height: 500px;
+    overflow: auto;
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-lg);
+  }
+  .preview-html-content {
+    font-family: 'Inter', sans-serif;
+    color: var(--colors-ink);
+    line-height: 1.6;
+  }
+  .preview-html-content p {
+    margin-bottom: var(--spacing-sm);
+  }
+</style>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing file…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">📝</div>
+  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-secondary">{uploadLabel}</div>
+  <input type="file" id="fileInput" class="file-input" accept={acceptMime} />
+</div>
+
+<!-- Preview Panel -->
+<div id="previewCard" class="preview-card" style="display: none;">
+  <div id="previewBody" class="preview-html-content"></div>
+</div>
+
+<!-- Controls -->
+<div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
+  <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
+  <div class="button-group">
+    <button class="button button-primary" id="btnDownload">Download {targetFormat}</button>
+    <button class="button button-danger" id="btnClear">Clear</button>
+  </div>
+</div>
+
+<script is:inline define:vars={{ slug, targetFormat }}>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const previewCard = document.getElementById('previewCard');
+    const previewBody = document.getElementById('previewBody');
+    const actionControls = document.getElementById('actionControls');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnClear = document.getElementById('btnClear');
+
+    let processedOutput = null;
+    let originalName = '';
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    function handleFile(file) {
+      hideError();
+      originalName = file.name;
+      const extension = file.name.split('.').pop().toLowerCase();
+
+      if (extension !== 'docx') {
+        showError("Invalid file format. Please upload a .docx Word document.");
+        return;
+      }
+
+      showProgress(30, "Reading Word document bytes…");
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const arrayBuffer = e.target.result;
+        
+        if (slug === 'word-to-pdf') {
+          showProgress(60, "Converting Document text structure to HTML…");
+          mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
+            .then(result => {
+              processedOutput = result.value; // HTML string
+              previewBody.innerHTML = processedOutput;
+              previewCard.style.display = 'block';
+              fileNameDisplay.textContent = file.name;
+              actionControls.style.display = 'flex';
+              dropZone.style.display = 'none';
+              hideProgress();
+            })
+            .catch(err => {
+              showError("Failed to parse Word document formatting.");
+              hideProgress();
+            });
+        } else if (slug === 'docx-to-txt') {
+          showProgress(60, "Extracting text nodes…");
+          mammoth.extractRawText({ arrayBuffer: arrayBuffer })
+            .then(result => {
+              processedOutput = result.value; // Plain text
+              const pre = document.createElement('pre');
+              pre.style.fontFamily = "monospace";
+              pre.style.whiteSpace = "pre-wrap";
+              pre.textContent = processedOutput;
+              previewBody.innerHTML = '';
+              previewBody.appendChild(pre);
+              
+              previewCard.style.display = 'block';
+              fileNameDisplay.textContent = file.name;
+              actionControls.style.display = 'flex';
+              dropZone.style.display = 'none';
+              hideProgress();
+            })
+            .catch(err => {
+              showError("Failed to extract text from document.");
+              hideProgress();
+            });
+        }
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+
+    btnDownload.addEventListener('click', () => {
+      if (slug === 'word-to-pdf') {
+        showProgress(50, "Generating PDF document…");
+        const element = previewBody;
+        const opt = {
+          margin:       15,
+          filename:     originalName.replace(/\.[^/.]+$/, "") + '.pdf',
+          image:        { type: 'jpeg', quality: 0.95 },
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save().then(() => {
+          hideProgress();
+        }).catch(err => {
+          showError("PDF compilation failed.");
+          hideProgress();
+        });
+      } else if (slug === 'docx-to-txt') {
+        const blob = new Blob([processedOutput], { type: "text/plain;charset=utf-8;" });
+        window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, "") + '.txt', "text/plain");
+      }
+    });
+
+    btnClear.addEventListener('click', () => {
+      processedOutput = null;
+      previewCard.style.display = 'none';
+      previewBody.innerHTML = '';
+      actionControls.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+    });
+  })();
+</script>

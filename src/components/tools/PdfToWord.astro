@@ -1,0 +1,209 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .text-preview {
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-md);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    max-height: 300px;
+    overflow: auto;
+    margin-top: var(--spacing-lg);
+  }
+</style>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing file…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">📄</div>
+  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-secondary">Upload PDF file (Max 25MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".pdf" />
+</div>
+
+<pre id="textPreview" class="text-preview" style="display: none;"></pre>
+
+<div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
+  <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
+  <div class="button-group">
+    <button class="button button-primary" id="btnDownload">Download DOC</button>
+    <button class="button button-danger" id="btnClear">Clear</button>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const textPreview = document.getElementById('textPreview');
+    const actionControls = document.getElementById('actionControls');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnClear = document.getElementById('btnClear');
+
+    let extractedResult = '';
+    let originalName = '';
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    async function handleFile(file) {
+      hideError();
+      originalName = file.name;
+      showProgress(10, "Loading PDF data structure…");
+      try {
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          try {
+            const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(e.target.result) });
+            const pdf = await loadingTask.promise;
+            let fullText = "";
+
+            for (let i = 1; i <= pdf.numPages; i++) {
+              showProgress(Math.round(10 + (i / pdf.numPages) * 85), `Reading page ${i} of ${pdf.numPages}…`);
+              const page = await pdf.getPage(i);
+              const textContent = await page.getTextContent();
+              const pageText = textContent.items.map(item => item.str).join(" ");
+              fullText += pageText + "\n\n";
+            }
+
+            extractedResult = fullText;
+            textPreview.textContent = fullText.substring(0, 1200) + (fullText.length > 1200 ? '\n…[truncated preview]' : '');
+            textPreview.style.display = 'block';
+            fileNameDisplay.textContent = file.name;
+            actionControls.style.display = 'flex';
+            dropZone.style.display = 'none';
+          } catch(err) {
+            showError("Failed to parse PDF pages.");
+          }
+          hideProgress();
+        };
+        reader.onerror = function() {
+          showError("Failed to read PDF file.");
+          hideProgress();
+        };
+        reader.readAsArrayBuffer(file);
+      } catch(err) {
+        showError("Initialization error.");
+        hideProgress();
+      }
+    }
+
+    btnDownload.addEventListener('click', () => {
+      // Compile Word-compatible HTML Document
+      const linesHtml = extractedResult.split('\n')
+        .map(line => line.trim() ? `<p>${line}</p>` : `<br/>`)
+        .join('');
+
+      const htmlDoc = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+          <title>Converted Document</title>
+          <!--[if gte mso 9]>
+          <xml>
+            <w:WordDocument>
+              <w:View>Print</w:View>
+              <w:Zoom>100</w:Zoom>
+            </w:WordDocument>
+          </xml>
+          <![endif]-->
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.5; padding: 20px; }
+            p { margin: 0 0 10px 0; }
+          </style>
+        </head>
+        <body>
+          ${linesHtml}
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob([htmlDoc], { type: "application/msword;charset=utf-8;" });
+      window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, "") + '.doc', "application/msword");
+    });
+
+    btnClear.addEventListener('click', () => {
+      extractedResult = '';
+      textPreview.style.display = 'none';
+      actionControls.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+    });
+  })();
+</script>
