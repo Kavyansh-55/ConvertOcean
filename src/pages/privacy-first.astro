@@ -3,11 +3,38 @@ import Layout from '../layouts/Layout.astro';
 
 const { lang = 'en' } = Astro.props;
 
-const title = "How Client-Side Privacy Works - ConvertOcean";
-const description = "Learn how ConvertOcean processes your files entirely inside your browser memory. Your files stay on your device. Zero server uploads.";
+const title = "Privacy First Guarantee & Data Safety | ConvertOcean";
+const description = "Learn how ConvertOcean ensures your private files never touch a remote server through 100% client-side web technology.";
+
+const faqList = [
+  {
+    q: "How does ConvertOcean convert files without uploading them?",
+    a: "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+  },
+  {
+    q: "Is my confidential business or financial data safe when converting files?",
+    a: "Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times."
+  },
+  {
+    q: "Can a client-side file converter run without an active internet connection?",
+    a: "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
+  },
+  {
+    q: "Are files stored temporarily on your servers or cookies?",
+    a: "No. ConvertOcean does not utilize remote servers for file processing or data storage. All file contents and parsed values reside temporarily in sandboxed browser memory. Once you download the converted file or close the web browser tab, all temporary data is instantly and permanently purged from your device's RAM."
+  },
+  {
+    q: "Does ConvertOcean collect any user telemetry or conversion metadata?",
+    a: "No. ConvertOcean does not track user activities, store analytics telemetry, use tracking cookies, or collect file metadata (such as names, sizes, or paths). Our tools are strictly client-side static assets, ensuring complete user privacy and anonymity without email logins or server logs."
+  },
+  {
+    q: "Why do some files fail to convert inside a browser sandbox?",
+    a: "Client-side conversions run entirely within your browser tab's RAM and CPU limitations. If a file has complex parsing structures, corrupted metadata formats, or exceeds tab memory allocations, the sandboxed process may terminate. Ensuring clean file layouts and converting extremely large datasets in smaller chunks typically resolves these local sandbox constraints."
+  }
+];
 ---
 
-<Layout title={title} description={description} lang={lang} category="Privacy First" categorySlug="privacy-first">
+<Layout title={title} description={description} lang={lang} category="Privacy First" categorySlug="privacy-first" faqList={faqList}>
   <style>
     /* Privacy explanation specific CSS */
     .privacy-container {
@@ -126,24 +153,17 @@ const description = "Learn how ConvertOcean processes your files entirely inside
     <section class="faq-section" style="max-width: 100%; padding: 0; margin-top: var(--spacing-3xl);">
       <h2 class="faq-title" style="font-size: 22px; margin-bottom: var(--spacing-lg); text-align: left;">Frequently Asked Questions</h2>
       <div class="faq-container">
-        <div class="faq-item">
-          <div class="faq-question">
-            Do you collect any data about me?
-            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        {faqList.map(faq => (
+          <div class="faq-item">
+            <div class="faq-question">
+              {faq.q}
+              <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </div>
+            <div class="faq-answer">
+              {faq.a}
+            </div>
           </div>
-          <div class="faq-answer">
-            No. We do not use analytics scripts, tracking cookies, or user databases. ConvertOcean is a static site serving tools directly to your browser. Your activity is completely invisible to us.
-          </div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question">
-            Can I run this offline?
-            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          </div>
-          <div class="faq-answer">
-            Yes. Once the page has loaded, you can completely disconnect your internet connection. All engines (including PDF compilers, Image canvas renderers, and OCR text extractors) run locally and offline.
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   </main>

@@ -65,9 +65,35 @@ const ToolComponent = toolsMap[toolData.slug];
 
 // Fetch related tools data
 const relatedToolsData = tools.filter(t => toolData.relatedTools.includes(t.slug));
+
+const globalFaqs = [
+  {
+    q: "How does ConvertOcean convert files without uploading them?",
+    a: "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+  },
+  {
+    q: "Can a client-side file converter run without an active internet connection?",
+    a: "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
+  },
+  {
+    q: "Do I need to register an account or pay for a conversion subscription?",
+    a: "No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions."
+  }
+];
+
+const specificFaqs = (toolData.faqs || [])
+  .filter(f => 
+    !f.question.toLowerCase().includes('upload') && 
+    !f.question.toLowerCase().includes('offline') && 
+    !f.question.toLowerCase().includes('account') &&
+    !f.question.toLowerCase().includes('sign up')
+  )
+  .map(f => ({ q: f.question, a: f.answer }));
+
+const faqList = [...globalFaqs, ...specificFaqs];
 ---
 
-<Layout title={toolData.title} description={toolData.description} lang={lang} toolName={toolData.name} category={toolData.category} categorySlug={toolData.categorySlug} isTool={true}>
+<Layout title={toolData.title} description={toolData.description} lang={lang} toolName={toolData.name} category={toolData.category} categorySlug={toolData.categorySlug} isTool={true} faqList={faqList}>
   <style>
     /* Tool Page Specific Styles */
     .steps-section {
@@ -264,21 +290,21 @@ const relatedToolsData = tools.filter(t => toolData.relatedTools.includes(t.slug
     )}
 
     <!-- FAQ Accordion Component -->
-    {toolData.faqs && toolData.faqs.length > 0 && (
+    {faqList && faqList.length > 0 && (
       <section class="faq-section" style="max-width: 100%; padding: 0; margin-top: var(--spacing-3xl);">
         <h2 class="faq-title" style="font-size: 20px; margin-bottom: var(--spacing-lg);">Frequently Asked Questions</h2>
         <div class="faq-container">
-          {toolData.faqs.map(faq => (
+          {faqList.map(faq => (
             <div class="faq-item">
               <div class="faq-question">
-                {faq.question}
+                {faq.q}
                 <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <line x1="12" y1="5" x2="12" y2="19"></line>
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
               </div>
               <div class="faq-answer">
-                {faq.answer}
+                {faq.a}
               </div>
             </div>
           ))}

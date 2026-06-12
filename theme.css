@@ -186,9 +186,10 @@ body {
 }
 
 .nav-link.active {
-  color: var(--colors-ink);
+  color: var(--colors-link);
   font-weight: 600;
-  background-color: var(--colors-canvas-soft-2);
+  background-color: var(--colors-link-bg-soft);
+  box-shadow: inset 0 0 0 2px var(--colors-link);
 }
 
 /* Central tools dropdown */
@@ -360,6 +361,13 @@ body {
 .mobile-nav-link:hover {
   background-color: var(--colors-canvas-soft-2);
   color: var(--colors-ink);
+}
+
+.mobile-nav-link.active {
+  color: var(--colors-link);
+  font-weight: 600;
+  background-color: var(--colors-link-bg-soft);
+  box-shadow: inset 0 0 0 2px var(--colors-link);
 }
 
 /* Containers */

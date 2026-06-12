@@ -3,8 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Private Image to Text OCR Converter - ConvertOcean</title>
-  <meta name="description" content="Extract text from screenshots, scans, and receipts inside your browser. 100% private WebAssembly OCR.">
+  <title>Image to Text OCR - Extract Text from Scans Offline | ConvertOcean</title>
+  <meta name="description" content="Extract plain text from screenshots, documents, and scans locally in your browser window. Private client-side OCR tool with 100% data confidentiality.">
+  <link rel="canonical" href="https://convertocean.com/image-to-text/" />
+  
+  <!-- Open Graph / Social sharing metadata -->
+  <meta property="og:title" content="Image to Text OCR - Extract Text from Scans Offline | ConvertOcean" />
+  <meta property="og:description" content="Extract plain text from screenshots, documents, and scans locally in your browser window. Private client-side OCR tool with 100% data confidentiality." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://convertocean.com/image-to-text/" />
+  <meta property="og:image" content="https://convertocean.com/apple-touch-icon.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Image to Text OCR - Private Offline OCR" />
+  <meta name="twitter:description" content="Extract plain text from screenshots, documents, and scans locally in your browser window." />
+  <meta name="twitter:image" content="https://convertocean.com/apple-touch-icon.png" />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://convertocean.com/image-to-text/#webpage",
+        "url": "https://convertocean.com/image-to-text/",
+        "name": "Image to Text OCR - Extract Text from Scans Offline | ConvertOcean",
+        "isPartOf": {
+          "@id": "https://convertocean.com/#website"
+        },
+        "description": "Extract plain text from screenshots, documents, and scans locally in your browser window. Private client-side OCR tool with 100% data confidentiality.",
+        "breadcrumb": {
+          "@id": "https://convertocean.com/image-to-text/#breadcrumb"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://convertocean.com/image-to-text/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://convertocean.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Image to Text OCR",
+            "item": "https://convertocean.com/image-to-text/"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <!-- FAQPage Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does ConvertOcean convert files without uploading them?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my confidential business or financial data safe when converting files?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can a client-side file converter run without an active internet connection?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is there a private tool to extract text from screenshots using offline OCR?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Our image-to-text OCR page runs Tesseract.js WebAssembly OCR engines completely client-side. This allows you to scan images, scans, and screenshots and extract text locally in your browser window without uploading confidential screenshots containing sensitive personal data."
+        }
+      }
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -91,7 +184,7 @@
     <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF Tools</a>
     <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
     <a href="/excel-converter/" class="mobile-nav-link">📊 Excel Converter</a>
-    <a href="/image-to-text/" class="mobile-nav-link">🔍 Image to Text</a>
+    <a href="/image-to-text/" class="mobile-nav-link active">🔍 Image to Text</a>
     <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
     <a href="/privacy-first/" class="mobile-nav-link">🔒 Privacy First</a>
   </div>
@@ -224,47 +317,38 @@
       <div class="faq-container">
         <div class="faq-item">
           <div class="faq-question">
-            Do files get uploaded to a server?
+            How does ConvertOcean convert files without uploading them?
             <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
           <div class="faq-answer">
-            No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.
+            ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server.
           </div>
         </div>
         <div class="faq-item">
           <div class="faq-question">
-            Does it work offline?
+            Is my confidential business or financial data safe when converting files?
             <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
           <div class="faq-answer">
-            Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.
+            Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times.
           </div>
         </div>
         <div class="faq-item">
           <div class="faq-question">
-            Do I need to sign up for an account?
+            Can a client-side file converter run without an active internet connection?
             <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
           <div class="faq-answer">
-            No. Every converter is immediately unlocked, 100% free, and completely untracked. No signup is required.
+            Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed.
           </div>
         </div>
         <div class="faq-item">
           <div class="faq-question">
-            Is my scanned text uploaded to an AI service?
+            Is there a private tool to extract text from screenshots using offline OCR?
             <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
           <div class="faq-answer">
-            No. All optical recognition is processed entirely inside your local browser memory sandbox via WebAssembly.
-          </div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question">
-            What file types are supported?
-            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          </div>
-          <div class="faq-answer">
-            PNG, JPG, JPEG, WebP, and BMP images.
+            Yes. Our image-to-text OCR page runs Tesseract.js WebAssembly OCR engines completely client-side. This allows you to scan images, scans, and screenshots and extract text locally in your browser window without uploading confidential screenshots containing sensitive personal data.
           </div>
         </div>
       </div>

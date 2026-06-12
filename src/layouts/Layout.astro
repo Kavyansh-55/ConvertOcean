@@ -1,7 +1,7 @@
 ---
 import '../styles/theme.css';
 
-const { title, description, lang = 'en', toolName, category, categorySlug, isTool = false } = Astro.props;
+const { title, description, lang = 'en', toolName, category, categorySlug, isTool = false, faqList = [] } = Astro.props;
 
 // Determine paths for canonicals and alternates
 const canonicalPath = Astro.url.pathname;
@@ -110,6 +110,19 @@ const softwareSchema = isTool ? {
   }
 } : null;
 
+const faqSchema = faqList && faqList.length > 0 ? {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqList.map((faq: { q: string; a: string }) => ({
+    "@type": "Question",
+    "name": faq.q,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.a
+    }
+  }))
+} : null;
+
 // Helper to prefix links with language prefix if not default 'en'
 const relLink = (target: string) => {
   const cleanTarget = target.startsWith('/') ? target : `/${target}`;
@@ -149,12 +162,18 @@ const relLink = (target: string) => {
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonicalURL} />
+  <meta property="og:image" content="https://convertocean.com/apple-touch-icon.png" />
   <meta property="og:site_name" content="ConvertOcean" />
 
   <!-- Twitter / X -->
-  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content="https://convertocean.com/apple-touch-icon.png" />
+
+  {faqSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}></script>
+  )}
 
   <!-- Pre-render theme code to prevent flashing -->
   <script is:inline>

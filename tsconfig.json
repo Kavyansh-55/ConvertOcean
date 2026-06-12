@@ -4,6 +4,8 @@
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "jsxImportSource": "astro",
-    "allowJs": true
-  }
+    "allowJs": true,
+    "noEmit": true
+  },
+  "exclude": ["node_modules", "dist", "scratch", "theme.js", "src/scripts/theme.js"]
 }
