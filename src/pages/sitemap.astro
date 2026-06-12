@@ -1,0 +1,172 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const { lang = 'en' } = Astro.props;
+
+const title = "HTML Sitemap - Offline File Converters & Web Utilities | ConvertOcean";
+const description = "Navigate ConvertOcean using our HTML sitemap. Access secure offline spreadsheet tools, PDF utilities, image converters, and developer utilities.";
+---
+
+<Layout title={title} description={description} lang={lang} category="Sitemap" categorySlug="sitemap">
+  <style>
+    .sitemap-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .sitemap-lead {
+      font-size: 18px;
+      color: var(--colors-body);
+      line-height: 1.6;
+      margin-bottom: var(--spacing-xl);
+      text-align: center;
+    }
+    .sitemap-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-xl);
+      margin-top: var(--spacing-xl);
+    }
+    @media (max-width: 768px) {
+      .sitemap-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .sitemap-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-lg);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+      transition: border-color 0.2s;
+    }
+    .sitemap-card:hover {
+      border-color: var(--colors-hairline-strong);
+    }
+    .sitemap-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      border-bottom: 1px solid var(--colors-hairline);
+      padding-bottom: var(--spacing-xs);
+      margin-bottom: var(--spacing-md);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+    .sitemap-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+    .sitemap-item-link {
+      color: var(--colors-body);
+      text-decoration: none;
+      font-size: 14.5px;
+      transition: color 0.15s, padding-left 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sitemap-item-link:hover {
+      color: var(--colors-link);
+      padding-left: 4px;
+    }
+    .sitemap-item-link::before {
+      content: '➔';
+      font-size: 10px;
+      color: var(--colors-mute);
+    }
+  </style>
+
+  <main class="app-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl); position: relative; z-index: 1;">
+    <div class="sitemap-container">
+      <div class="page-header" style="text-align: center;">
+        <h1 class="page-title">Sitemap.</h1>
+        <p class="sitemap-lead">A comprehensive index of all secure, offline utilities, converters, and informational pages on ConvertOcean.</p>
+      </div>
+
+      <hr class="section-divider" style="max-width: 100%; border: 0; height: 1px; background-color: var(--colors-hairline); margin-bottom: var(--spacing-lg);">
+
+      <div class="sitemap-grid">
+        <!-- Section 1: Spreadsheet Tools -->
+        <div class="sitemap-card">
+          <h2 class="sitemap-card-title">📊 Spreadsheet Tools</h2>
+          <ul class="sitemap-list">
+            <li><a href="/excel-converter/" class="sitemap-item-link">Excel Converter Category Hub</a></li>
+            <li><a href="/excel-to-pdf/" class="sitemap-item-link">Excel to PDF Converter</a></li>
+            <li><a href="/xlsx-to-csv/" class="sitemap-item-link">XLSX to CSV Converter</a></li>
+            <li><a href="/csv-to-xlsx/" class="sitemap-item-link">CSV to XLSX Converter</a></li>
+            <li><a href="/json-to-xlsx/" class="sitemap-item-link">JSON to XLSX Converter</a></li>
+            <li><a href="/pdf-to-excel/" class="sitemap-item-link">PDF to Excel Converter</a></li>
+            <li><a href="/xls-to-pdf/" class="sitemap-item-link">XLS to PDF Converter</a></li>
+          </ul>
+        </div>
+
+        <!-- Section 2: PDF & Document Tools -->
+        <div class="sitemap-card">
+          <h2 class="sitemap-card-title">📑 PDF & Document Tools</h2>
+          <ul class="sitemap-list">
+            <li><a href="/pdf-tools/" class="sitemap-item-link">PDF Tools Category Hub</a></li>
+            <li><a href="/document-tools/" class="sitemap-item-link">Document Tools Category Hub</a></li>
+            <li><a href="/merge-pdf/" class="sitemap-item-link">Merge PDF Documents</a></li>
+            <li><a href="/split-pdf/" class="sitemap-item-link">Split & Extract PDF Pages</a></li>
+            <li><a href="/txt-to-pdf/" class="sitemap-item-link">TXT to PDF Compiler</a></li>
+            <li><a href="/pdf-to-txt/" class="sitemap-item-link">PDF to TXT Parser</a></li>
+            <li><a href="/pdf-to-word/" class="sitemap-item-link">PDF to Word Converter</a></li>
+            <li><a href="/word-to-pdf/" class="sitemap-item-link">Word to PDF Converter</a></li>
+            <li><a href="/docx-to-txt/" class="sitemap-item-link">Word to TXT Extractor</a></li>
+            <li><a href="/pptx-to-pdf/" class="sitemap-item-link">PowerPoint to PDF Converter</a></li>
+          </ul>
+        </div>
+
+        <!-- Section 3: Image & OCR Tools -->
+        <div class="sitemap-card">
+          <h2 class="sitemap-card-title">🖼️ Image & OCR Tools</h2>
+          <ul class="sitemap-list">
+            <li><a href="/image-tools/" class="sitemap-item-link">Image Tools Category Hub</a></li>
+            <li><a href="/image-to-text/" class="sitemap-item-link">Image to Text OCR Platform</a></li>
+            <li><a href="/png-to-jpg/" class="sitemap-item-link">PNG to JPG Converter</a></li>
+            <li><a href="/jpg-to-png/" class="sitemap-item-link">JPG to PNG Converter</a></li>
+            <li><a href="/png-to-webp/" class="sitemap-item-link">PNG to WebP Converter</a></li>
+            <li><a href="/webp-to-png/" class="sitemap-item-link">WebP to PNG Converter</a></li>
+            <li><a href="/jpg-to-webp/" class="sitemap-item-link">JPG to WebP Converter</a></li>
+            <li><a href="/webp-to-jpg/" class="sitemap-item-link">WebP to JPG Converter</a></li>
+            <li><a href="/svg-to-png/" class="sitemap-item-link">SVG to PNG Rasterizer</a></li>
+            <li><a href="/svg-to-jpg/" class="sitemap-item-link">SVG to JPG Converter</a></li>
+            <li><a href="/svg-to-webp/" class="sitemap-item-link">SVG to WebP Converter</a></li>
+          </ul>
+        </div>
+
+        <!-- Section 4: Developer Tools -->
+        <div class="sitemap-card">
+          <h2 class="sitemap-card-title">⚙️ Developer Tools</h2>
+          <ul class="sitemap-list">
+            <li><a href="/developer-tools/" class="sitemap-item-link">Developer Tools Category Hub</a></li>
+            <li><a href="/csv-to-json/" class="sitemap-item-link">CSV to JSON Parser</a></li>
+            <li><a href="/json-to-csv/" class="sitemap-item-link">JSON to CSV Spreadsheet Converter</a></li>
+            <li><a href="/xml-to-json/" class="sitemap-item-link">XML to JSON Converter</a></li>
+          </ul>
+        </div>
+
+        <!-- Section 5: Legal & General Pages -->
+        <div class="sitemap-card" style="grid-column: span 2; max-width: 100%;">
+          <h2 class="sitemap-card-title">💼 General, Company & Legal Pages</h2>
+          <ul class="sitemap-list" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-sm);">
+            <li><a href="/" class="sitemap-item-link">Homepage</a></li>
+            <li><a href="/file-converter/" class="sitemap-item-link">File Converter Hub</a></li>
+            <li><a href="/privacy-first/" class="sitemap-item-link">Privacy First Policy</a></li>
+            <li><a href="/invoice-generator/" class="sitemap-item-link">Freelance Invoice Generator</a></li>
+            <li><a href="/about/" class="sitemap-item-link">About Us</a></li>
+            <li><a href="/contact/" class="sitemap-item-link">Contact Us</a></li>
+            <li><a href="/privacy/" class="sitemap-item-link">Privacy Policy</a></li>
+            <li><a href="/terms/" class="sitemap-item-link">Terms & Conditions</a></li>
+            <li><a href="/sitemap/" class="sitemap-item-link" style="font-weight: 600; color: var(--colors-link);">HTML Sitemap Index</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>

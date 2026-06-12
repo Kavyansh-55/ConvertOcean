@@ -3,117 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secure Offline PDF Tools - Merge & Split PDF Locally | ConvertOcean</title>
-  <meta name="description" content="Stitch multiple PDF documents together or extract specific page ranges securely inside browser memory. 100% private, free, no uploads.">
+  <title>Secure Offline PDF Tools - Merge, Split, & Convert PDF | ConvertOcean</title>
+  <meta name="description" content="Stitch multiple PDF files together, split page ranges, extract text, render pages to images, or convert PDF to document formats offline. 100% private, free, and secure.">
   <link rel="canonical" href="https://convertocean.com/pdf-tools/" />
   
-  <!-- Open Graph / Social sharing metadata -->
-  <meta property="og:title" content="Secure Offline PDF Tools - Merge & Split PDF Locally | ConvertOcean" />
-  <meta property="og:description" content="Stitch multiple PDF documents together or extract specific page ranges securely inside browser memory. 100% private, free, no uploads." />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Secure Offline PDF Tools - Merge, Split, & Convert PDF | ConvertOcean" />
+  <meta property="og:description" content="Stitch multiple PDF files together, split page ranges, extract text, render pages to images, or convert PDF to document formats offline. 100% private, free, and secure." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://convertocean.com/pdf-tools/" />
   <meta property="og:image" content="https://convertocean.com/apple-touch-icon.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Secure Offline PDF Tools" />
-  <meta name="twitter:description" content="Stitch multiple PDF documents together or extract specific page ranges locally. 100% private, no uploads." />
-  <meta name="twitter:image" content="https://convertocean.com/apple-touch-icon.png" />
-
-  <!-- Structured Data (JSON-LD) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebPage",
-        "@id": "https://convertocean.com/pdf-tools/#webpage",
-        "url": "https://convertocean.com/pdf-tools/",
-        "name": "Secure Offline PDF Tools - Merge & Split PDF Locally | ConvertOcean",
-        "isPartOf": {
-          "@id": "https://convertocean.com/#website"
-        },
-        "description": "Stitch multiple PDF documents together or extract specific page ranges securely inside browser memory. 100% private, free, no uploads.",
-        "breadcrumb": {
-          "@id": "https://convertocean.com/pdf-tools/#breadcrumb"
-        }
-      },
-      {
-        "@type": "BreadcrumbList",
-        "@id": "https://convertocean.com/pdf-tools/#breadcrumb",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://convertocean.com/"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "PDF Tools",
-            "item": "https://convertocean.com/pdf-tools/"
-          }
-        ]
-      }
-    ]
-  }
-  </script>
-  <!-- FAQPage Schema -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "How does ConvertOcean convert files without uploading them?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is my confidential business or financial data safe when converting files?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can a client-side file converter run without an active internet connection?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How does ConvertOcean merge or split PDF documents without data leaks?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "PDF split and merge utilities are powered by local compiled WebAssembly engines (pdf-lib). When you split ranges or stitch documents together, the modifications are computed locally in your browser sandbox memory. Your sensitive contracts, invoices, and IDs remain confidential, with no data transmitted to cloud storage."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can I convert PDF files to plain text (TXT) offline?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. Our local PDF to text converter parses native text characters and formatting arrays from document pages client-side using pdf.js in browser memory. This allows you to extract raw document contents directly on your machine without server upload latency."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What are the layout constraints when compiling TXT to PDF locally?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Our local compiler reads plain text formatting, handles carriage returns, wraps lines, and scales paragraphs to fit standard A4 paper dimensions with proper margins. PDF styling adjustments are compiled locally to produce clean, readable layouts suitable for printing."
-        }
-      }
-    ]
-  }
-  </script>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -124,159 +25,6 @@
       document.documentElement.setAttribute('data-theme', savedTheme);
     })();
   </script>
-  <!-- Load Libraries securely -->
-  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-  <style>
-    /* PDF Specific CSS adjustments */
-    .tabs-bar {
-      display: flex;
-      border-bottom: 1px solid var(--colors-hairline);
-      gap: var(--spacing-md);
-      margin-bottom: var(--spacing-sm);
-    }
-    .tab-btn {
-      background: none;
-      border: none;
-      color: var(--colors-mute);
-      font-size: 14px;
-      font-weight: 600;
-      padding: var(--spacing-xs) 0;
-      cursor: pointer;
-      position: relative;
-      transition: color 0.2s;
-    }
-    .tab-btn:hover {
-      color: var(--colors-ink);
-    }
-    .tab-btn.active {
-      color: var(--colors-ink);
-    }
-    .tab-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background-color: var(--colors-ink);
-    }
-    .file-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-xs);
-      max-height: 400px;
-      overflow-y: auto;
-      padding-right: var(--spacing-xs);
-    }
-    .file-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--spacing-xs) var(--spacing-sm);
-      background-color: var(--colors-canvas-soft);
-      border: 1px solid var(--colors-hairline);
-      border-radius: 6px;
-      font-size: 13px;
-      transition: all 0.2s;
-    }
-    .file-item:hover {
-      border-color: var(--colors-hairline-strong);
-    }
-    .file-item-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      overflow: hidden;
-    }
-    .file-item-name {
-      font-weight: 600;
-      color: var(--colors-ink);
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      max-width: 250px;
-    }
-    .file-item-meta {
-      font-size: 11px;
-      color: var(--colors-mute);
-    }
-    .file-item-actions {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .icon-btn {
-      background: none;
-      border: none;
-      color: var(--colors-body);
-      cursor: pointer;
-      width: 28px;
-      height: 28px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.2s, color 0.2s;
-    }
-    .icon-btn:hover {
-      background-color: var(--colors-canvas-soft-2);
-      color: var(--colors-ink);
-    }
-    .icon-btn.danger:hover {
-      background-color: var(--colors-error-soft);
-      color: var(--colors-error);
-    }
-    .pages-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: var(--spacing-md);
-      max-height: 480px;
-      overflow-y: auto;
-      padding-bottom: var(--spacing-xs);
-    }
-    .page-thumb-card {
-      background-color: var(--colors-canvas-soft);
-      border: 1px solid var(--colors-hairline);
-      border-radius: 6px;
-      padding: var(--spacing-xs);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      cursor: pointer;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .page-thumb-card.selected {
-      border-color: var(--colors-link);
-      box-shadow: 0 0 0 1px var(--colors-link);
-    }
-    .page-thumb-canvas {
-      width: 100px;
-      height: auto;
-      max-height: 140px;
-      object-fit: contain;
-      background-color: white;
-      border: 1px solid var(--colors-hairline);
-      border-radius: 4px;
-      margin-bottom: var(--spacing-xs);
-    }
-    .page-thumb-number {
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 500;
-      color: var(--colors-body);
-    }
-    .page-thumb-checkbox {
-      position: absolute;
-      top: var(--spacing-xs);
-      right: var(--spacing-xs);
-      accent-color: var(--colors-ink);
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-    }
-  </style>
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="shortcut icon" href="/favicon.ico" />
@@ -285,6 +33,8 @@
   <link rel="manifest" href="/site.webmanifest" />
 </head>
 <body>
+  <div class="hero-glow"></div>
+
   <!-- Header -->
   <header class="nav-bar">
     <a href="/index.html" class="nav-brand">
@@ -334,89 +84,148 @@
   <main class="app-container">
     <div class="page-header">
       <h1 class="page-title">PDF Tools.</h1>
-      <p class="page-description">Merge multiple files, extract selected pages, split ranges, or convert PDF pages to local images and text client-side.</p>
+      <p class="page-description">Merge multiple files, extract selected pages, split ranges, extract text, or convert PDF pages to local images and text client-side securely.</p>
     </div>
 
-    <!-- Mode Selector Tabs -->
-    <div class="tabs-bar">
-      <button id="tabMerge" class="tab-btn active" onclick="switchMode('merge')">Merge PDFs</button>
-      <button id="tabSplit" class="tab-btn" onclick="switchMode('split')">Split/Extract Pages</button>
-    </div>
+    <!-- Category Grid -->
+    <section class="grid-container" style="padding: 0;">
+      <div class="tool-grid">
+        <!-- Card 1: Merge PDF -->
+        <a href="/merge-pdf/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🥞</div>
+            <h3 class="tool-name">Merge PDF</h3>
+            <p class="tool-description">Stitch multiple PDF documents together client-side. Control row sequences and download compiled outputs safely.</p>
+          </div>
+          <div class="tool-action-link">
+            Open Merge PDF
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
 
-    <!-- Error Banner -->
-    <div id="errorBanner" class="error-banner">
-      <span>⚠️</span>
-      <span id="errorMessage"></span>
-    </div>
+        <!-- Card 2: Split PDF -->
+        <a href="/split-pdf/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🥞</div>
+            <h3 class="tool-name">Split PDF</h3>
+            <p class="tool-description">Slice individual pages, select specific page arrays, convert pages to local images, or extract text client-side.</p>
+          </div>
+          <div class="tool-action-link">
+            Open Split PDF
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
 
-    <!-- Progress Indicator -->
-    <div id="progressOverlay" class="progress-overlay">
-      <div class="progress-bar-container">
-        <div id="progressBarFill" class="progress-bar-fill"></div>
+        <!-- Card 3: Word to PDF -->
+        <a href="/word-to-pdf/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">📄</div>
+            <h3 class="tool-name">Word to PDF</h3>
+            <p class="tool-description">Convert Microsoft Word documents (.docx) into standard PDF files client-side locally.</p>
+          </div>
+          <div class="tool-action-link">
+            Open Word to PDF
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 4: Excel to PDF -->
+        <a href="/excel-to-pdf/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">📊</div>
+            <h3 class="tool-name">Excel to PDF</h3>
+            <p class="tool-description">Convert XLS, XLSX, and CSV spreadsheets to PDF directly in your browser without server uploads.</p>
+          </div>
+          <div class="tool-action-link">
+            Open Excel to PDF
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 5: PowerPoint to PDF -->
+        <a href="/pptx-to-pdf/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">📊</div>
+            <h3 class="tool-name">PowerPoint to PDF</h3>
+            <p class="tool-description">Convert PowerPoint slide presentations (.pptx) to PDF sheets offline in your browser.</p>
+          </div>
+          <div class="tool-action-link">
+            Open PowerPoint to PDF
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 6: TXT to PDF -->
+        <a href="/txt-to-pdf/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">📝</div>
+            <h3 class="tool-name">TXT to PDF</h3>
+            <p class="tool-description">Convert raw text documents (.txt) into cleanly formatted PDF files client-side with custom layouts.</p>
+          </div>
+          <div class="tool-action-link">
+            Open TXT to PDF
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 7: PDF to TXT -->
+        <a href="/pdf-to-txt/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">📄</div>
+            <h3 class="tool-name">PDF to TXT</h3>
+            <p class="tool-description">Extract raw textual content from local PDF files and compile text outputs completely offline in browser memory.</p>
+          </div>
+          <div class="tool-action-link">
+            Open PDF to TXT
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 8: PDF to Word -->
+        <a href="/pdf-to-word/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">📄</div>
+            <h3 class="tool-name">PDF to Word</h3>
+            <p class="tool-description">Convert and export PDF page structures back into editable Word (.docx) documents client-side locally.</p>
+          </div>
+          <div class="tool-action-link">
+            Open PDF to Word
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 9: PDF to Excel -->
+        <a href="/pdf-to-excel/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">📊</div>
+            <h3 class="tool-name">PDF to Excel</h3>
+            <p class="tool-description">Extract structured tabular data from PDF files and download as standard Excel (.xlsx) workbooks locally.</p>
+          </div>
+          <div class="tool-action-link">
+            Open PDF to Excel
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
       </div>
-      <div id="progressLabel" class="progress-label">Processing files…</div>
-    </div>
-
-    <!-- Upload Card -->
-    <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
-      <div class="upload-icon">📑</div>
-      <div id="uploadTextPrimary" class="upload-text-primary">Drag and drop PDF files here, or click to browse</div>
-      <div class="upload-text-secondary">All processes run locally. Files never touch any server.</div>
-      <input type="file" id="fileInput" class="file-input" accept=".pdf" multiple>
-    </div>
-
-    <!-- Workspace Panel -->
-    <div id="workspacePanel" class="workspace-panel" style="display: none;">
-      <!-- Left Card: Content Area -->
-      <div class="card panel-card">
-        <div class="card-title">
-          <span id="workspaceTitle" style="font-weight: 600; font-family: 'JetBrains Mono', monospace;">WORKSPACE</span>
-          <button class="button button-danger" style="height: 28px; font-size: 11px; padding: 0 var(--spacing-sm);" onclick="resetWorkspace()">Clear All</button>
-        </div>
-        
-        <!-- Mode 1: Merge File Queue -->
-        <div id="mergeQueueContainer" style="display: none;">
-          <div id="fileItemsList" class="file-list"></div>
-        </div>
-
-        <!-- Mode 2: Split Thumbnail Grid -->
-        <div id="splitGridContainer" style="display: none;">
-          <div style="font-size: 13px; color: var(--colors-body); margin-bottom: var(--spacing-sm);">
-            Select individual pages below to extract or convert:
-          </div>
-          <div id="pagesGrid" class="pages-grid"></div>
-        </div>
-      </div>
-
-      <!-- Right Card: Sidebar Options & Export -->
-      <div class="card panel-card">
-        <div class="card-title" style="font-weight: 600; font-family: 'JetBrains Mono', monospace;">EXPORT CONFIGURATION</div>
-        
-        <!-- Merge controls -->
-        <div id="mergeControls" class="sidebar-controls" style="display: none;">
-          <div class="form-group">
-            <label class="form-label" for="mergeOutputName">Merged Filename</label>
-            <input type="text" id="mergeOutputName" class="form-input" value="merged_document.pdf">
-          </div>
-          <button id="btnExecuteMerge" class="button button-primary" onclick="executePdfMerge()">Merge and Download</button>
-        </div>
-
-        <!-- Split controls -->
-        <div id="splitControls" class="sidebar-controls" style="display: none;">
-          <div class="form-group">
-            <label class="form-label">Selected Pages</label>
-            <div id="selectedCountLabel" style="font-size: 14px; font-weight: 600; color: var(--colors-link);">0 pages selected</div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="splitOutputName">Output Filename</label>
-            <input type="text" id="splitOutputName" class="form-input" value="extracted_pages.pdf">
-          </div>
-          <button id="btnExecuteSplit" class="button button-primary" onclick="executePdfSplit()">Extract to PDF</button>
-          <button id="btnExecuteImages" class="button button-secondary" onclick="executePdfToImages()" style="margin-top: 6px;">Convert Pages to Images</button>
-          <button id="btnExecuteText" class="button button-secondary" onclick="executePdfToText()" style="margin-top: 6px;">Extract Text (TXT)</button>
-        </div>
-      </div>
-    </div>
+    </section>
   </main>
 
   <!-- FAQ Section -->
@@ -457,24 +266,6 @@
         </div>
         <div class="faq-answer">
           PDF split and merge utilities are powered by local compiled WebAssembly engines (pdf-lib). When you split ranges or stitch documents together, the modifications are computed locally in your browser sandbox memory. Your sensitive contracts, invoices, and IDs remain confidential, with no data transmitted to cloud storage.
-        </div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question">
-          Can I convert PDF files to plain text (TXT) offline?
-          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </div>
-        <div class="faq-answer">
-          Yes. Our local PDF to text converter parses native text characters and formatting arrays from document pages client-side using pdf.js in browser memory. This allows you to extract raw document contents directly on your machine without server upload latency.
-        </div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question">
-          What are the layout constraints when compiling TXT to PDF locally?
-          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </div>
-        <div class="faq-answer">
-          Our local compiler reads plain text formatting, handles carriage returns, wraps lines, and scales paragraphs to fit standard A4 paper dimensions with proper margins. PDF styling adjustments are compiled locally to produce clean, readable layouts suitable for printing.
         </div>
       </div>
     </div>
@@ -532,7 +323,7 @@
             <a href="/contact/" class="footer-link">Contact Us</a>
             <a href="/privacy/" class="footer-link">Privacy Policy</a>
             <a href="/terms/" class="footer-link">Terms & Conditions</a>
-            <a href="/sitemap.xml" class="footer-link">Sitemap</a>
+            <a href="/sitemap/" class="footer-link">Sitemap</a>
           </div>
         </div>
       </div>
@@ -546,446 +337,5 @@
   </footer>
 
   <script src="/theme.js"></script>
-  <script>
-    // Initialize PDF.js Worker
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-
-    // Global State
-    let currentMode = 'merge'; // 'merge' | 'split'
-    
-    // Merge State
-    let mergeFiles = []; // Array of { id, name, size, bytes }
-    
-    // Split State
-    let splitFile = null; // { name, size, bytes, numPages }
-    let selectedPages = new Set(); // 1-indexed selected page numbers
-
-    // DOM Elements
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const errorBanner = document.getElementById('errorBanner');
-    const errorMessage = document.getElementById('errorMessage');
-    const progressOverlay = document.getElementById('progressOverlay');
-    const progressBarFill = document.getElementById('progressBarFill');
-    const progressLabel = document.getElementById('progressLabel');
-    const uploadTextPrimary = document.getElementById('uploadTextPrimary');
-
-    const workspacePanel = document.getElementById('workspacePanel');
-    const workspaceTitle = document.getElementById('workspaceTitle');
-    const mergeQueueContainer = document.getElementById('mergeQueueContainer');
-    const splitGridContainer = document.getElementById('splitGridContainer');
-    const fileItemsList = document.getElementById('fileItemsList');
-    const pagesGrid = document.getElementById('pagesGrid');
-
-    const mergeControls = document.getElementById('mergeControls');
-    const splitControls = document.getElementById('splitControls');
-    const selectedCountLabel = document.getElementById('selectedCountLabel');
-    const mergeOutputName = document.getElementById('mergeOutputName');
-    const splitOutputName = document.getElementById('splitOutputName');
-
-    // Tab switching
-    function switchMode(mode) {
-      if (mode === currentMode) return;
-      currentMode = mode;
-      
-      document.getElementById('tabMerge').classList.toggle('active', mode === 'merge');
-      document.getElementById('tabSplit').classList.toggle('active', mode === 'split');
-
-      resetWorkspace();
-
-      if (mode === 'merge') {
-        uploadTextPrimary.textContent = "Drag and drop PDF files here, or click to browse";
-        fileInput.multiple = true;
-      } else {
-        uploadTextPrimary.textContent = "Drag and drop a single PDF file here, or click to browse";
-        fileInput.multiple = false;
-      }
-    }
-
-    // Drag and drop listeners
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.add('dragover');
-      }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.remove('dragover');
-      }, false);
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-      const files = Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.pdf'));
-      if (files.length > 0) {
-        handleFiles(files);
-      }
-    });
-
-    fileInput.addEventListener('change', (e) => {
-      const files = Array.from(e.target.files).filter(f => f.name.endsWith('.pdf'));
-      if (files.length > 0) {
-        handleFiles(files);
-      }
-    });
-
-    function handleFiles(files) {
-      hideError();
-      if (currentMode === 'merge') {
-        processMergeFiles(files);
-      } else {
-        processSplitFile(files[0]);
-      }
-    }
-
-    async function processMergeFiles(files) {
-      showProgress(0, "Reading uploaded PDF documents…");
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        try {
-          const bytes = await readFileAsArrayBuffer(file);
-          // Check if valid PDF by loading via pdf-lib
-          const pdfDoc = await PDFLib.PDFDocument.load(bytes);
-          const numPages = pdfDoc.getPageCount();
-
-          mergeFiles.push({
-            id: Date.now() + Math.random().toString(36).substr(2, 9),
-            name: file.name,
-            size: file.size,
-            bytes: bytes,
-            pages: numPages
-          });
-        } catch (err) {
-          showError(`Failed to load "${file.name}". It might be encrypted or corrupt.`);
-        }
-        showProgress(Math.round(((i + 1) / files.length) * 100), `Reading files…`);
-      }
-      hideProgress();
-      renderMergeQueue();
-      if (mergeFiles.length > 0) {
-        showWorkspace();
-      }
-    }
-
-    async function processSplitFile(file) {
-      showProgress(0, "Loading PDF document…");
-      try {
-        const bytes = await readFileAsArrayBuffer(file);
-        const pdfDoc = await PDFLib.PDFDocument.load(bytes);
-        const numPages = pdfDoc.getPageCount();
-
-        splitFile = {
-          name: file.name,
-          size: file.size,
-          bytes: bytes,
-          numPages: numPages
-        };
-        splitOutputName.value = file.name.replace(/\.[^/.]+$/, "") + '_extracted.pdf';
-        
-        selectedPages.clear();
-        updateSelectedCount();
-
-        renderSplitGrid();
-        showWorkspace();
-      } catch (err) {
-        showError("Failed to parse PDF file. The file might be encrypted or corrupt.");
-        hideProgress();
-      }
-    }
-
-    function readFileAsArrayBuffer(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(reader.error);
-        reader.readAsArrayBuffer(file);
-      });
-    }
-
-    function renderMergeQueue() {
-      workspaceTitle.textContent = "MERGE PDF QUEUE";
-      fileItemsList.innerHTML = '';
-      
-      mergeFiles.forEach((file, index) => {
-        const item = document.createElement('div');
-        item.className = 'file-item';
-        item.innerHTML = `
-          <div class="file-item-info">
-            <span class="file-item-name">${file.name}</span>
-            <span class="file-item-meta">${(file.size / 1024 / 1024).toFixed(2)} MB • ${file.pages} pages</span>
-          </div>
-          <div class="file-item-actions">
-            <button class="icon-btn" onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
-            <button class="icon-btn" onclick="moveItem(${index}, 1)" ${index === mergeFiles.length - 1 ? 'disabled' : ''}>▼</button>
-            <button class="icon-btn danger" onclick="removeMergeFile('${file.id}')">✕</button>
-          </div>
-        `;
-        fileItemsList.appendChild(item);
-      });
-    }
-
-    function moveItem(index, direction) {
-      const target = index + direction;
-      if (target < 0 || target >= mergeFiles.length) return;
-      const temp = mergeFiles[index];
-      mergeFiles[index] = mergeFiles[target];
-      mergeFiles[target] = temp;
-      renderMergeQueue();
-    }
-
-    function removeMergeFile(id) {
-      mergeFiles = mergeFiles.filter(f => f.id !== id);
-      renderMergeQueue();
-      if (mergeFiles.length === 0) {
-        resetWorkspace();
-      }
-    }
-
-    async function renderSplitGrid() {
-      workspaceTitle.textContent = `SPLIT PDF: ${splitFile.name}`;
-      pagesGrid.innerHTML = '';
-      
-      showProgress(10, `Generating thumbnails…`);
-
-      try {
-        const loadingTask = pdfjsLib.getDocument({ data: splitFile.bytes });
-        const pdf = await loadingTask.promise;
-
-        for (let i = 1; i <= pdf.numPages; i++) {
-          const page = await pdf.getPage(i);
-          const viewport = page.getViewport({ scale: 0.25 });
-          
-          const canvas = document.createElement('canvas');
-          canvas.className = 'page-thumb-canvas';
-          const context = canvas.getContext('2d');
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
-
-          await page.render({ canvasContext: context, viewport: viewport }).promise;
-
-          const card = document.createElement('div');
-          card.className = 'page-thumb-card';
-          card.innerHTML = `
-            <input type="checkbox" class="page-thumb-checkbox" id="page-chk-${i}" onchange="togglePageSelect(${i})">
-            <span class="page-thumb-number">Page ${i}</span>
-          `;
-          card.insertBefore(canvas, card.firstChild);
-          card.onclick = (e) => {
-            if (e.target.className !== 'page-thumb-checkbox') {
-              const chk = card.querySelector('.page-thumb-checkbox');
-              chk.checked = !chk.checked;
-              togglePageSelect(i);
-            }
-          };
-          pagesGrid.appendChild(card);
-
-          const pct = Math.round(10 + (i / pdf.numPages) * 90);
-          showProgress(pct, `Loading preview page ${i} of ${pdf.numPages}…`);
-        }
-      } catch (err) {
-        console.error(err);
-        showError("Failed to render PDF page previews.");
-      }
-      hideProgress();
-    }
-
-    function togglePageSelect(pageNumber) {
-      const card = pagesGrid.children[pageNumber - 1];
-      const chk = card.querySelector('.page-thumb-checkbox');
-      
-      if (chk.checked) {
-        selectedPages.add(pageNumber);
-        card.classList.add('selected');
-      } else {
-        selectedPages.delete(pageNumber);
-        card.classList.remove('selected');
-      }
-      updateSelectedCount();
-    }
-
-    function updateSelectedCount() {
-      selectedCountLabel.textContent = `${selectedPages.size} pages selected`;
-    }
-
-    function showWorkspace() {
-      dropZone.style.display = 'none';
-      workspacePanel.style.display = 'grid';
-
-      if (currentMode === 'merge') {
-        mergeQueueContainer.style.display = 'block';
-        splitGridContainer.style.display = 'none';
-        mergeControls.style.display = 'flex';
-        splitControls.style.display = 'none';
-      } else {
-        mergeQueueContainer.style.display = 'none';
-        splitGridContainer.style.display = 'block';
-        mergeControls.style.display = 'none';
-        splitControls.style.display = 'flex';
-      }
-    }
-
-    function resetWorkspace() {
-      mergeFiles = [];
-      splitFile = null;
-      selectedPages.clear();
-      
-      fileInput.value = '';
-      pagesGrid.innerHTML = '';
-      fileItemsList.innerHTML = '';
-      
-      workspacePanel.style.display = 'none';
-      dropZone.style.display = 'flex';
-      hideError();
-    }
-
-    // Execute PDF Merge
-    async function executePdfMerge() {
-      if (mergeFiles.length < 2) {
-        showError("Please upload at least 2 PDF files to merge.");
-        return;
-      }
-      showProgress(10, "Merging documents client-side…");
-      try {
-        const mergedPdf = await PDFLib.PDFDocument.create();
-        for (let i = 0; i < mergeFiles.length; i++) {
-          const file = mergeFiles[i];
-          const doc = await PDFLib.PDFDocument.load(file.bytes);
-          const copiedPages = await mergedPdf.copyPages(doc, doc.getPageIndices());
-          copiedPages.forEach(page => mergedPdf.addPage(page));
-        }
-
-        const mergedBytes = await mergedPdf.save();
-        let outputName = mergeOutputName.value.trim() || 'merged_document.pdf';
-        if (!outputName.endsWith('.pdf')) outputName += '.pdf';
-
-        downloadBlob(new Blob([mergedBytes], { type: "application/pdf" }), outputName);
-      } catch (err) {
-        showError("Failed to compile PDF structure.");
-        console.error(err);
-      }
-      hideProgress();
-    }
-
-    // Execute PDF Split/Extract
-    async function executePdfSplit() {
-      if (selectedPages.size === 0) {
-        showError("Please select at least 1 page to extract.");
-        return;
-      }
-      showProgress(20, "Extracting pages client-side…");
-      try {
-        const sourcePdf = await PDFLib.PDFDocument.load(splitFile.bytes);
-        const subPdf = await PDFLib.PDFDocument.create();
-        
-        // Convert to sorted array
-        const sortedIndices = Array.from(selectedPages).sort((a, b) => a - b).map(idx => idx - 1);
-        
-        const copiedPages = await subPdf.copyPages(sourcePdf, sortedIndices);
-        copiedPages.forEach(page => subPdf.addPage(page));
-
-        const subBytes = await subPdf.save();
-        let outputName = splitOutputName.value.trim() || 'extracted_pages.pdf';
-        if (!outputName.endsWith('.pdf')) outputName += '.pdf';
-
-        downloadBlob(new Blob([subBytes], { type: "application/pdf" }), outputName);
-      } catch (err) {
-        showError("Failed to split PDF structure.");
-      }
-      hideProgress();
-    }
-
-    // Convert PDF Pages to Images
-    async function executePdfToImages() {
-      if (selectedPages.size === 0) {
-        showError("Please select at least 1 page to render to image.");
-        return;
-      }
-      showProgress(10, "Initializing rendering…");
-      try {
-        const loadingTask = pdfjsLib.getDocument({ data: splitFile.bytes });
-        const pdf = await loadingTask.promise;
-        
-        const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
-        
-        for (let i = 0; i < sortedPages.length; i++) {
-          const pageNum = sortedPages[i];
-          showProgress(Math.round(((i + 1) / sortedPages.length) * 100), `Rendering page ${pageNum}…`);
-          
-          const page = await pdf.getPage(pageNum);
-          const viewport = page.getViewport({ scale: 2.0 }); // High res render
-          
-          const canvas = document.createElement('canvas');
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
-          const context = canvas.getContext('2d');
-
-          await page.render({ canvasContext: context, viewport: viewport }).promise;
-          
-          canvas.toBlob(blob => {
-            downloadBlob(blob, `${splitFile.name.replace(/\.[^/.]+$/, "")}_page_${pageNum}.png`);
-          }, 'image/png');
-        }
-      } catch (err) {
-        showError("Failed to convert PDF pages to images.");
-      }
-      hideProgress();
-    }
-
-    // Extract PDF Text to TXT file
-    async function executePdfToText() {
-      if (selectedPages.size === 0) {
-        showError("Please select at least 1 page to extract text.");
-        return;
-      }
-      showProgress(10, "Extracting text contents…");
-      try {
-        const loadingTask = pdfjsLib.getDocument({ data: splitFile.bytes });
-        const pdf = await loadingTask.promise;
-        
-        const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
-        let extractedText = "";
-
-        for (let i = 0; i < sortedPages.length; i++) {
-          const pageNum = sortedPages[i];
-          const page = await pdf.getPage(pageNum);
-          const textContent = await page.getTextContent();
-          const pageText = textContent.items.map(item => item.str).join(" ");
-          
-          extractedText += `--- Page ${pageNum} ---\n${pageText}\n\n`;
-          showProgress(Math.round(((i + 1) / sortedPages.length) * 100), `Reading page ${pageNum}…`);
-        }
-
-        const blob = new Blob([extractedText], { type: "text/plain;charset=utf-8;" });
-        downloadBlob(blob, `${splitFile.name.replace(/\.[^/.]+$/, "")}_extracted_text.txt`);
-      } catch (err) {
-        showError("Failed to extract text from PDF.");
-      }
-      hideProgress();
-    }
-
-    function showProgress(percentage, label) {
-      progressOverlay.style.display = 'flex';
-      progressBarFill.style.width = `${percentage}%`;
-      progressLabel.textContent = label;
-    }
-
-    function hideProgress() {
-      progressOverlay.style.display = 'none';
-    }
-
-    function showError(message) {
-      errorMessage.textContent = message;
-      errorBanner.style.display = 'flex';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function hideError() {
-      errorBanner.style.display = 'none';
-    }
-  </script>
 </body>
 </html>

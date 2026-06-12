@@ -76,7 +76,14 @@ const catInfo = categoriesMap[category] || {
   seoTitle: 'Private Offline Browser Utilities | ConvertOcean',
   seoDescription: 'Secure browser-based file converter utilities. Process everything locally and offline. No server uploads.'
 };
-const filteredTools = tools.filter(t => t.categorySlug === category);
+let filteredTools = tools.filter(t => t.categorySlug === category);
+if (category === 'pdf-tools') {
+  filteredTools = tools.filter(t => 
+    t.categorySlug === 'pdf-tools' ||
+    t.slug.toLowerCase().includes('pdf') || 
+    t.name.toLowerCase().includes('pdf')
+  );
+}
 
 const title = catInfo.seoTitle;
 const description = catInfo.seoDescription;

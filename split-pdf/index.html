@@ -143,8 +143,10 @@
         <div id="pagesGrid" class="pages-grid" style="margin-bottom: var(--spacing-md);"></div>
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
           <input type="text" id="splitOutputName" class="form-input" style="max-width: 300px;" value="extracted_pages.pdf">
-          <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
+          <div class="button-group" style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
             <button class="button button-primary" onclick="splitAndDownload()">Extract Selected Pages</button>
+            <button class="button button-secondary" onclick="executePdfToImages()">Convert to Images</button>
+            <button class="button button-secondary" onclick="executePdfToText()">Extract Text (TXT)</button>
             <button class="button button-danger" onclick="resetFile()">Clear</button>
           </div>
         </div>
@@ -357,7 +359,7 @@
             <a href="/contact/" class="footer-link">Contact Us</a>
             <a href="/privacy/" class="footer-link">Privacy Policy</a>
             <a href="/terms/" class="footer-link">Terms & Conditions</a>
-            <a href="/sitemap.xml" class="footer-link">Sitemap</a>
+            <a href="/sitemap/" class="footer-link">Sitemap</a>
           </div>
         </div>
       </div>
@@ -529,6 +531,75 @@
         document.getElementById('splitWorkspace').style.display = 'none';
         document.getElementById('dropZone').style.display = 'flex';
         document.getElementById('fileInput').value = '';
+        hideProgress();
+      }
+
+      // Convert PDF Pages to Images
+      async function executePdfToImages() {
+        if (selectedPages.size === 0) {
+          showError("Please select at least 1 page to render to image.");
+          return;
+        }
+        showProgress(10, "Initializing rendering…");
+        try {
+          const loadingTask = pdfjsLib.getDocument({ data: splitFile.bytes });
+          const pdf = await loadingTask.promise;
+          
+          const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
+          
+          for (let i = 0; i < sortedPages.length; i++) {
+            const pageNum = sortedPages[i];
+            showProgress(Math.round(((i + 1) / sortedPages.length) * 100), `Rendering page ${pageNum}…`);
+            
+            const page = await pdf.getPage(pageNum);
+            const viewport = page.getViewport({ scale: 2.0 }); // High res render
+            
+            const canvas = document.createElement('canvas');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            const context = canvas.getContext('2d');
+
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+            
+            canvas.toBlob(blob => {
+              downloadBlob(blob, `${splitFile.name.replace(/\.[^/.]+$/, "")}_page_${pageNum}.png`);
+            }, 'image/png');
+          }
+        } catch (err) {
+          showError("Failed to convert PDF pages to images.");
+        }
+        hideProgress();
+      }
+
+      // Extract PDF Text to TXT file
+      async function executePdfToText() {
+        if (selectedPages.size === 0) {
+          showError("Please select at least 1 page to extract text.");
+          return;
+        }
+        showProgress(10, "Extracting text contents…");
+        try {
+          const loadingTask = pdfjsLib.getDocument({ data: splitFile.bytes });
+          const pdf = await loadingTask.promise;
+          
+          const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
+          let extractedText = "";
+
+          for (let i = 0; i < sortedPages.length; i++) {
+            const pageNum = sortedPages[i];
+            const page = await pdf.getPage(pageNum);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items.map(item => item.str).join(" ");
+            
+            extractedText += `--- Page ${pageNum} ---\n${pageText}\n\n`;
+            showProgress(Math.round(((i + 1) / sortedPages.length) * 100), `Reading page ${pageNum}…`);
+          }
+
+          const blob = new Blob([extractedText], { type: "text/plain;charset=utf-8;" });
+          downloadBlob(blob, `${splitFile.name.replace(/\.[^/.]+$/, "")}_extracted_text.txt`);
+        } catch (err) {
+          showError("Failed to extract text from PDF.");
+        }
         hideProgress();
       }
     
