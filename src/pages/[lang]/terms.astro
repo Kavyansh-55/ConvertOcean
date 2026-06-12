@@ -1,0 +1,14 @@
+---
+import TermsPage from '../terms.astro';
+
+export function getStaticPaths() {
+  const locales = [
+    'hi', 'es', 'fr', 'de', 'pt', 'it', 'nl', 'ru', 'tr', 'pl', 'uk', 'ar', 'fa', 'ur', 'bn', 'pa', 'ta', 'te', 'mr', 'gu', 'zh', 'ja', 'ko', 'th', 'vi', 'id', 'ms', 'fil'
+  ];
+  return locales.map(lang => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+---
+
+<TermsPage lang={lang} />

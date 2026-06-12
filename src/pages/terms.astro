@@ -1,0 +1,105 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const { lang = 'en' } = Astro.props;
+
+const title = "Terms & Conditions | ConvertOcean Secure File Utility Platform";
+const description = "Read our Terms and Conditions to understand the rules, licenses, and disclaimers for using the free client-side file tools on ConvertOcean.";
+---
+
+<Layout title={title} description={description} lang={lang} category="Terms & Conditions" categorySlug="terms">
+  <style>
+    .terms-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .terms-lead {
+      font-size: 20px;
+      color: var(--colors-body);
+      line-height: 1.6;
+      margin-bottom: var(--spacing-xl);
+    }
+    .terms-section {
+      margin-bottom: var(--spacing-xl);
+    }
+    .terms-subtitle {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.6px;
+      margin-bottom: var(--spacing-sm);
+      color: var(--colors-ink);
+    }
+    .terms-text {
+      font-size: 15px;
+      color: var(--colors-body);
+      line-height: 1.7;
+      margin-bottom: var(--spacing-md);
+    }
+    .bullet-list {
+      margin-left: 24px;
+      margin-bottom: var(--spacing-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+      color: var(--colors-body);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+  </style>
+
+  <main class="app-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl); position: relative; z-index: 1;">
+    <div class="terms-container">
+      <div class="page-header">
+        <h1 class="page-title">Terms & Conditions.</h1>
+        <p class="terms-lead">Please review our terms of use. By accessing and using our browser-based utility tools, you agree to these conditions.</p>
+      </div>
+
+      <div class="terms-section">
+        <h2 class="terms-subtitle">1. Free & Open Agreement</h2>
+        <p class="terms-text">
+          ConvertOcean provides file conversion, compression, splitting, and rendering tools 100% free of charge. There are no monthly subscriptions, usage caps, paywalls, or accounts. You are granted a personal, non-transferable, and non-exclusive license to use these tools for personal or corporate business tasks.
+        </p>
+      </div>
+
+      <div class="terms-section">
+        <h2 class="terms-subtitle">2. Local Computing Resources</h2>
+        <p class="terms-text">
+          Our utilities execute programs directly in your browser. By uploading a file, you acknowledge and authorize ConvertOcean to utilize your local device's computing resources (such as CPU, RAM, and browser sandbox memory) to complete the formatting and conversion operations.
+        </p>
+      </div>
+
+      <div class="terms-section">
+        <h2 class="terms-subtitle">3. Data Sovereignty & Security</h2>
+        <p class="terms-text">
+          Because ConvertOcean runs 100% client-side, we never upload your files, store them on servers, or inspect their contents. You retain complete ownership, control, and responsibility for all documents, sheets, and images processed on this platform.
+        </p>
+      </div>
+
+      <div class="terms-section">
+        <h2 class="terms-subtitle">4. Disclaimer of Warranties</h2>
+        <p class="terms-text">
+          ConvertOcean and its tools are provided **"as is" and "as available"**, without warranty of any kind, express or implied. Because conversions run entirely within your local browser sandbox memory, performance may vary depending on your hardware, browser settings, or system resources. We do not warrant that:
+        </p>
+        <ul class="bullet-list">
+          <li>The utilities will convert every file extension or layout structure perfectly.</li>
+          <li>Your browser tab will not experience crash limits on extremely large datasets.</li>
+          <li>The site will run uninterrupted in all configurations or legacy browser versions.</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <h2 class="terms-subtitle">5. Limitation of Liability</h2>
+        <p class="terms-text">
+          In no event shall ConvertOcean, its developers, or its contributors be liable for any damages (including, without limitation, damages for loss of data, business disruption, or hardware wear) arising out of the use or inability to use the local utilities.
+        </p>
+      </div>
+
+      <div class="terms-section">
+        <h2 class="terms-subtitle">6. Modifications to Terms</h2>
+        <p class="terms-text">
+          We reserves the right to revise these terms of service at any time without notice. By using this website you are agreeing to be bound by the then current version of these Terms & Conditions.
+        </p>
+      </div>
+    </div>
+  </main>
+</Layout>
