@@ -57,6 +57,171 @@ const description = "Free file tools that run directly in your browser. Convert,
       margin-bottom: var(--spacing-2xl);
     }
 
+    /* Premium Autocomplete Search Bar */
+    .search-container {
+      position: relative;
+      max-width: 600px;
+      width: 100%;
+      margin: var(--spacing-xl) auto;
+      z-index: 10;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      border-radius: var(--rounded-lg);
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .search-input-wrapper:focus-within {
+      border-color: #00dfd8;
+      box-shadow: 0 0 0 3px rgba(0, 223, 216, 0.15), 0 10px 40px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    [data-theme="dark"] .search-input-wrapper {
+      background-color: rgba(18, 18, 18, 0.7);
+      backdrop-filter: blur(12px);
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    [data-theme="dark"] .search-input-wrapper:focus-within {
+      border-color: #00dfd8;
+      box-shadow: 0 0 0 3px rgba(0, 223, 216, 0.25), 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: var(--spacing-md);
+      color: var(--colors-mute);
+      pointer-events: none;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 16px var(--spacing-md) 16px 48px;
+      font-size: 16px;
+      border: none;
+      background: transparent;
+      color: var(--colors-ink);
+      outline: none;
+      box-shadow: none !important;
+    }
+
+    .search-kbd {
+      position: absolute;
+      right: var(--spacing-md);
+      background: var(--colors-canvas-soft-2);
+      border: 1px solid var(--colors-hairline);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-family: inherit;
+      color: var(--colors-mute);
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .search-input-wrapper:focus-within .search-kbd {
+      opacity: 0;
+    }
+
+    [data-theme="dark"] .search-kbd {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Results Dropdown */
+    .search-results-panel {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      max-height: 380px;
+      overflow-y: auto;
+      box-shadow: 0 12px 50px rgba(0, 0, 0, 0.12);
+      display: none;
+      flex-direction: column;
+      z-index: 999;
+      padding: var(--spacing-xs) 0;
+    }
+
+    [data-theme="dark"] .search-results-panel {
+      background-color: #121212;
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 12px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-sm) var(--spacing-md);
+      text-decoration: none;
+      color: var(--colors-ink);
+      transition: all 0.2s ease;
+      margin: 2px var(--spacing-xs);
+      border-radius: var(--rounded-sm);
+    }
+
+    .search-result-item:hover, .search-result-item.selected {
+      background-color: var(--colors-canvas-soft-2);
+      transform: translateX(4px);
+    }
+
+    [data-theme="dark"] .search-result-item:hover, [data-theme="dark"] .search-result-item.selected {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .search-result-icon {
+      font-size: 20px;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background-color: var(--colors-canvas-soft-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid var(--colors-hairline);
+    }
+
+    [data-theme="dark"] .search-result-icon {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .search-result-info {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .search-result-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--colors-ink);
+    }
+
+    .search-result-desc {
+      font-size: 11.5px;
+      color: var(--colors-mute);
+      margin-top: 1px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 440px;
+    }
+
     .badge-container {
       display: flex;
       justify-content: center;
@@ -226,6 +391,16 @@ const description = "Free file tools that run directly in your browser. Convert,
       <h1 class="hero-title">Free File Tools That Run In Your Browser</h1>
       <p class="hero-subtitle">Convert, compress, merge, split and process files directly on your device. No uploads. No accounts. No tracking.</p>
       
+      <!-- Homepage Search bar -->
+      <div class="search-container" id="searchContainer" data-tools={JSON.stringify(tools.map(t => ({ name: t.name, slug: t.slug, icon: t.icon, desc: t.description })))}>
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="Search converter, e.g., pdf to word, png to jpg..." aria-label="Search all tools" autocomplete="off" />
+          <kbd class="search-kbd">/</kbd>
+        </div>
+        <div id="searchResults" class="search-results-panel"></div>
+      </div>
+
       <div class="hero-cta-group">
         <a href="#categories" class="button button-primary">Browse Tools</a>
         <a href={relLink('/privacy-first/')} class="button button-secondary">How Privacy Works</a>
@@ -409,15 +584,15 @@ const description = "Free file tools that run directly in your browser. Convert,
           </div>
         </a>
 
-        <!-- Card 6: OCR Tools -->
-        <a href={relLink('/ocr-tools/')} class="tool-card">
+        <!-- Card 6: Image to Text -->
+        <a href={relLink('/image-to-text/')} class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">🔍</div>
-            <h3 class="tool-name">OCR Tools</h3>
-            <p class="tool-description">Private Image-to-Text OCR engine. Extract text from scans, screenshots, receipts, and documents locally without server uploads.</p>
+            <h3 class="tool-name">Image to Text</h3>
+            <p class="tool-description">Private Image-to-Text OCR engine. Extract text from screenshots, scans, receipts, and images locally in your browser memory.</p>
           </div>
           <div class="tool-action-link">
-            Open OCR Tools
+            Open Image to Text
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -502,4 +677,134 @@ const description = "Free file tools that run directly in your browser. Convert,
       </div>
     </div>
   </section>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchContainer = document.getElementById('searchContainer');
+      if (!searchContainer) return;
+      
+      const searchInput = document.getElementById('searchInput');
+      const searchResults = document.getElementById('searchResults');
+      if (!searchInput || !searchResults) return;
+
+      const tools = JSON.parse(searchContainer.getAttribute('data-tools') || '[]');
+
+      let selectedIndex = -1;
+
+      function renderResults(filteredTools) {
+        searchResults.innerHTML = '';
+        if (filteredTools.length === 0) {
+          searchResults.style.display = 'none';
+          return;
+        }
+
+        // Determine current locale from URL path
+        let lang = 'en';
+        const pathParts = window.location.pathname.split('/');
+        if (pathParts[1] && pathParts[1].length === 2) {
+          lang = pathParts[1];
+        }
+
+        filteredTools.forEach((tool, index) => {
+          const item = document.createElement('a');
+          item.href = lang === 'en' ? `/${tool.slug}/` : `/${lang}/${tool.slug}/`;
+          item.className = 'search-result-item';
+          if (index === selectedIndex) {
+            item.classList.add('selected');
+          }
+
+          item.innerHTML = `
+            <div class="search-result-icon">${tool.icon}</div>
+            <div class="search-result-info">
+              <span class="search-result-name">${tool.name}</span>
+              <span class="search-result-desc">${tool.desc}</span>
+            </div>
+          `;
+
+          item.addEventListener('click', () => {
+            searchResults.style.display = 'none';
+            searchInput.value = '';
+          });
+
+          searchResults.appendChild(item);
+        });
+
+        searchResults.style.display = 'flex';
+      }
+
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase().trim();
+        selectedIndex = -1;
+        if (!query) {
+          searchResults.style.display = 'none';
+          return;
+        }
+
+        const filtered = tools.filter((tool) => 
+          tool.name.toLowerCase().includes(query) || 
+          tool.slug.toLowerCase().includes(query) || 
+          tool.desc.toLowerCase().includes(query)
+        );
+
+        renderResults(filtered.slice(0, 6));
+      });
+
+      searchInput.addEventListener('keydown', (e) => {
+        const items = searchResults.querySelectorAll('.search-result-item');
+        if (items.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = (selectedIndex + 1) % items.length;
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+          updateSelection(items);
+        } else if (e.key === 'Enter') {
+          if (selectedIndex >= 0 && selectedIndex < items.length) {
+            e.preventDefault();
+            items[selectedIndex].click();
+          }
+        } else if (e.key === 'Escape') {
+          searchResults.style.display = 'none';
+          searchInput.blur();
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach((item, index) => {
+          if (index === selectedIndex) {
+            item.classList.add('selected');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('selected');
+          }
+        });
+      }
+
+      document.addEventListener('click', (e) => {
+        if (!searchContainer.contains(e.target)) {
+          searchResults.style.display = 'none';
+        }
+      });
+
+      searchInput.addEventListener('focus', () => {
+        if (searchInput.value.trim()) {
+          searchInput.dispatchEvent(new Event('input'));
+        }
+      });
+
+      // Keyboard shortcut listener to focus search input
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          searchInput.focus();
+        } else if (e.key === '/' && document.activeElement !== searchInput) {
+          e.preventDefault();
+          searchInput.focus();
+        }
+      });
+    });
+  </script>
 </Layout>

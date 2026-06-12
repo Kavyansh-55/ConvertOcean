@@ -106,6 +106,6 @@ function downloadBlob(blob, filename, mimeType) {
     setTimeout(() => {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
-    }, 100);
+    }, 60000);
   }
 }
