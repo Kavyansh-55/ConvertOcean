@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
 
 export function getStaticPaths() {
-  const categories = ['pdf-tools', 'image-tools', 'document-tools', 'spreadsheet-tools', 'ocr-tools', 'business-tools'];
+  const categories = ['pdf-tools', 'image-tools', 'document-tools', 'excel-converter', 'ocr-tools', 'business-tools'];
   return categories.map(category => ({ params: { category } }));
 }
 
@@ -33,9 +33,9 @@ const categoriesMap: Record<string, { name: string; description: string; icon: s
     description: 'Process raw text files, compile document PDFs, and extract contents client-side.',
     icon: '📝'
   },
-  'spreadsheet-tools': {
-    name: 'Spreadsheet Tools',
-    description: 'Inspect CSV and Excel sheets client-side. Convert CSV to JSON, JSON to CSV, XLSX to CSV, or Excel to PDF offline.',
+  'excel-converter': {
+    name: 'Excel Converter',
+    description: 'Inspect, convert, and format Excel workbooks and CSV sheets offline. Convert Excel to PDF, CSV to JSON, JSON to CSV, XLSX to CSV, or CSV to XLSX offline.',
     icon: '📊'
   },
   'ocr-tools': {

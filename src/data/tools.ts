@@ -21,8 +21,8 @@ export const tools: ToolData[] = [
     headline: 'Excel to PDF.',
     subtitle: 'Convert Excel spreadsheets (.xlsx, .xls, .csv) to print-ready PDF files locally on your device.',
     icon: '📊',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' },
@@ -38,8 +38,8 @@ export const tools: ToolData[] = [
     headline: 'CSV to JSON.',
     subtitle: 'Upload any comma-separated (.csv) spreadsheet file and download its structured JSON equivalent client-side.',
     icon: '⚙️',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' },
@@ -56,8 +56,8 @@ export const tools: ToolData[] = [
     headline: 'JSON to CSV.',
     subtitle: 'Convert JSON arrays or objects into standard comma-separated spreadsheets (.csv) locally.',
     icon: '⚙️',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' },
@@ -73,8 +73,8 @@ export const tools: ToolData[] = [
     headline: 'XLSX to CSV.',
     subtitle: 'Upload Excel workbook spreadsheets (.xlsx, .xls) and download them parsed as clean CSV files client-side.',
     icon: '📊',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' },
@@ -90,8 +90,8 @@ export const tools: ToolData[] = [
     headline: 'CSV to XLSX.',
     subtitle: 'Compile flat CSV documents into fully compatible Microsoft Excel spreadsheets (.xlsx) locally.',
     icon: '📊',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' }
@@ -106,8 +106,8 @@ export const tools: ToolData[] = [
     headline: 'JSON to XLSX.',
     subtitle: 'Upload structured JSON data arrays and compile them into formatted Microsoft Excel worksheets (.xlsx).',
     icon: '📊',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' }
@@ -122,8 +122,8 @@ export const tools: ToolData[] = [
     headline: 'XML to JSON.',
     subtitle: 'Transform nested XML code structures into easy-to-read JSON datasets instantly.',
     icon: '⚙️',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' }
@@ -301,8 +301,8 @@ export const tools: ToolData[] = [
     headline: 'XLS to PDF.',
     subtitle: 'Convert XLS Excel sheets directly to clean PDF sheets client-side.',
     icon: '📊',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
@@ -317,8 +317,8 @@ export const tools: ToolData[] = [
     headline: 'CSV to PDF.',
     subtitle: 'Compile flat CSV documents into printable PDF formats locally on your device.',
     icon: '📊',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
@@ -333,8 +333,8 @@ export const tools: ToolData[] = [
     headline: 'XLSX to JSON.',
     subtitle: 'Upload modern Excel workbooks (.xlsx) and compile them into clean JSON text client-side.',
     icon: '⚙️',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
@@ -349,8 +349,8 @@ export const tools: ToolData[] = [
     headline: 'XLS to JSON.',
     subtitle: 'Transform legacy Excel sheets (.xls) into standard JSON objects arrays locally.',
     icon: '⚙️',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
@@ -365,8 +365,8 @@ export const tools: ToolData[] = [
     headline: 'XLS to CSV.',
     subtitle: 'Compile XLS spreadsheets into standard comma-separated text (.csv) locally.',
     icon: '📊',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
@@ -381,8 +381,8 @@ export const tools: ToolData[] = [
     headline: 'XML to CSV.',
     subtitle: 'Transform nested XML data structures into simple comma-separated tables client-side.',
     icon: '⚙️',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
@@ -397,8 +397,8 @@ export const tools: ToolData[] = [
     headline: 'XML to XLSX.',
     subtitle: 'Compile nested XML documents into standard Excel spreadsheets (.xlsx) locally.',
     icon: '📊',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
@@ -557,8 +557,8 @@ export const tools: ToolData[] = [
     headline: 'PDF to Excel.',
     subtitle: 'Extract tables and aligned cell grids from PDF files and download them as Excel workbooks locally.',
     icon: '📊',
-    category: 'Spreadsheet Tools',
-    categorySlug: 'spreadsheet-tools',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. Once loaded, the extraction and Excel compiler run 100% offline.' }

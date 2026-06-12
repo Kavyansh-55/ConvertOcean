@@ -339,43 +339,6 @@ const description = "Free file tools that run directly in your browser. Convert,
       }
     }
 
-    .popular-card {
-      background-color: var(--colors-canvas);
-      border: 1px solid var(--colors-hairline);
-      border-radius: var(--rounded-md);
-      padding: var(--spacing-md);
-      text-decoration: none;
-      color: var(--colors-ink);
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-sm);
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .popular-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--colors-hairline-strong);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-    }
-
-    .popular-card-icon {
-      font-size: 20px;
-      width: 36px;
-      height: 36px;
-      background-color: var(--colors-canvas-soft-2);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .popular-card-name {
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: -0.2px;
-    }
-
     .section-divider {
       max-width: 1200px;
       margin: 0 auto var(--spacing-3xl);
@@ -569,15 +532,15 @@ const description = "Free file tools that run directly in your browser. Convert,
           </div>
         </a>
 
-        <!-- Card 5: Spreadsheet Tools -->
-        <a href={relLink('/spreadsheet-tools/')} class="tool-card">
+        <!-- Card 5: Excel Converter -->
+        <a href={relLink('/excel-converter/')} class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">📊</div>
-            <h3 class="tool-name">Spreadsheet Tools</h3>
+            <h3 class="tool-name">Excel Converter</h3>
             <p class="tool-description">Inspect CSV and Excel sheets client-side. Convert CSV to JSON, JSON to Excel, XLSX to CSV, or compile reports to PDF offline.</p>
           </div>
           <div class="tool-action-link">
-            Open Spreadsheet Tools
+            Open Excel Converter
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
