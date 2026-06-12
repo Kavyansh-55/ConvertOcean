@@ -124,133 +124,6 @@
       document.documentElement.setAttribute('data-theme', savedTheme);
     })();
   </script>
-  <!-- Load JSZip for batch folders downloads -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <style>
-    .workspace-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--spacing-lg);
-    }
-    @media (max-width: 900px) {
-      .workspace-layout {
-        grid-template-columns: 1fr;
-      }
-    }
-    .slider-input {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 6px;
-      border-radius: 9999px;
-      background: var(--colors-canvas-soft-2);
-      outline: none;
-    }
-    .slider-input::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--colors-ink);
-      cursor: pointer;
-      border: 2px solid var(--colors-canvas);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-    }
-    .metrics-container {
-      background-color: var(--colors-canvas-soft-2);
-      border-radius: 8px;
-      padding: var(--spacing-md);
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--spacing-sm);
-      text-align: center;
-    }
-    .metric-box {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .metric-label {
-      font-size: 11px;
-      color: var(--colors-mute);
-      text-transform: uppercase;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .metric-value {
-      font-size: 16px;
-      font-weight: 600;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .metric-value.savings {
-      color: var(--colors-success);
-    }
-    .preview-display-wrapper {
-      flex: 1;
-      border: 1px dashed var(--colors-hairline);
-      border-radius: 8px;
-      background-color: #1e1e1e;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
-      margin-top: var(--spacing-md);
-      min-height: 250px;
-    }
-    .preview-image {
-      max-width: 100%;
-      max-height: 350px;
-      object-fit: contain;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      display: none;
-    }
-    .empty-preview {
-      color: var(--colors-mute);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--spacing-xs);
-    }
-    .batch-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--spacing-sm);
-      background-color: var(--colors-canvas-soft-2);
-      border: 1px solid var(--colors-hairline);
-      border-radius: 6px;
-      font-size: 12px;
-      transition: all 0.2s;
-    }
-    .batch-item:hover {
-      border-color: var(--colors-hairline-strong);
-    }
-    .batch-item-name {
-      font-weight: 600;
-      color: var(--colors-ink);
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      max-width: 180px;
-    }
-    .batch-item-size {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--colors-body);
-      font-size: 11px;
-    }
-    .batch-item-saving {
-      color: var(--colors-success);
-      font-weight: 600;
-    }
-    .batch-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-xs);
-      max-height: 300px;
-      overflow-y: auto;
-    }
-  </style>
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="shortcut icon" href="/favicon.ico" />
@@ -259,6 +132,8 @@
   <link rel="manifest" href="/site.webmanifest" />
 </head>
 <body>
+  <div class="hero-glow"></div>
+
   <!-- Header -->
   <header class="nav-bar">
     <a href="/index.html" class="nav-brand">
@@ -308,102 +183,163 @@
   <main class="app-container">
     <div class="page-header">
       <h1 class="page-title">Image Tools.</h1>
-      <p class="page-description">Convert PNG, JPG, WebP, SVG, and BMP formats instantly. Compress, resize, and optimize file sizes client-side in seconds.</p>
+      <p class="page-description">Convert between PNG, JPG, WebP, and SVG formats client-side instantly. Resize, compress, and process graphics 100% locally on your device with zero server uploads.</p>
     </div>
 
-    <!-- Error Banner -->
-    <div id="errorBanner" class="error-banner">
-      <span>⚠️</span>
-      <span id="errorMessage"></span>
-    </div>
-
-    <!-- Upload Card -->
-    <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
-      <div class="upload-icon">🖼️</div>
-      <div class="upload-text-primary">Drag and drop images here, or click to browse</div>
-      <div class="upload-text-secondary">Supports PNG, JPG, WebP, BMP, and SVG (Max size: 20MB)</div>
-      <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
-    </div>
-
-    <!-- Workspace Layout (hidden by default) -->
-    <div id="workspaceLayout" class="workspace-layout" style="display: none;">
-      <!-- Left Column: Settings and stats -->
-      <div class="card panel-card">
-        <h3 class="panel-section-title">OPTIMIZATION CONFIGURATION</h3>
-        
-        <div class="form-group">
-          <label class="form-label" for="outputFormatSelect">Target Format</label>
-          <select id="outputFormatSelect" class="select-input" onchange="processImage()">
-            <option value="webp">WebP (Highly Compressed)</option>
-            <option value="png">PNG (Lossless)</option>
-            <option value="jpeg">JPG (Standard)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <div class="control-label">
-            <span>Compression Quality</span>
-            <span id="qualityDisplay" class="control-value">80%</span>
+    <!-- Category Grid -->
+    <section class="grid-container" style="padding: 0;">
+      <div class="tool-grid">
+        <!-- Card 1: PNG to JPG -->
+        <a href="/png-to-jpg/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🖼️</div>
+            <h3 class="tool-name">PNG to JPG</h3>
+            <p class="tool-description">Convert PNG photos to compressed JPG / JPEG format client-side in your browser. Zero server uploads.</p>
           </div>
-          <input type="range" id="qualitySlider" class="slider-input" min="10" max="100" value="80" oninput="updateSliderDisplay(this.value)">
-        </div>
-
-        <div class="form-group">
-          <div class="control-label">
-            <span>Resize Scale</span>
-            <span id="scaleDisplay" class="control-value">100% (Original)</span>
+          <div class="tool-action-link">
+            Open PNG to JPG
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
-          <input type="range" id="scaleSlider" class="slider-input" min="10" max="100" value="100" oninput="updateScaleDisplay(this.value)">
-        </div>
+        </a>
 
-        <hr style="border: 0; height: 1px; background-color: var(--colors-hairline);">
-
-        <!-- Single Image Metrics -->
-        <div id="singleMetrics" class="metrics-container">
-          <div class="metric-box">
-            <span class="metric-label">Original</span>
-            <span id="originalSizeVal" class="metric-value">0 KB</span>
+        <!-- Card 2: JPG to PNG -->
+        <a href="/jpg-to-png/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🖼️</div>
+            <h3 class="tool-name">JPG to PNG</h3>
+            <p class="tool-description">Convert JPG / JPEG photos to PNG format locally in your browser. 100% secure offline file tools.</p>
           </div>
-          <div class="metric-box">
-            <span class="metric-label">Optimized</span>
-            <span id="optimizedSizeVal" class="metric-value">0 KB</span>
+          <div class="tool-action-link">
+            Open JPG to PNG
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
-          <div class="metric-box">
-            <span class="metric-label">Savings</span>
-            <span id="savingsVal" class="metric-value savings">0%</span>
+        </a>
+
+        <!-- Card 3: PNG to WebP -->
+        <a href="/png-to-webp/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🖼️</div>
+            <h3 class="tool-name">PNG to WebP</h3>
+            <p class="tool-description">Convert PNG images to modern, highly compressed WebP format client-side. Fast, private, and offline capable.</p>
           </div>
-        </div>
+          <div class="tool-action-link">
+            Open PNG to WebP
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
 
-        <!-- Batch List (hidden for single upload) -->
-        <div id="batchContainer" style="display: none;">
-          <h4 style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">BATCH PROCESSING LIST</h4>
-          <div id="batchList" class="batch-list"></div>
-        </div>
+        <!-- Card 4: WebP to PNG -->
+        <a href="/webp-to-png/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🖼️</div>
+            <h3 class="tool-name">WebP to PNG</h3>
+            <p class="tool-description">Convert WebP files to compatible lossless PNG image format locally in your browser sandbox. 100% private.</p>
+          </div>
+          <div class="tool-action-link">
+            Open WebP to PNG
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
 
-        <div class="button-group actions-panel" style="display: flex; gap: var(--spacing-sm);">
-          <button id="btnDownload" class="button button-primary" onclick="downloadOptimized()">Download Optimized File</button>
-          <button id="btnDownloadZip" class="button button-primary" onclick="downloadBatchZip()" style="display: none;">Download Batch ZIP</button>
-          <button class="button button-danger" onclick="resetWorkspace()">Upload Another</button>
-        </div>
+        <!-- Card 5: JPG to WebP -->
+        <a href="/jpg-to-webp/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🖼️</div>
+            <h3 class="tool-name">JPG to WebP</h3>
+            <p class="tool-description">Convert JPG/JPEG images to next-generation WebP format in your browser. 100% private and free.</p>
+          </div>
+          <div class="tool-action-link">
+            Open JPG to WebP
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 6: WebP to JPG -->
+        <a href="/webp-to-jpg/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🖼️</div>
+            <h3 class="tool-name">WebP to JPG</h3>
+            <p class="tool-description">Convert modern WebP images to standard JPG format client-side. Fast, secure, and offline capable.</p>
+          </div>
+          <div class="tool-action-link">
+            Open WebP to JPG
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 7: SVG to PNG -->
+        <a href="/svg-to-png/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🖼️</div>
+            <h3 class="tool-name">SVG to PNG</h3>
+            <p class="tool-description">Convert vector SVG files to transparent PNG images in your browser. 100% private and free.</p>
+          </div>
+          <div class="tool-action-link">
+            Open SVG to PNG
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 8: SVG to JPG -->
+        <a href="/svg-to-jpg/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🖼️</div>
+            <h3 class="tool-name">SVG to JPG</h3>
+            <p class="tool-description">Convert SVG vector graphics to compressed JPG format client-side. 100% browser-level security.</p>
+          </div>
+          <div class="tool-action-link">
+            Open SVG to JPG
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 9: SVG to WebP -->
+        <a href="/svg-to-webp/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🖼️</div>
+            <h3 class="tool-name">SVG to WebP</h3>
+            <p class="tool-description">Convert vector SVG files to highly compressed WebP format in your browser. 100% private and free.</p>
+          </div>
+          <div class="tool-action-link">
+            Open SVG to WebP
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 10: Image to Text OCR -->
+        <a href="/image-to-text/" class="tool-card">
+          <div class="tool-info">
+            <div class="tool-icon-wrapper">🔍</div>
+            <h3 class="tool-name">Image to Text OCR</h3>
+            <p class="tool-description">Extract plain text from screenshots, documents, and scans locally in your browser window. Private client-side OCR tool with 100% confidentiality.</p>
+          </div>
+          <div class="tool-action-link">
+            Open Image to Text OCR
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
       </div>
-
-      <!-- Right Column: Preview Panel -->
-      <div class="card panel-card" style="justify-content: space-between;">
-        <h3 class="panel-section-title">OPTIMIZED PREVIEW</h3>
-        
-        <div class="preview-display-wrapper">
-          <img id="previewImage" class="preview-image" alt="Optimized Preview">
-          <div id="emptyPreview" class="empty-preview">
-            <span style="font-size: 24px;">🖼️</span>
-            <span>Image loaded. Initializing preview…</span>
-          </div>
-        </div>
-        
-        <div style="font-size: 12px; color: var(--colors-mute); text-align: center; margin-top: var(--spacing-sm);">
-          Preview background is dark to help inspect transparent layouts.
-        </div>
-      </div>
-    </div>
+    </section>
   </main>
 
   <!-- FAQ Section -->
@@ -533,235 +469,5 @@
   </footer>
 
   <script src="/theme.js"></script>
-  <script>
-    // Image Tools Engine Logic
-    let activeFilesList = []; // Array of { id, file, originalSize, optimizedBlob, optimizedSize }
-    let activeIndex = 0; // Current active index in preview panel
-
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const errorBanner = document.getElementById('errorBanner');
-    const errorMessage = document.getElementById('errorMessage');
-    
-    const workspaceLayout = document.getElementById('workspaceLayout');
-    const previewImage = document.getElementById('previewImage');
-    const emptyPreview = document.getElementById('emptyPreview');
-
-    const outputFormatSelect = document.getElementById('outputFormatSelect');
-    const qualitySlider = document.getElementById('qualitySlider');
-    const qualityDisplay = document.getElementById('qualityDisplay');
-    const scaleSlider = document.getElementById('scaleSlider');
-    const scaleDisplay = document.getElementById('scaleDisplay');
-
-    const singleMetrics = document.getElementById('singleMetrics');
-    const originalSizeVal = document.getElementById('originalSizeVal');
-    const optimizedSizeVal = document.getElementById('optimizedSizeVal');
-    const savingsVal = document.getElementById('savingsVal');
-
-    const batchContainer = document.getElementById('batchContainer');
-    const batchList = document.getElementById('batchList');
-
-    const btnDownload = document.getElementById('btnDownload');
-    const btnDownloadZip = document.getElementById('btnDownloadZip');
-
-    // Drag and drop setup
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.add('dragover');
-      }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.remove('dragover');
-      }, false);
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-      const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-      if (files.length > 0) handleFileSelects(files);
-    });
-
-    fileInput.addEventListener('change', (e) => {
-      const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
-      if (files.length > 0) handleFileSelects(files);
-    });
-
-    function handleFileSelects(files) {
-      hideError();
-      activeFilesList = files.map(file => ({
-        id: Date.now() + Math.random().toString(36).substr(2, 9),
-        file: file,
-        originalSize: file.size,
-        optimizedBlob: null,
-        optimizedSize: 0
-      }));
-
-      activeIndex = 0;
-      showWorkspace();
-      
-      if (activeFilesList.length > 1) {
-        batchContainer.style.display = 'block';
-        singleMetrics.style.display = 'none';
-        btnDownload.style.display = 'none';
-        btnDownloadZip.style.display = 'inline-flex';
-      } else {
-        batchContainer.style.display = 'none';
-        singleMetrics.style.display = 'grid';
-        btnDownload.style.display = 'inline-flex';
-        btnDownloadZip.style.display = 'none';
-      }
-
-      processBatch();
-    }
-
-    function showWorkspace() {
-      dropZone.style.display = 'none';
-      workspaceLayout.style.display = 'grid';
-    }
-
-    function resetWorkspace() {
-      activeFilesList = [];
-      fileInput.value = '';
-      workspaceLayout.style.display = 'none';
-      dropZone.style.display = 'flex';
-      hideError();
-    }
-
-    function updateSliderDisplay(val) {
-      qualityDisplay.textContent = `${val}%`;
-      processBatch();
-    }
-
-    function updateScaleDisplay(val) {
-      scaleDisplay.textContent = val === '100' ? '100% (Original)' : `${val}%`;
-      processBatch();
-    }
-
-    async function processBatch() {
-      previewImage.style.display = 'none';
-      emptyPreview.style.display = 'flex';
-
-      for (let i = 0; i < activeFilesList.length; i++) {
-        const item = activeFilesList[i];
-        await processSingleItem(item);
-      }
-
-      renderBatchList();
-      updatePreviewDisplay();
-    }
-
-    function processSingleItem(item) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-
-            const scale = parseInt(scaleSlider.value) / 100;
-            canvas.width = img.width * scale;
-            canvas.height = img.height * scale;
-
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-            const format = outputFormatSelect.value;
-            const quality = parseInt(qualitySlider.value) / 100;
-
-            let mime = 'image/webp';
-            if (format === 'png') mime = 'image/png';
-            if (format === 'jpeg') mime = 'image/jpeg';
-
-            canvas.toBlob(blob => {
-              item.optimizedBlob = blob;
-              item.optimizedSize = blob.size;
-              resolve();
-            }, mime, quality);
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(item.file);
-      });
-    }
-
-    function renderBatchList() {
-      batchList.innerHTML = '';
-      activeFilesList.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = `batch-item ${index === activeIndex ? 'active' : ''}`;
-        
-        const savings = Math.round(((item.originalSize - item.optimizedSize) / item.originalSize) * 100);
-        const savingsText = savings > 0 ? `-${savings}%` : '0%';
-
-        div.innerHTML = `
-          <div class="batch-item-name">${item.file.name}</div>
-          <div class="batch-item-size">
-            <span>${(item.originalSize / 1024).toFixed(1)} KB</span> ➔ 
-            <span class="batch-item-saving">${(item.optimizedSize / 1024).toFixed(1)} KB (${savingsText})</span>
-          </div>
-        `;
-        div.onclick = () => {
-          activeIndex = index;
-          renderBatchList();
-          updatePreviewDisplay();
-        };
-        batchList.appendChild(div);
-      });
-    }
-
-    function updatePreviewDisplay() {
-      const activeItem = activeFilesList[activeIndex];
-      if (!activeItem || !activeItem.optimizedBlob) return;
-
-      const url = URL.createObjectURL(activeItem.optimizedBlob);
-      previewImage.src = url;
-      previewImage.style.display = 'block';
-      emptyPreview.style.display = 'none';
-
-      if (activeFilesList.length === 1) {
-        originalSizeVal.textContent = `${(activeItem.originalSize / 1024).toFixed(1)} KB`;
-        optimizedSizeVal.textContent = `${(activeItem.optimizedSize / 1024).toFixed(1)} KB`;
-        
-        const savings = Math.round(((activeItem.originalSize - activeItem.optimizedSize) / activeItem.originalSize) * 100);
-        savingsVal.textContent = savings > 0 ? `${savings}%` : '0%';
-      }
-    }
-
-    function downloadOptimized() {
-      const activeItem = activeFilesList[0];
-      if (!activeItem || !activeItem.optimizedBlob) return;
-
-      const format = outputFormatSelect.value;
-      const cleanName = activeItem.file.name.replace(/\.[^/.]+$/, "") + `_optimized.${format}`;
-      downloadBlob(activeItem.optimizedBlob, cleanName);
-    }
-
-    async function downloadBatchZip() {
-      const zip = new JSZip();
-      const format = outputFormatSelect.value;
-
-      activeFilesList.forEach(item => {
-        const cleanName = item.file.name.replace(/\.[^/.]+$/, "") + `_optimized.${format}`;
-        zip.file(cleanName, item.optimizedBlob);
-      });
-
-      const zipBlob = await zip.generateAsync({ type: 'blob' });
-      downloadBlob(zipBlob, `convert_ocean_batch_${Date.now()}.zip`);
-    }
-
-    function showError(message) {
-      errorMessage.textContent = message;
-      errorBanner.style.display = 'flex';
-    }
-
-    function hideError() {
-      errorBanner.style.display = 'none';
-    }
-  </script>
 </body>
 </html>

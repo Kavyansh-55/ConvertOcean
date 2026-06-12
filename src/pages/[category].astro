@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
 
 export function getStaticPaths() {
-  const categories = ['pdf-tools', 'image-tools', 'document-tools', 'excel-converter', 'ocr-tools', 'business-tools'];
+  const categories = ['pdf-tools', 'image-tools', 'document-tools', 'excel-converter', 'ocr-tools', 'business-tools', 'developer-tools'];
   return categories.map(category => ({ params: { category } }));
 }
 
@@ -59,6 +59,13 @@ const categoriesMap: Record<string, { name: string; description: string; icon: s
     icon: '💼',
     seoTitle: 'Private Business Tools & Invoice Generator Offline | ConvertOcean',
     seoDescription: 'Create professional freelance invoices and process financial documents locally. Keep client details 100% confidential. No server uploads.'
+  },
+  'developer-tools': {
+    name: 'Developer Tools',
+    description: 'Format JSON, convert XML, parse CSV, and compile developer datasets offline client-side.',
+    icon: '⚙️',
+    seoTitle: 'Private Offline Developer Tools & Utilities | ConvertOcean',
+    seoDescription: 'Convert CSV to JSON, JSON to CSV, XML to JSON locally. 100% private developer utilities with zero server uploads.'
   }
 };
 
@@ -209,6 +216,16 @@ const categoryFaqsMap: Record<string, { q: string; a: string }[]> = {
     {
       q: "Do I need to register an account or pay for a conversion subscription?",
       a: "No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions."
+    }
+  ],
+  'developer-tools': [
+    {
+      q: "Are my JSON datasets and XML structure schemas safe?",
+      a: "Yes. All developer parsing utilities process values client-side on your local device. None of your data entries are logged or uploaded to remote databases or server instances."
+    },
+    {
+      q: "Can I convert large database CSV payloads locally?",
+      a: "Absolutely. Local parsing speeds are determined entirely by your device CPU performance and memory. Large CSV files are parsed instantly directly in your browser tab memory sandbox."
     }
   ]
 };

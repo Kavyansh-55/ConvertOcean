@@ -38,8 +38,8 @@ export const tools: ToolData[] = [
     headline: 'CSV to JSON.',
     subtitle: 'Upload any comma-separated (.csv) spreadsheet file and download its structured JSON equivalent client-side.',
     icon: '⚙️',
-    category: 'Excel Converter',
-    categorySlug: 'excel-converter',
+    category: 'Developer Tools',
+    categorySlug: 'developer-tools',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' },
@@ -56,8 +56,8 @@ export const tools: ToolData[] = [
     headline: 'JSON to CSV.',
     subtitle: 'Convert JSON arrays or objects into standard comma-separated spreadsheets (.csv) locally.',
     icon: '⚙️',
-    category: 'Excel Converter',
-    categorySlug: 'excel-converter',
+    category: 'Developer Tools',
+    categorySlug: 'developer-tools',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' },
@@ -122,8 +122,8 @@ export const tools: ToolData[] = [
     headline: 'XML to JSON.',
     subtitle: 'Transform nested XML code structures into easy-to-read JSON datasets instantly.',
     icon: '⚙️',
-    category: 'Excel Converter',
-    categorySlug: 'excel-converter',
+    category: 'Developer Tools',
+    categorySlug: 'developer-tools',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' }
