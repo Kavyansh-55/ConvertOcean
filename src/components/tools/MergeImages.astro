@@ -1,0 +1,457 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .images-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+  }
+  .image-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    background: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  .image-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--rounded-sm);
+    border: 1px solid var(--colors-hairline-strong);
+    background-color: var(--colors-canvas-soft-2);
+  }
+  .image-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .image-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--colors-ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .image-size {
+    font-size: 12px;
+    color: var(--colors-mute);
+  }
+  .image-actions {
+    display: flex;
+    gap: var(--spacing-xxs);
+  }
+  .action-btn {
+    background: none;
+    border: 1px solid var(--colors-hairline);
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--colors-body);
+    transition: all 0.2s;
+  }
+  .action-btn:hover {
+    background-color: var(--colors-canvas-soft-2);
+    color: var(--colors-ink);
+    border-color: var(--colors-hairline-strong);
+  }
+  .action-btn-danger:hover {
+    background-color: var(--colors-error-soft);
+    color: var(--colors-error);
+    border-color: var(--colors-error);
+  }
+</style>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Overlay -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing files…</div>
+</div>
+
+<div class="workspace-layout">
+  <!-- Upload & List Panel -->
+  <div class="panel-card">
+    <h3 class="panel-section-title">Upload & Arrange Images</h3>
+    
+    <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">🖼️</div>
+      <div class="upload-text-primary">Drag and drop images, or click to browse</div>
+      <div class="upload-text-secondary">PNG, JPG, WebP, SVG (Max 15MB each, multiple allowed)</div>
+      <input type="file" id="fileInput" class="file-input" accept="image/*" multiple />
+    </div>
+
+    <div id="imagesList" class="images-list" style="display: none;"></div>
+  </div>
+
+  <!-- Settings & Export Panel -->
+  <div class="panel-card">
+    <h3 class="panel-section-title">Merge Configuration</h3>
+    
+    <div class="form-group">
+      <label class="form-label" for="mergeMode">Output Format</label>
+      <select class="select-input" id="mergeMode">
+        <option value="pdf">PDF (Separate Pages)</option>
+        <option value="stitch-v">Stitch Image (Vertically)</option>
+        <option value="stitch-h">Stitch Image (Horizontally)</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="pdfLayoutGroup">
+      <label class="form-label" for="pdfPageSize">PDF Page Layout</label>
+      <select class="select-input" id="pdfPageSize">
+        <option value="fit">Fit Image Dimensions</option>
+        <option value="a4-p">A4 Portrait (with Margins)</option>
+        <option value="a4-l">A4 Landscape (with Margins)</option>
+      </select>
+    </div>
+
+    <div class="button-group" style="margin-top: auto; display: flex; gap: var(--spacing-sm);">
+      <button class="button button-primary" id="btnMerge" disabled style="flex: 1;">Generate & Download</button>
+      <button class="button button-danger" id="btnClear" disabled>Clear All</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ slug }}>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const imagesList = document.getElementById('imagesList');
+    const mergeMode = document.getElementById('mergeMode');
+    const pdfLayoutGroup = document.getElementById('pdfLayoutGroup');
+    const pdfPageSize = document.getElementById('pdfPageSize');
+    const btnMerge = document.getElementById('btnMerge');
+    const btnClear = document.getElementById('btnClear');
+
+    let uploadedFiles = [];
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) handleFiles(files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files);
+      if (files.length > 0) handleFiles(files);
+    });
+
+    mergeMode.addEventListener('change', () => {
+      if (mergeMode.value === 'pdf') {
+        pdfLayoutGroup.style.display = 'flex';
+      } else {
+        pdfLayoutGroup.style.display = 'none';
+      }
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    function handleFiles(files) {
+      hideError();
+      const imageFiles = files.filter(f => f.type.startsWith('image/'));
+      if (imageFiles.length === 0) {
+        showError("Please select valid image files (PNG, JPG, WebP, SVG).");
+        return;
+      }
+
+      showProgress(10, "Reading uploaded images…");
+
+      let readCount = 0;
+      imageFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          uploadedFiles.push({
+            id: Date.now() + Math.random().toString(36).substr(2, 5),
+            name: file.name,
+            size: file.size,
+            dataUrl: event.target.result,
+            fileObj: file
+          });
+
+          readCount++;
+          showProgress(10 + Math.round((readCount / imageFiles.length) * 80), `Reading images (${readCount}/${imageFiles.length})…`);
+          if (readCount === imageFiles.length) {
+            hideProgress();
+            renderImagesList();
+          }
+        };
+        reader.onerror = function() {
+          readCount++;
+          if (readCount === imageFiles.length) {
+            hideProgress();
+            renderImagesList();
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderImagesList() {
+      if (uploadedFiles.length === 0) {
+        imagesList.style.display = 'none';
+        imagesList.innerHTML = '';
+        btnMerge.disabled = true;
+        btnClear.disabled = true;
+        return;
+      }
+
+      imagesList.innerHTML = '';
+      uploadedFiles.forEach((file, index) => {
+        const item = document.createElement('div');
+        item.className = 'image-item';
+        item.innerHTML = `
+          <img src="${file.dataUrl}" alt="${file.name}" class="image-thumb" />
+          <div class="image-info">
+            <span class="image-name">${file.name}</span>
+            <span class="image-size">${(file.size / 1024).toFixed(1)} KB</span>
+          </div>
+          <div class="image-actions">
+            <button class="action-btn" onclick="window.moveImageUp('${file.id}')" title="Move Up" ${index === 0 ? 'disabled' : ''}>▲</button>
+            <button class="action-btn" onclick="window.moveImageDown('${file.id}')" title="Move Down" ${index === uploadedFiles.length - 1 ? 'disabled' : ''}>▼</button>
+            <button class="action-btn action-btn-danger" onclick="window.deleteImage('${file.id}')" title="Remove">✕</button>
+          </div>
+        `;
+        imagesList.appendChild(item);
+      });
+
+      imagesList.style.display = 'flex';
+      btnMerge.disabled = false;
+      btnClear.disabled = false;
+    }
+
+    window.moveImageUp = function(id) {
+      const idx = uploadedFiles.findIndex(f => f.id === id);
+      if (idx > 0) {
+        const temp = uploadedFiles[idx];
+        uploadedFiles[idx] = uploadedFiles[idx - 1];
+        uploadedFiles[idx - 1] = temp;
+        renderImagesList();
+      }
+    };
+
+    window.moveImageDown = function(id) {
+      const idx = uploadedFiles.findIndex(f => f.id === id);
+      if (idx >= 0 && idx < uploadedFiles.length - 1) {
+        const temp = uploadedFiles[idx];
+        uploadedFiles[idx] = uploadedFiles[idx + 1];
+        uploadedFiles[idx + 1] = temp;
+        renderImagesList();
+      }
+    };
+
+    window.deleteImage = function(id) {
+      uploadedFiles = uploadedFiles.filter(f => f.id !== id);
+      renderImagesList();
+    };
+
+    btnClear.addEventListener('click', () => {
+      uploadedFiles = [];
+      renderImagesList();
+      fileInput.value = '';
+    });
+
+    btnMerge.addEventListener('click', async () => {
+      hideError();
+      if (uploadedFiles.length === 0) return;
+
+      const mode = mergeMode.value;
+      showProgress(15, "Initializing merger...");
+
+      if (mode === 'pdf') {
+        try {
+          const { jsPDF } = window.jspdf;
+          let doc = null;
+
+          for (let i = 0; i < uploadedFiles.length; i++) {
+            showProgress(20 + Math.round((i / uploadedFiles.length) * 70), `Adding page ${i + 1} of ${uploadedFiles.length}...`);
+            const file = uploadedFiles[i];
+
+            // Resolve image dimensions
+            const img = await loadImage(file.dataUrl);
+            const w = img.naturalWidth || img.width;
+            const h = img.naturalHeight || img.height;
+
+            const layout = pdfPageSize.value;
+            let pageWidth, pageHeight, imgWidth, imgHeight, dx = 0, dy = 0;
+
+            if (layout === 'fit') {
+              // Convert px to mm (roughly 72 dpi = 1 px/pt, 1 pt = 0.3527 mm)
+              pageWidth = w * 0.264583;
+              pageHeight = h * 0.264583;
+              imgWidth = pageWidth;
+              imgHeight = pageHeight;
+            } else {
+              // A4 Size in mm: 210 x 297
+              const isLandscape = layout === 'a4-l';
+              pageWidth = isLandscape ? 297 : 210;
+              pageHeight = isLandscape ? 210 : 297;
+
+              // Scale image to fit inside A4 margins (10mm margins)
+              const maxW = pageWidth - 20;
+              const maxH = pageHeight - 20;
+              const ratio = Math.min(maxW / w, maxH / h);
+              
+              imgWidth = w * ratio;
+              imgHeight = h * ratio;
+              dx = (pageWidth - imgWidth) / 2;
+              dy = (pageHeight - imgHeight) / 2;
+            }
+
+            const orient = pageWidth > pageHeight ? 'landscape' : 'portrait';
+            if (i === 0) {
+              doc = new jsPDF({
+                orientation: orient,
+                unit: 'mm',
+                format: [pageWidth, pageHeight]
+              });
+            } else {
+              doc.addPage([pageWidth, pageHeight], orient);
+            }
+
+            // Draw image on page
+            let mime = file.fileObj.type === 'image/png' ? 'PNG' : 'JPEG';
+            doc.addImage(file.dataUrl, mime, dx, dy, imgWidth, imgHeight, undefined, 'FAST');
+          }
+
+          showProgress(95, "Compiling PDF download...");
+          doc.save('merged-images.pdf');
+          hideProgress();
+        } catch (err) {
+          showError("PDF compilation failed: " + err.message);
+          hideProgress();
+        }
+      } else {
+        // Image Stitching Mode
+        try {
+          const images = [];
+          for (let file of uploadedFiles) {
+            images.push(await loadImage(file.dataUrl));
+          }
+
+          let canvas = document.createElement('canvas');
+          let ctx = canvas.getContext('2d');
+
+          if (mode === 'stitch-v') {
+            // Vertical Stitching
+            let width = Math.max(...images.map(img => img.naturalWidth || img.width));
+            let height = images.reduce((sum, img) => sum + (img.naturalHeight || img.height), 0);
+            
+            canvas.width = width;
+            canvas.height = height;
+
+            let currentY = 0;
+            images.forEach(img => {
+              const imgW = img.naturalWidth || img.width;
+              const imgH = img.naturalHeight || img.height;
+              // Center align images horizontally if they differ in width
+              const dx = (width - imgW) / 2;
+              ctx.drawImage(img, dx, currentY, imgW, imgH);
+              currentY += imgH;
+            });
+          } else {
+            // Horizontal Stitching
+            let width = images.reduce((sum, img) => sum + (img.naturalWidth || img.width), 0);
+            let height = Math.max(...images.map(img => img.naturalHeight || img.height));
+
+            canvas.width = width;
+            canvas.height = height;
+
+            let currentX = 0;
+            images.forEach(img => {
+              const imgW = img.naturalWidth || img.width;
+              const imgH = img.naturalHeight || img.height;
+              // Center align images vertically if they differ in height
+              const dy = (height - imgH) / 2;
+              ctx.drawImage(img, currentX, dy, imgW, imgH);
+              currentX += imgW;
+            });
+          }
+
+          showProgress(90, "Stitching images canvas...");
+          const link = document.createElement('a');
+          link.download = 'stitched-image.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          hideProgress();
+        } catch (err) {
+          showError("Image stitching failed: " + err.message);
+          hideProgress();
+        }
+      }
+    });
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = (e) => reject(new Error("Failed to load image resource"));
+        img.src = src;
+      });
+    }
+  })();
+</script>

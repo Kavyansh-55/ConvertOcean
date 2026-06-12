@@ -1,8 +1,8 @@
 ---
 const { slug, headline, subtitle } = Astro.props;
 
-let acceptMime = ".pptx";
-let uploadLabel = "Upload PowerPoint Presentation (.pptx) (Max 25MB)";
+let acceptMime = ".ppt,.pptx";
+let uploadLabel = "Upload PowerPoint Presentation (.ppt, .pptx) (Max 25MB)";
 let targetFormat = "PDF";
 ---
 
@@ -166,8 +166,36 @@ let targetFormat = "PDF";
       originalName = file.name;
       const extension = file.name.split('.').pop().toLowerCase();
 
-      if (extension !== 'pptx') {
-        showError("Invalid file format. Please upload a .pptx presentation file.");
+      if (extension !== 'pptx' && extension !== 'ppt') {
+        showError("Invalid file format. Please upload a .ppt or .pptx presentation file.");
+        return;
+      }
+
+      if (extension === 'ppt') {
+        previewBody.innerHTML = `
+          <div style="background-color: var(--colors-error-soft); border: 1px solid var(--colors-error); border-radius: var(--rounded-lg); padding: var(--spacing-lg); max-width: 600px; margin: 0 auto; text-align: left; color: var(--colors-ink);">
+            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--spacing-xs); display: flex; align-items: center; gap: 8px; color: var(--colors-error-deep);">
+              ⚠️ Legacy PowerPoint (.ppt) Format Detected
+            </h3>
+            <p style="font-size: 13.5px; line-height: 1.5; margin-bottom: var(--spacing-sm); color: var(--colors-body);">
+              Legacy <strong>.ppt</strong> files are stored in a closed proprietary binary format. For 100% private, secure client-side conversion, we require the modern XML-based <strong>.pptx</strong> format.
+            </p>
+            <h4 style="font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--colors-ink);">How to Convert to .pptx in 2 Steps:</h4>
+            <ol style="margin-left: var(--spacing-md); font-size: 13px; line-height: 1.5; color: var(--colors-body); display: flex; flex-direction: column; gap: 4px; padding-left: 15px;">
+              <li>Open your <code>.ppt</code> file in Microsoft PowerPoint or LibreOffice.</li>
+              <li>Go to <strong>File</strong> &rarr; <strong>Save As</strong>, and select <strong>PowerPoint Presentation (*.pptx)</strong> in the format dropdown.</li>
+            </ol>
+            <p style="font-size: 12.5px; margin-top: var(--spacing-sm); color: var(--colors-mute); font-style: italic;">
+              Once saved as .pptx, drag and drop the new file here for instant, offline, private PDF generation.
+            </p>
+          </div>
+        `;
+        previewCard.style.display = 'block';
+        fileNameDisplay.textContent = file.name;
+        actionControls.style.display = 'flex';
+        btnDownload.style.display = 'none';
+        dropZone.style.display = 'none';
+        hideProgress();
         return;
       }
 
@@ -232,6 +260,7 @@ let targetFormat = "PDF";
           previewCard.style.display = 'block';
           fileNameDisplay.textContent = file.name;
           actionControls.style.display = 'flex';
+          btnDownload.style.display = 'inline-flex';
           dropZone.style.display = 'none';
           hideProgress();
         })

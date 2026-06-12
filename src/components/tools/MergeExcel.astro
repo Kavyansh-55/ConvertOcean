@@ -1,0 +1,331 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: var(--spacing-xs);
+    margin-top: var(--spacing-md);
+  }
+  .file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 6px;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .file-item:hover {
+    border-color: var(--colors-hairline-strong);
+  }
+  .file-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+  }
+  .file-item-name {
+    font-weight: 600;
+    color: var(--colors-ink);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 300px;
+  }
+  .file-item-meta {
+    font-size: 11px;
+    color: var(--colors-mute);
+  }
+  .file-item-actions {
+    display: flex;
+    gap: 4px;
+  }
+  .icon-btn {
+    background: none;
+    border: 1px solid var(--colors-hairline);
+    border-radius: 4px;
+    color: var(--colors-body);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 11px;
+    transition: all 0.15s;
+  }
+  .icon-btn:hover:not(:disabled) {
+    background-color: var(--colors-canvas-soft-2);
+    color: var(--colors-ink);
+    border-color: var(--colors-hairline-strong);
+  }
+  .icon-btn.danger:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.2);
+  }
+</style>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing files…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">🥞</div>
+  <div class="upload-text-primary">Drag and drop spreadsheet files here, or click to browse</div>
+  <div class="upload-text-secondary">Upload XLS, XLSX, or CSV files (Max 25MB each)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv" multiple />
+</div>
+
+<!-- Merge Workspace Panel -->
+<div id="workspacePanel" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
+  <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute); margin-bottom: 8px;">Excel & CSV Merge Queue</div>
+  
+  <div class="file-list" id="fileItemsList"></div>
+
+  <div style="margin-top: var(--spacing-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm); border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-md);">
+    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+      <label for="mergeOutputName" style="font-size:13px; font-weight:600; color:var(--colors-body);">Output Filename:</label>
+      <input type="text" id="mergeOutputName" class="form-input" style="max-width: 250px; height: 36px; padding: 0 12px; font-size:13.5px;" value="merged_spreadsheet.xlsx">
+    </div>
+    <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
+      <button class="button button-primary" onclick="mergeSpreadsheets()">Merge & Download</button>
+      <button class="button button-danger" onclick="resetWorkspace()">Clear Queue</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const workspacePanel = document.getElementById('workspacePanel');
+    const fileItemsList = document.getElementById('fileItemsList');
+    const mergeOutputName = document.getElementById('mergeOutputName');
+
+    let mergeQueue = [];
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) handleFiles(files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      if (files.length > 0) handleFiles(files);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    async function handleFiles(files) {
+      hideError();
+      showProgress(10, "Reading spreadsheet files…");
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (!['xlsx', 'xls', 'csv'].includes(ext)) {
+          showError(`Skipped "${file.name}": Unsupported format. Only Excel & CSV are supported.`);
+          continue;
+        }
+
+        try {
+          const bytes = await readFileAsArrayBuffer(file);
+          const workbook = XLSX.read(bytes, { type: 'array' });
+          mergeQueue.push({
+            id: Date.now() + Math.random().toString(36).substr(2, 9),
+            name: file.name,
+            size: file.size,
+            bytes: bytes,
+            sheets: workbook.SheetNames
+          });
+        } catch(err) {
+          showError(`Failed to parse "${file.name}".`);
+        }
+      }
+      
+      hideProgress();
+      renderQueue();
+      if (mergeQueue.length > 0) {
+        workspacePanel.style.display = 'block';
+        dropZone.style.display = 'none';
+      }
+    }
+
+    function readFileAsArrayBuffer(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    window.moveItem = function(index, direction) {
+      const target = index + direction;
+      if (target < 0 || target >= mergeQueue.length) return;
+      const temp = mergeQueue[index];
+      mergeQueue[index] = mergeQueue[target];
+      mergeQueue[target] = temp;
+      renderQueue();
+    };
+
+    window.removeItem = function(id) {
+      mergeQueue = mergeQueue.filter(f => f.id !== id);
+      renderQueue();
+      if (mergeQueue.length === 0) {
+        resetWorkspace();
+      }
+    };
+
+    function renderQueue() {
+      fileItemsList.innerHTML = '';
+      mergeQueue.forEach((file, index) => {
+        const item = document.createElement('div');
+        item.className = 'file-item';
+        item.innerHTML = `
+          <div class="file-item-info">
+            <span class="file-item-name">${file.name}</span>
+            <span class="file-item-meta">${(file.size / 1024).toFixed(1)} KB • ${file.sheets.length} worksheet(s) (${file.sheets.join(', ')})</span>
+          </div>
+          <div class="file-item-actions">
+            <button class="icon-btn" onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+            <button class="icon-btn" onclick="moveItem(${index}, 1)" ${index === mergeQueue.length - 1 ? 'disabled' : ''}>▼</button>
+            <button class="icon-btn danger" onclick="removeItem('${file.id}')">✕</button>
+          </div>
+        `;
+        fileItemsList.appendChild(item);
+      });
+    }
+
+    window.mergeSpreadsheets = function() {
+      if (mergeQueue.length < 2) {
+        showError("Please upload at least 2 spreadsheet files to merge.");
+        return;
+      }
+      showProgress(30, "Merging worksheets client-side…");
+      try {
+        const outWorkbook = XLSX.utils.book_new();
+        const sheetNamesSet = new Set();
+
+        mergeQueue.forEach((file) => {
+          const workbook = XLSX.read(file.bytes, { type: 'array' });
+          workbook.SheetNames.forEach((sheetName) => {
+            const worksheet = workbook.Sheets[sheetName];
+            
+            // Generate a unique worksheet name to avoid spreadsheet duplicate conflicts
+            let finalSheetName = `${file.name.replace(/\.[^/.]+$/, "")}_${sheetName}`;
+            // Clean SheetJS sheetName restrictions (length <= 31, no invalid chars : \ / ? * [ ])
+            finalSheetName = finalSheetName.replace(/[\[\]\?\*\/\\\:]/g, '_').substring(0, 31);
+            
+            let counter = 1;
+            let tempName = finalSheetName;
+            while (sheetNamesSet.has(tempName.toLowerCase())) {
+              const suffix = `_${counter}`;
+              tempName = finalSheetName.substring(0, 31 - suffix.length) + suffix;
+              counter++;
+            }
+            finalSheetName = tempName;
+            sheetNamesSet.add(finalSheetName.toLowerCase());
+
+            XLSX.utils.book_append_sheet(outWorkbook, worksheet, finalSheetName);
+          });
+        });
+
+        showProgress(70, "Compiling merged XLSX workbook…");
+        const outBytes = XLSX.write(outWorkbook, { bookType: 'xlsx', type: 'array' });
+        
+        let outputName = mergeOutputName.value.trim() || 'merged_spreadsheet.xlsx';
+        if (!outputName.toLowerCase().endsWith('.xlsx')) outputName += '.xlsx';
+
+        const blob = new Blob([outBytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = outputName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        showError("Failed to merge spreadsheets. Ensure none of the sheets are corrupted.");
+      }
+      hideProgress();
+    };
+
+    window.resetWorkspace = function() {
+      mergeQueue = [];
+      fileInput.value = '';
+      fileItemsList.innerHTML = '';
+      workspacePanel.style.display = 'none';
+      dropZone.style.display = 'flex';
+      hideError();
+    };
+  })();
+</script>

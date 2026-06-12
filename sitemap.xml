@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap-stylesheet.xml"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Main Pages -->
   <url>
@@ -87,6 +88,14 @@
     <loc>https://convertocean.com/xls-to-pdf/</loc>
     <priority>0.80</priority>
   </url>
+  <url>
+    <loc>https://convertocean.com/merge-excel/</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://convertocean.com/split-excel/</loc>
+    <priority>0.80</priority>
+  </url>
 
   <!-- PDF & Document Tools -->
   <url>
@@ -119,6 +128,18 @@
   </url>
   <url>
     <loc>https://convertocean.com/pptx-to-pdf/</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://convertocean.com/ppt-to-pdf/</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://convertocean.com/merge-txt/</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://convertocean.com/split-txt/</loc>
     <priority>0.80</priority>
   </url>
 
@@ -157,6 +178,14 @@
   </url>
   <url>
     <loc>https://convertocean.com/svg-to-webp/</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://convertocean.com/merge-images/</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://convertocean.com/split-image/</loc>
     <priority>0.80</priority>
   </url>
 

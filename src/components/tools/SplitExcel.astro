@@ -1,0 +1,308 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .sheets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--spacing-md);
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: var(--spacing-md);
+    padding-right: var(--spacing-xs);
+  }
+  .sheet-card {
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 6px;
+    padding: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .sheet-card.selected {
+    border-color: var(--colors-link);
+    background-color: rgba(0, 223, 216, 0.03);
+    box-shadow: 0 0 0 1px var(--colors-link);
+  }
+  .sheet-checkbox {
+    accent-color: var(--colors-ink);
+    cursor: pointer;
+  }
+  .sheet-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .sheet-name {
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--colors-ink);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .sheet-meta {
+    font-size: 11px;
+    color: var(--colors-mute);
+  }
+</style>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing file…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">🥞</div>
+  <div class="upload-text-primary">Drag and drop a spreadsheet file here, or click to browse</div>
+  <div class="upload-text-secondary">Upload XLS, XLSX, or CSV workbook (Max 25MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv" />
+</div>
+
+<!-- Split Workspace Panel -->
+<div id="workspacePanel" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
+  <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute);">Select Worksheets to Extract</div>
+  
+  <div class="sheets-grid" id="sheetsGrid"></div>
+
+  <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-md); border-top: 1px solid var(--colors-hairline); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
+    <div style="display: flex; align-items: center; gap: var(--spacing-md); flex-wrap: wrap;">
+      <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
+        <label for="exportFormat" style="font-size:13px; font-weight:600; color:var(--colors-body);">Export Format:</label>
+        <select id="exportFormat" class="select-input" style="height: 36px; padding: 0 10px; font-size:13px; width: 100px;">
+          <option value="xlsx">XLSX</option>
+          <option value="csv">CSV</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
+      <button class="button button-primary" onclick="splitAndDownload()">Extract Selected Sheets</button>
+      <button class="button button-danger" onclick="resetWorkspace()">Clear</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const workspacePanel = document.getElementById('workspacePanel');
+    const sheetsGrid = document.getElementById('sheetsGrid');
+    const exportFormat = document.getElementById('exportFormat');
+
+    let activeFile = null; // { name, bytes, workbook, sheets: [] }
+    let selectedSheets = new Set();
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    async function handleFile(file) {
+      hideError();
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!['xlsx', 'xls', 'csv'].includes(ext)) {
+        showError("Unsupported format. Upload a valid Excel (.xlsx, .xls) or CSV file.");
+        return;
+      }
+
+      showProgress(20, "Reading spreadsheet workbook…");
+      try {
+        const bytes = await readFileAsArrayBuffer(file);
+        const workbook = XLSX.read(bytes, { type: 'array' });
+        
+        activeFile = {
+          name: file.name,
+          bytes: bytes,
+          workbook: workbook,
+          sheets: workbook.SheetNames
+        };
+
+        selectedSheets.clear();
+        renderSheets();
+        workspacePanel.style.display = 'block';
+        dropZone.style.display = 'none';
+      } catch (err) {
+        showError("Failed to parse spreadsheet file.");
+      }
+      hideProgress();
+    }
+
+    function readFileAsArrayBuffer(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    function renderSheets() {
+      sheetsGrid.innerHTML = '';
+      activeFile.sheets.forEach((sheetName, index) => {
+        const sheet = activeFile.workbook.Sheets[sheetName];
+        // Calculate row counts
+        const range = XLSX.utils.decode_range(sheet['!ref'] || 'A1:A1');
+        const rows = range.e.r - range.s.r + 1;
+
+        const card = document.createElement('div');
+        card.className = 'sheet-card';
+        card.innerHTML = `
+          <input type="checkbox" class="sheet-checkbox" id="sheet-chk-${index}" onchange="toggleSheetSelect(${index})">
+          <div class="sheet-info">
+            <span class="sheet-name">${sheetName}</span>
+            <span class="sheet-meta">${rows} rows</span>
+          </div>
+        `;
+        card.onclick = (e) => {
+          if (e.target.className !== 'sheet-checkbox') {
+            const chk = card.querySelector('.sheet-checkbox');
+            chk.checked = !chk.checked;
+            toggleSheetSelect(index);
+          }
+        };
+        sheetsGrid.appendChild(card);
+      });
+    }
+
+    window.toggleSheetSelect = function(index) {
+      const card = sheetsGrid.children[index];
+      const chk = card.querySelector('.sheet-checkbox');
+      const sheetName = activeFile.sheets[index];
+      
+      if (chk.checked) {
+        selectedSheets.add(sheetName);
+        card.classList.add('selected');
+      } else {
+        selectedSheets.delete(sheetName);
+        card.classList.remove('selected');
+      }
+    };
+
+    window.splitAndDownload = async function() {
+      if (selectedSheets.size === 0) {
+        showError("Please select at least 1 worksheet to extract.");
+        return;
+      }
+
+      showProgress(30, "Extracting selected sheets…");
+      try {
+        const format = exportFormat.value;
+        const zip = new JSZip();
+        
+        let counter = 0;
+        selectedSheets.forEach((sheetName) => {
+          const worksheet = activeFile.workbook.Sheets[sheetName];
+          const newWorkbook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(newWorkbook, worksheet, sheetName);
+          
+          if (format === 'xlsx') {
+            const outBytes = XLSX.write(newWorkbook, { bookType: 'xlsx', type: 'array' });
+            zip.file(`${sheetName}.xlsx`, outBytes);
+          } else {
+            const csvString = XLSX.utils.sheet_to_csv(worksheet);
+            zip.file(`${sheetName}.csv`, csvString);
+          }
+          counter++;
+        });
+
+        showProgress(75, "Compiling zip package…");
+        const zipContent = await zip.generateAsync({ type: "blob" });
+        
+        const zipName = activeFile.name.replace(/\.[^/.]+$/, "") + '_split_sheets.zip';
+        const url = URL.createObjectURL(zipContent);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = zipName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        showError("Failed to split sheets.");
+      }
+      hideProgress();
+    };
+
+    window.resetWorkspace = function() {
+      activeFile = null;
+      selectedSheets.clear();
+      fileInput.value = '';
+      sheetsGrid.innerHTML = '';
+      workspacePanel.style.display = 'none';
+      dropZone.style.display = 'flex';
+      hideError();
+    };
+  })();
+</script>

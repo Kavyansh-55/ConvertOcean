@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merge Images Online - 100% Private | ConvertOcean</title>
+  <meta name="description" content="Merge multiple PNG, JPG, WebP, and SVG images into a single PDF or stitch them into a single image vertically or horizontally client-side.">
+  <link rel="canonical" href="https://convertocean.com/merge-images/" />
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Merge Images Online - 100% Private | ConvertOcean" />
+  <meta property="og:description" content="Merge multiple PNG, JPG, WebP, and SVG images into a single PDF or stitch them into a single image vertically or horizontally client-side." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://convertocean.com/merge-images/" />
+  <meta property="og:image" content="https://convertocean.com/apple-touch-icon.png" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/theme.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    .images-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-lg);
+    }
+    .image-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      background: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-sm) var(--spacing-md);
+    }
+    .image-thumb {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: var(--rounded-sm);
+      border: 1px solid var(--colors-hairline-strong);
+      background-color: var(--colors-canvas-soft-2);
+    }
+    .image-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .image-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .image-size {
+      font-size: 12px;
+      color: var(--colors-mute);
+    }
+    .image-actions {
+      display: flex;
+      gap: var(--spacing-xxs);
+    }
+    .action-btn {
+      background: none;
+      border: 1px solid var(--colors-hairline);
+      border-radius: 4px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--colors-body);
+      transition: all 0.2s;
+    }
+    .action-btn:hover {
+      background-color: var(--colors-canvas-soft-2);
+      color: var(--colors-ink);
+      border-color: var(--colors-hairline-strong);
+    }
+    .action-btn-danger:hover {
+      background-color: var(--colors-error-soft);
+      color: var(--colors-error);
+      border-color: var(--colors-error);
+    }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="COcean" />
+  <link rel="manifest" href="/site.webmanifest" />
+</head>
+<body>
+  <div class="hero-glow"></div>
+
+  <!-- Header -->
+  <header class="nav-bar">
+    <a href="/index.html" class="nav-brand">
+      <img src="/fevicon.png" alt="ConvertOcean Logo" class="brand-logo-img" style="width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; transition: transform 0.2s ease;" />
+      <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+    </a>
+    
+    <nav class="nav-links">
+      <a href="/index.html" class="nav-link">⚡ Home</a>
+      <a href="/file-converter/" class="nav-link">📄 File Converter</a>
+      <a href="/pdf-tools/" class="nav-link">📑 PDF Tools</a>
+      <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
+      <a href="/excel-converter/" class="nav-link">📊 Excel Converter</a>
+      <a href="/image-to-text/" class="nav-link">🔍 Image to Text</a>
+      <a href="/business-tools/" class="nav-link">💼 Business Tools</a>
+      <a href="/privacy-first/" class="nav-link">🔒 Privacy First</a>
+    </nav>
+
+    <div class="nav-right-group">
+      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        </svg>
+      </button>
+      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobileNavMenu" class="mobile-nav-menu">
+    <a href="/index.html" class="mobile-nav-link">⚡ Home</a>
+    <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
+    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF Tools</a>
+    <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
+    <a href="/excel-converter/" class="mobile-nav-link">📊 Excel Converter</a>
+    <a href="/image-to-text/" class="mobile-nav-link">🔍 Image to Text</a>
+    <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
+    <a href="/privacy-first/" class="mobile-nav-link">🔒 Privacy First</a>
+  </div>
+
+  <main class="app-container">
+    <div class="page-header">
+      <h1 class="page-title">Merge Images.</h1>
+      <p class="page-description">Combine multiple images together client-side into a single PDF or stitched image locally.</p>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="errorBanner" class="error-banner">
+      <span>⚠️</span>
+      <span id="errorMessage"></span>
+    </div>
+
+    <!-- Progress Overlay -->
+    <div id="progressOverlay" class="progress-overlay">
+      <div class="progress-bar-container">
+        <div id="progressBarFill" class="progress-bar-fill"></div>
+      </div>
+      <div id="progressLabel" class="progress-label">Processing files…</div>
+    </div>
+
+    <div class="workspace-layout">
+      <!-- Upload & List Panel -->
+      <div class="panel-card">
+        <h3 class="panel-section-title">Upload & Arrange Images</h3>
+        
+        <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">🖼️</div>
+          <div class="upload-text-primary">Drag and drop images, or click to browse</div>
+          <div class="upload-text-secondary">PNG, JPG, WebP, SVG (Max 15MB each, multiple allowed)</div>
+          <input type="file" id="fileInput" class="file-input" accept="image/*" multiple />
+        </div>
+
+        <div id="imagesList" class="images-list" style="display: none;"></div>
+      </div>
+
+      <!-- Settings & Export Panel -->
+      <div class="panel-card">
+        <h3 class="panel-section-title">Merge Configuration</h3>
+        
+        <div class="form-group">
+          <label class="form-label" for="mergeMode">Output Format</label>
+          <select class="select-input" id="mergeMode">
+            <option value="pdf">PDF (Separate Pages)</option>
+            <option value="stitch-v">Stitch Image (Vertically)</option>
+            <option value="stitch-h">Stitch Image (Horizontally)</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="pdfLayoutGroup">
+          <label class="form-label" for="pdfPageSize">PDF Page Layout</label>
+          <select class="select-input" id="pdfPageSize">
+            <option value="fit">Fit Image Dimensions</option>
+            <option value="a4-p">A4 Portrait (with Margins)</option>
+            <option value="a4-l">A4 Landscape (with Margins)</option>
+          </select>
+        </div>
+
+        <div class="button-group" style="margin-top: auto; display: flex; gap: var(--spacing-sm);">
+          <button class="button button-primary" id="btnMerge" disabled style="flex: 1;">Generate & Download</button>
+          <button class="button button-danger" id="btnClear" disabled>Clear All</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/index.html" class="nav-brand" style="margin-bottom: 8px;">
+            <img src="/fevicon.png" alt="ConvertOcean Logo" class="brand-logo-img" style="width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; transition: transform 0.2s ease;" />
+            <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+          </a>
+          <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">File Converter</span>
+          <div class="footer-links">
+            <a href="/excel-to-pdf/" class="footer-link">Excel to PDF</a>
+            <a href="/csv-to-json/" class="footer-link">CSV to JSON</a>
+            <a href="/json-to-csv/" class="footer-link">JSON to CSV</a>
+            <a href="/xlsx-to-csv/" class="footer-link">XLSX to CSV</a>
+            <a href="/csv-to-xlsx/" class="footer-link">CSV to XLSX</a>
+            <a href="/json-to-xlsx/" class="footer-link">JSON to XLSX</a>
+            <a href="/xml-to-json/" class="footer-link">XML to JSON</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">PDF & Document</span>
+          <div class="footer-links">
+            <a href="/merge-pdf/" class="footer-link">Merge PDF</a>
+            <a href="/split-pdf/" class="footer-link">Split PDF</a>
+            <a href="/txt-to-pdf/" class="footer-link">TXT to PDF</a>
+            <a href="/pdf-to-txt/" class="footer-link">PDF to TXT</a>
+            <a href="/document-tools/" class="footer-link">Document Tools</a>
+            <a href="/excel-converter/" class="footer-link">Excel Converter</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Image & OCR</span>
+          <div class="footer-links">
+            <a href="/png-to-jpg/" class="footer-link">PNG to JPG</a>
+            <a href="/jpg-to-png/" class="footer-link">JPG to PNG</a>
+            <a href="/png-to-webp/" class="footer-link">PNG to WebP</a>
+            <a href="/webp-to-png/" class="footer-link">WebP to PNG</a>
+            <a href="/image-to-text/" class="footer-link">Image to Text OCR</a>
+            <a href="/image-tools/" class="footer-link">Image Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Legal & Company</span>
+          <div class="footer-links">
+            <a href="/about/" class="footer-link">About Us</a>
+            <a href="/contact/" class="footer-link">Contact Us</a>
+            <a href="/privacy/" class="footer-link">Privacy Policy</a>
+            <a href="/terms/" class="footer-link">Terms & Conditions</a>
+            <a href="/sitemap/" class="footer-link">Sitemap</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="privacy-disclaimer">
+          <strong>🔒 100% Device-Level Security Guarantee:</strong> Disconnect your internet connection completely and try any tool. It works flawlessly because your files never touch an external server. Everything resides in local sandbox memory and is automatically removed when you close the tab.
+        </p>
+        <p class="copyright">&copy; 2026 ConvertOcean. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/theme.js"></script>
+  <script>
+    (function() {
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const errorBanner = document.getElementById('errorBanner');
+      const errorMessage = document.getElementById('errorMessage');
+      const progressOverlay = document.getElementById('progressOverlay');
+      const progressBarFill = document.getElementById('progressBarFill');
+      const progressLabel = document.getElementById('progressLabel');
+      const imagesList = document.getElementById('imagesList');
+      const mergeMode = document.getElementById('mergeMode');
+      const pdfLayoutGroup = document.getElementById('pdfLayoutGroup');
+      const pdfPageSize = document.getElementById('pdfPageSize');
+      const btnMerge = document.getElementById('btnMerge');
+      const btnClear = document.getElementById('btnClear');
+
+      let uploadedFiles = [];
+
+      // Drag and drop setup
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add('dragover');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('dragover');
+        }, false);
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        let files = Array.from(e.dataTransfer.files);
+        if (files.length > 0) handleFiles(files);
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        let files = Array.from(e.target.files);
+        if (files.length > 0) handleFiles(files);
+      });
+
+      mergeMode.addEventListener('change', () => {
+        if (mergeMode.value === 'pdf') {
+          pdfLayoutGroup.style.display = 'flex';
+        } else {
+          pdfLayoutGroup.style.display = 'none';
+        }
+      });
+
+      function showProgress(pct, label) {
+        progressOverlay.style.display = 'flex';
+        progressBarFill.style.width = pct + '%';
+        progressLabel.textContent = label;
+      }
+
+      function hideProgress() {
+        progressOverlay.style.display = 'none';
+      }
+
+      function showError(msg) {
+        errorMessage.textContent = msg;
+        errorBanner.style.display = 'flex';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function hideError() {
+        errorBanner.style.display = 'none';
+      }
+
+      function handleFiles(files) {
+        hideError();
+        const imageFiles = files.filter(f => f.type.startsWith('image/'));
+        if (imageFiles.length === 0) {
+          showError("Please select valid image files (PNG, JPG, WebP, SVG).");
+          return;
+        }
+
+        showProgress(10, "Reading uploaded images…");
+
+        let readCount = 0;
+        imageFiles.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            uploadedFiles.push({
+              id: Date.now() + Math.random().toString(36).substr(2, 5),
+              name: file.name,
+              size: file.size,
+              dataUrl: event.target.result,
+              fileObj: file
+            });
+
+            readCount++;
+            showProgress(10 + Math.round((readCount / imageFiles.length) * 80), `Reading images (${readCount}/${imageFiles.length})…`);
+            if (readCount === imageFiles.length) {
+              hideProgress();
+              renderImagesList();
+            }
+          };
+          reader.onerror = function() {
+            readCount++;
+            if (readCount === imageFiles.length) {
+              hideProgress();
+              renderImagesList();
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function renderImagesList() {
+        if (uploadedFiles.length === 0) {
+          imagesList.style.display = 'none';
+          imagesList.innerHTML = '';
+          btnMerge.disabled = true;
+          btnClear.disabled = true;
+          return;
+        }
+
+        imagesList.innerHTML = '';
+        uploadedFiles.forEach((file, index) => {
+          const item = document.createElement('div');
+          item.className = 'image-item';
+          item.innerHTML = `
+            <img src="${file.dataUrl}" alt="${file.name}" class="image-thumb" />
+            <div class="image-info">
+              <span class="image-name">${file.name}</span>
+              <span class="image-size">${(file.size / 1024).toFixed(1)} KB</span>
+            </div>
+            <div class="image-actions">
+              <button class="action-btn" onclick="window.moveImageUp('${file.id}')" title="Move Up" ${index === 0 ? 'disabled' : ''}>▲</button>
+              <button class="action-btn" onclick="window.moveImageDown('${file.id}')" title="Move Down" ${index === uploadedFiles.length - 1 ? 'disabled' : ''}>▼</button>
+              <button class="action-btn action-btn-danger" onclick="window.deleteImage('${file.id}')" title="Remove">✕</button>
+            </div>
+          `;
+          imagesList.appendChild(item);
+        });
+
+        imagesList.style.display = 'flex';
+        btnMerge.disabled = false;
+        btnClear.disabled = false;
+      }
+
+      window.moveImageUp = function(id) {
+        const idx = uploadedFiles.findIndex(f => f.id === id);
+        if (idx > 0) {
+          const temp = uploadedFiles[idx];
+          uploadedFiles[idx] = uploadedFiles[idx - 1];
+          uploadedFiles[idx - 1] = temp;
+          renderImagesList();
+        }
+      };
+
+      window.moveImageDown = function(id) {
+        const idx = uploadedFiles.findIndex(f => f.id === id);
+        if (idx >= 0 && idx < uploadedFiles.length - 1) {
+          const temp = uploadedFiles[idx];
+          uploadedFiles[idx] = uploadedFiles[idx + 1];
+          uploadedFiles[idx + 1] = temp;
+          renderImagesList();
+        }
+      };
+
+      window.deleteImage = function(id) {
+        uploadedFiles = uploadedFiles.filter(f => f.id !== id);
+        renderImagesList();
+      };
+
+      btnClear.addEventListener('click', () => {
+        uploadedFiles = [];
+        renderImagesList();
+        fileInput.value = '';
+      });
+
+      btnMerge.addEventListener('click', async () => {
+        hideError();
+        if (uploadedFiles.length === 0) return;
+
+        const mode = mergeMode.value;
+        showProgress(15, "Initializing merger...");
+
+        if (mode === 'pdf') {
+          try {
+            const { jsPDF } = window.jspdf;
+            let doc = null;
+
+            for (let i = 0; i < uploadedFiles.length; i++) {
+              showProgress(20 + Math.round((i / uploadedFiles.length) * 70), `Adding page ${i + 1} of ${uploadedFiles.length}...`);
+              const file = uploadedFiles[i];
+
+              const img = await loadImage(file.dataUrl);
+              const w = img.naturalWidth || img.width;
+              const h = img.naturalHeight || img.height;
+
+              const layout = pdfPageSize.value;
+              let pageWidth, pageHeight, imgWidth, imgHeight, dx = 0, dy = 0;
+
+              if (layout === 'fit') {
+                pageWidth = w * 0.264583;
+                pageHeight = h * 0.264583;
+                imgWidth = pageWidth;
+                imgHeight = pageHeight;
+              } else {
+                const isLandscape = layout === 'a4-l';
+                pageWidth = isLandscape ? 297 : 210;
+                pageHeight = isLandscape ? 210 : 297;
+
+                const maxW = pageWidth - 20;
+                const maxH = pageHeight - 20;
+                const ratio = Math.min(maxW / w, maxH / h);
+                
+                imgWidth = w * ratio;
+                imgHeight = h * ratio;
+                dx = (pageWidth - imgWidth) / 2;
+                dy = (pageHeight - imgHeight) / 2;
+              }
+
+              const orient = pageWidth > pageHeight ? 'landscape' : 'portrait';
+              if (i === 0) {
+                doc = new jsPDF({
+                  orientation: orient,
+                  unit: 'mm',
+                  format: [pageWidth, pageHeight]
+                });
+              } else {
+                doc.addPage([pageWidth, pageHeight], orient);
+              }
+
+              let mime = file.fileObj.type === 'image/png' ? 'PNG' : 'JPEG';
+              doc.addImage(file.dataUrl, mime, dx, dy, imgWidth, imgHeight, undefined, 'FAST');
+            }
+
+            showProgress(95, "Compiling PDF download...");
+            doc.save('merged-images.pdf');
+            hideProgress();
+          } catch (err) {
+            showError("PDF compilation failed: " + err.message);
+            hideProgress();
+          }
+        } else {
+          try {
+            const images = [];
+            for (let file of uploadedFiles) {
+              images.push(await loadImage(file.dataUrl));
+            }
+
+            let canvas = document.createElement('canvas');
+            let ctx = canvas.getContext('2d');
+
+            if (mode === 'stitch-v') {
+              let width = Math.max(...images.map(img => img.naturalWidth || img.width));
+              let height = images.reduce((sum, img) => sum + (img.naturalHeight || img.height), 0);
+              
+              canvas.width = width;
+              canvas.height = height;
+
+              let currentY = 0;
+              images.forEach(img => {
+                const imgW = img.naturalWidth || img.width;
+                const imgH = img.naturalHeight || img.height;
+                const dx = (width - imgW) / 2;
+                ctx.drawImage(img, dx, currentY, imgW, imgH);
+                currentY += imgH;
+              });
+            } else {
+              let width = images.reduce((sum, img) => sum + (img.naturalWidth || img.width), 0);
+              let height = Math.max(...images.map(img => img.naturalHeight || img.height));
+
+              canvas.width = width;
+              canvas.height = height;
+
+              let currentX = 0;
+              images.forEach(img => {
+                const imgW = img.naturalWidth || img.width;
+                const imgH = img.naturalHeight || img.height;
+                const dy = (height - imgH) / 2;
+                ctx.drawImage(img, currentX, dy, imgW, imgH);
+                currentX += imgW;
+              });
+            }
+
+            showProgress(90, "Stitching images canvas...");
+            const link = document.createElement('a');
+            link.download = 'stitched-image.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            hideProgress();
+          } catch (err) {
+            showError("Image stitching failed: " + err.message);
+            hideProgress();
+          }
+        }
+      });
+
+      function loadImage(src) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = () => reject(new Error("Failed to load image resource"));
+          img.src = src;
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -547,7 +547,23 @@ export const tools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. The PowerPoint zip structure is parsed directly inside the browser memory.' }
     ],
-    relatedTools: ['word-to-pdf', 'txt-to-pdf', 'excel-to-pdf']
+    relatedTools: ['ppt-to-pdf', 'word-to-pdf', 'txt-to-pdf']
+  },
+  {
+    slug: 'ppt-to-pdf',
+    name: 'PPT to PDF',
+    title: 'Convert PPT to PDF Online - 100% Private | ConvertOcean',
+    description: 'Convert legacy and modern PowerPoint presentations (.ppt, .pptx) to PDF sheets offline in your browser. 100% secure client-side converter.',
+    headline: 'PPT to PDF.',
+    subtitle: 'Convert PowerPoint presentations (.ppt, .pptx) to printable PDF documents locally.',
+    icon: '📊',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Can I convert legacy .ppt files?', answer: 'Legacy .ppt files are a closed binary format. For 100% client-side privacy, you can save your presentation as .pptx in PowerPoint and upload the .pptx file, or use our interface which guides you through local conversion.' }
+    ],
+    relatedTools: ['pptx-to-pdf', 'word-to-pdf', 'txt-to-pdf']
   },
   {
     slug: 'pdf-to-excel',
@@ -564,6 +580,102 @@ export const tools: ToolData[] = [
       { question: 'Does it work offline?', answer: 'Yes. Once loaded, the extraction and Excel compiler run 100% offline.' }
     ],
     relatedTools: ['excel-to-pdf', 'csv-to-xlsx', 'json-to-xlsx']
+  },
+  {
+    slug: 'merge-excel',
+    name: 'Merge Excel & CSV',
+    title: 'Merge Excel & CSV Online - 100% Private | ConvertOcean',
+    description: 'Merge multiple Excel workbooks (.xlsx, .xls) and CSV sheets into a single spreadsheet document offline in your browser. 100% secure.',
+    headline: 'Merge Excel & CSV.',
+    subtitle: 'Stitch sheets and combine data rows from multiple Excel or CSV files client-side locally.',
+    icon: '📊',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No. All files are merged client-side in your browser sandboxed memory.' },
+      { question: 'Does it work offline?', answer: 'Yes. The SheetJS merging engine runs completely offline without internet connection.' }
+    ],
+    relatedTools: ['split-excel', 'excel-to-pdf', 'xlsx-to-csv']
+  },
+  {
+    slug: 'split-excel',
+    name: 'Split Excel & CSV',
+    title: 'Split Excel & CSV Online - 100% Private | ConvertOcean',
+    description: 'Split multi-sheet Excel files or partition CSV rows into separate downloadable worksheets offline in your browser.',
+    headline: 'Split Excel & CSV.',
+    subtitle: 'Extract individual worksheets or partition database CSV rows into smaller files locally.',
+    icon: '📊',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No. All file extraction and partition computations happen locally on your hardware.' },
+      { question: 'Does it work offline?', answer: 'Yes. The SheetJS splitter engine runs 100% client-side.' }
+    ],
+    relatedTools: ['merge-excel', 'excel-to-pdf', 'xlsx-to-csv']
+  },
+  {
+    slug: 'merge-images',
+    name: 'Merge Images',
+    title: 'Merge Images Online - 100% Private Image Merger | ConvertOcean',
+    description: 'Merge multiple images (PNG, JPG, WebP, SVG) into a single PDF document or stitch them into a single image file offline. 100% secure.',
+    headline: 'Merge Images.',
+    subtitle: 'Combine multiple images together client-side into a single PDF or stitched image locally.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No files are uploaded. Image combinations are drawn locally on a browser Canvas or structured via jsPDF.' },
+      { question: 'What options are available for stitching?', answer: 'You can combine images vertically, horizontally, or compile them as separate pages in a single PDF document.' }
+    ],
+    relatedTools: ['split-image', 'png-to-jpg', 'jpg-to-png']
+  },
+  {
+    slug: 'split-image',
+    name: 'Split Image',
+    title: 'Split Image Online - Grid & Tile Cutter | ConvertOcean',
+    description: 'Split images (PNG, JPG, WebP) into custom grids, equal rows/columns, or slices client-side in your browser. 100% secure.',
+    headline: 'Split Image.',
+    subtitle: 'Slice a single image file into grid tiles or parts client-side locally.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No. Your image is processed locally using Canvas, and split tiles are zipped in browser memory.' },
+      { question: 'Can I download the tiles together?', answer: 'Yes, you can download all split tiles at once as a single ZIP archive, or save individual slices.' }
+    ],
+    relatedTools: ['merge-images', 'png-to-jpg', 'jpg-to-png']
+  },
+  {
+    slug: 'merge-txt',
+    name: 'Merge Text & TXT',
+    title: 'Merge Text & TXT Files Online - 100% Private | ConvertOcean',
+    description: 'Merge multiple plain text, markdown, CSV, or log files (.txt, .md, .csv, .log) into a single document offline in your browser. 100% secure.',
+    headline: 'Merge Text & TXT.',
+    subtitle: 'Concatenate multiple text files client-side using custom formatting and separators locally.',
+    icon: '📝',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No. Text files are parsed as raw strings in browser tab memory and concatenated locally.' },
+      { question: 'What separators are supported?', answer: 'You can separate files by single newline, double newline, custom text delimiters, or merge them directly with no separator.' }
+    ],
+    relatedTools: ['split-txt', 'docx-to-txt', 'txt-to-pdf']
+  },
+  {
+    slug: 'split-txt',
+    name: 'Split Text & TXT',
+    title: 'Split Text & TXT Files Online - 100% Private | ConvertOcean',
+    description: 'Split large text or log files (.txt, .log, .md, .csv) into smaller files by line count, size, or custom delimiter offline in your browser.',
+    headline: 'Split Text & TXT.',
+    subtitle: 'Partition large text files into separate downloadable segments client-side locally.',
+    icon: '📝',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All file slicing is completed in browser memory.' },
+      { question: 'Can I split by custom markers?', answer: 'Yes, you can split by lines count, maximum file size in KB, or custom text search boundary strings.' }
+    ],
+    relatedTools: ['merge-txt', 'docx-to-txt', 'pdf-to-txt']
   }
 ];
 

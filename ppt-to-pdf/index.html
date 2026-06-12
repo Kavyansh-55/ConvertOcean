@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convert PPT to PDF Online - 100% Private | ConvertOcean</title>
+  <meta name="description" content="Convert PPT presentations to PDF formatting client-side in your browser. Complete browser-level data privacy and offline support.">
+  <link rel="canonical" href="https://convertocean.com/ppt-to-pdf/" />
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Convert PPT to PDF Online - 100% Private | ConvertOcean" />
+  <meta property="og:description" content="Convert PPT presentations to PDF formatting client-side in your browser. Complete browser-level data privacy and offline support." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://convertocean.com/ppt-to-pdf/" />
+  <meta property="og:image" content="https://convertocean.com/apple-touch-icon.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/theme.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    .preview-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      min-height: 250px;
+      max-height: 500px;
+      overflow: auto;
+      margin-top: var(--spacing-lg);
+      padding: var(--spacing-lg);
+    }
+    .slide-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+    .slide-page {
+      background: var(--colors-canvas-soft-2);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-md);
+      aspect-ratio: 16 / 9;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .slide-header {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--colors-mute);
+      border-bottom: 1px solid var(--colors-hairline);
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .slide-text {
+      font-size: 14px;
+      color: var(--colors-ink);
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="COcean" />
+  <link rel="manifest" href="/site.webmanifest" />
+</head>
+<body>
+  <div class="hero-glow"></div>
+
+  <!-- Header -->
+  <header class="nav-bar">
+    <a href="/index.html" class="nav-brand">
+      <img src="/fevicon.png" alt="ConvertOcean Logo" class="brand-logo-img" style="width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; transition: transform 0.2s ease;" />
+      <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+    </a>
+    
+    <nav class="nav-links">
+      <a href="/index.html" class="nav-link">⚡ Home</a>
+      <a href="/file-converter/" class="nav-link">📄 File Converter</a>
+      <a href="/pdf-tools/" class="nav-link">📑 PDF Tools</a>
+      <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
+      <a href="/excel-converter/" class="nav-link">📊 Excel Converter</a>
+      <a href="/image-to-text/" class="nav-link">🔍 Image to Text</a>
+      <a href="/business-tools/" class="nav-link">💼 Business Tools</a>
+      <a href="/privacy-first/" class="nav-link">🔒 Privacy First</a>
+    </nav>
+
+    <div class="nav-right-group">
+      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        </svg>
+      </button>
+      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobileNavMenu" class="mobile-nav-menu">
+    <a href="/index.html" class="mobile-nav-link">⚡ Home</a>
+    <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
+    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF Tools</a>
+    <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
+    <a href="/excel-converter/" class="mobile-nav-link">📊 Excel Converter</a>
+    <a href="/image-to-text/" class="mobile-nav-link">🔍 Image to Text</a>
+    <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
+    <a href="/privacy-first/" class="mobile-nav-link">🔒 Privacy First</a>
+  </div>
+
+  <main class="app-container">
+    <div class="page-header">
+      <h1 class="page-title">PPT to PDF.</h1>
+      <p class="page-description">Convert PowerPoint presentations (.ppt, .pptx) to PDF sheets offline in your browser.</p>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="errorBanner" class="error-banner">
+      <span>⚠️</span>
+      <span id="errorMessage"></span>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div id="progressOverlay" class="progress-overlay">
+      <div class="progress-bar-container">
+        <div id="progressBarFill" class="progress-bar-fill"></div>
+      </div>
+      <div id="progressLabel" class="progress-label">Processing file…</div>
+    </div>
+
+    <!-- Upload Card -->
+    <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">📊</div>
+      <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+      <div class="upload-text-secondary">Upload PowerPoint Presentation (.ppt, .pptx) (Max 25MB)</div>
+      <input type="file" id="fileInput" class="file-input" accept=".ppt,.pptx" />
+    </div>
+
+    <!-- Preview Panel -->
+    <div id="previewCard" class="preview-card" style="display: none;">
+      <div id="previewBody" class="slide-container"></div>
+    </div>
+
+    <!-- Controls -->
+    <div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
+      <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
+      <div class="button-group">
+        <button class="button button-primary" id="btnDownload">Download PDF</button>
+        <button class="button button-danger" id="btnClear">Clear</button>
+      </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <section class="info-section">
+      <h2 style="font-size:22px; font-weight:600; text-align:center; color:var(--colors-ink);">How It Works</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <span class="info-card-step">Step 1</span>
+          <h3 class="info-card-title">Upload File</h3>
+          <p class="info-card-desc">Drag and drop your PPT or PPTX file into the secure, local browser drop zone card.</p>
+        </div>
+        <div class="info-card">
+          <span class="info-card-step">Step 2</span>
+          <h3 class="info-card-title">Select Format</h3>
+          <p class="info-card-desc">Preview slide layout pages and check margins before local rendering.</p>
+        </div>
+        <div class="info-card">
+          <span class="info-card-step">Step 3</span>
+          <h3 class="info-card-title">Convert Locally</h3>
+          <p class="info-card-desc">PowerPoint archive slides compile locally to print-ready PDF formats inside browser sandbox memory.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Use Section -->
+    <section class="info-section" style="margin-top: 20px;">
+      <h2 style="font-size:22px; font-weight:600; text-align:center; color:var(--colors-ink); margin-bottom: var(--spacing-lg);">Why Choose ConvertOcean?</h2>
+      <div class="info-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="info-card">
+          <h3 class="info-card-title">🔒 100% Client-Side Privacy</h3>
+          <p class="info-card-desc">Your private documents never leave your computer. We process all data inside local browser tab sandbox memory.</p>
+        </div>
+        <div class="info-card">
+          <h3 class="info-card-title">⚡ High-Performance Speed</h3>
+          <p class="info-card-desc">Conversions start instantly without waiting for long network file uploads. Zero delay.</p>
+        </div>
+        <div class="info-card">
+          <h3 class="info-card-title">🚫 Free & Unlimited</h3>
+          <p class="info-card-desc">No accounts, no email addresses, no tracking parameters, and no subscription walls.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Tools Section -->
+    <section class="info-section" style="margin-top: 20px;">
+      <h3 style="font-size: 18px; font-weight: 600; color: var(--colors-ink); border-bottom: 1px solid var(--colors-hairline); padding-bottom: 8px;">Related Tools</h3>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); margin-top: var(--spacing-md);">
+        <a href="/pptx-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
+          <div class="popular-card-icon">📊</div>
+          <span class="popular-card-name">POWERPOINT TO PDF</span>
+        </a>
+        <a href="/word-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
+          <div class="popular-card-icon">📄</div>
+          <span class="popular-card-name">WORD TO PDF</span>
+        </a>
+        <a href="/excel-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
+          <div class="popular-card-icon">📊</div>
+          <span class="popular-card-name">EXCEL TO PDF</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/index.html" class="nav-brand" style="margin-bottom: 8px;">
+            <img src="/fevicon.png" alt="ConvertOcean Logo" class="brand-logo-img" style="width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; transition: transform 0.2s ease;" />
+            <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+          </a>
+          <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">File Converter</span>
+          <div class="footer-links">
+            <a href="/excel-to-pdf/" class="footer-link">Excel to PDF</a>
+            <a href="/csv-to-json/" class="footer-link">CSV to JSON</a>
+            <a href="/json-to-csv/" class="footer-link">JSON to CSV</a>
+            <a href="/xlsx-to-csv/" class="footer-link">XLSX to CSV</a>
+            <a href="/csv-to-xlsx/" class="footer-link">CSV to XLSX</a>
+            <a href="/json-to-xlsx/" class="footer-link">JSON to XLSX</a>
+            <a href="/xml-to-json/" class="footer-link">XML to JSON</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">PDF & Document</span>
+          <div class="footer-links">
+            <a href="/merge-pdf/" class="footer-link">Merge PDF</a>
+            <a href="/split-pdf/" class="footer-link">Split PDF</a>
+            <a href="/txt-to-pdf/" class="footer-link">TXT to PDF</a>
+            <a href="/pdf-to-txt/" class="footer-link">PDF to TXT</a>
+            <a href="/document-tools/" class="footer-link">Document Tools</a>
+            <a href="/excel-converter/" class="footer-link">Excel Converter</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Image & OCR</span>
+          <div class="footer-links">
+            <a href="/png-to-jpg/" class="footer-link">PNG to JPG</a>
+            <a href="/jpg-to-png/" class="footer-link">JPG to PNG</a>
+            <a href="/png-to-webp/" class="footer-link">PNG to WebP</a>
+            <a href="/webp-to-png/" class="footer-link">WebP to PNG</a>
+            <a href="/image-to-text/" class="footer-link">Image to Text OCR</a>
+            <a href="/image-tools/" class="footer-link">Image Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Legal & Company</span>
+          <div class="footer-links">
+            <a href="/about/" class="footer-link">About Us</a>
+            <a href="/contact/" class="footer-link">Contact Us</a>
+            <a href="/privacy/" class="footer-link">Privacy Policy</a>
+            <a href="/terms/" class="footer-link">Terms & Conditions</a>
+            <a href="/sitemap/" class="footer-link">Sitemap</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="privacy-disclaimer">
+          <strong>🔒 100% Device-Level Security Guarantee:</strong> Disconnect your internet connection completely and try any tool. It works flawlessly because your files never touch an external server. Everything resides in local sandbox memory and is automatically removed when you close the tab.
+        </p>
+        <p class="copyright">&copy; 2026 ConvertOcean. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/theme.js"></script>
+  <script>
+    (function() {
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const errorBanner = document.getElementById('errorBanner');
+      const errorMessage = document.getElementById('errorMessage');
+      const progressOverlay = document.getElementById('progressOverlay');
+      const progressBarFill = document.getElementById('progressBarFill');
+      const progressLabel = document.getElementById('progressLabel');
+      const previewCard = document.getElementById('previewCard');
+      const previewBody = document.getElementById('previewBody');
+      const actionControls = document.getElementById('actionControls');
+      const fileNameDisplay = document.getElementById('fileNameDisplay');
+      const btnDownload = document.getElementById('btnDownload');
+      const btnClear = document.getElementById('btnClear');
+
+      let originalName = '';
+
+      // Drag and drop setup
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add('dragover');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('dragover');
+        }, false);
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        let files = Array.from(e.dataTransfer.files).slice(0, 1);
+        if (files.length > 0) handleFile(files[0]);
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        let files = Array.from(e.target.files).slice(0, 1);
+        if (files.length > 0) handleFile(files[0]);
+      });
+
+      function showProgress(pct, label) {
+        progressOverlay.style.display = 'flex';
+        progressBarFill.style.width = pct + '%';
+        progressLabel.textContent = label;
+      }
+
+      function hideProgress() {
+        progressOverlay.style.display = 'none';
+      }
+
+      function showError(msg) {
+        errorMessage.textContent = msg;
+        errorBanner.style.display = 'flex';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function hideError() {
+        errorBanner.style.display = 'none';
+      }
+
+      function handleFile(file) {
+        hideError();
+        originalName = file.name;
+        const extension = file.name.split('.').pop().toLowerCase();
+
+        if (extension !== 'pptx' && extension !== 'ppt') {
+          showError("Invalid file format. Please upload a .ppt or .pptx presentation file.");
+          return;
+        }
+
+        if (extension === 'ppt') {
+          previewBody.innerHTML = `
+            <div style="background-color: var(--colors-error-soft); border: 1px solid var(--colors-error); border-radius: var(--rounded-lg); padding: var(--spacing-lg); max-width: 600px; margin: 0 auto; text-align: left; color: var(--colors-ink);">
+              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--spacing-xs); display: flex; align-items: center; gap: 8px; color: var(--colors-error-deep);">
+                ⚠️ Legacy PowerPoint (.ppt) Format Detected
+              </h3>
+              <p style="font-size: 13.5px; line-height: 1.5; margin-bottom: var(--spacing-sm); color: var(--colors-body);">
+                Legacy <strong>.ppt</strong> files are stored in a closed proprietary binary format. For 100% private, secure client-side conversion, we require the modern XML-based <strong>.pptx</strong> format.
+              </p>
+              <h4 style="font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--colors-ink);">How to Convert to .pptx in 2 Steps:</h4>
+              <ol style="margin-left: var(--spacing-md); font-size: 13px; line-height: 1.5; color: var(--colors-body); display: flex; flex-direction: column; gap: 4px; padding-left: 15px;">
+                <li>Open your <code>.ppt</code> file in Microsoft PowerPoint or LibreOffice.</li>
+                <li>Go to <strong>File</strong> &rarr; <strong>Save As</strong>, and select <strong>PowerPoint Presentation (*.pptx)</strong> in the format dropdown.</li>
+              </ol>
+              <p style="font-size: 12.5px; margin-top: var(--spacing-sm); color: var(--colors-mute); font-style: italic;">
+                Once saved as .pptx, drag and drop the new file here for instant, offline, private PDF generation.
+              </p>
+            </div>
+          `;
+          previewCard.style.display = 'block';
+          fileNameDisplay.textContent = file.name;
+          actionControls.style.display = 'flex';
+          btnDownload.style.display = 'none';
+          dropZone.style.display = 'none';
+          hideProgress();
+          return;
+        }
+
+        showProgress(25, "Loading presentation archive…");
+
+        JSZip.loadAsync(file)
+          .then(async function(zip) {
+            showProgress(55, "Extracting slide layouts…");
+            
+            // PPTX slides reside in ppt/slides/slide[X].xml
+            const slideFiles = [];
+            zip.folder("ppt/slides").forEach((relativePath, fileObj) => {
+              if (relativePath.match(/^slide\d+\.xml$/)) {
+                slideFiles.push(fileObj);
+              }
+            });
+
+            // Sort slides by index
+            slideFiles.sort((a, b) => {
+              const numA = parseInt(a.name.match(/slide(\d+)\.xml$/)[1]);
+              const numB = parseInt(b.name.match(/slide(\d+)\.xml$/)[1]);
+              return numA - numB;
+            });
+
+            if (slideFiles.length === 0) {
+              showError("No slides found in this presentation.");
+              hideProgress();
+              return;
+            }
+
+            previewBody.innerHTML = '';
+            const parser = new DOMParser();
+
+            for (let i = 0; i < slideFiles.length; i++) {
+              showProgress(55 + Math.round((i / slideFiles.length) * 35), `Parsing slide ${i + 1} of ${slideFiles.length}…`);
+              const slideText = await slideFiles[i].async("string");
+              const xmlDoc = parser.parseFromString(slideText, "text/xml");
+              
+              // Extract text from `<a:t>` elements
+              const textElements = xmlDoc.getElementsByTagName("a:t");
+              const textContent = Array.from(textElements)
+                .map(el => el.textContent)
+                .filter(txt => txt.trim() !== '')
+                .join("\n");
+
+              const slidePage = document.createElement('div');
+              slidePage.className = 'slide-page';
+              
+              const slideHeader = document.createElement('div');
+              slideHeader.className = 'slide-header';
+              slideHeader.textContent = `Slide ${i + 1}`;
+              
+              const slideTextEl = document.createElement('div');
+              slideTextEl.className = 'slide-text';
+              slideTextEl.textContent = textContent || "[Empty Slide]";
+
+              slidePage.appendChild(slideHeader);
+              slidePage.appendChild(slideTextEl);
+              previewBody.appendChild(slidePage);
+            }
+
+            previewCard.style.display = 'block';
+            fileNameDisplay.textContent = file.name;
+            actionControls.style.display = 'flex';
+            btnDownload.style.display = 'inline-flex';
+            dropZone.style.display = 'none';
+            hideProgress();
+          })
+          .catch(err => {
+            showError("Failed to parse PowerPoint archive files.");
+            hideProgress();
+          });
+      }
+
+      btnDownload.addEventListener('click', () => {
+        showProgress(40, "Compiling slides layout to PDF…");
+        const element = previewBody;
+        const opt = {
+          margin:       10,
+          filename:     originalName.replace(/\.[^/.]+$/, "") + '.pdf',
+          image:        { type: 'jpeg', quality: 0.95 },
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        };
+        html2pdf().set(opt).from(element).save().then(() => {
+          hideProgress();
+        }).catch(err => {
+          showError("PDF compilation failed.");
+          hideProgress();
+        });
+      });
+
+      btnClear.addEventListener('click', () => {
+        previewCard.style.display = 'none';
+        previewBody.innerHTML = '';
+        actionControls.style.display = 'none';
+        dropZone.style.display = 'flex';
+        fileInput.value = '';
+      });
+    })();
+  </script>
+</body>
+</html>

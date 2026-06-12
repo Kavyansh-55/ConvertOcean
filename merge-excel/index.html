@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merge Excel & CSV Online - 100% Private | ConvertOcean</title>
+  <meta name="description" content="Merge multiple Excel workbooks (.xlsx, .xls) and CSV sheets into a single spreadsheet document offline in your browser. 100% secure.">
+  <link rel="canonical" href="https://convertocean.com/merge-excel/" />
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Merge Excel & CSV Online - 100% Private | ConvertOcean" />
+  <meta property="og:description" content="Merge multiple Excel workbooks (.xlsx, .xls) and CSV sheets into a single spreadsheet document offline in your browser. 100% secure." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://convertocean.com/merge-excel/" />
+  <meta property="og:image" content="https://convertocean.com/apple-touch-icon.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/theme.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  <style>
+    .file-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: var(--spacing-xs);
+      margin-top: var(--spacing-md);
+    }
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      background-color: var(--colors-canvas-soft);
+      border: 1px solid var(--colors-hairline);
+      border-radius: 6px;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .file-item:hover {
+      border-color: var(--colors-hairline-strong);
+    }
+    .file-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow: hidden;
+    }
+    .file-item-name {
+      font-weight: 600;
+      color: var(--colors-ink);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 300px;
+    }
+    .file-item-meta {
+      font-size: 11px;
+      color: var(--colors-mute);
+    }
+    .file-item-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .icon-btn {
+      background: none;
+      border: 1px solid var(--colors-hairline);
+      border-radius: 4px;
+      color: var(--colors-body);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover:not(:disabled) {
+      background-color: var(--colors-canvas-soft-2);
+      color: var(--colors-ink);
+      border-color: var(--colors-hairline-strong);
+    }
+    .icon-btn.danger:hover {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="COcean" />
+  <link rel="manifest" href="/site.webmanifest" />
+</head>
+<body>
+  <div class="hero-glow"></div>
+
+  <!-- Header -->
+  <header class="nav-bar">
+    <a href="/index.html" class="nav-brand">
+      <img src="/fevicon.png" alt="ConvertOcean Logo" class="brand-logo-img" style="width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; transition: transform 0.2s ease;" />
+      <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+    </a>
+    
+    <nav class="nav-links">
+      <a href="/index.html" class="nav-link">⚡ Home</a>
+      <a href="/file-converter/" class="nav-link">📄 File Converter</a>
+      <a href="/pdf-tools/" class="nav-link">📑 PDF Tools</a>
+      <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
+      <a href="/excel-converter/" class="nav-link active">📊 Excel Converter</a>
+      <a href="/image-to-text/" class="nav-link">🔍 Image to Text</a>
+      <a href="/business-tools/" class="nav-link">💼 Business Tools</a>
+      <a href="/privacy-first/" class="nav-link">🔒 Privacy First</a>
+    </nav>
+
+    <div class="nav-right-group">
+      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        </svg>
+      </button>
+      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobileNavMenu" class="mobile-nav-menu">
+    <a href="/index.html" class="mobile-nav-link">⚡ Home</a>
+    <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
+    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF Tools</a>
+    <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
+    <a href="/excel-converter/" class="mobile-nav-link active">📊 Excel Converter</a>
+    <a href="/image-to-text/" class="mobile-nav-link">🔍 Image to Text</a>
+    <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
+    <a href="/privacy-first/" class="mobile-nav-link">🔒 Privacy First</a>
+  </div>
+
+  <main class="app-container">
+    <div class="page-header">
+      <h1 class="page-title">Merge Excel & CSV.</h1>
+      <p class="page-description">Stitch sheets and combine data rows from multiple Excel or CSV files client-side locally.</p>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="errorBanner" class="error-banner">
+      <span>⚠️</span>
+      <span id="errorMessage"></span>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div id="progressOverlay" class="progress-overlay">
+      <div class="progress-bar-container">
+        <div id="progressBarFill" class="progress-bar-fill"></div>
+      </div>
+      <div id="progressLabel" class="progress-label">Processing files…</div>
+    </div>
+
+    <!-- Upload Card -->
+    <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">🥞</div>
+      <div class="upload-text-primary">Drag and drop spreadsheet files here, or click to browse</div>
+      <div class="upload-text-secondary">Upload XLS, XLSX, or CSV files (Max 25MB each)</div>
+      <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv" multiple />
+    </div>
+
+    <!-- Merge Workspace Panel -->
+    <div id="workspacePanel" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
+      <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute); margin-bottom: 8px;">Excel & CSV Merge Queue</div>
+      
+      <div class="file-list" id="fileItemsList"></div>
+
+      <div style="margin-top: var(--spacing-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm); border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-md);">
+        <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+          <label for="mergeOutputName" style="font-size:13px; font-weight:600; color:var(--colors-body);">Output Filename:</label>
+          <input type="text" id="mergeOutputName" class="form-input" style="max-width: 250px; height: 36px; padding: 0 12px; font-size:13.5px;" value="merged_spreadsheet.xlsx">
+        </div>
+        <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
+          <button class="button button-primary" onclick="mergeSpreadsheets()">Merge & Download</button>
+          <button class="button button-danger" onclick="resetWorkspace()">Clear Queue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <section class="info-section">
+      <h2 style="font-size:22px; font-weight:600; text-align:center; color:var(--colors-ink);">How It Works</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <span class="info-card-step">Step 1</span>
+          <h3 class="info-card-title">Upload Files</h3>
+          <p class="info-card-desc">Select multiple XLS, XLSX or CSV files to merge from your local drive.</p>
+        </div>
+        <div class="info-card">
+          <span class="info-card-step">Step 2</span>
+          <h3 class="info-card-title">Arrange Sequence</h3>
+          <p class="info-card-desc">Move spreadsheet blocks up or down in the merge queue to order sheets.</p>
+        </div>
+        <div class="info-card">
+          <span class="info-card-step">Step 3</span>
+          <h3 class="info-card-title">Merge Offline</h3>
+          <p class="info-card-desc">Excel sheets are compiled client-side using SheetJS in browser tab cache memory.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Use Section -->
+    <section class="info-section" style="margin-top: 20px;">
+      <h2 style="font-size:22px; font-weight:600; text-align:center; color:var(--colors-ink); margin-bottom: var(--spacing-lg);">Why Choose ConvertOcean?</h2>
+      <div class="info-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="info-card">
+          <h3 class="info-card-title">🔒 100% Client-Side Privacy</h3>
+          <p class="info-card-desc">Your private documents never leave your computer. We process all data inside local browser tab sandbox memory.</p>
+        </div>
+        <div class="info-card">
+          <h3 class="info-card-title">⚡ High-Performance Speed</h3>
+          <p class="info-card-desc">Conversions start instantly without waiting for long network file uploads. Zero delay.</p>
+        </div>
+        <div class="info-card">
+          <h3 class="info-card-title">🚫 Free & Unlimited</h3>
+          <p class="info-card-desc">No accounts, no email addresses, no tracking parameters, and no subscription walls.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Tools Section -->
+    <section class="info-section" style="margin-top: 20px;">
+      <h3 style="font-size: 18px; font-weight: 600; color: var(--colors-ink); border-bottom: 1px solid var(--colors-hairline); padding-bottom: 8px;">Related Tools</h3>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); margin-top: var(--spacing-md);">
+        <a href="/split-excel/" class="popular-card" style="margin-top: var(--spacing-xs);">
+          <div class="popular-card-icon">📊</div>
+          <span class="popular-card-name">SPLIT EXCEL</span>
+        </a>
+        <a href="/excel-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
+          <div class="popular-card-icon">📊</div>
+          <span class="popular-card-name">EXCEL TO PDF</span>
+        </a>
+        <a href="/xlsx-to-csv/" class="popular-card" style="margin-top: var(--spacing-xs);">
+          <div class="popular-card-icon">📊</div>
+          <span class="popular-card-name">XLSX TO CSV</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/index.html" class="nav-brand" style="margin-bottom: 8px;">
+            <img src="/fevicon.png" alt="ConvertOcean Logo" class="brand-logo-img" style="width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; transition: transform 0.2s ease;" />
+            <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+          </a>
+          <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">File Converter</span>
+          <div class="footer-links">
+            <a href="/excel-to-pdf/" class="footer-link">Excel to PDF</a>
+            <a href="/csv-to-json/" class="footer-link">CSV to JSON</a>
+            <a href="/json-to-csv/" class="footer-link">JSON to CSV</a>
+            <a href="/xlsx-to-csv/" class="footer-link">XLSX to CSV</a>
+            <a href="/csv-to-xlsx/" class="footer-link">CSV to XLSX</a>
+            <a href="/json-to-xlsx/" class="footer-link">JSON to XLSX</a>
+            <a href="/xml-to-json/" class="footer-link">XML to JSON</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">PDF & Document</span>
+          <div class="footer-links">
+            <a href="/merge-pdf/" class="footer-link">Merge PDF</a>
+            <a href="/split-pdf/" class="footer-link">Split PDF</a>
+            <a href="/txt-to-pdf/" class="footer-link">TXT to PDF</a>
+            <a href="/pdf-to-txt/" class="footer-link">PDF to TXT</a>
+            <a href="/document-tools/" class="footer-link">Document Tools</a>
+            <a href="/excel-converter/" class="footer-link">Excel Converter</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Image & OCR</span>
+          <div class="footer-links">
+            <a href="/png-to-jpg/" class="footer-link">PNG to JPG</a>
+            <a href="/jpg-to-png/" class="footer-link">JPG to PNG</a>
+            <a href="/png-to-webp/" class="footer-link">PNG to WebP</a>
+            <a href="/webp-to-png/" class="footer-link">WebP to PNG</a>
+            <a href="/image-to-text/" class="footer-link">Image to Text OCR</a>
+            <a href="/image-tools/" class="footer-link">Image Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Legal & Company</span>
+          <div class="footer-links">
+            <a href="/about/" class="footer-link">About Us</a>
+            <a href="/contact/" class="footer-link">Contact Us</a>
+            <a href="/privacy/" class="footer-link">Privacy Policy</a>
+            <a href="/terms/" class="footer-link">Terms & Conditions</a>
+            <a href="/sitemap/" class="footer-link">Sitemap</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="privacy-disclaimer">
+          <strong>🔒 100% Device-Level Security Guarantee:</strong> Disconnect your internet connection completely and try any tool. It works flawlessly because your files never touch an external server. Everything resides in local sandbox memory and is automatically removed when you close the tab.
+        </p>
+        <p class="copyright">&copy; 2026 ConvertOcean. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/theme.js"></script>
+  <script>
+    (function() {
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const errorBanner = document.getElementById('errorBanner');
+      const errorMessage = document.getElementById('errorMessage');
+      const progressOverlay = document.getElementById('progressOverlay');
+      const progressBarFill = document.getElementById('progressBarFill');
+      const progressLabel = document.getElementById('progressLabel');
+      const workspacePanel = document.getElementById('workspacePanel');
+      const fileItemsList = document.getElementById('fileItemsList');
+      const mergeOutputName = document.getElementById('mergeOutputName');
+
+      let mergeQueue = [];
+
+      // Drag and drop setup
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add('dragover');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('dragover');
+        }, false);
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        const files = Array.from(e.dataTransfer.files);
+        if (files.length > 0) handleFiles(files);
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length > 0) handleFiles(files);
+      });
+
+      function showProgress(pct, label) {
+        progressOverlay.style.display = 'flex';
+        progressBarFill.style.width = pct + '%';
+        progressLabel.textContent = label;
+      }
+
+      function hideProgress() {
+        progressOverlay.style.display = 'none';
+      }
+
+      function showError(msg) {
+        errorMessage.textContent = msg;
+        errorBanner.style.display = 'flex';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function hideError() {
+        errorBanner.style.display = 'none';
+      }
+
+      async function handleFiles(files) {
+        hideError();
+        showProgress(10, "Reading spreadsheet files…");
+        
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const ext = file.name.split('.').pop().toLowerCase();
+          if (!['xlsx', 'xls', 'csv'].includes(ext)) {
+            showError(`Skipped "${file.name}": Unsupported format. Only Excel & CSV are supported.`);
+            continue;
+          }
+
+          try {
+            const bytes = await readFileAsArrayBuffer(file);
+            const workbook = XLSX.read(bytes, { type: 'array' });
+            mergeQueue.push({
+              id: Date.now() + Math.random().toString(36).substr(2, 9),
+              name: file.name,
+              size: file.size,
+              bytes: bytes,
+              sheets: workbook.SheetNames
+            });
+          } catch(err) {
+            showError(`Failed to parse "${file.name}".`);
+          }
+        }
+        
+        hideProgress();
+        renderQueue();
+        if (mergeQueue.length > 0) {
+          workspacePanel.style.display = 'block';
+          dropZone.style.display = 'none';
+        }
+      }
+
+      function readFileAsArrayBuffer(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsArrayBuffer(file);
+        });
+      }
+
+      window.moveItem = function(index, direction) {
+        const target = index + direction;
+        if (target < 0 || target >= mergeQueue.length) return;
+        const temp = mergeQueue[index];
+        mergeQueue[index] = mergeQueue[target];
+        mergeQueue[target] = temp;
+        renderQueue();
+      };
+
+      window.removeItem = function(id) {
+        mergeQueue = mergeQueue.filter(f => f.id !== id);
+        renderQueue();
+        if (mergeQueue.length === 0) {
+          resetWorkspace();
+        }
+      };
+
+      function renderQueue() {
+        fileItemsList.innerHTML = '';
+        mergeQueue.forEach((file, index) => {
+          const item = document.createElement('div');
+          item.className = 'file-item';
+          item.innerHTML = `
+            <div class="file-item-info">
+              <span class="file-item-name">${file.name}</span>
+              <span class="file-item-meta">${(file.size / 1024).toFixed(1)} KB • ${file.sheets.length} worksheet(s) (${file.sheets.join(', ')})</span>
+            </div>
+            <div class="file-item-actions">
+              <button class="icon-btn" onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+              <button class="icon-btn" onclick="moveItem(${index}, 1)" ${index === mergeQueue.length - 1 ? 'disabled' : ''}>▼</button>
+              <button class="icon-btn danger" onclick="removeItem('${file.id}')">✕</button>
+            </div>
+          `;
+          fileItemsList.appendChild(item);
+        });
+      }
+
+      window.mergeSpreadsheets = function() {
+        if (mergeQueue.length < 2) {
+          showError("Please upload at least 2 spreadsheet files to merge.");
+          return;
+        }
+        showProgress(30, "Merging worksheets client-side…");
+        try {
+          const outWorkbook = XLSX.utils.book_new();
+          const sheetNamesSet = new Set();
+
+          mergeQueue.forEach((file) => {
+            const workbook = XLSX.read(file.bytes, { type: 'array' });
+            workbook.SheetNames.forEach((sheetName) => {
+              const worksheet = workbook.Sheets[sheetName];
+              
+              let finalSheetName = `${file.name.replace(/\.[^/.]+$/, "")}_${sheetName}`;
+              finalSheetName = finalSheetName.replace(/[\[\]\?\*\/\\\:]/g, '_').substring(0, 31);
+              
+              let counter = 1;
+              let tempName = finalSheetName;
+              while (sheetNamesSet.has(tempName.toLowerCase())) {
+                const suffix = `_${counter}`;
+                tempName = finalSheetName.substring(0, 31 - suffix.length) + suffix;
+                counter++;
+              }
+              finalSheetName = tempName;
+              sheetNamesSet.add(finalSheetName.toLowerCase());
+
+              XLSX.utils.book_append_sheet(outWorkbook, worksheet, finalSheetName);
+            });
+          });
+
+          showProgress(70, "Compiling merged XLSX workbook…");
+          const outBytes = XLSX.write(outWorkbook, { bookType: 'xlsx', type: 'array' });
+          
+          let outputName = mergeOutputName.value.trim() || 'merged_spreadsheet.xlsx';
+          if (!outputName.toLowerCase().endsWith('.xlsx')) outputName += '.xlsx';
+
+          const blob = new Blob([outBytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = outputName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        } catch (err) {
+          showError("Failed to merge spreadsheets. Ensure none of the sheets are corrupted.");
+        }
+        hideProgress();
+      };
+
+      window.resetWorkspace = function() {
+        mergeQueue = [];
+        fileInput.value = '';
+        fileItemsList.innerHTML = '';
+        workspacePanel.style.display = 'none';
+        dropZone.style.display = 'flex';
+        hideError();
+      };
+    })();
+  </script>
+</body>
+</html>

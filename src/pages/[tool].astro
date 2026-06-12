@@ -15,6 +15,12 @@ import WordTool from '../components/tools/WordTool.astro';
 import PdfToWord from '../components/tools/PdfToWord.astro';
 import PptxTool from '../components/tools/PptxTool.astro';
 import PdfToExcel from '../components/tools/PdfToExcel.astro';
+import MergeExcel from '../components/tools/MergeExcel.astro';
+import SplitExcel from '../components/tools/SplitExcel.astro';
+import MergeImages from '../components/tools/MergeImages.astro';
+import SplitImage from '../components/tools/SplitImage.astro';
+import MergeTxt from '../components/tools/MergeTxt.astro';
+import SplitTxt from '../components/tools/SplitTxt.astro';
 
 export function getStaticPaths() {
   return tools.map(t => ({ params: { tool: t.slug } }));
@@ -58,7 +64,14 @@ const toolsMap: Record<string, any> = {
   'pdf-to-word': PdfToWord,
   'docx-to-txt': WordTool,
   'pptx-to-pdf': PptxTool,
-  'pdf-to-excel': PdfToExcel
+  'ppt-to-pdf': PptxTool,
+  'pdf-to-excel': PdfToExcel,
+  'merge-excel': MergeExcel,
+  'split-excel': SplitExcel,
+  'merge-images': MergeImages,
+  'split-image': SplitImage,
+  'merge-txt': MergeTxt,
+  'split-txt': SplitTxt
 };
 
 const ToolComponent = toolsMap[toolData.slug];

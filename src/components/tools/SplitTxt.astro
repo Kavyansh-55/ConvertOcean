@@ -1,0 +1,351 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .parts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .part-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  .part-info {
+    display: flex;
+    flex-direction: column;
+  }
+  .part-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--colors-ink);
+  }
+  .part-meta {
+    font-size: 12px;
+    color: var(--colors-mute);
+  }
+</style>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Overlay -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Splitting file…</div>
+</div>
+
+<div class="workspace-layout">
+  <!-- Upload & Preview Panel -->
+  <div class="panel-card">
+    <h3 class="panel-section-title">Upload & Parts Preview</h3>
+    
+    <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">📝</div>
+      <div class="upload-text-primary">Drag and drop text file here, or click to browse</div>
+      <div class="upload-text-secondary">TXT, MD, LOG, CSV, XML (Max 20MB)</div>
+      <input type="file" id="fileInput" class="file-input" accept=".txt,.md,.log,.csv,.xml,.json" />
+    </div>
+
+    <!-- Loaded Details -->
+    <div id="fileInfoCard" class="panel-card" style="display: none; box-shadow: none; border-color: var(--colors-hairline-strong);">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <strong id="loadedFileName" style="font-size: 14px; color: var(--colors-ink);"></strong>
+          <div id="loadedFileSize" style="font-size: 12px; color: var(--colors-mute);"></div>
+        </div>
+        <button class="button button-danger" id="btnClear" style="height: 32px; padding: 0 var(--spacing-sm);">Clear</button>
+      </div>
+    </div>
+
+    <div id="partsGrid" class="parts-grid" style="display: none;"></div>
+  </div>
+
+  <!-- Settings & Split Panel -->
+  <div class="panel-card">
+    <h3 class="panel-section-title">Split Configuration</h3>
+    
+    <div class="form-group">
+      <label class="form-label" for="splitMethod">Split Method</label>
+      <select class="select-input" id="splitMethod">
+        <option value="lines">By Line Count (e.g. every 1000 lines)</option>
+        <option value="size">By File Size (e.g. every 500 KB)</option>
+        <option value="delimiter">By Text Delimiter</option>
+      </select>
+    </div>
+
+    <!-- Lines Settings -->
+    <div class="form-group" id="linesGroup">
+      <label class="form-label" for="splitLines">Lines per segment</label>
+      <input type="number" class="form-input" id="splitLines" min="1" value="1000" />
+    </div>
+
+    <!-- Size Settings -->
+    <div class="form-group" id="sizeGroup" style="display: none;">
+      <label class="form-label" for="splitSize">Max segment size (KB)</label>
+      <input type="number" class="form-input" id="splitSize" min="10" value="500" />
+    </div>
+
+    <!-- Delimiter Settings -->
+    <div class="form-group" id="delimiterGroup" style="display: none;">
+      <label class="form-label" for="splitDelimiter">Delimiter text boundary</label>
+      <input type="text" class="form-input" id="splitDelimiter" placeholder="e.g. --- SECTION ---" />
+    </div>
+
+    <div class="button-group" style="margin-top: auto; display: flex; gap: var(--spacing-sm);">
+      <button class="button button-primary" id="btnSplit" disabled style="flex: 1;">Split &amp; Download ZIP</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ slug }}>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const fileInfoCard = document.getElementById('fileInfoCard');
+    const loadedFileName = document.getElementById('loadedFileName');
+    const loadedFileSize = document.getElementById('loadedFileSize');
+    const partsGrid = document.getElementById('partsGrid');
+    const splitMethod = document.getElementById('splitMethod');
+    const linesGroup = document.getElementById('linesGroup');
+    const sizeGroup = document.getElementById('sizeGroup');
+    const delimiterGroup = document.getElementById('delimiterGroup');
+    const splitLines = document.getElementById('splitLines');
+    const splitSize = document.getElementById('splitSize');
+    const splitDelimiter = document.getElementById('splitDelimiter');
+    const btnSplit = document.getElementById('btnSplit');
+    const btnClear = document.getElementById('btnClear');
+
+    let rawTextContent = '';
+    let originalName = '';
+    let fileSizeVal = 0;
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    splitMethod.addEventListener('change', () => {
+      const method = splitMethod.value;
+      linesGroup.style.display = method === 'lines' ? 'flex' : 'none';
+      sizeGroup.style.display = method === 'size' ? 'flex' : 'none';
+      delimiterGroup.style.display = method === 'delimiter' ? 'flex' : 'none';
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    function handleFile(file) {
+      hideError();
+      originalName = file.name;
+      fileSizeVal = file.size;
+
+      showProgress(20, "Reading text file content...");
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        rawTextContent = event.target.result;
+        hideProgress();
+        
+        dropZone.style.display = 'none';
+        loadedFileName.textContent = file.name;
+        loadedFileSize.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+        fileInfoCard.style.display = 'block';
+        btnSplit.disabled = false;
+      };
+      reader.onerror = function() {
+        showError("Failed to read text file.");
+        hideProgress();
+      };
+      reader.readAsText(file);
+    }
+
+    btnClear.addEventListener('click', () => {
+      rawTextContent = '';
+      originalName = '';
+      fileSizeVal = 0;
+      fileInfoCard.style.display = 'none';
+      partsGrid.style.display = 'none';
+      partsGrid.innerHTML = '';
+      dropZone.style.display = 'flex';
+      btnSplit.disabled = true;
+      fileInput.value = '';
+    });
+
+    btnSplit.addEventListener('click', async () => {
+      hideError();
+      if (!rawTextContent) return;
+
+      const method = splitMethod.value;
+      showProgress(15, "Parsing text chunks...");
+
+      let segments = [];
+      const baseName = originalName.replace(/\.[^/.]+$/, "");
+      const ext = originalName.split('.').pop().toLowerCase();
+
+      try {
+        if (method === 'lines') {
+          const linesLimit = parseInt(splitLines.value) || 1000;
+          if (linesLimit < 1) throw new Error("Line count must be at least 1.");
+
+          const allLines = rawTextContent.split(/\r?\n/);
+          for (let i = 0; i < allLines.length; i += linesLimit) {
+            const chunk = allLines.slice(i, i + linesLimit).join('\n');
+            if (chunk.length > 0) segments.push(chunk);
+          }
+        } else if (method === 'size') {
+          const maxKb = parseInt(splitSize.value) || 500;
+          if (maxKb < 1) throw new Error("Size limit must be at least 1 KB.");
+          const maxBytes = maxKb * 1024;
+
+          let currentChunk = [];
+          let currentBytes = 0;
+          const allLines = rawTextContent.split(/\r?\n/);
+
+          for (let i = 0; i < allLines.length; i++) {
+            const line = allLines[i];
+            const lineBytes = new Blob([line + '\n']).size;
+            
+            if (currentBytes + lineBytes > maxBytes && currentChunk.length > 0) {
+              segments.push(currentChunk.join('\n'));
+              currentChunk = [];
+              currentBytes = 0;
+            }
+            
+            currentChunk.push(line);
+            currentBytes += lineBytes;
+          }
+          if (currentChunk.length > 0) {
+            segments.push(currentChunk.join('\n'));
+          }
+        } else {
+          // Delimiter split
+          const delim = splitDelimiter.value;
+          if (!delim) throw new Error("Delimiter string cannot be empty.");
+          
+          const rawParts = rawTextContent.split(delim);
+          segments = rawParts.filter(p => p.trim() !== '');
+        }
+
+        if (segments.length === 0) {
+          showError("No segments compiled from the configuration.");
+          hideProgress();
+          return;
+        }
+
+        showProgress(60, "Generating ZIP archive...");
+        const zip = new JSZip();
+        
+        partsGrid.innerHTML = '';
+        segments.forEach((seg, index) => {
+          const name = `${baseName}_part${index + 1}.${ext}`;
+          zip.file(name, seg);
+
+          const item = document.createElement('div');
+          item.className = 'part-item';
+          item.innerHTML = `
+            <div class="part-info">
+              <span class="part-title">${name}</span>
+              <span class="part-meta">${(seg.length / 1024).toFixed(1)} KB | ${seg.split('\n').length} lines</span>
+            </div>
+            <button class="button button-secondary" style="height: 32px;" onclick="window.downloadSinglePart('${index}')">Download</button>
+          `;
+          partsGrid.appendChild(item);
+        });
+
+        // Expose a window helper to download single segment
+        window.downloadSinglePart = function(idx) {
+          const segIdx = parseInt(idx);
+          if (segments[segIdx]) {
+            const name = `${baseName}_part${segIdx + 1}.${ext}`;
+            const blob = new Blob([segments[segIdx]], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.download = name;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+          }
+        };
+
+        partsGrid.style.display = 'flex';
+
+        showProgress(85, "Saving split ZIP...");
+        const content = await zip.generateAsync({ type: 'blob' });
+        
+        const link = document.createElement('a');
+        link.download = `${baseName}_split.zip`;
+        link.href = URL.createObjectURL(content);
+        link.click();
+        
+        hideProgress();
+      } catch (err) {
+        showError("Split failed: " + err.message);
+        hideProgress();
+      }
+    });
+  })();
+</script>
