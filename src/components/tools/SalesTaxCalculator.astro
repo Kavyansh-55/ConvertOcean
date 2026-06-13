@@ -1,0 +1,332 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .tax-workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+  }
+  @media (max-width: 900px) {
+    .tax-workspace { grid-template-columns: 1fr; }
+  }
+  .tax-panel {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  }
+  .tax-panel-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--colors-mute);
+    border-bottom: 1px solid var(--colors-hairline);
+    padding-bottom: var(--spacing-xs);
+  }
+  .tax-mode-tabs {
+    display: flex;
+    gap: var(--spacing-xs);
+  }
+  .tax-mode-tab {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: var(--rounded-pill);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas);
+    color: var(--colors-body);
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .tax-mode-tab:hover { border-color: var(--colors-hairline-strong); }
+  .tax-mode-tab.active {
+    background-color: var(--colors-ink);
+    color: var(--colors-canvas);
+    border-color: var(--colors-ink);
+  }
+  .preset-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-xs);
+  }
+  @media (max-width: 600px) {
+    .preset-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .preset-btn {
+    padding: 8px 6px;
+    border-radius: var(--rounded-md);
+    font-size: 11.5px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas-soft);
+    color: var(--colors-body);
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .preset-btn:hover {
+    border-color: var(--colors-link);
+    color: var(--colors-link);
+    background-color: var(--colors-link-bg-soft);
+  }
+  .preset-btn.active {
+    border-color: var(--colors-link);
+    background-color: var(--colors-link-bg-soft);
+    color: var(--colors-link-deep);
+    font-weight: 600;
+  }
+  .tax-result-card {
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  .tax-result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--colors-hairline);
+  }
+  .tax-result-row:last-child { border-bottom: none; }
+  .tax-result-label {
+    font-size: 14px;
+    color: var(--colors-body);
+  }
+  .tax-result-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--colors-ink);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tax-result-value.grand {
+    font-size: 26px;
+    color: var(--colors-link);
+  }
+  .tax-breakdown {
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    overflow: hidden;
+  }
+  .tax-breakdown table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .tax-breakdown th {
+    background-color: var(--colors-canvas-soft-2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--colors-mute);
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--colors-hairline);
+  }
+  .tax-breakdown td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--colors-hairline);
+    color: var(--colors-body);
+  }
+  .tax-breakdown tr:last-child td { border-bottom: none; }
+  .tax-breakdown td:last-child, .tax-breakdown th:last-child { text-align: right; }
+  .formula-box {
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-md);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--colors-body);
+    line-height: 1.8;
+  }
+</style>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<div class="tax-workspace">
+  <div class="tax-panel">
+    <div class="tax-panel-title">Calculation Mode</div>
+    <div class="tax-mode-tabs">
+      <button class="tax-mode-tab active" id="taxTabAdd">Add Sales Tax</button>
+      <button class="tax-mode-tab" id="taxTabRemove">Remove Sales Tax</button>
+    </div>
+
+    <div class="tax-panel-title">Tax Rate Presets</div>
+    <div class="preset-grid" id="taxPresetGrid">
+      <button class="preset-btn" data-rate="7.12">🇺🇸 US Avg 7.12%</button>
+      <button class="preset-btn" data-rate="20">🇬🇧 UK VAT 20%</button>
+      <button class="preset-btn" data-rate="5">🇨🇦 CA GST 5%</button>
+      <button class="preset-btn" data-rate="13">🇨🇦 CA HST 13%</button>
+      <button class="preset-btn" data-rate="10">🇦🇺 AU GST 10%</button>
+      <button class="preset-btn" data-rate="19">🇩🇪 DE VAT 19%</button>
+      <button class="preset-btn active" data-rate="18">🇮🇳 IN GST 18%</button>
+      <button class="preset-btn" data-rate="10">🇯🇵 JP Tax 10%</button>
+    </div>
+
+    <div class="tax-panel-title">Enter Values</div>
+    <div id="taxFieldsAdd">
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="taxPrice1">Pre-Tax Price ($)</label>
+        <input type="number" id="taxPrice1" class="form-input" value="100" min="0" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="taxRate1">Tax Rate (%)</label>
+        <input type="number" id="taxRate1" class="form-input" value="18" min="0" max="100" step="0.01" />
+      </div>
+    </div>
+
+    <div id="taxFieldsRemove" style="display:none;">
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="taxTotal2">Total Price (Tax Inclusive) ($)</label>
+        <input type="number" id="taxTotal2" class="form-input" value="118" min="0" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="taxRate2">Tax Rate (%)</label>
+        <input type="number" id="taxRate2" class="form-input" value="18" min="0" max="100" step="0.01" />
+      </div>
+    </div>
+
+    <button class="button button-primary" id="taxCalcBtn" style="align-self: flex-start;">Calculate Tax</button>
+  </div>
+
+  <div class="tax-panel">
+    <div class="tax-panel-title">Tax Calculation Results</div>
+
+    <div class="tax-result-card">
+      <div class="tax-result-row">
+        <span class="tax-result-label" id="taxResGrandLabel">Total (Tax Inclusive)</span>
+        <span class="tax-result-value grand" id="taxResGrand">$118.00</span>
+      </div>
+      <div class="tax-result-row">
+        <span class="tax-result-label">Tax Amount</span>
+        <span class="tax-result-value" id="taxResTax">$18.00</span>
+      </div>
+      <div class="tax-result-row">
+        <span class="tax-result-label" id="taxResBaseLabel">Pre-Tax Price</span>
+        <span class="tax-result-value" id="taxResBase">$100.00</span>
+      </div>
+      <div class="tax-result-row">
+        <span class="tax-result-label">Tax Rate</span>
+        <span class="tax-result-value" id="taxResRate">18.00%</span>
+      </div>
+    </div>
+
+    <div class="tax-panel-title" style="margin-top: var(--spacing-sm);">Detailed Breakdown</div>
+    <div class="tax-breakdown">
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="taxBreakdownBody">
+          <tr><td>Base Price</td><td>$100.00</td></tr>
+          <tr><td>Tax (18%)</td><td>$18.00</td></tr>
+          <tr><td style="font-weight:600; color: var(--colors-ink);">Total</td><td style="font-weight:600; color: var(--colors-ink);">$118.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tax-panel-title" style="margin-top: var(--spacing-sm);">Formula Used</div>
+    <div class="formula-box" id="taxFormula">
+      Tax Amount = Price × (Rate ÷ 100) = $100.00 × 0.18 = $18.00<br/>
+      Total = Price + Tax = $100.00 + $18.00 = $118.00
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const $ = id => document.getElementById(id);
+    let taxMode = 'add';
+
+    $('taxTabAdd').addEventListener('click', () => {
+      taxMode = 'add';
+      $('taxTabAdd').classList.add('active');
+      $('taxTabRemove').classList.remove('active');
+      $('taxFieldsAdd').style.display = 'block';
+      $('taxFieldsRemove').style.display = 'none';
+      calculate();
+    });
+
+    $('taxTabRemove').addEventListener('click', () => {
+      taxMode = 'remove';
+      $('taxTabRemove').classList.add('active');
+      $('taxTabAdd').classList.remove('active');
+      $('taxFieldsAdd').style.display = 'none';
+      $('taxFieldsRemove').style.display = 'block';
+      calculate();
+    });
+
+    // Preset buttons
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const rate = parseFloat(btn.dataset.rate);
+        $('taxRate1').value = rate;
+        $('taxRate2').value = rate;
+        calculate();
+      });
+    });
+
+    function calculate() {
+      let base = 0, tax = 0, total = 0, rate = 0;
+
+      if (taxMode === 'add') {
+        base = parseFloat($('taxPrice1').value) || 0;
+        rate = parseFloat($('taxRate1').value) || 0;
+        tax = base * (rate / 100);
+        total = base + tax;
+        $('taxResGrandLabel').textContent = 'Total (Tax Inclusive)';
+        $('taxResBaseLabel').textContent = 'Pre-Tax Price';
+        $('taxFormula').innerHTML = `Tax Amount = Price × (Rate ÷ 100) = $${base.toFixed(2)} × ${(rate/100).toFixed(4)} = $${tax.toFixed(2)}<br/>Total = Price + Tax = $${base.toFixed(2)} + $${tax.toFixed(2)} = $${total.toFixed(2)}`;
+      } else {
+        total = parseFloat($('taxTotal2').value) || 0;
+        rate = parseFloat($('taxRate2').value) || 0;
+        base = total / (1 + rate / 100);
+        tax = total - base;
+        $('taxResGrandLabel').textContent = 'Total (Original)';
+        $('taxResBaseLabel').textContent = 'Pre-Tax Price (Extracted)';
+        $('taxFormula').innerHTML = `Pre-Tax Price = Total ÷ (1 + Rate/100) = $${total.toFixed(2)} ÷ ${(1 + rate/100).toFixed(4)} = $${base.toFixed(2)}<br/>Tax Amount = Total − Pre-Tax = $${total.toFixed(2)} − $${base.toFixed(2)} = $${tax.toFixed(2)}`;
+      }
+
+      $('taxResGrand').textContent = '$' + total.toFixed(2);
+      $('taxResTax').textContent = '$' + tax.toFixed(2);
+      $('taxResBase').textContent = '$' + base.toFixed(2);
+      $('taxResRate').textContent = rate.toFixed(2) + '%';
+
+      $('taxBreakdownBody').innerHTML = `
+        <tr><td>Base Price</td><td>$${base.toFixed(2)}</td></tr>
+        <tr><td>Tax (${rate.toFixed(2)}%)</td><td>$${tax.toFixed(2)}</td></tr>
+        <tr><td style="font-weight:600; color: var(--colors-ink);">Total</td><td style="font-weight:600; color: var(--colors-ink);">$${total.toFixed(2)}</td></tr>
+      `;
+    }
+
+    $('taxCalcBtn').addEventListener('click', calculate);
+    ['taxPrice1','taxRate1','taxTotal2','taxRate2'].forEach(id => {
+      $(id).addEventListener('input', calculate);
+    });
+
+    window.addEventListener('load', calculate);
+  })();
+</script>

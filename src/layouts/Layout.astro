@@ -136,6 +136,17 @@ const relLink = (target: string) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7STX0V993V" is:inline></script>
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7STX0V993V');
+  </script>
+  
   <title>{title}</title>
   <meta name="description" content={description}>
   
@@ -203,7 +214,7 @@ const relLink = (target: string) => {
     <nav class="nav-links">
       <a href={relLink('/')} class="nav-link">⚡ Home</a>
       <a href={relLink('/file-converter/')} class="nav-link">📄 File Converter</a>
-      <a href={relLink('/pdf-tools/')} class="nav-link">📑 PDF Tools</a>
+      <a href={relLink('/pdf-tools/')} class="nav-link">📑 PDF, Split & Merge</a>
       <a href={relLink('/image-tools/')} class="nav-link">🖼️ Image Tools</a>
       <a href={relLink('/excel-converter/')} class="nav-link">📊 Excel Converter</a>
       <a href={relLink('/image-to-text/')} class="nav-link">🔍 Image to Text</a>
@@ -241,7 +252,7 @@ const relLink = (target: string) => {
   <div id="mobileNavMenu" class="mobile-nav-menu">
     <a href={relLink('/')} class="mobile-nav-link">⚡ Home</a>
     <a href={relLink('/file-converter/')} class="mobile-nav-link">📄 File Converter</a>
-    <a href={relLink('/pdf-tools/')} class="mobile-nav-link">📑 PDF Tools</a>
+    <a href={relLink('/pdf-tools/')} class="mobile-nav-link">📑 PDF, Split & Merge</a>
     <a href={relLink('/image-tools/')} class="mobile-nav-link">🖼️ Image Tools</a>
     <a href={relLink('/excel-converter/')} class="mobile-nav-link">📊 Excel Converter</a>
     <a href={relLink('/image-to-text/')} class="mobile-nav-link">🔍 Image to Text</a>
@@ -274,6 +285,8 @@ const relLink = (target: string) => {
           <span class="footer-title">File Converter</span>
           <div class="footer-links">
             <a href={relLink('/excel-to-pdf/')} class="footer-link">Excel to PDF</a>
+            <a href={relLink('/txt-to-pdf/')} class="footer-link">TXT to PDF</a>
+            <a href={relLink('/pdf-to-txt/')} class="footer-link">PDF to TXT</a>
             <a href={relLink('/csv-to-json/')} class="footer-link">CSV to JSON</a>
             <a href={relLink('/json-to-csv/')} class="footer-link">JSON to CSV</a>
             <a href={relLink('/xlsx-to-csv/')} class="footer-link">XLSX to CSV</a>
@@ -283,14 +296,16 @@ const relLink = (target: string) => {
           </div>
         </div>
         <div class="footer-column">
-          <span class="footer-title">PDF & Document</span>
+          <span class="footer-title">PDF, Split & Merge</span>
           <div class="footer-links">
             <a href={relLink('/merge-pdf/')} class="footer-link">Merge PDF</a>
             <a href={relLink('/split-pdf/')} class="footer-link">Split PDF</a>
-            <a href={relLink('/txt-to-pdf/')} class="footer-link">TXT to PDF</a>
-            <a href={relLink('/pdf-to-txt/')} class="footer-link">PDF to TXT</a>
-            <a href={relLink('/document-tools/')} class="footer-link">Document Tools</a>
-            <a href={relLink('/excel-converter/')} class="footer-link">Excel Converter</a>
+            <a href={relLink('/merge-excel/')} class="footer-link">Merge Excel & CSV</a>
+            <a href={relLink('/split-excel/')} class="footer-link">Split Excel & CSV</a>
+            <a href={relLink('/merge-images/')} class="footer-link">Merge Images</a>
+            <a href={relLink('/split-image/')} class="footer-link">Split Image</a>
+            <a href={relLink('/merge-txt/')} class="footer-link">Merge Text & TXT</a>
+            <a href={relLink('/split-txt/')} class="footer-link">Split Text & TXT</a>
           </div>
         </div>
         <div class="footer-column">
@@ -302,6 +317,16 @@ const relLink = (target: string) => {
             <a href={relLink('/webp-to-png/')} class="footer-link">WebP to PNG</a>
             <a href={relLink('/image-to-text/')} class="footer-link">Image to Text OCR</a>
             <a href={relLink('/image-tools/')} class="footer-link">Image Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Business Tools</span>
+          <div class="footer-links">
+            <a href={relLink('/invoice-generator/')} class="footer-link">Invoice Generator</a>
+            <a href={relLink('/receipt-generator/')} class="footer-link">Receipt Generator</a>
+            <a href={relLink('/profit-margin-calculator/')} class="footer-link">Profit Margin Calculator</a>
+            <a href={relLink('/percentage-calculator/')} class="footer-link">Percentage Calculator</a>
+            <a href={relLink('/sales-tax-calculator/')} class="footer-link">Sales Tax Calculator</a>
           </div>
         </div>
         <div class="footer-column">

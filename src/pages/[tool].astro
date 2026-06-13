@@ -11,6 +11,10 @@ import ImageToText from '../components/tools/ImageToText.astro';
 import MergePdf from '../components/tools/MergePdf.astro';
 import SplitPdf from '../components/tools/SplitPdf.astro';
 import InvoiceGenerator from '../components/tools/InvoiceGenerator.astro';
+import ReceiptGenerator from '../components/tools/ReceiptGenerator.astro';
+import ProfitMarginCalculator from '../components/tools/ProfitMarginCalculator.astro';
+import PercentageCalculator from '../components/tools/PercentageCalculator.astro';
+import SalesTaxCalculator from '../components/tools/SalesTaxCalculator.astro';
 import WordTool from '../components/tools/WordTool.astro';
 import PdfToWord from '../components/tools/PdfToWord.astro';
 import PptxTool from '../components/tools/PptxTool.astro';
@@ -60,6 +64,10 @@ const toolsMap: Record<string, any> = {
   'merge-pdf': MergePdf,
   'split-pdf': SplitPdf,
   'invoice-generator': InvoiceGenerator,
+  'receipt-generator': ReceiptGenerator,
+  'profit-margin-calculator': ProfitMarginCalculator,
+  'percentage-calculator': PercentageCalculator,
+  'sales-tax-calculator': SalesTaxCalculator,
   'word-to-pdf': WordTool,
   'pdf-to-word': PdfToWord,
   'docx-to-txt': WordTool,
@@ -231,6 +239,74 @@ const faqList = [...globalFaqs, ...specificFaqs];
       font-size: 13.5px;
       font-weight: 600;
     }
+    
+    /* Unique SEO Article Content Styles */
+    .rich-text {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--colors-body);
+      margin-top: var(--spacing-3xl);
+    }
+    .rich-text h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      margin-top: var(--spacing-xl);
+      margin-bottom: var(--spacing-md);
+      letter-spacing: -0.96px;
+      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+    }
+    .rich-text h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      margin-top: var(--spacing-lg);
+      margin-bottom: var(--spacing-sm);
+      letter-spacing: -0.6px;
+      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+    }
+    .rich-text p {
+      margin-bottom: var(--spacing-md);
+    }
+    .rich-text ul {
+      margin-bottom: var(--spacing-md);
+      padding-left: var(--spacing-lg);
+      list-style-type: disc;
+    }
+    .rich-text li {
+      margin-bottom: var(--spacing-xs);
+    }
+    .rich-text blockquote {
+      border-left: 3px solid var(--colors-link);
+      padding: var(--spacing-sm) var(--spacing-md);
+      margin: var(--spacing-md) 0;
+      font-style: italic;
+      color: var(--colors-ink);
+      background-color: var(--colors-canvas-soft-2);
+      border-radius: var(--rounded-sm);
+    }
+    .rich-text a {
+      color: var(--colors-link);
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .rich-text a:hover {
+      color: var(--colors-link-deep);
+    }
+    .rich-text code {
+      font-family: 'JetBrains Mono', monospace;
+      background-color: var(--colors-canvas-soft-2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .rich-text .content-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xl);
+      margin-top: var(--spacing-xl);
+    }
   </style>
 
   <main class="page-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl); position: relative; z-index: 1;">
@@ -238,32 +314,39 @@ const faqList = [...globalFaqs, ...specificFaqs];
     <ToolComponent slug={toolData.slug} headline={toolData.headline} subtitle={toolData.subtitle} />
 
     <!-- How It Works Section -->
-    <section class="steps-section">
-      <h2 style="font-size: 20px; font-weight: 600; color: var(--colors-ink); text-align: center;">How It Works</h2>
-      <p style="font-size: 14px; color: var(--colors-body); text-align: center; margin-top: 4px;">Four simple steps to process your files securely client-side:</p>
-      <div class="steps-grid">
-        <div class="step-card">
-          <span class="step-number">1.</span>
-          <h3 class="step-title">Upload File</h3>
-          <p class="step-desc">Drag and drop or browse files directly from your storage. Files reside only in temporary browser memory.</p>
+    {toolData.categorySlug !== 'business-tools' && (
+      <section class="steps-section">
+        <h2 style="font-size: 20px; font-weight: 600; color: var(--colors-ink); text-align: center;">How It Works</h2>
+        <p style="font-size: 14px; color: var(--colors-body); text-align: center; margin-top: 4px;">Four simple steps to process your files securely client-side:</p>
+        <div class="steps-grid">
+          <div class="step-card">
+            <span class="step-number">1.</span>
+            <h3 class="step-title">Upload File</h3>
+            <p class="step-desc">Drag and drop or browse files directly from your storage. Files reside only in temporary browser memory.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-number">2.</span>
+            <h3 class="step-title">Select Output</h3>
+            <p class="step-desc">Pick your target conversion configuration or adjust quality/compression sliders according to your preference.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-number">3.</span>
+            <h3 class="step-title">Convert Locally</h3>
+            <p class="step-desc">All compilers and processors compile files locally in browser sandbox memory. No servers are used.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-number">4.</span>
+            <h3 class="step-title">Download Instantly</h3>
+            <p class="step-desc">Instantly download your output file. Memory cache is purged automatically when you close the tab.</p>
+          </div>
         </div>
-        <div class="step-card">
-          <span class="step-number">2.</span>
-          <h3 class="step-title">Select Output</h3>
-          <p class="step-desc">Pick your target conversion configuration or adjust quality/compression sliders according to your preference.</p>
-        </div>
-        <div class="step-card">
-          <span class="step-number">3.</span>
-          <h3 class="step-title">Convert Locally</h3>
-          <p class="step-desc">All compilers and processors compile files locally in browser sandbox memory. No servers are used.</p>
-        </div>
-        <div class="step-card">
-          <span class="step-number">4.</span>
-          <h3 class="step-title">Download Instantly</h3>
-          <p class="step-desc">Instantly download your output file. Memory cache is purged automatically when you close the tab.</p>
-        </div>
-      </div>
-    </section>
+      </section>
+    )}
+
+    <!-- Unique SEO Article Content Section -->
+    {toolData.content && (
+      <section class="rich-text" set:html={toolData.content}></section>
+    )}
 
     <!-- Why Use ConvertOcean Section -->
     <section class="features-section">

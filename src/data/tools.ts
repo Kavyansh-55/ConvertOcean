@@ -1,3 +1,11 @@
+import {
+  invoiceGeneratorContent,
+  receiptGeneratorContent,
+  profitMarginCalculatorContent,
+  percentageCalculatorContent,
+  salesTaxCalculatorContent
+} from './business-content';
+
 export interface ToolData {
   slug: string;
   name: string;
@@ -10,6 +18,7 @@ export interface ToolData {
   categorySlug: string;
   faqs: { question: string; answer: string }[];
   relatedTools: string[];
+  content?: string;
 }
 
 export const tools: ToolData[] = [
@@ -291,7 +300,98 @@ export const tools: ToolData[] = [
       { question: 'Can I export PDF?', answer: 'Yes. Clicking "Download Invoice PDF" formats the document to standard A4 printing sizes and triggers an instant download of a standard PDF document.' },
       { question: 'Is invoice data uploaded?', answer: 'No. None of your vendor, client, or financial figures are uploaded to our servers. Everything is processed directly inside your browser sandbox and disappears when you exit the page.' }
     ],
-    relatedTools: ['excel-to-pdf', 'csv-to-json', 'json-to-csv', 'xlsx-to-csv']
+    relatedTools: ['receipt-generator', 'profit-margin-calculator', 'sales-tax-calculator', 'percentage-calculator'],
+    content: invoiceGeneratorContent
+  },
+  {
+    slug: 'receipt-generator',
+    name: 'Receipt Generator',
+    title: 'Free Receipt Generator Online - Create Payment Receipts | ConvertOcean',
+    description: 'Generate professional payment receipts online for free. Create, customize, and download PDF receipts instantly. 100% private, client-side processing with no server uploads.',
+    headline: 'Receipt Generator.',
+    subtitle: 'Create professional payment receipts with itemized details, tax calculations, and payment method records. Download as print-ready PDF.',
+    icon: '🧾',
+    category: 'Business Tools',
+    categorySlug: 'business-tools',
+    faqs: [
+      { question: 'How do I create a receipt using ConvertOcean?', answer: 'Simply fill in your business details, customer information, payment method, and line items in the editor panel. The receipt preview updates in real time. Click "Download Receipt PDF" to save a professional A4 PDF receipt instantly.' },
+      { question: 'Can I customize the receipt with my business branding?', answer: 'Yes. You can enter your business name, address, contact details, and custom notes. The receipt renders with a clean, professional layout suitable for any industry.' },
+      { question: 'What payment methods can I include on the receipt?', answer: 'You can select from Cash, Credit Card, Debit Card, Bank Transfer, PayPal, Check, or enter a custom payment method. The selected method appears on the generated receipt.' },
+      { question: 'Is my financial data safe when generating receipts?', answer: 'Absolutely. ConvertOcean processes all receipt data 100% locally in your browser sandbox memory. No financial details, customer names, or transaction amounts are ever uploaded to any server.' },
+      { question: 'Can I generate receipts for free without limits?', answer: 'Yes. The Receipt Generator is completely free with no limits on the number of receipts you can create, customize, or download as PDF files.' },
+      { question: 'What is the difference between an invoice and a receipt?', answer: 'An invoice is a request for payment sent before a transaction is completed. A receipt is a confirmation of payment issued after a transaction has been processed. Use our Invoice Generator for billing and this Receipt Generator for payment confirmations.' },
+      { question: 'Can I add tax calculations to my receipts?', answer: 'Yes. You can select from GST (18%), IGST (18%), VAT (15%), or No Tax configurations. Tax amounts are automatically calculated and displayed on the receipt.' }
+    ],
+    relatedTools: ['invoice-generator', 'profit-margin-calculator', 'sales-tax-calculator', 'percentage-calculator'],
+    content: receiptGeneratorContent
+  },
+  {
+    slug: 'profit-margin-calculator',
+    name: 'Profit Margin Calculator',
+    title: 'Profit Margin Calculator - Calculate Markup & Profitability | ConvertOcean',
+    description: 'Calculate profit margin, markup percentage, and profitability instantly. Free online profit margin calculator with gross margin, net margin, and markup formulas. 100% private.',
+    headline: 'Profit Margin Calculator.',
+    subtitle: 'Calculate profit margin, markup percentage, gross profit, and net profitability from cost and revenue figures instantly.',
+    icon: '📈',
+    category: 'Business Tools',
+    categorySlug: 'business-tools',
+    faqs: [
+      { question: 'What is the difference between profit margin and markup?', answer: 'Profit margin is the percentage of revenue that is profit (Profit ÷ Revenue × 100). Markup is the percentage added to cost to get the selling price (Profit ÷ Cost × 100). For example, buying at $60 and selling at $100 gives a 40% margin but a 66.7% markup.' },
+      { question: 'How do I calculate gross profit margin?', answer: 'Gross Profit Margin = ((Revenue − Cost of Goods Sold) ÷ Revenue) × 100. Enter your revenue and cost values in our calculator to get instant results with a visual breakdown.' },
+      { question: 'Can I calculate the selling price from a desired margin?', answer: 'Yes. Switch to "Find Selling Price" mode, enter your cost and desired profit margin percentage, and the calculator will compute the required selling price and expected profit.' },
+      { question: 'Is this calculator accurate for business accounting?', answer: 'Yes. Our calculator uses standard financial formulas for profit margin, markup, and gross profit calculations. Results are computed with full decimal precision for professional accuracy.' },
+      { question: 'Can I use this for e-commerce product pricing?', answer: 'Absolutely. Enter your product cost (including shipping, manufacturing, etc.) and your desired margin or selling price to determine optimal pricing strategies for your online store.' },
+      { question: 'Does this calculator store my financial data?', answer: 'No. All calculations are performed locally in your browser. No financial figures, costs, or revenue data are transmitted to any server or stored anywhere.' },
+      { question: 'What formulas does the profit margin calculator use?', answer: 'The calculator uses three core formulas: Profit Margin (%) = (Profit ÷ Revenue) × 100, Markup (%) = (Profit ÷ Cost) × 100, and Gross Profit = Revenue − Cost of Goods Sold.' }
+    ],
+    relatedTools: ['percentage-calculator', 'sales-tax-calculator', 'invoice-generator', 'receipt-generator'],
+    content: profitMarginCalculatorContent
+  },
+  {
+    slug: 'percentage-calculator',
+    name: 'Percentage Calculator',
+    title: 'Percentage Calculator - Calculate Percentage Increase & Decrease | ConvertOcean',
+    description: 'Calculate percentages, percentage increase, percentage decrease, and percentage differences online. Free percentage calculator with step-by-step formulas. 100% private.',
+    headline: 'Percentage Calculator.',
+    subtitle: 'Calculate percentages, percentage change, increase, decrease, and differences with step-by-step formula breakdowns.',
+    icon: '🔢',
+    category: 'Business Tools',
+    categorySlug: 'business-tools',
+    faqs: [
+      { question: 'How do I calculate a percentage of a number?', answer: 'To find X% of Y, multiply Y by X and divide by 100. For example, 15% of 200 = (200 × 15) ÷ 100 = 30. Enter your values in our calculator for instant results.' },
+      { question: 'How do I calculate percentage increase?', answer: 'Percentage Increase = ((New Value − Old Value) ÷ Old Value) × 100. For example, if a price goes from $80 to $100, the increase is ((100 − 80) ÷ 80) × 100 = 25%.' },
+      { question: 'How do I calculate percentage decrease?', answer: 'Percentage Decrease = ((Old Value − New Value) ÷ Old Value) × 100. For example, if a price drops from $100 to $75, the decrease is ((100 − 75) ÷ 100) × 100 = 25%.' },
+      { question: 'What is the difference between percentage change and percentage difference?', answer: 'Percentage change compares a new value to an original value (has direction: increase or decrease). Percentage difference compares two values without implying which is the original: |A − B| ÷ ((A + B) ÷ 2) × 100.' },
+      { question: 'Can I calculate what percentage one number is of another?', answer: 'Yes. To find what percentage X is of Y, use the formula: (X ÷ Y) × 100. Our calculator includes this mode with instant results and formula display.' },
+      { question: 'Is this calculator free to use?', answer: 'Yes. The Percentage Calculator is 100% free with no limits, no account required, and no advertisements. All calculations run locally in your browser.' },
+      { question: 'Can I add or subtract a percentage from a number?', answer: 'Yes. Our calculator includes modes to add X% to Y (Y + Y×X/100) and subtract X% from Y (Y − Y×X/100), useful for calculating tips, discounts, and tax-inclusive prices.' },
+      { question: 'Does the calculator show the formula used?', answer: 'Yes. Every calculation displays the step-by-step formula breakdown so you can understand and verify the math behind each result.' }
+    ],
+    relatedTools: ['profit-margin-calculator', 'sales-tax-calculator', 'invoice-generator', 'receipt-generator'],
+    content: percentageCalculatorContent
+  },
+  {
+    slug: 'sales-tax-calculator',
+    name: 'Sales Tax Calculator',
+    title: 'Sales Tax Calculator - Calculate Tax Amount & Total Price | ConvertOcean',
+    description: 'Calculate sales tax, total price including tax, and tax amounts instantly. Free online sales tax calculator with US, UK, Canada, and Australia tax rate presets. 100% private.',
+    headline: 'Sales Tax Calculator.',
+    subtitle: 'Calculate sales tax amounts, total price including tax, and reverse tax from gross prices. Supports US, UK, Canada, Australia, and custom tax rates.',
+    icon: '💰',
+    category: 'Business Tools',
+    categorySlug: 'business-tools',
+    faqs: [
+      { question: 'How do I calculate sales tax on a purchase?', answer: 'Sales Tax Amount = Price × (Tax Rate ÷ 100). Total Price = Price + Sales Tax Amount. For example, a $100 item with 8.25% tax: Tax = $8.25, Total = $108.25. Enter your values for instant results.' },
+      { question: 'How do I reverse calculate tax from a total price?', answer: 'To find the pre-tax price from a tax-inclusive total: Pre-Tax Price = Total ÷ (1 + Tax Rate ÷ 100). For example, a $108.25 total at 8.25% tax: Pre-tax = $108.25 ÷ 1.0825 = $100.00.' },
+      { question: 'What tax rate presets are available?', answer: 'We include presets for US Average (7.12%), UK VAT (20%), Canada GST (5%), Canada HST (13%), Australia GST (10%), Germany VAT (19%), India GST (18%), and Japan Consumption Tax (10%). You can also enter any custom tax rate.' },
+      { question: 'Can I calculate tax for multiple items?', answer: 'Yes. Enter the total pre-tax amount for all your items and the applicable tax rate. The calculator will compute the total tax and grand total for the entire purchase.' },
+      { question: 'What is the difference between sales tax, VAT, and GST?', answer: 'Sales tax is charged at the point of sale (common in the US). VAT (Value Added Tax) is charged at each production stage (common in Europe/UK). GST (Goods and Services Tax) is similar to VAT and used in countries like Australia, Canada, and India. Our calculator works with all types.' },
+      { question: 'Is my purchase data stored or tracked?', answer: 'No. All tax calculations are performed 100% locally in your browser sandbox memory. No prices, tax amounts, or purchase details are ever uploaded to any server.' },
+      { question: 'Can I use this calculator for business tax planning?', answer: 'Yes. Use the calculator to estimate tax obligations on sales, verify customer invoices, plan pricing strategies, and calculate tax-inclusive or tax-exclusive prices for your products and services.' },
+      { question: 'How accurate are the tax calculations?', answer: 'Calculations use standard mathematical formulas with full decimal precision. Results are rounded to two decimal places for currency display. For official tax filings, always verify with your local tax authority.' }
+    ],
+    relatedTools: ['profit-margin-calculator', 'percentage-calculator', 'invoice-generator', 'receipt-generator'],
+    content: salesTaxCalculatorContent
   },
   {
     slug: 'xls-to-pdf',

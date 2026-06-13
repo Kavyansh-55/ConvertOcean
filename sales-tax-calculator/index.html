@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Tax Calculator - Calculate Tax Amount & Total Price | ConvertOcean</title>
+  <meta name="description" content="Calculate sales tax, total price including tax, and tax amounts instantly. Free online sales tax calculator with US, UK, Canada, and Australia tax presets.">
+  <link rel="canonical" href="https://convertocean.com/sales-tax-calculator/" />
+  
+  <!-- Open Graph / Social sharing metadata -->
+  <meta property="og:title" content="Sales Tax Calculator - Calculate Tax Amount & Total Price | ConvertOcean" />
+  <meta property="og:description" content="Calculate sales tax, total price including tax, and tax amounts instantly. Free online sales tax calculator with US, UK, Canada, and Australia tax presets." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://convertocean.com/sales-tax-calculator/" />
+  <meta property="og:image" content="https://convertocean.com/apple-touch-icon.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Sales Tax Calculator - Calculate Tax Amount & Total Price" />
+  <meta name="twitter:description" content="Calculate sales tax, total price including tax, and tax amounts instantly. Free online sales tax calculator with US, UK, Canada, and Australia tax presets." />
+  <meta name="twitter:image" content="https://convertocean.com/apple-touch-icon.png" />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://convertocean.com/sales-tax-calculator/#webpage",
+        "url": "https://convertocean.com/sales-tax-calculator/",
+        "name": "Sales Tax Calculator - Calculate Tax Amount & Total Price | ConvertOcean",
+        "isPartOf": {
+          "@id": "https://convertocean.com/#website"
+        },
+        "description": "Calculate sales tax, total price including tax, and tax amounts instantly. Free online sales tax calculator with US, UK, Canada, and Australia tax presets.",
+        "breadcrumb": {
+          "@id": "https://convertocean.com/sales-tax-calculator/#breadcrumb"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://convertocean.com/sales-tax-calculator/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://convertocean.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Business Tools",
+            "item": "https://convertocean.com/business-tools/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Sales Tax Calculator",
+            "item": "https://convertocean.com/sales-tax-calculator/"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <!-- FAQPage Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does ConvertOcean convert files without uploading them?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my confidential business or financial data safe when converting files?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can a client-side file converter run without an active internet connection?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need to register an account or pay for a conversion subscription?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/theme.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  <style>
+    /* Calculator workspace specific overrides */
+    .tax-workspace {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-lg);
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 var(--spacing-lg);
+    }
+    @media (max-width: 900px) {
+      .tax-workspace { grid-template-columns: 1fr; }
+    }
+    .tax-panel {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+    .tax-panel-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--colors-mute);
+      border-bottom: 1px solid var(--colors-hairline);
+      padding-bottom: var(--spacing-xs);
+    }
+    .tax-mode-tabs {
+      display: flex;
+      gap: var(--spacing-xs);
+    }
+    .tax-mode-tab {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: var(--rounded-pill);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--colors-hairline);
+      background-color: var(--colors-canvas);
+      color: var(--colors-body);
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .tax-mode-tab:hover { border-color: var(--colors-hairline-strong); }
+    .tax-mode-tab.active {
+      background-color: var(--colors-ink);
+      color: var(--colors-canvas);
+      border-color: var(--colors-ink);
+    }
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-xs);
+    }
+    @media (max-width: 600px) {
+      .preset-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .preset-btn {
+      padding: 8px 6px;
+      border-radius: var(--rounded-md);
+      font-size: 11.5px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--colors-hairline);
+      background-color: var(--colors-canvas-soft);
+      color: var(--colors-body);
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .preset-btn:hover {
+      border-color: var(--colors-link);
+      color: var(--colors-link);
+      background-color: var(--colors-link-bg-soft);
+    }
+    .preset-btn.active {
+      border-color: var(--colors-link);
+      background-color: var(--colors-link-bg-soft);
+      color: var(--colors-link-deep);
+      font-weight: 600;
+    }
+    .tax-result-card {
+      background-color: var(--colors-canvas-soft);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+    .tax-result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-xs) 0;
+      border-bottom: 1px solid var(--colors-hairline);
+    }
+    .tax-result-row:last-child { border-bottom: none; }
+    .tax-result-label {
+      font-size: 14px;
+      color: var(--colors-body);
+    }
+    .tax-result-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tax-result-value.grand {
+      font-size: 26px;
+      color: var(--colors-link);
+    }
+    .tax-breakdown {
+      background-color: var(--colors-canvas-soft-2);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-md);
+      overflow: hidden;
+    }
+    .tax-breakdown table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .tax-breakdown th {
+      background-color: var(--colors-canvas-soft-2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--colors-mute);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--colors-hairline);
+    }
+    .tax-breakdown td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--colors-hairline);
+      color: var(--colors-body);
+    }
+    .tax-breakdown tr:last-child td { border-bottom: none; }
+    .tax-breakdown td:last-child, .tax-breakdown th:last-child { text-align: right; }
+    .formula-box {
+      background-color: var(--colors-canvas-soft-2);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-md);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--colors-body);
+      line-height: 1.8;
+    }
+
+    /* Unique SEO Article Content Styles */
+    .rich-text {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--colors-body);
+      margin-top: 40px;
+    }
+    .rich-text h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      margin-top: var(--spacing-xl);
+      margin-bottom: var(--spacing-md);
+      letter-spacing: -0.96px;
+      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+    }
+    .rich-text h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      margin-top: var(--spacing-lg);
+      margin-bottom: var(--spacing-sm);
+      letter-spacing: -0.6px;
+      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+    }
+    .rich-text p {
+      margin-bottom: var(--spacing-md);
+    }
+    .rich-text ul {
+      margin-bottom: var(--spacing-md);
+      padding-left: var(--spacing-lg);
+      list-style-type: disc;
+    }
+    .rich-text li {
+      margin-bottom: var(--spacing-xs);
+    }
+    .rich-text blockquote {
+      border-left: 3px solid var(--colors-link);
+      padding: var(--spacing-sm) var(--spacing-md);
+      margin: var(--spacing-md) 0;
+      font-style: italic;
+      color: var(--colors-ink);
+      background-color: var(--colors-canvas-soft-2);
+      border-radius: var(--rounded-sm);
+    }
+    .rich-text a {
+      color: var(--colors-link);
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .rich-text a:hover {
+      color: var(--colors-link-deep);
+    }
+    .rich-text code {
+      font-family: 'JetBrains Mono', monospace;
+      background-color: var(--colors-canvas-soft-2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .rich-text .content-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xl);
+      margin-top: var(--spacing-xl);
+    }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="COcean" />
+  <link rel="manifest" href="/site.webmanifest" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="nav-bar">
+    <a href="/index.html" class="nav-brand">
+      <img src="/fevicon.png" alt="ConvertOcean Logo" class="brand-logo-img" style="width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; transition: transform 0.2s ease;" />
+      <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+    </a>
+    
+    <nav class="nav-links">
+      <a href="/index.html" class="nav-link">⚡ Home</a>
+      <a href="/file-converter/" class="nav-link">📄 File Converter</a>
+      <a href="/pdf-tools/" class="nav-link">📑 PDF Tools</a>
+      <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
+      <a href="/excel-converter/" class="nav-link">📊 Excel Converter</a>
+      <a href="/image-to-text/" class="nav-link">🔍 Image to Text</a>
+      <a href="/business-tools/" class="nav-link active">💼 Business Tools</a>
+      <a href="/privacy-first/" class="nav-link">🔒 Privacy First</a>
+    </nav>
+
+    <div class="nav-right-group">
+      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        </svg>
+      </button>
+      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobileNavMenu" class="mobile-nav-menu">
+    <a href="/index.html" class="mobile-nav-link">⚡ Home</a>
+    <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
+    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF Tools</a>
+    <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
+    <a href="/excel-converter/" class="mobile-nav-link">📊 Excel Converter</a>
+    <a href="/image-to-text/" class="mobile-nav-link">🔍 Image to Text</a>
+    <a href="/business-tools/" class="mobile-nav-link active">💼 Business Tools</a>
+    <a href="/privacy-first/" class="mobile-nav-link">🔒 Privacy First</a>
+  </div>
+
+  <main style="max-width: 1200px; margin: 40px auto 0; padding: 0 var(--spacing-lg);">
+    <div class="page-header" style="text-align: center; margin-bottom: 30px;">
+      <h1 class="page-title" style="font-size: 36px; font-weight: 600; letter-spacing: -1.2px;">Sales Tax Calculator.</h1>
+      <p class="page-description" style="font-size: 15px; color: var(--colors-body); max-width: 600px; margin: 10px auto 0;">Calculate sales tax amounts, total price including tax, and reverse tax from gross prices. Supports international presets.</p>
+    </div>
+  </main>
+
+  <div class="tax-workspace">
+    <div class="tax-panel">
+      <div class="calc-workspace-title" style="font-size: 13px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute); border-bottom: 1px solid var(--colors-hairline); padding-bottom: var(--spacing-xs); margin-bottom: 10px;">Calculation Mode</div>
+      <div class="tax-mode-tabs">
+        <button class="tax-mode-tab active" id="taxTabAdd">Add Sales Tax</button>
+        <button class="tax-mode-tab" id="taxTabRemove">Remove Sales Tax</button>
+      </div>
+
+      <div class="calc-workspace-title" style="font-size: 13px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute); border-bottom: 1px solid var(--colors-hairline); padding-bottom: var(--spacing-xs); margin-top: 15px; margin-bottom: 10px;">Tax Rate Presets</div>
+      <div class="preset-grid" id="taxPresetGrid">
+        <button class="preset-btn" data-rate="7.12">🇺🇸 US Avg 7.12%</button>
+        <button class="preset-btn" data-rate="20">🇬🇧 UK VAT 20%</button>
+        <button class="preset-btn" data-rate="5">🇨🇦 CA GST 5%</button>
+        <button class="preset-btn" data-rate="13">🇨🇦 CA HST 13%</button>
+        <button class="preset-btn" data-rate="10">🇦🇺 AU GST 10%</button>
+        <button class="preset-btn" data-rate="19">🇩🇪 DE VAT 19%</button>
+        <button class="preset-btn active" data-rate="18">🇮🇳 IN GST 18%</button>
+        <button class="preset-btn" data-rate="10">🇯🇵 JP Tax 10%</button>
+      </div>
+
+      <div class="calc-workspace-title" style="font-size: 13px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute); border-bottom: 1px solid var(--colors-hairline); padding-bottom: var(--spacing-xs); margin-top: 15px; margin-bottom: 10px;">Enter Values</div>
+      <div id="taxFieldsAdd">
+        <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
+          <label class="form-label" for="taxPrice1" style="font-size: 13px; font-weight: 500;">Pre-Tax Price ($)</label>
+          <input type="number" id="taxPrice1" class="form-input" value="100" min="0" step="0.01" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;" />
+        </div>
+        <div class="form-group" style="display: flex; flex-direction: column; gap: var(--spacing-xxs);">
+          <label class="form-label" for="taxRate1" style="font-size: 13px; font-weight: 500;">Tax Rate (%)</label>
+          <input type="number" id="taxRate1" class="form-input" value="18" min="0" max="100" step="0.01" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;" />
+        </div>
+      </div>
+
+      <div id="taxFieldsRemove" style="display:none;">
+        <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
+          <label class="form-label" for="taxTotal2" style="font-size: 13px; font-weight: 500;">Total Price (Tax Inclusive) ($)</label>
+          <input type="number" id="taxTotal2" class="form-input" value="118" min="0" step="0.01" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;" />
+        </div>
+        <div class="form-group" style="display: flex; flex-direction: column; gap: var(--spacing-xxs);">
+          <label class="form-label" for="taxRate2" style="font-size: 13px; font-weight: 500;">Tax Rate (%)</label>
+          <input type="number" id="taxRate2" class="form-input" value="18" min="0" max="100" step="0.01" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;" />
+        </div>
+      </div>
+
+      <button class="button button-primary" id="taxCalcBtn" style="align-self: flex-start; margin-top: 10px;">Calculate Tax</button>
+    </div>
+
+    <div class="tax-panel">
+      <div class="calc-workspace-title" style="font-size: 13px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute); border-bottom: 1px solid var(--colors-hairline); padding-bottom: var(--spacing-xs); margin-bottom: 10px;">Tax Calculation Results</div>
+
+      <div class="tax-result-card">
+        <div class="tax-result-row">
+          <span class="tax-result-label" id="taxResGrandLabel">Total (Tax Inclusive)</span>
+          <span class="tax-result-value grand" id="taxResGrand">$118.00</span>
+        </div>
+        <div class="tax-result-row">
+          <span class="tax-result-label">Tax Amount</span>
+          <span class="tax-result-value" id="taxResTax">$18.00</span>
+        </div>
+        <div class="tax-result-row">
+          <span class="tax-result-label" id="taxResBaseLabel">Pre-Tax Price</span>
+          <span class="tax-result-value" id="taxResBase">$100.00</span>
+        </div>
+        <div class="tax-result-row">
+          <span class="tax-result-label">Tax Rate</span>
+          <span class="tax-result-value" id="taxResRate">18.00%</span>
+        </div>
+      </div>
+
+      <div class="calc-workspace-title" style="font-size: 13px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute); border-bottom: 1px solid var(--colors-hairline); padding-bottom: var(--spacing-xs); margin-top: 15px; margin-bottom: 10px;">Detailed Breakdown</div>
+      <div class="tax-breakdown">
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody id="taxBreakdownBody">
+            <tr><td>Base Price</td><td>$100.00</td></tr>
+            <tr><td>Tax (18%)</td><td>$18.00</td></tr>
+            <tr><td style="font-weight:600; color: var(--colors-ink);">Total</td><td style="font-weight:600; color: var(--colors-ink);">$118.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="calc-workspace-title" style="font-size: 13px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute); border-bottom: 1px solid var(--colors-hairline); padding-bottom: var(--spacing-xs); margin-top: 15px; margin-bottom: 10px;">Formula Used</div>
+      <div class="formula-box" id="taxFormula">
+        Tax Amount = Price × (Rate ÷ 100) = $100.00 × 0.18 = $18.00<br/>
+        Total = Price + Tax = $100.00 + $18.00 = $118.00
+      </div>
+    </div>
+  </div>
+
+  <!-- SEO Article Content Section -->
+  <section class="rich-text" style="max-width: 1200px; margin: 40px auto 0; padding: 0 var(--spacing-lg);">
+    <div class="content-card">
+      <h2>Simplifying Sales Tax, GST, and VAT Calculations.</h2>
+      <p>
+        Whether you are an online buyer, a small retail owner, or an accountant, managing sales tax is a regular business chore. Sales Tax, Goods and Services Tax (GST), and Value Added Tax (VAT) vary by country, state, and county. Knowing the exact tax amount, calculating tax-inclusive total prices, or back-calculating tax figures from a gross total is essential for clear financial management.
+      </p>
+      <p>
+        ConvertOcean's <strong>Sales Tax Calculator</strong> allows you to calculate sales tax, total price including tax, and reverse tax amounts. It provides presets for the United States, United Kingdom, Canada, and Australia, and runs entirely in local browser tab memory.
+      </p>
+
+      <h3>How to Use the Sales Tax Calculator.</h3>
+      <p>
+        Our sales tax tool helps you calculate tax figures using two simple modes:
+      </p>
+      <ul>
+        <li><strong>Calculate Tax from Net Price (Standard):</strong> Select this mode, enter your pre-tax price, choose a preset tax rate or type a custom one. Click calculate to see the exact sales tax amount and the total tax-inclusive price.</li>
+        <li><strong>Reverse Calculate Tax from Gross Price:</strong> Select this mode, enter your total price including tax, and input the tax rate. The engine back-calculates to find the pre-tax net price and the exact tax amount.</li>
+      </ul>
+
+      <h3>International Sales Tax Presets.</h3>
+      <p>
+        Our tool includes quick presets for major international tax jurisdictions:
+      </p>
+      <ul>
+        <li><strong>United States:</strong> Features the US Average Combined Sales Tax Rate (7.12%).</li>
+        <li><strong>United Kingdom:</strong> Features the UK Standard Value Added Tax (VAT) rate of 20%.</li>
+        <li><strong>Canada:</strong> Includes the standard GST (5%) and common HST (13%) configurations.</li>
+        <li><strong>Australia:</strong> Includes the standard Australian GST rate of 10%.</li>
+        <li><strong>India:</strong> Features the standard GST rate for services (18%).</li>
+        <li><strong>Japan:</strong> Includes the standard Consumption Tax rate of 10%.</li>
+      </ul>
+
+      <h3>Sales Tax Formulas.</h3>
+      <p>
+        The calculator displays the mathematical formulas used to derive tax figures:
+      </p>
+      <ul>
+        <li><strong>Standard Tax Calculation:</strong> <code>Tax Amount = Price × (Tax Rate ÷ 100)</code> and <code>Total Price = Price + Tax Amount</code>.</li>
+        <li><strong>Reverse Tax Calculation:</strong> <code>Net Price = Total Price ÷ (1 + Tax Rate ÷ 100)</code> and <code>Tax Amount = Total Price − Net Price</code>.</li>
+      </ul>
+
+      <h3>Practical Business Use Cases.</h3>
+      <p>
+        Accurate sales tax calculations are vital for operational compliance:
+      </p>
+      <ul>
+        <li><strong>E-commerce Sellers:</strong> Calculate total customer prices during invoicing or check tax compliance across state borders.</li>
+        <li><strong>Purchasing & Expenses:</strong> Audit corporate expense receipts to separate net business costs from local sales tax.</li>
+        <li><strong>Freelancers:</strong> Calculate GST/VAT tax additions for domestic service clients prior to billing.</li>
+        <li><strong>Shoppers:</strong> Verify final retail costs at checkout by calculating local county tax percentages.</li>
+      </ul>
+
+      <h3>Tax Calculation Examples.</h3>
+      <p>
+        Here is an example of standard and reverse tax calculations:
+      </p>
+      <blockquote>
+        <strong>Standard Tax:</strong> Price: $100.00 | Tax Rate: 8.25% (US Custom)<br/>
+        <code>Tax Amount = $100.00 × 0.0825 = $8.25</code><br/>
+        <code>Total Price = $100.00 + $8.25 = $108.25</code><br/><br/>
+        <strong>Reverse Tax:</strong> Total Price: $108.25 | Tax Rate: 8.25%<br/>
+        <code>Net Price = $108.25 ÷ (1 + 0.0825) = $100.00</code><br/>
+        <code>Tax Amount = $108.25 − $100.00 = $8.25</code>
+      </blockquote>
+
+      <h3>Related Billing and Accounting Tools.</h3>
+      <p>
+        Once you calculate tax amounts, use the <a href="/invoice-generator/">Invoice Generator</a> to compile a professional invoice with VAT/GST breakdowns, or create payment confirmations with the <a href="/receipt-generator/">Receipt Generator</a>. If you need to estimate margin ratios before tax additions, consult our <a href="/profit-margin-calculator/">Profit Margin Calculator</a>, or verify growth using the <a href="/percentage-calculator/">Percentage Calculator</a>.
+      </p>
+
+      <h3>Absolute Financial Confidentiality.</h3>
+      <p>
+        ConvertOcean operates entirely client-side. No purchase values, prices, tax rates, or billing records are uploaded or stored. All computations run in your local browser sandbox, ensuring absolute compliance with corporate privacy policies.
+      </p>
+    </div>
+  </section>
+
+  <!-- Reusable FAQ Component -->
+  <section class="faq-section" style="margin-top: 40px;">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-container">
+      <div class="faq-item">
+        <div class="faq-question">
+          How does ConvertOcean convert files without uploading them?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Is my confidential business or financial data safe when converting files?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Can a client-side file converter run without an active internet connection?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Do I need to register an account or pay for a conversion subscription?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools Section -->
+  <section class="info-section" style="margin-top: 20px; max-width: 1200px; margin-left: auto; margin-right: auto; padding: 0 var(--spacing-lg);">
+    <h3 style="font-size: 18px; font-weight: 600; color: var(--colors-ink); border-bottom: 1px solid var(--colors-hairline); padding-bottom: 8px;">Related Tools</h3>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); margin-top: var(--spacing-md);">
+      <a href="/invoice-generator/" class="popular-card" style="margin-top: var(--spacing-xs);">
+        <div class="popular-card-icon">🧾</div>
+        <span class="popular-card-name">INVOICE GENERATOR</span>
+      </a>
+      <a href="/receipt-generator/" class="popular-card" style="margin-top: var(--spacing-xs);">
+        <div class="popular-card-icon">🧾</div>
+        <span class="popular-card-name">RECEIPT GENERATOR</span>
+      </a>
+      <a href="/profit-margin-calculator/" class="popular-card" style="margin-top: var(--spacing-xs);">
+        <div class="popular-card-icon">📈</div>
+        <span class="popular-card-name">PROFIT MARGIN CALCULATOR</span>
+      </a>
+      <a href="/percentage-calculator/" class="popular-card" style="margin-top: var(--spacing-xs);">
+        <div class="popular-card-icon">🔢</div>
+        <span class="popular-card-name">PERCENTAGE CALCULATOR</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/index.html" class="nav-brand" style="margin-bottom: 8px;">
+            <img src="/fevicon.png" alt="ConvertOcean Logo" class="brand-logo-img" style="width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; transition: transform 0.2s ease;" />
+            <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+          </a>
+          <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">File Converter</span>
+          <div class="footer-links">
+            <a href="/excel-to-pdf/" class="footer-link">Excel to PDF</a>
+            <a href="/csv-to-json/" class="footer-link">CSV to JSON</a>
+            <a href="/json-to-csv/" class="footer-link">JSON to CSV</a>
+            <a href="/xlsx-to-csv/" class="footer-link">XLSX to CSV</a>
+            <a href="/csv-to-xlsx/" class="footer-link">CSV to XLSX</a>
+            <a href="/json-to-xlsx/" class="footer-link">JSON to XLSX</a>
+            <a href="/xml-to-json/" class="footer-link">XML to JSON</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">PDF & Document</span>
+          <div class="footer-links">
+            <a href="/merge-pdf/" class="footer-link">Merge PDF</a>
+            <a href="/split-pdf/" class="footer-link">Split PDF</a>
+            <a href="/txt-to-pdf/" class="footer-link">TXT to PDF</a>
+            <a href="/pdf-to-txt/" class="footer-link">PDF to TXT</a>
+            <a href="/document-tools/" class="footer-link">Document Tools</a>
+            <a href="/excel-converter/" class="footer-link">Excel Converter</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Image & OCR</span>
+          <div class="footer-links">
+            <a href="/png-to-jpg/" class="footer-link">PNG to JPG</a>
+            <a href="/jpg-to-png/" class="footer-link">JPG to PNG</a>
+            <a href="/png-to-webp/" class="footer-link">PNG to WebP</a>
+            <a href="/webp-to-png/" class="footer-link">WebP to PNG</a>
+            <a href="/image-to-text/" class="footer-link">Image to Text OCR</a>
+            <a href="/image-tools/" class="footer-link">Image Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Legal & Company</span>
+          <div class="footer-links">
+            <a href="/about/" class="footer-link">About Us</a>
+            <a href="/contact/" class="footer-link">Contact Us</a>
+            <a href="/privacy/" class="footer-link">Privacy Policy</a>
+            <a href="/terms/" class="footer-link">Terms & Conditions</a>
+            <a href="/sitemap.xml" class="footer-link">Sitemap</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="privacy-disclaimer">
+          <strong>🔒 100% Device-Level Security Guarantee:</strong> Disconnect your internet connection completely and try any tool. It works flawlessly because your files never touch an external server. Everything resides in local sandbox memory and is automatically removed when you close the tab.
+        </p>
+        <p class="copyright">&copy; 2026 ConvertOcean. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/theme.js"></script>
+  <script>
+    (function() {
+      const $ = id => document.getElementById(id);
+      let taxMode = 'add';
+
+      $('taxTabAdd').addEventListener('click', () => {
+        taxMode = 'add';
+        $('taxTabAdd').classList.add('active');
+        $('taxTabRemove').classList.remove('active');
+        $('taxFieldsAdd').style.display = 'block';
+        $('taxFieldsRemove').style.display = 'none';
+        calculate();
+      });
+
+      $('taxTabRemove').addEventListener('click', () => {
+        taxMode = 'remove';
+        $('taxTabRemove').classList.add('active');
+        $('taxTabAdd').classList.remove('active');
+        $('taxFieldsAdd').style.display = 'none';
+        $('taxFieldsRemove').style.display = 'block';
+        calculate();
+      });
+
+      // Preset buttons
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const rate = parseFloat(btn.dataset.rate);
+          $('taxRate1').value = rate;
+          $('taxRate2').value = rate;
+          calculate();
+        });
+      });
+
+      function calculate() {
+        let base = 0, tax = 0, total = 0, rate = 0;
+
+        if (taxMode === 'add') {
+          base = parseFloat($('taxPrice1').value) || 0;
+          rate = parseFloat($('taxRate1').value) || 0;
+          tax = base * (rate / 100);
+          total = base + tax;
+          $('taxResGrandLabel').textContent = 'Total (Tax Inclusive)';
+          $('taxResBaseLabel').textContent = 'Pre-Tax Price';
+          $('taxFormula').innerHTML = `Tax Amount = Price × (Rate ÷ 100) = $${base.toFixed(2)} × ${(rate/100).toFixed(4)} = $${tax.toFixed(2)}<br/>Total = Price + Tax = $${base.toFixed(2)} + $${tax.toFixed(2)} = $${total.toFixed(2)}`;
+        } else {
+          total = parseFloat($('taxTotal2').value) || 0;
+          rate = parseFloat($('taxRate2').value) || 0;
+          base = total / (1 + rate / 100);
+          tax = total - base;
+          $('taxResGrandLabel').textContent = 'Total (Original)';
+          $('taxResBaseLabel').textContent = 'Pre-Tax Price (Extracted)';
+          $('taxFormula').innerHTML = `Pre-Tax Price = Total ÷ (1 + Rate/100) = $${total.toFixed(2)} ÷ ${(1 + rate/100).toFixed(4)} = $${base.toFixed(2)}<br/>Tax Amount = Total − Pre-Tax = $${total.toFixed(2)} − $${base.toFixed(2)} = $${tax.toFixed(2)}`;
+        }
+
+        $('taxResGrand').textContent = '$' + total.toFixed(2);
+        $('taxResTax').textContent = '$' + tax.toFixed(2);
+        $('taxResBase').textContent = '$' + base.toFixed(2);
+        $('taxResRate').textContent = rate.toFixed(2) + '%';
+
+        $('taxBreakdownBody').innerHTML = `
+          <tr><td>Base Price</td><td>$${base.toFixed(2)}</td></tr>
+          <tr><td>Tax (${rate.toFixed(2)}%)</td><td>$${tax.toFixed(2)}</td></tr>
+          <tr><td style="font-weight:600; color: var(--colors-ink);">Total</td><td style="font-weight:600; color: var(--colors-ink);">$${total.toFixed(2)}</td></tr>
+        `;
+      }
+
+      $('taxCalcBtn').addEventListener('click', calculate);
+      ['taxPrice1','taxRate1','taxTotal2','taxRate2'].forEach(id => {
+        $(id).addEventListener('input', calculate);
+      });
+
+      window.addEventListener('load', calculate);
+    })();
+  </script>
+</body>
+</html>

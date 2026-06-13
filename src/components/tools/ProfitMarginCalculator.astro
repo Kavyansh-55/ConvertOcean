@@ -1,0 +1,296 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .calc-workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+  }
+  @media (max-width: 900px) {
+    .calc-workspace { grid-template-columns: 1fr; }
+  }
+  .calc-panel {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  }
+  .calc-panel-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--colors-mute);
+    border-bottom: 1px solid var(--colors-hairline);
+    padding-bottom: var(--spacing-xs);
+  }
+  .mode-tabs {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+  }
+  .mode-tab {
+    padding: 8px 16px;
+    border-radius: var(--rounded-pill);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas);
+    color: var(--colors-body);
+    transition: all 0.2s;
+  }
+  .mode-tab:hover { border-color: var(--colors-hairline-strong); }
+  .mode-tab.active {
+    background-color: var(--colors-ink);
+    color: var(--colors-canvas);
+    border-color: var(--colors-ink);
+  }
+  .result-card {
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--colors-hairline);
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-label {
+    font-size: 14px;
+    color: var(--colors-body);
+  }
+  .result-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--colors-ink);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .result-value.highlight {
+    font-size: 24px;
+    color: var(--colors-link);
+  }
+  .margin-bar-container {
+    width: 100%;
+    height: 32px;
+    border-radius: var(--rounded-md);
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    overflow: hidden;
+    display: flex;
+    position: relative;
+  }
+  .margin-bar-cost {
+    height: 100%;
+    background: linear-gradient(135deg, #ff4d4d, #f9cb28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
+    min-width: 30px;
+  }
+  .margin-bar-profit {
+    height: 100%;
+    background: linear-gradient(135deg, #007cf0, #00dfd8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
+    min-width: 30px;
+  }
+  .formula-box {
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-md);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--colors-body);
+    line-height: 1.8;
+  }
+</style>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<div class="calc-workspace">
+  <div class="calc-panel">
+    <div class="calc-panel-title">Calculation Mode</div>
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="margin" id="pmTabMargin">Cost & Revenue → Margin</button>
+      <button class="mode-tab" data-mode="selling" id="pmTabSelling">Cost & Margin → Price</button>
+      <button class="mode-tab" data-mode="cost" id="pmTabCost">Revenue & Margin → Cost</button>
+    </div>
+
+    <div class="calc-panel-title">Enter Values</div>
+
+    <div id="pmFieldsMargin">
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="pmCost1">Cost Price ($)</label>
+        <input type="number" id="pmCost1" class="form-input" value="60" min="0" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="pmRevenue1">Selling Price / Revenue ($)</label>
+        <input type="number" id="pmRevenue1" class="form-input" value="100" min="0" step="0.01" />
+      </div>
+    </div>
+
+    <div id="pmFieldsSelling" style="display:none;">
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="pmCost2">Cost Price ($)</label>
+        <input type="number" id="pmCost2" class="form-input" value="60" min="0" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="pmMargin2">Desired Profit Margin (%)</label>
+        <input type="number" id="pmMargin2" class="form-input" value="40" min="0" max="100" step="0.01" />
+      </div>
+    </div>
+
+    <div id="pmFieldsCost" style="display:none;">
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="pmRevenue3">Revenue / Selling Price ($)</label>
+        <input type="number" id="pmRevenue3" class="form-input" value="100" min="0" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="pmMargin3">Desired Profit Margin (%)</label>
+        <input type="number" id="pmMargin3" class="form-input" value="40" min="0" max="100" step="0.01" />
+      </div>
+    </div>
+
+    <button class="button button-primary" id="pmCalcBtn" style="align-self: flex-start;">Calculate</button>
+  </div>
+
+  <div class="calc-panel">
+    <div class="calc-panel-title">Results</div>
+
+    <div class="result-card" id="pmResults">
+      <div class="result-row">
+        <span class="result-label">Profit Margin</span>
+        <span class="result-value highlight" id="pmResMargin">40.00%</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Markup</span>
+        <span class="result-value" id="pmResMarkup">66.67%</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Gross Profit</span>
+        <span class="result-value" id="pmResProfit">$40.00</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Cost</span>
+        <span class="result-value" id="pmResCost">$60.00</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Revenue</span>
+        <span class="result-value" id="pmResRevenue">$100.00</span>
+      </div>
+    </div>
+
+    <div class="calc-panel-title" style="margin-top: var(--spacing-sm);">Cost vs Profit Ratio</div>
+    <div class="margin-bar-container">
+      <div class="margin-bar-cost" id="pmBarCost" style="width:60%;">Cost 60%</div>
+      <div class="margin-bar-profit" id="pmBarProfit" style="width:40%;">Profit 40%</div>
+    </div>
+
+    <div class="calc-panel-title" style="margin-top: var(--spacing-sm);">Formula Used</div>
+    <div class="formula-box" id="pmFormula">
+      Profit = Revenue − Cost = $100.00 − $60.00 = $40.00<br/>
+      Margin = (Profit ÷ Revenue) × 100 = (40 ÷ 100) × 100 = 40.00%<br/>
+      Markup = (Profit ÷ Cost) × 100 = (40 ÷ 60) × 100 = 66.67%
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const $ = id => document.getElementById(id);
+    let mode = 'margin';
+
+    const tabs = document.querySelectorAll('.mode-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        mode = tab.dataset.mode;
+        $('pmFieldsMargin').style.display = mode === 'margin' ? 'block' : 'none';
+        $('pmFieldsSelling').style.display = mode === 'selling' ? 'block' : 'none';
+        $('pmFieldsCost').style.display = mode === 'cost' ? 'block' : 'none';
+        calculate();
+      });
+    });
+
+    function calculate() {
+      let cost = 0, revenue = 0, profit = 0, marginPct = 0, markupPct = 0;
+
+      if (mode === 'margin') {
+        cost = parseFloat($('pmCost1').value) || 0;
+        revenue = parseFloat($('pmRevenue1').value) || 0;
+        profit = revenue - cost;
+        marginPct = revenue > 0 ? (profit / revenue) * 100 : 0;
+        markupPct = cost > 0 ? (profit / cost) * 100 : 0;
+      } else if (mode === 'selling') {
+        cost = parseFloat($('pmCost2').value) || 0;
+        marginPct = parseFloat($('pmMargin2').value) || 0;
+        revenue = marginPct < 100 ? cost / (1 - marginPct / 100) : 0;
+        profit = revenue - cost;
+        markupPct = cost > 0 ? (profit / cost) * 100 : 0;
+      } else if (mode === 'cost') {
+        revenue = parseFloat($('pmRevenue3').value) || 0;
+        marginPct = parseFloat($('pmMargin3').value) || 0;
+        profit = revenue * (marginPct / 100);
+        cost = revenue - profit;
+        markupPct = cost > 0 ? (profit / cost) * 100 : 0;
+      }
+
+      $('pmResMargin').textContent = marginPct.toFixed(2) + '%';
+      $('pmResMarkup').textContent = markupPct.toFixed(2) + '%';
+      $('pmResProfit').textContent = '$' + profit.toFixed(2);
+      $('pmResCost').textContent = '$' + cost.toFixed(2);
+      $('pmResRevenue').textContent = '$' + revenue.toFixed(2);
+
+      const costPct = revenue > 0 ? Math.max(5, (cost / revenue) * 100) : 50;
+      const profitPct = revenue > 0 ? Math.max(5, (profit / revenue) * 100) : 50;
+      $('pmBarCost').style.width = costPct + '%';
+      $('pmBarCost').textContent = `Cost ${Math.round(costPct)}%`;
+      $('pmBarProfit').style.width = profitPct + '%';
+      $('pmBarProfit').textContent = `Profit ${Math.round(profitPct)}%`;
+
+      if (mode === 'margin') {
+        $('pmFormula').innerHTML = `Profit = Revenue − Cost = $${revenue.toFixed(2)} − $${cost.toFixed(2)} = $${profit.toFixed(2)}<br/>Margin = (Profit ÷ Revenue) × 100 = (${profit.toFixed(2)} ÷ ${revenue.toFixed(2)}) × 100 = ${marginPct.toFixed(2)}%<br/>Markup = (Profit ÷ Cost) × 100 = (${profit.toFixed(2)} ÷ ${cost.toFixed(2)}) × 100 = ${markupPct.toFixed(2)}%`;
+      } else if (mode === 'selling') {
+        $('pmFormula').innerHTML = `Selling Price = Cost ÷ (1 − Margin/100) = $${cost.toFixed(2)} ÷ ${(1 - marginPct/100).toFixed(4)} = $${revenue.toFixed(2)}<br/>Profit = Revenue − Cost = $${revenue.toFixed(2)} − $${cost.toFixed(2)} = $${profit.toFixed(2)}<br/>Markup = (Profit ÷ Cost) × 100 = ${markupPct.toFixed(2)}%`;
+      } else {
+        $('pmFormula').innerHTML = `Cost = Revenue × (1 − Margin/100) = $${revenue.toFixed(2)} × ${(1 - marginPct/100).toFixed(4)} = $${cost.toFixed(2)}<br/>Profit = Revenue − Cost = $${revenue.toFixed(2)} − $${cost.toFixed(2)} = $${profit.toFixed(2)}<br/>Markup = (Profit ÷ Cost) × 100 = ${markupPct.toFixed(2)}%`;
+      }
+    }
+
+    $('pmCalcBtn').addEventListener('click', calculate);
+    ['pmCost1','pmRevenue1','pmCost2','pmMargin2','pmRevenue3','pmMargin3'].forEach(id => {
+      $(id).addEventListener('input', calculate);
+    });
+
+    window.addEventListener('load', calculate);
+  })();
+</script>

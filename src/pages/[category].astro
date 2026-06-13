@@ -19,11 +19,11 @@ const relLink = (target: string) => {
 
 const categoriesMap: Record<string, { name: string; description: string; icon: string; seoTitle: string; seoDescription: string }> = {
   'pdf-tools': {
-    name: 'PDF Tools',
-    description: 'Merge multiple PDF documents, split ranges, extract pages, and compile documents offline securely.',
-    icon: '📑',
-    seoTitle: 'Secure Offline PDF Tools - Merge & Split PDF Locally | ConvertOcean',
-    seoDescription: 'Stitch multiple PDF documents together or extract specific page ranges securely inside browser memory. 100% private, free, no uploads.'
+    name: 'PDF, Split & Merge Tools',
+    description: 'Merge multiple PDF, Excel, Image, or Text documents, split ranges, extract pages, and compile documents offline securely.',
+    icon: '🥞',
+    seoTitle: 'Secure Offline PDF, Split & Merge Tools - Merge & Split Files Locally | ConvertOcean',
+    seoDescription: 'Stitch multiple PDF, Excel, image, or text documents together or extract specific pages/ranges securely inside browser memory. 100% private, free, no uploads.'
   },
   'image-tools': {
     name: 'Image Tools',
@@ -55,10 +55,10 @@ const categoriesMap: Record<string, { name: string; description: string; icon: s
   },
   'business-tools': {
     name: 'Business Tools',
-    description: 'Create professional freelance invoices, calculate taxes, adjust parameters, and compile print-ready PDFs.',
+    description: 'Generate invoices, create receipts, calculate profit margins, compute percentages, and estimate sales tax \u2014 all 100% client-side.',
     icon: '💼',
-    seoTitle: 'Private Business Tools & Invoice Generator Offline | ConvertOcean',
-    seoDescription: 'Create professional freelance invoices and process financial documents locally. Keep client details 100% confidential. No server uploads.'
+    seoTitle: 'Private Business Tools - Invoice, Receipt, Tax & Margin Calculator | ConvertOcean',
+    seoDescription: 'Generate invoices, create receipts, calculate profit margins, compute percentages, and estimate sales tax privately in your browser. No server uploads. 100% free.'
   },
   'developer-tools': {
     name: 'Developer Tools',
@@ -81,7 +81,9 @@ if (category === 'pdf-tools') {
   filteredTools = tools.filter(t => 
     t.categorySlug === 'pdf-tools' ||
     t.slug.toLowerCase().includes('pdf') || 
-    t.name.toLowerCase().includes('pdf')
+    t.name.toLowerCase().includes('pdf') ||
+    t.slug.toLowerCase().includes('merge') ||
+    t.slug.toLowerCase().includes('split')
   );
 }
 

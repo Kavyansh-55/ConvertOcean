@@ -941,7 +941,7 @@ footer {
 
 .footer-top {
   display: grid;
-  grid-template-columns: 2fr repeat(4, 1fr);
+  grid-template-columns: 2fr repeat(5, 1fr);
   gap: var(--spacing-xl);
   text-align: left;
 }

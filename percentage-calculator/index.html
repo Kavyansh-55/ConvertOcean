@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Percentage Calculator - Calculate Percentage Increase & Decrease | ConvertOcean</title>
+  <meta name="description" content="Calculate percentages, percentage increase, percentage decrease, and percentage differences online. Free percentage calculator with step-by-step formulas.">
+  <link rel="canonical" href="https://convertocean.com/percentage-calculator/" />
+  
+  <!-- Open Graph / Social sharing metadata -->
+  <meta property="og:title" content="Percentage Calculator - Calculate Percentage Increase & Decrease | ConvertOcean" />
+  <meta property="og:description" content="Calculate percentages, percentage increase, percentage decrease, and percentage differences online. Free percentage calculator with step-by-step formulas." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://convertocean.com/percentage-calculator/" />
+  <meta property="og:image" content="https://convertocean.com/apple-touch-icon.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Percentage Calculator - Calculate Percentage Increase & Decrease" />
+  <meta name="twitter:description" content="Calculate percentages, percentage increase, percentage decrease, and percentage differences online. Free percentage calculator with step-by-step formulas." />
+  <meta name="twitter:image" content="https://convertocean.com/apple-touch-icon.png" />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://convertocean.com/percentage-calculator/#webpage",
+        "url": "https://convertocean.com/percentage-calculator/",
+        "name": "Percentage Calculator - Calculate Percentage Increase & Decrease | ConvertOcean",
+        "isPartOf": {
+          "@id": "https://convertocean.com/#website"
+        },
+        "description": "Calculate percentages, percentage increase, percentage decrease, and percentage differences online. Free percentage calculator with step-by-step formulas.",
+        "breadcrumb": {
+          "@id": "https://convertocean.com/percentage-calculator/#breadcrumb"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://convertocean.com/percentage-calculator/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://convertocean.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Business Tools",
+            "item": "https://convertocean.com/business-tools/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Percentage Calculator",
+            "item": "https://convertocean.com/percentage-calculator/"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <!-- FAQPage Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does ConvertOcean convert files without uploading them?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my confidential business or financial data safe when converting files?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can a client-side file converter run without an active internet connection?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need to register an account or pay for a conversion subscription?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/theme.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  <style>
+    /* Calculator workspace specific overrides */
+    .pct-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-lg);
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 var(--spacing-lg);
+    }
+    @media (max-width: 900px) {
+      .pct-grid { grid-template-columns: 1fr; }
+    }
+    .pct-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .pct-card:hover {
+      border-color: var(--colors-hairline-strong);
+      transform: translateY(-2px);
+    }
+    .pct-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+    .pct-card-title .pct-num {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--rounded-full);
+      background: linear-gradient(135deg, #007cf0, #00dfd8);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .pct-desc {
+      font-size: 13px;
+      color: var(--colors-mute);
+      line-height: 1.4;
+    }
+    .pct-inputs {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      flex-wrap: wrap;
+    }
+    .pct-inputs span {
+      font-size: 14px;
+      color: var(--colors-body);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .pct-inputs input {
+      width: 100px;
+      height: 40px;
+      border-radius: var(--rounded-sm);
+      border: 1px solid var(--colors-hairline);
+      padding: 0 var(--spacing-sm);
+      font-size: 14px;
+      background-color: var(--colors-canvas);
+      color: var(--colors-ink);
+      outline: none;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .pct-inputs input:focus {
+      border-color: var(--colors-ink);
+    }
+    .pct-result-box {
+      background-color: var(--colors-canvas-soft);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-md);
+      text-align: center;
+      min-height: 52px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .pct-result-number {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--colors-link);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .pct-formula-text {
+      font-size: 11px;
+      color: var(--colors-mute);
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.6;
+    }
+
+    /* Unique SEO Article Content Styles */
+    .rich-text {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--colors-body);
+      margin-top: 40px;
+    }
+    .rich-text h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      margin-top: var(--spacing-xl);
+      margin-bottom: var(--spacing-md);
+      letter-spacing: -0.96px;
+      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+    }
+    .rich-text h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      margin-top: var(--spacing-lg);
+      margin-bottom: var(--spacing-sm);
+      letter-spacing: -0.6px;
+      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+    }
+    .rich-text p {
+      margin-bottom: var(--spacing-md);
+    }
+    .rich-text ul {
+      margin-bottom: var(--spacing-md);
+      padding-left: var(--spacing-lg);
+      list-style-type: disc;
+    }
+    .rich-text li {
+      margin-bottom: var(--spacing-xs);
+    }
+    .rich-text blockquote {
+      border-left: 3px solid var(--colors-link);
+      padding: var(--spacing-sm) var(--spacing-md);
+      margin: var(--spacing-md) 0;
+      font-style: italic;
+      color: var(--colors-ink);
+      background-color: var(--colors-canvas-soft-2);
+      border-radius: var(--rounded-sm);
+    }
+    .rich-text a {
+      color: var(--colors-link);
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .rich-text a:hover {
+      color: var(--colors-link-deep);
+    }
+    .rich-text code {
+      font-family: 'JetBrains Mono', monospace;
+      background-color: var(--colors-canvas-soft-2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .rich-text .content-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xl);
+      margin-top: var(--spacing-xl);
+    }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="COcean" />
+  <link rel="manifest" href="/site.webmanifest" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="nav-bar">
+    <a href="/index.html" class="nav-brand">
+      <img src="/fevicon.png" alt="ConvertOcean Logo" class="brand-logo-img" style="width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; transition: transform 0.2s ease;" />
+      <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+    </a>
+    
+    <nav class="nav-links">
+      <a href="/index.html" class="nav-link">⚡ Home</a>
+      <a href="/file-converter/" class="nav-link">📄 File Converter</a>
+      <a href="/pdf-tools/" class="nav-link">📑 PDF Tools</a>
+      <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
+      <a href="/excel-converter/" class="nav-link">📊 Excel Converter</a>
+      <a href="/image-to-text/" class="nav-link">🔍 Image to Text</a>
+      <a href="/business-tools/" class="nav-link active">💼 Business Tools</a>
+      <a href="/privacy-first/" class="nav-link">🔒 Privacy First</a>
+    </nav>
+
+    <div class="nav-right-group">
+      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        </svg>
+      </button>
+      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobileNavMenu" class="mobile-nav-menu">
+    <a href="/index.html" class="mobile-nav-link">⚡ Home</a>
+    <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
+    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF Tools</a>
+    <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
+    <a href="/excel-converter/" class="mobile-nav-link">📊 Excel Converter</a>
+    <a href="/image-to-text/" class="mobile-nav-link">🔍 Image to Text</a>
+    <a href="/business-tools/" class="mobile-nav-link active">💼 Business Tools</a>
+    <a href="/privacy-first/" class="mobile-nav-link">🔒 Privacy First</a>
+  </div>
+
+  <main style="max-width: 1200px; margin: 40px auto 0; padding: 0 var(--spacing-lg);">
+    <div class="page-header" style="text-align: center; margin-bottom: 30px;">
+      <h1 class="page-title" style="font-size: 36px; font-weight: 600; letter-spacing: -1.2px;">Percentage Calculator.</h1>
+      <p class="page-description" style="font-size: 15px; color: var(--colors-body); max-width: 600px; margin: 10px auto 0;">Calculate percentages, percentage change, increase, decrease, and differences with step-by-step formula breakdowns.</p>
+    </div>
+  </main>
+
+  <div class="pct-grid">
+    <!-- Card 1: X% of Y -->
+    <div class="pct-card">
+      <div class="pct-card-title"><span class="pct-num">1</span> Find X% of Y</div>
+      <div class="pct-desc">What is X percent of Y?</div>
+      <div class="pct-inputs">
+        <span>What is</span>
+        <input type="number" id="pct1X" value="15" step="any" />
+        <span>% of</span>
+        <input type="number" id="pct1Y" value="200" step="any" />
+        <span>?</span>
+      </div>
+      <div class="pct-result-box">
+        <div class="pct-result-number" id="pct1Res">30</div>
+        <div class="pct-formula-text" id="pct1Formula">= (200 × 15) ÷ 100 = 30</div>
+      </div>
+    </div>
+
+    <!-- Card 2: X is what % of Y -->
+    <div class="pct-card">
+      <div class="pct-card-title"><span class="pct-num">2</span> X is what % of Y?</div>
+      <div class="pct-desc">Find what percentage X is of Y.</div>
+      <div class="pct-inputs">
+        <input type="number" id="pct2X" value="30" step="any" />
+        <span>is what % of</span>
+        <input type="number" id="pct2Y" value="200" step="any" />
+        <span>?</span>
+      </div>
+      <div class="pct-result-box">
+        <div class="pct-result-number" id="pct2Res">15%</div>
+        <div class="pct-formula-text" id="pct2Formula">= (30 ÷ 200) × 100 = 15%</div>
+      </div>
+    </div>
+
+    <!-- Card 3: Percentage Change -->
+    <div class="pct-card">
+      <div class="pct-card-title"><span class="pct-num">3</span> Percentage Change</div>
+      <div class="pct-desc">Calculate % increase or decrease from X to Y.</div>
+      <div class="pct-inputs">
+        <span>From</span>
+        <input type="number" id="pct3X" value="80" step="any" />
+        <span>to</span>
+        <input type="number" id="pct3Y" value="100" step="any" />
+      </div>
+      <div class="pct-result-box">
+        <div class="pct-result-number" id="pct3Res">25% increase</div>
+        <div class="pct-formula-text" id="pct3Formula">= ((100 − 80) ÷ 80) × 100 = 25%</div>
+      </div>
+    </div>
+
+    <!-- Card 4: Add/Subtract % -->
+    <div class="pct-card">
+      <div class="pct-card-title"><span class="pct-num">4</span> Add or Subtract %</div>
+      <div class="pct-desc">Add or subtract a percentage from a number.</div>
+      <div class="pct-inputs">
+        <select id="pct4Op" class="select-input" style="width:90px; height:40px; font-size:13px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 6px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;">
+          <option value="add">Add</option>
+          <option value="sub">Subtract</option>
+        </select>
+        <input type="number" id="pct4X" value="20" step="any" />
+        <span>% to/from</span>
+        <input type="number" id="pct4Y" value="150" step="any" />
+      </div>
+      <div class="pct-result-box">
+        <div class="pct-result-number" id="pct4Res">180</div>
+        <div class="pct-formula-text" id="pct4Formula">= 150 + (150 × 20 ÷ 100) = 180</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEO Article Content Section -->
+  <section class="rich-text" style="max-width: 1200px; margin: 40px auto 0; padding: 0 var(--spacing-lg);">
+    <div class="content-card">
+      <h2>Solving Common Percentage Problems in Business and Daily Life.</h2>
+      <p>
+        Percentages are everywhere: interest rates, business growth metrics, retail discounts, sales taxes, tips, and financial portfolios. However, calculating percentages, tracking percentage increases or decreases, and finding differences can be prone to manual calculation errors.
+      </p>
+      <p>
+        ConvertOcean's <strong>Percentage Calculator</strong> provides a suite of tools to calculate percentages, changes, and difference rates. It calculates all formulas locally in your browser memory, displaying step-by-step mathematical breakdowns with no data ever sent to a server.
+      </p>
+
+      <h3>How to Use the Percentage Calculator.</h3>
+      <p>
+        Our calculator provides four independent modules to solve different percentage problems:
+      </p>
+      <ul>
+        <li><strong>Find a Percentage of a Number:</strong> Enter the percentage (X) and the base number (Y). The calculator outputs the exact portion (e.g. finding 15% of 200).</li>
+        <li><strong>Find What Percentage X is of Y:</strong> Input a portion (X) and a total (Y). The tool calculates the percentage ratio (e.g. figuring out what percentage 30 is of 200).</li>
+        <li><strong>Find Percentage Change (Increase/Decrease):</strong> Input an old value (X) and a new value (Y). The engine determines the percentage change and indicates if it is an increase or decrease.</li>
+        <li><strong>Add or Subtract a Percentage:</strong> Input a percentage (X) and a base number (Y), then select Add or Subtract. The calculator outputs the final sum (useful for tips, markups, or discounts).</li>
+      </ul>
+
+      <h3>Percentage Formulas Explained.</h3>
+      <p>
+        The calculator displays the exact formulas used for each calculation mode:
+      </p>
+      <ul>
+        <li><strong>Basic Percentage:</strong> <code>Result = (Y × X) ÷ 100</code></li>
+        <li><strong>Percentage Ratio:</strong> <code>Percentage (%) = (X ÷ Y) × 100</code></li>
+        <li><strong>Percentage Increase:</strong> <code>Increase (%) = ((New Value − Old Value) ÷ Old Value) × 100</code></li>
+        <li><strong>Percentage Decrease:</strong> <code>Decrease (%) = ((Old Value − New Value) ÷ Old Value) × 100</code></li>
+        <li><strong>Add Percentage:</strong> <code>Result = Base + (Base × Percentage ÷ 100)</code></li>
+      </ul>
+
+      <h3>Practical Business and Daily Use Cases.</h3>
+      <p>
+        Percentage calculations are standard in business and personal settings:
+      </p>
+      <ul>
+        <li><strong>Marketing Analysis:</strong> Track year-over-year web traffic changes, conversion rate adjustments, or advertising click-through trends.</li>
+        <li><strong>Retail Shopping:</strong> Instantly calculate item discounts, clearance sale markdowns, or check final pricing on discounted items.</li>
+        <li><strong>Financial Budgeting:</strong> Estimate savings goals, tax deductions, or calculate tip amounts at restaurants.</li>
+        <li><strong>Academic Math:</strong> Check test scores, calculate grade point averages, or verify algebra homework equations.</li>
+      </ul>
+
+      <h3>Step-by-Step Mathematical Examples.</h3>
+      <p>
+        Here are examples of how the calculator computes percentage changes:
+      </p>
+      <blockquote>
+        <strong>Example 1:</strong> Find 15% of 200.<br/>
+        <code>Formula: (200 × 15) ÷ 100 = 30</code><br/><br/>
+        <strong>Example 2:</strong> Calculate percentage increase from $80 to $100.<br/>
+        <code>Formula: ((100 − 80) ÷ 80) × 100 = (20 ÷ 80) × 100 = 25.00% increase</code>
+      </blockquote>
+
+      <h3>Related Mathematical and Business Tools.</h3>
+      <p>
+        If you are adjusting product prices based on percentage margins, use our dedicated <a href="/profit-margin-calculator/">Profit Margin Calculator</a>. For calculating exact tax amounts or tax-inclusive billing figures, run the client-side <a href="/sales-tax-calculator/">Sales Tax Calculator</a>. To compile billing invoices, use our <a href="/invoice-generator/">Invoice Generator</a> or create receipt files with the <a href="/receipt-generator/">Receipt Generator</a>.
+      </p>
+
+      <h3>Secure Browser-Based Calculation.</h3>
+      <p>
+        ConvertOcean processes all percentage calculations locally inside your browser. No figures, budgets, or data points are uploaded or sent online. This client-side processing keeps your personal budget files, corporate records, and academic sheets secure.
+      </p>
+    </div>
+  </section>
+
+  <!-- Reusable FAQ Component -->
+  <section class="faq-section" style="margin-top: 40px;">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-container">
+      <div class="faq-item">
+        <div class="faq-question">
+          How does ConvertOcean convert files without uploading them?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Is my confidential business or financial data safe when converting files?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Can a client-side file converter run without an active internet connection?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Do I need to register an account or pay for a conversion subscription?
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="faq-answer">
+          No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools Section -->
+  <section class="info-section" style="margin-top: 20px; max-width: 1200px; margin-left: auto; margin-right: auto; padding: 0 var(--spacing-lg);">
+    <h3 style="font-size: 18px; font-weight: 600; color: var(--colors-ink); border-bottom: 1px solid var(--colors-hairline); padding-bottom: 8px;">Related Tools</h3>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); margin-top: var(--spacing-md);">
+      <a href="/invoice-generator/" class="popular-card" style="margin-top: var(--spacing-xs);">
+        <div class="popular-card-icon">🧾</div>
+        <span class="popular-card-name">INVOICE GENERATOR</span>
+      </a>
+      <a href="/receipt-generator/" class="popular-card" style="margin-top: var(--spacing-xs);">
+        <div class="popular-card-icon">🧾</div>
+        <span class="popular-card-name">RECEIPT GENERATOR</span>
+      </a>
+      <a href="/profit-margin-calculator/" class="popular-card" style="margin-top: var(--spacing-xs);">
+        <div class="popular-card-icon">📈</div>
+        <span class="popular-card-name">PROFIT MARGIN CALCULATOR</span>
+      </a>
+      <a href="/sales-tax-calculator/" class="popular-card" style="margin-top: var(--spacing-xs);">
+        <div class="popular-card-icon">💰</div>
+        <span class="popular-card-name">SALES TAX CALCULATOR</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/index.html" class="nav-brand" style="margin-bottom: 8px;">
+            <img src="/fevicon.png" alt="ConvertOcean Logo" class="brand-logo-img" style="width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; transition: transform 0.2s ease;" />
+            <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+          </a>
+          <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">File Converter</span>
+          <div class="footer-links">
+            <a href="/excel-to-pdf/" class="footer-link">Excel to PDF</a>
+            <a href="/csv-to-json/" class="footer-link">CSV to JSON</a>
+            <a href="/json-to-csv/" class="footer-link">JSON to CSV</a>
+            <a href="/xlsx-to-csv/" class="footer-link">XLSX to CSV</a>
+            <a href="/csv-to-xlsx/" class="footer-link">CSV to XLSX</a>
+            <a href="/json-to-xlsx/" class="footer-link">JSON to XLSX</a>
+            <a href="/xml-to-json/" class="footer-link">XML to JSON</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">PDF & Document</span>
+          <div class="footer-links">
+            <a href="/merge-pdf/" class="footer-link">Merge PDF</a>
+            <a href="/split-pdf/" class="footer-link">Split PDF</a>
+            <a href="/txt-to-pdf/" class="footer-link">TXT to PDF</a>
+            <a href="/pdf-to-txt/" class="footer-link">PDF to TXT</a>
+            <a href="/document-tools/" class="footer-link">Document Tools</a>
+            <a href="/excel-converter/" class="footer-link">Excel Converter</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Image & OCR</span>
+          <div class="footer-links">
+            <a href="/png-to-jpg/" class="footer-link">PNG to JPG</a>
+            <a href="/jpg-to-png/" class="footer-link">JPG to PNG</a>
+            <a href="/png-to-webp/" class="footer-link">PNG to WebP</a>
+            <a href="/webp-to-png/" class="footer-link">WebP to PNG</a>
+            <a href="/image-to-text/" class="footer-link">Image to Text OCR</a>
+            <a href="/image-tools/" class="footer-link">Image Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Legal & Company</span>
+          <div class="footer-links">
+            <a href="/about/" class="footer-link">About Us</a>
+            <a href="/contact/" class="footer-link">Contact Us</a>
+            <a href="/privacy/" class="footer-link">Privacy Policy</a>
+            <a href="/terms/" class="footer-link">Terms & Conditions</a>
+            <a href="/sitemap.xml" class="footer-link">Sitemap</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="privacy-disclaimer">
+          <strong>🔒 100% Device-Level Security Guarantee:</strong> Disconnect your internet connection completely and try any tool. It works flawlessly because your files never touch an external server. Everything resides in local sandbox memory and is automatically removed when you close the tab.
+        </p>
+        <p class="copyright">&copy; 2026 ConvertOcean. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/theme.js"></script>
+  <script>
+    (function() {
+      const $ = id => document.getElementById(id);
+
+      function calc1() {
+        const x = parseFloat($('pct1X').value) || 0;
+        const y = parseFloat($('pct1Y').value) || 0;
+        const r = (y * x) / 100;
+        $('pct1Res').textContent = parseFloat(r.toFixed(6));
+        $('pct1Formula').textContent = `= (${y} × ${x}) ÷ 100 = ${parseFloat(r.toFixed(6))}`;
+      }
+
+      function calc2() {
+        const x = parseFloat($('pct2X').value) || 0;
+        const y = parseFloat($('pct2Y').value) || 0;
+        const r = y !== 0 ? (x / y) * 100 : 0;
+        $('pct2Res').textContent = parseFloat(r.toFixed(4)) + '%';
+        $('pct2Formula').textContent = `= (${x} ÷ ${y}) × 100 = ${parseFloat(r.toFixed(4))}%`;
+      }
+
+      function calc3() {
+        const x = parseFloat($('pct3X').value) || 0;
+        const y = parseFloat($('pct3Y').value) || 0;
+        const diff = y - x;
+        const r = x !== 0 ? (diff / Math.abs(x)) * 100 : 0;
+        const dir = diff >= 0 ? 'increase' : 'decrease';
+        $('pct3Res').textContent = parseFloat(Math.abs(r).toFixed(4)) + '% ' + dir;
+        $('pct3Formula').textContent = `= ((${y} − ${x}) ÷ ${Math.abs(x)}) × 100 = ${parseFloat(r.toFixed(4))}%`;
+      }
+
+      function calc4() {
+        const op = $('pct4Op').value;
+        const x = parseFloat($('pct4X').value) || 0;
+        const y = parseFloat($('pct4Y').value) || 0;
+        const delta = y * x / 100;
+        const r = op === 'add' ? y + delta : y - delta;
+        const sign = op === 'add' ? '+' : '−';
+        $('pct4Res').textContent = parseFloat(r.toFixed(6));
+        $('pct4Formula').textContent = `= ${y} ${sign} (${y} × ${x} ÷ 100) = ${parseFloat(r.toFixed(6))}`;
+      }
+
+      ['pct1X','pct1Y'].forEach(id => $(id).addEventListener('input', calc1));
+      ['pct2X','pct2Y'].forEach(id => $(id).addEventListener('input', calc2));
+      ['pct3X','pct3Y'].forEach(id => $(id).addEventListener('input', calc3));
+      ['pct4X','pct4Y'].forEach(id => $(id).addEventListener('input', calc4));
+      $('pct4Op').addEventListener('change', calc4);
+
+      window.addEventListener('load', () => { calc1(); calc2(); calc3(); calc4(); });
+    })();
+  </script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { tools } from '../data/tools';
 
 const { lang = 'en' } = Astro.props;
 
@@ -522,6 +523,22 @@ const faqList = [
           <div class="popular-card-icon">🧾</div>
           <span class="popular-card-name">Invoice Generator</span>
         </a>
+        <a href={relLink('/receipt-generator/')} class="popular-card">
+          <div class="popular-card-icon">🧾</div>
+          <span class="popular-card-name">Receipt Generator</span>
+        </a>
+        <a href={relLink('/profit-margin-calculator/')} class="popular-card">
+          <div class="popular-card-icon">📈</div>
+          <span class="popular-card-name">Profit Margin Calculator</span>
+        </a>
+        <a href={relLink('/percentage-calculator/')} class="popular-card">
+          <div class="popular-card-icon">🔢</div>
+          <span class="popular-card-name">Percentage Calculator</span>
+        </a>
+        <a href={relLink('/sales-tax-calculator/')} class="popular-card">
+          <div class="popular-card-icon">💰</div>
+          <span class="popular-card-name">Sales Tax Calculator</span>
+        </a>
       </div>
     </section>
 
@@ -546,15 +563,15 @@ const faqList = [
           </div>
         </a>
 
-        <!-- Card 2: PDF Tools -->
+        <!-- Card 2: PDF, Split & Merge Tools -->
         <a href={relLink('/pdf-tools/')} class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">🥞</div>
-            <h3 class="tool-name">PDF Tools</h3>
-            <p class="tool-description">Merge multiple PDF documents, split ranges, extract selected pages, and convert PDF sheets to local image formats offline securely.</p>
+            <h3 class="tool-name">PDF, Split & Merge Tools</h3>
+            <p class="tool-description">Merge multiple PDF, Excel, Image, or Text documents, split ranges, extract pages, and compile files offline securely.</p>
           </div>
           <div class="tool-action-link">
-            Open PDF Tools
+            Open PDF, Split & Merge Tools
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -658,6 +675,10 @@ const faqList = [
       <h3 style="font-size: 18px; font-weight: 600; text-align: center; margin-bottom: var(--spacing-lg); color: var(--colors-ink);">Related Tools</h3>
       <div class="links-grid">
         <a href={relLink('/invoice-generator/')} class="seo-link">Invoice Generator</a>
+        <a href={relLink('/receipt-generator/')} class="seo-link">Receipt Generator</a>
+        <a href={relLink('/profit-margin-calculator/')} class="seo-link">Profit Margin Calculator</a>
+        <a href={relLink('/percentage-calculator/')} class="seo-link">Percentage Calculator</a>
+        <a href={relLink('/sales-tax-calculator/')} class="seo-link">Sales Tax Calculator</a>
         <a href={relLink('/pdf-to-word/')} class="seo-link">PDF to Word</a>
         <a href={relLink('/excel-to-pdf/')} class="seo-link">Excel to PDF</a>
         <a href={relLink('/csv-to-json/')} class="seo-link">CSV to JSON</a>
@@ -706,7 +727,7 @@ const faqList = [
           <li><strong>Excel Converter:</strong> Move spreadsheets smoothly between Excel worksheets and flat databases. Convert Excel to PDF, CSV to JSON, JSON to CSV, XLSX to CSV, or compile JSON to Excel client-side without compromising corporate data.</li>
           <li><strong>PDF & Document Tools:</strong> Seamlessly split ranges, merge multiple documents, extract plain text, convert PDF to TXT, or compile Word files to PDF with total confidentiality.</li>
           <li><strong>Image Converter & OCR:</strong> Compress and convert graphic formats locally. Instantly translate files between PNG, JPG, and WebP. Use our secure, offline-ready Image to Text OCR engine to extract edit-ready texts from scans or screenshots.</li>
-          <li><strong>Freelance Business Tools:</strong> Compile professional freelance invoices and execute accounting workflows in browser sandbox memory with complete privacy.</li>
+          <li><strong>Business Tools:</strong> Generate professional invoices and receipts, calculate profit margins and markup, compute percentages, and estimate sales tax — all processed in browser sandbox memory with complete privacy.</li>
         </ul>
 
         <h2 style="font-size: 24px; font-weight: 600; text-align: center; letter-spacing: -1px; margin-top: var(--spacing-xl); color: var(--colors-ink);">The Benefits of Local, Secure Web Utilities</h2>

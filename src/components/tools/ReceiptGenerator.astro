@@ -1,0 +1,585 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .split-workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+  }
+  @media (max-width: 1024px) {
+    .split-workspace {
+      grid-template-columns: 1fr;
+    }
+  }
+  .editor-pane {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+  .preview-pane {
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-lg);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-x: auto;
+  }
+  .form-card {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+  .form-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--colors-mute);
+    border-bottom: 1px solid var(--colors-hairline);
+    padding-bottom: var(--spacing-xs);
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+  }
+  .textarea-input {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid var(--colors-hairline);
+    padding: var(--spacing-sm);
+    font-size: 13px;
+    background-color: var(--colors-canvas);
+    color: var(--colors-ink);
+    outline: none;
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+  }
+  .textarea-input:focus {
+    border-color: var(--colors-ink);
+  }
+  .item-edit-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .item-edit-table th {
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--colors-mute);
+    text-transform: uppercase;
+    padding-bottom: 6px;
+  }
+  .item-edit-row td {
+    padding: var(--spacing-xs) 0;
+  }
+  .item-delete-btn {
+    background: none;
+    border: none;
+    color: var(--colors-error);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0 var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .a4-wrapper {
+    transform-origin: top center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    background-color: #ffffff;
+    color: #171717;
+  }
+  .receipt-pdf-container {
+    width: 700px;
+    min-height: 800px;
+    padding: 40px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #171717;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .receipt-pdf-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #171717;
+    padding-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+  }
+  .pdf-brand-title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -1.2px;
+  }
+  .pdf-doc-type {
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: #888888;
+    text-align: right;
+  }
+  .pdf-meta-text {
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #4d4d4d;
+    margin-top: 4px;
+  }
+  .receipt-pdf-addresses {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-2xl);
+  }
+  .address-col-title {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: #888888;
+    margin-bottom: 6px;
+  }
+  .address-details {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #4d4d4d;
+    white-space: pre-wrap;
+  }
+  .receipt-pdf-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--spacing-2xl);
+  }
+  .receipt-pdf-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #888888;
+    border-bottom: 1px solid #171717;
+    padding: var(--spacing-xs) 6px;
+    text-align: left;
+  }
+  .receipt-pdf-table td {
+    font-size: 12px;
+    padding: 12px 6px;
+    border-bottom: 1px solid #ebebeb;
+    color: #4d4d4d;
+  }
+  .receipt-pdf-table tr:last-child td {
+    border-bottom: 1px solid #171717;
+  }
+  .receipt-pdf-table th.right-align, .receipt-pdf-table td.right-align {
+    text-align: right;
+  }
+  .pdf-summary-block {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--spacing-2xl);
+  }
+  .pdf-totals-table {
+    width: 250px;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .pdf-totals-table td {
+    padding: var(--spacing-xs) 6px;
+    color: #4d4d4d;
+  }
+  .pdf-totals-table tr.grand-total td {
+    font-weight: 600;
+    color: #171717;
+    font-size: 16px;
+    border-top: 2px solid #171717;
+    padding-top: var(--spacing-sm);
+  }
+  .pdf-totals-table td.right-align {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .receipt-pdf-footer {
+    border-top: 1px solid #ebebeb;
+    padding-top: var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .pdf-terms {
+    max-width: 400px;
+    font-size: 11px;
+    color: #888888;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .pdf-thankyou {
+    font-size: 12px;
+    font-weight: 500;
+    color: #171717;
+    font-style: italic;
+  }
+  .payment-badge {
+    display: inline-block;
+    background-color: #e6f7ef;
+    color: #0a7c42;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+  }
+</style>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<div class="split-workspace">
+  <section class="editor-pane">
+    <div class="form-card">
+      <div class="form-card-title">Receipt Settings</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="rcptNo">Receipt Number</label>
+          <input type="text" id="rcptNo" class="form-input" value="REC-2026-001" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rcptDate">Receipt Date</label>
+          <input type="date" id="rcptDate" class="form-input" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="rcptPayMethod">Payment Method</label>
+          <select id="rcptPayMethod" class="select-input">
+            <option value="Cash">Cash</option>
+            <option value="Credit Card" selected>Credit Card</option>
+            <option value="Debit Card">Debit Card</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="PayPal">PayPal</option>
+            <option value="Check">Check</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rcptTaxSelect">Tax Configuration</label>
+          <select id="rcptTaxSelect" class="select-input">
+            <option value="none">No Tax</option>
+            <option value="GST" selected>GST (18%)</option>
+            <option value="IGST">IGST (18%)</option>
+            <option value="VAT">VAT (15%)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">From (Business / Seller)</div>
+      <div class="form-group">
+        <label class="form-label" for="rcptVendorName">Business Name</label>
+        <input type="text" id="rcptVendorName" class="form-input" value="Kavya J. Studio" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="rcptVendorAddress">Address & Contact</label>
+        <textarea id="rcptVendorAddress" class="textarea-input">12 Developer Lane, Indiranagar&#10;Bengaluru, KA 560038&#10;hello@kavyaj.studio</textarea>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">To (Customer / Buyer)</div>
+      <div class="form-group">
+        <label class="form-label" for="rcptClientName">Customer Name</label>
+        <input type="text" id="rcptClientName" class="form-input" value="Galactic Group Ltd." />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="rcptClientAddress">Address & Details</label>
+        <textarea id="rcptClientAddress" class="textarea-input">45 Cloud Towers, Tech City&#10;Mumbai, MH 400001&#10;billing@galactic.com</textarea>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Itemized Line Items</div>
+      <table class="item-edit-table" id="rcptItemEditTable">
+        <thead>
+          <tr>
+            <th style="width: 50%;">Description</th>
+            <th style="width: 15%;">Qty</th>
+            <th style="width: 25%;">Rate ($)</th>
+            <th style="width: 10%;"></th>
+          </tr>
+        </thead>
+        <tbody id="rcptItemEditRows">
+        </tbody>
+      </table>
+      <button class="button button-secondary" id="rcptBtnAddItem" style="height: 34px; font-size: 13px; margin-top: var(--spacing-xs);">+ Add Line Item</button>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Notes</div>
+      <div class="form-group">
+        <label class="form-label" for="rcptNotes">Receipt Notes</label>
+        <textarea id="rcptNotes" class="textarea-input">Thank you for your payment.&#10;This receipt confirms payment has been received in full.</textarea>
+      </div>
+    </div>
+
+    <div class="actions-bar" style="margin-bottom: 20px; display: flex; gap: var(--spacing-sm);">
+      <button id="rcptBtnDownload" class="button button-primary">Download Receipt PDF</button>
+      <button id="rcptBtnClear" class="button button-danger">Clear Form</button>
+    </div>
+  </section>
+
+  <section class="preview-pane" id="rcptPreviewPane">
+    <div class="a4-wrapper" id="rcptA4Wrapper">
+      <div class="receipt-pdf-container" id="receiptPdfContainer">
+        <div class="receipt-pdf-header">
+          <div>
+            <div class="pdf-brand-title" id="rcptPdfVendorTitle">Kavya J. Studio</div>
+            <div class="pdf-meta-text" id="rcptPdfVendorSub">Payment Receipt</div>
+          </div>
+          <div>
+            <div class="pdf-doc-type">Payment Receipt</div>
+            <div class="pdf-meta-text" style="text-align: right;">
+              No: <strong id="rcptPdfNo">REC-2026-001</strong><br />
+              Date: <span id="rcptPdfDate">--/--/----</span><br />
+              Method: <span id="rcptPdfMethod" class="payment-badge">Credit Card</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="receipt-pdf-addresses">
+          <div>
+            <div class="address-col-title">Received From</div>
+            <div class="address-details" id="rcptPdfClientAddr"></div>
+          </div>
+          <div>
+            <div class="address-col-title">Received By</div>
+            <div class="address-details" id="rcptPdfVendorAddr"></div>
+          </div>
+        </div>
+
+        <table class="receipt-pdf-table">
+          <thead>
+            <tr>
+              <th style="width: 50%;">Item Description</th>
+              <th style="width: 10%; text-align: right;">Qty</th>
+              <th style="width: 20%; text-align: right;">Unit Rate</th>
+              <th style="width: 20%; text-align: right;">Amount</th>
+            </tr>
+          </thead>
+          <tbody id="rcptPdfTableRows">
+          </tbody>
+        </table>
+
+        <div style="margin-top: auto;">
+          <div class="pdf-summary-block">
+            <table class="pdf-totals-table">
+              <tr>
+                <td>Subtotal</td>
+                <td class="right-align" id="rcptPdfSubtotal">$0.00</td>
+              </tr>
+              <tr id="rcptPdfTaxRow">
+                <td id="rcptPdfTaxLabel">GST (18%)</td>
+                <td class="right-align" id="rcptPdfTaxAmount">$0.00</td>
+              </tr>
+              <tr class="grand-total">
+                <td>Amount Paid</td>
+                <td class="right-align" id="rcptPdfGrandTotal">$0.00</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="receipt-pdf-footer">
+            <div>
+              <div class="address-col-title">Notes</div>
+              <div class="pdf-terms" id="rcptPdfNotes"></div>
+            </div>
+            <div class="pdf-thankyou">Payment received. Thank you.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script is:inline>
+  (function() {
+    let rcptData = {
+      No: "REC-2026-001",
+      Date: "",
+      PayMethod: "Credit Card",
+      TaxModel: "GST",
+      TaxRate: 0.18,
+      VendorName: "Kavya J. Studio",
+      VendorAddress: "12 Developer Lane, Indiranagar\nBengaluru, KA 560038\nhello@kavyaj.studio",
+      ClientName: "Galactic Group Ltd.",
+      ClientAddress: "45 Cloud Towers, Tech City\nMumbai, MH 400001\nbilling@galactic.com",
+      Notes: "Thank you for your payment.\nThis receipt confirms payment has been received in full.",
+      LineItems: [
+        { desc: "Website Development Services", qty: 1, rate: 3500.00 },
+        { desc: "SEO Optimization Package", qty: 2, rate: 750.00 }
+      ]
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    window.addEventListener('load', () => {
+      const today = new Date();
+      rcptData.Date = today.toISOString().substring(0, 10);
+      $('rcptDate').value = rcptData.Date;
+      renderEditorTable();
+      updatePreview();
+      scalePreview();
+    });
+
+    window.addEventListener('resize', scalePreview);
+
+    function scalePreview() {
+      const pane = $('rcptPreviewPane');
+      const wrapper = $('rcptA4Wrapper');
+      if (!pane || !wrapper) return;
+      const pw = pane.clientWidth - 40;
+      const s = pw < 700 ? pw / 700 : 1;
+      wrapper.style.transform = `scale(${s})`;
+      pane.style.minHeight = `${800 * s + 40}px`;
+    }
+
+    function updatePreview() {
+      $('rcptPdfVendorTitle').textContent = rcptData.VendorName || "Business Name";
+      $('rcptPdfVendorAddr').textContent = rcptData.VendorAddress;
+      $('rcptPdfClientAddr').textContent = rcptData.ClientAddress;
+      $('rcptPdfNo').textContent = rcptData.No || "REC-000";
+      $('rcptPdfDate').textContent = formatDate(rcptData.Date);
+      $('rcptPdfMethod').textContent = rcptData.PayMethod;
+      $('rcptPdfNotes').textContent = rcptData.Notes;
+
+      const tbody = $('rcptPdfTableRows');
+      tbody.innerHTML = '';
+      let subtotal = 0;
+      rcptData.LineItems.forEach(item => {
+        const amt = item.qty * item.rate;
+        subtotal += amt;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${item.desc || "Item"}</td><td class="right-align">${item.qty}</td><td class="right-align">$${item.rate.toFixed(2)}</td><td class="right-align">$${amt.toFixed(2)}</td>`;
+        tbody.appendChild(tr);
+      });
+
+      $('rcptPdfSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+      const tax = subtotal * rcptData.TaxRate;
+      const grand = subtotal + tax;
+      const taxRow = $('rcptPdfTaxRow');
+      if (rcptData.TaxModel === 'none') {
+        taxRow.style.display = 'none';
+      } else {
+        taxRow.style.display = 'table-row';
+        $('rcptPdfTaxLabel').textContent = `${rcptData.TaxModel} (${(rcptData.TaxRate * 100)}%)`;
+        $('rcptPdfTaxAmount').textContent = `$${tax.toFixed(2)}`;
+      }
+      $('rcptPdfGrandTotal').textContent = `$${grand.toFixed(2)}`;
+    }
+
+    function renderEditorTable() {
+      const tbody = $('rcptItemEditRows');
+      tbody.innerHTML = '';
+      rcptData.LineItems.forEach((item, i) => {
+        const tr = document.createElement('tr');
+        tr.className = 'item-edit-row';
+        tr.innerHTML = `
+          <td><input type="text" class="form-input" value="${item.desc}" oninput="window._rcptUpdateItem(${i},'desc',this.value)"></td>
+          <td><input type="number" class="form-input" style="padding:0 6px;text-align:center;" value="${item.qty}" min="1" oninput="window._rcptUpdateItem(${i},'qty',this.value)"></td>
+          <td><input type="number" class="form-input" value="${item.rate}" min="0" step="0.01" oninput="window._rcptUpdateItem(${i},'rate',this.value)"></td>
+          <td><button class="item-delete-btn" onclick="window._rcptDeleteItem(${i})">×</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window._rcptUpdateItem = function(i, k, v) {
+      if (k === 'qty') rcptData.LineItems[i].qty = parseInt(v) || 1;
+      else if (k === 'rate') rcptData.LineItems[i].rate = parseFloat(v) || 0;
+      else rcptData.LineItems[i].desc = v;
+      updatePreview();
+    };
+
+    window._rcptDeleteItem = function(i) {
+      if (rcptData.LineItems.length > 1) {
+        rcptData.LineItems.splice(i, 1);
+        renderEditorTable();
+        updatePreview();
+      }
+    };
+
+    $('rcptBtnAddItem').addEventListener('click', () => {
+      rcptData.LineItems.push({ desc: "New Item", qty: 1, rate: 0 });
+      renderEditorTable();
+      updatePreview();
+    });
+
+    $('rcptNo').addEventListener('input', e => { rcptData.No = e.target.value; updatePreview(); });
+    $('rcptDate').addEventListener('change', e => { rcptData.Date = e.target.value; updatePreview(); });
+    $('rcptPayMethod').addEventListener('change', e => { rcptData.PayMethod = e.target.value; updatePreview(); });
+    $('rcptTaxSelect').addEventListener('change', e => {
+      const t = e.target.value;
+      rcptData.TaxModel = t;
+      rcptData.TaxRate = t === 'GST' || t === 'IGST' ? 0.18 : t === 'VAT' ? 0.15 : 0;
+      updatePreview();
+    });
+    $('rcptVendorName').addEventListener('input', e => { rcptData.VendorName = e.target.value; updatePreview(); });
+    $('rcptVendorAddress').addEventListener('input', e => { rcptData.VendorAddress = e.target.value; updatePreview(); });
+    $('rcptClientName').addEventListener('input', e => { rcptData.ClientName = e.target.value; updatePreview(); });
+    $('rcptClientAddress').addEventListener('input', e => { rcptData.ClientAddress = e.target.value; updatePreview(); });
+    $('rcptNotes').addEventListener('input', e => { rcptData.Notes = e.target.value; updatePreview(); });
+
+    function formatDate(ds) {
+      if (!ds) return '--/--/----';
+      const p = ds.split('-');
+      return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : ds;
+    }
+
+    $('rcptBtnDownload').addEventListener('click', () => {
+      const el = $('receiptPdfContainer');
+      const clone = el.cloneNode(true);
+      clone.style.transform = 'none';
+      clone.style.position = 'absolute';
+      clone.style.left = '0';
+      clone.style.top = '0';
+      clone.style.zIndex = '-9999';
+      clone.style.width = '794px';
+      document.body.appendChild(clone);
+      const fn = (rcptData.No || 'receipt') + '_' + rcptData.ClientName.replace(/\s+/g, '_').toLowerCase() + '.pdf';
+      html2pdf().set({
+        margin: 0, filename: fn,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
+      }).from(clone).save().then(() => document.body.removeChild(clone)).catch(() => document.body.removeChild(clone));
+    });
+
+    $('rcptBtnClear').addEventListener('click', () => {
+      rcptData.VendorName = ""; rcptData.VendorAddress = ""; rcptData.ClientName = ""; rcptData.ClientAddress = "";
+      rcptData.No = ""; rcptData.Notes = ""; rcptData.LineItems = [{ desc: "New Item", qty: 1, rate: 0 }];
+      $('rcptVendorName').value = ""; $('rcptVendorAddress').value = "";
+      $('rcptClientName').value = ""; $('rcptClientAddress').value = "";
+      $('rcptNo').value = ""; $('rcptNotes').value = "";
+      renderEditorTable(); updatePreview();
+    });
+  })();
+</script>

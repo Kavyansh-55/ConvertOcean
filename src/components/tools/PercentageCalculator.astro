@@ -1,0 +1,235 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .pct-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+  }
+  @media (max-width: 900px) {
+    .pct-grid { grid-template-columns: 1fr; }
+  }
+  .pct-card {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .pct-card:hover {
+    border-color: var(--colors-hairline-strong);
+    transform: translateY(-2px);
+  }
+  .pct-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--colors-ink);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+  .pct-card-title .pct-num {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--rounded-full);
+    background: linear-gradient(135deg, #007cf0, #00dfd8);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .pct-desc {
+    font-size: 13px;
+    color: var(--colors-mute);
+    line-height: 1.4;
+  }
+  .pct-inputs {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+  }
+  .pct-inputs span {
+    font-size: 14px;
+    color: var(--colors-body);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .pct-inputs input {
+    width: 100px;
+    height: 40px;
+    border-radius: var(--rounded-sm);
+    border: 1px solid var(--colors-hairline);
+    padding: 0 var(--spacing-sm);
+    font-size: 14px;
+    background-color: var(--colors-canvas);
+    color: var(--colors-ink);
+    outline: none;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  .pct-inputs input:focus {
+    border-color: var(--colors-ink);
+  }
+  .pct-result-box {
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-md);
+    text-align: center;
+    min-height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .pct-result-number {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--colors-link);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .pct-formula-text {
+    font-size: 11px;
+    color: var(--colors-mute);
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.6;
+  }
+</style>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<div class="pct-grid">
+  <!-- Card 1: X% of Y -->
+  <div class="pct-card">
+    <div class="pct-card-title"><span class="pct-num">1</span> Find X% of Y</div>
+    <div class="pct-desc">What is X percent of Y?</div>
+    <div class="pct-inputs">
+      <span>What is</span>
+      <input type="number" id="pct1X" value="15" step="any" />
+      <span>% of</span>
+      <input type="number" id="pct1Y" value="200" step="any" />
+      <span>?</span>
+    </div>
+    <div class="pct-result-box">
+      <div class="pct-result-number" id="pct1Res">30</div>
+      <div class="pct-formula-text" id="pct1Formula">= (200 × 15) ÷ 100 = 30</div>
+    </div>
+  </div>
+
+  <!-- Card 2: X is what % of Y -->
+  <div class="pct-card">
+    <div class="pct-card-title"><span class="pct-num">2</span> X is what % of Y?</div>
+    <div class="pct-desc">Find what percentage X is of Y.</div>
+    <div class="pct-inputs">
+      <input type="number" id="pct2X" value="30" step="any" />
+      <span>is what % of</span>
+      <input type="number" id="pct2Y" value="200" step="any" />
+      <span>?</span>
+    </div>
+    <div class="pct-result-box">
+      <div class="pct-result-number" id="pct2Res">15%</div>
+      <div class="pct-formula-text" id="pct2Formula">= (30 ÷ 200) × 100 = 15%</div>
+    </div>
+  </div>
+
+  <!-- Card 3: Percentage Change -->
+  <div class="pct-card">
+    <div class="pct-card-title"><span class="pct-num">3</span> Percentage Change</div>
+    <div class="pct-desc">Calculate % increase or decrease from X to Y.</div>
+    <div class="pct-inputs">
+      <span>From</span>
+      <input type="number" id="pct3X" value="80" step="any" />
+      <span>to</span>
+      <input type="number" id="pct3Y" value="100" step="any" />
+    </div>
+    <div class="pct-result-box">
+      <div class="pct-result-number" id="pct3Res">25% increase</div>
+      <div class="pct-formula-text" id="pct3Formula">= ((100 − 80) ÷ 80) × 100 = 25%</div>
+    </div>
+  </div>
+
+  <!-- Card 4: Add/Subtract % -->
+  <div class="pct-card">
+    <div class="pct-card-title"><span class="pct-num">4</span> Add or Subtract %</div>
+    <div class="pct-desc">Add or subtract a percentage from a number.</div>
+    <div class="pct-inputs">
+      <select id="pct4Op" class="select-input" style="width:90px; height:40px; font-size:13px;">
+        <option value="add">Add</option>
+        <option value="sub">Subtract</option>
+      </select>
+      <input type="number" id="pct4X" value="20" step="any" />
+      <span>% to/from</span>
+      <input type="number" id="pct4Y" value="150" step="any" />
+    </div>
+    <div class="pct-result-box">
+      <div class="pct-result-number" id="pct4Res">180</div>
+      <div class="pct-formula-text" id="pct4Formula">= 150 + (150 × 20 ÷ 100) = 180</div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const $ = id => document.getElementById(id);
+
+    function calc1() {
+      const x = parseFloat($('pct1X').value) || 0;
+      const y = parseFloat($('pct1Y').value) || 0;
+      const r = (y * x) / 100;
+      $('pct1Res').textContent = parseFloat(r.toFixed(6));
+      $('pct1Formula').textContent = `= (${y} × ${x}) ÷ 100 = ${parseFloat(r.toFixed(6))}`;
+    }
+
+    function calc2() {
+      const x = parseFloat($('pct2X').value) || 0;
+      const y = parseFloat($('pct2Y').value) || 0;
+      const r = y !== 0 ? (x / y) * 100 : 0;
+      $('pct2Res').textContent = parseFloat(r.toFixed(4)) + '%';
+      $('pct2Formula').textContent = `= (${x} ÷ ${y}) × 100 = ${parseFloat(r.toFixed(4))}%`;
+    }
+
+    function calc3() {
+      const x = parseFloat($('pct3X').value) || 0;
+      const y = parseFloat($('pct3Y').value) || 0;
+      const diff = y - x;
+      const r = x !== 0 ? (diff / Math.abs(x)) * 100 : 0;
+      const dir = diff >= 0 ? 'increase' : 'decrease';
+      $('pct3Res').textContent = parseFloat(Math.abs(r).toFixed(4)) + '% ' + dir;
+      $('pct3Formula').textContent = `= ((${y} − ${x}) ÷ ${Math.abs(x)}) × 100 = ${parseFloat(r.toFixed(4))}%`;
+    }
+
+    function calc4() {
+      const op = $('pct4Op').value;
+      const x = parseFloat($('pct4X').value) || 0;
+      const y = parseFloat($('pct4Y').value) || 0;
+      const delta = y * x / 100;
+      const r = op === 'add' ? y + delta : y - delta;
+      const sign = op === 'add' ? '+' : '−';
+      $('pct4Res').textContent = parseFloat(r.toFixed(6));
+      $('pct4Formula').textContent = `= ${y} ${sign} (${y} × ${x} ÷ 100) = ${parseFloat(r.toFixed(6))}`;
+    }
+
+    ['pct1X','pct1Y'].forEach(id => $(id).addEventListener('input', calc1));
+    ['pct2X','pct2Y'].forEach(id => $(id).addEventListener('input', calc2));
+    ['pct3X','pct3Y'].forEach(id => $(id).addEventListener('input', calc3));
+    ['pct4X','pct4Y'].forEach(id => $(id).addEventListener('input', calc4));
+    $('pct4Op').addEventListener('change', calc4);
+
+    window.addEventListener('load', () => { calc1(); calc2(); calc3(); calc4(); });
+  })();
+</script>
