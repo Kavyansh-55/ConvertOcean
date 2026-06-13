@@ -235,6 +235,71 @@ const { slug, headline, subtitle } = Astro.props;
     color: #171717;
     font-style: italic;
   }
+
+  @media (max-width: 600px) {
+    .form-row {
+      grid-template-columns: 1fr !important;
+      gap: var(--spacing-xs) !important;
+    }
+    .item-edit-table,
+    .item-edit-table thead,
+    .item-edit-table tbody,
+    .item-edit-table tr,
+    .item-edit-table td {
+      display: block !important;
+      width: 100% !important;
+    }
+    .item-edit-table thead {
+      display: none !important;
+    }
+    .item-edit-row {
+      position: relative !important;
+      padding: var(--spacing-sm) 0 !important;
+      border-bottom: 1px solid var(--colors-hairline) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: var(--spacing-xs) !important;
+    }
+    .item-edit-row td {
+      padding: 0 !important;
+    }
+    .item-edit-row td:nth-child(1)::before {
+      content: "Description";
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--colors-mute);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .item-edit-row td:nth-child(2)::before {
+      content: "Quantity";
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--colors-mute);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .item-edit-row td:nth-child(3)::before {
+      content: "Rate ($)";
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--colors-mute);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .item-edit-row td:nth-child(4) {
+      position: absolute !important;
+      right: 0 !important;
+      top: 24px !important;
+    }
+    .item-delete-btn {
+      padding: 4px !important;
+      font-size: 22px !important;
+    }
+  }
 </style>
 
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>

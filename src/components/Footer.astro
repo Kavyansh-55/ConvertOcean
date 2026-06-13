@@ -1,0 +1,98 @@
+---
+const { lang = 'en' } = Astro.props;
+
+const relLink = (target: string) => {
+  const cleanTarget = target.startsWith('/') ? target : `/${target}`;
+  if (lang === 'en') return cleanTarget;
+  return `/${lang}${cleanTarget}`;
+};
+---
+
+<!-- Footer -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href={relLink('/')} class="nav-brand" style="margin-bottom: 8px;">
+          <img src="/fevicon.png" alt="ConvertOcean Logo" class="brand-logo-img" style="width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; transition: transform 0.2s ease;" />
+          <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
+        </a>
+        <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">File Converter</span>
+        <div class="footer-links">
+          <a href={relLink('/excel-to-pdf/')} class="footer-link">Excel to PDF</a>
+          <a href={relLink('/txt-to-pdf/')} class="footer-link">TXT to PDF</a>
+          <a href={relLink('/pdf-to-txt/')} class="footer-link">PDF to TXT</a>
+          <a href={relLink('/csv-to-json/')} class="footer-link">CSV to JSON</a>
+          <a href={relLink('/json-to-csv/')} class="footer-link">JSON to CSV</a>
+          <a href={relLink('/xlsx-to-csv/')} class="footer-link">XLSX to CSV</a>
+          <a href={relLink('/csv-to-xlsx/')} class="footer-link">CSV to XLSX</a>
+          <a href={relLink('/json-to-xlsx/')} class="footer-link">JSON to XLSX</a>
+          <a href={relLink('/xml-to-json/')} class="footer-link">XML to JSON</a>
+        </div>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">PDF, Split & Merge</span>
+        <div class="footer-links">
+          <a href={relLink('/merge-pdf/')} class="footer-link">Merge PDF</a>
+          <a href={relLink('/split-pdf/')} class="footer-link">Split PDF</a>
+          <a href={relLink('/merge-word/')} class="footer-link">Merge Word</a>
+          <a href={relLink('/split-word/')} class="footer-link">Split Word</a>
+          <a href={relLink('/merge-pptx/')} class="footer-link">Merge PowerPoint</a>
+          <a href={relLink('/split-pptx/')} class="footer-link">Split PowerPoint</a>
+          <a href={relLink('/merge-excel/')} class="footer-link">Merge Excel & CSV</a>
+          <a href={relLink('/split-excel/')} class="footer-link">Split Excel & CSV</a>
+          <a href={relLink('/merge-images/')} class="footer-link">Merge Images</a>
+          <a href={relLink('/split-image/')} class="footer-link">Split Image</a>
+          <a href={relLink('/merge-txt/')} class="footer-link">Merge Text & TXT</a>
+          <a href={relLink('/split-txt/')} class="footer-link">Split Text & TXT</a>
+        </div>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Image & OCR</span>
+        <div class="footer-links">
+          <a href={relLink('/png-to-jpg/')} class="footer-link">PNG to JPG</a>
+          <a href={relLink('/jpg-to-png/')} class="footer-link">JPG to PNG</a>
+          <a href={relLink('/png-to-webp/')} class="footer-link">PNG to WebP</a>
+          <a href={relLink('/webp-to-png/')} class="footer-link">WebP to PNG</a>
+          <a href={relLink('/image-to-text/')} class="footer-link">Image to Text OCR</a>
+          <a href={relLink('/image-tools/')} class="footer-link">Image Tools</a>
+        </div>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Business Tools</span>
+        <div class="footer-links">
+          <a href={relLink('/invoice-generator/')} class="footer-link">Invoice Generator</a>
+          <a href={relLink('/receipt-generator/')} class="footer-link">Receipt Generator</a>
+          <a href={relLink('/profit-margin-calculator/')} class="footer-link">Profit Margin Calculator</a>
+          <a href={relLink('/percentage-calculator/')} class="footer-link">Percentage Calculator</a>
+          <a href={relLink('/sales-tax-calculator/')} class="footer-link">Sales Tax Calculator</a>
+        </div>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Legal & Company</span>
+        <div class="footer-links">
+          <a href={relLink('/about/')} class="footer-link">About Us</a>
+          <a href={relLink('/contact/')} class="footer-link">Contact Us</a>
+          <a href={relLink('/privacy/')} class="footer-link">Privacy Policy</a>
+          <a href={relLink('/terms/')} class="footer-link">Terms & Conditions</a>
+          <a href={relLink('/sitemap/')} class="footer-link">Sitemap</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p class="privacy-disclaimer">
+        <strong>🔒 100% Device-Level Security Guarantee:</strong> Disconnect your internet connection completely and try any tool. It works flawlessly because your files never touch an external server. Everything resides in local sandbox memory and is automatically removed when you close the tab.
+      </p>
+      <p class="copyright">&copy; 2026 ConvertOcean. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

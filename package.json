@@ -7,10 +7,15 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "sync": "node scratch/sync_headers_footers.js",
+    "deploy": "astro build && wrangler deploy"
   },
   "dependencies": {
     "astro": "^4.15.0",
     "@astrojs/sitemap": "^3.1.6"
+  },
+  "devDependencies": {
+    "wrangler": "^3.60.0"
   }
 }

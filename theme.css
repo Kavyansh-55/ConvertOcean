@@ -1239,3 +1239,14 @@ footer {
   color: var(--colors-link);
 }
 
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .nav-badge {
+    display: none !important;
+  }
+}
+
+.preview-pane {
+  overflow-x: hidden !important;
+}
+

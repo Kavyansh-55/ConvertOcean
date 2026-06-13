@@ -116,6 +116,30 @@
     <loc>https://convertocean.com/split-excel/</loc>
     <priority>0.80</priority>
   </url>
+  <url>
+    <loc>https://convertocean.com/csv-to-pdf/</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://convertocean.com/xlsx-to-json/</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://convertocean.com/xls-to-json/</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://convertocean.com/xls-to-csv/</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://convertocean.com/xml-to-csv/</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://convertocean.com/xml-to-xlsx/</loc>
+    <priority>0.80</priority>
+  </url>
 
   <!-- PDF & Document Tools -->
   <url>
