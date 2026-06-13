@@ -40,6 +40,23 @@ const faqList = [
     a: "No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions."
   }
 ];
+
+const getToolCount = (categorySlug: string) => {
+  if (categorySlug === 'file-converter') {
+    return 30; // 30+ formats
+  }
+  if (categorySlug === 'pdf-tools') {
+    return tools.filter(t => 
+      t.categorySlug === 'pdf-tools' ||
+      t.slug.toLowerCase().includes('pdf') || 
+      t.name.toLowerCase().includes('pdf') ||
+      t.slug.toLowerCase().includes('merge') ||
+      t.slug.toLowerCase().includes('split')
+    ).length;
+  }
+  return tools.filter(t => t.categorySlug === categorySlug).length;
+};
+
 ---
 
 <Layout title={title} description={description} lang={lang} faqList={faqList}>
@@ -374,13 +391,228 @@ const faqList = [
       height: 1px;
       background-color: var(--colors-hairline);
     }
+
+    /* Popular Searches Styling */
+    .popular-searches {
+      margin-top: var(--spacing-md);
+      font-size: 13.5px;
+      color: var(--colors-body);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .popular-searches-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--colors-mute);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-right: 4px;
+    }
+    .popular-search-link {
+      color: var(--colors-link);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+    .popular-search-link:hover {
+      color: var(--colors-link-deep);
+      text-decoration: underline;
+    }
+    .popular-search-separator {
+      color: var(--colors-hairline-strong);
+      user-select: none;
+      margin: 0 2px;
+    }
+
+    /* Featured Tools Styling */
+    .featured-section {
+      max-width: 1200px;
+      margin: 0 auto var(--spacing-4xl);
+      padding: 0 var(--spacing-lg);
+    }
+    .featured-title {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -1.2px;
+      margin-bottom: var(--spacing-xl);
+      color: var(--colors-ink);
+      text-align: center;
+    }
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-lg);
+    }
+    @media (max-width: 900px) {
+      .featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .featured-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .featured-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-lg);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.02), inset 0px 0px 0px 1px var(--colors-hairline);
+    }
+    .featured-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--colors-hairline-strong);
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05), inset 0px 0px 0px 1px var(--colors-hairline-strong);
+    }
+    .featured-badge {
+      align-self: flex-start;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: var(--rounded-pill);
+      background-color: var(--colors-canvas-soft-2);
+      color: var(--colors-body);
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+    [data-theme="dark"] .featured-badge {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    .featured-card-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    .featured-card-icon {
+      font-size: 24px;
+      width: 44px;
+      height: 44px;
+      background-color: var(--colors-canvas-soft-2);
+      border-radius: var(--rounded-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid var(--colors-hairline);
+    }
+    [data-theme="dark"] .featured-card-icon {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+    .featured-card-name {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.4px;
+      color: var(--colors-ink);
+      margin: 0;
+    }
+    .featured-card-desc {
+      font-size: 13.5px;
+      color: var(--colors-body);
+      line-height: 1.5;
+      flex-grow: 1;
+      margin: 0;
+    }
+    .featured-cta {
+      align-self: flex-start;
+      margin-top: var(--spacing-xs);
+    }
+
+    /* Comparison Table Styling */
+    .comparison-section {
+      max-width: 1200px;
+      margin: 0 auto var(--spacing-4xl);
+      padding: 0 var(--spacing-lg);
+      text-align: center;
+    }
+    .comparison-title {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -1.2px;
+      color: var(--colors-ink);
+      margin-bottom: var(--spacing-xs);
+    }
+    .comparison-subtitle {
+      font-size: 15px;
+      color: var(--colors-body);
+      max-width: 600px;
+      margin: 0 auto var(--spacing-xl);
+      line-height: 1.5;
+    }
+    .table-wrapper {
+      overflow-x: auto;
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      background-color: var(--colors-canvas);
+      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.01);
+    }
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14.5px;
+    }
+    .comparison-table th, 
+    .comparison-table td {
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-bottom: 1px solid var(--colors-hairline);
+    }
+    .comparison-table th {
+      font-weight: 600;
+      color: var(--colors-ink);
+      background-color: var(--colors-canvas-soft-2);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    [data-theme="dark"] .comparison-table th {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+    .feature-name {
+      font-weight: 500;
+      color: var(--colors-ink);
+    }
+    .col-highlight {
+      background-color: rgba(0, 223, 216, 0.02);
+      font-weight: 600;
+    }
+    [data-theme="dark"] .col-highlight {
+      background-color: rgba(0, 223, 216, 0.04);
+    }
+    .text-success {
+      color: #00dfd8;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .text-danger {
+      color: var(--colors-mute);
+      font-size: 16px;
+    }
+    .category-count {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--colors-mute);
+      margin-left: 6px;
+    }
   </style>
 
   <main>
     <!-- Hero Section -->
     <section class="hero-container">
-      <h1 class="hero-title">Free File Tools That Run In Your Browser</h1>
-      <p class="hero-subtitle">Convert, compress, merge, split and process files directly on your device. No uploads. No accounts. No tracking.</p>
+      <h1 class="hero-title">Convert, Compress, Merge & Edit Files — 100% Private.</h1>
+      <p class="hero-subtitle">Convert PDFs, Images, Excel files and documents directly in your browser. Merge, split, compress and edit files without uploading them anywhere.</p>
       
       <!-- Homepage Search bar -->
       <div class="search-container" id="searchContainer" data-tools={JSON.stringify(tools.map(t => ({ name: t.name, slug: t.slug, icon: t.icon, desc: t.description })))}>
@@ -390,6 +622,22 @@ const faqList = [
           <kbd class="search-kbd">/</kbd>
         </div>
         <div id="searchResults" class="search-results-panel"></div>
+
+        <!-- Popular Searches Section -->
+        <div class="popular-searches">
+          <span class="popular-searches-label">Popular:</span>
+          <a href={relLink('/pdf-to-word/')} class="popular-search-link">PDF to Word</a>
+          <span class="popular-search-separator">•</span>
+          <a href={relLink('/word-to-pdf/')} class="popular-search-link">Word to PDF</a>
+          <span class="popular-search-separator">•</span>
+          <a href={relLink('/jpg-to-png/')} class="popular-search-link">JPG to PNG</a>
+          <span class="popular-search-separator">•</span>
+          <a href={relLink('/merge-pdf/')} class="popular-search-link">Merge PDF</a>
+          <span class="popular-search-separator">•</span>
+          <a href={relLink('/excel-to-pdf/')} class="popular-search-link">Excel to PDF</a>
+          <span class="popular-search-separator">•</span>
+          <a href={relLink('/png-to-jpg/')} class="popular-search-link">PNG to JPG</a>
+        </div>
       </div>
 
       <div class="hero-cta-group">
@@ -426,6 +674,80 @@ const faqList = [
         <div class="trust-icon">🆓</div>
         <h3 class="trust-title">Free Forever</h3>
         <p class="trust-desc">No accounts, no subscriptions, and no tracking. Universal conversion with unlimited use.</p>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- Featured Tools Section -->
+    <section class="featured-section">
+      <h2 class="featured-title">Featured Tools</h2>
+      <div class="featured-grid">
+        <!-- Card 1 -->
+        <div class="featured-card">
+          <span class="featured-badge">Most Popular</span>
+          <div class="featured-card-header">
+            <div class="featured-card-icon">📄</div>
+            <h3 class="featured-card-name">PDF to Word</h3>
+          </div>
+          <p class="featured-card-desc">Convert PDF documents to editable Microsoft Word files offline in your browser. 100% private.</p>
+          <a href={relLink('/pdf-to-word/')} class="button button-primary-sm featured-cta">Open Tool</a>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="featured-card">
+          <span class="featured-badge">Frequently Used</span>
+          <div class="featured-card-header">
+            <div class="featured-card-icon">📄</div>
+            <h3 class="featured-card-name">Word to PDF</h3>
+          </div>
+          <p class="featured-card-desc">Convert Word documents (.docx) to standard print-ready PDF files locally on your device.</p>
+          <a href={relLink('/word-to-pdf/')} class="button button-primary-sm featured-cta">Open Tool</a>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="featured-card">
+          <span class="featured-badge">Recommended</span>
+          <div class="featured-card-header">
+            <div class="featured-card-icon">🖼️</div>
+            <h3 class="featured-card-name">JPG to PNG</h3>
+          </div>
+          <p class="featured-card-desc">Convert JPG images to lossless PNG format with transparency support client-side.</p>
+          <a href={relLink('/jpg-to-png/')} class="button button-primary-sm featured-cta">Open Tool</a>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="featured-card">
+          <span class="featured-badge">Most Popular</span>
+          <div class="featured-card-header">
+            <div class="featured-card-icon">🥞</div>
+            <h3 class="featured-card-name">Merge PDF</h3>
+          </div>
+          <p class="featured-card-desc">Combine multiple PDF documents together client-side into a single file instantly.</p>
+          <a href={relLink('/merge-pdf/')} class="button button-primary-sm featured-cta">Open Tool</a>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="featured-card">
+          <span class="featured-badge">Frequently Used</span>
+          <div class="featured-card-header">
+            <div class="featured-card-icon">📊</div>
+            <h3 class="featured-card-name">Excel to PDF</h3>
+          </div>
+          <p class="featured-card-desc">Convert XLS, XLSX, and CSV spreadsheets to print-ready PDF files in your browser window.</p>
+          <a href={relLink('/excel-to-pdf/')} class="button button-primary-sm featured-cta">Open Tool</a>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="featured-card">
+          <span class="featured-badge">Recommended</span>
+          <div class="featured-card-header">
+            <div class="featured-card-icon">📊</div>
+            <h3 class="featured-card-name">PDF to Excel</h3>
+          </div>
+          <p class="featured-card-desc">Extract tabular data from PDF files and construct aligned Excel spreadsheets (.xlsx) offline.</p>
+          <a href={relLink('/pdf-to-excel/')} class="button button-primary-sm featured-cta">Open Tool</a>
+        </div>
       </div>
     </section>
 
@@ -552,7 +874,7 @@ const faqList = [
         <a href={relLink('/file-converter/')} class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">📄</div>
-            <h3 class="tool-name">Universal File Converter</h3>
+            <h3 class="tool-name">Universal File Converter <span class="category-count">(30+ formats)</span></h3>
             <p class="tool-description">Convert files between dozens of formats directly inside your browser. Supports documents, spreadsheets, images, and structured data formats.</p>
           </div>
           <div class="tool-action-link">
@@ -567,7 +889,7 @@ const faqList = [
         <a href={relLink('/pdf-tools/')} class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">🥞</div>
-            <h3 class="tool-name">PDF, Split & Merge Tools</h3>
+            <h3 class="tool-name">PDF, Split & Merge Tools <span class="category-count">({getToolCount('pdf-tools')})</span></h3>
             <p class="tool-description">Merge multiple PDF, Excel, Image, or Text documents, split ranges, extract pages, and compile files offline securely.</p>
           </div>
           <div class="tool-action-link">
@@ -582,7 +904,7 @@ const faqList = [
         <a href={relLink('/image-tools/')} class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">🖼️</div>
-            <h3 class="tool-name">Image Tools</h3>
+            <h3 class="tool-name">Image Tools <span class="category-count">({getToolCount('image-tools')})</span></h3>
             <p class="tool-description">Convert PNG, JPG, WebP, SVG, and BMP formats instantly. Compress, resize, and optimize file sizes client-side in seconds.</p>
           </div>
           <div class="tool-action-link">
@@ -597,7 +919,7 @@ const faqList = [
         <a href={relLink('/document-tools/')} class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">📝</div>
-            <h3 class="tool-name">Document Tools</h3>
+            <h3 class="tool-name">Document Tools <span class="category-count">({getToolCount('document-tools')})</span></h3>
             <p class="tool-description">Process text files, compile document PDFs, convert formatting, and combine rich logs securely inside your local browser tab.</p>
           </div>
           <div class="tool-action-link">
@@ -612,7 +934,7 @@ const faqList = [
         <a href={relLink('/excel-converter/')} class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">📊</div>
-            <h3 class="tool-name">Excel Converter</h3>
+            <h3 class="tool-name">Excel Converter <span class="category-count">({getToolCount('excel-converter')})</span></h3>
             <p class="tool-description">Inspect CSV and Excel sheets client-side. Convert CSV to JSON, JSON to Excel, XLSX to CSV, or compile reports to PDF offline.</p>
           </div>
           <div class="tool-action-link">
@@ -623,26 +945,11 @@ const faqList = [
           </div>
         </a>
 
-        <!-- Card 6: Image to Text -->
-        <a href={relLink('/image-to-text/')} class="tool-card">
-          <div class="tool-info">
-            <div class="tool-icon-wrapper">🔍</div>
-            <h3 class="tool-name">Image to Text</h3>
-            <p class="tool-description">Private Image-to-Text OCR engine. Extract text from screenshots, scans, receipts, and images locally in your browser memory.</p>
-          </div>
-          <div class="tool-action-link">
-            Open Image to Text
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </a>
-
         <!-- Card 7: Business Tools -->
         <a href={relLink('/business-tools/')} class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">🧾</div>
-            <h3 class="tool-name">Business Tools</h3>
+            <h3 class="tool-name">Business Tools <span class="category-count">({getToolCount('business-tools')})</span></h3>
             <p class="tool-description">Create invoices, calculate taxes, and compile print-ready PDFs. Offline-first workflow.</p>
           </div>
           <div class="tool-action-link">
@@ -657,7 +964,7 @@ const faqList = [
         <a href={relLink('/developer-tools/')} class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">⚙️</div>
-            <h3 class="tool-name">Developer Tools</h3>
+            <h3 class="tool-name">Developer Tools <span class="category-count">({getToolCount('developer-tools')})</span></h3>
             <p class="tool-description">Format JSON, minify code, encode base64, and validate data structures locally.</p>
           </div>
           <div class="tool-action-link">
@@ -667,6 +974,69 @@ const faqList = [
             </svg>
           </div>
         </a>
+      </div>
+    </section>
+
+    <!-- Conversion Comparison Section -->
+    <section class="comparison-section">
+      <h2 class="comparison-title">Why ConvertOcean?</h2>
+      <p class="comparison-subtitle">See how we compare to typical online converters. We prioritize your data privacy and processing speed.</p>
+      
+      <div class="table-wrapper">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="col-highlight">ConvertOcean</th>
+              <th>Typical Online Converter</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="feature-name">Works Offline</td>
+              <td class="col-highlight text-success">✓</td>
+              <td class="text-danger">✗</td>
+            </tr>
+            <tr>
+              <td class="feature-name">File Upload Required</td>
+              <td class="col-highlight text-success">✗</td>
+              <td class="text-danger">✓</td>
+            </tr>
+            <tr>
+              <td class="feature-name">Account Required</td>
+              <td class="col-highlight text-success">✗</td>
+              <td class="text-danger">Often</td>
+            </tr>
+            <tr>
+              <td class="feature-name">Stores Files</td>
+              <td class="col-highlight text-success">✗</td>
+              <td class="text-danger">Often</td>
+            </tr>
+            <tr>
+              <td class="feature-name">Free Forever</td>
+              <td class="col-highlight text-success">✓</td>
+              <td class="text-danger">Sometimes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Reusable FAQ Component -->
+    <section class="faq-section">
+      <h2 class="faq-title">Frequently Asked Questions</h2>
+      <div class="faq-container">
+        {faqList.map(faq => (
+          <div class="faq-item">
+            <div class="faq-question">
+              {faq.q}
+              <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </div>
+            <div class="faq-answer">
+              {faq.a}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
 
@@ -737,24 +1107,6 @@ const faqList = [
       </div>
     </section>
   </main>
-
-  <!-- Reusable FAQ Component -->
-  <section class="faq-section">
-    <h2 class="faq-title">Frequently Asked Questions</h2>
-    <div class="faq-container">
-      {faqList.map(faq => (
-        <div class="faq-item">
-          <div class="faq-question">
-            {faq.q}
-            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          </div>
-          <div class="faq-answer">
-            {faq.a}
-          </div>
-        </div>
-      ))}
-    </div>
-  </section>
 
   <script is:inline>
     document.addEventListener('DOMContentLoaded', () => {

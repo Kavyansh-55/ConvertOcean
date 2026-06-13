@@ -17,6 +17,10 @@ const relLink = (target: string) => {
   return `/${lang}${cleanTarget}`;
 };
 
+if (category === 'ocr-tools') {
+  return Astro.redirect(relLink('/image-tools/'), 301);
+}
+
 const categoriesMap: Record<string, { name: string; description: string; icon: string; seoTitle: string; seoDescription: string }> = {
   'pdf-tools': {
     name: 'PDF, Split & Merge Tools',

@@ -243,8 +243,8 @@ export const tools: ToolData[] = [
     headline: 'Image to Text OCR.',
     subtitle: 'Upload local images, screenshots, or receipts and extract edit-ready plain text client-side.',
     icon: '🔍',
-    category: 'OCR Tools',
-    categorySlug: 'ocr-tools',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' },

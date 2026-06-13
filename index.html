@@ -517,6 +517,221 @@
       height: 1px;
       background-color: var(--colors-hairline);
     }
+
+    /* Popular Searches Styling */
+    .popular-searches {
+      margin-top: var(--spacing-md);
+      font-size: 13.5px;
+      color: var(--colors-body);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .popular-searches-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--colors-mute);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-right: 4px;
+    }
+    .popular-search-link {
+      color: var(--colors-link);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+    .popular-search-link:hover {
+      color: var(--colors-link-deep);
+      text-decoration: underline;
+    }
+    .popular-search-separator {
+      color: var(--colors-hairline-strong);
+      user-select: none;
+      margin: 0 2px;
+    }
+
+    /* Featured Tools Styling */
+    .featured-section {
+      max-width: 1200px;
+      margin: 0 auto var(--spacing-4xl);
+      padding: 0 var(--spacing-lg);
+    }
+    .featured-title {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -1.2px;
+      margin-bottom: var(--spacing-xl);
+      color: var(--colors-ink);
+      text-align: center;
+    }
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-lg);
+    }
+    @media (max-width: 900px) {
+      .featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .featured-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .featured-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-lg);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.02), inset 0px 0px 0px 1px var(--colors-hairline);
+    }
+    .featured-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--colors-hairline-strong);
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05), inset 0px 0px 0px 1px var(--colors-hairline-strong);
+    }
+    .featured-badge {
+      align-self: flex-start;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: var(--rounded-pill);
+      background-color: var(--colors-canvas-soft-2);
+      color: var(--colors-body);
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+    [data-theme="dark"] .featured-badge {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    .featured-card-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    .featured-card-icon {
+      font-size: 24px;
+      width: 44px;
+      height: 44px;
+      background-color: var(--colors-canvas-soft-2);
+      border-radius: var(--rounded-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid var(--colors-hairline);
+    }
+    [data-theme="dark"] .featured-card-icon {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+    .featured-card-name {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.4px;
+      color: var(--colors-ink);
+      margin: 0;
+    }
+    .featured-card-desc {
+      font-size: 13.5px;
+      color: var(--colors-body);
+      line-height: 1.5;
+      flex-grow: 1;
+      margin: 0;
+    }
+    .featured-cta {
+      align-self: flex-start;
+      margin-top: var(--spacing-xs);
+    }
+
+    /* Comparison Table Styling */
+    .comparison-section {
+      max-width: 1200px;
+      margin: 0 auto var(--spacing-4xl);
+      padding: 0 var(--spacing-lg);
+      text-align: center;
+    }
+    .comparison-title {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -1.2px;
+      color: var(--colors-ink);
+      margin-bottom: var(--spacing-xs);
+    }
+    .comparison-subtitle {
+      font-size: 15px;
+      color: var(--colors-body);
+      max-width: 600px;
+      margin: 0 auto var(--spacing-xl);
+      line-height: 1.5;
+    }
+    .table-wrapper {
+      overflow-x: auto;
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      background-color: var(--colors-canvas);
+      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.01);
+    }
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14.5px;
+    }
+    .comparison-table th, 
+    .comparison-table td {
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-bottom: 1px solid var(--colors-hairline);
+    }
+    .comparison-table th {
+      font-weight: 600;
+      color: var(--colors-ink);
+      background-color: var(--colors-canvas-soft-2);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    [data-theme="dark"] .comparison-table th {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+    .feature-name {
+      font-weight: 500;
+      color: var(--colors-ink);
+    }
+    .col-highlight {
+      background-color: rgba(0, 223, 216, 0.02);
+      font-weight: 600;
+    }
+    [data-theme="dark"] .col-highlight {
+      background-color: rgba(0, 223, 216, 0.04);
+    }
+    .text-success {
+      color: #00dfd8;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .text-danger {
+      color: var(--colors-mute);
+      font-size: 16px;
+    }
+    .category-count {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--colors-mute);
+      margin-left: 6px;
+    }
   </style>
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -536,12 +751,11 @@
     </a>
     
     <nav class="nav-links">
-      <a href="/index.html" class="nav-link active">⚡ Home</a>
+      <a href="/index.html" class="nav-link active">🏠 Home</a>
       <a href="/file-converter/" class="nav-link">📄 File Converter</a>
       <a href="/pdf-tools/" class="nav-link">📑 PDF, Split & Merge</a>
       <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
       <a href="/excel-converter/" class="nav-link">📊 Excel Converter</a>
-      <a href="/image-to-text/" class="nav-link">🔍 Image to Text</a>
       <a href="/business-tools/" class="nav-link">💼 Business Tools</a>
       <a href="/privacy-first/" class="nav-link">🔒 Privacy First</a>
     </nav>
@@ -564,12 +778,11 @@
 
   <!-- Mobile Dropdown Menu -->
   <div id="mobileNavMenu" class="mobile-nav-menu">
-    <a href="/index.html" class="mobile-nav-link">⚡ Home</a>
+    <a href="/index.html" class="mobile-nav-link">🏠 Home</a>
     <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
     <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF, Split & Merge</a>
     <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
     <a href="/excel-converter/" class="mobile-nav-link">📊 Excel Converter</a>
-    <a href="/image-to-text/" class="mobile-nav-link">🔍 Image to Text</a>
     <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
     <a href="/privacy-first/" class="mobile-nav-link">🔒 Privacy First</a>
   </div>
@@ -577,8 +790,8 @@
   <main>
     <!-- Hero Section -->
     <section class="hero-container">
-      <h1 class="hero-title">Free File Tools That Run In Your Browser.</h1>
-      <p class="hero-subtitle">Convert, compress, merge, split and process files directly on your device. No uploads. No accounts. No tracking.</p>
+      <h1 class="hero-title">Convert, Compress, Merge & Edit Files — 100% Private.</h1>
+      <p class="hero-subtitle">Convert PDFs, Images, Excel files and documents directly in your browser. Merge, split, compress and edit files without uploading them anywhere.</p>
       
       <!-- Homepage Search bar -->
       <div class="search-container" id="searchContainer">
@@ -588,6 +801,22 @@
           <kbd class="search-kbd">/</kbd>
         </div>
         <div id="searchResults" class="search-results-panel"></div>
+
+        <!-- Popular Searches Section -->
+        <div class="popular-searches">
+          <span class="popular-searches-label">Popular:</span>
+          <a href="/pdf-to-word/" class="popular-search-link">PDF to Word</a>
+          <span class="popular-search-separator">•</span>
+          <a href="/word-to-pdf/" class="popular-search-link">Word to PDF</a>
+          <span class="popular-search-separator">•</span>
+          <a href="/jpg-to-png/" class="popular-search-link">JPG to PNG</a>
+          <span class="popular-search-separator">•</span>
+          <a href="/merge-pdf/" class="popular-search-link">Merge PDF</a>
+          <span class="popular-search-separator">•</span>
+          <a href="/excel-to-pdf/" class="popular-search-link">Excel to PDF</a>
+          <span class="popular-search-separator">•</span>
+          <a href="/png-to-jpg/" class="popular-search-link">PNG to JPG</a>
+        </div>
       </div>
 
       <div class="hero-cta-group">
@@ -624,6 +853,80 @@
         <div class="trust-icon">🆓</div>
         <h3 class="trust-title">Free Forever</h3>
         <p class="trust-desc">No accounts, no subscriptions, and no tracking. Universal conversion with unlimited use.</p>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- Featured Tools Section -->
+    <section class="featured-section">
+      <h2 class="featured-title">Featured Tools</h2>
+      <div class="featured-grid">
+        <!-- Card 1 -->
+        <div class="featured-card">
+          <span class="featured-badge">Most Popular</span>
+          <div class="featured-card-header">
+            <div class="featured-card-icon">📄</div>
+            <h3 class="featured-card-name">PDF to Word</h3>
+          </div>
+          <p class="featured-card-desc">Convert PDF documents to editable Microsoft Word files offline in your browser. 100% private.</p>
+          <a href="/pdf-to-word/" class="button button-primary-sm featured-cta">Open Tool</a>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="featured-card">
+          <span class="featured-badge">Frequently Used</span>
+          <div class="featured-card-header">
+            <div class="featured-card-icon">📄</div>
+            <h3 class="featured-card-name">Word to PDF</h3>
+          </div>
+          <p class="featured-card-desc">Convert Word documents (.docx) to standard print-ready PDF files locally on your device.</p>
+          <a href="/word-to-pdf/" class="button button-primary-sm featured-cta">Open Tool</a>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="featured-card">
+          <span class="featured-badge">Recommended</span>
+          <div class="featured-card-header">
+            <div class="featured-card-icon">🖼️</div>
+            <h3 class="featured-card-name">JPG to PNG</h3>
+          </div>
+          <p class="featured-card-desc">Convert JPG images to lossless PNG format with transparency support client-side.</p>
+          <a href="/jpg-to-png/" class="button button-primary-sm featured-cta">Open Tool</a>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="featured-card">
+          <span class="featured-badge">Most Popular</span>
+          <div class="featured-card-header">
+            <div class="featured-card-icon">🥞</div>
+            <h3 class="featured-card-name">Merge PDF</h3>
+          </div>
+          <p class="featured-card-desc">Combine multiple PDF documents together client-side into a single file instantly.</p>
+          <a href="/merge-pdf/" class="button button-primary-sm featured-cta">Open Tool</a>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="featured-card">
+          <span class="featured-badge">Frequently Used</span>
+          <div class="featured-card-header">
+            <div class="featured-card-icon">📊</div>
+            <h3 class="featured-card-name">Excel to PDF</h3>
+          </div>
+          <p class="featured-card-desc">Convert XLS, XLSX, and CSV spreadsheets to print-ready PDF files in your browser window.</p>
+          <a href="/excel-to-pdf/" class="button button-primary-sm featured-cta">Open Tool</a>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="featured-card">
+          <span class="featured-badge">Recommended</span>
+          <div class="featured-card-header">
+            <div class="featured-card-icon">📊</div>
+            <h3 class="featured-card-name">PDF to Excel</h3>
+          </div>
+          <p class="featured-card-desc">Extract tabular data from PDF files and construct aligned Excel spreadsheets (.xlsx) offline.</p>
+          <a href="/pdf-to-excel/" class="button button-primary-sm featured-cta">Open Tool</a>
+        </div>
       </div>
     </section>
 
@@ -750,7 +1053,7 @@
         <a href="/file-converter/" class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">📄</div>
-            <h3 class="tool-name">Universal File Converter</h3>
+            <h3 class="tool-name">Universal File Converter <span class="category-count">(30+ formats)</span></h3>
             <p class="tool-description">Convert files between dozens of formats directly inside your browser. Supports documents, spreadsheets, images, and structured data formats.</p>
           </div>
           <div class="tool-action-link">
@@ -765,7 +1068,7 @@
         <a href="/pdf-tools/" class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">🥞</div>
-            <h3 class="tool-name">PDF, Split & Merge Tools</h3>
+            <h3 class="tool-name">PDF, Split & Merge Tools <span class="category-count">(22)</span></h3>
             <p class="tool-description">Merge multiple PDF, Excel, Image, or Text documents, split ranges, extract pages, and compile files offline securely.</p>
           </div>
           <div class="tool-action-link">
@@ -780,7 +1083,7 @@
         <a href="/image-tools/" class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">🖼️</div>
-            <h3 class="tool-name">Image Tools</h3>
+            <h3 class="tool-name">Image Tools <span class="category-count">(12)</span></h3>
             <p class="tool-description">Convert PNG, JPG, WebP, SVG, and BMP formats instantly. Compress, resize, and optimize file sizes client-side in seconds.</p>
           </div>
           <div class="tool-action-link">
@@ -795,7 +1098,7 @@
         <a href="/document-tools/" class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">📝</div>
-            <h3 class="tool-name">Document Tools</h3>
+            <h3 class="tool-name">Document Tools <span class="category-count">(13)</span></h3>
             <p class="tool-description">Process text files, compile document PDFs, convert formatting, and combine rich logs securely inside your local browser tab.</p>
           </div>
           <div class="tool-action-link">
@@ -810,7 +1113,7 @@
         <a href="/excel-converter/" class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">📊</div>
-            <h3 class="tool-name">Excel Converter</h3>
+            <h3 class="tool-name">Excel Converter <span class="category-count">(14)</span></h3>
             <p class="tool-description">Inspect CSV and Excel sheets client-side. Convert CSV to JSON, JSON to Excel, XLSX to CSV, or compile reports to PDF offline.</p>
           </div>
           <div class="tool-action-link">
@@ -821,26 +1124,11 @@
           </div>
         </a>
 
-        <!-- Card 6: Image to Text -->
-        <a href="/image-to-text/" class="tool-card">
-          <div class="tool-info">
-            <div class="tool-icon-wrapper">🔍</div>
-            <h3 class="tool-name">Image to Text</h3>
-            <p class="tool-description">Private Image-to-Text OCR engine. Extract text from screenshots, scans, receipts, and images locally in your browser memory.</p>
-          </div>
-          <div class="tool-action-link">
-            Open Image to Text
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </a>
-
         <!-- Card 7: Business Tools -->
         <a href="/business-tools/" class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">🧾</div>
-            <h3 class="tool-name">Business Tools</h3>
+            <h3 class="tool-name">Business Tools <span class="category-count">(5)</span></h3>
             <p class="tool-description">Create professional freelance invoices, calculate taxes, adjust parameters, and compile print-ready PDFs. Offline-first workflow.</p>
           </div>
           <div class="tool-action-link">
@@ -855,7 +1143,7 @@
         <a href="/developer-tools/" class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">⚙️</div>
-            <h3 class="tool-name">Developer Tools</h3>
+            <h3 class="tool-name">Developer Tools <span class="category-count">(3)</span></h3>
             <p class="tool-description">Format JSON, minify code, encode base64, and validate data structures locally.</p>
           </div>
           <div class="tool-action-link">
@@ -865,6 +1153,112 @@
             </svg>
           </div>
         </a>
+      </div>
+    </section>
+
+    <!-- Conversion Comparison Section -->
+    <section class="comparison-section">
+      <h2 class="comparison-title">Why ConvertOcean?</h2>
+      <p class="comparison-subtitle">See how we compare to typical online converters. We prioritize your data privacy and processing speed.</p>
+      
+      <div class="table-wrapper">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="col-highlight">ConvertOcean</th>
+              <th>Typical Online Converter</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="feature-name">Works Offline</td>
+              <td class="col-highlight text-success">✓</td>
+              <td class="text-danger">✗</td>
+            </tr>
+            <tr>
+              <td class="feature-name">File Upload Required</td>
+              <td class="col-highlight text-success">✗</td>
+              <td class="text-danger">✓</td>
+            </tr>
+            <tr>
+              <td class="feature-name">Account Required</td>
+              <td class="col-highlight text-success">✗</td>
+              <td class="text-danger">Often</td>
+            </tr>
+            <tr>
+              <td class="feature-name">Stores Files</td>
+              <td class="col-highlight text-success">✗</td>
+              <td class="text-danger">Often</td>
+            </tr>
+            <tr>
+              <td class="feature-name">Free Forever</td>
+              <td class="col-highlight text-success">✓</td>
+              <td class="text-danger">Sometimes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Reusable FAQ Component -->
+    <section class="faq-section">
+      <h2 class="faq-title">Frequently Asked Questions</h2>
+      <div class="faq-container">
+        <div class="faq-item">
+          <div class="faq-question">
+            How does ConvertOcean convert files without uploading them?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Is my confidential business or financial data safe when converting files?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Can a client-side file converter run without an active internet connection?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Are files stored temporarily on your servers or cookies?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            No. ConvertOcean does not utilize remote servers for file processing or data storage. All file contents and parsed values reside temporarily in sandboxed browser memory. Once you download the converted file or close the web browser tab, all temporary data is instantly and permanently purged from your device's RAM.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Does ConvertOcean collect any user telemetry or conversion metadata?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            No. ConvertOcean does not track user activities, store analytics telemetry, use tracking cookies, or collect file metadata (such as names, sizes, or paths). Our tools are strictly client-side static assets, ensuring complete user privacy and anonymity without email logins or server logs.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Do I need to register an account or pay for a conversion subscription?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions.
+          </div>
+        </div>
       </div>
     </section>
 
@@ -906,7 +1300,7 @@
           <li><strong>Excel Converter:</strong> Move spreadsheets smoothly between Excel worksheets and flat databases. Convert Excel to PDF, CSV to JSON, JSON to CSV, XLSX to CSV, or compile JSON to Excel client-side without compromising corporate data.</li>
           <li><strong>PDF & Document Tools:</strong> Seamlessly split ranges, merge multiple documents, extract plain text, convert PDF to TXT, or compile Word files to PDF with total confidentiality.</li>
           <li><strong>Image Converter & OCR:</strong> Compress and convert graphic formats locally. Instantly translate files between PNG, JPG, and WebP. Use our secure, offline-ready Image to Text OCR engine to extract edit-ready texts from scans or screenshots.</li>
-          <li><strong>Freelance Business Tools:</strong> Compile professional freelance invoices and execute accounting workflows in browser sandbox memory with complete privacy.</li>
+          <li><strong>Business Tools:</strong> Generate professional invoices and receipts, calculate profit margins and markup, compute percentages, and estimate sales tax — all processed in browser sandbox memory with complete privacy.</li>
         </ul>
 
         <h2 style="font-size: 24px; font-weight: 600; text-align: center; letter-spacing: -1px; margin-top: var(--spacing-xl); color: var(--colors-ink);">The Benefits of Local, Secure Web Utilities</h2>
@@ -916,67 +1310,6 @@
       </div>
     </section>
   </main>
-
-  <!-- Reusable FAQ Component -->
-  <section class="faq-section">
-    <h2 class="faq-title">Frequently Asked Questions</h2>
-    <div class="faq-container">
-      <div class="faq-item">
-        <div class="faq-question">
-          How does ConvertOcean convert files without uploading them?
-          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </div>
-        <div class="faq-answer">
-          ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server.
-        </div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question">
-          Is my confidential business or financial data safe when converting files?
-          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </div>
-        <div class="faq-answer">
-          Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times.
-        </div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question">
-          Can a client-side file converter run without an active internet connection?
-          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </div>
-        <div class="faq-answer">
-          Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed.
-        </div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question">
-          Are files stored temporarily on your servers or cookies?
-          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </div>
-        <div class="faq-answer">
-          No. ConvertOcean does not utilize remote servers for file processing or data storage. All file contents and parsed values reside temporarily in sandboxed browser memory. Once you download the converted file or close the web browser tab, all temporary data is instantly and permanently purged from your device's RAM.
-        </div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question">
-          Does ConvertOcean collect any user telemetry or conversion metadata?
-          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </div>
-        <div class="faq-answer">
-          No. ConvertOcean does not track user activities, store analytics telemetry, use tracking cookies, or collect file metadata (such as names, sizes, or paths). Our tools are strictly client-side static assets, ensuring complete user privacy and anonymity without email logins or server logs.
-        </div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question">
-          Do I need to register an account or pay for a conversion subscription?
-          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </div>
-        <div class="faq-answer">
-          No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions.
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- Footer -->
   <footer>
