@@ -1,0 +1,357 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .preview-card {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+  }
+  .split-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+  .input-label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--colors-ink);
+  }
+  .select-input, .number-input {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-sm);
+    padding: 0 var(--spacing-sm);
+    height: 40px;
+    font-size: 14px;
+    color: var(--colors-ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .select-input:focus, .number-input:focus {
+    border-color: var(--colors-link);
+  }
+  .doc-info {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--colors-body);
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 6px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+  }
+</style>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing files…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">✂️</div>
+  <div class="upload-text-primary">Drag and drop Word file here, or click to browse</div>
+  <div class="upload-text-secondary">Upload a single .docx Word file (Max 15MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".docx" />
+</div>
+
+<!-- Split Workspace -->
+<div id="splitWorkspace" class="preview-card" style="display: none;">
+  <div id="docDetails" class="doc-info"></div>
+
+  <div class="split-control-group">
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <span class="input-label">Split Mode:</span>
+      <select id="splitMode" class="select-input">
+        <option value="headings">Split by Heading 1</option>
+        <option value="paragraphs">Split by Paragraph Count</option>
+      </select>
+    </div>
+
+    <div id="paragraphCountGroup" style="display: none; flex-direction: column; gap: 4px;">
+      <span class="input-label">Paragraphs per Document:</span>
+      <input type="number" id="paragraphsPerDoc" class="number-input" value="10" min="1" style="max-width: 120px;" />
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-md); margin-top: var(--spacing-lg);">
+    <span id="fileNameDisplay" style="font-weight: 600; font-size: 14px;"></span>
+    <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
+      <button class="button button-primary" id="btnSplit">Split & Download</button>
+      <button class="button button-danger" id="btnClear">Clear File</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const splitWorkspace = document.getElementById('splitWorkspace');
+    const docDetails = document.getElementById('docDetails');
+    const splitMode = document.getElementById('splitMode');
+    const paragraphCountGroup = document.getElementById('paragraphCountGroup');
+    const paragraphsPerDoc = document.getElementById('paragraphsPerDoc');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const btnSplit = document.getElementById('btnSplit');
+    const btnClear = document.getElementById('btnClear');
+
+    let docBytes = null;
+    let originalName = '';
+    let parsedXmlDoc = null;
+    let originalZip = null;
+    let bodyChildren = [];
+    let originalSectPr = null;
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    splitMode.addEventListener('change', () => {
+      if (splitMode.value === 'paragraphs') {
+        paragraphCountGroup.style.display = 'flex';
+      } else {
+        paragraphCountGroup.style.display = 'none';
+      }
+    });
+
+    function handleFile(file) {
+      hideError();
+      originalName = file.name;
+      const extension = file.name.split('.').pop().toLowerCase();
+
+      if (extension !== 'docx') {
+        showError("Invalid file format. Please upload a .docx Word document.");
+        return;
+      }
+
+      showProgress(25, "Reading Word document archive…");
+      const reader = new FileReader();
+
+      reader.onload = async function(e) {
+        try {
+          docBytes = new Uint8Array(e.target.result);
+          originalZip = await JSZip.loadAsync(docBytes);
+          const xmlText = await originalZip.file("word/document.xml").async("string");
+
+          const parser = new DOMParser();
+          parsedXmlDoc = parser.parseFromString(xmlText, "text/xml");
+          const body = parsedXmlDoc.getElementsByTagName("w:body")[0];
+          
+          originalSectPr = body.getElementsByTagName("w:sectPr")[0];
+          bodyChildren = Array.from(body.childNodes).filter(node => node.nodeType === 1);
+
+          const paragraphsCount = bodyChildren.filter(n => n.nodeName === "w:p").length;
+          const tablesCount = bodyChildren.filter(n => n.nodeName === "w:tbl").length;
+
+          docDetails.innerHTML = `
+            <strong>File Details:</strong><br/>
+            Total Elements: ${bodyChildren.length} (Paragraphs: ${paragraphsCount}, Tables: ${tablesCount})
+          `;
+
+          fileNameDisplay.textContent = file.name;
+          splitWorkspace.style.display = 'block';
+          dropZone.style.display = 'none';
+          hideProgress();
+        } catch(err) {
+          showError("Failed to parse Word document archive structure.");
+          hideProgress();
+        }
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+
+    btnSplit.addEventListener('click', async () => {
+      if (!bodyChildren || bodyChildren.length === 0) return;
+      showProgress(15, "Splitting Word document…");
+      hideError();
+
+      try {
+        const mode = splitMode.value;
+        const chunks = [];
+        let currentChunk = [];
+
+        if (mode === 'headings') {
+          bodyChildren.forEach(node => {
+            // Check if it is Heading 1
+            let isHeading1 = false;
+            if (node.nodeName === "w:p") {
+              const pStyle = node.querySelector("pStyle");
+              if (pStyle) {
+                const val = pStyle.getAttribute("w:val");
+                if (val === "Heading1" || val === "1") {
+                  isHeading1 = true;
+                }
+              }
+            }
+
+            if (isHeading1 && currentChunk.length > 0) {
+              chunks.push(currentChunk);
+              currentChunk = [];
+            }
+            currentChunk.push(node);
+          });
+          if (currentChunk.length > 0) chunks.push(currentChunk);
+        } else if (mode === 'paragraphs') {
+          const count = parseInt(paragraphsPerDoc.value) || 10;
+          let paragraphCounter = 0;
+
+          bodyChildren.forEach(node => {
+            currentChunk.push(node);
+            if (node.nodeName === "w:p") {
+              paragraphCounter++;
+              if (paragraphCounter >= count) {
+                chunks.push(currentChunk);
+                currentChunk = [];
+                paragraphCounter = 0;
+              }
+            }
+          });
+          if (currentChunk.length > 0) chunks.push(currentChunk);
+        }
+
+        if (chunks.length === 0) {
+          showError("No segments found to split.");
+          hideProgress();
+          return;
+        }
+
+        if (chunks.length === 1) {
+          showError("File cannot be split into multiple parts using the current settings. Adjust settings or try a different mode.");
+          hideProgress();
+          return;
+        }
+
+        const zipOutput = new JSZip();
+        const serializer = new XMLSerializer();
+
+        for (let idx = 0; idx < chunks.length; idx++) {
+          showProgress(15 + Math.round((idx / chunks.length) * 75), `Compiling segment ${idx + 1} of ${chunks.length}…`);
+          const chunk = chunks[idx];
+          
+          // Clone the original XML doc
+          const docClone = parsedXmlDoc.cloneNode(true);
+          const bodyClone = docClone.getElementsByTagName("w:body")[0];
+          bodyClone.innerHTML = ''; // Clear existing contents
+
+          // Import and append chunk elements
+          chunk.forEach(node => {
+            const imported = docClone.importNode(node, true);
+            bodyClone.appendChild(imported);
+          });
+
+          // Append original section properties at the end to keep dimensions
+          if (originalSectPr) {
+            const sectPrImported = docClone.importNode(originalSectPr, true);
+            bodyClone.appendChild(sectPrImported);
+          }
+
+          // Serialize to xml text
+          const xmlText = serializer.serializeToString(docClone);
+          
+          // Clone zip object
+          const zipClone = await JSZip.loadAsync(docBytes);
+          zipClone.file("word/document.xml", xmlText);
+          
+          const fileBlob = await zipClone.generateAsync({ type: "blob" });
+          const baseName = originalName.replace(/\.[^/.]+$/, "");
+          zipOutput.file(`${baseName}_part_${idx + 1}.docx`, fileBlob);
+        }
+
+        showProgress(90, "Creating final split ZIP archive…");
+        const zipBlob = await zipOutput.generateAsync({ type: "blob" });
+        const downloadName = originalName.replace(/\.[^/.]+$/, "") + "_split.zip";
+        window.downloadBlob(zipBlob, downloadName, "application/zip");
+      } catch(err) {
+        showError("Failed to partition document elements.");
+      }
+      hideProgress();
+    });
+
+    btnClear.addEventListener('click', resetFile);
+
+    function resetFile() {
+      docBytes = null;
+      originalZip = null;
+      parsedXmlDoc = null;
+      bodyChildren = [];
+      originalSectPr = null;
+
+      splitWorkspace.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+      hideProgress();
+      hideError();
+    }
+  })();
+</script>

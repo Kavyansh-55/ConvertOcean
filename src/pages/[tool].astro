@@ -25,6 +25,10 @@ import MergeImages from '../components/tools/MergeImages.astro';
 import SplitImage from '../components/tools/SplitImage.astro';
 import MergeTxt from '../components/tools/MergeTxt.astro';
 import SplitTxt from '../components/tools/SplitTxt.astro';
+import MergeWord from '../components/tools/MergeWord.astro';
+import SplitWord from '../components/tools/SplitWord.astro';
+import MergePptx from '../components/tools/MergePptx.astro';
+import SplitPptx from '../components/tools/SplitPptx.astro';
 
 export function getStaticPaths() {
   return tools.map(t => ({ params: { tool: t.slug } }));
@@ -79,7 +83,11 @@ const toolsMap: Record<string, any> = {
   'merge-images': MergeImages,
   'split-image': SplitImage,
   'merge-txt': MergeTxt,
-  'split-txt': SplitTxt
+  'split-txt': SplitTxt,
+  'merge-word': MergeWord,
+  'split-word': SplitWord,
+  'merge-pptx': MergePptx,
+  'split-pptx': SplitPptx
 };
 
 const ToolComponent = toolsMap[toolData.slug];

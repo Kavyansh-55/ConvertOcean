@@ -776,6 +776,71 @@ export const tools: ToolData[] = [
       { question: 'Can I split by custom markers?', answer: 'Yes, you can split by lines count, maximum file size in KB, or custom text search boundary strings.' }
     ],
     relatedTools: ['merge-txt', 'docx-to-txt', 'pdf-to-txt']
+  },
+  {
+    slug: 'merge-word',
+    name: 'Merge Word',
+    title: 'Merge Word Documents Online - 100% Private | ConvertOcean',
+    description: 'Merge multiple Word documents (.docx) into a single document client-side. Complete browser-level privacy and offline support. No server uploads.',
+    headline: 'Merge Word',
+    subtitle: 'Stitch multiple DOCX documents together client-side in your browser memory.',
+    icon: '🥞',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, merging, and document compiling occur entirely in your local browser sandbox memory.' },
+      { question: 'Does it work offline?', answer: 'Yes. Once loaded, the DOCX merger runs 100% offline without requiring any internet connection.' },
+      { question: 'Will formatting be preserved?', answer: 'Yes, paragraph styles and properties from the individual files are preserved and concatenated into the output document.' }
+    ],
+    relatedTools: ['split-word', 'word-to-pdf', 'pdf-to-word', 'docx-to-txt']
+  },
+  {
+    slug: 'split-word',
+    name: 'Split Word',
+    title: 'Split Word Documents Online - 100% Private | ConvertOcean',
+    description: 'Split Word documents (.docx) by heading structures or paragraph count client-side. Safe offline document partitioning with zero uploads.',
+    headline: 'Split Word',
+    subtitle: 'Partition DOCX documents into separate downloadable files locally in browser memory.',
+    icon: '✂️',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All parsing, partitioning, and zip bundling happen entirely on your local machine.' },
+      { question: 'Can I split by custom headings?', answer: 'Yes, you can choose to split the document at every major Heading 1 tag, or by a specified number of paragraphs.' }
+    ],
+    relatedTools: ['merge-word', 'word-to-pdf', 'pdf-to-word', 'docx-to-txt']
+  },
+  {
+    slug: 'merge-pptx',
+    name: 'Merge PowerPoint',
+    title: 'Merge PowerPoint Presentations Online - 100% Private | ConvertOcean',
+    description: 'Merge multiple PowerPoint presentations (.pptx) into a single file offline in your browser. 100% secure client-side tools with no uploads.',
+    headline: 'Merge PowerPoint',
+    subtitle: 'Combine slides from multiple PPTX files client-side into a single presentation locally.',
+    icon: '🥞',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. The presentations are parsed and slide configurations merged directly inside your browser sandbox.' },
+      { question: 'Does it work offline?', answer: 'Yes. Once loaded, the PPTX merger runs 100% offline.' }
+    ],
+    relatedTools: ['split-pptx', 'pptx-to-pdf', 'ppt-to-pdf']
+  },
+  {
+    slug: 'split-pptx',
+    name: 'Split PowerPoint',
+    title: 'Split PowerPoint Presentations Online - 100% Private | ConvertOcean',
+    description: 'Split PowerPoint slides and extract selected ranges client-side in your browser. 100% private with no server uploads.',
+    headline: 'Split PowerPoint',
+    subtitle: 'Select specific slide ranges or split every slide into a separate presentation locally.',
+    icon: '✂️',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. The slide structures are parsed and split client-side in browser memory.' },
+      { question: 'Can I split the file into single slides?', answer: 'Yes. The splitter can output every single slide as its own PPTX file and package them into a single ZIP download.' }
+    ],
+    relatedTools: ['merge-pptx', 'pptx-to-pdf', 'ppt-to-pdf']
   }
 ];
 

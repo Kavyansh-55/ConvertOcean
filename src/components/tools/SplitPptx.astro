@@ -1,0 +1,448 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .preview-card {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+  }
+  .split-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+  .input-label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--colors-ink);
+  }
+  .select-input, .text-input {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-sm);
+    padding: 0 var(--spacing-sm);
+    height: 40px;
+    font-size: 14px;
+    color: var(--colors-ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .select-input:focus, .text-input:focus {
+    border-color: var(--colors-link);
+  }
+  .doc-info {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--colors-body);
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 6px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+  }
+</style>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing presentation…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">✂️</div>
+  <div class="upload-text-primary">Drag and drop PowerPoint here, or click to browse</div>
+  <div class="upload-text-secondary">Upload a single .pptx PowerPoint file (Max 25MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".pptx" />
+</div>
+
+<!-- Split Workspace -->
+<div id="splitWorkspace" class="preview-card" style="display: none;">
+  <div id="docDetails" class="doc-info"></div>
+
+  <div class="split-control-group">
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <span class="input-label">Split Mode:</span>
+      <select id="splitMode" class="select-input">
+        <option value="every">Split every slide into its own presentation</option>
+        <option value="ranges">Extract custom range(s)</option>
+      </select>
+    </div>
+
+    <div id="customRangesGroup" style="display: none; flex-direction: column; gap: 4px;">
+      <span class="input-label">Slide Ranges:</span>
+      <input type="text" id="slideRanges" class="text-input" placeholder="e.g. 1-2, 3-5, 6" style="max-width: 350px;" />
+      <span style="font-size: 11.5px; color: var(--colors-body);">Use comma-separated indices or ranges (e.g. "1-2, 4, 5-7").</span>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-md); margin-top: var(--spacing-lg);">
+    <span id="fileNameDisplay" style="font-weight: 600; font-size: 14px;"></span>
+    <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
+      <button class="button button-primary" id="btnSplit">Split & Download</button>
+      <button class="button button-danger" id="btnClear">Clear File</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const splitWorkspace = document.getElementById('splitWorkspace');
+    const docDetails = document.getElementById('docDetails');
+    const splitMode = document.getElementById('splitMode');
+    const customRangesGroup = document.getElementById('customRangesGroup');
+    const slideRanges = document.getElementById('slideRanges');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const btnSplit = document.getElementById('btnSplit');
+    const btnClear = document.getElementById('btnClear');
+
+    let docBytes = null;
+    let originalName = '';
+    let originalZip = null;
+    let slides = []; // List of slides details in correct presentation order
+
+    let parsedPresDoc = null;
+    let parsedRelsDoc = null;
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    splitMode.addEventListener('change', () => {
+      if (splitMode.value === 'ranges') {
+        customRangesGroup.style.display = 'flex';
+      } else {
+        customRangesGroup.style.display = 'none';
+      }
+    });
+
+    function handleFile(file) {
+      hideError();
+      originalName = file.name;
+      const extension = file.name.split('.').pop().toLowerCase();
+
+      if (extension !== 'pptx') {
+        showError("Invalid file format. Please upload a .pptx PowerPoint presentation.");
+        return;
+      }
+
+      showProgress(25, "Reading PowerPoint archive structure…");
+      const reader = new FileReader();
+
+      reader.onload = async function(e) {
+        try {
+          docBytes = new Uint8Array(e.target.result);
+          originalZip = await JSZip.loadAsync(docBytes);
+          
+          const presXmlText = await originalZip.file("ppt/presentation.xml").async("string");
+          const presRelsText = await originalZip.file("ppt/_rels/presentation.xml.rels").async("string");
+
+          const parser = new DOMParser();
+          parsedPresDoc = parser.parseFromString(presXmlText, "text/xml");
+          parsedRelsDoc = parser.parseFromString(presRelsText, "text/xml");
+
+          const sldIdLst = parsedPresDoc.getElementsByTagName("p:sldIdLst")[0];
+          if (!sldIdLst) {
+            throw new Error("No slides list found in presentation.");
+          }
+
+          const sldIds = Array.from(sldIdLst.getElementsByTagName("p:sldId"));
+          slides = sldIds.map((sldNode, idx) => {
+            const rId = sldNode.getAttribute("r:id");
+            const relNode = parsedRelsDoc.querySelector(`Relationship[Id="${rId}"]`);
+            const target = relNode ? relNode.getAttribute("Target") : `slides/slide${idx + 1}.xml`;
+            const slideFileName = target.split('/').pop();
+            return {
+              id: sldNode.getAttribute("id"),
+              rId: rId,
+              target: target,
+              slideFileName: slideFileName,
+              index: idx + 1
+            };
+          });
+
+          if (slides.length === 0) {
+            throw new Error("No slides found in this presentation.");
+          }
+
+          docDetails.innerHTML = `
+            <strong>Presentation Details:</strong><br/>
+            Total Slides: ${slides.length}
+          `;
+
+          fileNameDisplay.textContent = file.name;
+          splitWorkspace.style.display = 'block';
+          dropZone.style.display = 'none';
+          hideProgress();
+        } catch(err) {
+          showError("Failed to parse PowerPoint presentation structure. " + err.message);
+          hideProgress();
+        }
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+
+    function parseRanges(rangeStr, maxSlides) {
+      const parts = rangeStr.split(',');
+      const segments = [];
+      for (let part of parts) {
+        part = part.trim();
+        if (!part) continue;
+        const dashMatch = part.match(/^(\d+)-(\d+)$/);
+        if (dashMatch) {
+          const start = parseInt(dashMatch[1]);
+          const end = parseInt(dashMatch[2]);
+          if (start > 0 && start <= maxSlides && end > 0 && end <= maxSlides) {
+            const keep = [];
+            const s = Math.min(start, end);
+            const e = Math.max(start, end);
+            for (let i = s; i <= e; i++) {
+              keep.push(i);
+            }
+            if (keep.length > 0) {
+              segments.push({
+                name: `${start}-${end}`,
+                indices: keep
+              });
+            }
+          }
+        } else {
+          const num = parseInt(part);
+          if (!isNaN(num) && num > 0 && num <= maxSlides) {
+            segments.push({
+              name: `${num}`,
+              indices: [num]
+            });
+          }
+        }
+      }
+      return segments;
+    }
+
+    btnSplit.addEventListener('click', async () => {
+      if (!slides || slides.length === 0) return;
+      showProgress(15, "Splitting presentation…");
+      hideError();
+
+      try {
+        const mode = splitMode.value;
+        let segments = [];
+
+        if (mode === 'every') {
+          for (let i = 1; i <= slides.length; i++) {
+            segments.push({
+              name: `slide_${i}`,
+              indices: [i]
+            });
+          }
+        } else if (mode === 'ranges') {
+          const val = slideRanges.value.trim();
+          if (!val) {
+            showError("Please specify slide ranges.");
+            hideProgress();
+            return;
+          }
+          segments = parseRanges(val, slides.length);
+          if (segments.length === 0) {
+            showError("Invalid slide ranges specified. Make sure indices are between 1 and " + slides.length);
+            hideProgress();
+            return;
+          }
+        }
+
+        if (segments.length === 0) {
+          showError("No segments found to split.");
+          hideProgress();
+          return;
+        }
+
+        if (segments.length === 1 && mode === 'every' && slides.length === 1) {
+          showError("This presentation only contains 1 slide and cannot be split.");
+          hideProgress();
+          return;
+        }
+
+        const zipOutput = new JSZip();
+        const serializer = new XMLSerializer();
+        const parser = new DOMParser();
+
+        const baseName = originalName.replace(/\.[^/.]+$/, "");
+
+        for (let idx = 0; idx < segments.length; idx++) {
+          showProgress(15 + Math.round((idx / segments.length) * 75), `Compiling segment ${idx + 1} of ${segments.length}…`);
+          const segment = segments[idx];
+          
+          const keepIndices = segment.indices;
+          const slidesToDelete = slides.filter(s => !keepIndices.includes(s.index));
+
+          // Create DOM copies
+          const presDocClone = parsedPresDoc.cloneNode(true);
+          const relsDocClone = parsedRelsDoc.cloneNode(true);
+
+          // 1. Remove deleted slides from presentation.xml
+          const cloneSldIdLst = presDocClone.getElementsByTagName("p:sldIdLst")[0];
+          if (cloneSldIdLst) {
+            const cloneSldIds = Array.from(cloneSldIdLst.getElementsByTagName("p:sldId"));
+            cloneSldIds.forEach((node, sldIdx) => {
+              if (!keepIndices.includes(sldIdx + 1)) {
+                cloneSldIdLst.removeChild(node);
+              }
+            });
+          }
+
+          // 2. Remove relationship nodes in presentation.xml.rels
+          const cloneRelationships = relsDocClone.getElementsByTagName("Relationships")[0];
+          if (cloneRelationships) {
+            slidesToDelete.forEach(slide => {
+              const relNode = relsDocClone.querySelector(`Relationship[Id="${slide.rId}"]`);
+              if (relNode) {
+                cloneRelationships.removeChild(relNode);
+              }
+            });
+          }
+
+          // Clone original archive bytes for slide cleaning
+          const zipClone = await JSZip.loadAsync(docBytes);
+
+          // 3. Remove actual files from zipClone
+          slidesToDelete.forEach(slide => {
+            const slidePath = `ppt/${slide.target}`;
+            zipClone.remove(slidePath);
+            
+            const slideRelsPath = `ppt/slides/_rels/${slide.slideFileName}.rels`;
+            zipClone.remove(slideRelsPath);
+          });
+
+          // 4. Remove entries from [Content_Types].xml
+          const contentTypesText = await zipClone.file("[Content_Types].xml").async("string");
+          const contentTypesDoc = parser.parseFromString(contentTypesText, "text/xml");
+          const contentTypesRoot = contentTypesDoc.documentElement;
+
+          slidesToDelete.forEach(slide => {
+            let partName = slide.target;
+            if (!partName.startsWith('/')) {
+              partName = '/ppt/' + partName;
+            }
+            const overrideNode = contentTypesDoc.querySelector(`[PartName="${partName}"]`);
+            if (overrideNode) {
+              contentTypesRoot.removeChild(overrideNode);
+            }
+          });
+
+          zipClone.file("[Content_Types].xml", serializer.serializeToString(contentTypesDoc));
+
+          // 5. Save updated XML configurations
+          zipClone.file("ppt/presentation.xml", serializer.serializeToString(presDocClone));
+          zipClone.file("ppt/_rels/presentation.xml.rels", serializer.serializeToString(relsDocClone));
+
+          const fileBlob = await zipClone.generateAsync({ type: "blob" });
+          zipOutput.file(`${baseName}_${segment.name}.pptx`, fileBlob);
+        }
+
+        // If there's only 1 output segment, download it directly without zipping!
+        const filesInZip = Object.keys(zipOutput.files);
+        if (filesInZip.length === 1) {
+          showProgress(90, "Preparing presentation download…");
+          const singleFileName = filesInZip[0];
+          const singleBlob = await zipOutput.file(singleFileName).async("blob");
+          window.downloadBlob(singleBlob, singleFileName, "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+        } else {
+          showProgress(90, "Creating final split ZIP archive…");
+          const zipBlob = await zipOutput.generateAsync({ type: "blob" });
+          const downloadName = baseName + "_split.zip";
+          window.downloadBlob(zipBlob, downloadName, "application/zip");
+        }
+      } catch(err) {
+        showError("Failed to partition presentation slides. " + err.message);
+      }
+      hideProgress();
+    });
+
+    btnClear.addEventListener('click', resetFile);
+
+    function resetFile() {
+      docBytes = null;
+      originalZip = null;
+      parsedPresDoc = null;
+      parsedRelsDoc = null;
+      slides = [];
+
+      splitWorkspace.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+      hideProgress();
+      hideError();
+    }
+  })();
+</script>

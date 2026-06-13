@@ -538,7 +538,7 @@
     <nav class="nav-links">
       <a href="/index.html" class="nav-link active">⚡ Home</a>
       <a href="/file-converter/" class="nav-link">📄 File Converter</a>
-      <a href="/pdf-tools/" class="nav-link">📑 PDF Tools</a>
+      <a href="/pdf-tools/" class="nav-link">📑 PDF, Split & Merge</a>
       <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
       <a href="/excel-converter/" class="nav-link">📊 Excel Converter</a>
       <a href="/image-to-text/" class="nav-link">🔍 Image to Text</a>
@@ -566,7 +566,7 @@
   <div id="mobileNavMenu" class="mobile-nav-menu">
     <a href="/index.html" class="mobile-nav-link">⚡ Home</a>
     <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
-    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF Tools</a>
+    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF, Split & Merge</a>
     <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
     <a href="/excel-converter/" class="mobile-nav-link">📊 Excel Converter</a>
     <a href="/image-to-text/" class="mobile-nav-link">🔍 Image to Text</a>
@@ -761,15 +761,15 @@
           </div>
         </a>
 
-        <!-- Card 2: PDF Tools -->
+        <!-- Card 2: PDF, Split & Merge Tools -->
         <a href="/pdf-tools/" class="tool-card">
           <div class="tool-info">
             <div class="tool-icon-wrapper">🥞</div>
-            <h3 class="tool-name">PDF Tools</h3>
-            <p class="tool-description">Merge multiple PDF documents, split ranges, extract selected pages, and convert PDF sheets to local image formats offline securely.</p>
+            <h3 class="tool-name">PDF, Split & Merge Tools</h3>
+            <p class="tool-description">Merge multiple PDF, Excel, Image, or Text documents, split ranges, extract pages, and compile files offline securely.</p>
           </div>
           <div class="tool-action-link">
-            Open PDF Tools
+            Open PDF, Split & Merge
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -993,6 +993,8 @@
           <span class="footer-title">File Converter</span>
           <div class="footer-links">
             <a href="/excel-to-pdf/" class="footer-link">Excel to PDF</a>
+            <a href="/txt-to-pdf/" class="footer-link">TXT to PDF</a>
+            <a href="/pdf-to-txt/" class="footer-link">PDF to TXT</a>
             <a href="/csv-to-json/" class="footer-link">CSV to JSON</a>
             <a href="/json-to-csv/" class="footer-link">JSON to CSV</a>
             <a href="/xlsx-to-csv/" class="footer-link">XLSX to CSV</a>
@@ -1002,14 +1004,20 @@
           </div>
         </div>
         <div class="footer-column">
-          <span class="footer-title">PDF & Document</span>
+          <span class="footer-title">PDF, Split & Merge</span>
           <div class="footer-links">
             <a href="/merge-pdf/" class="footer-link">Merge PDF</a>
             <a href="/split-pdf/" class="footer-link">Split PDF</a>
-            <a href="/txt-to-pdf/" class="footer-link">TXT to PDF</a>
-            <a href="/pdf-to-txt/" class="footer-link">PDF to TXT</a>
-            <a href="/document-tools/" class="footer-link">Document Tools</a>
-            <a href="/excel-converter/" class="footer-link">Excel Converter</a>
+            <a href="/merge-word/" class="footer-link">Merge Word</a>
+            <a href="/split-word/" class="footer-link">Split Word</a>
+            <a href="/merge-pptx/" class="footer-link">Merge PowerPoint</a>
+            <a href="/split-pptx/" class="footer-link">Split PowerPoint</a>
+            <a href="/merge-excel/" class="footer-link">Merge Excel & CSV</a>
+            <a href="/split-excel/" class="footer-link">Split Excel & CSV</a>
+            <a href="/merge-images/" class="footer-link">Merge Images</a>
+            <a href="/split-image/" class="footer-link">Split Image</a>
+            <a href="/merge-txt/" class="footer-link">Merge Text & TXT</a>
+            <a href="/split-txt/" class="footer-link">Split Text & TXT</a>
           </div>
         </div>
         <div class="footer-column">
@@ -1021,6 +1029,16 @@
             <a href="/webp-to-png/" class="footer-link">WebP to PNG</a>
             <a href="/image-to-text/" class="footer-link">Image to Text OCR</a>
             <a href="/image-tools/" class="footer-link">Image Tools</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <span class="footer-title">Business Tools</span>
+          <div class="footer-links">
+            <a href="/invoice-generator/" class="footer-link">Invoice Generator</a>
+            <a href="/receipt-generator/" class="footer-link">Receipt Generator</a>
+            <a href="/profit-margin-calculator/" class="footer-link">Profit Margin Calculator</a>
+            <a href="/percentage-calculator/" class="footer-link">Percentage Calculator</a>
+            <a href="/sales-tax-calculator/" class="footer-link">Sales Tax Calculator</a>
           </div>
         </div>
         <div class="footer-column">
@@ -1083,7 +1101,11 @@
         { name: "Merge Images", slug: "merge-images", icon: "🖼️", desc: "Combine multiple PNG, JPG, WebP images into a single PDF or stitched image." },
         { name: "Split Image", slug: "split-image", icon: "🖼️", desc: "Split PNG, JPG, WebP images into custom rows and columns grids." },
         { name: "Merge Text & TXT", slug: "merge-txt", icon: "📝", desc: "Merge multiple text, markdown, or log files with custom delimiters." },
-        { name: "Split Text & TXT", slug: "split-txt", icon: "📝", desc: "Split text files into smaller segments by line count, size, or markers." }
+        { name: "Split Text & TXT", slug: "split-txt", icon: "📝", desc: "Split text files into smaller segments by line count, size, or markers." },
+        { name: "Merge Word", slug: "merge-word", icon: "🥞", desc: "Stitch multiple DOCX documents together client-side in your browser memory." },
+        { name: "Split Word", slug: "split-word", icon: "✂️", desc: "Partition DOCX documents into separate downloadable files locally in browser memory." },
+        { name: "Merge PowerPoint", slug: "merge-pptx", icon: "🥞", desc: "Combine slides from multiple PPTX files client-side into a single presentation locally." },
+        { name: "Split PowerPoint", slug: "split-pptx", icon: "✂️", desc: "Select specific slide ranges or split every slide into a separate presentation locally." }
       ];
 
       let selectedIndex = -1;

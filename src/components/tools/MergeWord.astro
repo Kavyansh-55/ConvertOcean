@@ -1,0 +1,311 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .icon-btn {
+    background: none;
+    border: 1px solid var(--colors-hairline);
+    border-radius: 4px;
+    color: var(--colors-body);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 11px;
+    transition: all 0.15s;
+  }
+  .icon-btn:hover:not(:disabled) {
+    background-color: var(--colors-canvas-soft-2);
+    color: var(--colors-ink);
+    border-color: var(--colors-hairline-strong);
+  }
+  .icon-btn.danger:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.2);
+  }
+</style>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing files…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">📝</div>
+  <div class="upload-text-primary">Drag and drop Word files here, or click to browse</div>
+  <div class="upload-text-secondary">Upload multiple .docx Word files (Max 15MB each)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".docx" multiple />
+</div>
+
+<div id="mergeWorkspace" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
+  <div id="fileItemsList" class="file-list" style="margin-bottom: var(--spacing-md);"></div>
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
+    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+      <label for="mergeOutputName" style="font-size:13px; font-weight:600; color:var(--colors-body);">Output Filename:</label>
+      <input type="text" id="mergeOutputName" class="form-input" style="max-width: 250px; height: 36px; padding: 0 12px; font-size:13.5px;" value="merged_document.docx" />
+    </div>
+    <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
+      <button class="button button-primary" id="btnMerge">Merge & Download</button>
+      <button class="button button-danger" id="btnClear">Clear Queue</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const mergeWorkspace = document.getElementById('mergeWorkspace');
+    const fileItemsList = document.getElementById('fileItemsList');
+    const mergeOutputName = document.getElementById('mergeOutputName');
+    const btnMerge = document.getElementById('btnMerge');
+    const btnClear = document.getElementById('btnClear');
+
+    let mergeFiles = [];
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) processFiles(files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files);
+      if (files.length > 0) processFiles(files);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    function processFiles(files) {
+      hideError();
+      let processed = 0;
+      showProgress(10, "Loading Word documents…");
+
+      files.forEach(f => {
+        const ext = f.name.split('.').pop().toLowerCase();
+        if (ext !== 'docx') {
+          showError(`Skipped "${f.name}": Unsupported format. Only .docx is supported.`);
+          processed++;
+          if (processed === files.length) hideProgress();
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          try {
+            const bytes = new Uint8Array(e.target.result);
+            mergeFiles.push({
+              name: f.name,
+              bytes: bytes
+            });
+            processed++;
+
+            if (processed === files.length) {
+              renderList();
+              hideProgress();
+            }
+          } catch(err) {
+            processed++;
+            showError("Failed to parse " + f.name);
+            hideProgress();
+          }
+        };
+        reader.readAsArrayBuffer(f);
+      });
+    }
+
+    function renderList() {
+      fileItemsList.innerHTML = '';
+      mergeFiles.forEach((file, index) => {
+        const div = document.createElement('div');
+        div.className = 'file-item';
+        div.innerHTML = `
+          <span>${file.name}</span>
+          <div style="display: flex; gap: 4px;">
+            <button class="icon-btn" onclick="window.moveFile(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+            <button class="icon-btn" onclick="window.moveFile(${index}, 1)" ${index === mergeFiles.length - 1 ? 'disabled' : ''}>▼</button>
+            <button class="icon-btn danger" onclick="window.removeMergeFile(${index})">✕</button>
+          </div>
+        `;
+        fileItemsList.appendChild(div);
+      });
+      mergeWorkspace.style.display = 'block';
+      dropZone.style.display = 'none';
+    }
+
+    window.moveFile = function(index, direction) {
+      const target = index + direction;
+      if (target < 0 || target >= mergeFiles.length) return;
+      const temp = mergeFiles[index];
+      mergeFiles[index] = mergeFiles[target];
+      mergeFiles[target] = temp;
+      renderList();
+    };
+
+    window.removeMergeFile = function(idx) {
+      mergeFiles.splice(idx, 1);
+      if (mergeFiles.length === 0) {
+        resetFile();
+      } else {
+        renderList();
+      }
+    };
+
+    btnMerge.addEventListener('click', async () => {
+      if (mergeFiles.length < 2) {
+        showError("Please upload at least 2 Word files.");
+        return;
+      }
+      showProgress(20, "Loading base document ZIP structure…");
+      try {
+        // Load the first document as base
+        const firstZip = await JSZip.loadAsync(mergeFiles[0].bytes);
+        const docXmlText = await firstZip.file("word/document.xml").async("string");
+
+        const parser = new DOMParser();
+        const firstDoc = parser.parseFromString(docXmlText, "text/xml");
+        const firstBody = firstDoc.getElementsByTagName("w:body")[0];
+        
+        // Find the section properties of first body (to preserve layout details at the very end of combined file)
+        const firstSectPr = firstBody.getElementsByTagName("w:sectPr")[0];
+
+        // Loop through subsequent files and extract body contents
+        for (let i = 1; i < mergeFiles.length; i++) {
+          showProgress(20 + Math.round((i / mergeFiles.length) * 50), `Merging document ${i + 1} of ${mergeFiles.length}…`);
+          const zip = await JSZip.loadAsync(mergeFiles[i].bytes);
+          const xmlText = await zip.file("word/document.xml").async("string");
+          const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+          const body = xmlDoc.getElementsByTagName("w:body")[0];
+
+          // Add page break paragraph before importing elements
+          const pageBreakNode = firstDoc.createElement("w:p");
+          const rNode = firstDoc.createElement("w:r");
+          const brNode = firstDoc.createElement("w:br");
+          brNode.setAttribute("w:type", "page");
+          rNode.appendChild(brNode);
+          pageBreakNode.appendChild(rNode);
+          
+          if (firstSectPr) {
+            firstBody.insertBefore(pageBreakNode, firstSectPr);
+          } else {
+            firstBody.appendChild(pageBreakNode);
+          }
+
+          // Import body elements (paragraphs, tables, lists) excluding the last sectPr
+          const childNodes = Array.from(body.childNodes);
+          for (let node of childNodes) {
+            if (node.nodeName !== "w:sectPr" && node.nodeType === 1) { // Element node
+              const importedNode = firstDoc.importNode(node, true);
+              if (firstSectPr) {
+                firstBody.insertBefore(importedNode, firstSectPr);
+              } else {
+                firstBody.appendChild(importedNode);
+              }
+            }
+          }
+        }
+
+        showProgress(85, "Saving merged Word archive…");
+        const serializer = new XMLSerializer();
+        const mergedXmlText = serializer.serializeToString(firstDoc);
+        firstZip.file("word/document.xml", mergedXmlText);
+
+        const outBytes = await firstZip.generateAsync({ type: "blob" });
+        let name = mergeOutputName.value || 'merged.docx';
+        if (!name.endsWith('.docx')) name += '.docx';
+
+        window.downloadBlob(outBytes, name, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+      } catch(err) {
+        showError("Failed to merge Word documents. Please ensure none of the files are corrupted.");
+      }
+      hideProgress();
+    });
+
+    btnClear.addEventListener('click', resetFile);
+
+    function resetFile() {
+      mergeFiles = [];
+      mergeWorkspace.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+      hideProgress();
+    }
+  })();
+</script>
