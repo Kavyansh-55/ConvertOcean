@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image to Text OCR - Extract Text from Scans Offline | ConvertOcean</title>
-  <meta name="description" content="Extract plain text from screenshots, documents, and scans locally in your browser window. Private client-side OCR tool with 100% data confidentiality.">
+  <title>Private Image to Text OCR Converter - ConvertOcean</title>
+  <meta name="description" content="Extract text from screenshots, scans, and receipts inside your browser. 100% private WebAssembly OCR.">
   <link rel="canonical" href="https://convertocean.com/image-to-text/" />
-  
+
   <!-- Open Graph / Social sharing metadata -->
-  <meta property="og:title" content="Image to Text OCR - Extract Text from Scans Offline | ConvertOcean" />
-  <meta property="og:description" content="Extract plain text from screenshots, documents, and scans locally in your browser window. Private client-side OCR tool with 100% data confidentiality." />
+  <meta property="og:title" content="Private Image to Text OCR Converter - ConvertOcean" />
+  <meta property="og:description" content="Extract text from screenshots, scans, and receipts inside your browser. 100% private WebAssembly OCR." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://convertocean.com/image-to-text/" />
   <meta property="og:image" content="https://convertocean.com/apple-touch-icon.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Image to Text OCR - Private Offline OCR" />
-  <meta name="twitter:description" content="Extract plain text from screenshots, documents, and scans locally in your browser window." />
+  <meta name="twitter:title" content="Private Image to Text OCR Converter - ConvertOcean" />
+  <meta name="twitter:description" content="Extract text from screenshots, scans, and receipts inside your browser. 100% private WebAssembly OCR." />
   <meta name="twitter:image" content="https://convertocean.com/apple-touch-icon.png" />
 
   <!-- Structured Data (JSON-LD) -->
@@ -27,11 +27,11 @@
         "@type": "WebPage",
         "@id": "https://convertocean.com/image-to-text/#webpage",
         "url": "https://convertocean.com/image-to-text/",
-        "name": "Image to Text OCR - Extract Text from Scans Offline | ConvertOcean",
+        "name": "Private Image to Text OCR Converter - ConvertOcean",
         "isPartOf": {
           "@id": "https://convertocean.com/#website"
         },
-        "description": "Extract plain text from screenshots, documents, and scans locally in your browser window. Private client-side OCR tool with 100% data confidentiality.",
+        "description": "Extract text from screenshots, scans, and receipts inside your browser. 100% private WebAssembly OCR.",
         "breadcrumb": {
           "@id": "https://convertocean.com/image-to-text/#breadcrumb"
         }
@@ -53,6 +53,20 @@
             "item": "https://convertocean.com/image-to-text/"
           }
         ]
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://convertocean.com/image-to-text/#software",
+        "name": "Image to Text OCR",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires HTML5, WebAssembly, and modern Javascript.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD"
+        },
+        "description": "Extract text from screenshots, scans, and receipts inside your browser. 100% private WebAssembly OCR."
       }
     ]
   }
@@ -73,14 +87,6 @@
       },
       {
         "@type": "Question",
-        "name": "Is my confidential business or financial data safe when converting files?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times."
-        }
-      },
-      {
-        "@type": "Question",
         "name": "Can a client-side file converter run without an active internet connection?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -89,10 +95,26 @@
       },
       {
         "@type": "Question",
-        "name": "Is there a private tool to extract text from screenshots using offline OCR?",
+        "name": "Do I need to register an account or pay for a conversion subscription?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. Our image-to-text OCR page runs Tesseract.js WebAssembly OCR engines completely client-side. This allows you to scan images, scans, and screenshots and extract text locally in your browser window without uploading confidential screenshots containing sensitive personal data."
+          "text": "No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my scanned text uploaded to an AI service?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. All optical recognition is processed entirely inside your local browser memory sandbox via WebAssembly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What file types are supported?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "PNG, JPG, JPEG, WebP, and BMP images."
         }
       }
     ]
@@ -154,13 +176,12 @@
       <a href="/index.html" class="nav-link">🏠 Home</a>
       <a href="/file-converter/" class="nav-link">📄 File Converter</a>
       <a href="/pdf-tools/" class="nav-link">📑 PDF, Split & Merge</a>
-      <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
+      <a href="/image-tools/" class="nav-link active">🖼️ Image Tools</a>
       <a href="/excel-converter/" class="nav-link">📊 Excel Converter</a>
       <a href="/business-tools/" class="nav-link">💼 Business Tools</a>
     </nav>
 
     <div class="nav-right-group">
-      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
       <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
         <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         </svg>
@@ -180,7 +201,7 @@
     <a href="/index.html" class="mobile-nav-link">🏠 Home</a>
     <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
     <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF, Split & Merge</a>
-    <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
+    <a href="/image-tools/" class="mobile-nav-link active">🖼️ Image Tools</a>
     <a href="/excel-converter/" class="mobile-nav-link">📊 Excel Converter</a>
     <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
   </div>
@@ -275,33 +296,33 @@
       <h3 style="font-size: 18px; font-weight: 600; color: var(--colors-ink); border-bottom: 1px solid var(--colors-hairline); padding-bottom: 8px;">Related Tools</h3>
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); margin-top: var(--spacing-md);">
         
+    <a href="/png-to-jpg/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">🖼️</div>
+      <span class="popular-card-name">PNG TO JPG</span>
+    </a>
+  
+
+    <a href="/jpg-to-png/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">🖼️</div>
+      <span class="popular-card-name">JPG TO PNG</span>
+    </a>
+  
+
+    <a href="/png-to-webp/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">🖼️</div>
+      <span class="popular-card-name">PNG TO WEBP</span>
+    </a>
+  
+
+    <a href="/webp-to-png/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">🖼️</div>
+      <span class="popular-card-name">WEBP TO PNG</span>
+    </a>
+  
+
     <a href="/excel-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
       <div class="popular-card-icon">📊</div>
       <span class="popular-card-name">EXCEL TO PDF</span>
-    </a>
-  
-
-    <a href="/csv-to-json/" class="popular-card" style="margin-top: var(--spacing-xs);">
-      <div class="popular-card-icon">⚙️</div>
-      <span class="popular-card-name">CSV TO JSON</span>
-    </a>
-  
-
-    <a href="/json-to-csv/" class="popular-card" style="margin-top: var(--spacing-xs);">
-      <div class="popular-card-icon">⚙️</div>
-      <span class="popular-card-name">JSON TO CSV</span>
-    </a>
-  
-
-    <a href="/xlsx-to-csv/" class="popular-card" style="margin-top: var(--spacing-xs);">
-      <div class="popular-card-icon">📊</div>
-      <span class="popular-card-name">XLSX TO CSV</span>
-    </a>
-  
-
-    <a href="/csv-to-xlsx/" class="popular-card" style="margin-top: var(--spacing-xs);">
-      <div class="popular-card-icon">📊</div>
-      <span class="popular-card-name">CSV TO XLSX</span>
     </a>
   
       </div>
@@ -322,15 +343,6 @@
         </div>
         <div class="faq-item">
           <div class="faq-question">
-            Is my confidential business or financial data safe when converting files?
-            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          </div>
-          <div class="faq-answer">
-            Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times.
-          </div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question">
             Can a client-side file converter run without an active internet connection?
             <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
@@ -340,11 +352,29 @@
         </div>
         <div class="faq-item">
           <div class="faq-question">
-            Is there a private tool to extract text from screenshots using offline OCR?
+            Do I need to register an account or pay for a conversion subscription?
             <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
           <div class="faq-answer">
-            Yes. Our image-to-text OCR page runs Tesseract.js WebAssembly OCR engines completely client-side. This allows you to scan images, scans, and screenshots and extract text locally in your browser window without uploading confidential screenshots containing sensitive personal data.
+            No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Is my scanned text uploaded to an AI service?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            No. All optical recognition is processed entirely inside your local browser memory sandbox via WebAssembly.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            What file types are supported?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            PNG, JPG, JPEG, WebP, and BMP images.
           </div>
         </div>
       </div>
@@ -370,6 +400,9 @@
 <a href="/image-to-text/" class="seo-link">➔ IMAGE TO TEXT</a>
 <a href="/merge-pdf/" class="seo-link">➔ MERGE PDF</a>
 <a href="/split-pdf/" class="seo-link">➔ SPLIT PDF</a>
+<a href="/pdf-to-excel/" class="seo-link">➔ PDF TO EXCEL</a>
+<a href="/pdf-to-word/" class="seo-link">➔ PDF TO WORD</a>
+<a href="/word-to-pdf/" class="seo-link">➔ WORD TO PDF</a>
       </div>
     </section>
   </main>

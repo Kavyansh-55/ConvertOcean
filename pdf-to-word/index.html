@@ -5,6 +5,121 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Convert PDF to Word Online - 100% Private | ConvertOcean</title>
   <meta name="description" content="Convert PDF documents to editable Microsoft Word files (.doc) offline in your browser. Zero server uploads. 100% private.">
+  <link rel="canonical" href="https://convertocean.com/pdf-to-word/" />
+
+  <!-- Open Graph / Social sharing metadata -->
+  <meta property="og:title" content="Convert PDF to Word Online - 100% Private | ConvertOcean" />
+  <meta property="og:description" content="Convert PDF documents to editable Microsoft Word files (.doc) offline in your browser. Zero server uploads. 100% private." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://convertocean.com/pdf-to-word/" />
+  <meta property="og:image" content="https://convertocean.com/apple-touch-icon.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Convert PDF to Word Online - 100% Private | ConvertOcean" />
+  <meta name="twitter:description" content="Convert PDF documents to editable Microsoft Word files (.doc) offline in your browser. Zero server uploads. 100% private." />
+  <meta name="twitter:image" content="https://convertocean.com/apple-touch-icon.png" />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://convertocean.com/pdf-to-word/#webpage",
+        "url": "https://convertocean.com/pdf-to-word/",
+        "name": "Convert PDF to Word Online - 100% Private | ConvertOcean",
+        "isPartOf": {
+          "@id": "https://convertocean.com/#website"
+        },
+        "description": "Convert PDF documents to editable Microsoft Word files (.doc) offline in your browser. Zero server uploads. 100% private.",
+        "breadcrumb": {
+          "@id": "https://convertocean.com/pdf-to-word/#breadcrumb"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://convertocean.com/pdf-to-word/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://convertocean.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "PDF to Word",
+            "item": "https://convertocean.com/pdf-to-word/"
+          }
+        ]
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://convertocean.com/pdf-to-word/#software",
+        "name": "PDF to Word",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires HTML5, WebAssembly, and modern Javascript.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD"
+        },
+        "description": "Convert PDF documents to editable Microsoft Word files (.doc) offline in your browser. Zero server uploads. 100% private."
+      }
+    ]
+  }
+  </script>
+  <!-- FAQPage Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does ConvertOcean convert files without uploading them?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can a client-side file converter run without an active internet connection?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need to register an account or pay for a conversion subscription?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does it preserve complex Word formatting?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The tool extracts text nodes and formats them into paragraph elements within a Word compatible HTML structure."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is the conversion processed offline?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. All text extraction and Word document compiling are computed client-side in browser memory."
+        }
+      }
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -17,18 +132,20 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
   <style>
-    .text-preview {
-      background-color: var(--colors-canvas-soft-2);
-      border: 1px solid var(--colors-hairline);
-      border-radius: var(--rounded-md);
-      padding: var(--spacing-md);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      white-space: pre-wrap;
-      max-height: 300px;
-      overflow: auto;
-      margin-top: var(--spacing-lg);
-    }
+    
+      .text-preview {
+        background-color: var(--colors-canvas-soft-2);
+        border: 1px solid var(--colors-hairline);
+        border-radius: var(--rounded-md);
+        padding: var(--spacing-md);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        white-space: pre-wrap;
+        max-height: 300px;
+        overflow: auto;
+        margin-top: var(--spacing-lg);
+      }
+    
   </style>
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -55,7 +172,6 @@
     </nav>
 
     <div class="nav-right-group">
-      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
       <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
         <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         </svg>
@@ -103,20 +219,21 @@
     <!-- Upload Card -->
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon">📄</div>
-      <div class="upload-text-primary">Drag and drop PDF here, or click to browse</div>
+      <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
       <div class="upload-text-secondary">Upload PDF document (Max 25MB)</div>
-      <input type="file" id="fileInput" class="file-input" accept=".pdf">
+      <input type="file" id="fileInput" class="file-input" accept=".pdf" >
     </div>
 
-    <pre id="textPreview" class="text-preview" style="display: none;"></pre>
-
-    <div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
-      <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
-      <div class="button-group">
-        <button class="button button-primary" id="btnDownload">Download Word Doc</button>
-        <button class="button button-danger" id="btnClear">Clear</button>
+    
+      <pre id="textPreview" class="text-preview" style="display: none;"></pre>
+      <div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
+        <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
+        <div class="button-group">
+          <button class="button button-primary" onclick="downloadWord()">Download Word Doc</button>
+          <button class="button button-danger" onclick="resetFile()">Clear</button>
+        </div>
       </div>
-    </div>
+    
 
     <!-- How It Works Section -->
     <section class="info-section">
@@ -124,23 +241,23 @@
       <div class="info-grid">
         <div class="info-card">
           <span class="info-card-step">Step 1</span>
-          <h3 class="info-card-title">Upload PDF</h3>
-          <p class="info-card-desc">Drag and drop your PDF file into the secure, local browser drop zone card.</p>
+          <h3 class="info-card-title">Upload File</h3>
+          <p class="info-card-desc">Drag and drop your file into the secure, local browser drop zone card.</p>
         </div>
         <div class="info-card">
           <span class="info-card-step">Step 2</span>
-          <h3 class="info-card-title">Process Locally</h3>
-          <p class="info-card-desc">Our client-side reader extracts the text layouts entirely within your browser memory sandbox.</p>
+          <h3 class="info-card-title">Select Format</h3>
+          <p class="info-card-desc">Preview formatting cells and select your custom export requirements.</p>
         </div>
         <div class="info-card">
           <span class="info-card-step">Step 3</span>
-          <h3 class="info-card-title">Download Word Doc</h3>
-          <p class="info-card-desc">Click download to compile a Word-compatible .doc file directly from your device.</p>
+          <h3 class="info-card-title">Convert Locally</h3>
+          <p class="info-card-desc">Process formatting data client-side in browser sandbox. No server uploads.</p>
         </div>
       </div>
     </section>
 
-    <!-- Why Choose Section -->
+    <!-- Why Use Section -->
     <section class="info-section" style="margin-top: 20px;">
       <h2 style="font-size:22px; font-weight:600; text-align:center; color:var(--colors-ink); margin-bottom: var(--spacing-lg);">Why Choose ConvertOcean?</h2>
       <div class="info-grid" style="grid-template-columns: repeat(3, 1fr);">
@@ -163,53 +280,68 @@
     <section class="info-section" style="margin-top: 20px;">
       <h3 style="font-size: 18px; font-weight: 600; color: var(--colors-ink); border-bottom: 1px solid var(--colors-hairline); padding-bottom: 8px;">Related Tools</h3>
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); margin-top: var(--spacing-md);">
-        <a href="/word-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
-          <div class="popular-card-icon">📝</div>
-          <span class="popular-card-name">Word to PDF</span>
-        </a>
-        <a href="/pdf-to-excel/" class="popular-card" style="margin-top: var(--spacing-xs);">
-          <div class="popular-card-icon">📊</div>
-          <span class="popular-card-name">PDF to Excel</span>
-        </a>
-        <a href="/excel-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
-          <div class="popular-card-icon">📊</div>
-          <span class="popular-card-name">Excel to PDF</span>
-        </a>
-        <a href="/merge-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
-          <div class="popular-card-icon">🥞</div>
-          <span class="popular-card-name">Merge PDF</span>
-        </a>
-        <a href="/split-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
-          <div class="popular-card-icon">🥞</div>
-          <span class="popular-card-name">Split PDF</span>
-        </a>
-        <a href="/pdf-to-txt/" class="popular-card" style="margin-top: var(--spacing-xs);">
-          <div class="popular-card-icon">📄</div>
-          <span class="popular-card-name">PDF to TXT</span>
-        </a>
+        
+    <a href="/txt-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">📄</div>
+      <span class="popular-card-name">TXT TO PDF</span>
+    </a>
+  
+
+    <a href="/pdf-to-txt/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">📄</div>
+      <span class="popular-card-name">PDF TO TXT</span>
+    </a>
+  
+
+    <a href="/merge-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">🥞</div>
+      <span class="popular-card-name">MERGE PDF</span>
+    </a>
+  
+
+    <a href="/split-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">🥞</div>
+      <span class="popular-card-name">SPLIT PDF</span>
+    </a>
+  
+
+    <a href="/word-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">📝</div>
+      <span class="popular-card-name">WORD TO PDF</span>
+    </a>
+  
       </div>
     </section>
 
-    <!-- FAQ Section -->
+    <!-- Reusable FAQ Component -->
     <section class="faq-section">
       <h2 class="faq-title">Frequently Asked Questions</h2>
       <div class="faq-container">
         <div class="faq-item">
           <div class="faq-question">
-            Do files get uploaded to a server?
+            How does ConvertOcean convert files without uploading them?
             <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
           <div class="faq-answer">
-            No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.
+            ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server.
           </div>
         </div>
         <div class="faq-item">
           <div class="faq-question">
-            Does it work offline?
+            Can a client-side file converter run without an active internet connection?
             <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
           <div class="faq-answer">
-            Yes. Once you load this tool page, you can disconnect from the internet and convert files. The conversion engine runs entirely client-side.
+            Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Do I need to register an account or pay for a conversion subscription?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions.
           </div>
         </div>
         <div class="faq-item">
@@ -218,9 +350,44 @@
             <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
           <div class="faq-answer">
-            The tool extracts text nodes and formats them into paragraph elements within a Microsoft Word compatible HTML structure. While simple styling and layouts are fully retained, highly complex desktop-published PDF grids may require manual alignment inside Word.
+            The tool extracts text nodes and formats them into paragraph elements within a Word compatible HTML structure.
           </div>
         </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Is the conversion processed offline?
+            <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div class="faq-answer">
+            Yes. All text extraction and Word document compiling are computed client-side in browser memory.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sitemap Internal Links -->
+    <section class="links-section">
+      <h4 style="font-size: 11px; font-weight:600; text-transform:uppercase; font-family:'JetBrains Mono', monospace; color:var(--colors-mute); margin-bottom:var(--spacing-xs);">Sitemap Conversion Tools</h4>
+      <div class="links-grid">
+        <a href="/excel-to-pdf/" class="seo-link">➔ EXCEL TO PDF</a>
+<a href="/csv-to-json/" class="seo-link">➔ CSV TO JSON</a>
+<a href="/json-to-csv/" class="seo-link">➔ JSON TO CSV</a>
+<a href="/xlsx-to-csv/" class="seo-link">➔ XLSX TO CSV</a>
+<a href="/csv-to-xlsx/" class="seo-link">➔ CSV TO XLSX</a>
+<a href="/json-to-xlsx/" class="seo-link">➔ JSON TO XLSX</a>
+<a href="/xml-to-json/" class="seo-link">➔ XML TO JSON</a>
+<a href="/txt-to-pdf/" class="seo-link">➔ TXT TO PDF</a>
+<a href="/pdf-to-txt/" class="seo-link">➔ PDF TO TXT</a>
+<a href="/png-to-jpg/" class="seo-link">➔ PNG TO JPG</a>
+<a href="/jpg-to-png/" class="seo-link">➔ JPG TO PNG</a>
+<a href="/png-to-webp/" class="seo-link">➔ PNG TO WEBP</a>
+<a href="/webp-to-png/" class="seo-link">➔ WEBP TO PNG</a>
+<a href="/image-to-text/" class="seo-link">➔ IMAGE TO TEXT</a>
+<a href="/merge-pdf/" class="seo-link">➔ MERGE PDF</a>
+<a href="/split-pdf/" class="seo-link">➔ SPLIT PDF</a>
+<a href="/pdf-to-excel/" class="seo-link">➔ PDF TO EXCEL</a>
+<a href="/pdf-to-word/" class="seo-link">➔ PDF TO WORD</a>
+<a href="/word-to-pdf/" class="seo-link">➔ WORD TO PDF</a>
       </div>
     </section>
   </main>
@@ -310,82 +477,74 @@
 
   <script src="/theme.js"></script>
   <script>
-    (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+
+    // Drag and drop setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      let files = Array.from(e.dataTransfer.files);
+      if (`pdf-to-word` !== 'merge-pdf') {
+        files = files.slice(0, 1);
+      }
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      let files = Array.from(e.target.files);
+      if (`pdf-to-word` !== 'merge-pdf') {
+        files = files.slice(0, 1);
+      }
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-
-      const dropZone = document.getElementById('dropZone');
-      const fileInput = document.getElementById('fileInput');
-      const errorBanner = document.getElementById('errorBanner');
-      const errorMessage = document.getElementById('errorMessage');
-      const progressOverlay = document.getElementById('progressOverlay');
-      const progressBarFill = document.getElementById('progressBarFill');
-      const progressLabel = document.getElementById('progressLabel');
-      const textPreview = document.getElementById('textPreview');
-      const actionControls = document.getElementById('actionControls');
-      const fileNameDisplay = document.getElementById('fileNameDisplay');
-      const btnDownload = document.getElementById('btnDownload');
-      const btnClear = document.getElementById('btnClear');
-
       let extractedResult = '';
       let originalName = '';
-
-      // Drag and drop setup
-      ['dragenter', 'dragover'].forEach(eventName => {
-        dropZone.addEventListener(eventName, (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          dropZone.classList.add('dragover');
-        }, false);
-      });
-
-      ['dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          dropZone.classList.remove('dragover');
-        }, false);
-      });
-
-      dropZone.addEventListener('drop', (e) => {
-        let files = Array.from(e.dataTransfer.files).slice(0, 1);
-        if (files.length > 0) handleFile(files[0]);
-      });
-
-      fileInput.addEventListener('change', (e) => {
-        let files = Array.from(e.target.files).slice(0, 1);
-        if (files.length > 0) handleFile(files[0]);
-      });
-
-      function showProgress(pct, label) {
-        progressOverlay.style.display = 'flex';
-        progressBarFill.style.width = pct + '%';
-        progressLabel.textContent = label;
-      }
-
-      function hideProgress() {
-        progressOverlay.style.display = 'none';
-      }
-
-      function showError(msg) {
-        errorMessage.textContent = msg;
-        errorBanner.style.display = 'flex';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-
-      function hideError() {
-        errorBanner.style.display = 'none';
-      }
-
       async function handleFile(file) {
         hideError();
         originalName = file.name;
-        
-        const extension = file.name.split('.').pop().toLowerCase();
-        if (extension !== 'pdf') {
-          showError("Invalid file format. Please upload a PDF file.");
-          return;
-        }
-
         showProgress(10, "Loading PDF data structure…");
         try {
           const reader = new FileReader();
@@ -404,18 +563,14 @@
               }
 
               extractedResult = fullText;
-              textPreview.textContent = fullText.substring(0, 1200) + (fullText.length > 1200 ? '\n…[truncated preview]' : '');
-              textPreview.style.display = 'block';
-              fileNameDisplay.textContent = file.name;
-              actionControls.style.display = 'flex';
-              dropZone.style.display = 'none';
+              document.getElementById('textPreview').textContent = fullText.substring(0, 1200) + (fullText.length > 1200 ? '\n…[truncated preview]' : '');
+              document.getElementById('textPreview').style.display = 'block';
+              document.getElementById('fileNameDisplay').textContent = file.name;
+              document.getElementById('actionControls').style.display = 'flex';
+              document.getElementById('dropZone').style.display = 'none';
             } catch(err) {
               showError("Failed to parse PDF pages.");
             }
-            hideProgress();
-          };
-          reader.onerror = function() {
-            showError("Failed to read PDF file.");
             hideProgress();
           };
           reader.readAsArrayBuffer(file);
@@ -424,10 +579,9 @@
           hideProgress();
         }
       }
-
-      btnDownload.addEventListener('click', () => {
+      function downloadWord() {
         const linesHtml = extractedResult.split('\n')
-          .map(line => line.trim() ? `<p>${line}</p>` : `<br/>`)
+          .map(line => line.trim() ? `<p>&nbsp;${line}</p>` : `<br/>`)
           .join('');
 
         const htmlDoc = `
@@ -454,17 +608,16 @@
         `;
 
         const blob = new Blob([htmlDoc], { type: "application/msword;charset=utf-8;" });
-        window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, "") + '.doc', "application/msword");
-      });
-
-      btnClear.addEventListener('click', () => {
+        downloadBlob(blob, originalName.replace(/\.[^/.]+$/, "") + '.doc');
+      }
+      function resetFile() {
         extractedResult = '';
-        textPreview.style.display = 'none';
-        actionControls.style.display = 'none';
-        dropZone.style.display = 'flex';
-        fileInput.value = '';
-      });
-    })();
+        document.getElementById('textPreview').style.display = 'none';
+        document.getElementById('actionControls').style.display = 'none';
+        document.getElementById('dropZone').style.display = 'flex';
+        document.getElementById('fileInput').value = '';
+      }
+    
   </script>
 </body>
 </html>

@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initDropdowns();
   initMobileMenu();
   initFAQ();
-  initLangSelector();
-  checkLanguageRedirect();
+  // initLangSelector();
+  // checkLanguageRedirect();
 });
 
 // Theme Switcher Logic

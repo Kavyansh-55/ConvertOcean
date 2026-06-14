@@ -5,6 +5,121 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Split PDF Online - Extract Pages Client-Side | ConvertOcean</title>
   <meta name="description" content="Split PDF files and extract selected ranges offline in your browser. 100% private with no server uploads.">
+  <link rel="canonical" href="https://convertocean.com/split-pdf/" />
+
+  <!-- Open Graph / Social sharing metadata -->
+  <meta property="og:title" content="Split PDF Online - Extract Pages Client-Side | ConvertOcean" />
+  <meta property="og:description" content="Split PDF files and extract selected ranges offline in your browser. 100% private with no server uploads." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://convertocean.com/split-pdf/" />
+  <meta property="og:image" content="https://convertocean.com/apple-touch-icon.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Split PDF Online - Extract Pages Client-Side | ConvertOcean" />
+  <meta name="twitter:description" content="Split PDF files and extract selected ranges offline in your browser. 100% private with no server uploads." />
+  <meta name="twitter:image" content="https://convertocean.com/apple-touch-icon.png" />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://convertocean.com/split-pdf/#webpage",
+        "url": "https://convertocean.com/split-pdf/",
+        "name": "Split PDF Online - Extract Pages Client-Side | ConvertOcean",
+        "isPartOf": {
+          "@id": "https://convertocean.com/#website"
+        },
+        "description": "Split PDF files and extract selected ranges offline in your browser. 100% private with no server uploads.",
+        "breadcrumb": {
+          "@id": "https://convertocean.com/split-pdf/#breadcrumb"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://convertocean.com/split-pdf/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://convertocean.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Split PDF",
+            "item": "https://convertocean.com/split-pdf/"
+          }
+        ]
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://convertocean.com/split-pdf/#software",
+        "name": "Split PDF",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires HTML5, WebAssembly, and modern Javascript.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD"
+        },
+        "description": "Split PDF files and extract selected ranges offline in your browser. 100% private with no server uploads."
+      }
+    ]
+  }
+  </script>
+  <!-- FAQPage Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does ConvertOcean convert files without uploading them?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can a client-side file converter run without an active internet connection?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need to register an account or pay for a conversion subscription?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I extract multiple disjoint ranges?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. You can select any custom set of pages (e.g. page 1, page 5, and page 10) to compile a new PDF."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is the page selection highlighted?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Selected page cards feature a blue border outline."
+        }
+      }
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -81,7 +196,6 @@
     </nav>
 
     <div class="nav-right-group">
-      <span class="nav-badge"><span class="pulse-dot"></span> Offline Ready</span>
       <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
         <svg id="themeToggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         </svg>
@@ -139,10 +253,8 @@
         <div id="pagesGrid" class="pages-grid" style="margin-bottom: var(--spacing-md);"></div>
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
           <input type="text" id="splitOutputName" class="form-input" style="max-width: 300px;" value="extracted_pages.pdf">
-          <div class="button-group" style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
+          <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
             <button class="button button-primary" onclick="splitAndDownload()">Extract Selected Pages</button>
-            <button class="button button-secondary" onclick="executePdfToImages()">Convert to Images</button>
-            <button class="button button-secondary" onclick="executePdfToText()">Extract Text (TXT)</button>
             <button class="button button-danger" onclick="resetFile()">Clear</button>
           </div>
         </div>
@@ -195,33 +307,33 @@
       <h3 style="font-size: 18px; font-weight: 600; color: var(--colors-ink); border-bottom: 1px solid var(--colors-hairline); padding-bottom: 8px;">Related Tools</h3>
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); margin-top: var(--spacing-md);">
         
-    <a href="/excel-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
-      <div class="popular-card-icon">📊</div>
-      <span class="popular-card-name">EXCEL TO PDF</span>
+    <a href="/txt-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">📄</div>
+      <span class="popular-card-name">TXT TO PDF</span>
     </a>
   
 
-    <a href="/csv-to-json/" class="popular-card" style="margin-top: var(--spacing-xs);">
-      <div class="popular-card-icon">⚙️</div>
-      <span class="popular-card-name">CSV TO JSON</span>
+    <a href="/pdf-to-txt/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">📄</div>
+      <span class="popular-card-name">PDF TO TXT</span>
     </a>
   
 
-    <a href="/json-to-csv/" class="popular-card" style="margin-top: var(--spacing-xs);">
-      <div class="popular-card-icon">⚙️</div>
-      <span class="popular-card-name">JSON TO CSV</span>
+    <a href="/merge-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">🥞</div>
+      <span class="popular-card-name">MERGE PDF</span>
     </a>
   
 
-    <a href="/xlsx-to-csv/" class="popular-card" style="margin-top: var(--spacing-xs);">
-      <div class="popular-card-icon">📊</div>
-      <span class="popular-card-name">XLSX TO CSV</span>
+    <a href="/pdf-to-word/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">📄</div>
+      <span class="popular-card-name">PDF TO WORD</span>
     </a>
   
 
-    <a href="/csv-to-xlsx/" class="popular-card" style="margin-top: var(--spacing-xs);">
-      <div class="popular-card-icon">📊</div>
-      <span class="popular-card-name">CSV TO XLSX</span>
+    <a href="/word-to-pdf/" class="popular-card" style="margin-top: var(--spacing-xs);">
+      <div class="popular-card-icon">📝</div>
+      <span class="popular-card-name">WORD TO PDF</span>
     </a>
   
       </div>
@@ -233,29 +345,29 @@
       <div class="faq-container">
         <div class="faq-item">
           <div class="faq-question">
-            Do files get uploaded to a server?
+            How does ConvertOcean convert files without uploading them?
             <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
           <div class="faq-answer">
-            No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.
+            ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server.
           </div>
         </div>
         <div class="faq-item">
           <div class="faq-question">
-            Does it work offline?
+            Can a client-side file converter run without an active internet connection?
             <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
           <div class="faq-answer">
-            Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.
+            Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed.
           </div>
         </div>
         <div class="faq-item">
           <div class="faq-question">
-            Do I need to sign up for an account?
+            Do I need to register an account or pay for a conversion subscription?
             <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
           <div class="faq-answer">
-            No. Every converter is immediately unlocked, 100% free, and completely untracked. No signup is required.
+            No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions.
           </div>
         </div>
         <div class="faq-item">
@@ -299,6 +411,9 @@
 <a href="/image-to-text/" class="seo-link">➔ IMAGE TO TEXT</a>
 <a href="/merge-pdf/" class="seo-link">➔ MERGE PDF</a>
 <a href="/split-pdf/" class="seo-link">➔ SPLIT PDF</a>
+<a href="/pdf-to-excel/" class="seo-link">➔ PDF TO EXCEL</a>
+<a href="/pdf-to-word/" class="seo-link">➔ PDF TO WORD</a>
+<a href="/word-to-pdf/" class="seo-link">➔ WORD TO PDF</a>
       </div>
     </section>
   </main>
@@ -545,75 +660,6 @@
         document.getElementById('splitWorkspace').style.display = 'none';
         document.getElementById('dropZone').style.display = 'flex';
         document.getElementById('fileInput').value = '';
-        hideProgress();
-      }
-
-      // Convert PDF Pages to Images
-      async function executePdfToImages() {
-        if (selectedPages.size === 0) {
-          showError("Please select at least 1 page to render to image.");
-          return;
-        }
-        showProgress(10, "Initializing rendering…");
-        try {
-          const loadingTask = pdfjsLib.getDocument({ data: splitFile.bytes });
-          const pdf = await loadingTask.promise;
-          
-          const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
-          
-          for (let i = 0; i < sortedPages.length; i++) {
-            const pageNum = sortedPages[i];
-            showProgress(Math.round(((i + 1) / sortedPages.length) * 100), `Rendering page ${pageNum}…`);
-            
-            const page = await pdf.getPage(pageNum);
-            const viewport = page.getViewport({ scale: 2.0 }); // High res render
-            
-            const canvas = document.createElement('canvas');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            const context = canvas.getContext('2d');
-
-            await page.render({ canvasContext: context, viewport: viewport }).promise;
-            
-            canvas.toBlob(blob => {
-              downloadBlob(blob, `${splitFile.name.replace(/\.[^/.]+$/, "")}_page_${pageNum}.png`);
-            }, 'image/png');
-          }
-        } catch (err) {
-          showError("Failed to convert PDF pages to images.");
-        }
-        hideProgress();
-      }
-
-      // Extract PDF Text to TXT file
-      async function executePdfToText() {
-        if (selectedPages.size === 0) {
-          showError("Please select at least 1 page to extract text.");
-          return;
-        }
-        showProgress(10, "Extracting text contents…");
-        try {
-          const loadingTask = pdfjsLib.getDocument({ data: splitFile.bytes });
-          const pdf = await loadingTask.promise;
-          
-          const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
-          let extractedText = "";
-
-          for (let i = 0; i < sortedPages.length; i++) {
-            const pageNum = sortedPages[i];
-            const page = await pdf.getPage(pageNum);
-            const textContent = await page.getTextContent();
-            const pageText = textContent.items.map(item => item.str).join(" ");
-            
-            extractedText += `--- Page ${pageNum} ---\n${pageText}\n\n`;
-            showProgress(Math.round(((i + 1) / sortedPages.length) * 100), `Reading page ${pageNum}…`);
-          }
-
-          const blob = new Blob([extractedText], { type: "text/plain;charset=utf-8;" });
-          downloadBlob(blob, `${splitFile.name.replace(/\.[^/.]+$/, "")}_extracted_text.txt`);
-        } catch (err) {
-          showError("Failed to extract text from PDF.");
-        }
         hideProgress();
       }
     
