@@ -578,14 +578,22 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="rcptPayMethod">Payment Method</label>
-            <select id="rcptPayMethod" class="select-input">
-              <option value="Cash">Cash</option>
-              <option value="Credit Card" selected>Credit Card</option>
-              <option value="Debit Card">Debit Card</option>
-              <option value="Bank Transfer">Bank Transfer</option>
-              <option value="PayPal">PayPal</option>
-              <option value="Check">Check</option>
+            <label class="form-label" for="rcptCurrency">Currency</label>
+            <select id="rcptCurrency" class="select-input">
+              <option value="$" selected>$ &ndash; US Dollar (USD)</option>
+              <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
+              <option value="&pound;">&pound; &ndash; British Pound (GBP)</option>
+              <option value="&#8377;">&#8377; &ndash; Indian Rupee (INR)</option>
+              <option value="&yen;">&yen; &ndash; Japanese Yen (JPY)</option>
+              <option value="&yen;">&yen; &ndash; Chinese Yuan (CNY)</option>
+              <option value="C$">C$ &ndash; Canadian Dollar (CAD)</option>
+              <option value="A$">A$ &ndash; Australian Dollar (AUD)</option>
+              <option value="CHF">CHF &ndash; Swiss Franc</option>
+              <option value="AED">AED &ndash; UAE Dirham</option>
+              <option value="SGD">SGD &ndash; Singapore Dollar</option>
+              <option value="R">R &ndash; South African Rand</option>
+              <option value="zł">zł &ndash; Polish Złoty (PLN)</option>
+              <option value="₩">₩ &ndash; South Korean Won (KRW)</option>
             </select>
           </div>
           <div class="form-group">
@@ -595,6 +603,19 @@
               <option value="GST" selected>GST (18%)</option>
               <option value="IGST">IGST (18%)</option>
               <option value="VAT">VAT (15%)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="rcptPayMethod">Payment Method</label>
+            <select id="rcptPayMethod" class="select-input">
+              <option value="Cash">Cash</option>
+              <option value="Credit Card" selected>Credit Card</option>
+              <option value="Debit Card">Debit Card</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="PayPal">PayPal</option>
+              <option value="Check">Check</option>
             </select>
           </div>
         </div>
@@ -631,7 +652,7 @@
             <tr>
               <th style="width: 50%;">Description</th>
               <th style="width: 15%;">Qty</th>
-              <th style="width: 25%;">Rate ($)</th>
+              <th id="rcptRateHeader" style="width: 25%;">Rate ($)</th>
               <th style="width: 10%;"></th>
             </tr>
           </thead>
@@ -776,7 +797,7 @@
       <p>
         A receipt should clearly state the transaction status and payment method. Here is an example of a typical payment receipt layout:
       </p>
-      blockquote>
+      <blockquote>
         <strong>Receipt No:</strong> REC-2026-001<br/>
         <strong>Received By:</strong> Kavya J. Studio (hello@kavyaj.studio)<br/>
         <strong>Received From:</strong> Galactic Group Ltd. (billing@galactic.com)<br/>
@@ -965,6 +986,7 @@
       ]
     };
 
+    let rcptCurrSym = '$';
     const $ = (id) => document.getElementById(id);
 
     window.addEventListener('load', () => {
@@ -988,6 +1010,8 @@
       pane.style.minHeight = `${800 * s + 40}px`;
     }
 
+    function fmt(n) { return rcptCurrSym + n.toFixed(2); }
+
     function updatePreview() {
       $('rcptPdfVendorTitle').textContent = rcptData.VendorName || "Business Name";
       $('rcptPdfVendorAddr').textContent = rcptData.VendorAddress;
@@ -1004,11 +1028,11 @@
         const amt = item.qty * item.rate;
         subtotal += amt;
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${item.desc || "Item"}</td><td class="right-align">${item.qty}</td><td class="right-align">$${item.rate.toFixed(2)}</td><td class="right-align">$${amt.toFixed(2)}</td>`;
+        tr.innerHTML = `<td>${item.desc || "Item"}</td><td class="right-align">${item.qty}</td><td class="right-align">${fmt(item.rate)}</td><td class="right-align">${fmt(amt)}</td>`;
         tbody.appendChild(tr);
       });
 
-      $('rcptPdfSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+      $('rcptPdfSubtotal').textContent = fmt(subtotal);
       const tax = subtotal * rcptData.TaxRate;
       const grand = subtotal + tax;
       const taxRow = $('rcptPdfTaxRow');
@@ -1017,14 +1041,17 @@
       } else {
         taxRow.style.display = 'table-row';
         $('rcptPdfTaxLabel').textContent = `${rcptData.TaxModel} (${(rcptData.TaxRate * 100)}%)`;
-        $('rcptPdfTaxAmount').textContent = `$${tax.toFixed(2)}`;
+        $('rcptPdfTaxAmount').textContent = fmt(tax);
       }
-      $('rcptPdfGrandTotal').textContent = `$${grand.toFixed(2)}`;
+      $('rcptPdfGrandTotal').textContent = fmt(grand);
     }
 
     function renderEditorTable() {
       const tbody = $('rcptItemEditRows');
       tbody.innerHTML = '';
+      // Update header
+      const hdr = $('rcptRateHeader');
+      if (hdr) hdr.textContent = `Rate (${rcptCurrSym})`;
       rcptData.LineItems.forEach((item, i) => {
         const tr = document.createElement('tr');
         tr.className = 'item-edit-row';
@@ -1062,6 +1089,11 @@
     $('rcptNo').addEventListener('input', e => { rcptData.No = e.target.value; updatePreview(); });
     $('rcptDate').addEventListener('change', e => { rcptData.Date = e.target.value; updatePreview(); });
     $('rcptPayMethod').addEventListener('change', e => { rcptData.PayMethod = e.target.value; updatePreview(); });
+    $('rcptCurrency').addEventListener('change', e => {
+      rcptCurrSym = e.target.value;
+      renderEditorTable();
+      updatePreview();
+    });
     $('rcptTaxSelect').addEventListener('change', e => {
       const t = e.target.value;
       rcptData.TaxModel = t;

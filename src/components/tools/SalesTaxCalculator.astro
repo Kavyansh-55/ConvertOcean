@@ -181,10 +181,31 @@ const { slug, headline, subtitle } = Astro.props;
       <button class="preset-btn" data-rate="10">🇯🇵 JP Tax 10%</button>
     </div>
 
+    <div class="tax-panel-title">Currency & Values</div>
+    <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
+      <label class="form-label" for="taxCurrency" style="font-size: 13px; font-weight: 500;">Currency</label>
+      <select id="taxCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;">
+        <option value="$" selected>$ &ndash; US Dollar (USD)</option>
+        <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
+        <option value="&pound;">&pound; &ndash; British Pound (GBP)</option>
+        <option value="&#8377;">&#8377; &ndash; Indian Rupee (INR)</option>
+        <option value="&yen;">&yen; &ndash; Japanese Yen (JPY)</option>
+        <option value="&yen;">&yen; &ndash; Chinese Yuan (CNY)</option>
+        <option value="C$">C$ &ndash; Canadian Dollar (CAD)</option>
+        <option value="A$">A$ &ndash; Australian Dollar (AUD)</option>
+        <option value="CHF">CHF &ndash; Swiss Franc (CHF)</option>
+        <option value="AED">AED &ndash; UAE Dirham (AED)</option>
+        <option value="SGD">SGD &ndash; Singapore Dollar (SGD)</option>
+        <option value="R">R &ndash; South African Rand (ZAR)</option>
+        <option value="zł">zł &ndash; Polish Złoty (PLN)</option>
+        <option value="₩">₩ &ndash; South Korean Won (KRW)</option>
+      </select>
+    </div>
+
     <div class="tax-panel-title">Enter Values</div>
     <div id="taxFieldsAdd">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
-        <label class="form-label" for="taxPrice1">Pre-Tax Price ($)</label>
+        <label class="form-label" for="taxPrice1" id="taxLblPrice1">Pre-Tax Price ($)</label>
         <input type="number" id="taxPrice1" class="form-input" value="100" min="0" step="0.01" />
       </div>
       <div class="form-group">
@@ -195,7 +216,7 @@ const { slug, headline, subtitle } = Astro.props;
 
     <div id="taxFieldsRemove" style="display:none;">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
-        <label class="form-label" for="taxTotal2">Total Price (Tax Inclusive) ($)</label>
+        <label class="form-label" for="taxTotal2" id="taxLblTotal2">Total Price (Tax Inclusive) ($)</label>
         <input type="number" id="taxTotal2" class="form-input" value="118" min="0" step="0.01" />
       </div>
       <div class="form-group">
@@ -258,6 +279,15 @@ const { slug, headline, subtitle } = Astro.props;
   (function() {
     const $ = id => document.getElementById(id);
     let taxMode = 'add';
+    let currSym = '$';
+
+    // Currency selector
+    $('taxCurrency').addEventListener('change', function() {
+      currSym = this.value;
+      $('taxLblPrice1').textContent = `Pre-Tax Price (${currSym})`;
+      $('taxLblTotal2').textContent = `Total Price (Tax Inclusive) (${currSym})`;
+      calculate();
+    });
 
     $('taxTabAdd').addEventListener('click', () => {
       taxMode = 'add';
@@ -289,6 +319,8 @@ const { slug, headline, subtitle } = Astro.props;
       });
     });
 
+    function fmt(n) { return currSym + n.toFixed(2); }
+
     function calculate() {
       let base = 0, tax = 0, total = 0, rate = 0;
 
@@ -299,7 +331,7 @@ const { slug, headline, subtitle } = Astro.props;
         total = base + tax;
         $('taxResGrandLabel').textContent = 'Total (Tax Inclusive)';
         $('taxResBaseLabel').textContent = 'Pre-Tax Price';
-        $('taxFormula').innerHTML = `Tax Amount = Price × (Rate ÷ 100) = $${base.toFixed(2)} × ${(rate/100).toFixed(4)} = $${tax.toFixed(2)}<br/>Total = Price + Tax = $${base.toFixed(2)} + $${tax.toFixed(2)} = $${total.toFixed(2)}`;
+        $('taxFormula').innerHTML = `Tax Amount = Price × (Rate ÷ 100) = ${fmt(base)} × ${(rate/100).toFixed(4)} = ${fmt(tax)}<br/>Total = Price + Tax = ${fmt(base)} + ${fmt(tax)} = ${fmt(total)}`;
       } else {
         total = parseFloat($('taxTotal2').value) || 0;
         rate = parseFloat($('taxRate2').value) || 0;
@@ -307,18 +339,18 @@ const { slug, headline, subtitle } = Astro.props;
         tax = total - base;
         $('taxResGrandLabel').textContent = 'Total (Original)';
         $('taxResBaseLabel').textContent = 'Pre-Tax Price (Extracted)';
-        $('taxFormula').innerHTML = `Pre-Tax Price = Total ÷ (1 + Rate/100) = $${total.toFixed(2)} ÷ ${(1 + rate/100).toFixed(4)} = $${base.toFixed(2)}<br/>Tax Amount = Total − Pre-Tax = $${total.toFixed(2)} − $${base.toFixed(2)} = $${tax.toFixed(2)}`;
+        $('taxFormula').innerHTML = `Pre-Tax Price = Total ÷ (1 + Rate/100) = ${fmt(total)} ÷ ${(1 + rate/100).toFixed(4)} = ${fmt(base)}<br/>Tax Amount = Total − Pre-Tax = ${fmt(total)} − ${fmt(base)} = ${fmt(tax)}`;
       }
 
-      $('taxResGrand').textContent = '$' + total.toFixed(2);
-      $('taxResTax').textContent = '$' + tax.toFixed(2);
-      $('taxResBase').textContent = '$' + base.toFixed(2);
+      $('taxResGrand').textContent = fmt(total);
+      $('taxResTax').textContent = fmt(tax);
+      $('taxResBase').textContent = fmt(base);
       $('taxResRate').textContent = rate.toFixed(2) + '%';
 
       $('taxBreakdownBody').innerHTML = `
-        <tr><td>Base Price</td><td>$${base.toFixed(2)}</td></tr>
-        <tr><td>Tax (${rate.toFixed(2)}%)</td><td>$${tax.toFixed(2)}</td></tr>
-        <tr><td style="font-weight:600; color: var(--colors-ink);">Total</td><td style="font-weight:600; color: var(--colors-ink);">$${total.toFixed(2)}</td></tr>
+        <tr><td>Base Price</td><td>${fmt(base)}</td></tr>
+        <tr><td>Tax (${rate.toFixed(2)}%)</td><td>${fmt(tax)}</td></tr>
+        <tr><td style="font-weight:600; color: var(--colors-ink);">Total</td><td style="font-weight:600; color: var(--colors-ink);">${fmt(total)}</td></tr>
       `;
     }
 

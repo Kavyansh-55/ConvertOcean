@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://convertocean.com/sitemap-index.xml
+Sitemap: https://convertocean.com/sitemap.xml

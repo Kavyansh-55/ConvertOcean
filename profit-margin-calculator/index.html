@@ -379,22 +379,42 @@
         <button class="mode-tab" data-mode="cost" id="pmTabCost">Revenue & Margin → Cost</button>
       </div>
 
-      <div class="calc-panel-title">Enter Values</div>
+      <div class="calc-panel-title">Currency & Values</div>
+
+      <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
+        <label class="form-label" for="pmCurrency" style="font-size: 13px; font-weight: 500;">Currency</label>
+        <select id="pmCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;">
+          <option value="$" selected>$ – US Dollar (USD)</option>
+          <option value="€">€ – Euro (EUR)</option>
+          <option value="£">£ – British Pound (GBP)</option>
+          <option value="₹">₹ – Indian Rupee (INR)</option>
+          <option value="¥">¥ – Japanese Yen (JPY)</option>
+          <option value="¥">¥ – Chinese Yuan (CNY)</option>
+          <option value="C$">C$ – Canadian Dollar (CAD)</option>
+          <option value="A$">A$ – Australian Dollar (AUD)</option>
+          <option value="CHF">CHF – Swiss Franc (CHF)</option>
+          <option value="AED">AED – UAE Dirham (AED)</option>
+          <option value="SGD">SGD – Singapore Dollar (SGD)</option>
+          <option value="R">R – South African Rand (ZAR)</option>
+          <option value="zł">zł – Polish Złoty (PLN)</option>
+          <option value="₩">₩ – South Korean Won (KRW)</option>
+        </select>
+      </div>
 
       <div id="pmFieldsMargin">
         <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
-          <label class="form-label" for="pmCost1" style="font-size: 13px; font-weight: 500;">Cost Price ($)</label>
+          <label class="form-label" for="pmCost1" id="pmLblCost1" style="font-size: 13px; font-weight: 500;">Cost Price ($)</label>
           <input type="number" id="pmCost1" class="form-input" value="60" min="0" step="0.01" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;" />
         </div>
         <div class="form-group" style="display: flex; flex-direction: column; gap: var(--spacing-xxs);">
-          <label class="form-label" for="pmRevenue1" style="font-size: 13px; font-weight: 500;">Selling Price / Revenue ($)</label>
+          <label class="form-label" for="pmRevenue1" id="pmLblRevenue1" style="font-size: 13px; font-weight: 500;">Selling Price / Revenue ($)</label>
           <input type="number" id="pmRevenue1" class="form-input" value="100" min="0" step="0.01" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;" />
         </div>
       </div>
 
       <div id="pmFieldsSelling" style="display:none;">
         <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
-          <label class="form-label" for="pmCost2" style="font-size: 13px; font-weight: 500;">Cost Price ($)</label>
+          <label class="form-label" for="pmCost2" id="pmLblCost2" style="font-size: 13px; font-weight: 500;">Cost Price ($)</label>
           <input type="number" id="pmCost2" class="form-input" value="60" min="0" step="0.01" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;" />
         </div>
         <div class="form-group" style="display: flex; flex-direction: column; gap: var(--spacing-xxs);">
@@ -405,7 +425,7 @@
 
       <div id="pmFieldsCost" style="display:none;">
         <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
-          <label class="form-label" for="pmRevenue3" style="font-size: 13px; font-weight: 500;">Revenue / Selling Price ($)</label>
+          <label class="form-label" for="pmRevenue3" id="pmLblRevenue3" style="font-size: 13px; font-weight: 500;">Revenue / Selling Price ($)</label>
           <input type="number" id="pmRevenue3" class="form-input" value="100" min="0" step="0.01" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;" />
         </div>
         <div class="form-group" style="display: flex; flex-direction: column; gap: var(--spacing-xxs);">
@@ -506,7 +526,7 @@
       <p>
         Suppose you run an e-commerce shop and buy items from a supplier for $60. You want to maintain a standard 40% profit margin. The calculation steps are:
       </p>
-      blockquote>
+      <blockquote>
         <strong>Wholesale Cost:</strong> $60.00 | <strong>Desired Margin:</strong> 40.00%<br/>
         <strong>Required Selling Price:</strong> Cost ÷ (1 − Margin/100) = $60 ÷ 0.6 = $100.00<br/>
         <strong>Gross Profit:</strong> Revenue − Cost = $100.00 − $60.00 = $40.00<br/>
@@ -679,6 +699,21 @@
     (function() {
       const $ = id => document.getElementById(id);
       let mode = 'margin';
+      let currSym = '$';
+
+      // Currency selector
+      $('pmCurrency').addEventListener('change', function() {
+        currSym = this.value;
+        updateCurrencyLabels();
+        calculate();
+      });
+
+      function updateCurrencyLabels() {
+        $('pmLblCost1').textContent = `Cost Price (${currSym})`;
+        $('pmLblRevenue1').textContent = `Selling Price / Revenue (${currSym})`;
+        $('pmLblCost2').textContent = `Cost Price (${currSym})`;
+        $('pmLblRevenue3').textContent = `Revenue / Selling Price (${currSym})`;
+      }
 
       const tabs = document.querySelectorAll('.mode-tab');
       tabs.forEach(tab => {
@@ -692,6 +727,8 @@
           calculate();
         });
       });
+
+      function fmt(n) { return currSym + n.toFixed(2); }
 
       function calculate() {
         let cost = 0, revenue = 0, profit = 0, marginPct = 0, markupPct = 0;
@@ -718,9 +755,9 @@
 
         $('pmResMargin').textContent = marginPct.toFixed(2) + '%';
         $('pmResMarkup').textContent = markupPct.toFixed(2) + '%';
-        $('pmResProfit').textContent = '$' + profit.toFixed(2);
-        $('pmResCost').textContent = '$' + cost.toFixed(2);
-        $('pmResRevenue').textContent = '$' + revenue.toFixed(2);
+        $('pmResProfit').textContent = fmt(profit);
+        $('pmResCost').textContent = fmt(cost);
+        $('pmResRevenue').textContent = fmt(revenue);
 
         const costPct = revenue > 0 ? Math.max(5, (cost / revenue) * 100) : 50;
         const profitPct = revenue > 0 ? Math.max(5, (profit / revenue) * 100) : 50;
@@ -730,11 +767,11 @@
         $('pmBarProfit').textContent = `Profit ${Math.round(profitPct)}%`;
 
         if (mode === 'margin') {
-          $('pmFormula').innerHTML = `Profit = Revenue − Cost = $${revenue.toFixed(2)} − $${cost.toFixed(2)} = $${profit.toFixed(2)}<br/>Margin = (Profit ÷ Revenue) × 100 = (${profit.toFixed(2)} ÷ ${revenue.toFixed(2)}) × 100 = ${marginPct.toFixed(2)}%<br/>Markup = (Profit ÷ Cost) × 100 = (${profit.toFixed(2)} ÷ ${cost.toFixed(2)}) × 100 = ${markupPct.toFixed(2)}%`;
+          $('pmFormula').innerHTML = `Profit = Revenue &minus; Cost = ${fmt(revenue)} &minus; ${fmt(cost)} = ${fmt(profit)}<br/>Margin = (Profit &divide; Revenue) &times; 100 = (${profit.toFixed(2)} &divide; ${revenue.toFixed(2)}) &times; 100 = ${marginPct.toFixed(2)}%<br/>Markup = (Profit &divide; Cost) &times; 100 = (${profit.toFixed(2)} &divide; ${cost.toFixed(2)}) &times; 100 = ${markupPct.toFixed(2)}%`;
         } else if (mode === 'selling') {
-          $('pmFormula').innerHTML = `Selling Price = Cost ÷ (1 − Margin/100) = $${cost.toFixed(2)} ÷ ${(1 - marginPct/100).toFixed(4)} = $${revenue.toFixed(2)}<br/>Profit = Revenue − Cost = $${revenue.toFixed(2)} − $${cost.toFixed(2)} = $${profit.toFixed(2)}<br/>Markup = (Profit ÷ Cost) × 100 = ${markupPct.toFixed(2)}%`;
+          $('pmFormula').innerHTML = `Selling Price = Cost &divide; (1 &minus; Margin/100) = ${fmt(cost)} &divide; ${(1 - marginPct/100).toFixed(4)} = ${fmt(revenue)}<br/>Profit = Revenue &minus; Cost = ${fmt(revenue)} &minus; ${fmt(cost)} = ${fmt(profit)}<br/>Markup = (Profit &divide; Cost) &times; 100 = ${markupPct.toFixed(2)}%`;
         } else {
-          $('pmFormula').innerHTML = `Cost = Revenue × (1 − Margin/100) = $${revenue.toFixed(2)} × ${(1 - marginPct/100).toFixed(4)} = $${cost.toFixed(2)}<br/>Profit = Revenue − Cost = $${revenue.toFixed(2)} − $${cost.toFixed(2)} = $${profit.toFixed(2)}<br/>Markup = (Profit ÷ Cost) × 100 = ${markupPct.toFixed(2)}%`;
+          $('pmFormula').innerHTML = `Cost = Revenue &times; (1 &minus; Margin/100) = ${fmt(revenue)} &times; ${(1 - marginPct/100).toFixed(4)} = ${fmt(cost)}<br/>Profit = Revenue &minus; Cost = ${fmt(revenue)} &minus; ${fmt(cost)} = ${fmt(profit)}<br/>Markup = (Profit &divide; Cost) &times; 100 = ${markupPct.toFixed(2)}%`;
         }
       }
 

@@ -27,7 +27,7 @@
   </script>
   <style>
     .contact-container {
-      max-width: 800px;
+      max-width: 600px;
       margin: 0 auto;
     }
     .contact-lead {
@@ -36,53 +36,13 @@
       line-height: 1.6;
       margin-bottom: var(--spacing-xl);
     }
-    .contact-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: var(--spacing-2xl);
-      margin-top: var(--spacing-lg);
-    }
-    @media (max-width: 768px) {
-      .contact-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-xl);
-      }
-    }
     .contact-card {
       background-color: var(--colors-canvas);
       border: 1px solid var(--colors-hairline);
       border-radius: var(--rounded-lg);
       padding: var(--spacing-xl);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.01);
-    }
-    .contact-info-section {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-lg);
-    }
-    .info-block {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-xxs);
-    }
-    .info-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: var(--colors-mute);
-      letter-spacing: 0.5px;
-    }
-    .info-value {
-      font-size: 15px;
-      color: var(--colors-ink);
-      font-weight: 500;
-      text-decoration: none;
-    }
-    .info-desc {
-      font-size: 13px;
-      color: var(--colors-body);
-      line-height: 1.5;
+      margin-top: var(--spacing-lg);
     }
     .form-group {
       display: flex;
@@ -177,77 +137,54 @@
     <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
   </div>
 
-  <main class="app-container">
+  <main class="app-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl); position: relative; z-index: 1;">
     <div class="contact-container">
       <div class="page-header">
         <h1 class="page-title">Contact Us.</h1>
         <p class="contact-lead">Have questions, bugs to report, or ideas for new client-side tools? Reach out directly and let us know how we can make ConvertOcean better.</p>
       </div>
 
-      <div class="contact-grid">
-        <!-- Contact Form Card -->
-        <div class="contact-card">
-          <div id="submitSuccess" class="submit-success">
-            <span>✅</span>
-            <span>Thank you for your message! Since we run entirely client-side, your email client will open to send this message securely.</span>
-          </div>
-
-          <form id="contactForm" onsubmit="event.preventDefault(); handleContactSubmit();">
-            <div class="form-group">
-              <label for="contactName" class="form-label">Name</label>
-              <input type="text" id="contactName" class="form-input" placeholder="Your name" required />
-            </div>
-
-            <div class="form-group">
-              <label for="contactEmail" class="form-label">Email Address</label>
-              <input type="email" id="contactEmail" class="form-input" placeholder="you@example.com" required />
-            </div>
-
-            <div class="form-group">
-              <label for="contactReason" class="form-label">Reason for Inquiry</label>
-              <select id="contactReason" class="select-input" required>
-                <option value="General Support">General Support / FAQ Inquiry</option>
-                <option value="Bug Report">Bug Report / Tool Malfunction</option>
-                <option value="Feature Request">Feature Request / New Tool Idea</option>
-                <option value="Partnership">Partnership / Corporate Integration</option>
-                <option value="Security">Security Disclosures</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="contactMessage" class="form-label">Message</label>
-              <textarea id="contactMessage" class="form-input text-area" placeholder="Write your message here..." required></textarea>
-            </div>
-
-            <button type="submit" class="button button-primary" style="width: 100%; margin-top: var(--spacing-sm);">Send Message</button>
-          </form>
-
-          <p class="contact-privacy-note">
-            <span>🔒</span>
-            <span><strong>Privacy Note:</strong> We do not store form data in any cloud databases. Sending this form opens a local secure mail link to forward your message directly from your browser.</span>
-          </p>
+      <!-- Contact Form Card -->
+      <div class="contact-card">
+        <div id="submitSuccess" class="submit-success">
+          <span>✅</span>
+          <span>Thank you for your message! Since we run entirely client-side, your email client will open to send this message securely.</span>
         </div>
 
-        <!-- Contact Information Sidebar -->
-        <div class="contact-info-section">
-          <div class="info-block">
-            <span class="info-label">Developer Support</span>
-            <a href="mailto:support@convertocean.com" class="info-value">support@convertocean.com</a>
-            <p class="info-desc">Reach out for help with file conversions, feature guides, or generic support.</p>
+        <form id="contactForm" onsubmit="event.preventDefault(); handleContactSubmit();">
+          <div class="form-group">
+            <label for="contactName" class="form-label">Name</label>
+            <input type="text" id="contactName" class="form-input" placeholder="Your name" required />
           </div>
 
-          <div class="info-block">
-            <span class="info-label">Partnerships</span>
-            <a href="mailto:partners@convertocean.com" class="info-value">partners@convertocean.com</a>
-            <p class="info-desc">For white-label inquiries, local offline tools, or browser integration requests.</p>
+          <div class="form-group">
+            <label for="contactEmail" class="form-label">Email Address</label>
+            <input type="email" id="contactEmail" class="form-input" placeholder="you@example.com" required />
           </div>
 
-          <div class="info-block">
-            <span class="info-label">Security & OCR Reporting</span>
-            <a href="mailto:security@convertocean.com" class="info-value">security@convertocean.com</a>
-            <p class="info-desc">Report vulnerabilities, data leakage concerns, or private OCR sandbox bugs.</p>
+          <div class="form-group">
+            <label for="contactReason" class="form-label">Reason for Inquiry</label>
+            <select id="contactReason" class="select-input" required>
+              <option value="General Support">General Support / FAQ Inquiry</option>
+              <option value="Bug Report">Bug Report / Tool Malfunction</option>
+              <option value="Feature Request">Feature Request / New Tool Idea</option>
+              <option value="Partnership">Partnership / Corporate Integration</option>
+              <option value="Security">Security Disclosures</option>
+            </select>
           </div>
-        </div>
+
+          <div class="form-group">
+            <label for="contactMessage" class="form-label">Message</label>
+            <textarea id="contactMessage" class="form-input text-area" placeholder="Write your message here..." required></textarea>
+          </div>
+
+          <button type="submit" class="button button-primary" style="width: 100%; margin-top: var(--spacing-sm);">Send Message</button>
+        </form>
+
+        <p class="contact-privacy-note">
+          <span>🔒</span>
+          <span><strong>Privacy Note:</strong> We do not store form data in any cloud databases. Sending this form opens a local secure mail link to forward your message directly from your browser.</span>
+        </p>
       </div>
     </div>
   </main>
@@ -346,7 +283,7 @@
       const subject = encodeURIComponent(`ConvertOcean [${reason}] - From ${name}`);
       const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nInquiry: ${reason}\n\nMessage:\n${message}`);
       
-      const mailtoUrl = `mailto:support@convertocean.com?subject=${subject}&body=${body}`;
+      const mailtoUrl = `mailto:kavyanshtech7@gmail.com?subject=${subject}&body=${body}`;
       
       document.getElementById('submitSuccess').style.display = 'flex';
       document.getElementById('contactForm').reset();

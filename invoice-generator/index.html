@@ -573,9 +573,30 @@
         </div>
         <div class="form-row">
           <div class="form-group">
+            <label for="invCurrency">Currency</label>
+            <select id="invCurrency" class="select-input" onchange="updateCurrency(this.value)">
+              <option value="$" selected>$ &ndash; US Dollar (USD)</option>
+              <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
+              <option value="&pound;">&pound; &ndash; British Pound (GBP)</option>
+              <option value="&#8377;">&#8377; &ndash; Indian Rupee (INR)</option>
+              <option value="&yen;">&yen; &ndash; Japanese Yen (JPY)</option>
+              <option value="&yen;">&yen; &ndash; Chinese Yuan (CNY)</option>
+              <option value="C$">C$ &ndash; Canadian Dollar (CAD)</option>
+              <option value="A$">A$ &ndash; Australian Dollar (AUD)</option>
+              <option value="CHF">CHF &ndash; Swiss Franc</option>
+              <option value="AED">AED &ndash; UAE Dirham</option>
+              <option value="SGD">SGD &ndash; Singapore Dollar</option>
+              <option value="R">R &ndash; South African Rand</option>
+              <option value="zł">zł &ndash; Polish Złoty (PLN)</option>
+              <option value="₩">₩ &ndash; South Korean Won (KRW)</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label for="inputInvDate">Invoice Date</label>
             <input type="date" id="inputInvDate" class="form-input" onchange="updateField('InvDate', this.value)">
           </div>
+        </div>
+        <div class="form-row">
           <div class="form-group">
             <label for="inputDueDate">Due Date</label>
             <input type="date" id="inputDueDate" class="form-input" onchange="updateField('DueDate', this.value)">
@@ -617,7 +638,7 @@
             <tr>
               <th style="width: 50%;">Description</th>
               <th style="width: 15%;">Qty</th>
-              <th style="width: 25%;">Rate ($)</th>
+              <th id="invRateHeader" style="width: 25%;">Rate ($)</th>
               <th style="width: 10%;"></th>
             </tr>
           </thead>
@@ -957,6 +978,15 @@
       ]
     };
 
+    let invCurrSym = '$';
+
+    function updateCurrency(sym) {
+      invCurrSym = sym;
+      const hdr = document.getElementById('invRateHeader');
+      if (hdr) hdr.textContent = `Rate (${sym})`;
+      updatePreviewPage();
+    }
+
     window.addEventListener('load', () => {
       // Set default dates
       const today = new Date();
@@ -1054,6 +1084,8 @@
       }
     }
 
+    function fmt(n) { return invCurrSym + n.toFixed(2); }
+
     function updatePreviewPage() {
       document.getElementById('pdfVendorTitle').textContent = invoiceData.VendorName || "Billing Entity";
       document.getElementById('pdfVendorAddr').textContent = invoiceData.VendorAddress;
@@ -1075,13 +1107,13 @@
         tr.innerHTML = `
           <td>${item.desc || "Line item details"}</td>
           <td class="right-align">${item.qty}</td>
-          <td class="right-align">$${item.rate.toFixed(2)}</td>
-          <td class="right-align">$${itemAmount.toFixed(2)}</td>
+          <td class="right-align">${fmt(item.rate)}</td>
+          <td class="right-align">${fmt(itemAmount)}</td>
         `;
         tbody.appendChild(tr);
       });
 
-      document.getElementById('pdfSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById('pdfSubtotal').textContent = fmt(subtotal);
       const taxAmount = subtotal * invoiceData.TaxRate;
       const grandTotal = subtotal + taxAmount;
 
@@ -1091,9 +1123,9 @@
       } else {
         taxRow.style.display = 'table-row';
         document.getElementById('pdfTaxLabel').textContent = `${invoiceData.TaxModel} (${(invoiceData.TaxRate * 100)}%)`;
-        document.getElementById('pdfTaxAmount').textContent = `$${taxAmount.toFixed(2)}`;
+        document.getElementById('pdfTaxAmount').textContent = fmt(taxAmount);
       }
-      document.getElementById('pdfGrandTotal').textContent = `$${grandTotal.toFixed(2)}`;
+      document.getElementById('pdfGrandTotal').textContent = fmt(grandTotal);
     }
 
     function formatDate(dateString) {

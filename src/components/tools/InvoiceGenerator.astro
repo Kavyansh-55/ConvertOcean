@@ -282,7 +282,7 @@ const { slug, headline, subtitle } = Astro.props;
       margin-bottom: 4px;
     }
     .item-edit-row td:nth-child(3)::before {
-      content: "Rate ($)";
+      content: "Rate";
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
@@ -332,9 +332,30 @@ const { slug, headline, subtitle } = Astro.props;
       </div>
       <div class="form-row">
         <div class="form-group">
+          <label class="form-label" for="invCurrency">Currency</label>
+          <select id="invCurrency" class="select-input">
+            <option value="$" selected>$ &ndash; US Dollar (USD)</option>
+            <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
+            <option value="&pound;">&pound; &ndash; British Pound (GBP)</option>
+            <option value="&#8377;">&#8377; &ndash; Indian Rupee (INR)</option>
+            <option value="&yen;">&yen; &ndash; Japanese Yen (JPY)</option>
+            <option value="&yen;">&yen; &ndash; Chinese Yuan (CNY)</option>
+            <option value="C$">C$ &ndash; Canadian Dollar (CAD)</option>
+            <option value="A$">A$ &ndash; Australian Dollar (AUD)</option>
+            <option value="CHF">CHF &ndash; Swiss Franc</option>
+            <option value="AED">AED &ndash; UAE Dirham</option>
+            <option value="SGD">SGD &ndash; Singapore Dollar</option>
+            <option value="R">R &ndash; South African Rand</option>
+            <option value="zł">zł &ndash; Polish Złoty (PLN)</option>
+            <option value="₩">₩ &ndash; South Korean Won (KRW)</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label class="form-label" for="inputInvDate">Invoice Date</label>
           <input type="date" id="inputInvDate" class="form-input" />
         </div>
+      </div>
+      <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="inputDueDate">Due Date</label>
           <input type="date" id="inputDueDate" class="form-input" />
@@ -376,7 +397,7 @@ const { slug, headline, subtitle } = Astro.props;
           <tr>
             <th style="width: 50%;">Description</th>
             <th style="width: 15%;">Qty</th>
-            <th style="width: 25%;">Rate ($)</th>
+            <th style="width: 25%;" id="invRateHeader">Rate ($)</th>
             <th style="width: 10%;"></th>
           </tr>
         </thead>
@@ -498,8 +519,10 @@ const { slug, headline, subtitle } = Astro.props;
       ]
     };
 
+    let invCurrSym = '$';
     const inputInvNo = document.getElementById('inputInvNo');
     const inputTaxSelect = document.getElementById('inputTaxSelect');
+    const invCurrency = document.getElementById('invCurrency');
     const inputInvDate = document.getElementById('inputInvDate');
     const inputDueDate = document.getElementById('inputDueDate');
     const inputVendorName = document.getElementById('inputVendorName');
@@ -541,6 +564,8 @@ const { slug, headline, subtitle } = Astro.props;
       previewPane.style.minHeight = `${900 * scale + 40}px`;
     }
 
+    function fmt(n) { return invCurrSym + n.toFixed(2); }
+
     function updatePreviewPage() {
       document.getElementById('pdfVendorTitle').textContent = invoiceData.VendorName || "Billing Entity";
       document.getElementById('pdfVendorAddr').textContent = invoiceData.VendorAddress;
@@ -562,13 +587,13 @@ const { slug, headline, subtitle } = Astro.props;
         tr.innerHTML = `
           <td>${item.desc || "Line item details"}</td>
           <td class="right-align">${item.qty}</td>
-          <td class="right-align">$${item.rate.toFixed(2)}</td>
-          <td class="right-align">$${itemAmount.toFixed(2)}</td>
+          <td class="right-align">${fmt(item.rate)}</td>
+          <td class="right-align">${fmt(itemAmount)}</td>
         `;
         tbody.appendChild(tr);
       });
 
-      document.getElementById('pdfSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById('pdfSubtotal').textContent = fmt(subtotal);
       const taxAmount = subtotal * invoiceData.TaxRate;
       const grandTotal = subtotal + taxAmount;
 
@@ -578,13 +603,15 @@ const { slug, headline, subtitle } = Astro.props;
       } else {
         taxRow.style.display = 'table-row';
         document.getElementById('pdfTaxLabel').textContent = `${invoiceData.TaxModel} (${(invoiceData.TaxRate * 100)}%)`;
-        document.getElementById('pdfTaxAmount').textContent = `$${taxAmount.toFixed(2)}`;
+        document.getElementById('pdfTaxAmount').textContent = fmt(taxAmount);
       }
-      document.getElementById('pdfGrandTotal').textContent = `$${grandTotal.toFixed(2)}`;
+      document.getElementById('pdfGrandTotal').textContent = fmt(grandTotal);
     }
 
     function renderEditorTable() {
       itemEditRows.innerHTML = '';
+      const hdr = document.getElementById('invRateHeader');
+      if (hdr) hdr.textContent = `Rate (${invCurrSym})`;
       invoiceData.LineItems.forEach((item, index) => {
         const tr = document.createElement('tr');
         tr.className = 'item-edit-row';
@@ -643,6 +670,11 @@ const { slug, headline, subtitle } = Astro.props;
       } else {
         invoiceData.TaxRate = 0;
       }
+      updatePreviewPage();
+    });
+    invCurrency.addEventListener('change', (e) => {
+      invCurrSym = e.target.value;
+      renderEditorTable();
       updatePreviewPage();
     });
     inputInvDate.addEventListener('change', (e) => { invoiceData.InvDate = e.target.value; updatePreviewPage(); });

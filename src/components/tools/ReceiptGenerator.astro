@@ -292,7 +292,7 @@ const { slug, headline, subtitle } = Astro.props;
       margin-bottom: 4px;
     }
     .item-edit-row td:nth-child(3)::before {
-      content: "Rate ($)";
+      content: "Rate";
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
@@ -335,14 +335,22 @@ const { slug, headline, subtitle } = Astro.props;
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label" for="rcptPayMethod">Payment Method</label>
-          <select id="rcptPayMethod" class="select-input">
-            <option value="Cash">Cash</option>
-            <option value="Credit Card" selected>Credit Card</option>
-            <option value="Debit Card">Debit Card</option>
-            <option value="Bank Transfer">Bank Transfer</option>
-            <option value="PayPal">PayPal</option>
-            <option value="Check">Check</option>
+          <label class="form-label" for="rcptCurrency">Currency</label>
+          <select id="rcptCurrency" class="select-input">
+            <option value="$" selected>$ &ndash; US Dollar (USD)</option>
+            <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
+            <option value="&pound;">&pound; &ndash; British Pound (GBP)</option>
+            <option value="&#8377;">&#8377; &ndash; Indian Rupee (INR)</option>
+            <option value="&yen;">&yen; &ndash; Japanese Yen (JPY)</option>
+            <option value="&yen;">&yen; &ndash; Chinese Yuan (CNY)</option>
+            <option value="C$">C$ &ndash; Canadian Dollar (CAD)</option>
+            <option value="A$">A$ &ndash; Australian Dollar (AUD)</option>
+            <option value="CHF">CHF &ndash; Swiss Franc</option>
+            <option value="AED">AED &ndash; UAE Dirham</option>
+            <option value="SGD">SGD &ndash; Singapore Dollar</option>
+            <option value="R">R &ndash; South African Rand</option>
+            <option value="zł">zł &ndash; Polish Złoty (PLN)</option>
+            <option value="₩">₩ &ndash; South Korean Won (KRW)</option>
           </select>
         </div>
         <div class="form-group">
@@ -352,6 +360,19 @@ const { slug, headline, subtitle } = Astro.props;
             <option value="GST" selected>GST (18%)</option>
             <option value="IGST">IGST (18%)</option>
             <option value="VAT">VAT (15%)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="rcptPayMethod">Payment Method</label>
+          <select id="rcptPayMethod" class="select-input">
+            <option value="Cash">Cash</option>
+            <option value="Credit Card" selected>Credit Card</option>
+            <option value="Debit Card">Debit Card</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="PayPal">PayPal</option>
+            <option value="Check">Check</option>
           </select>
         </div>
       </div>
@@ -388,7 +409,7 @@ const { slug, headline, subtitle } = Astro.props;
           <tr>
             <th style="width: 50%;">Description</th>
             <th style="width: 15%;">Qty</th>
-            <th style="width: 25%;">Rate ($)</th>
+            <th style="width: 25%;" id="rcptRateHeader">Rate ($)</th>
             <th style="width: 10%;"></th>
           </tr>
         </thead>
@@ -504,6 +525,7 @@ const { slug, headline, subtitle } = Astro.props;
       ]
     };
 
+    let rcptCurrSym = '$';
     const $ = (id) => document.getElementById(id);
 
     window.addEventListener('load', () => {
@@ -527,6 +549,8 @@ const { slug, headline, subtitle } = Astro.props;
       pane.style.minHeight = `${800 * s + 40}px`;
     }
 
+    function fmt(n) { return rcptCurrSym + n.toFixed(2); }
+
     function updatePreview() {
       $('rcptPdfVendorTitle').textContent = rcptData.VendorName || "Business Name";
       $('rcptPdfVendorAddr').textContent = rcptData.VendorAddress;
@@ -543,11 +567,11 @@ const { slug, headline, subtitle } = Astro.props;
         const amt = item.qty * item.rate;
         subtotal += amt;
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${item.desc || "Item"}</td><td class="right-align">${item.qty}</td><td class="right-align">$${item.rate.toFixed(2)}</td><td class="right-align">$${amt.toFixed(2)}</td>`;
+        tr.innerHTML = `<td>${item.desc || "Item"}</td><td class="right-align">${item.qty}</td><td class="right-align">${fmt(item.rate)}</td><td class="right-align">${fmt(amt)}</td>`;
         tbody.appendChild(tr);
       });
 
-      $('rcptPdfSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+      $('rcptPdfSubtotal').textContent = fmt(subtotal);
       const tax = subtotal * rcptData.TaxRate;
       const grand = subtotal + tax;
       const taxRow = $('rcptPdfTaxRow');
@@ -556,14 +580,17 @@ const { slug, headline, subtitle } = Astro.props;
       } else {
         taxRow.style.display = 'table-row';
         $('rcptPdfTaxLabel').textContent = `${rcptData.TaxModel} (${(rcptData.TaxRate * 100)}%)`;
-        $('rcptPdfTaxAmount').textContent = `$${tax.toFixed(2)}`;
+        $('rcptPdfTaxAmount').textContent = fmt(tax);
       }
-      $('rcptPdfGrandTotal').textContent = `$${grand.toFixed(2)}`;
+      $('rcptPdfGrandTotal').textContent = fmt(grand);
     }
 
     function renderEditorTable() {
       const tbody = $('rcptItemEditRows');
       tbody.innerHTML = '';
+      // Update header
+      const hdr = $('rcptRateHeader');
+      if (hdr) hdr.textContent = `Rate (${rcptCurrSym})`;
       rcptData.LineItems.forEach((item, i) => {
         const tr = document.createElement('tr');
         tr.className = 'item-edit-row';
@@ -601,6 +628,11 @@ const { slug, headline, subtitle } = Astro.props;
     $('rcptNo').addEventListener('input', e => { rcptData.No = e.target.value; updatePreview(); });
     $('rcptDate').addEventListener('change', e => { rcptData.Date = e.target.value; updatePreview(); });
     $('rcptPayMethod').addEventListener('change', e => { rcptData.PayMethod = e.target.value; updatePreview(); });
+    $('rcptCurrency').addEventListener('change', e => {
+      rcptCurrSym = e.target.value;
+      renderEditorTable();
+      updatePreview();
+    });
     $('rcptTaxSelect').addEventListener('change', e => {
       const t = e.target.value;
       rcptData.TaxModel = t;
