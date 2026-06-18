@@ -43,21 +43,33 @@ const { slug, headline, subtitle } = Astro.props;
   <div id="progressLabel" class="progress-label">Processing files…</div>
 </div>
 
-<!-- Upload Card -->
-<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
-  <div class="upload-icon">🥞</div>
-  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
-  <div class="upload-text-secondary">Upload multiple PDF files (Max 25MB each)</div>
-  <input type="file" id="fileInput" class="file-input" accept=".pdf" multiple />
-</div>
+<div class="workspace-layout">
+  <!-- Upload & Arrange List Panel -->
+  <div class="panel-card">
+    <h3 class="panel-section-title">Upload & Arrange PDFs</h3>
+    
+    <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">🥞</div>
+      <div class="upload-text-primary">Drag and drop files here, or click to browse</div>
+      <div class="upload-text-secondary">Upload PDF files (Max 25MB each, multiple allowed)</div>
+      <input type="file" id="fileInput" class="file-input" accept=".pdf" multiple />
+    </div>
 
-<div id="mergeWorkspace" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
-  <div id="fileItemsList" class="file-list" style="margin-bottom: var(--spacing-md);"></div>
-  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
-    <input type="text" id="mergeOutputName" class="form-input" style="max-width: 300px;" value="merged_document.pdf" />
-    <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" id="btnMerge">Merge & Download</button>
-      <button class="button button-danger" id="btnClear">Clear</button>
+    <div id="fileItemsList" class="file-list" style="display: none; margin-top: var(--spacing-md);"></div>
+  </div>
+
+  <!-- Settings & Merge Panel -->
+  <div class="panel-card">
+    <h3 class="panel-section-title">Merge Configuration</h3>
+    
+    <div class="form-group">
+      <label class="form-label" for="mergeOutputName">Output Filename</label>
+      <input type="text" id="mergeOutputName" class="form-input" value="merged_document.pdf" />
+    </div>
+
+    <div class="button-group" style="margin-top: auto; display: flex; gap: var(--spacing-sm);">
+      <button class="button button-primary" id="btnMerge" disabled style="flex: 1;">Merge & Download</button>
+      <button class="button button-danger" id="btnClear" disabled>Clear Queue</button>
     </div>
   </div>
 </div>
@@ -71,7 +83,6 @@ const { slug, headline, subtitle } = Astro.props;
     const progressOverlay = document.getElementById('progressOverlay');
     const progressBarFill = document.getElementById('progressBarFill');
     const progressLabel = document.getElementById('progressLabel');
-    const mergeWorkspace = document.getElementById('mergeWorkspace');
     const fileItemsList = document.getElementById('fileItemsList');
     const mergeOutputName = document.getElementById('mergeOutputName');
     const btnMerge = document.getElementById('btnMerge');
@@ -112,6 +123,18 @@ const { slug, headline, subtitle } = Astro.props;
       progressLabel.textContent = label;
     }
 
+    // Fix helper since downloadBlob was missing in some layout scopes
+    window.downloadBlob = window.downloadBlob || function(blob, name) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
     function hideProgress() {
       progressOverlay.style.display = 'none';
     }
@@ -145,6 +168,7 @@ const { slug, headline, subtitle } = Astro.props;
             processed++;
 
             if (processed === files.length) {
+              fileInput.value = ''; // reset so same file can be re-added
               renderList();
               hideProgress();
             }
@@ -159,6 +183,14 @@ const { slug, headline, subtitle } = Astro.props;
     }
 
     function renderList() {
+      if (mergeFiles.length === 0) {
+        fileItemsList.innerHTML = '';
+        fileItemsList.style.display = 'none';
+        btnMerge.disabled = true;
+        btnClear.disabled = true;
+        return;
+      }
+
       fileItemsList.innerHTML = '';
       mergeFiles.forEach((file, index) => {
         const div = document.createElement('div');
@@ -169,17 +201,14 @@ const { slug, headline, subtitle } = Astro.props;
         `;
         fileItemsList.appendChild(div);
       });
-      mergeWorkspace.style.display = 'block';
-      dropZone.style.display = 'none';
+      fileItemsList.style.display = 'flex';
+      btnMerge.disabled = false;
+      btnClear.disabled = false;
     }
 
     window.removeMergeFile = function(idx) {
       mergeFiles.splice(idx, 1);
-      if (mergeFiles.length === 0) {
-        resetFile();
-      } else {
-        renderList();
-      }
+      renderList();
     };
 
     btnMerge.addEventListener('click', async () => {
@@ -210,10 +239,10 @@ const { slug, headline, subtitle } = Astro.props;
 
     function resetFile() {
       mergeFiles = [];
-      mergeWorkspace.style.display = 'none';
-      dropZone.style.display = 'flex';
+      renderList();
       fileInput.value = '';
       hideProgress();
+      hideError();
     }
   })();
 </script>

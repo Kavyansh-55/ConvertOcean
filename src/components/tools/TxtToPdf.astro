@@ -9,22 +9,30 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-md);
     padding: var(--spacing-lg);
-    font-family: 'Inter', sans-serif;
-    font-size: 13.5px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
     line-height: 1.6;
     white-space: pre-wrap;
-    min-height: 250px;
-    max-height: 450px;
+    min-height: 200px;
+    max-height: 400px;
     overflow: auto;
     margin-top: var(--spacing-lg);
     width: 100%;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
+    word-break: break-word;
+  }
+  .file-meta {
+    font-size: 12px;
+    color: var(--colors-mute);
+    margin-top: var(--spacing-xs);
+    text-align: center;
   }
 </style>
 
-<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- jsPDF via unpkg — reliable, versioned -->
+<script is:inline src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <div class="page-header">
   <h1 class="page-title">{headline}</h1>
@@ -50,128 +58,197 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="upload-icon">📄</div>
   <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
   <div class="upload-text-secondary">Upload TXT file (Max 15MB)</div>
-  <input type="file" id="fileInput" class="file-input" accept=".txt" />
+  <input type="file" id="fileInput" class="file-input" accept=".txt,.text,.log,.md,.csv" />
 </div>
 
 <pre id="txtPreview" class="txt-preview" style="display: none;"></pre>
+<div id="fileMeta" class="file-meta" style="display:none;"></div>
 
 <div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
   <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
   <div class="button-group">
-    <button class="button button-primary" id="btnDownload">Convert & Download PDF</button>
+    <button class="button button-primary" id="btnDownload">Convert &amp; Download PDF</button>
     <button class="button button-danger" id="btnClear">Clear</button>
   </div>
 </div>
 
 <script is:inline>
   (function() {
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const errorBanner = document.getElementById('errorBanner');
-    const errorMessage = document.getElementById('errorMessage');
+    const dropZone      = document.getElementById('dropZone');
+    const fileInput     = document.getElementById('fileInput');
+    const errorBanner   = document.getElementById('errorBanner');
+    const errorMessage  = document.getElementById('errorMessage');
     const progressOverlay = document.getElementById('progressOverlay');
     const progressBarFill = document.getElementById('progressBarFill');
     const progressLabel = document.getElementById('progressLabel');
-    const txtPreview = document.getElementById('txtPreview');
+    const txtPreview    = document.getElementById('txtPreview');
+    const fileMeta      = document.getElementById('fileMeta');
     const actionControls = document.getElementById('actionControls');
     const fileNameDisplay = document.getElementById('fileNameDisplay');
-    const btnDownload = document.getElementById('btnDownload');
-    const btnClear = document.getElementById('btnClear');
+    const btnDownload   = document.getElementById('btnDownload');
+    const btnClear      = document.getElementById('btnClear');
 
     let textContents = '';
     let originalName = '';
 
-    // Drag and drop setup
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.add('dragover');
-      }, false);
+    // ── Drag & drop ──────────────────────────────────────────────────
+    ['dragenter', 'dragover'].forEach(evt => {
+      dropZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); dropZone.classList.add('dragover'); }, false);
     });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.remove('dragover');
-      }, false);
+    ['dragleave', 'drop'].forEach(evt => {
+      dropZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('dragover'); }, false);
     });
-
-    dropZone.addEventListener('drop', (e) => {
-      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+    dropZone.addEventListener('drop', e => {
+      const files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+    fileInput.addEventListener('change', e => {
+      const files = Array.from(e.target.files).slice(0, 1);
       if (files.length > 0) handleFile(files[0]);
     });
 
-    fileInput.addEventListener('change', (e) => {
-      let files = Array.from(e.target.files).slice(0, 1);
-      if (files.length > 0) handleFile(files[0]);
-    });
-
+    // ── UI helpers ───────────────────────────────────────────────────
     function showProgress(pct, label) {
       progressOverlay.style.display = 'flex';
       progressBarFill.style.width = pct + '%';
       progressLabel.textContent = label;
     }
-
-    function hideProgress() {
-      progressOverlay.style.display = 'none';
-    }
-
+    function hideProgress() { progressOverlay.style.display = 'none'; }
     function showError(msg) {
       errorMessage.textContent = msg;
       errorBanner.style.display = 'flex';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    function hideError() { errorBanner.style.display = 'none'; }
 
-    function hideError() {
-      errorBanner.style.display = 'none';
-    }
-
+    // ── File read ────────────────────────────────────────────────────
     function handleFile(file) {
       hideError();
       originalName = file.name;
-      showProgress(30, "Reading raw text content…");
+      showProgress(20, 'Reading text file…');
       const reader = new FileReader();
       reader.onload = function(e) {
-        textContents = e.target.result;
-        txtPreview.textContent = textContents;
+        textContents = e.target.result.replace(/\r/g, '');
+        const lineCount = textContents.split('\n').length;
+        const sizeKb    = (file.size / 1024).toFixed(1);
+        // Show a truncated preview (first 200 lines) so the <pre> doesn't hang the browser
+        const previewLines = textContents.split('\n').slice(0, 200).join('\n');
+        txtPreview.textContent = previewLines + (lineCount > 200 ? `\n\n… (showing first 200 of ${lineCount.toLocaleString()} lines — full file will be converted)` : '');
         txtPreview.style.display = 'block';
+        fileMeta.textContent = `${file.name} — ${lineCount.toLocaleString()} lines · ${sizeKb} KB`;
+        fileMeta.style.display = 'block';
         fileNameDisplay.textContent = file.name;
         actionControls.style.display = 'flex';
         dropZone.style.display = 'none';
         hideProgress();
       };
       reader.onerror = function() {
-        showError("Failed to read text file.");
+        showError('Failed to read text file.');
         hideProgress();
       };
-      reader.readAsText(file);
+      reader.readAsText(file, 'UTF-8');
     }
 
+    // ── PDF conversion ───────────────────────────────────────────────
     btnDownload.addEventListener('click', () => {
-      showProgress(50, "Compiling print-ready PDF layout…");
-      const opt = {
-        margin:       12,
-        filename:     originalName.replace(/\.[^/.]+$/, "") + '.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(txtPreview).save().then(() => {
+      hideError();
+
+      // Check library loaded
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        showError('PDF library not loaded. Please check your internet connection and reload the page.');
+        return;
+      }
+
+      if (!textContents) {
+        showError('No text content to convert.');
+        return;
+      }
+
+      try {
+        showProgress(30, 'Preparing PDF…');
+
+        const { jsPDF } = window.jspdf;
+
+        // ── Page constants (points — avoids mm float issues) ─────────
+        // A4 portrait: 595.28 × 841.89 pt
+        const PW = 595.28;
+        const PH = 841.89;
+        const ML = 45;       // left margin (pt) ≈ 15.9mm
+        const MT = 45;       // top margin (pt)
+        const MR = 45;       // right margin (pt)
+        const MB = 45;       // bottom margin (pt)
+        const FS = 10;       // font size (pt)
+        const LH = FS * 1.5; // line height (pt) = 15
+
+        const doc = new jsPDF({ unit: 'pt', format: [PW, PH], orientation: 'portrait' });
+        doc.setFont('courier', 'normal');
+        doc.setFontSize(FS);
+
+        // Usable text area
+        const usableW = PW - ML - MR;             // pt for text wrapping
+        // First text baseline position on each page
+        const firstLineY = MT + FS;               // baseline of line 0 = 55pt
+        // How many lines fit per page
+        const linesPerPage = Math.floor((PH - MB - firstLineY) / LH) + 1;
+        // PH - MB - firstLineY = 841.89 - 45 - 55 = 741.89  → floor(741.89/15)+1 = 49+1 = 50
+
+        showProgress(40, 'Splitting text into lines…');
+
+        // Expand every raw line into word-wrapped sub-lines
+        const rawLines = textContents.split('\n');
+        const allLines = [];
+        for (const raw of rawLines) {
+          if (raw.length === 0) {
+            allLines.push(''); // preserve blank lines
+          } else {
+            const wrapped = doc.splitTextToSize(raw, usableW);
+            for (const wl of wrapped) allLines.push(wl);
+          }
+        }
+
+        const totalPages = Math.max(1, Math.ceil(allLines.length / linesPerPage));
+        showProgress(55, `Building ${totalPages} page(s)…`);
+
+        // Render each page
+        for (let pg = 0; pg < totalPages; pg++) {
+          if (pg > 0) doc.addPage([PW, PH]);
+
+          doc.setFont('courier', 'normal');
+          doc.setFontSize(FS);
+
+          const chunk = allLines.slice(pg * linesPerPage, (pg + 1) * linesPerPage);
+          let y = firstLineY; // baseline of first line
+
+          for (const line of chunk) {
+            // jsPDF.text skips empty strings — use a space so blank lines still advance y
+            doc.text(line || ' ', ML, y);
+            y += LH;
+          }
+
+          showProgress(55 + Math.round(((pg + 1) / totalPages) * 40), `Page ${pg + 1} of ${totalPages}…`);
+        }
+
+        showProgress(98, 'Saving…');
+        const pdfName = originalName.replace(/\.[^/.]+$/, '') + '.pdf';
+        doc.save(pdfName);
+        showProgress(100, 'Done!');
+        setTimeout(hideProgress, 900);
+      } catch (err) {
+        showError('PDF creation failed: ' + (err && err.message ? err.message : String(err)));
         hideProgress();
-      }).catch(err => {
-        showError("PDF creation failed.");
-        hideProgress();
-      });
+      }
     });
 
+    // ── Clear ────────────────────────────────────────────────────────
     btnClear.addEventListener('click', () => {
       textContents = '';
+      txtPreview.textContent = '';
       txtPreview.style.display = 'none';
+      fileMeta.style.display = 'none';
       actionControls.style.display = 'none';
       dropZone.style.display = 'flex';
       fileInput.value = '';
+      hideError();
     });
   })();
 </script>

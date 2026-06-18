@@ -67,24 +67,33 @@ const { slug, headline, subtitle } = Astro.props;
   <div id="progressLabel" class="progress-label">Processing files…</div>
 </div>
 
-<!-- Upload Card -->
-<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
-  <div class="upload-icon">📊</div>
-  <div class="upload-text-primary">Drag and drop PowerPoint presentations here, or click to browse</div>
-  <div class="upload-text-secondary">Upload multiple .pptx presentations (Max 25MB each)</div>
-  <input type="file" id="fileInput" class="file-input" accept=".pptx" multiple />
-</div>
-
-<div id="mergeWorkspace" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
-  <div id="fileItemsList" class="file-list" style="margin-bottom: var(--spacing-md);"></div>
-  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
-    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-      <label for="mergeOutputName" style="font-size:13px; font-weight:600; color:var(--colors-body);">Output Filename:</label>
-      <input type="text" id="mergeOutputName" class="form-input" style="max-width: 250px; height: 36px; padding: 0 12px; font-size:13.5px;" value="merged_presentation.pptx" />
+<div class="workspace-layout">
+  <!-- Upload & Arrange List Panel -->
+  <div class="panel-card">
+    <h3 class="panel-section-title">Upload & Arrange PowerPoint Presentations</h3>
+    
+    <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">📊</div>
+      <div class="upload-text-primary">Drag and drop PowerPoint presentations here, or click to browse</div>
+      <div class="upload-text-secondary">Upload multiple .pptx presentations (Max 25MB each)</div>
+      <input type="file" id="fileInput" class="file-input" accept=".pptx" multiple />
     </div>
-    <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" id="btnMerge">Merge & Download</button>
-      <button class="button button-danger" id="btnClear">Clear Queue</button>
+
+    <div id="fileItemsList" class="file-list" style="display: none; margin-top: var(--spacing-md);"></div>
+  </div>
+
+  <!-- Settings & Merge Panel -->
+  <div class="panel-card">
+    <h3 class="panel-section-title">Merge Configuration</h3>
+    
+    <div class="form-group">
+      <label class="form-label" for="mergeOutputName">Output Filename</label>
+      <input type="text" id="mergeOutputName" class="form-input" value="merged_presentation.pptx" />
+    </div>
+
+    <div class="button-group" style="margin-top: auto; display: flex; gap: var(--spacing-sm);">
+      <button class="button button-primary" id="btnMerge" disabled style="flex: 1;">Merge & Download</button>
+      <button class="button button-danger" id="btnClear" disabled>Clear Queue</button>
     </div>
   </div>
 </div>
@@ -98,7 +107,6 @@ const { slug, headline, subtitle } = Astro.props;
     const progressOverlay = document.getElementById('progressOverlay');
     const progressBarFill = document.getElementById('progressBarFill');
     const progressLabel = document.getElementById('progressLabel');
-    const mergeWorkspace = document.getElementById('mergeWorkspace');
     const fileItemsList = document.getElementById('fileItemsList');
     const mergeOutputName = document.getElementById('mergeOutputName');
     const btnMerge = document.getElementById('btnMerge');
@@ -138,6 +146,18 @@ const { slug, headline, subtitle } = Astro.props;
       progressBarFill.style.width = pct + '%';
       progressLabel.textContent = label;
     }
+
+    // Fix helper since downloadBlob was missing in some layout scopes
+    window.downloadBlob = window.downloadBlob || function(blob, name) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
 
     function hideProgress() {
       progressOverlay.style.display = 'none';
@@ -187,6 +207,7 @@ const { slug, headline, subtitle } = Astro.props;
             processed++;
 
             if (processed === files.length) {
+              fileInput.value = ''; // reset so same file can be re-added
               renderList();
               hideProgress();
             }
@@ -201,6 +222,14 @@ const { slug, headline, subtitle } = Astro.props;
     }
 
     function renderList() {
+      if (mergeFiles.length === 0) {
+        fileItemsList.innerHTML = '';
+        fileItemsList.style.display = 'none';
+        btnMerge.disabled = true;
+        btnClear.disabled = true;
+        return;
+      }
+
       fileItemsList.innerHTML = '';
       mergeFiles.forEach((file, index) => {
         const div = document.createElement('div');
@@ -215,8 +244,9 @@ const { slug, headline, subtitle } = Astro.props;
         `;
         fileItemsList.appendChild(div);
       });
-      mergeWorkspace.style.display = 'block';
-      dropZone.style.display = 'none';
+      fileItemsList.style.display = 'flex';
+      btnMerge.disabled = false;
+      btnClear.disabled = false;
     }
 
     window.moveFile = function(index, direction) {
@@ -230,11 +260,7 @@ const { slug, headline, subtitle } = Astro.props;
 
     window.removeMergeFile = function(idx) {
       mergeFiles.splice(idx, 1);
-      if (mergeFiles.length === 0) {
-        resetFile();
-      } else {
-        renderList();
-      }
+      renderList();
     };
 
     btnMerge.addEventListener('click', async () => {
@@ -298,10 +324,11 @@ const { slug, headline, subtitle } = Astro.props;
           const pSldIds = Array.from(pDoc.getElementsByTagName("p:sldId"));
           
           for (let sld of pSldIds) {
-            const origRid = sld.getAttribute("r:id");
+            const origRid = sld.getAttribute("r:id") || sld.getAttribute("id") || sld.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id");
             
             // Find target slide filename
-            const relNode = pRelsDoc.querySelector(`Relationship[Id="${origRid}"]`);
+            const relationships = Array.from(pRelsDoc.getElementsByTagName('Relationship'));
+            const relNode = relationships.find(r => r.getAttribute('Id') === origRid);
             if (!relNode) continue;
 
             const targetSlidePath = relNode.getAttribute("Target"); // e.g. "slides/slide1.xml"
@@ -366,8 +393,7 @@ const { slug, headline, subtitle } = Astro.props;
 
     function resetFile() {
       mergeFiles = [];
-      mergeWorkspace.style.display = 'none';
-      dropZone.style.display = 'flex';
+      renderList();
       fileInput.value = '';
       hideProgress();
       hideError();

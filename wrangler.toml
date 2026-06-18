@@ -4,3 +4,12 @@ compatibility_date = "2026-06-12"
 
 [assets]
 directory = "./dist"
+
+[[routes]]
+pattern = "convertocean.com"
+custom_domain = true
+
+[[routes]]
+pattern = "www.convertocean.com"
+custom_domain = true
+

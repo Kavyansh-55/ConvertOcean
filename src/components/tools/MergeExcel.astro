@@ -95,28 +95,33 @@ const { slug, headline, subtitle } = Astro.props;
   <div id="progressLabel" class="progress-label">Processing files…</div>
 </div>
 
-<!-- Upload Card -->
-<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
-  <div class="upload-icon">🥞</div>
-  <div class="upload-text-primary">Drag and drop spreadsheet files here, or click to browse</div>
-  <div class="upload-text-secondary">Upload XLS, XLSX, or CSV files (Max 25MB each)</div>
-  <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv" multiple />
-</div>
-
-<!-- Merge Workspace Panel -->
-<div id="workspacePanel" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
-  <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute); margin-bottom: 8px;">Excel & CSV Merge Queue</div>
-  
-  <div class="file-list" id="fileItemsList"></div>
-
-  <div style="margin-top: var(--spacing-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm); border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-md);">
-    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-      <label for="mergeOutputName" style="font-size:13px; font-weight:600; color:var(--colors-body);">Output Filename:</label>
-      <input type="text" id="mergeOutputName" class="form-input" style="max-width: 250px; height: 36px; padding: 0 12px; font-size:13.5px;" value="merged_spreadsheet.xlsx">
+<div class="workspace-layout">
+  <!-- Upload & Arrange List Panel -->
+  <div class="panel-card">
+    <h3 class="panel-section-title">Upload & Arrange Spreadsheets</h3>
+    
+    <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">🥞</div>
+      <div class="upload-text-primary">Drag and drop spreadsheet files here, or click to browse</div>
+      <div class="upload-text-secondary">Upload XLS, XLSX, or CSV files (Max 25MB each)</div>
+      <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv" multiple />
     </div>
-    <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" onclick="mergeSpreadsheets()">Merge & Download</button>
-      <button class="button button-danger" onclick="resetWorkspace()">Clear Queue</button>
+
+    <div id="fileItemsList" class="file-list" style="display: none; margin-top: var(--spacing-md);"></div>
+  </div>
+
+  <!-- Settings & Merge Panel -->
+  <div class="panel-card">
+    <h3 class="panel-section-title">Merge Configuration</h3>
+    
+    <div class="form-group">
+      <label class="form-label" for="mergeOutputName">Output Filename</label>
+      <input type="text" id="mergeOutputName" class="form-input" value="merged_spreadsheet.xlsx" />
+    </div>
+
+    <div class="button-group" style="margin-top: auto; display: flex; gap: var(--spacing-sm);">
+      <button class="button button-primary" id="btnMerge" onclick="mergeSpreadsheets()" disabled style="flex: 1;">Merge & Download</button>
+      <button class="button button-danger" id="btnClear" onclick="resetWorkspace()" disabled>Clear Queue</button>
     </div>
   </div>
 </div>
@@ -130,9 +135,10 @@ const { slug, headline, subtitle } = Astro.props;
     const progressOverlay = document.getElementById('progressOverlay');
     const progressBarFill = document.getElementById('progressBarFill');
     const progressLabel = document.getElementById('progressLabel');
-    const workspacePanel = document.getElementById('workspacePanel');
     const fileItemsList = document.getElementById('fileItemsList');
     const mergeOutputName = document.getElementById('mergeOutputName');
+    const btnMerge = document.getElementById('btnMerge');
+    const btnClear = document.getElementById('btnClear');
 
     let mergeQueue = [];
 
@@ -211,11 +217,8 @@ const { slug, headline, subtitle } = Astro.props;
       }
       
       hideProgress();
+      fileInput.value = ''; // reset so same file can be re-added
       renderQueue();
-      if (mergeQueue.length > 0) {
-        workspacePanel.style.display = 'block';
-        dropZone.style.display = 'none';
-      }
     }
 
     function readFileAsArrayBuffer(file) {
@@ -239,12 +242,17 @@ const { slug, headline, subtitle } = Astro.props;
     window.removeItem = function(id) {
       mergeQueue = mergeQueue.filter(f => f.id !== id);
       renderQueue();
-      if (mergeQueue.length === 0) {
-        resetWorkspace();
-      }
     };
 
     function renderQueue() {
+      if (mergeQueue.length === 0) {
+        fileItemsList.innerHTML = '';
+        fileItemsList.style.display = 'none';
+        btnMerge.disabled = true;
+        btnClear.disabled = true;
+        return;
+      }
+
       fileItemsList.innerHTML = '';
       mergeQueue.forEach((file, index) => {
         const item = document.createElement('div');
@@ -262,6 +270,9 @@ const { slug, headline, subtitle } = Astro.props;
         `;
         fileItemsList.appendChild(item);
       });
+      fileItemsList.style.display = 'flex';
+      btnMerge.disabled = false;
+      btnClear.disabled = false;
     }
 
     window.mergeSpreadsheets = function() {
@@ -322,10 +333,9 @@ const { slug, headline, subtitle } = Astro.props;
     window.resetWorkspace = function() {
       mergeQueue = [];
       fileInput.value = '';
-      fileItemsList.innerHTML = '';
-      workspacePanel.style.display = 'none';
-      dropZone.style.display = 'flex';
+      renderQueue();
       hideError();
+      hideProgress();
     };
   })();
 </script>
