@@ -356,28 +356,6 @@
       max-width: 440px;
     }
 
-    .badge-container {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: var(--spacing-sm);
-      margin-bottom: var(--spacing-4xl);
-    }
-
-    .trust-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background-color: var(--colors-canvas);
-      border: 1px solid var(--colors-hairline);
-      padding: 6px var(--spacing-sm);
-      border-radius: var(--rounded-pill);
-      font-size: 13.5px;
-      font-weight: 500;
-      color: var(--colors-body);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-    }
-
     /* Trust section */
     .trust-section {
       max-width: 1200px;
@@ -406,18 +384,39 @@
       border-radius: var(--rounded-lg);
       padding: var(--spacing-lg);
       text-align: left;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
-      transition: transform 0.2s, border-color 0.2s;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02), inset 0px 0px 0px 1px var(--colors-hairline);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
     }
 
     .trust-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-4px);
       border-color: var(--colors-hairline-strong);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), inset 0px 0px 0px 1px var(--colors-hairline-strong);
     }
 
-    .trust-icon {
-      font-size: 24px;
-      margin-bottom: var(--spacing-xs);
+    .trust-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--rounded-md);
+      background-color: var(--colors-canvas-soft-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--spacing-xxs);
+      transition: background-color 0.3s, transform 0.25s ease;
+      border: 1px solid var(--colors-hairline);
+    }
+
+    [data-theme="dark"] .trust-icon-wrapper {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .trust-card:hover .trust-icon-wrapper {
+      transform: scale(1.05);
+      background-color: var(--colors-canvas);
     }
 
     .trust-title {
@@ -751,12 +750,12 @@
     </a>
     
     <nav class="nav-links">
-      <a href="/index.html" class="nav-link active">🏠 Home</a>
-      <a href="/file-converter/" class="nav-link">📄 File Converter</a>
-      <a href="/pdf-tools/" class="nav-link">📑 PDF, Split & Merge</a>
-      <a href="/image-tools/" class="nav-link">🖼️ Image Tools</a>
-      <a href="/excel-converter/" class="nav-link">📊 Excel Converter</a>
-      <a href="/business-tools/" class="nav-link">💼 Business Tools</a>
+      <a href="/index.html" class="nav-link active"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</a>
+      <a href="/file-converter/" class="nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h8"/><path d="M8 17h8"/></svg> File Converter</a>
+      <a href="/pdf-tools/" class="nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z"/><path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8"/><path d="M15 2v4.5h4.5"/></svg> PDF, Split & Merge</a>
+      <a href="/image-tools/" class="nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> Image Tools</a>
+      <a href="/excel-converter/" class="nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg> Excel Converter</a>
+      <a href="/business-tools/" class="nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg> Business Tools</a>
     </nav>
 
     <div class="nav-right-group">
@@ -776,12 +775,12 @@
 
   <!-- Mobile Dropdown Menu -->
   <div id="mobileNavMenu" class="mobile-nav-menu">
-    <a href="/index.html" class="mobile-nav-link">🏠 Home</a>
-    <a href="/file-converter/" class="mobile-nav-link">📄 File Converter</a>
-    <a href="/pdf-tools/" class="mobile-nav-link">📑 PDF, Split & Merge</a>
-    <a href="/image-tools/" class="mobile-nav-link">🖼️ Image Tools</a>
-    <a href="/excel-converter/" class="mobile-nav-link">📊 Excel Converter</a>
-    <a href="/business-tools/" class="mobile-nav-link">💼 Business Tools</a>
+    <a href="/index.html" class="mobile-nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</a>
+    <a href="/file-converter/" class="mobile-nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h8"/><path d="M8 17h8"/></svg> File Converter</a>
+    <a href="/pdf-tools/" class="mobile-nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z"/><path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8"/><path d="M15 2v4.5h4.5"/></svg> PDF, Split & Merge</a>
+    <a href="/image-tools/" class="mobile-nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> Image Tools</a>
+    <a href="/excel-converter/" class="mobile-nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg> Excel Converter</a>
+    <a href="/business-tools/" class="mobile-nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg> Business Tools</a>
   </div>
 
   <main>
@@ -821,33 +820,36 @@
         <a href="/privacy-first/" class="button button-secondary">How Privacy Works</a>
       </div>
 
-      <div class="badge-container">
-        <div class="trust-badge">🔒 Files Stay On Your Device</div>
-        <div class="trust-badge">⚡ Browser-Powered Processing</div>
-        <div class="trust-badge">🚫 No Server Uploads</div>
-        <div class="trust-badge">🆓 Completely Free</div>
       </div>
     </section>
 
     <!-- Trust Cards Section -->
     <section class="trust-section">
       <div class="trust-card">
-        <div class="trust-icon">🔒</div>
+        <div class="trust-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #0070f3;"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
         <h3 class="trust-title">100% Private</h3>
         <p class="trust-desc">Files are processed locally in your browser. No files are ever sent to a server.</p>
       </div>
       <div class="trust-card">
-        <div class="trust-icon">🚫</div>
+        <div class="trust-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #ee0000;"><path d="m2 2 20 20"/><path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 2.227-8.411"/><path d="M15.758 10.143A5 5 0 0 0 10 4.3a6.99 6.99 0 0 0-4.086 2.029"/></svg>
+        </div>
         <h3 class="trust-title">No Uploads</h3>
         <p class="trust-desc">Files never touch our servers. Your data stays entirely in local sandboxed memory.</p>
       </div>
       <div class="trust-card">
-        <div class="trust-icon">⚡</div>
+        <div class="trust-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #f5a623;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
         <h3 class="trust-title">Works Offline</h3>
         <p class="trust-desc">Many tools continue working without internet. You can convert files offline.</p>
       </div>
       <div class="trust-card">
-        <div class="trust-icon">🆓</div>
+        <div class="trust-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #7928ca;"><rect width="18" height="14" x="3" y="8" rx="2"/><path d="M12 5a3 3 0 1 0-3 3h6a3 3 0 1 0-3-3Z"/><path d="M12 8v14"/><path d="M3 12h18"/></svg>
+        </div>
         <h3 class="trust-title">Free Forever</h3>
         <p class="trust-desc">No accounts, no subscriptions, and no tracking. Universal conversion with unlimited use.</p>
       </div>

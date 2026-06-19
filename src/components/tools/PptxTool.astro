@@ -3,21 +3,21 @@ const { slug, headline, subtitle } = Astro.props;
 let targetFormat = "PDF";
 ---
 
-<style>
-  .slides-grid {
+<style is:global>
+  .pptx-tool-container .slides-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: var(--spacing-md);
     margin-top: var(--spacing-lg);
   }
-  .slide-card {
+  .pptx-tool-container .slide-card {
     background: var(--colors-canvas-soft-2);
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-md);
     overflow: hidden;
     box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
-  .slide-card-label {
+  .pptx-tool-container .slide-card-label {
     font-size: 11px;
     font-family: 'JetBrains Mono', monospace;
     color: var(--colors-mute);
@@ -26,7 +26,7 @@ let targetFormat = "PDF";
     background: var(--colors-canvas);
     border-bottom: 1px solid var(--colors-hairline);
   }
-  .slide-card-img {
+  .pptx-tool-container .slide-card-img {
     width: 100%;
     aspect-ratio: 16 / 9;
     display: block;
@@ -39,38 +39,40 @@ let targetFormat = "PDF";
 <script is:inline src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <!-- theme is passed into parseMaster so bgFillStyleLst can be resolved -->
 
-<div class="page-header">
-  <h1 class="page-title">{headline}</h1>
-  <p class="page-description">{subtitle}</p>
-</div>
-
-<div id="errorBanner" class="error-banner">
-  <span>⚠️</span>
-  <span id="errorMessage"></span>
-</div>
-
-<div id="progressOverlay" class="progress-overlay">
-  <div class="progress-bar-container">
-    <div id="progressBarFill" class="progress-bar-fill"></div>
+<div class="pptx-tool-container">
+  <div class="page-header">
+    <h1 class="page-title">{headline}</h1>
+    <p class="page-description">{subtitle}</p>
   </div>
-  <div id="progressLabel" class="progress-label">Processing…</div>
-</div>
 
-<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInputPptx').click()">
-  <div class="upload-icon">📊</div>
-  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
-  <div class="upload-text-secondary">Upload .pptx PowerPoint file (Max 25MB)</div>
-  <input type="file" id="fileInputPptx" class="file-input" accept=".pptx,.ppt" />
-</div>
-
-<div id="slidesGrid" class="slides-grid" style="display:none;"></div>
-
-<div id="actionControls" class="panel-card" style="display:none; margin-top:var(--spacing-md); flex-direction:row; justify-content:space-between; align-items:center;">
-  <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
-  <div class="button-group">
-    <button class="button button-primary" id="btnDownload">Download {targetFormat}</button>
-    <button class="button button-danger"  id="btnClear">Clear</button>
+  <div id="errorBanner" class="error-banner">
+    <span>⚠️</span>
+    <span id="errorMessage"></span>
   </div>
+
+  <div id="progressOverlay" class="progress-overlay">
+    <div class="progress-bar-container">
+      <div id="progressBarFill" class="progress-bar-fill"></div>
+    </div>
+    <div id="progressLabel" class="progress-label">Processing…</div>
+  </div>
+
+  <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInputPptx').click()">
+    <div class="upload-icon">📊</div>
+    <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+    <div class="upload-text-secondary">Upload .pptx PowerPoint file (Max 25MB)</div>
+    <input type="file" id="fileInputPptx" class="file-input" accept=".pptx,.ppt" />
+  </div>
+
+  <div id="actionControls" class="panel-card" style="display:none; margin-top:var(--spacing-md); margin-bottom:var(--spacing-md); flex-direction:row; justify-content:space-between; align-items:center;">
+    <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
+    <div class="button-group" style="display:flex; gap:var(--spacing-xs);">
+      <button class="button button-primary" id="btnDownload">Download {targetFormat}</button>
+      <button class="button button-danger"  id="btnClear">Clear</button>
+    </div>
+  </div>
+
+  <div id="slidesGrid" class="slides-grid" style="display:none;"></div>
 </div>
 
 <script is:inline define:vars={{ slug, targetFormat }}>

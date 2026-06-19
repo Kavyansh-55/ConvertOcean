@@ -174,7 +174,7 @@ body {
   border-radius: var(--rounded-sm);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   transition: background-color 0.2s, color 0.2s;
   white-space: nowrap;
   cursor: pointer;
@@ -183,6 +183,18 @@ body {
 .nav-link:hover {
   background-color: var(--colors-canvas-soft-2);
   color: var(--colors-ink);
+}
+
+.nav-link svg, .mobile-nav-link svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2px;
+  flex-shrink: 0;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s;
+}
+
+.nav-link:hover svg, .mobile-nav-link:hover svg {
+  transform: translateY(-0.5px) scale(1.05);
 }
 
 .nav-link.active {
@@ -356,6 +368,9 @@ body {
   padding: 8px 12px;
   border-radius: var(--rounded-sm);
   transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .mobile-nav-link:hover {
@@ -814,11 +829,14 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  transition: transform 0.2s, border-color 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01), inset 0px 0px 0px 1px var(--colors-hairline);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .info-card:hover {
+  transform: translateY(-4px);
   border-color: var(--colors-hairline-strong);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), inset 0px 0px 0px 1px var(--colors-hairline-strong);
 }
 
 .info-card-step {
@@ -830,9 +848,24 @@ body {
 }
 
 .info-card-title {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--colors-ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-card-title svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2px;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.info-card:hover .info-card-title svg {
+  transform: scale(1.1);
 }
 
 .info-card-desc {

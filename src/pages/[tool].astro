@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
+import CategoryIcon from '../components/CategoryIcon.astro';
 
 import ExcelToPdf from '../components/tools/ExcelToPdf.astro';
 import SpreadsheetTool from '../components/tools/SpreadsheetTool.astro';
@@ -197,11 +198,36 @@ const faqList = [...globalFaqs, ...specificFaqs];
       border: 1px solid var(--colors-hairline);
       border-radius: var(--rounded-lg);
       padding: var(--spacing-lg);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01), inset 0px 0px 0px 1px var(--colors-hairline);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
     }
-    .feature-icon {
-      font-size: 24px;
-      margin-bottom: 8px;
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--colors-hairline-strong);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), inset 0px 0px 0px 1px var(--colors-hairline-strong);
+    }
+    .feature-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--rounded-md);
+      background-color: var(--colors-canvas-soft-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--spacing-xxs);
+      transition: background-color 0.3s, transform 0.25s ease;
+      border: 1px solid var(--colors-hairline);
+      flex-shrink: 0;
+    }
+    [data-theme="dark"] .feature-icon-wrapper {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+    .feature-card:hover .feature-icon-wrapper {
+      transform: scale(1.05);
+      background-color: var(--colors-canvas);
     }
     .feature-title {
       font-size: 16px;
@@ -373,17 +399,23 @@ const faqList = [...globalFaqs, ...specificFaqs];
       <h2 style="font-size: 20px; font-weight: 600; color: var(--colors-ink); text-align: center;">Why Choose ConvertOcean?</h2>
       <div class="features-grid">
         <div class="feature-card">
-          <div class="feature-icon">🔒</div>
+          <div class="feature-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #0070f3;"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
           <h3 class="feature-title">Files Stay On Your Device</h3>
           <p class="feature-desc">Traditional sites upload files to external servers. ConvertOcean processes your data 100% locally. Perfect for corporate records and private papers.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">⚡</div>
+          <div class="feature-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #f5a623;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
           <h3 class="feature-title">Browser-Powered Processing</h3>
           <p class="feature-desc">By eliminating network upload/download queues, conversions run at client-side machine speeds. It continues working even when offline.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">🆓</div>
+          <div class="feature-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #7928ca;"><rect width="18" height="14" x="3" y="8" rx="2"/><path d="M12 5a3 3 0 1 0-3 3h6a3 3 0 1 0-3-3Z"/><path d="M12 8v14"/><path d="M3 12h18"/></svg>
+          </div>
           <h3 class="feature-title">Free & No Accounts</h3>
           <p class="feature-desc">Enjoy unlimited file sizes and conversions. No account creations, no email newsletter subscriptions, and no advertising trackers.</p>
         </div>
@@ -397,7 +429,9 @@ const faqList = [...globalFaqs, ...specificFaqs];
         <div class="related-grid">
           {relatedToolsData.map(rt => (
             <a href={relLink(`/${rt.slug}/`)} class="related-card">
-              <div class="related-card-icon">{rt.icon}</div>
+              <div class="related-card-icon" style="color: var(--colors-ink);">
+                <CategoryIcon icon={rt.icon} width="18" height="18" />
+              </div>
               <span class="related-card-name">{rt.name}</span>
             </a>
           ))}

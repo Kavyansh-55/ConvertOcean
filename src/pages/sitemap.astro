@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CategoryIcon from '../components/CategoryIcon.astro';
 
 const { lang = 'en' } = Astro.props;
 
@@ -93,7 +94,7 @@ const description = "Navigate ConvertOcean using our HTML sitemap. Access secure
       <div class="sitemap-grid">
         <!-- Section 1: Spreadsheet Tools -->
         <div class="sitemap-card">
-          <h2 class="sitemap-card-title">📊 Spreadsheet Tools</h2>
+          <h2 class="sitemap-card-title"><CategoryIcon categorySlug="excel-converter" width="20" height="20" /> Spreadsheet Tools</h2>
           <ul class="sitemap-list">
             <li><a href="/excel-converter/" class="sitemap-item-link">Excel Converter Category Hub</a></li>
             <li><a href="/excel-to-pdf/" class="sitemap-item-link">Excel to PDF Converter</a></li>
@@ -115,7 +116,7 @@ const description = "Navigate ConvertOcean using our HTML sitemap. Access secure
 
         <!-- Section 2: PDF & Document Tools -->
         <div class="sitemap-card">
-          <h2 class="sitemap-card-title">📑 PDF & Document Tools</h2>
+          <h2 class="sitemap-card-title"><CategoryIcon categorySlug="pdf-tools" width="20" height="20" /> PDF & Document Tools</h2>
           <ul class="sitemap-list">
             <li><a href="/pdf-tools/" class="sitemap-item-link">PDF Tools Category Hub</a></li>
             <li><a href="/document-tools/" class="sitemap-item-link">Document Tools Category Hub</a></li>
@@ -135,7 +136,7 @@ const description = "Navigate ConvertOcean using our HTML sitemap. Access secure
 
         <!-- Section 3: Image & OCR Tools -->
         <div class="sitemap-card">
-          <h2 class="sitemap-card-title">🖼️ Image & OCR Tools</h2>
+          <h2 class="sitemap-card-title"><CategoryIcon categorySlug="image-tools" width="20" height="20" /> Image & OCR Tools</h2>
           <ul class="sitemap-list">
             <li><a href="/image-tools/" class="sitemap-item-link">Image Tools Category Hub</a></li>
             <li><a href="/image-to-text/" class="sitemap-item-link">Image to Text OCR Platform</a></li>
@@ -155,7 +156,7 @@ const description = "Navigate ConvertOcean using our HTML sitemap. Access secure
 
         <!-- Section 4: Developer Tools -->
         <div class="sitemap-card">
-          <h2 class="sitemap-card-title">⚙️ Developer Tools</h2>
+          <h2 class="sitemap-card-title"><CategoryIcon categorySlug="developer-tools" width="20" height="20" /> Developer Tools</h2>
           <ul class="sitemap-list">
             <li><a href="/developer-tools/" class="sitemap-item-link">Developer Tools Category Hub</a></li>
             <li><a href="/csv-to-json/" class="sitemap-item-link">CSV to JSON Parser</a></li>
@@ -166,7 +167,7 @@ const description = "Navigate ConvertOcean using our HTML sitemap. Access secure
 
         <!-- Section 5: Business Tools -->
         <div class="sitemap-card">
-          <h2 class="sitemap-card-title">💼 Business Tools</h2>
+          <h2 class="sitemap-card-title"><CategoryIcon categorySlug="business-tools" width="20" height="20" /> Business Tools</h2>
           <ul class="sitemap-list">
             <li><a href="/business-tools/" class="sitemap-item-link">Business Tools Category Hub</a></li>
             <li><a href="/invoice-generator/" class="sitemap-item-link">Invoice Generator</a></li>
@@ -179,7 +180,7 @@ const description = "Navigate ConvertOcean using our HTML sitemap. Access secure
 
         <!-- Section 6: Legal & General Pages -->
         <div class="sitemap-card" style="grid-column: span 2; max-width: 100%;">
-          <h2 class="sitemap-card-title">📄 General, Company & Legal Pages</h2>
+          <h2 class="sitemap-card-title"><CategoryIcon categorySlug="file-converter" width="20" height="20" /> General, Company & Legal Pages</h2>
           <ul class="sitemap-list" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-sm);">
             <li><a href="/" class="sitemap-item-link">Homepage</a></li>
             <li><a href="/file-converter/" class="sitemap-item-link">File Converter Hub</a></li>

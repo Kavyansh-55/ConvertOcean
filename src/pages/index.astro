@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
+import CategoryIcon from '../components/CategoryIcon.astro';
 
 const { lang = 'en' } = Astro.props;
 
@@ -271,28 +272,6 @@ const getToolCount = (categorySlug: string) => {
   </style>
   <style>
 
-    .badge-container {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: var(--spacing-sm);
-      margin-bottom: var(--spacing-4xl);
-    }
-
-    .trust-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background-color: var(--colors-canvas);
-      border: 1px solid var(--colors-hairline);
-      padding: 6px var(--spacing-sm);
-      border-radius: var(--rounded-pill);
-      font-size: 13.5px;
-      font-weight: 500;
-      color: var(--colors-body);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-    }
-
     /* Trust section */
     .trust-section {
       max-width: 1200px;
@@ -321,18 +300,39 @@ const getToolCount = (categorySlug: string) => {
       border-radius: var(--rounded-lg);
       padding: var(--spacing-lg);
       text-align: left;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
-      transition: transform 0.2s, border-color 0.2s;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02), inset 0px 0px 0px 1px var(--colors-hairline);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
     }
 
     .trust-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-4px);
       border-color: var(--colors-hairline-strong);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), inset 0px 0px 0px 1px var(--colors-hairline-strong);
     }
 
-    .trust-icon {
-      font-size: 24px;
-      margin-bottom: var(--spacing-xs);
+    .trust-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--rounded-md);
+      background-color: var(--colors-canvas-soft-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--spacing-xxs);
+      transition: background-color 0.3s, transform 0.25s ease;
+      border: 1px solid var(--colors-hairline);
+    }
+
+    [data-theme="dark"] .trust-icon-wrapper {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .trust-card:hover .trust-icon-wrapper {
+      transform: scale(1.05);
+      background-color: var(--colors-canvas);
     }
 
     .trust-title {
@@ -649,33 +649,35 @@ const getToolCount = (categorySlug: string) => {
         <a href={relLink('/privacy-first/')} class="button button-secondary">How Privacy Works</a>
       </div>
 
-      <div class="badge-container">
-        <div class="trust-badge">🔒 Files Stay On Your Device</div>
-        <div class="trust-badge">⚡ Browser-Powered Processing</div>
-        <div class="trust-badge">🚫 No Server Uploads</div>
-        <div class="trust-badge">🆓 Completely Free</div>
-      </div>
     </section>
 
     <!-- Trust Cards Section -->
     <section class="trust-section">
       <div class="trust-card">
-        <div class="trust-icon">🔒</div>
+        <div class="trust-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #0070f3;"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
         <h3 class="trust-title">100% Private</h3>
         <p class="trust-desc">Files are processed locally in your browser. No files are ever sent to a server.</p>
       </div>
       <div class="trust-card">
-        <div class="trust-icon">🚫</div>
+        <div class="trust-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #ee0000;"><path d="m2 2 20 20"/><path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 2.227-8.411"/><path d="M15.758 10.143A5 5 0 0 0 10 4.3a6.99 6.99 0 0 0-4.086 2.029"/></svg>
+        </div>
         <h3 class="trust-title">No Uploads</h3>
         <p class="trust-desc">Files never touch our servers. Your data stays entirely in local sandboxed memory.</p>
       </div>
       <div class="trust-card">
-        <div class="trust-icon">⚡</div>
+        <div class="trust-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #f5a623;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
         <h3 class="trust-title">Works Offline</h3>
         <p class="trust-desc">Many tools continue working without internet. You can convert files offline.</p>
       </div>
       <div class="trust-card">
-        <div class="trust-icon">🆓</div>
+        <div class="trust-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #7928ca;"><rect width="18" height="14" x="3" y="8" rx="2"/><path d="M12 5a3 3 0 1 0-3 3h6a3 3 0 1 0-3-3Z"/><path d="M12 8v14"/><path d="M3 12h18"/></svg>
+        </div>
         <h3 class="trust-title">Free Forever</h3>
         <p class="trust-desc">No accounts, no subscriptions, and no tracking. Universal conversion with unlimited use.</p>
       </div>
@@ -877,7 +879,7 @@ const getToolCount = (categorySlug: string) => {
         <!-- Card 1: File Converter -->
         <a href={relLink('/file-converter/')} class="tool-card">
           <div class="tool-info">
-            <div class="tool-icon-wrapper">📄</div>
+            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="file-converter" width="20" height="20" /></div>
             <h3 class="tool-name">Universal File Converter <span class="category-count">(30+ formats)</span></h3>
             <p class="tool-description">Convert files between dozens of formats directly inside your browser. Supports documents, spreadsheets, images, and structured data formats.</p>
           </div>
@@ -892,7 +894,7 @@ const getToolCount = (categorySlug: string) => {
         <!-- Card 2: PDF, Split & Merge Tools -->
         <a href={relLink('/pdf-tools/')} class="tool-card">
           <div class="tool-info">
-            <div class="tool-icon-wrapper">🥞</div>
+            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="pdf-tools" width="20" height="20" /></div>
             <h3 class="tool-name">PDF, Split & Merge Tools <span class="category-count">({getToolCount('pdf-tools')})</span></h3>
             <p class="tool-description">Merge multiple PDF, Excel, Image, or Text documents, split ranges, extract pages, and compile files offline securely.</p>
           </div>
@@ -907,7 +909,7 @@ const getToolCount = (categorySlug: string) => {
         <!-- Card 3: Image Tools -->
         <a href={relLink('/image-tools/')} class="tool-card">
           <div class="tool-info">
-            <div class="tool-icon-wrapper">🖼️</div>
+            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="image-tools" width="20" height="20" /></div>
             <h3 class="tool-name">Image Tools <span class="category-count">({getToolCount('image-tools')})</span></h3>
             <p class="tool-description">Convert PNG, JPG, WebP, SVG, and BMP formats instantly. Compress, resize, and optimize file sizes client-side in seconds.</p>
           </div>
@@ -922,7 +924,7 @@ const getToolCount = (categorySlug: string) => {
         <!-- Card 4: Document Tools -->
         <a href={relLink('/document-tools/')} class="tool-card">
           <div class="tool-info">
-            <div class="tool-icon-wrapper">📝</div>
+            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="document-tools" width="20" height="20" /></div>
             <h3 class="tool-name">Document Tools <span class="category-count">({getToolCount('document-tools')})</span></h3>
             <p class="tool-description">Process text files, compile document PDFs, convert formatting, and combine rich logs securely inside your local browser tab.</p>
           </div>
@@ -937,7 +939,7 @@ const getToolCount = (categorySlug: string) => {
         <!-- Card 5: Excel Converter -->
         <a href={relLink('/excel-converter/')} class="tool-card">
           <div class="tool-info">
-            <div class="tool-icon-wrapper">📊</div>
+            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="excel-converter" width="20" height="20" /></div>
             <h3 class="tool-name">Excel Converter <span class="category-count">({getToolCount('excel-converter')})</span></h3>
             <p class="tool-description">Inspect CSV and Excel sheets client-side. Convert CSV to JSON, JSON to Excel, XLSX to CSV, or compile reports to PDF offline.</p>
           </div>
@@ -952,7 +954,7 @@ const getToolCount = (categorySlug: string) => {
         <!-- Card 7: Business Tools -->
         <a href={relLink('/business-tools/')} class="tool-card">
           <div class="tool-info">
-            <div class="tool-icon-wrapper">🧾</div>
+            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="business-tools" width="20" height="20" /></div>
             <h3 class="tool-name">Business Tools <span class="category-count">({getToolCount('business-tools')})</span></h3>
             <p class="tool-description">Create invoices, calculate taxes, and compile print-ready PDFs. Offline-first workflow.</p>
           </div>
@@ -967,7 +969,7 @@ const getToolCount = (categorySlug: string) => {
         <!-- Card 8: Developer Tools -->
         <a href={relLink('/developer-tools/')} class="tool-card">
           <div class="tool-info">
-            <div class="tool-icon-wrapper">⚙️</div>
+            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="developer-tools" width="20" height="20" /></div>
             <h3 class="tool-name">Developer Tools <span class="category-count">({getToolCount('developer-tools')})</span></h3>
             <p class="tool-description">Format JSON, minify code, encode base64, and validate data structures locally.</p>
           </div>

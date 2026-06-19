@@ -2,15 +2,15 @@
 const { slug, headline, subtitle } = Astro.props;
 ---
 
-<style>
-  .file-list {
+<style is:global>
+  .merge-pdf-container .file-list {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
     max-height: 300px;
     overflow-y: auto;
   }
-  .file-item {
+  .merge-pdf-container .file-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -43,7 +43,7 @@ const { slug, headline, subtitle } = Astro.props;
   <div id="progressLabel" class="progress-label">Processing files…</div>
 </div>
 
-<div class="workspace-layout">
+<div class="workspace-layout merge-pdf-container">
   <!-- Upload & Arrange List Panel -->
   <div class="panel-card">
     <h3 class="panel-section-title">Upload & Arrange PDFs</h3>

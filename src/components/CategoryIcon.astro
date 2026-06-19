@@ -1,0 +1,138 @@
+---
+interface Props {
+  categorySlug?: string;
+  icon?: string;
+  width?: number | string;
+  height?: number | string;
+  class?: string;
+}
+
+const { categorySlug, icon, width = 24, height = 24, class: className = "" } = Astro.props;
+
+const key = (categorySlug || icon || "").toLowerCase().trim();
+---
+
+{/* File / Universal File Converter */}
+{(key === 'file-converter' || key === '📄') && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
+    <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+    <path d="M8 13h8"/>
+    <path d="M8 17h8"/>
+  </svg>
+)}
+
+{/* PDF / Stack */}
+{(key === 'pdf-tools' || key === '🥞') && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <path d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z"/>
+    <path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8"/>
+    <path d="M15 2v4.5h4.5"/>
+  </svg>
+)}
+
+{/* Image / Picture */}
+{(key === 'image-tools' || key === '🖼️') && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+    <circle cx="9" cy="9" r="2"/>
+    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+  </svg>
+)}
+
+{/* Excel / Grid */}
+{(key === 'excel-converter' || key === '📊') && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <rect width="18" height="18" x="3" y="3" rx="2"/>
+    <path d="M3 9h18"/>
+    <path d="M3 15h18"/>
+    <path d="M9 3v18"/>
+    <path d="M15 3v18"/>
+  </svg>
+)}
+
+{/* Business / Briefcase */}
+{(key === 'business-tools' || key === '💼') && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+    <rect width="20" height="14" x="2" y="6" rx="2"/>
+  </svg>
+)}
+
+{/* Document / Edit / Pen */}
+{(key === 'document-tools' || key === '📝') && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <path d="M12 20h9"/>
+    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+  </svg>
+)}
+
+{/* Developer / Gear / Cog */}
+{(key === 'developer-tools' || key === '⚙️') && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </svg>
+)}
+
+{/* Search / Zoom / OCR */}
+{key === '🔍' && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <circle cx="11" cy="11" r="8"/>
+    <path d="m21 21-4.3-4.3"/>
+  </svg>
+)}
+
+{/* Receipt */}
+{key === '🧾' && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1Z"/>
+    <path d="M16 8H8"/>
+    <path d="M16 12H8"/>
+    <path d="M13 16H8"/>
+  </svg>
+)}
+
+{/* Trend Up / Profit Margin */}
+{key === '📈' && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+    <polyline points="16 7 22 7 22 13"/>
+  </svg>
+)}
+
+{/* Calculator / Numbers */}
+{key === '🔢' && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <rect width="16" height="16" x="4" y="4" rx="2"/>
+    <path d="M9 9h6"/>
+    <path d="M9 15h6"/>
+    <path d="M12 9v6"/>
+  </svg>
+)}
+
+{/* Money / Tax */}
+{key === '💰' && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <line x1="12" y1="1" x2="12" y2="23"/>
+    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+  </svg>
+)}
+
+{/* Scissors / Split */}
+{key === '✂️' && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <circle cx="6" cy="6" r="3"/>
+    <circle cx="6" cy="18" r="3"/>
+    <line x1="9.8" y1="8.2" x2="21" y2="19.4"/>
+    <line x1="21" y1="4.6" x2="12.4" y2="13.2"/>
+    <line x1="6" y1="9" x2="6" y2="15"/>
+  </svg>
+)}
+
+{/* Fallback */}
+{!['file-converter', 'pdf-tools', 'image-tools', 'excel-converter', 'business-tools', 'document-tools', 'developer-tools', '📄', '🥞', '🖼️', '📊', '💼', '📝', '⚙️', '🔍', '🧾', '📈', '🔢', '💰', '✂️'].includes(key) && (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+  </svg>
+)}

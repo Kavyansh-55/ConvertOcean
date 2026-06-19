@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
+import CategoryIcon from '../components/CategoryIcon.astro';
 
 export function getStaticPaths() {
   const categories = ['pdf-tools', 'image-tools', 'document-tools', 'excel-converter', 'ocr-tools', 'business-tools', 'developer-tools'];
@@ -249,7 +250,9 @@ const faqList = categoryFaqsMap[category] || [];
 <Layout title={title} description={description} lang={lang} category={catInfo.name} categorySlug={category} faqList={faqList}>
   <main class="page-container" style="max-width: 1200px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl);">
     <div class="page-header" style="text-align: center; margin-bottom: var(--spacing-3xl);">
-      <div style="font-size: 48px; margin-bottom: var(--spacing-sm);">{catInfo.icon}</div>
+      <div class="category-header-icon-wrapper" style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: var(--rounded-lg); background-color: var(--colors-canvas-soft-2); border: 1px solid var(--colors-hairline); margin-bottom: var(--spacing-md); color: var(--colors-ink); box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.03), inset 0 0 0 1px var(--colors-hairline);">
+        <CategoryIcon categorySlug={category} width="40" height="40" />
+      </div>
       <h1 class="page-title" style="font-size: 38px; font-weight: 600; letter-spacing: -1.5px; color: var(--colors-ink);">{catInfo.name}</h1>
       <p class="page-description" style="font-size: 16px; color: var(--colors-body); max-width: 600px; margin: var(--spacing-xs) auto 0; line-height: 1.5;">{catInfo.description}</p>
     </div>
@@ -260,7 +263,7 @@ const faqList = categoryFaqsMap[category] || [];
       {filteredTools.map(tool => (
         <a href={relLink(`/${tool.slug}/`)} class="tool-card">
           <div class="tool-info">
-            <div class="tool-icon-wrapper">{tool.icon}</div>
+            <div class="tool-icon-wrapper"><CategoryIcon icon={tool.icon} width="20" height="20" /></div>
             <h3 class="tool-name">{tool.name}</h3>
             <p class="tool-description">{tool.description}</p>
           </div>

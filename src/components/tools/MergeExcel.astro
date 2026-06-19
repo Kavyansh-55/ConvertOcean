@@ -2,8 +2,8 @@
 const { slug, headline, subtitle } = Astro.props;
 ---
 
-<style>
-  .file-list {
+<style is:global>
+  .merge-excel-container .file-list {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
@@ -12,7 +12,7 @@ const { slug, headline, subtitle } = Astro.props;
     padding-right: var(--spacing-xs);
     margin-top: var(--spacing-md);
   }
-  .file-item {
+  .merge-excel-container .file-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -23,16 +23,16 @@ const { slug, headline, subtitle } = Astro.props;
     font-size: 13px;
     transition: all 0.2s;
   }
-  .file-item:hover {
+  .merge-excel-container .file-item:hover {
     border-color: var(--colors-hairline-strong);
   }
-  .file-item-info {
+  .merge-excel-container .file-item-info {
     display: flex;
     flex-direction: column;
     gap: 2px;
     overflow: hidden;
   }
-  .file-item-name {
+  .merge-excel-container .file-item-name {
     font-weight: 600;
     color: var(--colors-ink);
     white-space: nowrap;
@@ -40,15 +40,15 @@ const { slug, headline, subtitle } = Astro.props;
     overflow: hidden;
     max-width: 300px;
   }
-  .file-item-meta {
+  .merge-excel-container .file-item-meta {
     font-size: 11px;
     color: var(--colors-mute);
   }
-  .file-item-actions {
+  .merge-excel-container .file-item-actions {
     display: flex;
     gap: 4px;
   }
-  .icon-btn {
+  .merge-excel-container .icon-btn {
     background: none;
     border: 1px solid var(--colors-hairline);
     border-radius: 4px;
@@ -62,12 +62,12 @@ const { slug, headline, subtitle } = Astro.props;
     font-size: 11px;
     transition: all 0.15s;
   }
-  .icon-btn:hover:not(:disabled) {
+  .merge-excel-container .icon-btn:hover:not(:disabled) {
     background-color: var(--colors-canvas-soft-2);
     color: var(--colors-ink);
     border-color: var(--colors-hairline-strong);
   }
-  .icon-btn.danger:hover {
+  .merge-excel-container .icon-btn.danger:hover {
     background-color: rgba(239, 68, 68, 0.1);
     color: #ef4444;
     border-color: rgba(239, 68, 68, 0.2);
@@ -95,7 +95,7 @@ const { slug, headline, subtitle } = Astro.props;
   <div id="progressLabel" class="progress-label">Processing files…</div>
 </div>
 
-<div class="workspace-layout">
+<div class="workspace-layout merge-excel-container">
   <!-- Upload & Arrange List Panel -->
   <div class="panel-card">
     <h3 class="panel-section-title">Upload & Arrange Spreadsheets</h3>
