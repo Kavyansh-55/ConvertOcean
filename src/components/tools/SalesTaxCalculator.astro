@@ -179,6 +179,7 @@ const { slug, headline, subtitle } = Astro.props;
       <button class="preset-btn" data-rate="19">🇩🇪 DE VAT 19%</button>
       <button class="preset-btn active" data-rate="18">🇮🇳 IN GST 18%</button>
       <button class="preset-btn" data-rate="10">🇯🇵 JP Tax 10%</button>
+      <button class="preset-btn" id="presetBtnCustom" data-rate="custom">✨ Custom Rate</button>
     </div>
 
     <div class="tax-panel-title">Currency & Values</div>
@@ -312,10 +313,39 @@ const { slug, headline, subtitle } = Astro.props;
       btn.addEventListener('click', () => {
         document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        if (btn.dataset.rate === 'custom') {
+          if (taxMode === 'add') {
+            $('taxRate1').focus();
+          } else {
+            $('taxRate2').focus();
+          }
+          return;
+        }
         const rate = parseFloat(btn.dataset.rate);
-        $('taxRate1').value = rate;
-        $('taxRate2').value = rate;
+        if (!isNaN(rate)) {
+          $('taxRate1').value = rate;
+          $('taxRate2').value = rate;
+        }
         calculate();
+      });
+    });
+
+    // Auto-highlight Custom preset when editing rate fields
+    ['taxRate1', 'taxRate2'].forEach(id => {
+      $(id).addEventListener('input', () => {
+        const val = parseFloat($(id).value);
+        let matched = false;
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+          if (btn.dataset.rate !== 'custom' && parseFloat(btn.dataset.rate) === val) {
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            matched = true;
+          }
+        });
+        if (!matched) {
+          document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+          $('presetBtnCustom').classList.add('active');
+        }
       });
     });
 

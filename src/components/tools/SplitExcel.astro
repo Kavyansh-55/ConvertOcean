@@ -51,6 +51,17 @@ const { slug, headline, subtitle } = Astro.props;
     font-size: 11px;
     color: var(--colors-mute);
   }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+  }
+  @media (max-width: 600px) {
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-xs);
+    }
+  }
 </style>
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -85,9 +96,39 @@ const { slug, headline, subtitle } = Astro.props;
 
 <!-- Split Workspace Panel -->
 <div id="workspacePanel" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
-  <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute);">Select Worksheets to Extract</div>
-  
-  <div class="sheets-grid" id="sheetsGrid"></div>
+  <div class="form-row" style="margin-bottom: var(--spacing-md);">
+    <div class="form-group">
+      <label class="form-label" for="splitMode">Split Method</label>
+      <select id="splitMode" class="select-input" style="height: 36px; padding: 0 10px; font-size: 13px;">
+        <option value="sheets">Extract Worksheets (Split by Sheets)</option>
+        <option value="rows">Split Worksheet Rows (Partition by Row Count)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Sheets Selection Section -->
+  <div id="sheetsSection">
+    <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute); margin-bottom: var(--spacing-xs);">Select Worksheets to Extract</div>
+    <div class="sheets-grid" id="sheetsGrid"></div>
+  </div>
+
+  <!-- Rows Partition Section -->
+  <div id="rowsSection" style="display: none;">
+    <div class="form-row" style="margin-bottom: var(--spacing-md);">
+      <div class="form-group">
+        <label class="form-label" for="rowSplitSheetSelect">Select Worksheet to Split</label>
+        <select id="rowSplitSheetSelect" class="select-input" style="height: 36px; padding: 0 10px; font-size: 13px;"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="rowSplitLimit">Rows per File</label>
+        <input type="number" id="rowSplitLimit" class="form-input" min="1" value="1000" style="height: 36px; font-size: 13px;" />
+      </div>
+    </div>
+    <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-bottom: var(--spacing-md);">
+      <input type="checkbox" id="rowSplitHeader" checked style="width: 16px; height: 16px; accent-color: var(--colors-ink); cursor: pointer;" />
+      <label for="rowSplitHeader" style="font-size: 13px; color: var(--colors-body); cursor: pointer; user-select: none;">First row is header (keep header in all split files)</label>
+    </div>
+  </div>
 
   <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-md); border-top: 1px solid var(--colors-hairline); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
     <div style="display: flex; align-items: center; gap: var(--spacing-md); flex-wrap: wrap;">
@@ -101,7 +142,7 @@ const { slug, headline, subtitle } = Astro.props;
     </div>
     
     <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" onclick="splitAndDownload()">Extract Selected Sheets</button>
+      <button class="button button-primary" id="processBtn" onclick="processSplit()">Extract Selected Sheets</button>
       <button class="button button-danger" onclick="resetWorkspace()">Clear</button>
     </div>
   </div>
@@ -119,6 +160,13 @@ const { slug, headline, subtitle } = Astro.props;
     const workspacePanel = document.getElementById('workspacePanel');
     const sheetsGrid = document.getElementById('sheetsGrid');
     const exportFormat = document.getElementById('exportFormat');
+    const splitMode = document.getElementById('splitMode');
+    const sheetsSection = document.getElementById('sheetsSection');
+    const rowsSection = document.getElementById('rowsSection');
+    const rowSplitSheetSelect = document.getElementById('rowSplitSheetSelect');
+    const rowSplitLimit = document.getElementById('rowSplitLimit');
+    const rowSplitHeader = document.getElementById('rowSplitHeader');
+    const processBtn = document.getElementById('processBtn');
 
     let activeFile = null; // { name, bytes, workbook, sheets: [] }
     let selectedSheets = new Set();
@@ -148,6 +196,19 @@ const { slug, headline, subtitle } = Astro.props;
     fileInput.addEventListener('change', (e) => {
       const files = Array.from(e.target.files).slice(0, 1);
       if (files.length > 0) handleFile(files[0]);
+    });
+
+    splitMode.addEventListener('change', () => {
+      const mode = splitMode.value;
+      if (mode === 'sheets') {
+        sheetsSection.style.display = 'block';
+        rowsSection.style.display = 'none';
+        processBtn.textContent = 'Extract Selected Sheets';
+      } else {
+        sheetsSection.style.display = 'none';
+        rowsSection.style.display = 'block';
+        processBtn.textContent = 'Split Rows & Download ZIP';
+      }
     });
 
     function showProgress(pct, label) {
@@ -192,6 +253,7 @@ const { slug, headline, subtitle } = Astro.props;
 
         selectedSheets.clear();
         renderSheets();
+        populateSheetSelect();
         workspacePanel.style.display = 'block';
         dropZone.style.display = 'none';
       } catch (err) {
@@ -237,6 +299,16 @@ const { slug, headline, subtitle } = Astro.props;
       });
     }
 
+    function populateSheetSelect() {
+      rowSplitSheetSelect.innerHTML = '';
+      activeFile.sheets.forEach(sheetName => {
+        const option = document.createElement('option');
+        option.value = sheetName;
+        option.textContent = sheetName;
+        rowSplitSheetSelect.appendChild(option);
+      });
+    }
+
     window.toggleSheetSelect = function(index) {
       const card = sheetsGrid.children[index];
       const chk = card.querySelector('.sheet-checkbox');
@@ -251,7 +323,16 @@ const { slug, headline, subtitle } = Astro.props;
       }
     };
 
-    window.splitAndDownload = async function() {
+    window.processSplit = async function() {
+      const mode = splitMode.value;
+      if (mode === 'sheets') {
+        await extractSheets();
+      } else {
+        await splitRows();
+      }
+    };
+
+    async function extractSheets() {
       if (selectedSheets.size === 0) {
         showError("Please select at least 1 worksheet to extract.");
         return;
@@ -294,13 +375,139 @@ const { slug, headline, subtitle } = Astro.props;
         showError("Failed to split sheets.");
       }
       hideProgress();
-    };
+    }
+
+    async function splitRows() {
+      const sheetName = rowSplitSheetSelect.value;
+      const rowsPerFile = parseInt(rowSplitLimit.value) || 1000;
+      const hasHeader = rowSplitHeader.checked;
+
+      if (!sheetName) {
+        showError("Please select a worksheet to split.");
+        return;
+      }
+      if (rowsPerFile < 1) {
+        showError("Rows per file must be at least 1.");
+        return;
+      }
+
+      showProgress(30, "Partitioning rows…");
+      try {
+        const format = exportFormat.value;
+        const zip = new JSZip();
+
+        const sheet = activeFile.workbook.Sheets[sheetName];
+        if (!sheet) {
+          showError("Worksheet not found.");
+          hideProgress();
+          return;
+        }
+
+        const range = XLSX.utils.decode_range(sheet['!ref'] || 'A1:A1');
+        const startRow = range.s.r;
+        const endRow = range.e.r;
+
+        const dataStartRow = hasHeader ? Math.min(startRow + 1, endRow + 1) : startRow;
+
+        if (dataStartRow > endRow) {
+          showError("The selected worksheet does not contain enough rows to split.");
+          hideProgress();
+          return;
+        }
+
+        let fileIndex = 1;
+        const baseName = activeFile.name.replace(/\.[^/.]+$/, "");
+
+        for (let r = dataStartRow; r <= endRow; r += rowsPerFile) {
+          const chunkStartRow = r;
+          const chunkEndRow = Math.min(r + rowsPerFile - 1, endRow);
+
+          const newSheet = {};
+          let targetRow = 0;
+
+          // Copy headers first if applicable
+          if (hasHeader && startRow < dataStartRow) {
+            const headerRowIdx = startRow;
+            for (let c = range.s.c; c <= range.e.c; c++) {
+              const cellRef = XLSX.utils.encode_cell({ r: headerRowIdx, c: c });
+              const cell = sheet[cellRef];
+              if (cell !== undefined) {
+                const newCellRef = XLSX.utils.encode_cell({ r: targetRow, c: c });
+                newSheet[newCellRef] = { ...cell };
+              }
+            }
+            targetRow++;
+          }
+
+          // Copy data rows for this chunk
+          for (let rowIdx = chunkStartRow; rowIdx <= chunkEndRow; rowIdx++) {
+            for (let c = range.s.c; c <= range.e.c; c++) {
+              const cellRef = XLSX.utils.encode_cell({ r: rowIdx, c: c });
+              const cell = sheet[cellRef];
+              if (cell !== undefined) {
+                const newCellRef = XLSX.utils.encode_cell({ r: targetRow, c: c });
+                newSheet[newCellRef] = { ...cell };
+              }
+            }
+            targetRow++;
+          }
+
+          // Define new range
+          newSheet['!ref'] = XLSX.utils.encode_range({
+            s: { r: 0, c: range.s.c },
+            e: { r: targetRow - 1, c: range.e.c }
+          });
+
+          // Copy column properties
+          if (sheet['!cols']) {
+            newSheet['!cols'] = sheet['!cols'];
+          }
+
+          // Create new workbook
+          const newWorkbook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(newWorkbook, newSheet, sheetName);
+
+          const outName = `${baseName}_${sheetName}_part${fileIndex}.${format}`;
+
+          if (format === 'xlsx') {
+            const outBytes = XLSX.write(newWorkbook, { bookType: 'xlsx', type: 'array' });
+            zip.file(outName, outBytes);
+          } else {
+            const csvString = XLSX.utils.sheet_to_csv(newSheet);
+            zip.file(outName, csvString);
+          }
+
+          fileIndex++;
+        }
+
+        showProgress(75, "Compiling zip package…");
+        const zipContent = await zip.generateAsync({ type: "blob" });
+
+        const zipName = `${baseName}_split_rows.zip`;
+        const url = URL.createObjectURL(zipContent);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = zipName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        showError("Failed to split rows: " + err.message);
+      }
+      hideProgress();
+    }
 
     window.resetWorkspace = function() {
       activeFile = null;
       selectedSheets.clear();
       fileInput.value = '';
       sheetsGrid.innerHTML = '';
+      rowSplitSheetSelect.innerHTML = '';
+      splitMode.value = 'sheets';
+      sheetsSection.style.display = 'block';
+      rowsSection.style.display = 'none';
+      processBtn.textContent = 'Extract Selected Sheets';
       workspacePanel.style.display = 'none';
       dropZone.style.display = 'flex';
       hideError();

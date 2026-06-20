@@ -568,7 +568,18 @@
               <option value="GST" selected>GST (18%)</option>
               <option value="IGST">IGST (18%)</option>
               <option value="VAT">VAT (15%)</option>
+              <option value="custom">Custom Tax Rate</option>
             </select>
+          </div>
+        </div>
+        <div id="customTaxGroup" class="form-row" style="display: none; margin-top: var(--spacing-xxs);">
+          <div class="form-group">
+            <label for="inputCustomTaxLabel">Tax Label</label>
+            <input type="text" id="inputCustomTaxLabel" class="form-input" value="Tax" oninput="updateCustomTaxLabel(this.value)" style="height: 36px; font-size: 13px;">
+          </div>
+          <div class="form-group">
+            <label for="inputCustomTaxRate">Tax Rate (%)</label>
+            <input type="number" id="inputCustomTaxRate" class="form-input" value="5" min="0" max="100" step="0.01" oninput="updateCustomTaxRate(this.value)" style="height: 36px; font-size: 13px;">
           </div>
         </div>
         <div class="form-row">
@@ -615,6 +626,10 @@
           <label for="inputVendorAddress">Address & Contact Info</label>
           <textarea id="inputVendorAddress" class="textarea-input" oninput="updateField('VendorAddress', this.value)">12 Developer Lane, Indiranagar&#10;Bengaluru, KA 560038&#10;hello@kavyaj.studio</textarea>
         </div>
+        <div class="form-group">
+          <label for="inputVendorTaxId">Business GSTIN / VAT ID / Tax ID (Optional)</label>
+          <input type="text" id="inputVendorTaxId" class="form-input" placeholder="e.g., GSTIN, VAT, or ABN" oninput="updateField('VendorTaxId', this.value)" style="height: 36px; font-size: 13px;">
+        </div>
       </div>
 
       <!-- Card: Client details -->
@@ -627,6 +642,10 @@
         <div class="form-group">
           <label for="inputClientAddress">Address & Details</label>
           <textarea id="inputClientAddress" class="textarea-input" oninput="updateField('ClientAddress', this.value)">45 Cloud Towers, Tech City&#10;Mumbai, MH 400001&#10;billing@galactic.com</textarea>
+        </div>
+        <div class="form-group">
+          <label for="inputClientTaxId">Customer GSTIN / VAT ID / Tax ID (Optional)</label>
+          <input type="text" id="inputClientTaxId" class="form-input" placeholder="e.g., Client GSTIN, VAT" oninput="updateField('ClientTaxId', this.value)" style="height: 36px; font-size: 13px;">
         </div>
       </div>
 
@@ -688,10 +707,16 @@
             <div>
               <div class="address-col-title">Billing Entity (From)</div>
               <div class="address-details" id="pdfVendorAddr"></div>
+              <div id="pdfVendorTaxIdContainer" style="display: none; font-size: 11px; margin-top: 4px; color: #4d4d4d;">
+                <strong>Tax ID:</strong> <span id="pdfVendorTaxId"></span>
+              </div>
             </div>
             <div>
               <div class="address-col-title">Billed Client (To)</div>
               <div class="address-details" id="pdfClientAddr"></div>
+              <div id="pdfClientTaxIdContainer" style="display: none; font-size: 11px; margin-top: 4px; color: #4d4d4d;">
+                <strong>Tax ID:</strong> <span id="pdfClientTaxId"></span>
+              </div>
             </div>
           </div>
 
@@ -969,9 +994,12 @@
       TaxRate: 0.18,
       VendorName: "Kavya J. Studio",
       VendorAddress: "12 Developer Lane, Indiranagar\nBengaluru, KA 560038\nhello@kavyaj.studio",
+      VendorTaxId: "",
       ClientName: "Galactic Group Ltd.",
       ClientAddress: "45 Cloud Towers, Tech City\nMumbai, MH 400001\nbilling@galactic.com",
+      ClientTaxId: "",
       Terms: "Bank: HDFC Bank | A/C: 9876543210\nIFSC: HDFC0000123\nPayment is due within 15 days of invoice date.",
+      CustomTaxLabel: "Tax",
       LineItems: [
         { desc: "Advanced Multi-page Web UI Scaffolding", qty: 1, rate: 2500.00 },
         { desc: "Client-side Performance Optimization Suite", qty: 4, rate: 350.00 }
@@ -1024,13 +1052,33 @@
 
     function updateTaxModel(taxType) {
       invoiceData.TaxModel = taxType;
+      const customTaxGroup = document.getElementById('customTaxGroup');
       if (taxType === 'GST' || taxType === 'IGST') {
         invoiceData.TaxRate = 0.18;
+        customTaxGroup.style.display = 'none';
       } else if (taxType === 'VAT') {
         invoiceData.TaxRate = 0.15;
+        customTaxGroup.style.display = 'none';
+      } else if (taxType === 'custom') {
+        customTaxGroup.style.display = 'flex';
+        const customRate = parseFloat(document.getElementById('inputCustomTaxRate').value) || 0;
+        invoiceData.TaxRate = customRate / 100;
+        invoiceData.CustomTaxLabel = document.getElementById('inputCustomTaxLabel').value || 'Tax';
       } else {
         invoiceData.TaxRate = 0;
+        customTaxGroup.style.display = 'none';
       }
+      updatePreviewPage();
+    }
+
+    function updateCustomTaxLabel(val) {
+      invoiceData.CustomTaxLabel = val || 'Tax';
+      updatePreviewPage();
+    }
+
+    function updateCustomTaxRate(val) {
+      const rate = parseFloat(val) || 0;
+      invoiceData.TaxRate = rate / 100;
       updatePreviewPage();
     }
 
@@ -1122,10 +1170,31 @@
         taxRow.style.display = 'none';
       } else {
         taxRow.style.display = 'table-row';
-        document.getElementById('pdfTaxLabel').textContent = `${invoiceData.TaxModel} (${(invoiceData.TaxRate * 100)}%)`;
+        const label = invoiceData.TaxModel === 'custom' ? invoiceData.CustomTaxLabel : invoiceData.TaxModel;
+        const ratePct = parseFloat((invoiceData.TaxRate * 100).toFixed(4));
+        document.getElementById('pdfTaxLabel').textContent = `${label} (${ratePct}%)`;
         document.getElementById('pdfTaxAmount').textContent = fmt(taxAmount);
       }
       document.getElementById('pdfGrandTotal').textContent = fmt(grandTotal);
+
+      // Render Tax IDs
+      const pdfVendorTaxIdContainer = document.getElementById('pdfVendorTaxIdContainer');
+      const pdfVendorTaxId = document.getElementById('pdfVendorTaxId');
+      if (invoiceData.VendorTaxId) {
+        pdfVendorTaxId.textContent = invoiceData.VendorTaxId;
+        pdfVendorTaxIdContainer.style.display = 'block';
+      } else {
+        pdfVendorTaxIdContainer.style.display = 'none';
+      }
+
+      const pdfClientTaxIdContainer = document.getElementById('pdfClientTaxIdContainer');
+      const pdfClientTaxId = document.getElementById('pdfClientTaxId');
+      if (invoiceData.ClientTaxId) {
+        pdfClientTaxId.textContent = invoiceData.ClientTaxId;
+        pdfClientTaxIdContainer.style.display = 'block';
+      } else {
+        pdfClientTaxIdContainer.style.display = 'none';
+      }
     }
 
     function formatDate(dateString) {
@@ -1176,9 +1245,12 @@
       invoiceData.TaxRate = 0;
       invoiceData.VendorName = "";
       invoiceData.VendorAddress = "";
+      invoiceData.VendorTaxId = "";
       invoiceData.ClientName = "";
       invoiceData.ClientAddress = "";
+      invoiceData.ClientTaxId = "";
       invoiceData.Terms = "";
+      invoiceData.CustomTaxLabel = "Tax";
       invoiceData.LineItems = [{ desc: "", qty: 1, rate: 0.00 }];
 
       document.getElementById('inputInvNo').value = "";
@@ -1187,9 +1259,14 @@
       document.getElementById('inputTaxSelect').value = "none";
       document.getElementById('inputVendorName').value = "";
       document.getElementById('inputVendorAddress').value = "";
+      document.getElementById('inputVendorTaxId').value = "";
       document.getElementById('inputClientName').value = "";
       document.getElementById('inputClientAddress').value = "";
+      document.getElementById('inputClientTaxId').value = "";
       document.getElementById('inputTerms').value = "";
+      document.getElementById('inputCustomTaxLabel').value = "Tax";
+      document.getElementById('inputCustomTaxRate').value = "5";
+      document.getElementById('customTaxGroup').style.display = 'none';
 
       renderEditorTable();
       updatePreviewPage();

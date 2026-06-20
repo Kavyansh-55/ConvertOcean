@@ -603,7 +603,18 @@
               <option value="GST" selected>GST (18%)</option>
               <option value="IGST">IGST (18%)</option>
               <option value="VAT">VAT (15%)</option>
+              <option value="custom">Custom Tax Rate</option>
             </select>
+          </div>
+        </div>
+        <div id="rcptCustomTaxGroup" class="form-row" style="display: none; margin-top: var(--spacing-xxs);">
+          <div class="form-group">
+            <label class="form-label" for="rcptCustomTaxLabel">Tax Label</label>
+            <input type="text" id="rcptCustomTaxLabel" class="form-input" value="Tax" style="height: 36px; font-size: 13px;" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="rcptCustomTaxRate">Tax Rate (%)</label>
+            <input type="number" id="rcptCustomTaxRate" class="form-input" value="5" min="0" max="100" step="0.01" style="height: 36px; font-size: 13px;" />
           </div>
         </div>
         <div class="form-row">
@@ -631,6 +642,10 @@
           <label class="form-label" for="rcptVendorAddress">Address & Contact</label>
           <textarea id="rcptVendorAddress" class="textarea-input">12 Developer Lane, Indiranagar&#10;Bengaluru, KA 560038&#10;hello@kavyaj.studio</textarea>
         </div>
+        <div class="form-group">
+          <label class="form-label" for="rcptVendorTaxId">Business GSTIN / VAT ID / Tax ID (Optional)</label>
+          <input type="text" id="rcptVendorTaxId" class="form-input" placeholder="e.g., GSTIN, VAT, or ABN" style="height: 36px; font-size: 13px;" />
+        </div>
       </div>
 
       <div class="form-card">
@@ -642,6 +657,10 @@
         <div class="form-group">
           <label class="form-label" for="rcptClientAddress">Address & Details</label>
           <textarea id="rcptClientAddress" class="textarea-input">45 Cloud Towers, Tech City&#10;Mumbai, MH 400001&#10;billing@galactic.com</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rcptClientTaxId">Customer GSTIN / VAT ID / Tax ID (Optional)</label>
+          <input type="text" id="rcptClientTaxId" class="form-input" placeholder="e.g., Client GSTIN, VAT" style="height: 36px; font-size: 13px;" />
         </div>
       </div>
 
@@ -699,10 +718,16 @@
             <div>
               <div class="address-col-title">Received From</div>
               <div class="address-details" id="rcptPdfClientAddr"></div>
+              <div id="rcptClientTaxIdContainer" style="display: none; font-size: 11px; margin-top: 4px; color: #4d4d4d;">
+                <strong>Tax ID:</strong> <span id="rcptClientTaxId"></span>
+              </div>
             </div>
             <div>
               <div class="address-col-title">Received By</div>
               <div class="address-details" id="rcptPdfVendorAddr"></div>
+              <div id="rcptVendorTaxIdContainer" style="display: none; font-size: 11px; margin-top: 4px; color: #4d4d4d;">
+                <strong>Tax ID:</strong> <span id="rcptVendorTaxId"></span>
+              </div>
             </div>
           </div>
 
@@ -977,9 +1002,12 @@
       TaxRate: 0.18,
       VendorName: "Kavya J. Studio",
       VendorAddress: "12 Developer Lane, Indiranagar\nBengaluru, KA 560038\nhello@kavyaj.studio",
+      VendorTaxId: "",
       ClientName: "Galactic Group Ltd.",
       ClientAddress: "45 Cloud Towers, Tech City\nMumbai, MH 400001\nbilling@galactic.com",
+      ClientTaxId: "",
       Notes: "Thank you for your payment.\nThis receipt confirms payment has been received in full.",
+      CustomTaxLabel: "Tax",
       LineItems: [
         { desc: "Website Development Services", qty: 1, rate: 3500.00 },
         { desc: "SEO Optimization Package", qty: 2, rate: 750.00 }
@@ -1040,10 +1068,35 @@
         taxRow.style.display = 'none';
       } else {
         taxRow.style.display = 'table-row';
-        $('rcptPdfTaxLabel').textContent = `${rcptData.TaxModel} (${(rcptData.TaxRate * 100)}%)`;
+        const label = rcptData.TaxModel === 'custom' ? rcptData.CustomTaxLabel : rcptData.TaxModel;
+        const ratePct = parseFloat((rcptData.TaxRate * 100).toFixed(4));
+        $('rcptPdfTaxLabel').textContent = `${label} (${ratePct}%)`;
         $('rcptPdfTaxAmount').textContent = fmt(tax);
       }
       $('rcptPdfGrandTotal').textContent = fmt(grand);
+
+      // Render Tax IDs
+      const vendorTaxIdContainer = $('rcptVendorTaxIdContainer');
+      const vendorTaxId = $('rcptVendorTaxId');
+      if (vendorTaxIdContainer && vendorTaxId) {
+        if (rcptData.VendorTaxId) {
+          vendorTaxId.textContent = rcptData.VendorTaxId;
+          vendorTaxIdContainer.style.display = 'block';
+        } else {
+          vendorTaxIdContainer.style.display = 'none';
+        }
+      }
+
+      const clientTaxIdContainer = $('rcptClientTaxIdContainer');
+      const clientTaxId = $('rcptClientTaxId');
+      if (clientTaxIdContainer && clientTaxId) {
+        if (rcptData.ClientTaxId) {
+          clientTaxId.textContent = rcptData.ClientTaxId;
+          clientTaxIdContainer.style.display = 'block';
+        } else {
+          clientTaxIdContainer.style.display = 'none';
+        }
+      }
     }
 
     function renderEditorTable() {
@@ -1097,7 +1150,39 @@
     $('rcptTaxSelect').addEventListener('change', e => {
       const t = e.target.value;
       rcptData.TaxModel = t;
-      rcptData.TaxRate = t === 'GST' || t === 'IGST' ? 0.18 : t === 'VAT' ? 0.15 : 0;
+      const customTaxGroup = $('rcptCustomTaxGroup');
+      if (t === 'GST' || t === 'IGST') {
+        rcptData.TaxRate = 0.18;
+        customTaxGroup.style.display = 'none';
+      } else if (t === 'VAT') {
+        rcptData.TaxRate = 0.15;
+        customTaxGroup.style.display = 'none';
+      } else if (t === 'custom') {
+        customTaxGroup.style.display = 'flex';
+        const customRate = parseFloat($('rcptCustomTaxRate').value) || 0;
+        rcptData.TaxRate = customRate / 100;
+        rcptData.CustomTaxLabel = $('rcptCustomTaxLabel').value || 'Tax';
+      } else {
+        rcptData.TaxRate = 0;
+        customTaxGroup.style.display = 'none';
+      }
+      updatePreview();
+    });
+    $('rcptCustomTaxLabel').addEventListener('input', e => {
+      rcptData.CustomTaxLabel = e.target.value || 'Tax';
+      updatePreview();
+    });
+    $('rcptCustomTaxRate').addEventListener('input', e => {
+      const rate = parseFloat(e.target.value) || 0;
+      rcptData.TaxRate = rate / 100;
+      updatePreview();
+    });
+    $('rcptVendorTaxId').addEventListener('input', e => {
+      rcptData.VendorTaxId = e.target.value;
+      updatePreview();
+    });
+    $('rcptClientTaxId').addEventListener('input', e => {
+      rcptData.ClientTaxId = e.target.value;
       updatePreview();
     });
     $('rcptVendorName').addEventListener('input', e => { rcptData.VendorName = e.target.value; updatePreview(); });
@@ -1132,11 +1217,18 @@
     });
 
     $('rcptBtnClear').addEventListener('click', () => {
-      rcptData.VendorName = ""; rcptData.VendorAddress = ""; rcptData.ClientName = ""; rcptData.ClientAddress = "";
-      rcptData.No = ""; rcptData.Notes = ""; rcptData.LineItems = [{ desc: "New Item", qty: 1, rate: 0 }];
+      rcptData.VendorName = ""; rcptData.VendorAddress = ""; rcptData.VendorTaxId = "";
+      rcptData.ClientName = ""; rcptData.ClientAddress = ""; rcptData.ClientTaxId = "";
+      rcptData.No = ""; rcptData.Notes = ""; rcptData.CustomTaxLabel = "Tax";
+      rcptData.LineItems = [{ desc: "New Item", qty: 1, rate: 0 }];
       $('rcptVendorName').value = ""; $('rcptVendorAddress').value = "";
+      $('rcptVendorTaxId').value = "";
       $('rcptClientName').value = ""; $('rcptClientAddress').value = "";
+      $('rcptClientTaxId').value = "";
       $('rcptNo').value = ""; $('rcptNotes').value = "";
+      $('rcptCustomTaxLabel').value = "Tax";
+      $('rcptCustomTaxRate').value = "5";
+      $('rcptCustomTaxGroup').style.display = 'none';
       renderEditorTable(); updatePreview();
     });
   </script>
