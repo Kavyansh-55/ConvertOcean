@@ -9,11 +9,12 @@
     "preview": "astro preview",
     "astro": "astro",
     "sync": "node scratch/sync_headers_footers.js",
+    "update-icons": "node scratch/update_icons.js",
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
-    "@astrojs/sitemap": "3.6.0",
-    "astro": "^4.15.0"
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^6.4.8"
   },
   "devDependencies": {
     "wrangler": "^4.100.0"

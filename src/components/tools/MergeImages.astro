@@ -1,4 +1,5 @@
 ---
+import CategoryIcon from '../CategoryIcon.astro';
 const { slug, headline, subtitle } = Astro.props;
 ---
 
@@ -100,7 +101,7 @@ const { slug, headline, subtitle } = Astro.props;
     <h3 class="panel-section-title">Upload & Arrange Images</h3>
     
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
-      <div class="upload-icon">🖼️</div>
+      <div class="upload-icon"><CategoryIcon icon="🖼️" width="40" height="40" /></div>
       <div class="upload-text-primary">Drag and drop images, or click to browse</div>
       <div class="upload-text-secondary">PNG, JPG, WebP, SVG (Max 15MB each, multiple allowed)</div>
       <input type="file" id="fileInput" class="file-input" accept="image/*" multiple />
