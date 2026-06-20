@@ -1,0 +1,162 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { guides } from '../../data/guides';
+import CategoryIcon from '../../components/CategoryIcon.astro';
+
+const { lang = 'en' } = Astro.props;
+
+const title = "Guides & Resources - Private Browser File Tools | ConvertOcean";
+const description = "Learn how to convert files locally, compare image formats, merge documents, and run OCR character extraction client-side with complete privacy.";
+
+// Localize links helper
+const relLink = (target: string) => {
+  const cleanTarget = target.startsWith('/') ? target : `/${target}`;
+  if (lang === 'en') return cleanTarget;
+  return `/${lang}${cleanTarget}`;
+};
+---
+
+<Layout title={title} description={description} lang={lang} category="Guides" categorySlug="guides">
+  <style>
+    .hub-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-5xl);
+      position: relative;
+      z-index: 1;
+    }
+
+    .hub-lead {
+      font-size: 18px;
+      color: var(--colors-body);
+      line-height: 1.6;
+      margin-bottom: var(--spacing-xl);
+      text-align: center;
+    }
+
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-2xl);
+    }
+
+    @media (max-width: 900px) {
+      .hub-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hub-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hub-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-lg);
+      text-decoration: none;
+      color: var(--colors-ink);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.01), inset 0px 0px 0px 1px var(--colors-hairline);
+    }
+
+    .hub-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--colors-hairline-strong);
+      box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.04), inset 0px 0px 0px 1px var(--colors-hairline-strong);
+    }
+
+    .hub-card-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--colors-link);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hub-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin: 0;
+      letter-spacing: -0.4px;
+      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+    }
+
+    .hub-card-desc {
+      font-size: 13.5px;
+      color: var(--colors-body);
+      line-height: 1.5;
+      margin: 0;
+      flex-grow: 1;
+    }
+
+    .hub-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: var(--spacing-xs);
+      border-top: 1px solid var(--colors-hairline-strong);
+      font-size: 12px;
+      color: var(--colors-mute);
+    }
+
+    .hub-card-btn {
+      color: var(--colors-link);
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      transition: color 0.2s;
+    }
+
+    .hub-card:hover .hub-card-btn {
+      color: var(--colors-link-deep);
+    }
+  </style>
+
+  <main class="hub-container">
+    <div class="page-header" style="text-align: center;">
+      <h1 class="page-title" style="font-size: 38px; font-weight: 600; letter-spacing: -1.5px; color: var(--colors-ink);">Guides & Resources.</h1>
+      <p class="hub-lead">Practical handbooks and comparisons to help you optimize document properties, configure graphic settings, and manage private local conversions.</p>
+    </div>
+
+    <hr class="section-divider" style="max-width: 100%; border: 0; height: 1px; background-color: var(--colors-hairline); margin-bottom: var(--spacing-xl);">
+
+    <div class="hub-grid">
+      {guides.map(guide => (
+        <a href={relLink(`/guides/${guide.slug}/`)} class="hub-card">
+          <div class="hub-card-tag">
+            <span>Guide</span>
+            <span style="color: var(--colors-hairline-strong);">•</span>
+            <span>{guide.readTime}</span>
+          </div>
+          <h3 class="hub-card-title">{guide.title.split(' - ')[0]}</h3>
+          <p class="hub-card-desc">{guide.description}</p>
+          <div class="hub-card-footer" style="border-top: 0; padding-top: 0;">
+            <span>Published {guide.publishDate}</span>
+            <span class="hub-card-btn">
+              Read Guide
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </main>
+</Layout>

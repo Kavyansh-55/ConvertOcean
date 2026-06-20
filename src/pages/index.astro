@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
+import { guides } from '../data/guides';
 import CategoryIcon from '../components/CategoryIcon.astro';
 
 const { lang = 'en' } = Astro.props;
@@ -615,8 +616,8 @@ const getToolCount = (categorySlug: string) => {
   <main>
     <!-- Hero Section -->
     <section class="hero-container">
-      <h1 class="hero-title">Convert, Compress, Merge & Edit Files — 100% Private.</h1>
-      <p class="hero-subtitle">Convert PDFs, Images, Excel files and documents directly in your browser. Merge, split, compress and edit files without uploading them anywhere.</p>
+      <h1 class="hero-title">Convert, Merge & Process Files — 100% Private.</h1>
+      <p class="hero-subtitle">PDF, image, spreadsheet, OCR and business tools that run directly in your browser. No uploads. No accounts. No tracking.</p>
       
       <!-- Homepage Search bar -->
       <div class="search-container" id="searchContainer" data-tools={JSON.stringify(tools.map(t => ({ name: t.name, slug: t.slug, icon: t.icon, desc: t.description })))}>
@@ -1025,6 +1026,31 @@ const getToolCount = (categorySlug: string) => {
             </tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- Guides & Resources Section Conforming to DESIGN.md -->
+    <section class="featured-section" style="margin-top: var(--spacing-4xl); border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-3xl);">
+      <h2 class="featured-title">Guides & Resources</h2>
+      <p style="text-align: center; color: var(--colors-body); font-size: 15px; margin-top: -10px; margin-bottom: var(--spacing-xl); max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+        Learn how to optimize layouts, compare graphics formats, perform offline optical recognition, and merge document streams securely on your local hardware.
+      </p>
+      <div class="featured-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-lg);">
+        {guides.map(g => (
+          <div class="featured-card">
+            <span class="featured-badge" style="color: var(--colors-link); font-weight: 600;">{g.readTime}</span>
+            <div class="featured-card-header" style="margin-top: var(--spacing-xs);">
+              <h3 class="featured-card-name" style="font-size: 16px; font-weight: 600; line-height: 1.3;">{g.title.split(' - ')[0]}</h3>
+            </div>
+            <p class="featured-card-desc" style="font-size: 13px; color: var(--colors-body); line-height: 1.4; flex-grow: 1;">{g.description}</p>
+            <a href={relLink(`/guides/${g.slug}/`)} class="button button-primary-sm featured-cta" style="margin-top: var(--spacing-xs); align-self: flex-start;">
+              Read Guide
+            </a>
+          </div>
+        ))}
+      </div>
+      <div style="text-align: center; margin-top: var(--spacing-xl);">
+        <a href={relLink('/guides/')} class="button button-secondary">View All Resources</a>
       </div>
     </section>
 

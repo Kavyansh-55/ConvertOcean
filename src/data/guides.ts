@@ -1,0 +1,369 @@
+export interface GuideData {
+  slug: string;
+  title: string;
+  description: string;
+  h1: string;
+  readTime: string;
+  publishDate: string;
+  relatedTools: string[];
+  relatedGuides: string[];
+  intro: string;
+  contentHtml: string;
+  faqs: { question: string; answer: string }[];
+}
+
+export const guides: GuideData[] = [
+  {
+    slug: 'pdf-to-word-without-losing-formatting',
+    title: 'How to Convert PDF to Word Without Losing Formatting - ConvertOcean',
+    description: 'Learn how to convert PDF documents to Microsoft Word (.docx) format while keeping layout, tables, and fonts perfectly intact using client-side tools.',
+    h1: 'How to Convert PDF to Word Without Losing Formatting.',
+    readTime: '5 min read',
+    publishDate: 'June 20, 2026',
+    relatedTools: ['pdf-to-word'],
+    relatedGuides: ['merge-multiple-pdf-files', 'excel-to-pdf'],
+    intro: 'Converting a PDF to an editable Microsoft Word document can be frustrating when layouts split, fonts mismatch, or tables turn into scattered text strings. Learn why this happens and how to convert your documents without losing formatting.',
+    contentHtml: `
+      <h2>The Formatting Mismatch: Flow Layout vs. Absolute Coordinates</h2>
+      <p>To understand why PDFs lose formatting when converted to Word, you must look at how both file formats represent text. PDFs are designed for visual consistency. They place characters at precise coordinates (e.g., "draw letter 'A' at X: 100, Y: 250"). There is no concept of paragraphs, lines, or table cells in a raw PDF—just positions on a canvas.</p>
+      <p>Conversely, Microsoft Word utilizes a dynamic "flow" layout engine. Text flows from one line to the next based on margins, paragraph spacing, and page size. When a converter tries to translate absolute coordinates into flowing text, it often makes guesses. This results in double margins, random line breaks, and tables broken into floating text boxes.</p>
+
+      <h2>Common Formatting Problems in PDF Conversion</h2>
+      <ul>
+        <li><strong>Broken Tables:</strong> Columns align visually in a PDF, but standard converters fail to translate them into a structured table, turning rows into plain text separated by dozens of tab keys.</li>
+        <li><strong>Split Sentences:</strong> Paragraphs are often broken into separate lines, each terminated by a hard break (carriage return), making edit-flow impossible.</li>
+        <li><strong>Font Substitutions:</strong> If the converter or your computer does not possess the embedded font used in the original PDF, a fallback font (like Times New Roman or Arial) will be substituted, throwing off margins and alignments.</li>
+        <li><strong>Overlapping Elements:</strong> Text boxes, images, and backgrounds can overlap because the layout coordinates overlap, causing unreadable segments.</li>
+      </ul>
+
+      <h2>Step-by-Step: Converting PDF to Word on ConvertOcean</h2>
+      <p>ConvertOcean performs conversion 100% locally in your browser memory sandbox using WebAssembly layout mapping. Here is how to convert your files privately without losing structure:</p>
+      <div class="content-card">
+        <h3 style="margin-top: 0;">Step 1: Select Your File</h3>
+        <p>Go to the <a href="/pdf-to-word/">PDF to Word Converter</a> tool. Drag and drop your target PDF file into the secure local drop zone. The file remains entirely on your device.</p>
+        
+        <h3>Step 2: Parse Layout Coordinates</h3>
+        <p>The parser begins analyzing text positions, font families, and bounding grids to group letters into words, words into sentences, and tabular regions into database-ready tables. This calculation runs client-side.</p>
+        
+        <h3>Step 3: Compile Flow Nodes</h3>
+        <p>The layout flow engine builds a structured DOCX file, wrapping paragraphs together and nesting tabular areas into proper tables instead of plain text spans.</p>
+        
+        <h3>Step 4: Download and Edit</h3>
+        <p>Click the download button to save the editable DOCX directly. Open it in Microsoft Word or Google Docs to begin modifications.</p>
+      </div>
+
+      <h2>Best Practices for Perfect Conversion</h2>
+      <p>To achieve high layout fidelity, make sure your source document matches these characteristics:</p>
+      <ul>
+        <li><strong>Ensure Text is Selectable:</strong> If you cannot select or copy text in your source PDF, the file is a scanned image. Use our <a href="/image-to-text/">Image to Text OCR</a> first to extract text.</li>
+        <li><strong>Use Standard System Fonts:</strong> PDFs built with standard fonts like Arial, Calibri, or Helvetica translate without substituting layouts.</li>
+        <li><strong>Limit Nested Overlays:</strong> Remove excessive background graphics or overlapping watermarks in the original application before printing to PDF.</li>
+      </ul>
+
+      <h2>Common Mistakes to Avoid</h2>
+      <blockquote>
+        <strong>Warning: Never upload sensitive records to unknown online converters.</strong> Many cloud utilities copy your text data to external databases, exposing personal identification information (PII) or confidential financial formulas. ConvertOcean operates 100% locally, ensuring complete privacy.
+      </blockquote>
+      <p>Another common error is converting a heavily modified PDF multiple times. Every conversion adds rounding discrepancies to coordinate placements. Always use the original source file whenever possible.</p>
+    `,
+    faqs: [
+      {
+        question: 'Why do my converted PDF tables look broken in Word?',
+        answer: 'This happens because PDFs do not have structural table tags; they only place text at specific coordinates. Standard converters translate columns to plain text separated by tabs. ConvertOcean groups bounding box alignments to reconstruct a proper table.'
+      },
+      {
+        question: 'Can I convert a scanned PDF containing image-only pages to Word?',
+        answer: 'A direct PDF-to-Word converter cannot parse image-only documents. For scanned files, you must use an OCR (Optical Character Recognition) engine like ConvertOcean\'s Image to Text OCR to recognize characters before editing.'
+      },
+      {
+        question: 'Is my data secure when converting documents on this site?',
+        answer: 'Yes. ConvertOcean processes all document formatting, text parsing, and DOCX compiling locally in your browser memory sandbox. Your files are never uploaded to any remote server or third-party database.'
+      }
+    ]
+  },
+  {
+    slug: 'merge-multiple-pdf-files',
+    title: 'How to Merge Multiple PDF Files Online - 100% Private | ConvertOcean',
+    description: 'Combine multiple PDF files, reports, and scans into a single cohesive document client-side in your browser. Complete privacy with zero server uploads.',
+    h1: 'How to Merge Multiple PDF Files Online.',
+    readTime: '4 min read',
+    publishDate: 'June 20, 2026',
+    relatedTools: ['merge-pdf'],
+    relatedGuides: ['pdf-to-word-without-losing-formatting', 'excel-to-pdf'],
+    intro: 'Combining separate PDF pages, business reports, or tax forms into a single unified file is a common administrative chore. Discover how to merge your documents quickly and securely without uploading them to external servers.',
+    contentHtml: `
+      <h2>Why Merging PDFs Locally is Essential for Security</h2>
+      <p>Most popular online PDF mergers require you to upload your documents to their servers. If you are combining invoices, medical history, or tax returns, uploading files exposes your data to interception, database leaks, or profiling. Processing files locally in browser tab memory ensures your private assets never leave your hardware.</p>
+
+      <h2>The Technical Process of Merging PDFs</h2>
+      <p>PDF documents are structured files with tables of references pointing to page trees, graphics, and embedded font blocks. Merging multiple PDFs involves more than stitching bytes; the merging software must:</p>
+      <ul>
+        <li><strong>Resolve Page Trees:</strong> Append the pages to the master reference table in the correct sequence.</li>
+        <li><strong>Consolidate Resources:</strong> Merge embedded fonts and image dictionaries to prevent duplicate data bloat.</li>
+        <li><strong>Maintain Interactive Elements:</strong> Re-map form fields, links, and navigation bookmarks so they point to the correct targets in the new combined file.</li>
+      </ul>
+
+      <h2>Step-by-Step: Merging PDFs on ConvertOcean</h2>
+      <p>ConvertOcean utilizes the local JavaScript library pdf-lib to merge documents directly on your device. Follow these steps:</p>
+      <div class="content-card">
+        <h3 style="margin-top: 0;">Step 1: Upload Multiple Files</h3>
+        <p>Open the <a href="/merge-pdf/">Merge PDF</a> utility. Drop all the PDF documents you want to combine. You can add files incrementally.</p>
+        
+        <h3>Step 2: Rearrange Pages</h3>
+        <p>Sort or order the documents using the drag handle grid interface. Ensure the sequence flows correctly (e.g., Cover Page followed by Content chapters).</p>
+        
+        <h3>Step 3: Process the Stream</h3>
+        <p>Click "Merge PDF." The local WebAssembly compiler merges page directories and references. The process takes less than a second.</p>
+        
+        <h3>Step 4: Download Your File</h3>
+        <p>Save the combined PDF locally. The sandbox memory is cleared once you download or close the tab.</p>
+      </div>
+
+      <h2>Common Mistakes When Merging PDFs</h2>
+      <ul>
+        <li><strong>Merging Password-Protected Documents:</strong> Merging engines cannot parse encrypted documents. Decrypt or remove password protections before combining.</li>
+        <li><strong>Ignoring File Size:</strong> Stitching dozens of high-resolution image PDFs creates a huge combined file. Compress your images before merging to keep the output file manageable.</li>
+        <li><strong>Losing Interactive Forms:</strong> Merging documents with identical form field names can cause values to duplicate. Rename fields or flatten forms if you notice fields mirroring each other.</li>
+      </ul>
+
+      <h2>Best Practices for Document Compilation</h2>
+      <p>To compile clean documents, normalize page sizes and orientations beforehand. Merging a landscape slide deck with portrait letter reports can result in inconsistent display viewports. If necessary, convert pages to a uniform orientation using local layout tools.</p>
+    `,
+    faqs: [
+      {
+        question: 'Is there a limit to how many PDF files I can merge at once?',
+        answer: 'Since ConvertOcean merges files locally in your browser memory sandbox, there is no arbitrary file count limit. The boundaries are determined by your device\'s hardware capability and system RAM.'
+      },
+      {
+        question: 'Do my private documents remain secure during the merge?',
+        answer: 'Absolutely. The merging process runs completely client-side. No files, metadata, or document contents are transmitted over the network or uploaded to our servers.'
+      },
+      {
+        question: 'Will merging files preserve internal links and bookmarks?',
+        answer: 'Yes. Our local layout parser copies document outlines, page indexes, and link definitions, updating their pointers to fit the combined file structure.'
+      }
+    ]
+  },
+  {
+    slug: 'png-vs-jpg',
+    title: 'PNG vs JPG: Which Image Format Should You Use? | ConvertOcean',
+    description: 'Compare PNG and JPG formats to understand compression types, transparency, image quality, and page load speed. Choose the best format for your files.',
+    h1: 'PNG vs JPG: Which Format Should You Use?',
+    readTime: '6 min read',
+    publishDate: 'June 20, 2026',
+    relatedTools: ['png-to-jpg', 'jpg-to-png'],
+    relatedGuides: ['how-ocr-works'],
+    intro: 'Choosing the correct image extension determines your website\'s loading speed, graphic rendering quality, and layout presentation. Understand the differences between PNG and JPG to make the right choice.',
+    contentHtml: `
+      <h2>The Core Difference: Lossless vs. Lossy Compression</h2>
+      <p>The primary distinction between PNG (Portable Network Graphics) and JPG (Joint Photographic Experts Group) is how they compress pixels to reduce file size:</p>
+      <ul>
+        <li><strong>PNG (Lossless):</strong> PNG uses compression algorithms that preserve every single pixel. When you save an image as PNG, no visual quality is discarded. It is ideal for graphics with sharp edges, line drawings, and text.</li>
+        <li><strong>JPG (Lossy):</strong> JPG discards "unnecessary" color detail that the human eye is less likely to notice. This creates highly compressed, small file sizes, but repeating saves causes "compression artifacts" (visible blurriness or color blocks). It is ideal for photographs.</li>
+      </ul>
+
+      <h2>Comparison Matrix: PNG vs. JPG</h2>
+      <div style="overflow-x: auto; margin: var(--spacing-lg) 0;">
+        <table style="width: 100%; border-collapse: collapse; border: 1px solid var(--colors-hairline); font-size: 14px; text-align: left;">
+          <thead>
+            <tr style="background-color: var(--colors-canvas-soft-2);">
+              <th style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Feature</th>
+              <th style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">PNG (Portable Network Graphics)</th>
+              <th style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">JPG / JPEG (Joint Photographic Experts Group)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline); font-weight: 600;">Compression Type</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Lossless (100% detail preserved)</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Lossy (some data discarded)</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline); font-weight: 600;">Transparency Support</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Yes (Alpha channel transparency)</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">No (transparent pixels turn white/black)</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline); font-weight: 600;">Best Used For</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Logos, screenshots, UI mockups, text graphics</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Photographs, realistic scenery, gradients</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline); font-weight: 600;">Average File Size</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Large (detailed images lead to large sizes)</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Small (highly compressed)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Transparency and Alpha Channels</h2>
+      <p>If your layout requires a logo or illustration to sit transparently over a colored background, <strong>you must use PNG</strong>. PNG supports alpha transparency, allowing the background colors to show through. Saving a transparent logo as a JPG will automatically fill the transparent areas with a solid color, usually white, breaking your page design.</p>
+
+      <h2>When to Convert Image Formats</h2>
+      <p>Understanding when to convert formats can improve web loading times and storage management:</p>
+      <ul>
+        <li><strong>Convert PNG to JPG:</strong> If you take screenshots of photographic contents or save detailed photos as PNG, the file sizes will be massive. Convert them to JPG using our <a href="/png-to-jpg/">PNG to JPG Converter</a> to reduce storage up to 80% without noticeable quality loss.</li>
+        <li><strong>Convert JPG to PNG:</strong> If you need to edit an image containing clean typography, logos, or solid color fields, convert it to PNG using our <a href="/jpg-to-png/">JPG to PNG Converter</a> to prevent text blurring during layout adjustments.</li>
+      </ul>
+
+      <h2>Best Practices for Image Optimization</h2>
+      <blockquote>
+        <strong>Tip: WebP is a next-generation replacement.</strong> WebP combines the best features of both formats, offering transparency support and file sizes 25-30% smaller than JPG. Consider converting your images to WebP for production web environments.
+      </blockquote>
+    `,
+    faqs: [
+      {
+        question: 'Why does my transparent PNG image get a white background when converted to JPG?',
+        answer: 'JPG does not support transparency or alpha channels. When you convert a transparent PNG to JPG, the empty transparency pixels are automatically filled with a solid color (defaulting to white).'
+      },
+      {
+        question: 'Does converting JPG to PNG improve image quality?',
+        answer: 'No. Converting JPG to PNG will prevent further compression loss during future saves, but it cannot restore pixels or detail discarded during the original JPG compression.'
+      },
+      {
+        question: 'Which image format loads faster on web pages?',
+        answer: 'JPG generally loads faster because it yields significantly smaller file sizes. However, for simple icons and logos, a compressed PNG or vector SVG is often the best choice.'
+      }
+    ]
+  },
+  {
+    slug: 'excel-to-pdf',
+    title: 'How to Convert Excel to PDF Without Page Cut-Offs - ConvertOcean',
+    description: 'Convert Excel spreadsheets (.xlsx, .xls, .csv) to print-ready PDF files without columns breaking or table layouts getting cut off. Keep formulas private.',
+    h1: 'How to Convert Excel to PDF.',
+    readTime: '5 min read',
+    publishDate: 'June 20, 2026',
+    relatedTools: ['excel-to-pdf'],
+    relatedGuides: ['merge-multiple-pdf-files', 'pdf-to-word-without-losing-formatting'],
+    intro: 'Formatting dynamic spreadsheet data for a static PDF can result in columns getting cut off or table contents spilling across empty pages. Learn how to compile professional, print-ready PDFs from Excel worksheets.',
+    contentHtml: `
+      <h2>The Layout Gap: Sheets vs. Fixed Page Sizes</h2>
+      <p>Excel sheets are infinite grids designed to grow both horizontally and vertically. PDF files, however, utilize a fixed, print-ready document format (typically standard A4 or Letter sizes). When you convert a spreadsheet to a PDF, the conversion engine must slice the grid into pages. If a table has more columns than the page width allows, the extra columns are pushed to additional pages, creating a disjointed layout.</p>
+
+      <h2>Key Challenges in Excel to PDF Conversion</h2>
+      <ul>
+        <li><strong>Horizontal Spillover:</strong> Wide spreadsheets often split columns across separate sheets of paper, making the table unreadable.</li>
+        <li><strong>Font and Gridline Alignments:</strong> Text wrapping can break table rows, causing overlapping columns.</li>
+        <li><strong>Hidden Information:</strong> Comments, formulas, and hidden notes can sometimes render incorrectly or clutter the output PDF.</li>
+      </ul>
+
+      <h2>Step-by-Step: Converting Excel to PDF Securely on ConvertOcean</h2>
+      <p>ConvertOcean parses and renders spreadsheet data locally on your device. Follow these steps for clean conversions:</p>
+      <div class="content-card">
+        <h3 style="margin-top: 0;">Step 1: Upload Your Sheet</h3>
+        <p>Go to the <a href="/excel-to-pdf/">Excel to PDF Converter</a>. Drop your XLS, XLSX, or CSV file. The file parses entirely inside sandboxed browser memory.</p>
+        
+        <h3>Step 2: Check Layout Preview</h3>
+        <p>Our renderer maps the spreadsheet columns client-side. Adjust column widths in Excel beforehand to ensure content fits within standard margins.</p>
+        
+        <h3>Step 3: Compile layout parameters</h3>
+        <p>The layout engine outputs to A4 landscape by default for wide tables, ensuring columns fit comfortably on the page.</p>
+        
+        <h3>Step 4: Download PDF</h3>
+        <p>Click "Convert & Download PDF" to save the formatted document directly to your device. No data is sent over the network.</p>
+      </div>
+
+      <h2>Best Practices for Clean PDF Output</h2>
+      <p>Avoid column formatting issues by following these pre-conversion formatting practices in your spreadsheet application:</p>
+      <ul>
+        <li><strong>Use Landscape Orientation:</strong> Because tables read horizontally, setting your page orientation to Landscape provides more space for columns.</li>
+        <li><strong>Set Print Areas:</strong> Explicitly define the print area in Excel before uploading. This instructs the converter which cell ranges to parse and ignore.</li>
+        <li><strong>Auto-Fit Column Widths:</strong> Double-click column borders to auto-fit text. This prevents truncated data or overflow boundaries.</li>
+      </ul>
+
+      <h2>Why Keep Spreadsheet Data Private?</h2>
+      <blockquote>
+        <strong>Caution: Financial sheets contain trade secrets.</strong> Uploading company budgets, invoice calculations, or employee salaries to cloud-based converters exposes your raw business data. ConvertOcean processes everything client-side, keeping your commercial data secure on your local device.
+      </blockquote>
+    `,
+    faqs: [
+      {
+        question: 'Why does my PDF cut off columns on the right side?',
+        answer: 'This occurs because the columns exceed the page width of the PDF. To resolve this, adjust your page setup to landscape or scale your column widths to fit before converting.'
+      },
+      {
+        question: 'Are sheet formulas visible in the generated PDF?',
+        answer: 'No. The conversion engine evaluates the computed value of the cells and renders the resulting text or figures. Your raw formulas remain private.'
+      },
+      {
+        question: 'Can I convert CSV text files to PDF using this tool?',
+        answer: 'Yes. CSV files are formatted as tables and converted to PDF using the same client-side spreadsheet layout engine.'
+      }
+    ]
+  },
+  {
+    slug: 'how-ocr-works',
+    title: 'How OCR Extracts Text From Images - Optical Character Recognition | ConvertOcean',
+    description: 'Understand the optical character recognition (OCR) pipeline. Learn how machines identify, isolate, and digitize text characters from images and screenshots.',
+    h1: 'How OCR Extracts Text From Images.',
+    readTime: '6 min read',
+    publishDate: 'June 20, 2026',
+    relatedTools: ['image-to-text'],
+    relatedGuides: ['png-vs-jpg'],
+    intro: 'Optical Character Recognition (OCR) converts static image pixels into editable text strings. Explore the detailed processing steps that happen behind the scenes when a computer reads a document.',
+    contentHtml: `
+      <h2>The Challenge: From Pixels to Vector Text</h2>
+      <p>To a computer, a scanned document or screenshot is a grid of colored pixels. It has no understanding of letter shapes or word boundaries. OCR bridges this gap by analyzing dark and light patterns in an image to identify characters (like letters, numbers, and punctuation) and compile them into digital text formats.</p>
+
+      <h2>The Step-by-Step OCR Pipeline</h2>
+      <p>Modern OCR engines, such as Tesseract.js (which runs locally on ConvertOcean), parse image data using a series of processing steps:</p>
+      
+      <h3>1. Image Pre-Processing</h3>
+      <p>Before recognizing letters, the engine cleans up the image to improve scanning accuracy:</p>
+      <ul>
+        <li><strong>Binarization:</strong> The engine converts the image to monochrome (pure black and white pixels), removing colored backgrounds and shadows.</li>
+        <li><strong>Deskewing:</strong> If the document was scanned crookedly, the engine rotates the canvas to align text lines horizontally.</li>
+        <li><strong>Noise Removal:</strong> Speckles and dust artifacts are cleaned up to prevent false character readings.</li>
+      </ul>
+
+      <h3>2. Layout Analysis (Segmentation)</h3>
+      <p>The engine parses the page structure to isolate text regions from illustrations. It groups text into distinct columns, paragraphs, lines, and individual word blocks.</p>
+
+      <h3>3. Character Recognition</h3>
+      <p>To identify individual characters, OCR engines use two main techniques:</p>
+      <ul>
+        <li><strong>Matrix Matching:</strong> The engine compares a character shape against a database of built-in glyph templates. This works well for standard fonts but struggles with handwriting or distorted scans.</li>
+        <li><strong>Feature Detection:</strong> The engine breaks a character down into key geometric strokes (e.g., vertical lines, loops, intersections). For example, an uppercase "H" is identified by two parallel vertical lines joined by a horizontal bar. This is highly robust across different fonts.</li>
+      </ul>
+
+      <h3>4. Post-Processing & Dictionary Checks</h3>
+      <p>After recognizing characters, the engine matches words against a local dictionary to fix scanning errors (e.g., correcting "c0nvert" to "convert").</p>
+
+      <h2>Step-by-Step: Extracting Text on ConvertOcean</h2>
+      <p>ConvertOcean uses WebAssembly to run the OCR engine directly inside your browser window. Here is how it works:</p>
+      <div class="content-card">
+        <h3 style="margin-top: 0;">Step 1: Upload Scan or Screenshot</h3>
+        <p>Go to the <a href="/image-to-text/">Image to Text OCR</a> tool and upload your file. The file loads in sandboxed memory.</p>
+        
+        <h3>Step 2: Recognize Characters Locally</h3>
+        <p>The WebAssembly library processes pixel arrays using your local device CPU. No pixel data is sent to external APIs.</p>
+        
+        <h3>Step 3: Review and Copy</h3>
+        <p>The extracted text displays in a secure edit field. Copy or download the output immediately. Your data remains completely private.</p>
+      </div>
+
+      <h2>Factors That Affect OCR Accuracy</h2>
+      <p>Ensure high-quality text extraction by matching these parameters:</p>
+      <ul>
+        <li><strong>Image Resolution:</strong> Source scans should be at least 300 DPI for clear character rendering.</li>
+        <li><strong>High Contrast:</strong> Sharp black text on clean white backgrounds yields the highest recognition rates.</li>
+        <li><strong>Standard Fonts:</strong> Standard typefaces like Times New Roman, Arial, or Calibri scan much better than cursive fonts or handwriting.</li>
+      </ul>
+    `,
+    faqs: [
+      {
+        question: 'Can OCR read handwritten notes?',
+        answer: 'Standard OCR engines are optimized for typed and printed fonts. While they can scan neat handwriting, recognition accuracy is significantly lower compared to printed documents.'
+      },
+      {
+        question: 'Does my image upload to a cloud service for text extraction?',
+        answer: 'No. ConvertOcean processes OCR client-side using Tesseract.js WebAssembly. All pixel parsing and character recognition run locally in your browser memory.'
+      },
+      {
+        question: 'Why does the OCR output contain random characters like "@" or "|"?',
+        answer: 'This is usually caused by noise in the image, low resolution, or background graphics that the engine misinterprets as text strokes.'
+      }
+    ]
+  }
+];
