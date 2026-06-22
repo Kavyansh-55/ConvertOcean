@@ -98,138 +98,86 @@ const description = catInfo.seoDescription;
 const categoryFaqsMap: Record<string, { q: string; a: string }[]> = {
   'pdf-tools': [
     {
-      q: "How does ConvertOcean convert files without uploading them?",
-      a: "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+      q: "Can I merge files of different orientations or formats?",
+      a: "Yes, you can combine multiple PDF files, images, or text documents together. Layout dimensions are calculated and formatted to standard A4/Letter size or stitched into landscape viewports."
     },
     {
-      q: "Is my confidential business or financial data safe when converting files?",
-      a: "Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times."
+      q: "Is there a maximum file size or page limit when splitting PDF files?",
+      a: "Because all PDF split and merge compilation runs client-side on your device, the file size limit is determined by your system's RAM. Most modern browsers can easily split or merge PDF documents up to several hundred megabytes."
     },
     {
-      q: "Can a client-side file converter run without an active internet connection?",
-      a: "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
-    },
-    {
-      q: "How does ConvertOcean merge or split PDF documents without data leaks?",
-      a: "PDF split and merge utilities are powered by local compiled WebAssembly engines (pdf-lib). When you split ranges or stitch documents together, the modifications are computed locally in your browser sandbox memory. Your sensitive contracts, invoices, and IDs remain confidential, with no data transmitted to cloud storage."
-    },
-    {
-      q: "Can I convert PDF files to plain text (TXT) offline?",
-      a: "Yes. Our local PDF to text converter parses native text characters and formatting arrays from document pages client-side using pdf.js in browser memory. This allows you to extract raw document contents directly on your machine without server upload latency."
-    },
-    {
-      q: "What are the layout constraints when compiling TXT to PDF locally?",
-      a: "Our local compiler reads plain text formatting, handles carriage returns, wraps lines, and scales paragraphs to fit standard A4 paper dimensions with proper margins. PDF styling adjustments are compiled locally to produce clean, readable layouts suitable for printing."
+      q: "How does ConvertOcean merge PDF files without losing interactive elements?",
+      a: "Our client-side merger consolidates resource libraries (like fonts, page coordinates, and form structures) to prevent file size bloat while keeping links, text flows, and standard annotations intact."
     }
   ],
   'image-tools': [
     {
-      q: "How does ConvertOcean convert files without uploading them?",
-      a: "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+      q: "What is the best image format for reducing page load speeds?",
+      a: "Modern WebP formats are optimal for websites because they offer transparency support and are 25-30% smaller than JPG files. We recommend converting PNG or JPG assets to WebP for production use."
     },
     {
-      q: "Is my confidential business or financial data safe when converting files?",
-      a: "Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times."
+      q: "Does converting a low-resolution JPG to a PNG layout restore image detail?",
+      a: "No. While PNG is a lossless format that prevents further compression artifacts in future saves, it cannot restore visual pixels or metadata discarded by the original lossy JPG compression."
     },
     {
-      q: "Can a client-side file converter run without an active internet connection?",
-      a: "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
-    },
-    {
-      q: "How do client-side image converters preserve quality during compression?",
-      a: "Client-side image converters utilize the HTML5 Canvas API and local WebAssembly codecs to compress images (such as WebP, JPG, PNG). This allows you to adjust quality parameters and compress files locally on your device with high rendering quality and instant local feedback."
-    },
-    {
-      q: "Is there a private tool to extract text from screenshots using offline OCR?",
-      a: "Yes. Our image-to-text OCR page runs Tesseract.js WebAssembly OCR engines completely client-side. This allows you to scan images, scans, and screenshots and extract text locally in your browser window without uploading confidential screenshots containing sensitive personal data."
-    },
-    {
-      q: "Does WebP to PNG conversion happen on my device or a server?",
-      a: "Every image conversion (WebP to PNG, JPG to PNG, PNG to WebP) occurs on your local device. The browser reads image pixel dimensions locally via File APIs and compiles the new image structure in sandbox memory, meaning no graphic assets are uploaded to external hosting."
+      q: "Can I run image format conversions in batch mode offline?",
+      a: "Yes. All image rasterization, color channel processing, and metadata updates run locally using HTML5 canvas capabilities in browser sandbox memory, meaning you can convert batches of images offline."
     }
   ],
   'excel-converter': [
     {
-      q: "How does ConvertOcean convert files without uploading them?",
-      a: "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+      q: "Does this tool evaluate formulas and macros when converting Excel files?",
+      a: "Our spreadsheet engine evaluates the calculated cell values in the sheet and renders the text or numbers. Standard formulas are evaluated local-side, but macros (.xlsm) or external database lookups are not supported."
     },
     {
-      q: "Is my confidential business or financial data safe when converting files?",
-      a: "Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times."
+      q: "Which sheet is processed when converting multi-sheet workbooks to CSV?",
+      a: "When converting XLSX/XLS workbooks to CSV, only the first visible sheet is parsed and exported. To convert other sheets, you can reorder them to the front of the workbook in Excel before uploading."
     },
     {
-      q: "Can a client-side file converter run without an active internet connection?",
-      a: "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
-    },
-    {
-      q: "Is it safe to convert Excel files containing corporate financial calculations to PDF?",
-      a: "Yes. ConvertOcean converts Excel spreadsheets (XLSX, XLS, CSV) locally inside your browser tab sandbox. SheetJS evaluating models process financial tables, styles, and numbers client-side, compiling them to PDF without transmitting proprietary commercial calculations, formulas, or trade data online."
-    },
-    {
-      q: "How does browser memory limit large XLSX or CSV database conversions?",
-      a: "Because all conversions execute client-side, the file size limit is determined by your device's available RAM and browser tab memory allocations. Most modern browsers can easily process spreadsheet datasets up to 25MB (containing tens of thousands of rows) without performance drops or tab crashes."
-    },
-    {
-      q: "Can I convert JSON database records to CSV sheets locally?",
-      a: "Yes. Our client-side database parser reads your JSON array files locally, compiles their key-value parameters into tabular structures, and formats them as standard comma-separated values (CSV) inside browser memory, allowing immediate and private offline spreadsheet downloads."
+      q: "How secure is my financial spreadsheet data on ConvertOcean?",
+      a: "Absolutely secure. All cell parsing, formula compilation, and CSV/JSON exports are computed in your browser sandbox memory on your local machine. No corporate records, budgets, or pricing tables leave your hardware."
     }
   ],
   'document-tools': [
     {
-      q: "How does ConvertOcean convert files without uploading them?",
-      a: "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+      q: "How does the document conversion engine preserve paragraph flows?",
+      a: "The engine extracts text layouts, preserves line breaks, wraps paragraphs, and formats them to fit standard margins. It compiles clean text nodes and outputs standard formats locally."
     },
     {
-      q: "Is my confidential business or financial data safe when converting files?",
-      a: "Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times."
+      q: "Can I parse scanned Word documents into TXT files?",
+      a: "No. Scanned or image-based DOCX files do not contain selectable text characters. To extract text from these documents, you should convert the pages to images and run them through our Image to Text OCR."
     },
     {
-      q: "Can a client-side file converter run without an active internet connection?",
-      a: "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
-    },
-    {
-      q: "Can I convert PDF files to plain text (TXT) offline?",
-      a: "Yes. Our local PDF to text converter parses native text characters and formatting arrays from document pages client-side using pdf.js in browser memory. This allows you to extract raw document contents directly on your machine without server upload latency."
-    },
-    {
-      q: "What are the layout constraints when compiling TXT to PDF locally?",
-      a: "Our local compiler reads plain text formatting, handles carriage returns, wraps lines, and scales paragraphs to fit standard A4 paper dimensions with proper margins. PDF styling adjustments are compiled locally to produce clean, readable layouts suitable for printing."
+      q: "What options are supported when merging plain text files?",
+      a: "You can customize separator delimiters between files (such as single newlines, double newlines, or custom text borders) to merge codebase files, logs, or text outputs in a clean order."
     }
   ],
   'ocr-tools': [
     {
-      q: "How does ConvertOcean convert files without uploading them?",
-      a: "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+      q: "How does the OCR engine identify characters from poor quality scans?",
+      a: "The local OCR engine uses image pre-processing algorithms (binarization, deskewing, and noise removal) to convert images into high-contrast monochrome pixels. It then applies feature detection to match shapes with character models."
     },
     {
-      q: "Is my confidential business or financial data safe when converting files?",
-      a: "Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times."
+      q: "What languages are supported by the client-side text extractor?",
+      a: "Our WebAssembly OCR engine is pre-configured to extract English characters. It accurately processes screenshot text, code structures, receipt rows, and scanned PDF forms."
     },
     {
-      q: "Can a client-side file converter run without an active internet connection?",
-      a: "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
-    },
-    {
-      q: "Is there a private tool to extract text from screenshots using offline OCR?",
-      a: "Yes. Our image-to-text OCR page runs Tesseract.js WebAssembly OCR engines completely client-side. This allows you to scan images, scans, and screenshots and extract text locally in your browser window without uploading confidential screenshots containing sensitive personal data."
+      q: "Are my screenshots and scanned text private?",
+      a: "Yes. All optical character recognition is performed locally on your device's CPU/GPU via WebAssembly (Tesseract.js). No graphic assets, extracted text, or client data are sent over the network."
     }
   ],
   'business-tools': [
     {
-      q: "How does ConvertOcean convert files without uploading them?",
-      a: "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
+      q: "Can I customize tax settings for invoice and receipt generation?",
+      a: "Yes. You can select standard preset rates (like GST 18%, VAT 15%) or type any custom tax rate percentage. Taxes are automatically calculated and detailed on the downloadable A4 PDF."
     },
     {
-      q: "Is my confidential business or financial data safe when converting files?",
-      a: "Yes, converting sensitive files on ConvertOcean is completely safe. Because all data processing happens locally on your device (client-side), confidential documents, financial statements, internal spreadsheet formulas, and tax details are never uploaded to any remote server or third-party database. You retain full data sovereignty at all times."
+      q: "What is the difference between profit margin and markup?",
+      a: "Profit margin represents the percentage of selling price that is profit, while markup is the percentage added to the wholesale cost to set the selling price. Margin can never exceed 100%, but markup can be infinite."
     },
     {
-      q: "Can a client-side file converter run without an active internet connection?",
-      a: "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
-    },
-    {
-      q: "Do I need to register an account or pay for a conversion subscription?",
-      a: "No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions."
+      q: "Does the sales tax calculator support reverse tax back-calculation?",
+      a: "Yes. You can calculate the net pre-tax price and exact tax amount from a tax-inclusive gross total by selecting the reverse tax mode in the calculator interface."
     }
   ],
   'developer-tools': [

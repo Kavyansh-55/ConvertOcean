@@ -112,31 +112,7 @@ const relatedToolsData = tools.filter(t => toolData.relatedTools.includes(t.slug
 // Fetch related guides data
 const relatedGuides = guides.filter(g => g.relatedTools.includes(toolData.slug));
 
-const globalFaqs = [
-  {
-    q: "How does ConvertOcean convert files without uploading them?",
-    a: "ConvertOcean uses WebAssembly (WASM) and local JavaScript compilers to convert files directly inside your browser window. When you load a tool page, all required code is loaded into your browser tab cache, allowing your device's CPU/GPU to parse, compile, and format files locally. Since your file data remains inside sandboxed tab memory, it is never transmitted over the internet or uploaded to a remote server."
-  },
-  {
-    q: "Can a client-side file converter run without an active internet connection?",
-    a: "Yes, ConvertOcean is offline-capable. Once you load the tool page in your web browser, all formatting engines, scripts, and WebAssembly converters are stored in your browser tab cache. You can disconnect your device from the internet entirely and convert files locally with 100% functionality and speed."
-  },
-  {
-    q: "Do I need to register an account or pay for a conversion subscription?",
-    a: "No registration, signups, or email entries are required. ConvertOcean is 100% free with no conversion limits, no monthly subscriptions, and no paywalls. Every tool is immediately unlocked and ready for secure, private client-side file conversions."
-  }
-];
-
-const specificFaqs = (toolData.faqs || [])
-  .filter(f => 
-    !f.question.toLowerCase().includes('upload') && 
-    !f.question.toLowerCase().includes('offline') && 
-    !f.question.toLowerCase().includes('account') &&
-    !f.question.toLowerCase().includes('sign up')
-  )
-  .map(f => ({ q: f.question, a: f.answer }));
-
-const faqList = [...globalFaqs, ...specificFaqs];
+const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }));
 ---
 
 <Layout title={toolData.title} description={toolData.description} lang={lang} toolName={toolData.name} category={toolData.category} categorySlug={toolData.categorySlug} isTool={true} faqList={faqList}>

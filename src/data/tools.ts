@@ -5,6 +5,7 @@ import {
   percentageCalculatorContent,
   salesTaxCalculatorContent
 } from './business-content';
+import { seoContentMap } from './seo-content';
 
 export interface ToolData {
   slug: string;
@@ -21,7 +22,7 @@ export interface ToolData {
   content?: string;
 }
 
-export const tools: ToolData[] = [
+const rawTools: ToolData[] = [
   {
     slug: 'excel-to-pdf',
     name: 'Excel to PDF',
@@ -843,4 +844,15 @@ export const tools: ToolData[] = [
     relatedTools: ['merge-pptx', 'pptx-to-pdf', 'ppt-to-pdf']
   }
 ];
+
+export const tools: ToolData[] = rawTools.map(t => {
+  const seo = seoContentMap[t.slug];
+  return {
+    ...t,
+    title: seo ? seo.title : t.title,
+    description: seo ? seo.description : t.description,
+    faqs: seo ? seo.faqs : t.faqs,
+    content: t.content || (seo ? seo.content : undefined)
+  };
+});
 
