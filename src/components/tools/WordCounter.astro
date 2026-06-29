@@ -1,0 +1,516 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .wc-workspace {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+    align-items: start;
+  }
+  @media (max-width: 960px) {
+    .wc-workspace { grid-template-columns: 1fr; }
+  }
+
+  /* Textarea Panel */
+  .wc-editor-panel {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+  }
+  .wc-editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 10px var(--spacing-md);
+    border-bottom: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas-soft);
+    flex-wrap: wrap;
+  }
+  .wc-toolbar-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--colors-mute);
+    letter-spacing: 0.5px;
+    margin-right: auto;
+  }
+  .wc-btn {
+    padding: 6px 14px;
+    border-radius: var(--rounded-pill);
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas);
+    color: var(--colors-body);
+    transition: all 0.18s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .wc-btn:hover {
+    border-color: var(--colors-hairline-strong);
+    color: var(--colors-ink);
+  }
+  .wc-btn-danger:hover {
+    border-color: var(--colors-error);
+    color: var(--colors-error);
+  }
+  .wc-btn-success {
+    background-color: var(--colors-ink);
+    color: var(--colors-canvas);
+    border-color: var(--colors-ink);
+  }
+  .wc-btn-success:hover {
+    opacity: 0.85;
+    color: var(--colors-canvas);
+  }
+
+  .wc-textarea {
+    width: 100%;
+    min-height: 340px;
+    padding: var(--spacing-lg);
+    font-size: 15px;
+    line-height: 1.65;
+    font-family: Geist, Inter, system-ui, sans-serif;
+    color: var(--colors-ink);
+    background-color: var(--colors-canvas);
+    border: none;
+    outline: none;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+  [data-theme="dark"] .wc-textarea {
+    background-color: var(--colors-canvas);
+    color: var(--colors-ink);
+  }
+  .wc-textarea::placeholder {
+    color: var(--colors-mute);
+    font-style: italic;
+  }
+
+  /* Limit Presets */
+  .wc-presets {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px var(--spacing-md);
+    border-top: 1px solid var(--colors-hairline);
+    flex-wrap: wrap;
+    background-color: var(--colors-canvas-soft);
+  }
+  .wc-presets-label {
+    font-size: 11.5px;
+    color: var(--colors-mute);
+    font-weight: 500;
+    margin-right: 2px;
+  }
+  .preset-chip {
+    padding: 4px 10px;
+    border-radius: var(--rounded-pill);
+    font-size: 11.5px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas);
+    color: var(--colors-body);
+    transition: all 0.18s;
+  }
+  .preset-chip:hover {
+    border-color: var(--colors-link);
+    color: var(--colors-link);
+    background-color: var(--colors-link-bg-soft);
+  }
+  .preset-chip.active {
+    background-color: var(--colors-ink);
+    color: var(--colors-canvas);
+    border-color: var(--colors-ink);
+  }
+  .wc-char-limit-bar {
+    height: 3px;
+    background-color: var(--colors-hairline);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 0 var(--spacing-md) 4px;
+  }
+  .wc-char-limit-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #0070f3, #00dfd8);
+    transition: width 0.25s ease, background 0.25s;
+    width: 0%;
+  }
+  .wc-char-limit-fill.warn { background: linear-gradient(90deg, #f5a623, #f9cb28); }
+  .wc-char-limit-fill.danger { background: linear-gradient(90deg, #ee0000, #ff4d4d); }
+
+  /* Stats Panel */
+  .wc-stats-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .wc-stat-card {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+  }
+
+  .wc-stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .wc-stat-value {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--colors-ink);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+  .wc-stat-label {
+    font-size: 11px;
+    color: var(--colors-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+
+  .wc-time-card {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  }
+  .wc-time-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--colors-mute);
+    margin-bottom: var(--spacing-sm);
+    letter-spacing: 0.5px;
+  }
+  .wc-time-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--colors-hairline);
+    font-size: 13.5px;
+  }
+  .wc-time-row:last-child { border-bottom: none; }
+  .wc-time-label { color: var(--colors-body); }
+  .wc-time-value { font-weight: 600; color: var(--colors-ink); font-size: 14px; }
+
+  /* Keyword Density */
+  .wc-keyword-card {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  }
+  .wc-keyword-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--colors-mute);
+    margin-bottom: var(--spacing-sm);
+    letter-spacing: 0.5px;
+  }
+  .wc-keyword-card :global(.wc-keyword-row) {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--colors-hairline);
+    font-size: 13px;
+  }
+  .wc-keyword-card :global(.wc-keyword-row:last-child) { border-bottom: none; }
+  .wc-keyword-card :global(.wc-keyword-word) {
+    flex: 1;
+    color: var(--colors-ink);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+  .wc-keyword-card :global(.wc-keyword-count) {
+    color: var(--colors-mute);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    min-width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .wc-keyword-card :global(.wc-keyword-bar-wrap) {
+    width: 60px;
+    flex-shrink: 0;
+  }
+  .wc-keyword-card :global(.wc-keyword-bar) {
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #0070f3, #00dfd8);
+  }
+  .wc-empty-kw {
+    font-size: 13px;
+    color: var(--colors-mute);
+    font-style: italic;
+    text-align: center;
+    padding: var(--spacing-sm) 0;
+  }
+</style>
+
+<div class="wc-workspace" id="wc-root">
+  <!-- LEFT: Editor Panel -->
+  <div class="wc-editor-panel">
+    <div class="wc-editor-toolbar">
+      <span class="wc-toolbar-label">TEXT INPUT</span>
+      <button class="wc-btn" id="wc-paste-btn" title="Paste from clipboard">
+        📋 Paste
+      </button>
+      <button class="wc-btn" id="wc-copy-btn" title="Copy text">
+        📄 Copy
+      </button>
+      <button class="wc-btn wc-btn-danger" id="wc-clear-btn" title="Clear all">
+        🗑️ Clear
+      </button>
+    </div>
+    <textarea
+      id="wc-textarea"
+      class="wc-textarea"
+      placeholder="Paste or type your text here to instantly analyze word count, character count, reading time, and keyword density..."
+      spellcheck="false"
+    ></textarea>
+    <div class="wc-char-limit-bar" id="wc-limit-bar-wrap" style="display:none;">
+      <div class="wc-char-limit-fill" id="wc-limit-fill"></div>
+    </div>
+    <div class="wc-presets">
+      <span class="wc-presets-label">Limit:</span>
+      <button class="preset-chip" data-limit="280" id="pchip-280">Twitter/X 280</button>
+      <button class="preset-chip" data-limit="160" id="pchip-160">Meta Desc 160</button>
+      <button class="preset-chip" data-limit="2200" id="pchip-2200">Instagram 2200</button>
+      <button class="preset-chip" data-limit="3000" id="pchip-3000">LinkedIn 3000</button>
+      <button class="preset-chip" data-limit="0" id="pchip-none">None</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: Stats Panel -->
+  <div class="wc-stats-panel">
+    <!-- Main counts -->
+    <div class="wc-stat-card">
+      <div class="wc-stat-item">
+        <span class="wc-stat-value" id="wc-words">0</span>
+        <span class="wc-stat-label">Words</span>
+      </div>
+      <div class="wc-stat-item">
+        <span class="wc-stat-value" id="wc-chars">0</span>
+        <span class="wc-stat-label">Characters</span>
+      </div>
+      <div class="wc-stat-item">
+        <span class="wc-stat-value" id="wc-chars-no-space">0</span>
+        <span class="wc-stat-label">No Spaces</span>
+      </div>
+      <div class="wc-stat-item">
+        <span class="wc-stat-value" id="wc-sentences">0</span>
+        <span class="wc-stat-label">Sentences</span>
+      </div>
+      <div class="wc-stat-item">
+        <span class="wc-stat-value" id="wc-paragraphs">0</span>
+        <span class="wc-stat-label">Paragraphs</span>
+      </div>
+      <div class="wc-stat-item">
+        <span class="wc-stat-value" id="wc-lines">0</span>
+        <span class="wc-stat-label">Lines</span>
+      </div>
+    </div>
+
+    <!-- Reading / Speaking Time -->
+    <div class="wc-time-card">
+      <div class="wc-time-title">⏱ Time Estimates</div>
+      <div class="wc-time-row">
+        <span class="wc-time-label">📖 Reading time</span>
+        <span class="wc-time-value" id="wc-read-time">—</span>
+      </div>
+      <div class="wc-time-row">
+        <span class="wc-time-label">🎙 Speaking time</span>
+        <span class="wc-time-value" id="wc-speak-time">—</span>
+      </div>
+    </div>
+
+    <!-- Keyword Density -->
+    <div class="wc-keyword-card">
+      <div class="wc-keyword-title">🔑 Top Keywords</div>
+      <div id="wc-keyword-list">
+        <p class="wc-empty-kw">Start typing to see keyword frequency…</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const textarea   = document.getElementById('wc-textarea');
+    const elWords    = document.getElementById('wc-words');
+    const elChars    = document.getElementById('wc-chars');
+    const elCharsNS  = document.getElementById('wc-chars-no-space');
+    const elSent     = document.getElementById('wc-sentences');
+    const elPara     = document.getElementById('wc-paragraphs');
+    const elLines    = document.getElementById('wc-lines');
+    const elRead     = document.getElementById('wc-read-time');
+    const elSpeak    = document.getElementById('wc-speak-time');
+    const elKwList   = document.getElementById('wc-keyword-list');
+    const limitBarWrap = document.getElementById('wc-limit-bar-wrap');
+    const limitFill  = document.getElementById('wc-limit-fill');
+    const copyBtn    = document.getElementById('wc-copy-btn');
+    const pasteBtn   = document.getElementById('wc-paste-btn');
+    const clearBtn   = document.getElementById('wc-clear-btn');
+
+    let activeLimit = 0;
+
+    // Stop words for keyword density
+    const STOP = new Set([
+      'a','an','the','and','or','but','in','on','at','to','for','of','with','by',
+      'from','as','is','was','are','were','be','been','being','have','has','had',
+      'do','does','did','will','would','could','should','may','might','shall',
+      'it','its','this','that','these','those','i','you','he','she','we','they',
+      'me','him','her','us','them','my','your','his','our','their','not','no',
+      'so','if','then','than','when','what','who','how','all','any','each',
+      'more','also','just','about','up','out','into','can','also'
+    ]);
+
+    function formatTime(minutes) {
+      if (minutes < 1) return '< 1 min';
+      if (minutes < 60) return Math.round(minutes) + ' min';
+      const h = Math.floor(minutes / 60);
+      const m = Math.round(minutes % 60);
+      return h + 'h ' + (m > 0 ? m + 'm' : '');
+    }
+
+    function analyze() {
+      const text = textarea.value;
+      const words = text.trim() === '' ? [] : text.trim().split(/\s+/);
+      const wordCount = words.length;
+      const charCount = text.length;
+      const charNoSpace = text.replace(/\s/g, '').length;
+      const sentences = text.trim() === '' ? 0 : (text.match(/[.!?]+/g) || []).length || (text.trim().length > 0 ? 1 : 0);
+      const paragraphs = text.trim() === '' ? 0 : text.split(/\n\s*\n/).filter(p => p.trim().length > 0).length || (text.trim().length > 0 ? 1 : 0);
+      const lines = text.trim() === '' ? 0 : text.split('\n').filter(l => l.trim().length > 0).length;
+
+      elWords.textContent = wordCount.toLocaleString();
+      elChars.textContent = charCount.toLocaleString();
+      elCharsNS.textContent = charNoSpace.toLocaleString();
+      elSent.textContent = sentences.toLocaleString();
+      elPara.textContent = paragraphs.toLocaleString();
+      elLines.textContent = lines.toLocaleString();
+
+      // Time
+      if (wordCount === 0) {
+        elRead.textContent = '—';
+        elSpeak.textContent = '—';
+      } else {
+        elRead.textContent = formatTime(wordCount / 200);
+        elSpeak.textContent = formatTime(wordCount / 130);
+      }
+
+      // Limit bar
+      if (activeLimit > 0) {
+        limitBarWrap.style.display = 'block';
+        const pct = Math.min((charCount / activeLimit) * 100, 100);
+        limitFill.style.width = pct + '%';
+        limitFill.className = 'wc-char-limit-fill';
+        if (pct >= 100) limitFill.classList.add('danger');
+        else if (pct >= 80) limitFill.classList.add('warn');
+      } else {
+        limitBarWrap.style.display = 'none';
+      }
+
+      // Keyword density
+      const freq = {};
+      words.forEach(w => {
+        const clean = w.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (clean.length > 2 && !STOP.has(clean)) {
+          freq[clean] = (freq[clean] || 0) + 1;
+        }
+      });
+      const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+      if (sorted.length === 0) {
+        elKwList.innerHTML = '<p class="wc-empty-kw">Start typing to see keyword frequency…</p>';
+      } else {
+        const maxCount = sorted[0][1];
+        elKwList.innerHTML = sorted.map(([word, count]) => {
+          const pct = Math.round((count / maxCount) * 100);
+          const density = wordCount > 0 ? ((count / wordCount) * 100).toFixed(1) : '0.0';
+          return `<div class="wc-keyword-row">
+            <span class="wc-keyword-word" title="${word}">${word}</span>
+            <div class="wc-keyword-bar-wrap">
+              <div class="wc-keyword-bar" style="width:${pct}%"></div>
+            </div>
+            <span class="wc-keyword-count">${count}×</span>
+          </div>`;
+        }).join('');
+      }
+    }
+
+    textarea.addEventListener('input', analyze);
+
+    // Paste
+    pasteBtn.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        textarea.value = text;
+        analyze();
+      } catch(e) {
+        textarea.focus();
+      }
+    });
+
+    // Copy
+    copyBtn.addEventListener('click', async () => {
+      if (!textarea.value) return;
+      try {
+        await navigator.clipboard.writeText(textarea.value);
+        copyBtn.textContent = '✅ Copied!';
+        setTimeout(() => { copyBtn.innerHTML = '📄 Copy'; }, 1800);
+      } catch(e) {}
+    });
+
+    // Clear
+    clearBtn.addEventListener('click', () => {
+      textarea.value = '';
+      analyze();
+    });
+
+    // Limit presets
+    document.querySelectorAll('.preset-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+        const lim = parseInt(chip.dataset.limit);
+        activeLimit = lim;
+        if (lim > 0) chip.classList.add('active');
+        analyze();
+      });
+    });
+
+    analyze();
+  })();
+</script>

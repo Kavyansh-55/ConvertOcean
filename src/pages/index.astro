@@ -77,15 +77,29 @@ const getToolCount = (categorySlug: string) => {
       font-size: 56px;
       font-weight: 600;
       line-height: 1.05;
-      letter-spacing: -2.8px;
+      letter-spacing: -2.6px;
       margin-bottom: var(--spacing-md);
       color: var(--colors-ink);
+    }
+
+    .hero-title-accent {
+      background: linear-gradient(90deg, #007cf0, #00dfd8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
     }
 
     @media (max-width: 768px) {
       .hero-title {
         font-size: 38px;
-        letter-spacing: -1.8px;
+        letter-spacing: -1.6px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .hero-title {
+        font-size: 30px;
+        letter-spacing: -1.2px;
       }
     }
 
@@ -97,11 +111,24 @@ const getToolCount = (categorySlug: string) => {
       line-height: 1.6;
     }
 
+    @media (max-width: 480px) {
+      .hero-subtitle {
+        font-size: 15.5px;
+      }
+    }
+
     .hero-cta-group {
       display: flex;
       justify-content: center;
       gap: var(--spacing-md);
       margin-bottom: var(--spacing-2xl);
+    }
+
+    /* Hide /⌘K kbd hint on touch devices — no keyboard shortcut */
+    @media (max-width: 640px) {
+      .search-kbd {
+        display: none;
+      }
     }
 
   </style>
@@ -120,28 +147,29 @@ const getToolCount = (categorySlug: string) => {
       display: flex;
       align-items: center;
       border-radius: var(--rounded-lg);
-      background-color: var(--colors-canvas);
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
       border: 1px solid var(--colors-hairline);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .search-input-wrapper:focus-within {
-      border-color: #00dfd8;
-      box-shadow: 0 0 0 3px rgba(0, 223, 216, 0.15), 0 10px 40px rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 112, 243, 0.45);
+      box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.12), 0 10px 40px rgba(0, 0, 0, 0.06);
       transform: translateY(-1px);
     }
 
     [data-theme="dark"] .search-input-wrapper {
-      background-color: rgba(18, 18, 18, 0.7);
-      backdrop-filter: blur(12px);
+      background-color: rgba(18, 18, 18, 0.8);
+      backdrop-filter: blur(8px);
       border-color: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
     }
 
     [data-theme="dark"] .search-input-wrapper:focus-within {
-      border-color: #00dfd8;
-      box-shadow: 0 0 0 3px rgba(0, 223, 216, 0.25), 0 10px 40px rgba(0, 0, 0, 0.4);
+      border-color: rgba(0, 223, 216, 0.45);
+      box-shadow: 0 0 0 3px rgba(0, 223, 216, 0.18), 0 10px 40px rgba(0, 0, 0, 0.35);
     }
 
     .search-icon {
@@ -193,22 +221,24 @@ const getToolCount = (categorySlug: string) => {
       top: calc(100% + 8px);
       left: 0;
       right: 0;
-      background-color: var(--colors-canvas);
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--colors-hairline);
       border-radius: var(--rounded-lg);
       max-height: 380px;
       overflow-y: auto;
-      box-shadow: 0 12px 50px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.08);
       display: none;
       flex-direction: column;
       z-index: 999;
       padding: var(--spacing-xs) 0;
+      animation: dropdown-fade-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     [data-theme="dark"] .search-results-panel {
-      background-color: #121212;
+      background-color: rgba(18, 18, 18, 0.95);
       border-color: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 12px 50px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.4);
     }
 
     .search-result-item {
@@ -616,8 +646,28 @@ const getToolCount = (categorySlug: string) => {
   <main>
     <!-- Hero Section -->
     <section class="hero-container">
-      <h1 class="hero-title">Convert, Merge & Process Files — 100% Private.</h1>
-      <p class="hero-subtitle">PDF, image, spreadsheet, OCR and business tools that run directly in your browser. No uploads. No accounts. No tracking.</p>
+      <h1 class="hero-title">Convert, Merge & Process Files — <span class="hero-title-accent">100% Private.</span></h1>
+      <p class="hero-subtitle">Secure client-side document utilities that run locally in your web browser sandbox. Speed and safety combined.</p>
+      
+      <!-- Inline Trust Badges Row -->
+      <div class="hero-trust-badges">
+        <span class="trust-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #0070f3;"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          100% Private (On-Device)
+        </span>
+        <span class="trust-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #ee0000;"><path d="m2 2 20 20"/><path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 2.227-8.411"/><path d="M15.758 10.143A5 5 0 0 0 10 4.3a6.99 6.99 0 0 0-4.086 2.029"/></svg>
+          No Server Uploads
+        </span>
+        <span class="trust-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #f5a623;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Works Offline
+        </span>
+        <span class="trust-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #7928ca;"><rect width="18" height="14" x="3" y="8" rx="2"/><path d="M12 5a3 3 0 1 0-3 3h6a3 3 0 1 0-3-3Z"/><path d="M12 8v14"/><path d="M3 12h18"/></svg>
+          Free & Unlimited
+        </span>
+      </div>
       
       <!-- Homepage Search bar -->
       <div class="search-container" id="searchContainer" data-tools={JSON.stringify(tools.map(t => ({ name: t.name, slug: t.slug, icon: t.icon, desc: t.description })))}>
@@ -646,228 +696,41 @@ const getToolCount = (categorySlug: string) => {
       </div>
 
       <div class="hero-cta-group">
-        <a href="#categories" class="button button-primary">Browse Tools</a>
+        <a href="#tools" class="button button-primary">Browse Tools</a>
         <a href={relLink('/privacy-first/')} class="button button-secondary">How Privacy Works</a>
       </div>
 
     </section>
 
-    <!-- Trust Cards Section -->
-    <section class="trust-section">
-      <div class="trust-card">
-        <div class="trust-icon-wrapper">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #0070f3;"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        </div>
-        <h3 class="trust-title">100% Private</h3>
-        <p class="trust-desc">Files are processed locally in your browser. No files are ever sent to a server.</p>
-      </div>
-      <div class="trust-card">
-        <div class="trust-icon-wrapper">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #ee0000;"><path d="m2 2 20 20"/><path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 2.227-8.411"/><path d="M15.758 10.143A5 5 0 0 0 10 4.3a6.99 6.99 0 0 0-4.086 2.029"/></svg>
-        </div>
-        <h3 class="trust-title">No Uploads</h3>
-        <p class="trust-desc">Files never touch our servers. Your data stays entirely in local sandboxed memory.</p>
-      </div>
-      <div class="trust-card">
-        <div class="trust-icon-wrapper">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #f5a623;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-        <h3 class="trust-title">Works Offline</h3>
-        <p class="trust-desc">Many tools continue working without internet. You can convert files offline.</p>
-      </div>
-      <div class="trust-card">
-        <div class="trust-icon-wrapper">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #7928ca;"><rect width="18" height="14" x="3" y="8" rx="2"/><path d="M12 5a3 3 0 1 0-3 3h6a3 3 0 1 0-3-3Z"/><path d="M12 8v14"/><path d="M3 12h18"/></svg>
-        </div>
-        <h3 class="trust-title">Free Forever</h3>
-        <p class="trust-desc">No accounts, no subscriptions, and no tracking. Universal conversion with unlimited use.</p>
-      </div>
-    </section>
-
     <hr class="section-divider">
 
-    <!-- Featured Tools Section -->
-    <section class="featured-section">
-      <h2 class="featured-title">Featured Tools</h2>
-      <div class="featured-grid">
-        <!-- Card 1 -->
-        <div class="featured-card">
-          <span class="featured-badge">Most Popular</span>
-          <div class="featured-card-header">
-            <div class="featured-card-icon"><CategoryIcon icon="📄" width="24" height="24" /></div>
-            <h3 class="featured-card-name">PDF to Word</h3>
-          </div>
-          <p class="featured-card-desc">Convert PDF documents to editable Microsoft Word files offline in your browser. 100% private.</p>
-          <a href={relLink('/pdf-to-word/')} class="button button-primary-sm featured-cta">Open Tool</a>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="featured-card">
-          <span class="featured-badge">Frequently Used</span>
-          <div class="featured-card-header">
-            <div class="featured-card-icon"><CategoryIcon icon="📄" width="24" height="24" /></div>
-            <h3 class="featured-card-name">Word to PDF</h3>
-          </div>
-          <p class="featured-card-desc">Convert Word documents (.docx) to standard print-ready PDF files locally on your device.</p>
-          <a href={relLink('/word-to-pdf/')} class="button button-primary-sm featured-cta">Open Tool</a>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="featured-card">
-          <span class="featured-badge">Recommended</span>
-          <div class="featured-card-header">
-            <div class="featured-card-icon"><CategoryIcon icon="🖼️" width="24" height="24" /></div>
-            <h3 class="featured-card-name">JPG to PNG</h3>
-          </div>
-          <p class="featured-card-desc">Convert JPG images to lossless PNG format with transparency support client-side.</p>
-          <a href={relLink('/jpg-to-png/')} class="button button-primary-sm featured-cta">Open Tool</a>
-        </div>
-
-        <!-- Card 4 -->
-        <div class="featured-card">
-          <span class="featured-badge">Most Popular</span>
-          <div class="featured-card-header">
-            <div class="featured-card-icon"><CategoryIcon icon="🥞" width="24" height="24" /></div>
-            <h3 class="featured-card-name">Merge PDF</h3>
-          </div>
-          <p class="featured-card-desc">Combine multiple PDF documents together client-side into a single file instantly.</p>
-          <a href={relLink('/merge-pdf/')} class="button button-primary-sm featured-cta">Open Tool</a>
-        </div>
-
-        <!-- Card 5 -->
-        <div class="featured-card">
-          <span class="featured-badge">Frequently Used</span>
-          <div class="featured-card-header">
-            <div class="featured-card-icon"><CategoryIcon icon="📊" width="24" height="24" /></div>
-            <h3 class="featured-card-name">Excel to PDF</h3>
-          </div>
-          <p class="featured-card-desc">Convert XLS, XLSX, and CSV spreadsheets to print-ready PDF files in your browser window.</p>
-          <a href={relLink('/excel-to-pdf/')} class="button button-primary-sm featured-cta">Open Tool</a>
-        </div>
-
-        <!-- Card 6 -->
-        <div class="featured-card">
-          <span class="featured-badge">Recommended</span>
-          <div class="featured-card-header">
-            <div class="featured-card-icon"><CategoryIcon icon="📊" width="24" height="24" /></div>
-            <h3 class="featured-card-name">PDF to Excel</h3>
-          </div>
-          <p class="featured-card-desc">Extract tabular data from PDF files and construct aligned Excel spreadsheets (.xlsx) offline.</p>
-          <a href={relLink('/pdf-to-excel/')} class="button button-primary-sm featured-cta">Open Tool</a>
-        </div>
+    <!-- Explore Tools Section (Interactive Tabbed Console) -->
+    <section class="explore-section" id="tools">
+      <h2 class="explore-title">Explore Tools</h2>
+      <div class="filter-tab-container">
+        <button class="filter-tab active" data-category="all">All Tools</button>
+        <button class="filter-tab" data-category="pdf-tools">PDF & Merge</button>
+        <button class="filter-tab" data-category="image-tools">Image Tools</button>
+        <button class="filter-tab" data-category="excel-converter">Spreadsheets</button>
+        <button class="filter-tab" data-category="developer-tools">Developer</button>
+        <button class="filter-tab" data-category="business-tools">Business</button>
       </div>
-    </section>
 
-    <hr class="section-divider">
-
-    <!-- Popular Tools Section -->
-    <section class="popular-section">
-      <h2 class="popular-title">Popular Tools</h2>
-      <div class="popular-grid">
-        <a href={relLink('/pdf-to-word/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="📄" width="20" height="20" /></div>
-          <span class="popular-card-name">PDF to Word</span>
-        </a>
-        <a href={relLink('/word-to-pdf/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="📄" width="20" height="20" /></div>
-          <span class="popular-card-name">Word to PDF</span>
-        </a>
-        <a href={relLink('/pdf-to-excel/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="📊" width="20" height="20" /></div>
-          <span class="popular-card-name">PDF to Excel</span>
-        </a>
-        <a href={relLink('/excel-to-pdf/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="📊" width="20" height="20" /></div>
-          <span class="popular-card-name">Excel to PDF</span>
-        </a>
-        <a href={relLink('/csv-to-json/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="⚙️" width="20" height="20" /></div>
-          <span class="popular-card-name">CSV to JSON</span>
-        </a>
-        <a href={relLink('/json-to-csv/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="⚙️" width="20" height="20" /></div>
-          <span class="popular-card-name">JSON to CSV</span>
-        </a>
-        <a href={relLink('/png-to-jpg/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="🖼️" width="20" height="20" /></div>
-          <span class="popular-card-name">PNG to JPG</span>
-        </a>
-        <a href={relLink('/jpg-to-png/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="🖼️" width="20" height="20" /></div>
-          <span class="popular-card-name">JPG to PNG</span>
-        </a>
-        <a href={relLink('/png-to-webp/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="🖼️" width="20" height="20" /></div>
-          <span class="popular-card-name">PNG to WebP</span>
-        </a>
-        <a href={relLink('/webp-to-png/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="🖼️" width="20" height="20" /></div>
-          <span class="popular-card-name">WebP to PNG</span>
-        </a>
-        <a href={relLink('/image-to-text/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="🔍" width="20" height="20" /></div>
-          <span class="popular-card-name">Image to Text OCR</span>
-        </a>
-        <a href={relLink('/merge-pdf/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="🥞" width="20" height="20" /></div>
-          <span class="popular-card-name">Merge PDF</span>
-        </a>
-        <a href={relLink('/split-pdf/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="🥞" width="20" height="20" /></div>
-          <span class="popular-card-name">Split PDF</span>
-        </a>
-        <a href={relLink('/merge-excel/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="📊" width="20" height="20" /></div>
-          <span class="popular-card-name">Merge Excel</span>
-        </a>
-        <a href={relLink('/split-excel/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="📊" width="20" height="20" /></div>
-          <span class="popular-card-name">Split Excel</span>
-        </a>
-        <a href={relLink('/pptx-to-pdf/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="📊" width="20" height="20" /></div>
-          <span class="popular-card-name">PowerPoint to PDF</span>
-        </a>
-        <a href={relLink('/ppt-to-pdf/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="📊" width="20" height="20" /></div>
-          <span class="popular-card-name">PPT to PDF</span>
-        </a>
-        <a href={relLink('/merge-images/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="🖼️" width="20" height="20" /></div>
-          <span class="popular-card-name">Merge Images</span>
-        </a>
-        <a href={relLink('/split-image/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="🖼️" width="20" height="20" /></div>
-          <span class="popular-card-name">Split Image</span>
-        </a>
-        <a href={relLink('/merge-txt/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="📝" width="20" height="20" /></div>
-          <span class="popular-card-name">Merge Text</span>
-        </a>
-        <a href={relLink('/split-txt/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="📝" width="20" height="20" /></div>
-          <span class="popular-card-name">Split Text</span>
-        </a>
-        <a href={relLink('/invoice-generator/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="🧾" width="20" height="20" /></div>
-          <span class="popular-card-name">Invoice Generator</span>
-        </a>
-        <a href={relLink('/receipt-generator/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="🧾" width="20" height="20" /></div>
-          <span class="popular-card-name">Receipt Generator</span>
-        </a>
-        <a href={relLink('/profit-margin-calculator/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="📈" width="20" height="20" /></div>
-          <span class="popular-card-name">Profit Margin Calculator</span>
-        </a>
-        <a href={relLink('/percentage-calculator/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="🔢" width="20" height="20" /></div>
-          <span class="popular-card-name">Percentage Calculator</span>
-        </a>
-        <a href={relLink('/sales-tax-calculator/')} class="popular-card">
-          <div class="popular-card-icon"><CategoryIcon icon="💰" width="20" height="20" /></div>
-          <span class="popular-card-name">Sales Tax Calculator</span>
-        </a>
+      <div class="explore-grid" id="exploreGrid">
+        {tools.map(t => (
+          <a href={relLink(`/${t.slug}/`)} class="explore-card" data-category={t.categorySlug}>
+            <div class="explore-card-icon"><CategoryIcon icon={t.icon} width="20" height="20" /></div>
+            <div class="explore-card-info">
+              <span class="explore-card-name">{t.name}</span>
+              <span class="explore-card-desc">{t.description}</span>
+            </div>
+            <div class="explore-card-arrow">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </a>
+        ))}
       </div>
     </section>
 
@@ -1088,6 +951,8 @@ const getToolCount = (categorySlug: string) => {
         <a href={relLink('/image-to-text/')} class="seo-link">Image to Text OCR</a>
         <a href={relLink('/merge-pdf/')} class="seo-link">Merge PDF</a>
         <a href={relLink('/split-pdf/')} class="seo-link">Split PDF</a>
+        <a href={relLink('/word-counter/')} class="seo-link">Word Counter</a>
+        <a href={relLink('/json-formatter/')} class="seo-link">JSON Formatter</a>
       </div>
     </section>
 
@@ -1286,6 +1151,33 @@ const getToolCount = (categorySlug: string) => {
           e.preventDefault();
           searchInput.focus();
         }
+      });
+    });
+  </script>
+
+  <!-- Interactive Grid Category Filter Controller -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.filter-tab');
+      const cards = document.querySelectorAll('.explore-card');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Toggle active tab state
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          // Toggle tool cards display state based on selected category
+          const category = tab.getAttribute('data-category');
+          cards.forEach(card => {
+            const cardCat = card.getAttribute('data-category');
+            if (category === 'all' || cardCat === category) {
+              (card as HTMLElement).style.display = 'flex';
+            } else {
+              (card as HTMLElement).style.display = 'none';
+            }
+          });
+        });
       });
     });
   </script>

@@ -842,6 +842,44 @@ const rawTools: ToolData[] = [
       { question: 'Can I split the file into single slides?', answer: 'Yes. The splitter can output every single slide as its own PPTX file and package them into a single ZIP download.' }
     ],
     relatedTools: ['merge-pptx', 'pptx-to-pdf', 'ppt-to-pdf']
+  },
+  {
+    slug: 'word-counter',
+    name: 'Word Counter',
+    title: 'Word Counter & Text Analyzer - Free, Private & Offline | ConvertOcean',
+    description: 'Count words, characters, sentences, and paragraphs instantly. Get reading time, speaking time, and keyword density analysis — 100% client-side, no data sent to any server.',
+    headline: 'Word Counter.',
+    subtitle: 'Analyze your text in real time: word count, character count, reading time, speaking time, and keyword density — all processed locally in your browser.',
+    icon: '📝',
+    category: 'Developer Tools',
+    categorySlug: 'developer-tools',
+    faqs: [
+      { question: 'Is my text stored or sent anywhere?', answer: 'No. All text analysis happens entirely inside your browser using client-side JavaScript. Your text never leaves your device — no server uploads, no tracking, no storage.' },
+      { question: 'How is reading time calculated?', answer: 'Reading time is estimated at an average adult reading speed of 200 words per minute. Speaking time is estimated at 130 words per minute, which is the average conversational speech rate.' },
+      { question: 'What are the social media character limit presets?', answer: 'We include presets for Twitter/X (280 characters), Meta Description (160 characters), Instagram captions (2,200 characters), and LinkedIn posts (3,000 characters). Select any to see a real-time fill bar as you type.' },
+      { question: 'How does keyword density work?', answer: 'The tool counts all significant words (excluding common stop words like "the", "and", "is") and shows the top 10 most frequent keywords with their occurrence count and a visual frequency bar. This helps identify keyword repetition for SEO.' },
+      { question: 'Does it work offline?', answer: 'Yes. Once the page is loaded, the word counter works completely offline. All computation is done in your browser tab — no internet connection is needed.' }
+    ],
+    relatedTools: ['json-formatter', 'csv-to-json', 'json-to-csv', 'xml-to-json']
+  },
+  {
+    slug: 'json-formatter',
+    name: 'JSON Formatter',
+    title: 'JSON Formatter & Validator Online - Free & Private | ConvertOcean',
+    description: 'Format, validate, and minify JSON instantly in your browser. Syntax highlighting, real-time error detection with line numbers, key count, nesting depth — 100% client-side with no uploads.',
+    headline: 'JSON Formatter.',
+    subtitle: 'Paste raw or minified JSON to instantly format it with syntax highlighting, validate it, detect errors with exact line numbers, and toggle minified output — all offline in your browser.',
+    icon: '⚙️',
+    category: 'Developer Tools',
+    categorySlug: 'developer-tools',
+    faqs: [
+      { question: 'Is my JSON data sent to a server?', answer: 'No. JSON formatting and validation is performed entirely in your browser using client-side JavaScript. Your data never leaves your device — there are no server uploads, no logs, and no data storage.' },
+      { question: 'How does the JSON validator work?', answer: 'The tool uses the native browser JSON.parse() function to validate your input in real time. If your JSON is malformed, it reports the exact error message along with the approximate line number and column position where the error occurs.' },
+      { question: 'Can I minify JSON with this tool?', answer: 'Yes. Toggle the "Minify" switch in the output panel to convert the pretty-printed JSON into a single-line minified string. Toggle it back to return to indented formatting.' },
+      { question: 'What metadata does the tool show?', answer: 'The output panel shows three metrics: total key count (including nested keys), maximum nesting depth, and the size of the formatted JSON in bytes or kilobytes.' },
+      { question: 'Does it work offline?', answer: 'Yes. Once the tool page is loaded in your browser, the JSON formatter works completely offline. No network connection is required for formatting, validation, or download.' }
+    ],
+    relatedTools: ['word-counter', 'csv-to-json', 'json-to-csv', 'xml-to-json', 'xlsx-to-json']
   }
 ];
 

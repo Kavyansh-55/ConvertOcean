@@ -1,0 +1,426 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .jf-workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .jf-workspace { grid-template-columns: 1fr; }
+  }
+
+  .jf-panel {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+    min-height: 480px;
+  }
+
+  .jf-panel-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 10px var(--spacing-md);
+    border-bottom: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas-soft);
+    flex-wrap: wrap;
+  }
+  .jf-panel-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--colors-mute);
+    letter-spacing: 0.5px;
+    margin-right: auto;
+  }
+
+  .jf-btn {
+    padding: 6px 14px;
+    border-radius: var(--rounded-pill);
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas);
+    color: var(--colors-body);
+    transition: all 0.18s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+  .jf-btn:hover { border-color: var(--colors-hairline-strong); color: var(--colors-ink); }
+  .jf-btn-primary {
+    background-color: var(--colors-ink);
+    color: var(--colors-canvas);
+    border-color: var(--colors-ink);
+  }
+  .jf-btn-primary:hover { opacity: 0.85; color: var(--colors-canvas); }
+  .jf-btn-danger:hover { border-color: var(--colors-error); color: var(--colors-error); }
+
+  .jf-textarea {
+    width: 100%;
+    flex: 1;
+    min-height: 380px;
+    padding: var(--spacing-md);
+    font-size: 13.5px;
+    line-height: 1.6;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    color: var(--colors-ink);
+    background-color: var(--colors-canvas);
+    border: none;
+    outline: none;
+    resize: none;
+    box-sizing: border-box;
+  }
+  .jf-textarea::placeholder { color: var(--colors-mute); font-style: italic; }
+  [data-theme="dark"] .jf-textarea { background-color: var(--colors-canvas); }
+
+  /* Output area */
+  .jf-output-area {
+    flex: 1;
+    min-height: 380px;
+    padding: var(--spacing-md);
+    font-size: 13.5px;
+    line-height: 1.6;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    color: var(--colors-ink);
+    background-color: var(--colors-canvas-soft);
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    position: relative;
+  }
+  .jf-placeholder-msg {
+    color: var(--colors-mute);
+    font-style: italic;
+    font-size: 13.5px;
+  }
+
+  /* Syntax highlighting */
+  .jf-output-area .jf-key   { color: #0761d1; }
+  .jf-output-area .jf-str   { color: #29bc9b; }
+  .jf-output-area .jf-num   { color: #7928ca; }
+  .jf-output-area .jf-bool  { color: #f5a623; }
+  .jf-output-area .jf-null  { color: #888; }
+  .jf-output-area .jf-punc  { color: var(--colors-body); }
+  [data-theme="dark"] .jf-output-area .jf-key  { color: #79b8ff; }
+  [data-theme="dark"] .jf-output-area .jf-str  { color: #50e3c2; }
+  [data-theme="dark"] .jf-output-area .jf-num  { color: #c792ea; }
+  [data-theme="dark"] .jf-output-area .jf-bool { color: #f5a623; }
+
+  /* Status Bar */
+  .jf-status-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 8px var(--spacing-md);
+    border-top: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas-soft);
+    font-size: 12px;
+    flex-wrap: wrap;
+    min-height: 36px;
+  }
+  .jf-status-badge {
+    padding: 3px 10px;
+    border-radius: var(--rounded-pill);
+    font-size: 11.5px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .jf-status-valid {
+    background-color: #d3fae8;
+    color: #006400;
+  }
+  .jf-status-invalid {
+    background-color: var(--colors-error-soft);
+    color: var(--colors-error-deep);
+  }
+  .jf-status-idle {
+    background-color: var(--colors-canvas-soft-2);
+    color: var(--colors-mute);
+  }
+  .jf-status-msg {
+    color: var(--colors-body);
+    font-size: 12px;
+    flex: 1;
+  }
+  .jf-status-meta {
+    color: var(--colors-mute);
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-left: auto;
+    display: flex;
+    gap: var(--spacing-md);
+  }
+
+  /* Toggle switch for minify */
+  .jf-toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--colors-body);
+    cursor: pointer;
+    user-select: none;
+  }
+  .jf-toggle {
+    position: relative;
+    width: 32px;
+    height: 18px;
+    background: var(--colors-hairline);
+    border-radius: 9px;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .jf-toggle::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: left 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .jf-toggle.on { background: var(--colors-ink); }
+  .jf-toggle.on::after { left: 16px; }
+</style>
+
+<div class="jf-workspace" id="jf-root">
+  <!-- LEFT: Input Panel -->
+  <div class="jf-panel">
+    <div class="jf-panel-header">
+      <span class="jf-panel-title">RAW JSON INPUT</span>
+      <button class="jf-btn" id="jf-paste-btn">📋 Paste</button>
+      <button class="jf-btn jf-btn-primary" id="jf-format-btn">⚡ Format</button>
+      <button class="jf-btn jf-btn-danger" id="jf-clear-btn">🗑️ Clear</button>
+    </div>
+    <textarea
+      id="jf-input"
+      class="jf-textarea"
+      placeholder='Paste your JSON here… e.g. {"name":"ConvertOcean","private":true}'
+      spellcheck="false"
+      autocomplete="off"
+    ></textarea>
+    <div class="jf-status-bar" id="jf-in-status">
+      <span class="jf-status-badge jf-status-idle" id="jf-badge">IDLE</span>
+      <span class="jf-status-msg" id="jf-msg">Paste JSON to validate and format.</span>
+    </div>
+  </div>
+
+  <!-- RIGHT: Output Panel -->
+  <div class="jf-panel">
+    <div class="jf-panel-header">
+      <span class="jf-panel-title">FORMATTED OUTPUT</span>
+      <label class="jf-toggle-wrap" id="jf-minify-label" title="Toggle minified output">
+        <span class="jf-toggle" id="jf-minify-toggle"></span>
+        Minify
+      </label>
+      <button class="jf-btn" id="jf-copy-btn">📄 Copy</button>
+      <button class="jf-btn" id="jf-download-btn">⬇️ .json</button>
+    </div>
+    <div class="jf-output-area" id="jf-output">
+      <span class="jf-placeholder-msg">Formatted JSON will appear here with syntax highlighting…</span>
+    </div>
+    <div class="jf-status-bar">
+      <span class="jf-status-meta" id="jf-meta"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const inputEl    = document.getElementById('jf-input');
+    const outputEl   = document.getElementById('jf-output');
+    const badge      = document.getElementById('jf-badge');
+    const msgEl      = document.getElementById('jf-msg');
+    const metaEl     = document.getElementById('jf-meta');
+    const formatBtn  = document.getElementById('jf-format-btn');
+    const pasteBtn   = document.getElementById('jf-paste-btn');
+    const clearBtn   = document.getElementById('jf-clear-btn');
+    const copyBtn    = document.getElementById('jf-copy-btn');
+    const downloadBtn = document.getElementById('jf-download-btn');
+    const minifyToggle = document.getElementById('jf-minify-toggle');
+    let isMinify = false;
+    let lastParsed = null;
+
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function syntaxHighlight(json) {
+      return json.replace(
+        /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+        function(match) {
+          if (/^"/.test(match)) {
+            if (/:$/.test(match)) return '<span class="jf-key">' + escHtml(match) + '</span>';
+            return '<span class="jf-str">' + escHtml(match) + '</span>';
+          }
+          if (/true|false/.test(match)) return '<span class="jf-bool">' + match + '</span>';
+          if (/null/.test(match)) return '<span class="jf-null">' + match + '</span>';
+          return '<span class="jf-num">' + match + '</span>';
+        }
+      );
+    }
+
+    function countKeys(obj) {
+      if (typeof obj !== 'object' || obj === null) return 0;
+      let count = 0;
+      if (Array.isArray(obj)) {
+        obj.forEach(item => { count += countKeys(item); });
+      } else {
+        count += Object.keys(obj).length;
+        Object.values(obj).forEach(v => { count += countKeys(v); });
+      }
+      return count;
+    }
+
+    function getDepth(obj) {
+      if (typeof obj !== 'object' || obj === null) return 0;
+      if (Array.isArray(obj)) {
+        return 1 + Math.max(0, ...obj.map(getDepth));
+      }
+      const vals = Object.values(obj);
+      return 1 + (vals.length ? Math.max(...vals.map(getDepth)) : 0);
+    }
+
+    function setValid(parsed) {
+      lastParsed = parsed;
+      badge.textContent = '✓ VALID';
+      badge.className = 'jf-status-badge jf-status-valid';
+      msgEl.textContent = 'JSON is valid.';
+      renderOutput(parsed);
+    }
+
+    function setInvalid(err) {
+      lastParsed = null;
+      badge.textContent = '✗ INVALID';
+      badge.className = 'jf-status-badge jf-status-invalid';
+      // Extract line info if available
+      const match = err.message.match(/position (\d+)/i);
+      if (match) {
+        const pos = parseInt(match[1]);
+        const src = inputEl.value;
+        const before = src.substring(0, pos);
+        const line = (before.match(/\n/g) || []).length + 1;
+        const col  = pos - before.lastIndexOf('\n');
+        msgEl.textContent = `${err.message} — Line ${line}, Col ${col}`;
+      } else {
+        msgEl.textContent = err.message;
+      }
+      outputEl.innerHTML = '<span class="jf-placeholder-msg">Fix the JSON error to see formatted output.</span>';
+      metaEl.textContent = '';
+    }
+
+    function setIdle() {
+      lastParsed = null;
+      badge.textContent = 'IDLE';
+      badge.className = 'jf-status-badge jf-status-idle';
+      msgEl.textContent = 'Paste JSON to validate and format.';
+      outputEl.innerHTML = '<span class="jf-placeholder-msg">Formatted JSON will appear here with syntax highlighting…</span>';
+      metaEl.textContent = '';
+    }
+
+    function renderOutput(parsed) {
+      const str = isMinify
+        ? JSON.stringify(parsed)
+        : JSON.stringify(parsed, null, 2);
+      outputEl.innerHTML = syntaxHighlight(str);
+      // Meta info
+      const keys = countKeys(parsed);
+      const depth = getDepth(parsed);
+      const size = new Blob([str]).size;
+      const sizeStr = size > 1024 ? (size/1024).toFixed(1) + ' KB' : size + ' B';
+      metaEl.innerHTML = `keys: ${keys} &nbsp;|&nbsp; depth: ${depth} &nbsp;|&nbsp; size: ${sizeStr}`;
+    }
+
+    function processInput() {
+      const raw = inputEl.value.trim();
+      if (!raw) { setIdle(); return; }
+      try {
+        const parsed = JSON.parse(raw);
+        setValid(parsed);
+      } catch(e) {
+        setInvalid(e);
+      }
+    }
+
+    // Auto-format on input (debounced)
+    let debTimer;
+    inputEl.addEventListener('input', () => {
+      clearTimeout(debTimer);
+      debTimer = setTimeout(processInput, 350);
+    });
+
+    // Format button
+    formatBtn.addEventListener('click', processInput);
+
+    // Paste
+    pasteBtn.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        inputEl.value = text;
+        processInput();
+      } catch(e) { inputEl.focus(); }
+    });
+
+    // Clear
+    clearBtn.addEventListener('click', () => {
+      inputEl.value = '';
+      setIdle();
+    });
+
+    // Copy output
+    copyBtn.addEventListener('click', async () => {
+      if (!lastParsed) return;
+      const str = isMinify ? JSON.stringify(lastParsed) : JSON.stringify(lastParsed, null, 2);
+      try {
+        await navigator.clipboard.writeText(str);
+        copyBtn.textContent = '✅ Copied!';
+        setTimeout(() => { copyBtn.innerHTML = '📄 Copy'; }, 1800);
+      } catch(e) {}
+    });
+
+    // Download
+    downloadBtn.addEventListener('click', () => {
+      if (!lastParsed) return;
+      const str = isMinify ? JSON.stringify(lastParsed) : JSON.stringify(lastParsed, null, 2);
+      const blob = new Blob([str], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'formatted.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Minify toggle
+    minifyToggle.addEventListener('click', () => {
+      isMinify = !isMinify;
+      minifyToggle.classList.toggle('on', isMinify);
+      if (lastParsed) renderOutput(lastParsed);
+    });
+    document.getElementById('jf-minify-label').addEventListener('click', (e) => {
+      if (e.target !== minifyToggle) {
+        isMinify = !isMinify;
+        minifyToggle.classList.toggle('on', isMinify);
+        if (lastParsed) renderOutput(lastParsed);
+      }
+    });
+
+    setIdle();
+  })();
+</script>

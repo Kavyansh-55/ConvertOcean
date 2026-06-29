@@ -31,6 +31,8 @@ import MergeWord from '../components/tools/MergeWord.astro';
 import SplitWord from '../components/tools/SplitWord.astro';
 import MergePptx from '../components/tools/MergePptx.astro';
 import SplitPptx from '../components/tools/SplitPptx.astro';
+import WordCounter from '../components/tools/WordCounter.astro';
+import JsonFormatter from '../components/tools/JsonFormatter.astro';
 
 export function getStaticPaths() {
   return tools.map(t => ({ params: { tool: t.slug } }));
@@ -101,7 +103,9 @@ const toolsMap: Record<string, any> = {
   'merge-word': MergeWord,
   'split-word': SplitWord,
   'merge-pptx': MergePptx,
-  'split-pptx': SplitPptx
+  'split-pptx': SplitPptx,
+  'word-counter': WordCounter,
+  'json-formatter': JsonFormatter
 };
 
 const ToolComponent = toolsMap[toolData.slug];
@@ -139,12 +143,27 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     .step-card {
       display: flex;
       flex-direction: column;
-      gap: var(--spacing-xxs);
+      gap: var(--spacing-xs);
+      padding: var(--spacing-md);
+      background-color: var(--colors-canvas-soft);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-md);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .step-card:hover {
+      border-color: var(--colors-hairline-strong);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02);
+    }
+    [data-theme="dark"] .step-card {
+      background-color: rgba(255, 255, 255, 0.01);
     }
     .step-number {
       font-size: 32px;
       font-weight: 700;
-      color: var(--colors-link);
+      background: linear-gradient(135deg, var(--colors-link), #00dfd8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       font-family: 'JetBrains Mono', monospace;
       line-height: 1;
     }
@@ -156,7 +175,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     .step-desc {
       font-size: 13px;
       color: var(--colors-body);
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .features-section {
