@@ -1,0 +1,492 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { comparisons } from '../../data/comparisons';
+
+export function getStaticPaths() {
+  return comparisons.map(comp => ({
+    params: { competitor: comp.slug }
+  }));
+}
+
+const { competitor } = Astro.params;
+const { lang = 'en' } = Astro.props;
+
+const comp = comparisons.find(c => c.slug === competitor);
+if (!comp) {
+  return Astro.redirect('/');
+}
+
+// Localize links helper
+const relLink = (target: string) => {
+  const cleanTarget = target.startsWith('/') ? target : `/${target}`;
+  if (lang === 'en') return cleanTarget;
+  return `/${lang}${cleanTarget}`;
+};
+
+const faqList = comp.faqs;
+---
+
+<Layout 
+  title={comp.title} 
+  description={comp.description} 
+  lang={lang} 
+  isTool={true} 
+  toolName={`${comp.competitorName} Alternative`}
+  faqList={faqList}
+>
+  <style>
+    /* Vercel Stark Design Conforming to DESIGN.md */
+    .vs-main-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-5xl);
+      position: relative;
+      z-index: 1;
+    }
+
+    .vs-header {
+      text-align: center;
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .vs-title {
+      font-size: 48px;
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -2.4px;
+      color: var(--colors-ink);
+      margin: var(--spacing-xs) 0;
+      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+    }
+
+    .vs-subtitle {
+      font-size: 18px;
+      color: var(--colors-body);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      .vs-title {
+        font-size: 36px;
+        letter-spacing: -1.5px;
+      }
+      .vs-subtitle {
+        font-size: 16px;
+      }
+    }
+
+    /* Privacy Spotlight CTA Card */
+    .spotlight-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xl);
+      margin-bottom: var(--spacing-3xl);
+      box-shadow: 0px 2px 2px #00000005, 0px 8px 16px -4px #0000000a, inset 0px 0px 0px 1px var(--colors-hairline);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .spotlight-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(0, 112, 243, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
+      pointer-events: none;
+    }
+
+    .spotlight-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--colors-link);
+      background-color: var(--colors-link-bg-soft);
+      padding: var(--spacing-xxs) var(--spacing-sm);
+      border-radius: var(--rounded-pill-sm);
+      display: inline-block;
+      margin-bottom: var(--spacing-sm);
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .spotlight-title {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.96px;
+      color: var(--colors-ink);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .spotlight-desc {
+      font-size: 15px;
+      color: var(--colors-body);
+      line-height: 1.6;
+      max-width: 700px;
+      margin: 0 auto var(--spacing-lg);
+    }
+
+    /* Table Design conforming to ex-data-table-cell styling */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      background-color: var(--colors-canvas);
+      margin-bottom: var(--spacing-3xl);
+      box-shadow: 0px 1px 1px #00000005, inset 0px 0px 0px 1px var(--colors-hairline);
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    .comparison-table th {
+      background-color: var(--colors-canvas-soft);
+      color: var(--colors-body);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-bottom: 1px solid var(--colors-hairline);
+      letter-spacing: 0.5px;
+    }
+
+    .comparison-table td {
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-bottom: 1px solid var(--colors-hairline);
+      color: var(--colors-body);
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table tr:hover td {
+      background-color: var(--colors-canvas-soft);
+    }
+
+    .feature-name {
+      font-weight: 600;
+      color: var(--colors-ink);
+    }
+
+    .verdict-cell {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      font-weight: 500;
+    }
+
+    .icon-check {
+      color: var(--colors-success);
+      font-weight: bold;
+    }
+
+    .icon-cross {
+      color: var(--colors-error-deep);
+      font-weight: bold;
+    }
+
+    /* Grid Pros and Cons */
+    .grid-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-3xl);
+    }
+
+    @media (max-width: 768px) {
+      .grid-compare {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .compare-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xl);
+      box-shadow: 0px 1px 1px #00000005, inset 0px 0px 0px 1px var(--colors-hairline);
+    }
+
+    .compare-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.6px;
+      margin-bottom: var(--spacing-md);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+
+    .compare-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+
+    .compare-item {
+      font-size: 14px;
+      line-height: 1.5;
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-xs);
+      color: var(--colors-body);
+    }
+
+    .compare-item svg {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Content Layout */
+    .rich-text {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--colors-body);
+      margin-bottom: var(--spacing-3xl);
+    }
+
+    .rich-text h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      margin: var(--spacing-xl) 0 var(--spacing-md);
+      letter-spacing: -0.96px;
+    }
+
+    .rich-text p {
+      margin-bottom: var(--spacing-md);
+    }
+
+    /* FAQ accordion custom animation overrides */
+    .faq-item {
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-md);
+      background-color: var(--colors-canvas);
+      margin-bottom: var(--spacing-xs);
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .faq-item:hover {
+      border-color: var(--colors-hairline-strong);
+    }
+
+    .faq-question {
+      padding: var(--spacing-md) var(--spacing-lg);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .faq-icon {
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      color: var(--colors-mute);
+    }
+
+    .faq-item.open .faq-icon {
+      transform: rotate(45deg);
+      color: var(--colors-ink);
+    }
+
+    .faq-answer {
+      display: none;
+      padding: 0 var(--spacing-lg) var(--spacing-md);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--colors-body);
+      border-top: 1px solid transparent;
+    }
+
+    .faq-item.open .faq-answer {
+      display: block;
+      border-top-color: var(--colors-hairline);
+      animation: slide-down 0.2s ease-out;
+    }
+
+    @keyframes slide-down {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+  <main class="vs-main-container">
+    <!-- Breadcrumbs navigation -->
+    <nav class="breadcrumbs" aria-label="Breadcrumb" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-bottom: var(--spacing-lg); color: var(--colors-mute);">
+      <a href={relLink('/')} style="text-decoration: none; color: var(--colors-mute); transition: color 0.15s;">HOME</a>
+      <span style="margin: 0 var(--spacing-xs); color: var(--colors-hairline-strong);">/</span>
+      <span style="color: var(--colors-ink); font-weight: 500; text-transform: uppercase;">VS {comp.competitorName.toUpperCase()}</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="vs-header">
+      <h1 class="vs-title">{comp.h1}</h1>
+      <p class="vs-subtitle">{comp.subtitle}</p>
+    </header>
+
+    <!-- Privacy Spotlight CTA -->
+    <section class="spotlight-card">
+      <span class="spotlight-badge">Privacy First</span>
+      <h2 class="spotlight-title">100% Offline Client-Side File Sandbox.</h2>
+      <p class="spotlight-desc">{comp.intro}</p>
+      <div style="display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap;">
+        <a href={relLink('/')} class="button button-primary" style="text-decoration: none; border-radius: var(--rounded-pill); padding: var(--spacing-xs) var(--spacing-xl); font-weight: 500; display: inline-flex; align-items: center; justify-content: center;">
+          Browse File Tools
+        </a>
+        <a href={relLink('/sitemap/')} class="button button-secondary" style="text-decoration: none; border-radius: var(--rounded-pill); padding: var(--spacing-xs) var(--spacing-xl); font-weight: 500; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--colors-hairline);">
+          View Sitemap Index
+        </a>
+      </div>
+    </section>
+
+    <!-- Comparison Matrix Table -->
+    <section>
+      <h2 style="font-size: 20px; font-weight: 600; color: var(--colors-ink); margin-bottom: var(--spacing-md); letter-spacing: -0.6px; text-align: center;">Comparison Matrix.</h2>
+      <div class="table-container">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature Comparison</th>
+              <th>ConvertOcean</th>
+              <th>{comp.competitorName}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {comp.comparisonTable.map(row => (
+              <tr>
+                <td class="feature-name">{row.feature}</td>
+                <td>
+                  <span class="verdict-cell">
+                    <svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    {row.convertocean}
+                  </span>
+                </td>
+                <td>
+                  <span class="verdict-cell">
+                    {row.isConvertoceanBetter ? (
+                      <svg class="icon-cross" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    ) : (
+                      <svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    )}
+                    {row.competitor}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Pros & Cons Grid -->
+    <section class="grid-compare">
+      <div class="compare-card" style="border-left: 3px solid var(--colors-success);">
+        <h3 class="compare-card-title" style="color: var(--colors-success);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 11.08 22 12 12 22 2 12 12 2 17.5 7.5"></polyline>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          Why Choose ConvertOcean?
+        </h3>
+        <ul class="compare-list">
+          {comp.pros.map(pro => (
+            <li class="compare-item">
+              <svg style="color: var(--colors-success);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              {pro}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="compare-card" style="border-left: 3px solid var(--colors-error-deep);">
+        <h3 class="compare-card-title" style="color: var(--colors-error-deep);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          Why Avoid {comp.competitorName}?
+        </h3>
+        <ul class="compare-list">
+          {comp.cons.map(con => (
+            <li class="compare-item">
+              <svg style="color: var(--colors-error-deep);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              {con}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- Narrative Rich Content Sections (AEO lede-first / factual density) -->
+    <section class="rich-text">
+      {comp.sections.map(section => (
+        <>
+          <h2>{section.title}</h2>
+          {section.paragraphs.map(p => (
+            <p>{p}</p>
+          ))}
+        </>
+      ))}
+    </section>
+
+    <!-- Frequently Asked Questions -->
+    {faqList && faqList.length > 0 && (
+      <section class="faq-section" style="max-width: 100%; padding: 0; margin-top: var(--spacing-xl);">
+        <h2 style="font-size: 22px; font-weight: 600; color: var(--colors-ink); margin-bottom: var(--spacing-lg); letter-spacing: -0.6px; text-align: center;">Frequently Asked Questions.</h2>
+        <div class="faq-container">
+          {faqList.map(faq => (
+            <div class="faq-item">
+              <div class="faq-question">
+                {faq.q}
+                <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </div>
+              <div class="faq-answer">
+                {faq.a}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+</Layout>
