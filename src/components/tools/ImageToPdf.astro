@@ -1,0 +1,314 @@
+---
+import CategoryIcon from '../CategoryIcon.astro';
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style is:global>
+  .imgtopdf-container .image-list {
+    margin-top: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: var(--spacing-xs);
+  }
+  .imgtopdf-container .image-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--rounded-md);
+  }
+  .imgtopdf-container .image-item-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    overflow: hidden;
+  }
+  .imgtopdf-container .image-thumb {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--colors-hairline);
+    background: #000;
+  }
+  .imgtopdf-container .image-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--colors-ink);
+  }
+  .imgtopdf-container .image-size {
+    font-size: 12px;
+    color: var(--colors-mute);
+  }
+  .imgtopdf-container .btn-remove {
+    background: none;
+    border: none;
+    color: var(--colors-danger);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+  }
+  .imgtopdf-container .btn-remove:hover {
+    color: #ff0000;
+  }
+</style>
+
+<!-- jsPDF via unpkg -->
+<script is:inline src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<div class="imgtopdf-container">
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing files…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon"><CategoryIcon icon="🖼️" width="40" height="40" /></div>
+  <div class="upload-text-primary">Drag and drop images here, or click to browse</div>
+  <div class="upload-text-secondary">Upload JPG, PNG, or WebP images (Multiple allowed)</div>
+  <input type="file" id="fileInput" class="file-input" accept="image/png, image/jpeg, image/webp" multiple />
+</div>
+
+<div id="imageList" class="image-list" style="display: none;"></div>
+
+<div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
+  <span id="fileCountDisplay" style="font-weight:600; font-size:14px;"></span>
+  <div class="button-group">
+    <button class="button button-primary" id="btnDownload">Convert &amp; Download PDF</button>
+    <button class="button button-danger" id="btnClear">Clear All</button>
+  </div>
+</div>
+</div>
+
+<script is:inline>
+  (function() {
+    const dropZone      = document.getElementById('dropZone');
+    const fileInput     = document.getElementById('fileInput');
+    const errorBanner   = document.getElementById('errorBanner');
+    const errorMessage  = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const imageList     = document.getElementById('imageList');
+    const actionControls = document.getElementById('actionControls');
+    const fileCountDisplay = document.getElementById('fileCountDisplay');
+    const btnDownload   = document.getElementById('btnDownload');
+    const btnClear      = document.getElementById('btnClear');
+
+    let selectedFiles = []; // array of { file, dataUrl, id }
+
+    // ── Drag & drop ──────────────────────────────────────────────────
+    ['dragenter', 'dragover'].forEach(evt => {
+      dropZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); dropZone.classList.add('dragover'); }, false);
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+      dropZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('dragover'); }, false);
+    });
+    dropZone.addEventListener('drop', e => {
+      const files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) handleFiles(files);
+    });
+    fileInput.addEventListener('change', e => {
+      const files = Array.from(e.target.files);
+      if (files.length > 0) handleFiles(files);
+      fileInput.value = ''; // reset so same files can be selected again
+    });
+
+    // ── UI helpers ───────────────────────────────────────────────────
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+    function hideProgress() { progressOverlay.style.display = 'none'; }
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function hideError() { errorBanner.style.display = 'none'; }
+
+    // ── File Handling ───────────────────────────────────────────────
+    function handleFiles(files) {
+      hideError();
+      const imageFiles = files.filter(f => f.type.startsWith('image/'));
+      if (imageFiles.length === 0) {
+        showError("Please upload valid image files (JPG, PNG, WebP).");
+        return;
+      }
+
+      showProgress(20, 'Reading images…');
+      let loaded = 0;
+      imageFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          selectedFiles.push({
+            id: Math.random().toString(36).substr(2, 9),
+            file: file,
+            dataUrl: e.target.result
+          });
+          loaded++;
+          if (loaded === imageFiles.length) {
+            renderImageList();
+            hideProgress();
+          }
+        };
+        reader.onerror = function() {
+          loaded++;
+          if (loaded === imageFiles.length) {
+            renderImageList();
+            hideProgress();
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function removeImage(id) {
+      selectedFiles = selectedFiles.filter(f => f.id !== id);
+      renderImageList();
+    }
+    window.removeImagePdf = removeImage;
+
+    function renderImageList() {
+      if (selectedFiles.length === 0) {
+        imageList.style.display = 'none';
+        actionControls.style.display = 'none';
+        dropZone.style.display = 'flex';
+        return;
+      }
+      
+      imageList.innerHTML = '';
+      selectedFiles.forEach(item => {
+        const sizeKb = (item.file.size / 1024).toFixed(1);
+        const div = document.createElement('div');
+        div.className = 'image-item';
+        div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: var(--colors-canvas-soft); border: 1px solid var(--colors-hairline); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--rounded-md); margin-bottom: var(--spacing-sm);';
+        div.innerHTML = `
+          <div class="image-item-left" style="display: flex; align-items: center; gap: var(--spacing-md); overflow: hidden;">
+            <img src="${item.dataUrl}" class="image-thumb" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; flex-shrink: 0; object-fit: cover; border-radius: 4px; border: 1px solid var(--colors-hairline); background: #000;" />
+            <div style="display: flex; flex-direction: column; min-width: 0;">
+              <div class="image-name" style="font-size: 14px; font-weight: 500; color: var(--colors-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.file.name}</div>
+              <div class="image-size" style="font-size: 12px; color: var(--colors-mute);">${sizeKb} KB</div>
+            </div>
+          </div>
+          <button class="btn-remove" onclick="window.removeImagePdf('${item.id}')" title="Remove" style="background: none; border: none; color: var(--colors-danger); cursor: pointer; font-size: 18px; padding: 4px; flex-shrink: 0;">✕</button>
+        `;
+        imageList.appendChild(div);
+      });
+      
+      imageList.style.display = 'flex';
+      actionControls.style.display = 'flex';
+      dropZone.style.display = 'flex'; // Allow adding more
+      dropZone.style.marginTop = 'var(--spacing-md)';
+      fileCountDisplay.textContent = `${selectedFiles.length} image(s) selected`;
+    }
+
+    // ── PDF conversion ───────────────────────────────────────────────
+    btnDownload.addEventListener('click', async () => {
+      hideError();
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        showError('PDF library not loaded. Please check your internet connection and reload the page.');
+        return;
+      }
+      if (selectedFiles.length === 0) {
+        showError('No images selected.');
+        return;
+      }
+
+      try {
+        showProgress(20, 'Preparing PDF…');
+        const { jsPDF } = window.jspdf;
+        
+        // A4 portrait dimensions in points
+        const PW = 595.28;
+        const PH = 841.89;
+        
+        const doc = new jsPDF({ unit: 'pt', format: [PW, PH], orientation: 'portrait' });
+        
+        for (let i = 0; i < selectedFiles.length; i++) {
+          if (i > 0) doc.addPage([PW, PH]);
+          
+          showProgress(20 + Math.round((i / selectedFiles.length) * 60), `Processing image ${i + 1} of ${selectedFiles.length}…`);
+          
+          const imgData = selectedFiles[i].dataUrl;
+          
+          // Get image dimensions
+          const img = new Image();
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = imgData;
+          });
+          
+          let imgWidth = img.width;
+          let imgHeight = img.height;
+          
+          // Margin
+          const margin = 40;
+          const maxW = PW - margin * 2;
+          const maxH = PH - margin * 2;
+          
+          // Scale to fit
+          const scale = Math.min(maxW / imgWidth, maxH / imgHeight, 1); // 1 = don't upscale if smaller
+          
+          const finalW = imgWidth * scale;
+          const finalH = imgHeight * scale;
+          
+          // Center on page
+          const x = (PW - finalW) / 2;
+          const y = (PH - finalH) / 2;
+          
+          let format = 'JPEG';
+          if (imgData.indexOf('data:image/png') === 0) format = 'PNG';
+          else if (imgData.indexOf('data:image/webp') === 0) format = 'WEBP';
+          
+          doc.addImage(imgData, format, x, y, finalW, finalH);
+        }
+
+        showProgress(95, 'Saving PDF…');
+        const pdfName = selectedFiles.length === 1 
+          ? selectedFiles[0].file.name.replace(/\.[^/.]+$/, '') + '.pdf' 
+          : 'images-to-pdf.pdf';
+          
+        doc.save(pdfName);
+        showProgress(100, 'Done!');
+        setTimeout(hideProgress, 900);
+      } catch (err) {
+        showError('PDF creation failed: ' + (err && err.message ? err.message : String(err)));
+        hideProgress();
+      }
+    });
+
+    // ── Clear ────────────────────────────────────────────────────────
+    btnClear.addEventListener('click', () => {
+      selectedFiles = [];
+      renderImageList();
+      hideError();
+      dropZone.style.marginTop = '0';
+    });
+  })();
+</script>

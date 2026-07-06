@@ -64,12 +64,56 @@ function initDropdowns() {
 function initMobileMenu() {
   const mobileMenuBtn = document.getElementById('mobileMenuBtn');
   const mobileNavMenu = document.getElementById('mobileNavMenu');
+  const header = document.querySelector('.nav-bar');
 
-  if (mobileMenuBtn && mobileNavMenu) {
-    mobileMenuBtn.addEventListener('click', () => {
-      mobileNavMenu.classList.toggle('active');
-    });
+  if (!mobileMenuBtn || !mobileNavMenu) return;
+
+  // Pin the fixed panel directly beneath the sticky header, at its exact
+  // height, so it opens where the user is — not at the top of the page.
+  function positionMenu() {
+    const h = header ? header.offsetHeight : 60;
+    mobileNavMenu.style.top = h + 'px';
+    mobileNavMenu.style.maxHeight = (window.innerHeight - h) + 'px';
   }
+
+  function closeMenu() {
+    mobileNavMenu.classList.remove('active');
+    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  mobileMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const willOpen = !mobileNavMenu.classList.contains('active');
+    if (willOpen) positionMenu();
+    mobileNavMenu.classList.toggle('active', willOpen);
+    mobileMenuBtn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+  });
+
+  // Tapping a link closes the menu (also covers same-page anchors)
+  mobileNavMenu.querySelectorAll('a').forEach((a) => {
+    a.addEventListener('click', closeMenu);
+  });
+
+  // Tapping outside the panel closes it
+  document.addEventListener('click', (e) => {
+    if (
+      mobileNavMenu.classList.contains('active') &&
+      !mobileNavMenu.contains(e.target) &&
+      !mobileMenuBtn.contains(e.target)
+    ) {
+      closeMenu();
+    }
+  });
+
+  // Escape closes it
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  // Keep it aligned if the viewport changes while open
+  window.addEventListener('resize', () => {
+    if (mobileNavMenu.classList.contains('active')) positionMenu();
+  });
 }
 
 // Reusable FAQ Accordion Animation

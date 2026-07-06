@@ -880,6 +880,22 @@ const rawTools: ToolData[] = [
       { question: 'Does it work offline?', answer: 'Yes. Once the tool page is loaded in your browser, the JSON formatter works completely offline. No network connection is required for formatting, validation, or download.' }
     ],
     relatedTools: ['word-counter', 'csv-to-json', 'json-to-csv', 'xml-to-json', 'xlsx-to-json']
+  },
+  {
+    slug: 'image-to-pdf',
+    name: 'Image to PDF',
+    title: 'Convert Image to PDF Online - 100% Private | ConvertOcean',
+    description: 'Convert JPG, PNG, and WebP images to PDF documents directly in your browser. No server uploads. 100% private, secure, and offline capable.',
+    headline: 'Image to PDF.',
+    subtitle: 'Convert images to a cleanly formatted PDF document client-side.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' }
+    ],
+    relatedTools: ['pdf-to-txt', 'txt-to-pdf', 'merge-pdf', 'split-pdf']
   }
 ];
 

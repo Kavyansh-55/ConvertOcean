@@ -1,0 +1,68 @@
+
+
+# Redirect removed languages to root English equivalents
+/hi/* /:splat 301
+/es/* /:splat 301
+/fr/* /:splat 301
+/de/* /:splat 301
+/pt/* /:splat 301
+/it/* /:splat 301
+/nl/* /:splat 301
+/ru/* /:splat 301
+/tr/* /:splat 301
+/pl/* /:splat 301
+/uk/* /:splat 301
+/ar/* /:splat 301
+/fa/* /:splat 301
+/ur/* /:splat 301
+/bn/* /:splat 301
+/pa/* /:splat 301
+/ta/* /:splat 301
+/te/* /:splat 301
+/mr/* /:splat 301
+/gu/* /:splat 301
+/zh/* /:splat 301
+/ja/* /:splat 301
+/ko/* /:splat 301
+/th/* /:splat 301
+/vi/* /:splat 301
+/id/* /:splat 301
+/ms/* /:splat 301
+/fil/* /:splat 301
+
+# Redirect broken 'ides' pages to 'guides'
+/hiides/* /guides/:splat 301
+/esides/* /guides/:splat 301
+/frides/* /guides/:splat 301
+/deides/* /guides/:splat 301
+/ptides/* /guides/:splat 301
+/itides/* /guides/:splat 301
+/nlides/* /guides/:splat 301
+/ruides/* /guides/:splat 301
+/trides/* /guides/:splat 301
+/plides/* /guides/:splat 301
+/ukides/* /guides/:splat 301
+/arides/* /guides/:splat 301
+/faides/* /guides/:splat 301
+/urides/* /guides/:splat 301
+/bnides/* /guides/:splat 301
+/paides/* /guides/:splat 301
+/taides/* /guides/:splat 301
+/teides/* /guides/:splat 301
+/mrides/* /guides/:splat 301
+/zhides/* /guides/:splat 301
+/jaides/* /guides/:splat 301
+/koides/* /guides/:splat 301
+/thides/* /guides/:splat 301
+/viides/* /guides/:splat 301
+/idides/* /guides/:splat 301
+/msides/* /guides/:splat 301
+/filides/* /guides/:splat 301
+
+# Fix old 5xx tools
+/cpm-calculator / 301
+/vtt-to-srt / 301
+
+# Fix noindex old WP feeds
+/best-backend-frameworks-in-2025-which-one-fits-your-project/* / 301
+/7-figma-plugins-that-save-your-time/* / 301

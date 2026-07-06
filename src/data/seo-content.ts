@@ -9,6 +9,26 @@ interface SEOData {
 }
 
 export const seoContentMap: Record<string, SEOData> = {
+  'word-counter': {
+    title: 'Word Counter & Text Analyzer — Free & Private | ConvertOcean',
+    description: 'Count words, characters, sentences & paragraphs instantly. Get reading time, speaking time & keyword density — 100% private, all in your browser.',
+    content: `
+<div class="content-card">
+  <h2>Count Words, Characters, and Reading Time Instantly.</h2>
+  <p>A word counter measures the length and structure of your writing in real time — words, characters (with and without spaces), sentences, paragraphs, and lines. Whether you are trimming an essay to a strict limit, fitting a meta description under 160 characters, or checking a social post against Twitter/X's 280-character cap, seeing the count update as you type removes the guesswork.</p>
+  <p>ConvertOcean runs the entire analysis inside your browser using JavaScript. Nothing you type is uploaded, logged, or stored — your draft never leaves your device, which makes it safe for confidential reports, unpublished articles, and client work.</p>
+  <h3>Reading Time, Speaking Time, and Keyword Density.</h3>
+  <p>Reading time is estimated at 200 words per minute (the average adult reading speed) and speaking time at 130 words per minute (a natural presentation pace) — useful for bloggers estimating "5 min read" labels and speakers timing a script. The keyword density panel lists your most-repeated significant words, helping writers and SEO editors catch over-optimization and keep prose varied.</p>
+</div>
+    `,
+    faqs: [
+      { question: 'Is my text stored or sent anywhere?', answer: 'No. All text analysis happens entirely inside your browser using client-side JavaScript. Your text never leaves your device — no server uploads, no tracking, no storage.' },
+      { question: 'How is reading time calculated?', answer: 'Reading time is estimated at an average adult reading speed of 200 words per minute. Speaking time is estimated at 130 words per minute, which is the average conversational speech rate.' },
+      { question: 'What are the social media character limit presets?', answer: 'We include presets for Twitter/X (280 characters), Meta Description (160 characters), Instagram captions (2,200 characters), and LinkedIn posts (3,000 characters). Select any to see a real-time fill bar as you type.' },
+      { question: 'How does keyword density work?', answer: 'The tool counts all significant words (excluding common stop words like "the", "and", "is") and shows the top 10 most frequent keywords with their occurrence count and a visual frequency bar. This helps identify keyword repetition for SEO.' },
+      { question: 'Does it work offline?', answer: 'Yes. Once the page is loaded, the word counter works completely offline. All computation is done in your browser tab — no internet connection is needed.' }
+    ]
+  },
   'excel-to-pdf': {
     title: 'Convert Excel to PDF Online - 100% Private | ConvertOcean',
     description: 'Convert XLS, XLSX, and CSV spreadsheets to PDF directly in your browser. Keep your financial calculations, formulas, and cells 100% private.',

@@ -83,10 +83,22 @@ const getToolCount = (categorySlug: string) => {
     }
 
     .hero-title-accent {
-      background: linear-gradient(90deg, #007cf0, #00dfd8);
+      background: linear-gradient(90deg, #007cf0, #00dfd8, #007cf0);
+      background-size: 200% 100%;
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       display: inline-block;
+      animation: accent-pan 6s ease-in-out infinite;
+    }
+
+    @keyframes accent-pan {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-title-accent { animation: none; }
     }
 
     @media (max-width: 768px) {
@@ -705,7 +717,7 @@ const getToolCount = (categorySlug: string) => {
     <hr class="section-divider">
 
     <!-- Explore Tools Section (Interactive Tabbed Console) -->
-    <section class="explore-section" id="tools">
+    <section class="explore-section" id="tools" data-reveal>
       <h2 class="explore-title">Explore Tools</h2>
       <div class="filter-tab-container">
         <button class="filter-tab active" data-category="all">All Tools</button>
@@ -739,7 +751,7 @@ const getToolCount = (categorySlug: string) => {
     <!-- Categories Grid -->
     <section class="grid-container">
       <h2 style="font-size: 28px; font-weight: 600; text-align: center; margin-bottom: var(--spacing-xl); letter-spacing: -1.2px;">Browse Tools by Category</h2>
-      <div class="tool-grid">
+      <div class="tool-grid" data-reveal-stagger>
         <!-- Card 1: File Converter -->
         <a href={relLink('/file-converter/')} class="tool-card">
           <div class="tool-info">
@@ -848,7 +860,7 @@ const getToolCount = (categorySlug: string) => {
     </section>
 
     <!-- Conversion Comparison Section -->
-    <section class="comparison-section">
+    <section class="comparison-section" data-reveal>
       <h2 class="comparison-title">Why ConvertOcean?</h2>
       <p class="comparison-subtitle">See how we compare to typical online converters. We prioritize your data privacy and processing speed.</p>
       
@@ -898,7 +910,7 @@ const getToolCount = (categorySlug: string) => {
       <p style="text-align: center; color: var(--colors-body); font-size: 15px; margin-top: -10px; margin-bottom: var(--spacing-xl); max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.5;">
         Learn how to optimize layouts, compare graphics formats, perform offline optical recognition, and merge document streams securely on your local hardware.
       </p>
-      <div class="featured-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-lg);">
+      <div class="featured-grid" data-reveal-stagger style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-lg);">
         {guides.map(g => (
           <div class="featured-card">
             <span class="featured-badge" style="color: var(--colors-link); font-weight: 600;">{g.readTime}</span>
@@ -968,7 +980,7 @@ const getToolCount = (categorySlug: string) => {
     </section>
 
     <!-- SEO Informational Section -->
-    <section class="info-section" style="margin-top: var(--spacing-4xl); border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-3xl);">
+    <section class="info-section" data-reveal style="margin-top: var(--spacing-4xl); border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-3xl);">
       <h2 style="font-size: 28px; font-weight: 600; text-align: center; letter-spacing: -1.2px; margin-bottom: var(--spacing-xl); color: var(--colors-ink);">Why Choose a Private File Converter?</h2>
       
       <div style="max-width: 800px; margin: 0 auto; color: var(--colors-body); font-size: 15px; line-height: 1.7; display: flex; flex-direction: column; gap: var(--spacing-lg);">

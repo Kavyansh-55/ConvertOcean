@@ -10,6 +10,7 @@ import ImageTool from '../components/tools/ImageTool.astro';
 import TxtToPdf from '../components/tools/TxtToPdf.astro';
 import PdfToTxt from '../components/tools/PdfToTxt.astro';
 import ImageToText from '../components/tools/ImageToText.astro';
+import ImageToPdf from '../components/tools/ImageToPdf.astro';
 import MergePdf from '../components/tools/MergePdf.astro';
 import SplitPdf from '../components/tools/SplitPdf.astro';
 import InvoiceGenerator from '../components/tools/InvoiceGenerator.astro';
@@ -105,7 +106,8 @@ const toolsMap: Record<string, any> = {
   'merge-pptx': MergePptx,
   'split-pptx': SplitPptx,
   'word-counter': WordCounter,
-  'json-formatter': JsonFormatter
+  'json-formatter': JsonFormatter,
+  'image-to-pdf': ImageToPdf
 };
 
 const ToolComponent = toolsMap[toolData.slug];
@@ -418,7 +420,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
 
     <!-- How It Works Section -->
     {toolData.categorySlug !== 'business-tools' && (
-      <section class="steps-section">
+      <section class="steps-section" data-reveal>
         <h2 style="font-size: 20px; font-weight: 600; color: var(--colors-ink); text-align: center;">How It Works</h2>
         <p style="font-size: 14px; color: var(--colors-body); text-align: center; margin-top: 4px;">Four simple steps to process your files securely client-side:</p>
         <div class="steps-grid">
@@ -448,13 +450,13 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
 
     <!-- Unique SEO Article Content Section -->
     {toolData.content && (
-      <section class="rich-text" set:html={toolData.content}></section>
+      <section class="rich-text" data-reveal set:html={toolData.content}></section>
     )}
 
     <!-- Why Use ConvertOcean Section -->
     <section class="features-section">
       <h2 style="font-size: 20px; font-weight: 600; color: var(--colors-ink); text-align: center;">Why Choose ConvertOcean?</h2>
-      <div class="features-grid">
+      <div class="features-grid" data-reveal-stagger>
         <div class="feature-card">
           <div class="feature-icon-wrapper">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #0070f3;"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -483,7 +485,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     {relatedToolsData.length > 0 && (
       <section class="related-section">
         <h2 style="font-size: 20px; font-weight: 600; color: var(--colors-ink); text-align: center;">Related File Utilities</h2>
-        <div class="related-grid">
+        <div class="related-grid" data-reveal-stagger>
           {relatedToolsData.map(rt => (
             <a href={relLink(`/${rt.slug}/`)} class="related-card">
               <div class="related-card-icon" style="color: var(--colors-ink);">
@@ -500,7 +502,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     {relatedGuides.length > 0 && (
       <section class="related-guides-section">
         <h2 style="font-size: 20px; font-weight: 600; color: var(--colors-ink); text-align: center;">Related Guides & Resources.</h2>
-        <div class="related-guides-grid">
+        <div class="related-guides-grid" data-reveal-stagger>
           {relatedGuides.map(g => (
             <a href={relLink(`/guides/${g.slug}/`)} class="tool-related-guide-card">
               <span class="tool-related-guide-tag">Guide</span>
@@ -520,7 +522,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
 
     <!-- FAQ Accordion Component -->
     {faqList && faqList.length > 0 && (
-      <section class="faq-section" style="max-width: 100%; padding: 0; margin-top: var(--spacing-3xl);">
+      <section class="faq-section" data-reveal style="max-width: 100%; padding: 0; margin-top: var(--spacing-3xl);">
         <h2 class="faq-title" style="font-size: 20px; margin-bottom: var(--spacing-lg);">Frequently Asked Questions</h2>
         <div class="faq-container">
           {faqList.map(faq => (

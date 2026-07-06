@@ -196,6 +196,15 @@ const relLink = (target: string) => {
     (function() {
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
+      // Enable scroll-reveal ONLY when JS is active, IntersectionObserver
+      // is supported, and the user has not requested reduced motion.
+      // Otherwise content is never hidden (SEO/no-JS/a11y safe).
+      try {
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!reduce && 'IntersectionObserver' in window) {
+          document.documentElement.classList.add('js-reveal');
+        }
+      } catch (e) {}
     })();
   </script>
 
@@ -221,6 +230,28 @@ const relLink = (target: string) => {
 
   <script>
     import '../scripts/theme.js';
+  </script>
+
+  <!-- Scroll-reveal observer (no-op unless html.js-reveal is set) -->
+  <script is:inline>
+    (function () {
+      var root = document.documentElement;
+      if (!root.classList.contains('js-reveal')) return;
+      var els = document.querySelectorAll('[data-reveal], [data-reveal-stagger]');
+      if (!els.length) return;
+      var reveal = function (el) { el.classList.add('is-visible'); };
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            reveal(entry.target);
+            io.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
+      els.forEach(function (el) { io.observe(el); });
+      // Failsafe: never leave content hidden if the observer misfires.
+      window.setTimeout(function () { els.forEach(reveal); }, 3000);
+    })();
   </script>
 </body>
 </html>
