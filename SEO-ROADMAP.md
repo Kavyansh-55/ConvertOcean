@@ -54,6 +54,7 @@
 
 ## Backlog / discovered ideas
 _(routine appends here as it finds opportunities)_
+- **AEO vs AI-blocking conflict (review in S7):** Cloudflare's "Managed robots.txt" is injecting a block that Disallows AI crawlers (Amazonbot, Applebot-Extended, Bytespider, likely GPTBot/PerplexityBot/ClaudeBot) plus a `Content-Signal: ai-train=no` line. This blocks the very AI engines we want to cite us. Decide: keep blocking AI scrapers vs. allow AI *search* bots (PerplexityBot, OAI-SearchBot, ChatGPT-User) for AEO. Adjust in Cloudflare (AI Audit / Managed robots.txt settings), not in repo. The GSC "Rule ignored by Googlebot (line 30)" warning itself is harmless — Googlebot just skips the unrecognized Content-Signal line.
 - Consider self-hosting Geist font (brand fidelity per DESIGN.md) vs. current Inter — perf tradeoff.
 - Reconsider AdSense on thin/low-traffic tool pages (quality signal while building trust).
 - Proper 1200×630 OG image (current og:image is a 180×180 icon — looks broken when shared).
