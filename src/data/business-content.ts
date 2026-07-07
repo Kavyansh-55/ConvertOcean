@@ -194,6 +194,11 @@ export const profitMarginCalculatorContent = `
     Once you determine your product costs and selling prices, use our <a href="/sales-tax-calculator/">Sales Tax Calculator</a> to estimate total customer billing amounts with tax. If you need to invoice your business clients, generate an A4 PDF using the <a href="/invoice-generator/">Invoice Generator</a> or issue proof of payment with the <a href="/receipt-generator/">Receipt Generator</a>. For tracking general metrics, consult the <a href="/percentage-calculator/">Percentage Calculator</a>.
   </p>
 
+  <h3>Accuracy, Methodology, and Review.</h3>
+  <p>
+    This calculator implements the standard gross-margin and markup definitions used in accounting: <code>Margin = (Profit ÷ Revenue) × 100</code> and <code>Markup = (Profit ÷ Cost) × 100</code>. Every formula is displayed on this page so you can verify any result by hand, and outputs are checked against worked examples like the one above whenever the tool is updated. <em>Last reviewed: July 2026.</em> Results are informational — for pricing or tax-filing decisions, confirm figures with a qualified accountant. Read more about <a href="/about/">how we build and test our tools</a>.
+  </p>
+
   <h3>Client-Side Computation Guarantee.</h3>
   <p>
     Your business financials, wholesale unit costs, and profit targets represent critical proprietary information. ConvertOcean processes all mathematical logic client-side inside your browser sandbox. No cost lists, sales figures, or margins are ever uploaded or transmitted online, ensuring absolute business confidentiality.
@@ -259,6 +264,11 @@ export const percentageCalculatorContent = `
   <h3>Related Mathematical and Business Tools.</h3>
   <p>
     If you are adjusting product prices based on percentage margins, use our dedicated <a href="/profit-margin-calculator/">Profit Margin Calculator</a>. For calculating exact tax amounts or tax-inclusive billing figures, run the client-side <a href="/sales-tax-calculator/">Sales Tax Calculator</a>. To compile billing invoices, use our <a href="/invoice-generator/">Invoice Generator</a> or create receipt files with the <a href="/receipt-generator/">Receipt Generator</a>.
+  </p>
+
+  <h3>Accuracy, Methodology, and Review.</h3>
+  <p>
+    All four modes use the elementary percentage identities shown above — the same definitions taught in standard mathematics — and each result displays its step-by-step formula so you can verify the arithmetic yourself. Outputs are cross-checked against hand-worked examples whenever the calculator is updated. <em>Last reviewed: July 2026.</em> Learn more about <a href="/about/">how we build and test our tools</a>.
   </p>
 
   <h3>Secure Browser-Based Calculation.</h3>
@@ -336,6 +346,11 @@ export const salesTaxCalculatorContent = `
   <h3>Related Billing and Accounting Tools.</h3>
   <p>
     Once you calculate tax amounts, use the <a href="/invoice-generator/">Invoice Generator</a> to compile a professional invoice with VAT/GST breakdowns, or create payment confirmations with the <a href="/receipt-generator/">Receipt Generator</a>. If you need to estimate margin ratios before tax additions, consult our <a href="/profit-margin-calculator/">Profit Margin Calculator</a>, or verify growth using the <a href="/percentage-calculator/">Percentage Calculator</a>.
+  </p>
+
+  <h3>Accuracy, Methodology, and Review.</h3>
+  <p>
+    Tax math uses the standard net-to-gross and reverse (tax-inclusive) formulas shown above, verified against hand-worked examples. One important honest note: the country presets (US average, UK VAT, Canadian GST/HST, Australian GST, Indian GST, Japanese Consumption Tax) are <strong>indicative standard rates</strong> — actual rates vary by state, province, product category, and legislation changes. Always confirm your exact local rate with your tax authority before invoicing or filing. Preset rates are periodically re-checked. <em>Last reviewed: July 2026.</em> Read more about <a href="/about/">how we build and test our tools</a>.
   </p>
 
   <h3>Absolute Financial Confidentiality.</h3>
