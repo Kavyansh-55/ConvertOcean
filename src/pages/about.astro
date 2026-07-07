@@ -5,6 +5,21 @@ const { lang = 'en' } = Astro.props;
 
 const title = "About ConvertOcean | Browser-Based Secure File Utility Platform";
 const description = "Discover the technology and mission behind ConvertOcean: a client-side, offline-first file conversion toolset prioritizing user privacy and absolute data safety.";
+
+const aboutSchema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About ConvertOcean",
+  "url": "https://convertocean.com/about/",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "ConvertOcean",
+    "url": "https://convertocean.com",
+    "logo": "https://convertocean.com/favicon.svg",
+    "foundingDate": "2026",
+    "description": "An independent, privacy-first suite of client-side file converters, PDF utilities, and business calculators that run entirely in the browser with no server uploads."
+  }
+};
 ---
 
 <Layout title={title} description={description} lang={lang} category="About Us" categorySlug="about">
@@ -152,6 +167,54 @@ const description = "Discover the technology and mission behind ConvertOcean: a 
           These compiled libraries are cached inside your browser sandbox tab memory. When you choose a tool, the browser runs the library dynamically using your local CPU, producing high-fidelity outputs in seconds.
         </p>
       </div>
+
+      <div class="about-section">
+        <h2 class="about-section-title">Who Builds ConvertOcean</h2>
+        <p class="about-text">
+          ConvertOcean is an independent project — designed, developed, and maintained by a small indie team rather than a large corporation. That independence is deliberate: because we do not answer to advertisers or data brokers, we have no incentive to collect your files, track your behavior, or lock features behind subscriptions. Every tool on this site exists because we needed it ourselves and wanted a version that respected the user.
+        </p>
+        <p class="about-text">
+          The same people who write the conversion engines also answer support questions. If you find a bug, spot an incorrect result, or want a new tool, you can reach us directly through the <a href="/contact/" style="color: var(--colors-link);">contact page</a> — reports go straight to the developers who can fix them.
+        </p>
+      </div>
+
+      <div class="about-section">
+        <h2 class="about-section-title">How We Test and Verify Our Tools</h2>
+        <p class="about-text">
+          Accuracy matters as much as privacy. Before a converter or calculator ships, it goes through a consistent verification process:
+        </p>
+        <div class="values-grid">
+          <div class="value-card">
+            <h3 class="value-title">🧮 Standard formulas only</h3>
+            <p class="value-text">
+              Our business calculators — like the <a href="/profit-margin-calculator/" style="color: var(--colors-link);">Profit Margin Calculator</a> and <a href="/sales-tax-calculator/" style="color: var(--colors-link);">Sales Tax Calculator</a> — use the standard accounting and mathematical definitions, and each tool page shows its exact formulas so you can verify every result by hand.
+            </p>
+          </div>
+          <div class="value-card">
+            <h3 class="value-title">✅ Reference-checked outputs</h3>
+            <p class="value-text">
+              File converters are tested against reference files: we convert known documents, spreadsheets, and images and compare the output against expected results before and after every significant update.
+            </p>
+          </div>
+          <div class="value-card">
+            <h3 class="value-title">📚 Proven open-source engines</h3>
+            <p class="value-text">
+              We build on widely audited open-source libraries (pdf.js, pdf-lib, SheetJS, Tesseract) used by thousands of production applications, rather than unproven custom parsers.
+            </p>
+          </div>
+          <div class="value-card">
+            <h3 class="value-title">🔍 Dated reviews & corrections</h3>
+            <p class="value-text">
+              Calculator pages carry a last-reviewed note, and tax-rate presets are periodically checked. If a user reports an inaccuracy, verifying and correcting it takes priority over shipping anything new.
+            </p>
+          </div>
+        </div>
+        <p class="about-text">
+          One honest caveat: our calculators are informational tools, not professional advice. They are built to be mathematically correct, but decisions about pricing, taxes, or filings should always be confirmed with a qualified accountant or your local tax authority.
+        </p>
+      </div>
     </div>
   </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify(aboutSchema)}></script>
 </Layout>

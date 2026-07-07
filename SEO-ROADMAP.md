@@ -31,7 +31,7 @@
 ---
 
 ## Week 1 — Content foundation + AEO groundwork
-- [ ] **S1 — E-E-A-T + author/trust signals.** Add an author/"who built this" section to `/about/` and to the calculators (accuracy/method notes). This is the cheapest AEO + trust win. Add `Organization`/`Person` schema where appropriate.
+- [x] **S1 — E-E-A-T + author/trust signals.** Add an author/"who built this" section to `/about/` and to the calculators (accuracy/method notes). This is the cheapest AEO + trust win. Add `Organization`/`Person` schema where appropriate. *(Done 2026-07-07, branch `seo/s1-eeat-trust`.)*
 - [ ] **S2 — Guide: "How to calculate profit margin (with formula + examples)."** Targets the calculator already getting organic traffic. 800–1200 words, worked examples, links to `/profit-margin-calculator/`. FAQ schema.
 - [ ] **S3 — Guide: "CSV to JSON: when and how to convert (developer guide)."** Supports the `/csv-to-json/` "crawled-not-indexed" page. Internal-link both ways.
 
@@ -62,3 +62,4 @@ _(routine appends here as it finds opportunities)_
 ## Progress log
 _(routine appends a dated one-line entry per session: what shipped, what's pending approval)_
 - 2026-07-06 — Roadmap created. Baseline: host canonicalization fixed, GSC Validate Fix submitted, UI polish + mobile-menu fix + word-counter content deployed live.
+- 2026-07-07 — S1 shipped on branch `seo/s1-eeat-trust` (pending approval): about-page "who builds this" + verification-methodology sections with AboutPage schema; accuracy/last-reviewed notes on 3 calculators; enriched Organization schema. Note: `gh` CLI not installed — PRs proposed via chat review instead.
