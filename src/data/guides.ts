@@ -365,5 +365,106 @@ export const guides: GuideData[] = [
         answer: 'This is usually caused by noise in the image, low resolution, or background graphics that the engine misinterprets as text strokes.'
       }
     ]
+  },
+  {
+    slug: 'how-to-calculate-profit-margin',
+    title: 'How to Calculate Profit Margin: Formula & Examples | ConvertOcean',
+    description: 'Learn how to calculate gross and net profit margin step by step — the formula, worked examples, margin vs markup explained, and what counts as a good margin.',
+    h1: 'How to Calculate Profit Margin (Formula + Examples).',
+    readTime: '7 min read',
+    publishDate: 'July 8, 2026',
+    relatedTools: ['profit-margin-calculator', 'percentage-calculator', 'sales-tax-calculator', 'invoice-generator'],
+    relatedGuides: ['excel-to-pdf'],
+    intro: 'Profit margin tells you what share of every sale you actually keep after costs — and it is the single most common number small businesses get wrong. This guide walks through the formula step by step, with worked examples for product and service businesses, and explains the margin-versus-markup trap that leads to underpricing.',
+    contentHtml: `
+      <h2>What Profit Margin Actually Tells You</h2>
+      <p>Profit margin is the percentage of your selling price that is profit. If your margin is 40%, then for every $100 a customer pays you, $40 stays with you and $60 covers what it cost to deliver the product or service. It is a <em>ratio</em>, not a dollar amount — which is exactly why it is so useful: it lets you compare a $10 product against a $10,000 contract on equal terms, and it tells you instantly whether a price rise, a discount, or a supplier change is helping or quietly draining your business.</p>
+      <p>There are three variants you will meet in practice:</p>
+      <ul>
+        <li><strong>Gross profit margin</strong> — only subtracts the direct cost of the goods or service sold (materials, manufacturing, wholesale price). This is what most pricing decisions use.</li>
+        <li><strong>Operating margin</strong> — also subtracts running costs like rent, salaries, software, and marketing.</li>
+        <li><strong>Net profit margin</strong> — subtracts <em>everything</em>, including interest and taxes. This is the "what actually ends up in the bank" number.</li>
+      </ul>
+
+      <h2>The Profit Margin Formula</h2>
+      <p>The core formula is the same for all three variants — only what you count as "cost" changes:</p>
+      <blockquote>
+        <strong>Profit Margin (%) = ((Revenue − Cost) ÷ Revenue) × 100</strong>
+      </blockquote>
+      <p>Three steps, every time:</p>
+      <ul>
+        <li><strong>Step 1 — Find your profit:</strong> subtract total cost from the selling price (Revenue − Cost).</li>
+        <li><strong>Step 2 — Divide by revenue:</strong> divide that profit by the <em>selling price</em>, not the cost. This is the step people get wrong.</li>
+        <li><strong>Step 3 — Multiply by 100</strong> to express it as a percentage.</li>
+      </ul>
+
+      <h2>Worked Example 1: A Product Business</h2>
+      <div class="content-card">
+        <p style="margin-top: 0;">Say you make candles. Materials, packaging, and shipping cost <strong>$12.50</strong> per unit, and you sell each candle for <strong>$30.00</strong>.</p>
+        <p><code>Profit = $30.00 − $12.50 = $17.50</code><br/>
+        <code>Margin = ($17.50 ÷ $30.00) × 100 = 58.33%</code></p>
+        <p style="margin-bottom: 0;">You keep about 58 cents of every sales dollar. Note that the same numbers give a <strong>markup</strong> of ($17.50 ÷ $12.50) × 100 = <strong>140%</strong> — a very different figure, from the same sale. More on that trap below.</p>
+      </div>
+
+      <h2>Worked Example 2: A Freelancer or Service Business</h2>
+      <div class="content-card">
+        <p style="margin-top: 0;">Service businesses have costs too, even without inventory. Suppose a freelance designer bills <strong>$4,800</strong> in a month, and spends <strong>$350</strong> on software, <strong>$600</strong> on an outsourced subcontractor, and <strong>$350</strong> on payment-processing fees and advertising — <strong>$1,300</strong> total.</p>
+        <p><code>Profit = $4,800 − $1,300 = $3,500</code><br/>
+        <code>Margin = ($3,500 ÷ $4,800) × 100 ≈ 72.9%</code></p>
+        <p style="margin-bottom: 0;">High margins are normal in services — but so are forgotten costs. If this designer ignored the processing fees and ads, they would report a flattering number and misprice their next retainer.</p>
+      </div>
+
+      <h2>Working Backwards: Price from a Target Margin</h2>
+      <p>The most practical use of margin math is setting a price. The formula is <strong>not</strong> "cost plus margin percent" — that gives you markup. To hit a true margin target:</p>
+      <blockquote>
+        <strong>Selling Price = Cost ÷ (1 − Desired Margin ÷ 100)</strong>
+      </blockquote>
+      <p>Example: your product costs <strong>$45.00</strong> and you want a <strong>35%</strong> margin. Price = $45 ÷ (1 − 0.35) = $45 ÷ 0.65 = <strong>$69.23</strong>. Check it: profit is $24.23, and $24.23 ÷ $69.23 = 35% exactly. If you had instead added 35% <em>to the cost</em> ($60.75), your real margin would be only 25.9% — nearly ten points below target. Our <a href="/profit-margin-calculator/">Profit Margin Calculator</a> has a dedicated mode for this reverse calculation, and shows the formula with every result.</p>
+
+      <h2>Margin vs. Markup: The Trap That Causes Underpricing</h2>
+      <p>Margin divides profit by <em>revenue</em>; markup divides profit by <em>cost</em>. Because cost is always the smaller base, markup is always the bigger-sounding number:</p>
+      <ul>
+        <li>A <strong>50% markup</strong> is only a <strong>33.3% margin</strong>.</li>
+        <li>A <strong>100% markup</strong> is a <strong>50% margin</strong>.</li>
+        <li>A <strong>50% margin</strong> requires a <strong>100% markup</strong>.</li>
+      </ul>
+      <p>The danger is asymmetric: if a supplier tells you "the standard markup in this category is 80%" and you enter 80 into a <em>margin</em> field, you will underprice every unit you sell. When in doubt, compute both — the calculator reports margin and markup side by side for exactly this reason.</p>
+
+      <h2>What Is a "Good" Profit Margin?</h2>
+      <p>Honest answer: it depends heavily on your industry, and any universal number is a rough compass, not a rule. That said, a widely used rule of thumb for <em>net</em> margin in small businesses is that around <strong>10% is typical, 20% is strong, and 5% is thin</strong>. Gross margins vary far more: grocery and hardware retail often run single-digit net margins on enormous volume, restaurants commonly land in the 3–9% range, while software and digital services can carry 70%+ gross margins because each additional sale costs little to deliver. Compare yourself against your own sector — and against your own last quarter — rather than a global average.</p>
+
+      <h2>Common Mistakes to Avoid</h2>
+      <ul>
+        <li><strong>Dividing by cost instead of revenue.</strong> That computes markup, not margin (see above).</li>
+        <li><strong>Forgetting invisible costs.</strong> Payment processors typically take 2–3%, and shipping, returns, refunds, and free samples are all real costs of goods sold. Leaving them out overstates your margin.</li>
+        <li><strong>Mixing tax-inclusive and tax-exclusive prices.</strong> If your shelf price includes sales tax or GST/VAT, strip the tax out before computing margin — the tax portion was never yours. Our <a href="/sales-tax-calculator/">Sales Tax Calculator</a> has a reverse mode that back-calculates the pre-tax price from a gross total.</li>
+        <li><strong>Setting margins once and never revisiting.</strong> Supplier prices creep. A margin computed on last year's costs is a fiction — recheck whenever input costs change, and track the percentage change with the <a href="/percentage-calculator/">Percentage Calculator</a>.</li>
+      </ul>
+
+      <h2>Putting It Into Practice</h2>
+      <p>Once your margins are set, the day-to-day work is applying them consistently: quote prices that hit your target margin, add the correct tax at billing time, and invoice cleanly — our <a href="/invoice-generator/">Invoice Generator</a> compiles itemized PDF invoices locally in your browser, so client and pricing data never leave your device. Like every ConvertOcean tool, the <a href="/profit-margin-calculator/">Profit Margin Calculator</a> runs 100% client-side: your costs, prices, and margins are never uploaded anywhere.</p>
+    `,
+    faqs: [
+      {
+        question: 'What is the formula for calculating profit margin?',
+        answer: 'Profit Margin (%) = ((Revenue − Cost) ÷ Revenue) × 100. Subtract your total cost from the selling price to get profit, divide that profit by the selling price (not the cost), then multiply by 100. For example, an item costing $60 and selling for $100 has a margin of (40 ÷ 100) × 100 = 40%.'
+      },
+      {
+        question: 'What is the difference between profit margin and markup?',
+        answer: 'Margin divides profit by revenue; markup divides profit by cost. The same sale always produces a higher markup number than margin — a $40 profit on a $100 sale is a 40% margin but a 66.7% markup. Confusing the two leads to systematic underpricing.'
+      },
+      {
+        question: 'What is a good profit margin for a small business?',
+        answer: 'It varies significantly by industry, but a common rule of thumb for net margin is that roughly 10% is typical, 20% is strong, and 5% is thin. Retail and food businesses normally run lower margins on higher volume, while services and software run much higher. Benchmark against your own sector rather than a universal number.'
+      },
+      {
+        question: 'How do I calculate a selling price from a desired profit margin?',
+        answer: 'Use Selling Price = Cost ÷ (1 − Desired Margin ÷ 100). For a $45 cost and a 35% target margin: $45 ÷ 0.65 = $69.23. Do not simply add the margin percentage on top of cost — that produces a markup and results in a lower real margin than you intended.'
+      },
+      {
+        question: 'Is profit margin calculated before or after tax?',
+        answer: 'Gross and operating margins are calculated before income tax; net profit margin is calculated after all expenses including tax. Whichever you use, be consistent — and if your selling prices include sales tax, GST, or VAT, remove the tax portion first, because that money is collected for the tax authority and was never revenue you keep.'
+      }
+    ]
   }
 ];
