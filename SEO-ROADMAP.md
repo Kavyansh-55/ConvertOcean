@@ -65,3 +65,4 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 - 2026-07-07 — S1 shipped on branch `seo/s1-eeat-trust` (pending approval): about-page "who builds this" + verification-methodology sections with AboutPage schema; accuracy/last-reviewed notes on 3 calculators; enriched Organization schema. Note: `gh` CLI not installed — PRs proposed via chat review instead.
 - 2026-07-07 — S1 approved, merged to main, deployed, verified live.
 - 2026-07-08 — S2 shipped on branch `seo/s2-profit-margin-guide` (pending approval): new guide /guides/how-to-calculate-profit-margin/ (983-word article + 5 FAQs, on-page score 88), bidirectionally linked with 4 business tools, listed on homepage/guides index/HTML+XML sitemaps.
+- 2026-07-08 — S2 approved, merged to main, deployed, verified live (200 + FAQ schema + backlinks + in XML sitemap). Next: S3 — CSV-to-JSON developer guide.
