@@ -33,7 +33,7 @@
 ## Week 1 — Content foundation + AEO groundwork
 - [x] **S1 — E-E-A-T + author/trust signals.** Add an author/"who built this" section to `/about/` and to the calculators (accuracy/method notes). This is the cheapest AEO + trust win. Add `Organization`/`Person` schema where appropriate. *(Done 2026-07-07, branch `seo/s1-eeat-trust`.)*
 - [x] **S2 — Guide: "How to calculate profit margin (with formula + examples)."** Targets the calculator already getting organic traffic. 800–1200 words, worked examples, links to `/profit-margin-calculator/`. FAQ schema. *(Done 2026-07-08, branch `seo/s2-profit-margin-guide`.)*
-- [ ] **S3 — Guide: "CSV to JSON: when and how to convert (developer guide)."** Supports the `/csv-to-json/` "crawled-not-indexed" page. Internal-link both ways.
+- [x] **S3 — Guide: "CSV to JSON: when and how to convert (developer guide)."** Supports the `/csv-to-json/` "crawled-not-indexed" page. Internal-link both ways. *(Done 2026-07-09, branch `seo/s3-csv-json-guide`.)*
 
 ## Week 2 — Content expansion + first new tool
 - [ ] **S4 — Guide: "Excel to PDF without cutting off columns"** (expand/refresh existing) + "PDF to Word formatting tips." Strengthen the two best-trafficked tool clusters.
@@ -66,3 +66,4 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 - 2026-07-07 — S1 approved, merged to main, deployed, verified live.
 - 2026-07-08 — S2 shipped on branch `seo/s2-profit-margin-guide` (pending approval): new guide /guides/how-to-calculate-profit-margin/ (983-word article + 5 FAQs, on-page score 88), bidirectionally linked with 4 business tools, listed on homepage/guides index/HTML+XML sitemaps.
 - 2026-07-08 — S2 approved, merged to main, deployed, verified live (200 + FAQ schema + backlinks + in XML sitemap). Next: S3 — CSV-to-JSON developer guide.
+- 2026-07-09 — S3 shipped on branch `seo/s3-csv-json-guide` (pending approval): new guide /guides/csv-to-json/ (1,029-word developer article + 5 FAQs, on-page score 90 — site best), bidirectionally linked with csv-to-json / json-to-csv / json-formatter / xml-to-json, listed on homepage/guides index/HTML+XML sitemaps. Week 1 of roadmap complete.
