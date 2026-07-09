@@ -466,5 +466,104 @@ export const guides: GuideData[] = [
         answer: 'Gross and operating margins are calculated before income tax; net profit margin is calculated after all expenses including tax. Whichever you use, be consistent — and if your selling prices include sales tax, GST, or VAT, remove the tax portion first, because that money is collected for the tax authority and was never revenue you keep.'
       }
     ]
+  },
+  {
+    slug: 'csv-to-json',
+    title: 'How to Convert CSV to JSON: Developer Guide | ConvertOcean',
+    description: 'Learn when and how to convert CSV to JSON: header mapping, data types, delimiters, nested structures, and the parsing pitfalls that corrupt data — with examples.',
+    h1: 'How to Convert CSV to JSON: A Developer Guide.',
+    readTime: '6 min read',
+    publishDate: 'July 9, 2026',
+    relatedTools: ['csv-to-json', 'json-to-csv', 'json-formatter', 'xml-to-json'],
+    relatedGuides: ['excel-to-pdf', 'how-to-calculate-profit-margin'],
+    intro: 'CSV and JSON solve different problems: one is a flat grid built for spreadsheets and database dumps, the other a typed, nested structure built for APIs and application code. This guide explains when converting between them makes sense, exactly how rows become objects, and the type-coercion and quoting pitfalls that silently corrupt data.',
+    contentHtml: `
+      <h2>Two Formats, Two Shapes of Data</h2>
+      <p>A CSV file is a grid: one record per line, one value per column, with the first line usually acting as a header row. It has no hierarchy, no data types, and no official structure beyond "values separated by a delimiter." That simplicity is why every spreadsheet, database, and analytics platform can export it.</p>
+      <p>JSON is the opposite: a typed, hierarchical format. Values can be strings, numbers, booleans, or null; objects can nest inside objects; arrays can hold anything. It is the native data language of JavaScript, REST APIs, and configuration files. Converting CSV to JSON is therefore not just a syntax swap — it is a translation from a flat, untyped grid into a typed, structured document, and every decision in that translation matters.</p>
+
+      <h2>When Converting CSV to JSON Makes Sense</h2>
+      <ul>
+        <li><strong>Feeding data into a web application.</strong> JavaScript consumes JSON natively via <code>JSON.parse()</code> — no CSV-parsing library, no delimiter guessing.</li>
+        <li><strong>Seeding an API or NoSQL database.</strong> Document stores like MongoDB and Firestore import JSON arrays directly; a converted CSV export gets you from spreadsheet to database in one step.</li>
+        <li><strong>Mock data and fixtures.</strong> Turning a hand-maintained spreadsheet of test cases into a JSON fixture file keeps non-developers productive while the code consumes clean structured data.</li>
+        <li><strong>Configuration migration.</strong> Legacy exports from ERP or CRM systems usually arrive as CSV; modern tooling almost always wants JSON.</li>
+      </ul>
+      <p>And when it does <em>not</em>: if humans need to read or edit the data in a spreadsheet, keep CSV (or convert JSON the other way with our <a href="/json-to-csv/">JSON to CSV converter</a>). CSV is also far more compact for very large, truly tabular datasets — JSON repeats every key name on every record.</p>
+
+      <h2>How the Mapping Works: Headers Become Keys</h2>
+      <p>The standard conversion treats the first CSV row as the key names and each subsequent row as one JSON object. Given this CSV:</p>
+      <div class="content-card">
+        <p style="margin-top: 0;"><code>id,name,city,active</code><br/>
+        <code>1,Asha,Mumbai,true</code><br/>
+        <code>2,Leo,"Berlin, DE",false</code></p>
+        <p style="margin-bottom: 0;">…the converter produces:</p>
+        <p style="margin-bottom: 0;"><code>[</code><br/>
+        <code>&nbsp;&nbsp;{ "id": 1, "name": "Asha", "city": "Mumbai", "active": true },</code><br/>
+        <code>&nbsp;&nbsp;{ "id": 2, "name": "Leo", "city": "Berlin, DE", "active": false }</code><br/>
+        <code>]</code></p>
+      </div>
+      <p>Notice two things in that example. First, <code>"Berlin, DE"</code> survived intact: because the value contains a comma, the CSV wraps it in double quotes (the RFC 4180 quoting rule), and a correct parser respects that. Second, <code>1</code> and <code>true</code> came out as a number and a boolean — not strings — which brings us to the most important pitfall.</p>
+
+      <h2>The Type Problem: Everything in CSV Is a String</h2>
+      <p>CSV has no type system. <code>42</code>, <code>true</code>, and <code>2026-07-09</code> are all just text until something interprets them. Converters therefore apply <em>type inference</em> — and inference can guess wrong in ways that silently corrupt data:</p>
+      <ul>
+        <li><strong>Leading zeros disappear.</strong> A ZIP code <code>02139</code> or phone number inferred as a number becomes <code>2139</code>. IDs, postal codes, and phone numbers should stay strings.</li>
+        <li><strong>Long numbers lose precision.</strong> JavaScript numbers are 64-bit floats; a 19-digit order ID will be rounded. Keep long identifiers as strings.</li>
+        <li><strong>"true" the word vs. true the boolean.</strong> If a column legitimately contains the text "true" (say, a survey answer), boolean coercion changes its meaning.</li>
+      </ul>
+      <p>The safe workflow: convert, then <em>inspect</em>. Paste the output into our <a href="/json-formatter/">JSON Formatter &amp; Validator</a> — it pretty-prints the structure, validates syntax, and makes a mis-typed column obvious in seconds.</p>
+
+      <h2>Delimiters, Quoting, and Regional Gotchas</h2>
+      <p>Not every "CSV" uses commas. Spreadsheets in much of Europe export with <strong>semicolons</strong> (because the comma is the decimal separator there), tab-separated files are common in data engineering, and pipes appear in log exports. A good converter auto-detects the delimiter; if your output collapses into one giant column, delimiter mismatch is almost always the cause. Quoting matters equally: values containing the delimiter, double quotes, or line breaks must be wrapped in double quotes, with inner quotes doubled (<code>""</code>). Hand-rolled parsers that just <code>split(",")</code> break on exactly these rows — usually the ones with real-world addresses or names.</p>
+
+      <h2>Nested JSON and Flattening</h2>
+      <p>CSV cannot represent nesting, so the bridge is <strong>dot notation</strong>: a column named <code>user.name</code> can unfold into <code>{ "user": { "name": … } }</code>, and conversely a nested object flattens back into dotted columns when converting JSON to CSV. If you round-trip data both ways, keep column names dot-friendly and avoid keys that themselves contain dots.</p>
+
+      <h2>Step-by-Step: Converting CSV to JSON on ConvertOcean</h2>
+      <div class="content-card">
+        <h3 style="margin-top: 0;">Step 1: Open the converter</h3>
+        <p>Go to the <a href="/csv-to-json/">CSV to JSON converter</a>. Everything runs client-side in your browser — the file is never uploaded.</p>
+        <h3>Step 2: Drop in your CSV</h3>
+        <p>Drag the file into the drop zone. The parser auto-detects comma, semicolon, tab, and pipe delimiters, and reads the header row as key names.</p>
+        <h3>Step 3: Review the output</h3>
+        <p>Check the generated array: spot-check a row with quotes or special characters, and verify numeric-looking identifiers kept their leading zeros.</p>
+        <h3>Step 4: Download or copy</h3>
+        <p>Save the .json file or copy it straight into your codebase. Because processing is local, even confidential exports (customer lists, financial dumps) stay on your machine.</p>
+      </div>
+
+      <h2>Common Pitfalls Checklist</h2>
+      <ul>
+        <li><strong>Excel's hidden BOM.</strong> "CSV UTF-8" exports from Excel start with an invisible byte-order mark that can glue itself to your first header (<code>ï»¿id</code>). A correct parser strips it; if your first key looks corrupted, this is why.</li>
+        <li><strong>Trailing empty rows and columns.</strong> Spreadsheets happily export blank trailing rows, which become useless <code>{}</code> objects. Delete them before converting.</li>
+        <li><strong>Inconsistent column counts.</strong> A row with more values than headers means an unquoted delimiter inside a value — fix the quoting at the source.</li>
+        <li><strong>Very large files.</strong> Browser-based conversion holds the data in tab memory. Datasets up to roughly 100,000 rows convert in seconds; for multi-gigabyte exports, use a streaming pipeline instead.</li>
+      </ul>
+
+      <h2>Privacy: Why Client-Side Conversion Matters for Data Work</h2>
+      <p>CSV exports are frequently the most sensitive files in a company — customer databases, payroll, sales pipelines. Uploading them to a random cloud converter hands that data to an unknown server. ConvertOcean parses and serializes entirely inside your browser sandbox: disconnect from the internet after the page loads and the <a href="/csv-to-json/">converter</a> keeps working. If your dataset needs restructuring first, the same applies to our <a href="/xml-to-json/">XML to JSON</a> and <a href="/json-to-csv/">JSON to CSV</a> tools.</p>
+    `,
+    faqs: [
+      {
+        question: 'Does converting CSV to JSON change my data types?',
+        answer: 'It can. CSV stores everything as text, so converters infer types: numeric-looking values become numbers and true/false become booleans. This is usually what you want, but it strips leading zeros from ZIP codes and can round very long numeric IDs. Always spot-check identifier columns after conversion and keep them as strings if precision matters.'
+      },
+      {
+        question: 'How do I handle commas inside CSV values when converting?',
+        answer: 'Values containing commas must be wrapped in double quotes in the source CSV (RFC 4180), e.g. "Berlin, DE". A standards-compliant parser then treats it as one value. If your converted JSON has values split across two keys, the source file is missing those quotes.'
+      },
+      {
+        question: 'Can I convert nested JSON structures to CSV and back?',
+        answer: 'Yes, via flattening: a nested object like {"user":{"name":"Asha"}} becomes a column named user.name, and dot-notation columns unfold back into nested objects. Deeply nested arrays do not round-trip cleanly, so keep structures shallow if you need to edit the data in a spreadsheet.'
+      },
+      {
+        question: 'Why does my first column header look corrupted after converting an Excel CSV?',
+        answer: 'Excel\'s "CSV UTF-8" export prepends an invisible byte-order mark (BOM). Parsers that do not strip it attach it to the first header name. ConvertOcean\'s parser strips the BOM automatically; if you see characters like ï»¿ in output from other tools, that is the cause.'
+      },
+      {
+        question: 'Is there a file size limit for browser-based CSV to JSON conversion?',
+        answer: 'The practical limit is your device\'s RAM, since the file is processed in browser tab memory. Tabular exports up to roughly 100,000 rows convert in seconds. For multi-gigabyte datasets, a streaming command-line pipeline is the better tool.'
+      }
+    ]
   }
 ];
