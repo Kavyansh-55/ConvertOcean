@@ -36,7 +36,7 @@
 - [x] **S3 — Guide: "CSV to JSON: when and how to convert (developer guide)."** Supports the `/csv-to-json/` "crawled-not-indexed" page. Internal-link both ways. *(Done 2026-07-09, branch `seo/s3-csv-json-guide`.)*
 
 ## Week 2 — Content expansion + first new tool
-- [ ] **S4 — Guide: "Excel to PDF without cutting off columns"** (expand/refresh existing) + "PDF to Word formatting tips." Strengthen the two best-trafficked tool clusters.
+- [x] **S4 — Guide: "Excel to PDF without cutting off columns"** (expand/refresh existing) + "PDF to Word formatting tips." Strengthen the two best-trafficked tool clusters. *(Done 2026-07-10, branch `seo/s4-cluster-guides`.)*
 - [ ] **S5 — New tool: a low-competition calculator** (e.g. break-even, markup, or discount calculator). Build it well (matches existing calculator components), unique content + FAQ, link from `/business-tools/` and related calculators.
 - [ ] **S6 — Internal linking + AEO pass.** Audit that every tool links to ≥2 relevant guides and vice-versa. Add concise "quick answer" (40–60 word) summaries near the top of tool pages for AI-overview citation.
 
@@ -68,3 +68,4 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 - 2026-07-08 — S2 approved, merged to main, deployed, verified live (200 + FAQ schema + backlinks + in XML sitemap). Next: S3 — CSV-to-JSON developer guide.
 - 2026-07-09 — S3 shipped on branch `seo/s3-csv-json-guide` (pending approval): new guide /guides/csv-to-json/ (1,029-word developer article + 5 FAQs, on-page score 90 — site best), bidirectionally linked with csv-to-json / json-to-csv / json-formatter / xml-to-json, listed on homepage/guides index/HTML+XML sitemaps. Week 1 of roadmap complete.
 - 2026-07-09 — S3 approved, merged to main, deployed, verified live (200, FAQ schema, backlinks, XML sitemap). WEEK 1 COMPLETE. Next: S4 — strengthen excel-to-pdf + pdf-to-word guide cluster.
+- 2026-07-10 — S4 shipped on branch `seo/s4-cluster-guides` (pending approval): expanded excel-to-pdf guide 372→974 words (+scale-to-fit, print titles, CSV case, split/merge workflow, troubleshooting; +3 FAQs) and pdf-to-word guide 538→1,067 words (+scanned-vs-digital, Word cleanup checklist, troubleshooting; +2 FAQs); guides now feed links to unindexed csv-to-pdf/split-excel pages. Fixed sitewide guide-template h1→h3 heading skip (tool-callout h3→p) — all guide scores up: pdf-to-word 100, csv-to-json 92, excel-to-pdf 90, profit-margin 90. Trimmed pdf-to-word title to 60ch.

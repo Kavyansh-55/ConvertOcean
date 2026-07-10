@@ -15,13 +15,13 @@ export interface GuideData {
 export const guides: GuideData[] = [
   {
     slug: 'pdf-to-word-without-losing-formatting',
-    title: 'How to Convert PDF to Word Without Losing Formatting - ConvertOcean',
-    description: 'Learn how to convert PDF documents to Microsoft Word (.docx) format while keeping layout, tables, and fonts perfectly intact using client-side tools.',
+    title: 'Convert PDF to Word Without Losing Formatting | ConvertOcean',
+    description: 'Learn how to convert PDF documents to Word (.docx) while keeping layout, tables, and fonts intact — plus fixes for scanned files, broken tables, and font swaps.',
     h1: 'How to Convert PDF to Word Without Losing Formatting.',
-    readTime: '5 min read',
-    publishDate: 'June 20, 2026',
-    relatedTools: ['pdf-to-word'],
-    relatedGuides: ['merge-multiple-pdf-files', 'excel-to-pdf'],
+    readTime: '7 min read',
+    publishDate: 'July 10, 2026',
+    relatedTools: ['pdf-to-word', 'word-to-pdf', 'pdf-to-txt', 'image-to-text'],
+    relatedGuides: ['merge-multiple-pdf-files', 'excel-to-pdf', 'how-ocr-works'],
     intro: 'Converting a PDF to an editable Microsoft Word document can be frustrating when layouts split, fonts mismatch, or tables turn into scattered text strings. Learn why this happens and how to convert your documents without losing formatting.',
     contentHtml: `
       <h2>The Formatting Mismatch: Flow Layout vs. Absolute Coordinates</h2>
@@ -35,6 +35,10 @@ export const guides: GuideData[] = [
         <li><strong>Font Substitutions:</strong> If the converter or your computer does not possess the embedded font used in the original PDF, a fallback font (like Times New Roman or Arial) will be substituted, throwing off margins and alignments.</li>
         <li><strong>Overlapping Elements:</strong> Text boxes, images, and backgrounds can overlap because the layout coordinates overlap, causing unreadable segments.</li>
       </ul>
+
+      <h2>Digital vs. Scanned: Know Which PDF You Have</h2>
+      <p>Before converting anything, run a ten-second test: open the PDF and try to <strong>select a sentence with your cursor</strong>. If text highlights, you have a <em>digital</em> PDF — the characters exist as real text and a converter can restructure them. If your cursor drags a selection box instead, the page is a <em>scanned image</em>: to the file, that "text" is just pixels, and a direct PDF-to-Word converter will output either nothing or an embedded picture.</p>
+      <p>Scanned documents need a different pipeline: run them through <a href="/image-to-text/">Image to Text OCR</a> first, which recognizes the characters optically, then paste the recognized text into Word and reformat. Expect to redo the layout — OCR recovers <em>words</em>, not design. (Curious how that works? See our guide on <a href="/guides/how-ocr-works/">how OCR extracts text from images</a>.) Mixed PDFs exist too: a contract with typed pages plus a scanned signature page will convert cleanly except for that one page.</p>
 
       <h2>Step-by-Step: Converting PDF to Word on ConvertOcean</h2>
       <p>ConvertOcean performs conversion 100% locally in your browser memory sandbox using WebAssembly layout mapping. Here is how to convert your files privately without losing structure:</p>
@@ -65,6 +69,28 @@ export const guides: GuideData[] = [
         <strong>Warning: Never upload sensitive records to unknown online converters.</strong> Many cloud utilities copy your text data to external databases, exposing personal identification information (PII) or confidential financial formulas. ConvertOcean operates 100% locally, ensuring complete privacy.
       </blockquote>
       <p>Another common error is converting a heavily modified PDF multiple times. Every conversion adds rounding discrepancies to coordinate placements. Always use the original source file whenever possible.</p>
+
+      <h2>After Converting: A Five-Minute Cleanup Checklist in Word</h2>
+      <p>Even a good conversion benefits from a quick pass in Word before you start editing. This checklist catches the classic artifacts:</p>
+      <ul>
+        <li><strong>Show formatting marks</strong> (the ¶ button, or Ctrl+Shift+8). Now you can <em>see</em> the conversion artifacts you are about to fix.</li>
+        <li><strong>Remove stray hard line breaks.</strong> If every line ends in its own ¶, use Find &amp; Replace: search for a paragraph mark followed by a lowercase letter and rejoin those lines, so paragraphs flow again when you edit.</li>
+        <li><strong>Check table boundaries.</strong> Click inside each table and confirm it is a real Word table (a grid appears in the ribbon) rather than text aligned with tabs. Real tables survive future edits; tab-aligned text collapses.</li>
+        <li><strong>Reset the fonts.</strong> Select all (Ctrl+A) and apply your document font once, instead of fixing mismatched substituted fonts paragraph by paragraph.</li>
+        <li><strong>Verify page count and numbering.</strong> Headers, footers, and page numbers often arrive as plain text on each page — delete those and re-insert proper Word headers/footers if you need them.</li>
+      </ul>
+
+      <h2>Troubleshooting Quick Reference</h2>
+      <ul>
+        <li><strong>Output is empty or one big image</strong> → the PDF is scanned; run OCR first (see above).</li>
+        <li><strong>Table turned into scattered text</strong> → the source used invisible layout tables; rebuild with Insert → Table, pasting column by column.</li>
+        <li><strong>Fonts look different</strong> → the original font is not installed on your machine; either install it or restyle with a system font.</li>
+        <li><strong>Random boxes or symbols (□, ï, Â)</strong> → embedded symbol fonts or encoding artifacts; replace them via Find &amp; Replace once you spot the pattern.</li>
+        <li><strong>Converter rejects the file</strong> → the PDF is password-protected; remove the open password first (you need the password to do this — protection exists precisely to prevent silent conversion).</li>
+      </ul>
+
+      <h2>Only Need the Text — or the Reverse Direction?</h2>
+      <p>If layout does not matter and you just want clean, copyable text (for pasting into an email, a CMS, or a script), skip Word entirely: <a href="/pdf-to-txt/">PDF to TXT</a> extracts the raw text far faster than a full layout conversion. And once your editing is done, <a href="/word-to-pdf/">Word to PDF</a> takes the document back to a fixed, share-ready format — both tools run entirely client-side, like the <a href="/pdf-to-word/">PDF to Word converter</a> itself.</p>
     `,
     faqs: [
       {
@@ -78,6 +104,14 @@ export const guides: GuideData[] = [
       {
         question: 'Is my data secure when converting documents on this site?',
         answer: 'Yes. ConvertOcean processes all document formatting, text parsing, and DOCX compiling locally in your browser memory sandbox. Your files are never uploaded to any remote server or third-party database.'
+      },
+      {
+        question: 'Can I convert a password-protected PDF to Word?',
+        answer: 'Not directly — encryption exists precisely to prevent that. You need to open the PDF with its password and remove the protection (or re-save an unprotected copy) first. A converter that silently bypassed PDF passwords would be a security flaw, not a feature.'
+      },
+      {
+        question: 'Why did the fonts change after converting my PDF to Word?',
+        answer: 'PDFs can embed fonts inside the file, but a DOCX only references fonts by name. If the original font is not installed on your computer, Word substitutes a similar system font, which shifts spacing and line breaks. Install the original font, or select all text and restyle it with a standard font once.'
       }
     ]
   },
@@ -232,10 +266,10 @@ export const guides: GuideData[] = [
     title: 'How to Convert Excel to PDF Without Page Cut-Offs - ConvertOcean',
     description: 'Convert Excel spreadsheets (.xlsx, .xls, .csv) to print-ready PDF files without columns breaking or table layouts getting cut off. Keep formulas private.',
     h1: 'How to Convert Excel to PDF.',
-    readTime: '5 min read',
-    publishDate: 'June 20, 2026',
-    relatedTools: ['excel-to-pdf'],
-    relatedGuides: ['merge-multiple-pdf-files', 'pdf-to-word-without-losing-formatting'],
+    readTime: '7 min read',
+    publishDate: 'July 10, 2026',
+    relatedTools: ['excel-to-pdf', 'csv-to-pdf', 'split-excel', 'merge-excel'],
+    relatedGuides: ['merge-multiple-pdf-files', 'pdf-to-word-without-losing-formatting', 'csv-to-json'],
     intro: 'Formatting dynamic spreadsheet data for a static PDF can result in columns getting cut off or table contents spilling across empty pages. Learn how to compile professional, print-ready PDFs from Excel worksheets.',
     contentHtml: `
       <h2>The Layout Gap: Sheets vs. Fixed Page Sizes</h2>
@@ -246,6 +280,22 @@ export const guides: GuideData[] = [
         <li><strong>Horizontal Spillover:</strong> Wide spreadsheets often split columns across separate sheets of paper, making the table unreadable.</li>
         <li><strong>Font and Gridline Alignments:</strong> Text wrapping can break table rows, causing overlapping columns.</li>
         <li><strong>Hidden Information:</strong> Comments, formulas, and hidden notes can sometimes render incorrectly or clutter the output PDF.</li>
+      </ul>
+
+      <h2>Scale-to-Fit: The Three Settings That Stop Cut-Offs</h2>
+      <p>Almost every "my columns got cut off" problem is solved by three settings inside Excel (or LibreOffice/Google Sheets) <em>before</em> you convert. Set them once in the source file and every future export stays clean:</p>
+      <ul>
+        <li><strong>Orientation → Landscape.</strong> Under Page Layout, switch wide tables to landscape. A standard A4 portrait page fits roughly 8–9 typical columns; landscape fits 12–14. This single change fixes the majority of cut-off complaints.</li>
+        <li><strong>Scaling → "Fit All Columns on One Page."</strong> In Excel's Page Setup, this shrinks the sheet's width to the page width while letting rows continue onto following pages — exactly what you want for long tables. Avoid "Fit Sheet on One Page" for anything longer than ~50 rows, because it shrinks text until it is unreadable.</li>
+        <li><strong>Margins → Narrow.</strong> Default margins waste around 2 cm on either side. Narrow margins buy back an extra column or two of usable width.</li>
+      </ul>
+      <p>If your table is still too wide after all three — say a 30-column financial export — the honest answer is that no page size can hold it legibly. Split the data instead: hide non-essential columns before exporting, or break the workbook into logical parts with our <a href="/split-excel/">Split Excel tool</a> and convert each part separately.</p>
+
+      <h2>Repeating Headers and Page Breaks for Long Tables</h2>
+      <p>A multi-page PDF where only page one shows the column names is painful to read. Two source-file settings fix it:</p>
+      <ul>
+        <li><strong>Print Titles:</strong> In Excel, Page Layout → Print Titles → "Rows to repeat at top" → select your header row. It will now repeat on every PDF page, like a proper report.</li>
+        <li><strong>Manual page breaks:</strong> If a category block or monthly section gets split awkwardly across pages, insert a page break above it (Page Layout → Breaks) so each section starts cleanly.</li>
       </ul>
 
       <h2>Step-by-Step: Converting Excel to PDF Securely on ConvertOcean</h2>
@@ -272,6 +322,25 @@ export const guides: GuideData[] = [
         <li><strong>Auto-Fit Column Widths:</strong> Double-click column borders to auto-fit text. This prevents truncated data or overflow boundaries.</li>
       </ul>
 
+      <h2>CSV Files: The Special Case</h2>
+      <p>CSV files convert to PDF too, but they behave differently from XLSX: a CSV stores <em>only raw values</em> — no column widths, no bold headers, no cell colors, no number formats. Whatever formatting you see when a spreadsheet app opens the CSV was generated on the fly and is not in the file. So when converting CSV directly, the layout engine applies its own clean default table styling. That is usually fine for data dumps and reports; if you need custom styling (colored headers, currency formats), open the CSV in a spreadsheet first, format it, save as XLSX, and convert that. For plain data-to-document jobs, our dedicated <a href="/csv-to-pdf/">CSV to PDF converter</a> handles the direct route.</p>
+
+      <h2>Multi-Sheet Workbooks: Split or Combine First</h2>
+      <p>Two workflow tips for bigger workbooks:</p>
+      <ul>
+        <li><strong>Only need one sheet as PDF?</strong> Extract it first with the <a href="/split-excel/">Split Excel tool</a>, which breaks a workbook into individual sheet files — then convert just the one you need.</li>
+        <li><strong>Combining monthly reports?</strong> Merge the source workbooks with <a href="/merge-excel/">Merge Excel</a> before converting, so you produce one continuous PDF instead of stitching PDFs afterwards. (If you already have separate PDFs, <a href="/merge-pdf/">Merge PDF</a> joins them.)</li>
+      </ul>
+
+      <h2>Troubleshooting Quick Reference</h2>
+      <ul>
+        <li><strong>Columns cut off on the right</strong> → switch to landscape + "Fit All Columns on One Page" (see above).</li>
+        <li><strong>Text too small to read</strong> → you used "Fit Sheet on One Page" on a long table; switch to fitting columns only, and let rows flow to more pages.</li>
+        <li><strong>Numbers show as #####</strong> → the column is too narrow in the source sheet; auto-fit the column width before converting.</li>
+        <li><strong>Headers missing after page 1</strong> → set Print Titles → "Rows to repeat at top."</li>
+        <li><strong>Empty pages at the end</strong> → stray formatting in far-away cells; select the unused columns/rows, delete them, and set an explicit print area.</li>
+      </ul>
+
       <h2>Why Keep Spreadsheet Data Private?</h2>
       <blockquote>
         <strong>Caution: Financial sheets contain trade secrets.</strong> Uploading company budgets, invoice calculations, or employee salaries to cloud-based converters exposes your raw business data. ConvertOcean processes everything client-side, keeping your commercial data secure on your local device.
@@ -288,7 +357,15 @@ export const guides: GuideData[] = [
       },
       {
         question: 'Can I convert CSV text files to PDF using this tool?',
-        answer: 'Yes. CSV files are formatted as tables and converted to PDF using the same client-side spreadsheet layout engine.'
+        answer: 'Yes. CSV files are formatted as tables and converted to PDF using the same client-side spreadsheet layout engine. Note that CSVs carry no formatting of their own, so the converter applies clean default table styling; for custom colors or number formats, save the file as XLSX first.'
+      },
+      {
+        question: 'How do I convert only one worksheet from a multi-sheet workbook?',
+        answer: 'Either set a print area on the sheet you want before converting, or split the workbook into individual sheet files first using a split tool and convert just the sheet you need. This also keeps the output PDF smaller.'
+      },
+      {
+        question: 'Why is the text in my converted PDF too small to read?',
+        answer: 'This happens when a long table is forced onto a single page with "Fit Sheet on One Page" scaling. Use "Fit All Columns on One Page" instead — it fits the table width to the page while letting rows continue across multiple pages at a readable size.'
       }
     ]
   },
