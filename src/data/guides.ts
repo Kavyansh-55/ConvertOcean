@@ -450,7 +450,7 @@ export const guides: GuideData[] = [
     h1: 'How to Calculate Profit Margin (Formula + Examples).',
     readTime: '7 min read',
     publishDate: 'July 8, 2026',
-    relatedTools: ['profit-margin-calculator', 'percentage-calculator', 'sales-tax-calculator', 'invoice-generator'],
+    relatedTools: ['profit-margin-calculator', 'break-even-calculator', 'percentage-calculator', 'sales-tax-calculator', 'invoice-generator'],
     relatedGuides: ['excel-to-pdf'],
     intro: 'Profit margin tells you what share of every sale you actually keep after costs — and it is the single most common number small businesses get wrong. This guide walks through the formula step by step, with worked examples for product and service businesses, and explains the margin-versus-markup trap that leads to underpricing.',
     contentHtml: `
@@ -519,7 +519,7 @@ export const guides: GuideData[] = [
       </ul>
 
       <h2>Putting It Into Practice</h2>
-      <p>Once your margins are set, the day-to-day work is applying them consistently: quote prices that hit your target margin, add the correct tax at billing time, and invoice cleanly — our <a href="/invoice-generator/">Invoice Generator</a> compiles itemized PDF invoices locally in your browser, so client and pricing data never leave your device. Like every ConvertOcean tool, the <a href="/profit-margin-calculator/">Profit Margin Calculator</a> runs 100% client-side: your costs, prices, and margins are never uploaded anywhere.</p>
+      <p>Once your margins are set, the day-to-day work is applying them consistently: quote prices that hit your target margin, add the correct tax at billing time, and invoice cleanly — our <a href="/invoice-generator/">Invoice Generator</a> compiles itemized PDF invoices locally in your browser, so client and pricing data never leave your device. Margin also feeds directly into volume planning: your per-unit margin determines how many sales cover your fixed costs each month, a number the <a href="/break-even-calculator/">Break-Even Calculator</a> computes from your costs and price. Like every ConvertOcean tool, the <a href="/profit-margin-calculator/">Profit Margin Calculator</a> runs 100% client-side: your costs, prices, and margins are never uploaded anywhere.</p>
     `,
     faqs: [
       {

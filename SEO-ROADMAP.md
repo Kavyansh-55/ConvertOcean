@@ -37,7 +37,7 @@
 
 ## Week 2 — Content expansion + first new tool
 - [x] **S4 — Guide: "Excel to PDF without cutting off columns"** (expand/refresh existing) + "PDF to Word formatting tips." Strengthen the two best-trafficked tool clusters. *(Done 2026-07-10, branch `seo/s4-cluster-guides`.)*
-- [ ] **S5 — New tool: a low-competition calculator** (e.g. break-even, markup, or discount calculator). Build it well (matches existing calculator components), unique content + FAQ, link from `/business-tools/` and related calculators.
+- [x] **S5 — New tool: a low-competition calculator** (e.g. break-even, markup, or discount calculator). Build it well (matches existing calculator components), unique content + FAQ, link from `/business-tools/` and related calculators. *(Done 2026-07-11, branch `seo/s5-break-even-calculator` — chose break-even: markup/discount already covered inside existing calculators, would risk cannibalization.)*
 - [ ] **S6 — Internal linking + AEO pass.** Audit that every tool links to ≥2 relevant guides and vice-versa. Add concise "quick answer" (40–60 word) summaries near the top of tool pages for AI-overview citation.
 
 ## Week 3 — AEO deepening + tools + comparisons
@@ -58,6 +58,7 @@ _(routine appends here as it finds opportunities)_
 - Consider self-hosting Geist font (brand fidelity per DESIGN.md) vs. current Inter — perf tradeoff.
 - Reconsider AdSense on thin/low-traffic tool pages (quality signal while building trust).
 - Proper 1200×630 OG image (current og:image is a 180×180 icon — looks broken when shared).
+- Guide cards on tool pages render the guide title via `title.split(' - ')[0]` — guides whose titles use ":" (profit-margin, csv-to-json) show the full "… | ConvertOcean" suffix on the card. One-line fix in `[tool].astro` (also split on ' | ').
 
 ## Progress log
 _(routine appends a dated one-line entry per session: what shipped, what's pending approval)_
@@ -70,3 +71,4 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 - 2026-07-09 — S3 approved, merged to main, deployed, verified live (200, FAQ schema, backlinks, XML sitemap). WEEK 1 COMPLETE. Next: S4 — strengthen excel-to-pdf + pdf-to-word guide cluster.
 - 2026-07-10 — S4 shipped on branch `seo/s4-cluster-guides` (pending approval): expanded excel-to-pdf guide 372→974 words (+scale-to-fit, print titles, CSV case, split/merge workflow, troubleshooting; +3 FAQs) and pdf-to-word guide 538→1,067 words (+scanned-vs-digital, Word cleanup checklist, troubleshooting; +2 FAQs); guides now feed links to unindexed csv-to-pdf/split-excel pages. Fixed sitewide guide-template h1→h3 heading skip (tool-callout h3→p) — all guide scores up: pdf-to-word 100, csv-to-json 92, excel-to-pdf 90, profit-margin 90. Trimmed pdf-to-word title to 60ch.
 - 2026-07-10 — S4 approved, merged to main, deployed, verified live (both guides' new content, heading fix, csv-to-pdf/split-excel backlinks). Next: S5 — new low-competition calculator (break-even / markup / discount).
+- 2026-07-11 — S5 shipped on branch `seo/s5-break-even-calculator` (pending approval): new /break-even-calculator/ tool — 3-mode client-side calculator (break-even point, units-for-target-profit, required-price) with formula transparency + rounding-up note, 942-word unique article, 8 FAQs (FAQPage schema verified), title exactly 60ch. Inbound links from 7 pages (homepage, business-tools hub, 3 calculators, profit-margin guide, HTML sitemap); in XML sitemap. Discovered: guide-card title suffix bug on tool pages (backlog).
