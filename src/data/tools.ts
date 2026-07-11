@@ -3,7 +3,8 @@ import {
   receiptGeneratorContent,
   profitMarginCalculatorContent,
   percentageCalculatorContent,
-  salesTaxCalculatorContent
+  salesTaxCalculatorContent,
+  breakEvenCalculatorContent
 } from './business-content';
 import { seoContentMap } from './seo-content';
 
@@ -345,8 +346,31 @@ const rawTools: ToolData[] = [
       { question: 'Does this calculator store my financial data?', answer: 'No. All calculations are performed locally in your browser. No financial figures, costs, or revenue data are transmitted to any server or stored anywhere.' },
       { question: 'What formulas does the profit margin calculator use?', answer: 'The calculator uses three core formulas: Profit Margin (%) = (Profit ÷ Revenue) × 100, Markup (%) = (Profit ÷ Cost) × 100, and Gross Profit = Revenue − Cost of Goods Sold.' }
     ],
-    relatedTools: ['percentage-calculator', 'sales-tax-calculator', 'invoice-generator', 'receipt-generator'],
+    relatedTools: ['break-even-calculator', 'percentage-calculator', 'sales-tax-calculator', 'invoice-generator', 'receipt-generator'],
     content: profitMarginCalculatorContent
+  },
+  {
+    slug: 'break-even-calculator',
+    name: 'Break-Even Calculator',
+    title: 'Break-Even Point Calculator - Units & Revenue | ConvertOcean',
+    description: 'Calculate your break-even point in units and revenue instantly. Free calculator with contribution margin, target-profit mode, and clear formulas. 100% private.',
+    headline: 'Break-Even Calculator.',
+    subtitle: 'Find how many units you need to sell to cover your costs — break-even point in units and revenue, contribution margin, and target-profit volume.',
+    icon: '⚖️',
+    category: 'Business Tools',
+    categorySlug: 'business-tools',
+    faqs: [
+      { question: 'How do I calculate my break-even point?', answer: 'Break-Even Units = Fixed Costs ÷ (Selling Price per Unit − Variable Cost per Unit). For example, with $5,000 in monthly fixed costs, a $39 price, and $14 variable cost per unit: $5,000 ÷ $25 = 200 units per month. Multiply by price to get break-even revenue ($7,800).' },
+      { question: 'What is contribution margin?', answer: 'Contribution margin is what each sale contributes toward covering fixed costs: Selling Price − Variable Cost per Unit. If a unit sells for $39 with $14 in variable costs, every sale contributes $25. The contribution margin ratio expresses this as a share of the price — 64.1% in this example.' },
+      { question: 'What is the difference between fixed and variable costs?', answer: 'Fixed costs stay the same regardless of sales volume — rent, salaries, insurance, subscriptions. Variable costs scale with each unit sold — materials, packaging, shipping, payment fees, commissions. Break-even analysis requires splitting your costs correctly into these two groups.' },
+      { question: 'How many units do I need to sell to reach a target profit?', answer: 'Use the formula: Units = (Fixed Costs + Target Profit) ÷ Contribution Margin per Unit. Our calculator includes a dedicated "Units for Target Profit" mode — enter your profit goal alongside your costs and price to get the required sales volume instantly.' },
+      { question: 'What if my selling price is lower than my variable cost per unit?', answer: 'Then no sales volume can ever break even — every additional sale increases your loss, because each unit costs more to deliver than it earns. The calculator flags this case. You must either raise the price or reduce the variable cost per unit.' },
+      { question: 'Can freelancers and service businesses use this calculator?', answer: 'Yes. Treat a billable project, client engagement, or billable hour as your "unit." Enter your monthly overheads as fixed costs, per-project delivery costs as variable costs, and your typical project fee as the price to find how many engagements per month cover your costs.' },
+      { question: 'Is my financial data stored or uploaded?', answer: 'No. All break-even calculations run 100% locally in your browser sandbox memory. Your fixed costs, unit economics, prices, and profit targets are never transmitted to any server, logged, or stored anywhere.' },
+      { question: 'What formulas does the break-even calculator use?', answer: 'Three standard cost-volume-profit formulas: Break-Even Units = Fixed Costs ÷ (Price − Variable Cost), Break-Even Revenue = Break-Even Units × Price, and Target-Profit Units = (Fixed Costs + Target Profit) ÷ Contribution Margin. Each result displays its substituted formula for verification.' }
+    ],
+    relatedTools: ['profit-margin-calculator', 'percentage-calculator', 'sales-tax-calculator', 'invoice-generator'],
+    content: breakEvenCalculatorContent
   },
   {
     slug: 'percentage-calculator',
@@ -368,7 +392,7 @@ const rawTools: ToolData[] = [
       { question: 'Can I add or subtract a percentage from a number?', answer: 'Yes. Our calculator includes modes to add X% to Y (Y + Y×X/100) and subtract X% from Y (Y − Y×X/100), useful for calculating tips, discounts, and tax-inclusive prices.' },
       { question: 'Does the calculator show the formula used?', answer: 'Yes. Every calculation displays the step-by-step formula breakdown so you can understand and verify the math behind each result.' }
     ],
-    relatedTools: ['profit-margin-calculator', 'sales-tax-calculator', 'invoice-generator', 'receipt-generator'],
+    relatedTools: ['profit-margin-calculator', 'break-even-calculator', 'sales-tax-calculator', 'invoice-generator', 'receipt-generator'],
     content: percentageCalculatorContent
   },
   {
@@ -391,7 +415,7 @@ const rawTools: ToolData[] = [
       { question: 'Can I use this calculator for business tax planning?', answer: 'Yes. Use the calculator to estimate tax obligations on sales, verify customer invoices, plan pricing strategies, and calculate tax-inclusive or tax-exclusive prices for your products and services.' },
       { question: 'How accurate are the tax calculations?', answer: 'Calculations use standard mathematical formulas with full decimal precision. Results are rounded to two decimal places for currency display. For official tax filings, always verify with your local tax authority.' }
     ],
-    relatedTools: ['profit-margin-calculator', 'percentage-calculator', 'invoice-generator', 'receipt-generator'],
+    relatedTools: ['profit-margin-calculator', 'break-even-calculator', 'percentage-calculator', 'invoice-generator', 'receipt-generator'],
     content: salesTaxCalculatorContent
   },
   {

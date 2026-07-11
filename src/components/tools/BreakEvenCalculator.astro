@@ -1,0 +1,409 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .calc-workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+  }
+  @media (max-width: 900px) {
+    .calc-workspace { grid-template-columns: 1fr; }
+  }
+  .calc-panel {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  }
+  .calc-panel-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--colors-mute);
+    border-bottom: 1px solid var(--colors-hairline);
+    padding-bottom: var(--spacing-xs);
+  }
+  .mode-tabs {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+  }
+  .mode-tab {
+    padding: 8px 16px;
+    border-radius: var(--rounded-pill);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas);
+    color: var(--colors-body);
+    transition: all 0.2s;
+  }
+  .mode-tab:hover { border-color: var(--colors-hairline-strong); }
+  .mode-tab.active {
+    background-color: var(--colors-ink);
+    color: var(--colors-canvas);
+    border-color: var(--colors-ink);
+  }
+  .result-card {
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--colors-hairline);
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-label {
+    font-size: 14px;
+    color: var(--colors-body);
+  }
+  .result-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--colors-ink);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .result-value.highlight {
+    font-size: 24px;
+    color: var(--colors-link);
+  }
+  .be-bar-container {
+    width: 100%;
+    height: 32px;
+    border-radius: var(--rounded-md);
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    overflow: hidden;
+    display: flex;
+    position: relative;
+  }
+  .be-bar-var {
+    height: 100%;
+    background: linear-gradient(135deg, #ff4d4d, #f9cb28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
+    min-width: 30px;
+  }
+  .be-bar-cm {
+    height: 100%;
+    background: linear-gradient(135deg, #007cf0, #00dfd8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
+    min-width: 30px;
+  }
+  .formula-box {
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-md);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--colors-body);
+    line-height: 1.8;
+  }
+</style>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<div class="calc-workspace">
+  <div class="calc-panel">
+    <div class="calc-panel-title">Calculation Mode</div>
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="units" id="beTabUnits">Break-Even Point</button>
+      <button class="mode-tab" data-mode="profit" id="beTabProfit">Units for Target Profit</button>
+      <button class="mode-tab" data-mode="price" id="beTabPrice">Required Price</button>
+    </div>
+
+    <div class="calc-panel-title">Currency & Values</div>
+    <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
+      <label class="form-label" for="beCurrency" style="font-size: 13px; font-weight: 500;">Currency</label>
+      <select id="beCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;">
+        <option value="$" selected>$ – US Dollar (USD)</option>
+        <option value="€">€ – Euro (EUR)</option>
+        <option value="£">£ – British Pound (GBP)</option>
+        <option value="₹">₹ – Indian Rupee (INR)</option>
+        <option value="¥">¥ – Japanese Yen (JPY)</option>
+        <option value="¥">¥ – Chinese Yuan (CNY)</option>
+        <option value="C$">C$ – Canadian Dollar (CAD)</option>
+        <option value="A$">A$ – Australian Dollar (AUD)</option>
+        <option value="CHF">CHF – Swiss Franc (CHF)</option>
+        <option value="AED">AED – UAE Dirham (AED)</option>
+        <option value="SGD">SGD – Singapore Dollar (SGD)</option>
+        <option value="R">R – South African Rand (ZAR)</option>
+        <option value="zł">zł – Polish Złoty (PLN)</option>
+        <option value="₩">₩ – South Korean Won (KRW)</option>
+      </select>
+    </div>
+
+    <div class="calc-panel-title">Enter Values</div>
+
+    <div id="beFieldsUnits">
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="beFixed1" id="beLblFixed1">Total Fixed Costs ($)</label>
+        <input type="number" id="beFixed1" class="form-input" value="5000" min="0" step="0.01" />
+      </div>
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="beVar1" id="beLblVar1">Variable Cost per Unit ($)</label>
+        <input type="number" id="beVar1" class="form-input" value="14" min="0" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="bePrice1" id="beLblPrice1">Selling Price per Unit ($)</label>
+        <input type="number" id="bePrice1" class="form-input" value="39" min="0" step="0.01" />
+      </div>
+    </div>
+
+    <div id="beFieldsProfit" style="display:none;">
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="beFixed2" id="beLblFixed2">Total Fixed Costs ($)</label>
+        <input type="number" id="beFixed2" class="form-input" value="5000" min="0" step="0.01" />
+      </div>
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="beVar2" id="beLblVar2">Variable Cost per Unit ($)</label>
+        <input type="number" id="beVar2" class="form-input" value="14" min="0" step="0.01" />
+      </div>
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="bePrice2" id="beLblPrice2">Selling Price per Unit ($)</label>
+        <input type="number" id="bePrice2" class="form-input" value="39" min="0" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="beProfit2" id="beLblProfit2">Target Profit ($)</label>
+        <input type="number" id="beProfit2" class="form-input" value="2500" min="0" step="0.01" />
+      </div>
+    </div>
+
+    <div id="beFieldsPrice" style="display:none;">
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="beFixed3" id="beLblFixed3">Total Fixed Costs ($)</label>
+        <input type="number" id="beFixed3" class="form-input" value="5000" min="0" step="0.01" />
+      </div>
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="beVar3" id="beLblVar3">Variable Cost per Unit ($)</label>
+        <input type="number" id="beVar3" class="form-input" value="14" min="0" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="beUnits3">Expected Units Sold</label>
+        <input type="number" id="beUnits3" class="form-input" value="400" min="1" step="1" />
+      </div>
+    </div>
+
+    <button class="button button-primary" id="beCalcBtn" style="align-self: flex-start;">Calculate</button>
+  </div>
+
+  <div class="calc-panel">
+    <div class="calc-panel-title">Results</div>
+
+    <div class="result-card" id="beResults">
+      <div class="result-row">
+        <span class="result-label" id="beResMainLbl">Break-Even Point</span>
+        <span class="result-value highlight" id="beResMain">200 units</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label" id="beResRevenueLbl">Break-Even Revenue</span>
+        <span class="result-value" id="beResRevenue">$7,800.00</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Contribution Margin / Unit</span>
+        <span class="result-value" id="beResCM">$25.00</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Contribution Margin Ratio</span>
+        <span class="result-value" id="beResRatio">64.10%</span>
+      </div>
+    </div>
+
+    <div class="calc-panel-title" style="margin-top: var(--spacing-sm);">Where Each Sales Dollar Goes</div>
+    <div class="be-bar-container">
+      <div class="be-bar-var" id="beBarVar" style="width:36%;">Variable 36%</div>
+      <div class="be-bar-cm" id="beBarCM" style="width:64%;">Contribution 64%</div>
+    </div>
+
+    <div class="calc-panel-title" style="margin-top: var(--spacing-sm);">Formula Used</div>
+    <div class="formula-box" id="beFormula">
+      Contribution Margin = Price − Variable Cost = $39.00 − $14.00 = $25.00<br/>
+      Break-Even Units = Fixed Costs ÷ Contribution Margin = $5,000.00 ÷ $25.00 = 200 units<br/>
+      Break-Even Revenue = Break-Even Units × Price = 200 × $39.00 = $7,800.00
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const $ = id => document.getElementById(id);
+    let mode = 'units';
+    let currSym = '$';
+
+    // Currency selector
+    $('beCurrency').addEventListener('change', function() {
+      currSym = this.value;
+      updateCurrencyLabels();
+      calculate();
+    });
+
+    function updateCurrencyLabels() {
+      ['beLblFixed1','beLblFixed2','beLblFixed3'].forEach(id => { $(id).textContent = `Total Fixed Costs (${currSym})`; });
+      ['beLblVar1','beLblVar2','beLblVar3'].forEach(id => { $(id).textContent = `Variable Cost per Unit (${currSym})`; });
+      ['beLblPrice1','beLblPrice2'].forEach(id => { $(id).textContent = `Selling Price per Unit (${currSym})`; });
+      $('beLblProfit2').textContent = `Target Profit (${currSym})`;
+    }
+
+    const tabs = document.querySelectorAll('.mode-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        mode = tab.dataset.mode;
+        $('beFieldsUnits').style.display = mode === 'units' ? 'block' : 'none';
+        $('beFieldsProfit').style.display = mode === 'profit' ? 'block' : 'none';
+        $('beFieldsPrice').style.display = mode === 'price' ? 'block' : 'none';
+        calculate();
+      });
+    });
+
+    function fmt(n) {
+      return currSym + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function fmtUnits(n) { return Math.ceil(n).toLocaleString() + ' units'; }
+
+    function setBar(varCost, price) {
+      const container = $('beBarVar').parentElement;
+      if (price <= 0 || varCost >= price) {
+        $('beBarVar').style.width = '100%';
+        $('beBarVar').textContent = 'No contribution — price does not exceed variable cost';
+        $('beBarCM').style.width = '0%';
+        $('beBarCM').textContent = '';
+        container.setAttribute('aria-label', 'No contribution margin: price does not exceed variable cost');
+        return;
+      }
+      const varPct = Math.max(5, (varCost / price) * 100);
+      const cmPct = Math.max(5, 100 - varPct);
+      $('beBarVar').style.width = varPct + '%';
+      $('beBarVar').textContent = `Variable ${Math.round(varPct)}%`;
+      $('beBarCM').style.width = cmPct + '%';
+      $('beBarCM').textContent = `Contribution ${Math.round(cmPct)}%`;
+      container.setAttribute('aria-label', `Each sales dollar: ${Math.round(varPct)}% variable cost, ${Math.round(cmPct)}% contribution margin`);
+    }
+
+    function showInvalid(message) {
+      $('beResMain').textContent = '—';
+      $('beResRevenue').textContent = '—';
+      $('beResCM').textContent = '—';
+      $('beResRatio').textContent = '—';
+      $('beFormula').innerHTML = message;
+    }
+
+    function calculate() {
+      if (mode === 'units') {
+        $('beResMainLbl').textContent = 'Break-Even Point';
+        $('beResRevenueLbl').textContent = 'Break-Even Revenue';
+        const fixed = parseFloat($('beFixed1').value) || 0;
+        const varCost = parseFloat($('beVar1').value) || 0;
+        const price = parseFloat($('bePrice1').value) || 0;
+        const cm = price - varCost;
+        setBar(varCost, price);
+        if (price <= 0 || cm <= 0) {
+          showInvalid('Break-even is not reachable: the selling price per unit must be greater than the variable cost per unit. Raise the price or reduce the variable cost.');
+          if (price > 0) {
+            $('beResCM').textContent = fmt(cm);
+            $('beResRatio').textContent = ((cm / price) * 100).toFixed(2) + '%';
+          }
+          return;
+        }
+        const exactUnits = fixed / cm;
+        const units = Math.ceil(exactUnits);
+        const revenue = units * price;
+        const ratio = (cm / price) * 100;
+        $('beResMain').textContent = fmtUnits(exactUnits);
+        $('beResRevenue').textContent = fmt(revenue);
+        $('beResCM').textContent = fmt(cm);
+        $('beResRatio').textContent = ratio.toFixed(2) + '%';
+        const roundNote = Number.isInteger(exactUnits) ? '' : ` (exactly ${exactUnits.toFixed(2)}, rounded up)`;
+        $('beFormula').innerHTML = `Contribution Margin = Price − Variable Cost = ${fmt(price)} − ${fmt(varCost)} = ${fmt(cm)}<br/>Break-Even Units = Fixed Costs ÷ Contribution Margin = ${fmt(fixed)} ÷ ${fmt(cm)} = ${units.toLocaleString()} units${roundNote}<br/>Break-Even Revenue = Break-Even Units × Price = ${units.toLocaleString()} × ${fmt(price)} = ${fmt(revenue)}`;
+      } else if (mode === 'profit') {
+        $('beResMainLbl').textContent = 'Units for Target Profit';
+        $('beResRevenueLbl').textContent = 'Revenue Required';
+        const fixed = parseFloat($('beFixed2').value) || 0;
+        const varCost = parseFloat($('beVar2').value) || 0;
+        const price = parseFloat($('bePrice2').value) || 0;
+        const target = parseFloat($('beProfit2').value) || 0;
+        const cm = price - varCost;
+        setBar(varCost, price);
+        if (price <= 0 || cm <= 0) {
+          showInvalid('The target is not reachable: the selling price per unit must be greater than the variable cost per unit. Raise the price or reduce the variable cost.');
+          if (price > 0) {
+            $('beResCM').textContent = fmt(cm);
+            $('beResRatio').textContent = ((cm / price) * 100).toFixed(2) + '%';
+          }
+          return;
+        }
+        const exactUnits = (fixed + target) / cm;
+        const units = Math.ceil(exactUnits);
+        const revenue = units * price;
+        const ratio = (cm / price) * 100;
+        $('beResMain').textContent = fmtUnits(exactUnits);
+        $('beResRevenue').textContent = fmt(revenue);
+        $('beResCM').textContent = fmt(cm);
+        $('beResRatio').textContent = ratio.toFixed(2) + '%';
+        const roundNote = Number.isInteger(exactUnits) ? '' : ` (exactly ${exactUnits.toFixed(2)}, rounded up)`;
+        $('beFormula').innerHTML = `Contribution Margin = Price − Variable Cost = ${fmt(price)} − ${fmt(varCost)} = ${fmt(cm)}<br/>Units Required = (Fixed Costs + Target Profit) ÷ Contribution Margin = (${fmt(fixed)} + ${fmt(target)}) ÷ ${fmt(cm)} = ${units.toLocaleString()} units${roundNote}<br/>Revenue Required = Units × Price = ${units.toLocaleString()} × ${fmt(price)} = ${fmt(revenue)}`;
+      } else {
+        $('beResMainLbl').textContent = 'Required Price per Unit';
+        $('beResRevenueLbl').textContent = 'Revenue at Break-Even';
+        const fixed = parseFloat($('beFixed3').value) || 0;
+        const varCost = parseFloat($('beVar3').value) || 0;
+        const units = parseFloat($('beUnits3').value) || 0;
+        if (units <= 0) {
+          setBar(1, 0);
+          showInvalid('Enter the number of units you expect to sell (at least 1) to compute the price needed to break even.');
+          return;
+        }
+        const cm = fixed / units;
+        const price = varCost + cm;
+        const revenue = price * units;
+        const ratio = price > 0 ? (cm / price) * 100 : 0;
+        setBar(varCost, price);
+        $('beResMain').textContent = fmt(price);
+        $('beResRevenue').textContent = fmt(revenue);
+        $('beResCM').textContent = fmt(cm);
+        $('beResRatio').textContent = ratio.toFixed(2) + '%';
+        $('beFormula').innerHTML = `Required Contribution / Unit = Fixed Costs ÷ Units = ${fmt(fixed)} ÷ ${units.toLocaleString()} = ${fmt(cm)}<br/>Required Price = Variable Cost + Required Contribution = ${fmt(varCost)} + ${fmt(cm)} = ${fmt(price)}<br/>Revenue at Break-Even = Price × Units = ${fmt(price)} × ${units.toLocaleString()} = ${fmt(revenue)}`;
+      }
+    }
+
+    $('beCalcBtn').addEventListener('click', calculate);
+    ['beFixed1','beVar1','bePrice1','beFixed2','beVar2','bePrice2','beProfit2','beFixed3','beVar3','beUnits3'].forEach(id => {
+      $(id).addEventListener('input', calculate);
+    });
+
+    window.addEventListener('load', calculate);
+  })();
+</script>

@@ -191,7 +191,7 @@ export const profitMarginCalculatorContent = `
 
   <h3>Related Calculations and Financial Tools.</h3>
   <p>
-    Once you determine your product costs and selling prices, use our <a href="/sales-tax-calculator/">Sales Tax Calculator</a> to estimate total customer billing amounts with tax. If you need to invoice your business clients, generate an A4 PDF using the <a href="/invoice-generator/">Invoice Generator</a> or issue proof of payment with the <a href="/receipt-generator/">Receipt Generator</a>. For tracking general metrics, consult the <a href="/percentage-calculator/">Percentage Calculator</a>.
+    Once you determine your product costs and selling prices, find how many units that margin must sell to cover your overheads with the <a href="/break-even-calculator/">Break-Even Calculator</a>, and use our <a href="/sales-tax-calculator/">Sales Tax Calculator</a> to estimate total customer billing amounts with tax. If you need to invoice your business clients, generate an A4 PDF using the <a href="/invoice-generator/">Invoice Generator</a> or issue proof of payment with the <a href="/receipt-generator/">Receipt Generator</a>. For tracking general metrics, consult the <a href="/percentage-calculator/">Percentage Calculator</a>.
   </p>
 
   <h3>Accuracy, Methodology, and Review.</h3>
@@ -356,6 +356,86 @@ export const salesTaxCalculatorContent = `
   <h3>Absolute Financial Confidentiality.</h3>
   <p>
     ConvertOcean operates entirely client-side. No purchase values, prices, tax rates, or billing records are uploaded or stored. All computations run in your local browser sandbox, ensuring absolute compliance with corporate privacy policies.
+  </p>
+</div>
+`;
+
+export const breakEvenCalculatorContent = `
+<div class="content-card">
+  <h2>What Is a Break-Even Point and Why It Decides Whether a Business Survives.</h2>
+  <p>
+    Your break-even point is the number of units you must sell for total revenue to exactly cover total costs — the line between losing money and making it. The formula is <code>Break-Even Units = Fixed Costs ÷ (Price − Variable Cost per Unit)</code>. Every unit sold beyond that point contributes pure profit; every unit short of it means your fixed costs are eating into your capital. Knowing this single number tells you whether a product is viable before you launch it, how much room you have to discount, and how a rent increase or supplier price change shifts your survival threshold.
+  </p>
+  <p>
+    ConvertOcean's <strong>Break-Even Calculator</strong> computes break-even units and revenue, contribution margin, and target-profit volumes instantly. Like every tool on this site, all math runs client-side in your browser — your cost structure, pricing plans, and profit targets are never uploaded anywhere.
+  </p>
+
+  <h3>How to Use the Break-Even Calculator.</h3>
+  <p>
+    The calculator answers three related questions through three modes:
+  </p>
+  <ul>
+    <li><strong>Break-Even Point:</strong> Enter your total fixed costs, variable cost per unit, and selling price per unit. The calculator returns the units and revenue required to cover all costs, plus your contribution margin per unit and contribution margin ratio.</li>
+    <li><strong>Units for Target Profit:</strong> Add a profit goal on top of your costs. The calculator computes how many units you must sell to bank that profit — the planning number behind sales quotas and launch targets.</li>
+    <li><strong>Required Price:</strong> Already know roughly how many units you can sell? Enter your expected volume and the calculator solves the equation backwards, returning the minimum price per unit that covers your costs at that volume.</li>
+  </ul>
+
+  <h3>Fixed Costs vs. Variable Costs: Getting the Inputs Right.</h3>
+  <p>
+    Break-even math is only as good as the cost classification behind it, and this is where most first attempts go wrong:
+  </p>
+  <ul>
+    <li><strong>Fixed costs</strong> stay the same regardless of how much you sell: rent, salaried staff, insurance, software subscriptions, loan payments, and equipment leases. Sum them for the same period you are analyzing (usually one month).</li>
+    <li><strong>Variable costs</strong> scale with every unit sold: materials, packaging, shipping, payment-processing fees, per-unit manufacturing, and sales commissions.</li>
+  </ul>
+  <p>
+    Watch for semi-variable traps: a payment processor's 2.9% fee is variable (it scales with sales), while its $25 monthly account fee is fixed. Utilities often have a fixed base plus usage. When a cost has both parts, split it — misclassifying variable costs as fixed makes your break-even look better than it really is.
+  </p>
+
+  <h3>The Formulas Behind the Calculator.</h3>
+  <ul>
+    <li><strong>Contribution Margin per Unit</strong> = Selling Price − Variable Cost per Unit. This is what each sale actually contributes toward fixed costs.</li>
+    <li><strong>Contribution Margin Ratio</strong> = (Contribution Margin ÷ Price) × 100. The share of every sales dollar left after variable costs.</li>
+    <li><strong>Break-Even Units</strong> = Fixed Costs ÷ Contribution Margin per Unit, rounded up — you cannot sell a fraction of a unit.</li>
+    <li><strong>Break-Even Revenue</strong> = Break-Even Units × Price.</li>
+    <li><strong>Units for a Target Profit</strong> = (Fixed Costs + Target Profit) ÷ Contribution Margin per Unit.</li>
+  </ul>
+
+  <h3>Worked Break-Even Example.</h3>
+  <p>
+    Suppose you sell handmade candles online. Your studio rent, insurance, and software total $5,000 per month in fixed costs. Each candle costs $14 in materials, packaging, and shipping, and sells for $39:
+  </p>
+  <blockquote>
+    <strong>Contribution Margin:</strong> $39 − $14 = $25.00 per candle (64.1% of each sale)<br/>
+    <strong>Break-Even Units:</strong> $5,000 ÷ $25 = 200 candles per month<br/>
+    <strong>Break-Even Revenue:</strong> 200 × $39 = $7,800 per month<br/>
+    <strong>For $2,500 monthly profit:</strong> ($5,000 + $2,500) ÷ $25 = 300 candles
+  </blockquote>
+  <p>
+    The insight: candle number 201 is the first one you truly profit from. If a marketplace raises its commission by $2 per unit, your contribution margin drops to $23 and break-even jumps to 218 candles — the calculator lets you test scenarios like this in seconds.
+  </p>
+
+  <h3>Who Uses Break-Even Analysis.</h3>
+  <ul>
+    <li><strong>Startups & product launches:</strong> Validate whether projected sales volume can realistically cover costs before committing to inventory or tooling.</li>
+    <li><strong>Cafés, restaurants & retail:</strong> Convert monthly overheads into a daily covers or transactions target the whole team can track.</li>
+    <li><strong>E-commerce sellers:</strong> Model how marketplace fees, shipping, and ad spend per order move the break-even line for each SKU.</li>
+    <li><strong>Freelancers & agencies:</strong> Treat billable projects as units to find the minimum monthly engagements needed to cover overheads and a salary.</li>
+  </ul>
+
+  <h3>Related Pricing and Business Tools.</h3>
+  <p>
+    Break-even analysis pairs naturally with margin math: once you know your survival volume, use the <a href="/profit-margin-calculator/">Profit Margin Calculator</a> to set prices that hit a target margin, and read our step-by-step guide on <a href="/guides/how-to-calculate-profit-margin/">how to calculate profit margin</a>. Estimate customer-facing totals with the <a href="/sales-tax-calculator/">Sales Tax Calculator</a>, track cost changes with the <a href="/percentage-calculator/">Percentage Calculator</a>, and bill clients with the <a href="/invoice-generator/">Invoice Generator</a>.
+  </p>
+
+  <h3>Accuracy, Methodology, and Review.</h3>
+  <p>
+    This calculator implements the standard cost-volume-profit (CVP) identities used in managerial accounting: <code>Break-Even Units = Fixed Costs ÷ (Price − Variable Cost)</code> and <code>Required Units = (Fixed Costs + Target Profit) ÷ Contribution Margin</code>. Unit results are rounded up to the next whole unit, and every calculation displays its substituted formula so you can verify the arithmetic by hand. Outputs are checked against worked examples like the one above whenever the tool is updated. <em>Last reviewed: July 2026.</em> Results are informational — classic CVP analysis assumes constant prices and unit costs across the volume range, so confirm major decisions with a qualified accountant. Read more about <a href="/about/">how we build and test our tools</a>.
+  </p>
+
+  <h3>Client-Side Computation Guarantee.</h3>
+  <p>
+    Your cost structure, supplier pricing, and profit targets are competitively sensitive information. ConvertOcean performs every break-even computation locally inside your browser sandbox — no fixed costs, unit economics, or sales projections are ever transmitted, logged, or stored on any server.
   </p>
 </div>
 `;
