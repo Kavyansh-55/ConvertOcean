@@ -122,7 +122,7 @@ export const guides: GuideData[] = [
     h1: 'How to Merge Multiple PDF Files Online.',
     readTime: '4 min read',
     publishDate: 'June 20, 2026',
-    relatedTools: ['merge-pdf'],
+    relatedTools: ['merge-pdf', 'split-pdf'],
     relatedGuides: ['pdf-to-word-without-losing-formatting', 'excel-to-pdf'],
     intro: 'Combining separate PDF pages, business reports, or tax forms into a single unified file is a common administrative chore. Discover how to merge your documents quickly and securely without uploading them to external servers.',
     contentHtml: `
@@ -162,6 +162,7 @@ export const guides: GuideData[] = [
 
       <h2>Best Practices for Document Compilation</h2>
       <p>To compile clean documents, normalize page sizes and orientations beforehand. Merging a landscape slide deck with portrait letter reports can result in inconsistent display viewports. If necessary, convert pages to a uniform orientation using local layout tools.</p>
+      <p>The reverse workflow is just as common: pulling a signed page out of a contract, or extracting a single chapter from a long report before merging it elsewhere. Our <a href="/split-pdf/">Split PDF</a> tool extracts selected pages or ranges into standalone files using the same client-side engine, so nothing is uploaded in either direction.</p>
     `,
     faqs: [
       {
@@ -185,7 +186,7 @@ export const guides: GuideData[] = [
     h1: 'PNG vs JPG: Which Format Should You Use?',
     readTime: '6 min read',
     publishDate: 'June 20, 2026',
-    relatedTools: ['png-to-jpg', 'jpg-to-png'],
+    relatedTools: ['png-to-jpg', 'jpg-to-png', 'png-to-webp', 'webp-to-png', 'jpg-to-webp', 'webp-to-jpg'],
     relatedGuides: ['how-ocr-works'],
     intro: 'Choosing the correct image extension determines your website\'s loading speed, graphic rendering quality, and layout presentation. Understand the differences between PNG and JPG to make the right choice.',
     contentHtml: `
@@ -268,7 +269,7 @@ export const guides: GuideData[] = [
     h1: 'How to Convert Excel to PDF.',
     readTime: '7 min read',
     publishDate: 'July 10, 2026',
-    relatedTools: ['excel-to-pdf', 'csv-to-pdf', 'split-excel', 'merge-excel'],
+    relatedTools: ['excel-to-pdf', 'xls-to-pdf', 'csv-to-pdf', 'split-excel', 'merge-excel'],
     relatedGuides: ['merge-multiple-pdf-files', 'pdf-to-word-without-losing-formatting', 'csv-to-json'],
     intro: 'Formatting dynamic spreadsheet data for a static PDF can result in columns getting cut off or table contents spilling across empty pages. Learn how to compile professional, print-ready PDFs from Excel worksheets.',
     contentHtml: `
@@ -551,7 +552,7 @@ export const guides: GuideData[] = [
     h1: 'How to Convert CSV to JSON: A Developer Guide.',
     readTime: '6 min read',
     publishDate: 'July 9, 2026',
-    relatedTools: ['csv-to-json', 'json-to-csv', 'json-formatter', 'xml-to-json'],
+    relatedTools: ['csv-to-json', 'json-to-csv', 'json-formatter', 'xml-to-json', 'xlsx-to-json'],
     relatedGuides: ['excel-to-pdf', 'how-to-calculate-profit-margin'],
     intro: 'CSV and JSON solve different problems: one is a flat grid built for spreadsheets and database dumps, the other a typed, nested structure built for APIs and application code. This guide explains when converting between them makes sense, exactly how rows become objects, and the type-coercion and quoting pitfalls that silently corrupt data.',
     contentHtml: `

@@ -289,6 +289,33 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
       font-weight: 600;
     }
     
+    /* Quick Answer Callout (AEO) */
+    .quick-answer {
+      margin-top: var(--spacing-xl);
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-left: 3px solid var(--colors-link);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-md) var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xxs);
+    }
+    .quick-answer-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--colors-link);
+    }
+    .quick-answer-text {
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--colors-body);
+      margin: 0;
+    }
+
     /* Unique SEO Article Content Styles */
     .rich-text {
       font-size: 14.5px;
@@ -420,6 +447,14 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     <!-- Active Tool Interface -->
     <ToolComponent slug={toolData.slug} headline={toolData.headline} subtitle={toolData.subtitle} />
 
+    <!-- Quick Answer (AEO extractable definition block) -->
+    {toolData.quickAnswer && (
+      <aside class="quick-answer" data-reveal>
+        <span class="quick-answer-label">Quick Answer</span>
+        <p class="quick-answer-text" set:html={toolData.quickAnswer}></p>
+      </aside>
+    )}
+
     <!-- How It Works Section -->
     {toolData.categorySlug !== 'business-tools' && (
       <section class="steps-section" data-reveal>
@@ -508,7 +543,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
           {relatedGuides.map(g => (
             <a href={relLink(`/guides/${g.slug}/`)} class="tool-related-guide-card">
               <span class="tool-related-guide-tag">Guide</span>
-              <h3 class="tool-related-guide-name">{g.title.split(' - ')[0]}</h3>
+              <h3 class="tool-related-guide-name">{g.title.split(' | ')[0].split(' - ')[0]}</h3>
               <p class="tool-related-guide-desc">{g.description}</p>
               <span class="tool-related-guide-action">
                 Read Guide
