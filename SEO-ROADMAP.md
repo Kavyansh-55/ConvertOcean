@@ -38,7 +38,7 @@
 ## Week 2 — Content expansion + first new tool
 - [x] **S4 — Guide: "Excel to PDF without cutting off columns"** (expand/refresh existing) + "PDF to Word formatting tips." Strengthen the two best-trafficked tool clusters. *(Done 2026-07-10, branch `seo/s4-cluster-guides`.)*
 - [x] **S5 — New tool: a low-competition calculator** (e.g. break-even, markup, or discount calculator). Build it well (matches existing calculator components), unique content + FAQ, link from `/business-tools/` and related calculators. *(Done 2026-07-11, branch `seo/s5-break-even-calculator` — chose break-even: markup/discount already covered inside existing calculators, would risk cannibalization.)*
-- [ ] **S6 — Internal linking + AEO pass.** Audit that every tool links to ≥2 relevant guides and vice-versa. Add concise "quick answer" (40–60 word) summaries near the top of tool pages for AI-overview citation.
+- [x] **S6 — Internal linking + AEO pass.** Audit that every tool links to ≥2 relevant guides and vice-versa. Add concise "quick answer" (40–60 word) summaries near the top of tool pages for AI-overview citation. *(Done 2026-07-12, branch `seo/s6-internal-linking-aeo`. Note: "every tool ≥2 guides" is impossible with 7 guides — guide-card coverage raised 20→27 tools where genuinely relevant; full coverage needs S10's new guides.)*
 
 ## Week 3 — AEO deepening + tools + comparisons
 - [ ] **S7 — AEO: structured answers + schema audit.** Ensure `HowTo`/`FAQPage` schema on tool + guide pages; add clear H2 questions with direct answers. (Use the `aeo` skill.)
@@ -58,7 +58,8 @@ _(routine appends here as it finds opportunities)_
 - Consider self-hosting Geist font (brand fidelity per DESIGN.md) vs. current Inter — perf tradeoff.
 - Reconsider AdSense on thin/low-traffic tool pages (quality signal while building trust).
 - Proper 1200×630 OG image (current og:image is a 180×180 icon — looks broken when shared).
-- Guide cards on tool pages render the guide title via `title.split(' - ')[0]` — guides whose titles use ":" (profit-margin, csv-to-json) show the full "… | ConvertOcean" suffix on the card. One-line fix in `[tool].astro` (also split on ' | ').
+- **S10 input (from S6 audit):** 26 tools still have zero guide cards — mostly the excel-converter long-tail (xlsx-to-csv, csv-to-xlsx, json-to-xlsx, xml-to-*…) and the merge/split document family (txt/word/pptx/image). Each category needs 1–2 new guides to close the "every tool ≥2 guides" target honestly.
+- Quick answers now cover 14 high-value pages; extend to remaining tool pages gradually as unique copy can be written (never boilerplate).
 
 ## Progress log
 _(routine appends a dated one-line entry per session: what shipped, what's pending approval)_
@@ -73,3 +74,4 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 - 2026-07-10 — S4 approved, merged to main, deployed, verified live (both guides' new content, heading fix, csv-to-pdf/split-excel backlinks). Next: S5 — new low-competition calculator (break-even / markup / discount).
 - 2026-07-11 — S5 shipped on branch `seo/s5-break-even-calculator` (pending approval): new /break-even-calculator/ tool — 3-mode client-side calculator (break-even point, units-for-target-profit, required-price) with formula transparency + rounding-up note, 942-word unique article, 8 FAQs (FAQPage schema verified), title exactly 60ch. Inbound links from 7 pages (homepage, business-tools hub, 3 calculators, profit-margin guide, HTML sitemap); in XML sitemap. Discovered: guide-card title suffix bug on tool pages (backlog).
 - 2026-07-11 — S5 approved, merged to main, deployed, verified live (200, FAQ schema, homepage + profit-margin backlinks, XML sitemap). Traffic note: still ~1–2 users/day (baseline-flat, expected — content is <1 week old); watch GSC impressions trend, not clicks. Next: S6 — internal linking + AEO quick-answer pass.
+- 2026-07-12 — S6 shipped on branch `seo/s6-internal-linking-aeo` (pending approval): AEO "Quick Answer" definition blocks (Pattern-1 extractable, 44–53 words each, all unique) on 14 high-value pages (6 business tools + 8 top converters); link audit run — guide-card coverage 20→27 tools via justified additions only (xls-to-pdf→excel guide, 4 WebP tools→png-vs-jpg guide, xlsx-to-json→csv-json guide, split-pdf→merge guide + new content sentence); fixed guide-card brand-suffix bug ([tool].astro title split). Verified: 0 suffix leaks, all word counts in range, quick answer renders before article in DOM.
