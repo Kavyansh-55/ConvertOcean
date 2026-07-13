@@ -38,9 +38,51 @@ const faqList = [
 ---
 
 <Layout title={title} description={description} lang={lang} category="File Converter" categorySlug="file-converter" faqList={faqList}>
+  <style>
+    .pillar-intro {
+      max-width: 800px;
+      margin: var(--spacing-3xl) auto 0;
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--colors-body);
+    }
+    .pillar-intro h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      letter-spacing: -0.88px;
+      margin-bottom: var(--spacing-md);
+      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+    }
+    .pillar-intro h3 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      letter-spacing: -0.5px;
+      margin: var(--spacing-lg) 0 var(--spacing-sm);
+      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+    }
+    .pillar-intro p { margin-bottom: var(--spacing-md); }
+    .pillar-intro a {
+      color: var(--colors-link);
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .pillar-intro a:hover { color: var(--colors-link-deep); }
+  </style>
   <main class="page-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl);">
     <UniversalFileConverter slug="file-converter" headline={headline} subtitle={subtitle} />
-    
+
+    <!-- Pillar intro (unique article content) -->
+    <section class="pillar-intro" data-reveal>
+      <h2>One Converter, Every Format Family — Zero Uploads.</h2>
+      <p>Most "free online converters" share one architecture: your file travels to their server, gets converted there, and a download link comes back — along with all the questions that raises about where your contract, payslip, or client list just went. ConvertOcean inverts that design. The conversion engines (WebAssembly and JavaScript compilers) are delivered <em>to your browser</em>, and your file never leaves it. The privacy guarantee is structural, not a policy promise.</p>
+      <h3>How the Universal Converter Fits the Toolkit.</h3>
+      <p>Drop any supported file above and the converter detects its format and offers the matching outputs — the fastest route when you just need a one-off conversion. Behind it sit dedicated tools with format-specific options and deeper explanations: <a href="/document-tools/">documents</a> (Word, PDF, text, presentations), <a href="/excel-converter/">spreadsheets</a> (Excel, CSV, JSON, XML), <a href="/image-tools/">images</a> (PNG, JPG, WebP, SVG), <a href="/pdf-tools/">PDF merge/split</a>, and <a href="/developer-tools/">developer data formats</a>. If you convert the same format pair regularly, the dedicated page is worth bookmarking.</p>
+      <h3>Picking the Right Target Format.</h3>
+      <p>The recurring decisions have consistent answers: PDF when a document must look identical everywhere and resist casual editing; the editable source format (DOCX, XLSX) while content is still changing; CSV or JSON when data is headed into another system; WebP for images on the web, JPG for photos going anywhere else, PNG when sharp edges or transparency matter. Our <a href="/guides/">guides</a> cover the judgment calls in detail — from <a href="/guides/pdf-to-word-without-losing-formatting/">PDF-to-Word formatting</a> to <a href="/guides/png-vs-jpg/">choosing image formats</a>.</p>
+    </section>
+
     <!-- FAQ Section -->
     {faqList && faqList.length > 0 && (
       <section class="faq-section" style="margin-top: var(--spacing-3xl);">
