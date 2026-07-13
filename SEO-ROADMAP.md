@@ -52,11 +52,27 @@
 
 ---
 
+## AdSense recovery track (added 2026-07-13 after 2nd rejection)
+**Diagnosis:** rejection = "low value content", not traffic (AdSense has no traffic minimum). Scan evidence: 54 of 61 tool/category pages had <150 words of unique article text over shared boilerplate; only the 5 calculators + word-counter looked substantial. Reviewer sees the whole site.
+
+- [x] **A1 — Thicken top-8 converter pages** to 300+ unique words each (excel-to-pdf, csv-to-json, json-to-csv, image-to-text, merge-pdf, split-pdf, word-to-pdf, pdf-to-word). *(Done 2026-07-13, branch `seo/a1-adsense-content-batch1`.)*
+- [ ] **A2 — Thicken next batch:** image cluster (png-to-jpg, jpg-to-png, webp pair), pdf-to-txt, txt-to-pdf, json-formatter, + 100–150 word intros on the 6 category hub pages (currently 0 unique words).
+- [ ] **A3 — Long-tail duplicate decision:** the ~20 remaining stubs (xls/xlsx/xml/csv permutations, merge/split txt/word/pptx/image). Enrich the ones with real search demand; consolidate or noindex the rest. Don't leave 35-word pages for the reviewer.
+
+**Resubmission checklist — only tick the AdSense box and click Resubmit when ALL of these are true:**
+1. A1–A3 done and deployed (no page an AdSense reviewer lands on has <150 unique words; top pages have 300+).
+2. S10 guide expansion shipped (more real article mass).
+3. At least ~2 weeks have passed since the last fixes deployed (reviewers may re-check cached impressions; let Google recrawl first — verify key pages re-indexed in GSC).
+4. All legal pages intact (privacy/terms/contact/about — already ✓).
+5. Realistic target date: **early-to-mid August 2026.** Note: resubmitting = the reply; there is no written appeal. Each premature resubmit wastes a review cycle.
+
+---
+
 ## Backlog / discovered ideas
 _(routine appends here as it finds opportunities)_
 - **AEO vs AI-blocking conflict (review in S7):** Cloudflare's "Managed robots.txt" is injecting a block that Disallows AI crawlers (Amazonbot, Applebot-Extended, Bytespider, likely GPTBot/PerplexityBot/ClaudeBot) plus a `Content-Signal: ai-train=no` line. This blocks the very AI engines we want to cite us. Decide: keep blocking AI scrapers vs. allow AI *search* bots (PerplexityBot, OAI-SearchBot, ChatGPT-User) for AEO. Adjust in Cloudflare (AI Audit / Managed robots.txt settings), not in repo. The GSC "Rule ignored by Googlebot (line 30)" warning itself is harmless — Googlebot just skips the unrecognized Content-Signal line.
 - Consider self-hosting Geist font (brand fidelity per DESIGN.md) vs. current Inter — perf tradeoff.
-- Reconsider AdSense on thin/low-traffic tool pages (quality signal while building trust).
+- ~~Reconsider AdSense on thin/low-traffic tool pages~~ → superseded by the AdSense recovery track above.
 - Proper 1200×630 OG image (current og:image is a 180×180 icon — looks broken when shared).
 - **S10 input (from S6 audit):** 26 tools still have zero guide cards — mostly the excel-converter long-tail (xlsx-to-csv, csv-to-xlsx, json-to-xlsx, xml-to-*…) and the merge/split document family (txt/word/pptx/image). Each category needs 1–2 new guides to close the "every tool ≥2 guides" target honestly.
 - Quick answers now cover 14 high-value pages; extend to remaining tool pages gradually as unique copy can be written (never boilerplate).
@@ -76,3 +92,4 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 - 2026-07-11 — S5 approved, merged to main, deployed, verified live (200, FAQ schema, homepage + profit-margin backlinks, XML sitemap). Traffic note: still ~1–2 users/day (baseline-flat, expected — content is <1 week old); watch GSC impressions trend, not clicks. Next: S6 — internal linking + AEO quick-answer pass.
 - 2026-07-12 — S6 shipped on branch `seo/s6-internal-linking-aeo` (pending approval): AEO "Quick Answer" definition blocks (Pattern-1 extractable, 44–53 words each, all unique) on 14 high-value pages (6 business tools + 8 top converters); link audit run — guide-card coverage 20→27 tools via justified additions only (xls-to-pdf→excel guide, 4 WebP tools→png-vs-jpg guide, xlsx-to-json→csv-json guide, split-pdf→merge guide + new content sentence); fixed guide-card brand-suffix bug ([tool].astro title split). Verified: 0 suffix leaks, all word counts in range, quick answer renders before article in DOM.
 - 2026-07-12 — S6 approved, merged to main, deployed, verified live (quick answers on 3 spot-checked pages, WebP guide card, 0 suffix leaks, merge-guide split link). WEEK 2 COMPLETE. Next: S7 — AEO structured answers + schema audit (includes the Cloudflare AI-crawler robots.txt decision from backlog).
+- 2026-07-13 — AdSense 2nd rejection analyzed (low-value content, not traffic — see recovery track above). Pivoted session to A1 on branch `seo/a1-adsense-content-batch1` (pending approval): expanded 8 top converter pages from ~35–80 to 300+ unique words each with fresh tool-angle content (mechanics, use cases, troubleshooting, in-content links to guides + adjacent tools). S7 deferred to next session.

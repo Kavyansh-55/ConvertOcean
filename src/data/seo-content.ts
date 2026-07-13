@@ -37,6 +37,20 @@ export const seoContentMap: Record<string, SEOData> = {
   <h2>Converting Spreadsheets to Print-Ready Documents.</h2>
   <p>Excel workbooks (.xlsx, .xls) are dynamic infinite grids, while PDF is a fixed-page layout format designed for consistency. When sharing reports or accounting statements, converting them to PDF ensures that formatting, grids, and numbers look identical on any device.</p>
   <p>ConvertOcean parses Excel cells and compiles a standard PDF layout completely client-side. The formulas, grid lines, and alignments are evaluated and rendered locally. Your financial figures and confidential business numbers are kept safe on your machine.</p>
+
+  <h3>What Converts — and What Gets Left Behind.</h3>
+  <p>The converter prints the <em>calculated value</em> of every cell, not the formula behind it. A cell showing <code>=SUM(B2:B14)</code> exports as the total figure, which means you can send a client a price sheet without exposing the pricing logic that produced it. Cell text, number formatting, column widths, and grid alignment carry over; macros, pivot-table interactivity, and conditional-formatting rules do not, because PDF is a static page format with no calculation engine.</p>
+
+  <h3>Handling Wide Spreadsheets.</h3>
+  <p>The single most common Excel-to-PDF complaint is columns falling off the right edge of the page. A PDF page has fixed dimensions, so a 20-column budget sheet cannot fit at full size on portrait A4. Before converting, either switch the sheet to landscape orientation, reduce column widths, or hide helper columns you do not need in the output. For a full walkthrough — including scale-to-fit and repeating header rows across pages — see our guide on <a href="/guides/excel-to-pdf/">converting Excel to PDF without cutting off columns</a>.</p>
+
+  <h3>Common Uses for Spreadsheet PDFs.</h3>
+  <ul>
+    <li><strong>Client deliverables:</strong> quotes, rate cards, and project budgets that must look identical on every device — and cannot be edited after sending.</li>
+    <li><strong>Financial records:</strong> month-end statements and reconciliations frozen as fixed pages for audit trails.</li>
+    <li><strong>Printing:</strong> attendance sheets, rosters, and inventory lists formatted to physical pages instead of an endless grid.</li>
+  </ul>
+  <p>Working with other spreadsheet formats? The same client-side engine powers our <a href="/xls-to-pdf/">XLS to PDF</a> and <a href="/csv-to-pdf/">CSV to PDF</a> converters, and you can combine several exported reports into one file with <a href="/merge-pdf/">Merge PDF</a>.</p>
 </div>
     `,
     faqs: [
@@ -53,6 +67,20 @@ export const seoContentMap: Record<string, SEOData> = {
   <h2>Transforming Comma-Separated Data to Structured JSON.</h2>
   <p>CSV is a line-based format used for database dumps and tabular spreadsheets, while JSON is the standard hierarchical format for API integrations and web development. Converting CSV exports to JSON lets web developers ingest raw lists directly into JavaScript applications.</p>
   <p>ConvertOcean parses CSV text structures, maps the first line headers as key names, and serializes the data rows into a structured JSON array. This parsing compiles locally inside your browser memory cache.</p>
+
+  <h3>How the Mapping Works.</h3>
+  <p>The first row of your file becomes the property names: a CSV with headers <code>id,name,email</code> produces objects shaped like <code>{"id": "104", "name": "Priya", "email": "..."}</code>, one per data row, collected into a single array. The parser auto-detects the delimiter — comma, semicolon, tab, or pipe — so European-style semicolon exports and TSV files convert without any settings. Quoted fields containing commas or line breaks are handled per the CSV specification rather than naively split.</p>
+
+  <h3>Where Developers Use This.</h3>
+  <ul>
+    <li><strong>API fixtures and tests:</strong> turn a product or user list maintained in a spreadsheet into mock-response JSON for integration tests.</li>
+    <li><strong>Database seeding:</strong> convert exported reference data into a format that <code>JSON.parse()</code> or an ORM seed script can consume directly.</li>
+    <li><strong>Front-end prototyping:</strong> feed spreadsheet data into a chart library or React component without standing up a backend.</li>
+    <li><strong>Configuration migration:</strong> lift lookup tables out of legacy CSV exports into modern JSON config files.</li>
+  </ul>
+
+  <h3>Things to Check Before Converting.</h3>
+  <p>Two CSV quirks cause most conversion surprises. First, files exported from Excel sometimes begin with an invisible byte-order mark (BOM) that can attach itself to the first header name — our parser strips it automatically. Second, CSV has no types: every value arrives as text, so <code>"42"</code> stays a string in the output. If your pipeline needs real numbers or booleans, cast them at import time. For a deeper treatment — including nested structures and command-line alternatives — read the <a href="/guides/csv-to-json/">CSV to JSON developer guide</a>, and use the <a href="/json-formatter/">JSON Formatter</a> to validate the output. Need the reverse direction? Use <a href="/json-to-csv/">JSON to CSV</a>, or convert Excel workbooks straight to JSON with <a href="/xlsx-to-json/">XLSX to JSON</a>.</p>
 </div>
     `,
     faqs: [
@@ -69,6 +97,20 @@ export const seoContentMap: Record<string, SEOData> = {
   <h2>Converting JSON Arrays to Tabular CSV Layouts.</h2>
   <p>JSON text is the backbone of modern web APIs, but it is difficult to audit or view without programming skills. Converting JSON arrays to CSV allows accountants, analysts, and project managers to open and inspect API data directly in Microsoft Excel or Google Sheets.</p>
   <p>The converter reads the property keys of your JSON objects to construct the CSV header row and flattens nested values to output a clean tabular string client-side.</p>
+
+  <h3>How Nested Data Becomes Rows and Columns.</h3>
+  <p>JSON is hierarchical; CSV is flat. The converter bridges the two by flattening nested objects with dot-notation column names — <code>{"user": {"name": "John", "city": "Pune"}}</code> becomes two columns, <code>user.name</code> and <code>user.city</code>. Keys are collected across <em>all</em> objects in the array, so records with missing fields simply produce empty cells instead of breaking the table. Values containing commas, quotes, or line breaks are escaped with double quotes per the CSV standard, which keeps the file openable in Excel, Google Sheets, and LibreOffice without corruption.</p>
+
+  <h3>Why Convert API Data to a Spreadsheet.</h3>
+  <ul>
+    <li><strong>Non-technical review:</strong> analysts, accountants, and managers can filter and pivot API exports in a spreadsheet without touching code.</li>
+    <li><strong>Reporting:</strong> a webhook log or orders endpoint dump becomes a sortable sheet for month-end reconciliation.</li>
+    <li><strong>Data migration:</strong> many CRMs, e-commerce platforms, and bulk-import tools accept CSV but not JSON.</li>
+    <li><strong>Quick auditing:</strong> eyeballing 2,000 records is far faster in a grid than in raw braces and brackets.</li>
+  </ul>
+
+  <h3>Round-Trip Caveats.</h3>
+  <p>Flattening is lossy by design: deeply nested arrays cannot be fully represented in a flat table, and converting the CSV back with <a href="/csv-to-json/">CSV to JSON</a> reproduces the dot-notation keys as plain column names rather than rebuilding the original hierarchy. If you need to inspect or repair the JSON before converting, run it through the <a href="/json-formatter/">JSON Formatter</a> first — it pinpoints syntax errors with line numbers. To land the data directly in a native spreadsheet with typed cells instead of plain text, use <a href="/json-to-xlsx/">JSON to XLSX</a>. Like every ConvertOcean tool, the whole pipeline runs in your browser: API responses containing customer data never leave your machine.</p>
 </div>
     `,
     faqs: [
@@ -241,6 +283,20 @@ export const seoContentMap: Record<string, SEOData> = {
   <h2>Extracting Edit-Ready Text from Images and Scans.</h2>
   <p>Screenshots, book scans, and digital bills contain textual information that cannot be highlighted, copied, or searched. Image-to-Text OCR uses advanced optical algorithms to analyze pixel patterns, identify characters, and export them as plain text.</p>
   <p>ConvertOcean compiles Tesseract.js using WebAssembly to process images directly inside your browser window. This guarantees that your sensitive invoices, IDs, and screenshots remain secure.</p>
+
+  <h3>What Determines OCR Accuracy.</h3>
+  <p>Recognition quality depends far more on the input image than on the engine. Four factors matter most: <strong>resolution</strong> (aim for the equivalent of 300 DPI — text at least 20–30 pixels tall), <strong>contrast</strong> (dark text on a clean, light background), <strong>skew</strong> (straight, level lines of text), and <strong>font type</strong> (printed fonts read reliably; decorative fonts and handwriting do not). A sharp phone photo taken square-on in good light routinely beats a higher-megapixel shot taken at an angle under a shadow. If a receipt scan comes back garbled, retaking the photo closer and straighter usually fixes more than any setting can.</p>
+
+  <h3>Everyday OCR Jobs This Tool Handles.</h3>
+  <ul>
+    <li><strong>Receipts and invoices:</strong> lift amounts and line items out of a photographed bill for expense reports.</li>
+    <li><strong>Screenshots:</strong> recover text from an error message, chat, or slide when the original cannot be copied.</li>
+    <li><strong>Book and document scans:</strong> convert photographed pages into editable, searchable text for notes and quotes.</li>
+    <li><strong>Printed forms:</strong> digitize typed records without retyping them by hand.</li>
+  </ul>
+
+  <h3>Privacy Is the Whole Point.</h3>
+  <p>OCR inputs are among the most sensitive files people handle — identity documents, medical letters, financial statements. Uploading them to a server-based OCR service means trusting a third party with exactly the documents you least want copied. Because the recognition model runs in your browser via WebAssembly, nothing is transmitted: the image, the intermediate data, and the extracted text all stay in local tab memory. Curious how character recognition actually works under the hood? Read our guide on <a href="/guides/how-ocr-works/">how OCR works</a>. To pull text out of a PDF instead of an image, use <a href="/pdf-to-txt/">PDF to TXT</a>, and check the length of what you extracted with the <a href="/word-counter/">Word Counter</a>.</p>
 </div>
     `,
     faqs: [
@@ -257,6 +313,20 @@ export const seoContentMap: Record<string, SEOData> = {
   <h2>Stitching Multiple PDF Files into a Single Document.</h2>
   <p>Managing multiple reports, tax statements, or scanning records can be difficult. Merging PDFs combines separate documents into a single sequential file, simplifying cataloging, emailing, and archiving.</p>
   <p>Our PDF engine compiles files locally, merging page structures and directories securely inside your device's RAM sandbox.</p>
+
+  <h3>What Actually Happens When PDFs Merge.</h3>
+  <p>A PDF is not a simple stream of pages — it is a database of cross-referenced objects: page trees, embedded fonts, images, links, and form fields. Merging correctly means appending each document's pages to a new master page tree, de-duplicating shared resources (so two reports using the same font do not embed it twice), and re-pointing bookmarks and internal links at their new page positions. Our engine does all of this in browser memory using pdf-lib; the output is a standards-compliant PDF, not a lossy re-print.</p>
+
+  <h3>Typical Merge Jobs.</h3>
+  <ul>
+    <li><strong>Tax and loan bundles:</strong> combine salary slips, bank statements, and ID scans into the single attachment a portal demands.</li>
+    <li><strong>Applications:</strong> stitch a cover letter, résumé, and certificates into one file so nothing gets separated in an inbox.</li>
+    <li><strong>Scanned paperwork:</strong> phone scanners often produce one PDF per page — merge them back into a single document in the right order.</li>
+    <li><strong>Client deliverables:</strong> assemble a proposal, pricing sheet, and terms into one professional package.</li>
+  </ul>
+
+  <h3>Getting a Clean Result.</h3>
+  <p>Order the files before merging — the tool preserves your arrangement exactly, so put the cover page first. Password-protected files must be unlocked beforehand, since encrypted page trees cannot be parsed. Mixed page sizes are legal in PDF and will merge fine, but a landscape slide between portrait letters looks jarring; normalize orientation first if the document will be printed. Expect the merged file size to be roughly the sum of its parts — if it needs to be smaller, compress images before merging rather than after. For the full step-by-step process, read our guide on <a href="/guides/merge-multiple-pdf-files/">how to merge multiple PDF files</a>. Need the opposite operation? <a href="/split-pdf/">Split PDF</a> extracts pages back out, and <a href="/image-to-pdf/">Image to PDF</a> turns loose JPG or PNG scans into PDF pages you can then merge.</p>
 </div>
     `,
     faqs: [
@@ -272,6 +342,20 @@ export const seoContentMap: Record<string, SEOData> = {
 <div class="content-card">
   <h2>Extracting Specific Pages and Slicing PDF Files.</h2>
   <p>Large PDF files containing dozens of pages can be difficult to share. Splitting PDFs lets you isolate specific pages, extract target sections, and compile them as independent documents.</p>
+
+  <h3>Selecting Pages and Ranges.</h3>
+  <p>The split panel accepts individual page numbers (<code>1, 3, 7</code>), ranges (<code>5-10</code>), or a combination (<code>1, 5-10, 14</code>). Each selection compiles into its own standalone PDF. Extraction copies the original page objects — text, vector graphics, and images — into the new file without re-rendering or re-compressing anything, so a split page is pixel-identical to the original. That also makes splitting fast: pulling three pages out of a 300-page manual takes about a second, because nothing is being redrawn.</p>
+
+  <h3>When Splitting Beats Sending the Whole File.</h3>
+  <ul>
+    <li><strong>Signature pages:</strong> extract just the page that needs signing from a long contract instead of emailing the entire agreement.</li>
+    <li><strong>Selective sharing:</strong> send a vendor the one chapter that concerns them — not the internal sections around it.</li>
+    <li><strong>Attachment limits:</strong> break a scan archive that exceeds an email or portal upload cap into smaller parts.</li>
+    <li><strong>Re-organizing:</strong> pull chapters out of several documents, then reassemble them in a new order with <a href="/merge-pdf/">Merge PDF</a>.</li>
+  </ul>
+
+  <h3>Limits Worth Knowing.</h3>
+  <p>Encrypted PDFs must be unlocked before splitting — the engine cannot parse a password-protected page tree. Interactive form fields and bookmarks that point at pages you did not extract are dropped from the output, since their targets no longer exist. Page numbers printed on the page itself do not renumber either: page "47" of the manual stays labeled 47 in the extract, which is usually what you want for citations and references. And because everything runs client-side in browser memory, a confidential contract never touches a server: the pages you extract exist only on your device. If the extracted pages need editing afterward, convert them with <a href="/pdf-to-word/">PDF to Word</a>, or pull just the raw text with <a href="/pdf-to-txt/">PDF to TXT</a>.</p>
 </div>
     `,
     faqs: [
@@ -467,6 +551,20 @@ export const seoContentMap: Record<string, SEOData> = {
 <div class="content-card">
   <h2>Converting Word Documents to PDF Layouts.</h2>
   <p>Microsoft Word files (.docx) can display differently depending on the operating system, font libraries, and word processor used. Converting Word documents to PDF locks the fonts, paragraphs, and images into standard pages.</p>
+
+  <h3>Why Word Files Shift — and PDFs Do Not.</h3>
+  <p>A .docx file does not store a picture of your document; it stores instructions — "this paragraph, in this font, with this spacing" — that every device re-interprets at open time. If the recipient's machine lacks your font, Word substitutes another, and suddenly line breaks move, tables reflow, and your two-page résumé becomes two and a half. A PDF stores the final rendered layout itself, so the document is frozen: what you approved is what every recipient, printer, and phone screen shows.</p>
+
+  <h3>Documents That Should Always Travel as PDF.</h3>
+  <ul>
+    <li><strong>Résumés and CVs:</strong> applicant-tracking systems and recruiters see your intended layout, not a reflowed approximation.</li>
+    <li><strong>Contracts and agreements:</strong> fixed pagination means clause numbers and signature lines stay where both parties saw them.</li>
+    <li><strong>Invoices and letters:</strong> a PDF cannot be casually edited in transit the way a Word file can.</li>
+    <li><strong>Print-ready material:</strong> flyers and notices print identically from any machine.</li>
+  </ul>
+
+  <h3>Conversion Notes.</h3>
+  <p>The converter parses modern OpenXML .docx files; if you have a legacy .doc from Word 97–2003, re-save it as .docx first. Embedded images, margins, lists, and headers carry into the PDF. When a document uses a font that is not available to the browser, the engine maps it to a metric-compatible fallback (such as Arial or Helvetica) to preserve alignment — if exact brand typography matters, embed standard fonts in the source document. Everything renders locally in your browser sandbox, so unpublished manuscripts and confidential letters are never uploaded. Going the other direction? Use <a href="/pdf-to-word/">PDF to Word</a> to make a PDF editable again, extract plain text with <a href="/docx-to-txt/">Word to TXT</a>, or bundle several converted documents into one file with <a href="/merge-pdf/">Merge PDF</a>.</p>
 </div>
     `,
     faqs: [
@@ -482,6 +580,21 @@ export const seoContentMap: Record<string, SEOData> = {
 <div class="content-card">
   <h2>Converting PDF Files into Editable Word Documents.</h2>
   <p>PDFs are static files designed to look consistent, which makes them difficult to edit. Converting PDF to Word (.docx) parses absolute coordinates, reconstructs paragraphs, and wraps text flow elements into editable formats.</p>
+
+  <h3>Digital vs. Scanned: Know Your PDF First.</h3>
+  <p>The single biggest factor in conversion quality is how the PDF was born. A <strong>digitally created</strong> PDF — exported from Word, Google Docs, or an invoicing app — contains real text objects with exact positions, and converts cleanly into editable paragraphs. A <strong>scanned</strong> PDF is just photographs of pages: there is no text to extract, only pixels. Quick test: try selecting text in your PDF viewer. If you cannot highlight it, run the pages through <a href="/image-to-text/">Image to Text OCR</a> first, then bring the recognized text into Word.</p>
+
+  <h3>How the Reconstruction Works.</h3>
+  <p>PDF stores characters at absolute coordinates — it has no concept of a paragraph. The converter reads those positioned glyphs, groups them into lines by their vertical positions, merges lines into paragraphs based on spacing patterns, and detects aligned bounding boxes to rebuild tables as real Word tables rather than strings of spaces. The result is a .docx that flows and re-wraps naturally when you edit it, not a frozen snapshot.</p>
+
+  <h3>What to Expect in the Output.</h3>
+  <ul>
+    <li><strong>Body text and headings:</strong> convert reliably, with sizes and basic styling preserved.</li>
+    <li><strong>Tables:</strong> regular grids rebuild well; heavily merged or borderless layouts may need touch-up.</li>
+    <li><strong>Multi-column layouts:</strong> converters must guess reading order — expect some reflow in newsletters and academic papers.</li>
+    <li><strong>Custom-encoded fonts:</strong> rare decorative fonts can produce garbled characters; standard PDFs translate cleanly.</li>
+  </ul>
+  <p>For a checklist that prevents formatting loss — including the five-minute post-conversion cleanup routine — read our guide on <a href="/guides/pdf-to-word-without-losing-formatting/">converting PDF to Word without losing formatting</a>. If you only need the raw words and not the layout, <a href="/pdf-to-txt/">PDF to TXT</a> is faster, and the finished document can go back to fixed form anytime with <a href="/word-to-pdf/">Word to PDF</a>. As always, parsing happens in your browser — contracts and financial statements are never uploaded.</p>
 </div>
     `,
     faqs: [
