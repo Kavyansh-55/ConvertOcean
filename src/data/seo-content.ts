@@ -29,6 +29,39 @@ export const seoContentMap: Record<string, SEOData> = {
       { question: 'Does it work offline?', answer: 'Yes. Once the page is loaded, the word counter works completely offline. All computation is done in your browser tab — no internet connection is needed.' }
     ]
   },
+  'json-formatter': {
+    title: 'JSON Formatter & Validator Online - Free & Private | ConvertOcean',
+    description: 'Format, validate, and minify JSON instantly in your browser. Syntax highlighting, real-time error detection with line numbers, key count, nesting depth — 100% client-side with no uploads.',
+    content: `
+<div class="content-card">
+  <h2>Format, Validate, and Debug JSON Without Leaving Your Browser.</h2>
+  <p>JSON that machines exchange is rarely fit for humans to read — API responses arrive minified into a single endless line, and one missing comma somewhere inside can break an entire integration. A JSON formatter does three jobs at once: it pretty-prints the structure with indentation and syntax highlighting so you can actually see the hierarchy, validates the syntax, and pinpoints exactly where any error lives.</p>
+  <p>Because the tool wraps the browser's native <code>JSON.parse()</code> engine, validation follows the exact same rules your JavaScript application will apply — if it passes here, it parses in production.</p>
+
+  <h3>Find the Exact Error Fast.</h3>
+  <p>When parsing fails, the tool reports the error message with the approximate line and column, which turns "invalid JSON" from a guessing game into a one-second fix. The usual suspects, in order of frequency: a trailing comma after the last item, single quotes instead of double quotes, an unquoted property name, and a missing bracket or brace at the end of a hand-edited file. JSON is stricter than JavaScript object syntax — all four are legal in JS code and illegal in JSON.</p>
+
+  <h3>Beautify for Reading, Minify for Shipping.</h3>
+  <p>Formatted output uses consistent indentation for reviewing, diffing, and committing configuration files. The minify toggle strips every unnecessary character back out — useful when the JSON is a payload where bytes matter, or a config value that must live on a single line. Alongside the output, the tool reports total key count (including nested keys), maximum nesting depth, and formatted size — a quick way to spot a bloated API response or an accidentally deep structure.</p>
+
+  <h3>Where It Fits in a Developer Workflow.</h3>
+  <ul>
+    <li><strong>Debugging API responses:</strong> paste a minified response and instantly see the structure you are actually receiving.</li>
+    <li><strong>Inspecting webhooks:</strong> make event payloads readable before writing the handler.</li>
+    <li><strong>Editing config files:</strong> validate package or app configuration after hand edits, before they break a build.</li>
+    <li><strong>Preparing fixtures:</strong> clean up test data so diffs stay reviewable.</li>
+  </ul>
+  <p>Working between formats? Convert spreadsheet exports with <a href="/csv-to-json/">CSV to JSON</a>, flatten API data for analysts with <a href="/json-to-csv/">JSON to CSV</a>, or migrate legacy payloads with <a href="/xml-to-json/">XML to JSON</a>. Everything runs client-side: pasted payloads — often full of tokens, emails, and customer records — are never transmitted, logged, or stored.</p>
+</div>
+    `,
+    faqs: [
+      { question: 'Is my JSON data sent to a server?', answer: 'No. JSON formatting and validation is performed entirely in your browser using client-side JavaScript. Your data never leaves your device — there are no server uploads, no logs, and no data storage.' },
+      { question: 'How does the JSON validator work?', answer: 'The tool uses the native browser JSON.parse() function to validate your input in real time. If your JSON is malformed, it reports the exact error message along with the approximate line number and column position where the error occurs.' },
+      { question: 'Can I minify JSON with this tool?', answer: 'Yes. Toggle the "Minify" switch in the output panel to convert the pretty-printed JSON into a single-line minified string. Toggle it back to return to indented formatting.' },
+      { question: 'What metadata does the tool show?', answer: 'The output panel shows three metrics: total key count (including nested keys), maximum nesting depth, and the size of the formatted JSON in bytes or kilobytes.' },
+      { question: 'Does it work offline?', answer: 'Yes. Once the tool page is loaded in your browser, the JSON formatter works completely offline. No network connection is required for formatting, validation, or download.' }
+    ]
+  },
   'excel-to-pdf': {
     title: 'Convert Excel to PDF Online - 100% Private | ConvertOcean',
     description: 'Convert XLS, XLSX, and CSV spreadsheets to PDF directly in your browser. Keep your financial calculations, formulas, and cells 100% private.',
@@ -191,6 +224,15 @@ export const seoContentMap: Record<string, SEOData> = {
   <h2>Converting Lossless PNG Images to Compressed JPGs.</h2>
   <p>PNG images utilize lossless compression which keeps screenshots and graphic designs crisp, but yields massive file sizes. Converting PNG files to JPG compresses the image data, dramatically reducing file size to optimize website loading speeds and storage usage.</p>
   <p>The local image engine draws the PNG file onto an off-screen HTML5 canvas element and rasterizes the canvas output stream to JPEG compression at your preferred quality level.</p>
+
+  <h3>When JPG Is the Right Choice.</h3>
+  <p>JPG compression is built for photographs — images with soft gradients, natural textures, and millions of colors — where discarding detail the eye cannot perceive shrinks files by 5–10× with no visible difference. Convert to JPG when a photo needs to clear an upload size limit, travel by email, or load fast on a web page. Keep the original PNG when the image is a screenshot, logo, diagram, or anything with sharp text edges: lossy compression smears crisp lines into visible halo artifacts.</p>
+
+  <h3>Choosing a Quality Setting.</h3>
+  <p>At 90% quality, most photos are visually indistinguishable from the source at a fraction of the size. 75–85% is the practical web default. Below about 60%, blocky artifacts appear in gradients and around edges. One caution: JPG loss is cumulative — every re-save compresses again — so convert from the PNG original rather than re-exporting an existing JPG.</p>
+
+  <h3>Transparency Gets Flattened.</h3>
+  <p>JPG has no alpha channel. Any transparent region in your PNG is filled with a solid background (white by default) during conversion. If the image must keep its transparency — a logo that sits on colored backgrounds, for instance — stay with PNG, or use <a href="/png-to-webp/">PNG to WebP</a>, which compresses harder while preserving the alpha channel. To understand exactly when each format wins, read our <a href="/guides/png-vs-jpg/">PNG vs JPG guide</a>, and use <a href="/jpg-to-png/">JPG to PNG</a> for the reverse direction. All rasterization runs in your browser — photos never leave your device.</p>
 </div>
     `,
     faqs: [
@@ -207,6 +249,20 @@ export const seoContentMap: Record<string, SEOData> = {
   <h2>Rasterizing JPG Images to Lossless PNG format.</h2>
   <p>JPG is a compressed, lossy format that can suffer from compression artifacts around text borders or sharp vector lines. Converting JPG files to PNG wraps the image data in a lossless format, preventing further compression artifacts during future edits.</p>
   <p>Our canvas engine parses the JPG color channel data locally and outputs a high-fidelity PNG structure.</p>
+
+  <h3>Why Wrap a Lossy Image in a Lossless Format.</h3>
+  <p>The real enemy is <em>generational loss</em>. Every time a JPG is edited and saved as JPG again, the compressor runs again and throws away a little more detail — after a few editing rounds, artifacts become clearly visible. Converting to PNG first freezes the image exactly as it is now: you can crop, annotate, and re-save the PNG a hundred times and the pixels never degrade further. That makes JPG-to-PNG the correct first step of any editing workflow that involves multiple saves.</p>
+
+  <h3>What This Conversion Cannot Do.</h3>
+  <p>PNG faithfully preserves what the JPG currently contains — including any compression artifacts already baked in. It does not sharpen, upscale, or restore detail the original compression discarded. If a JPG already shows blockiness, the PNG will show the identical blockiness, just without adding more.</p>
+
+  <h3>Practical Reasons to Convert.</h3>
+  <ul>
+    <li><strong>Editing pipelines:</strong> lock the image before multiple rounds of cropping and annotation.</li>
+    <li><strong>Adding transparency later:</strong> PNG supports an alpha channel, so a background removed in an editor can actually stay transparent.</li>
+    <li><strong>Print and archival workflows</strong> that require lossless input formats.</li>
+  </ul>
+  <p>Expect the PNG to be noticeably larger than the JPG — often 2–5× — because lossless storage keeps every pixel. When the edits are done, compress the final result back down with <a href="/png-to-jpg/">PNG to JPG</a> or the even smaller <a href="/png-to-webp/">PNG to WebP</a>. For the full format comparison, see the <a href="/guides/png-vs-jpg/">PNG vs JPG guide</a>. Conversion happens entirely client-side in your browser.</p>
 </div>
     `,
     faqs: [
@@ -222,6 +278,15 @@ export const seoContentMap: Record<string, SEOData> = {
 <div class="content-card">
   <h2>Converting PNG Images to Modern WebP Format.</h2>
   <p>WebP is a next-generation format developed by Google that offers superior compression. Converting PNG files to WebP yields files that are 25-30% smaller while preserving alpha transparency, making WebP the ideal choice for modern web layouts.</p>
+
+  <h3>Why Web Developers Convert PNG Assets.</h3>
+  <p>Image weight is usually the single largest contributor to page size, and oversized images are a leading cause of slow Largest Contentful Paint scores. Swapping PNG interface assets — logos, icons, illustrations, screenshots — for WebP typically cuts that weight by a quarter or more with zero visible change, because WebP supports both a lossless mode (a direct, pixel-perfect replacement for PNG) and a lossy mode with an alpha channel, something JPG never offered. Transparency survives either way: a transparent PNG converts to a transparent WebP.</p>
+
+  <h3>Quality Settings That Work.</h3>
+  <p>For photographic content, a lossy quality of 80–85% is the sweet spot — significant savings, no visible loss. For flat graphics with text or sharp edges, prefer the higher end so anti-aliased edges stay clean. As with any lossy format, convert from the PNG source rather than re-compressing an already-compressed file.</p>
+
+  <h3>When to Keep the PNG.</h3>
+  <p>Print workflows, legacy desktop editors, and some upload forms still expect PNG or JPG, and email clients are inconsistent with WebP attachments. Keep the PNG master for those pipelines and serve WebP on the web — modern browsers (Chrome, Safari, Edge, Firefox) all support it. On sites that must support very old browsers, the HTML <code>&lt;picture&gt;</code> element lets you serve the WebP with an automatic PNG fallback, so nothing breaks for anyone. Need to go back? <a href="/webp-to-png/">WebP to PNG</a> unwraps the file losslessly. Converting photos instead of graphics? <a href="/jpg-to-webp/">JPG to WebP</a> handles that side, and the <a href="/guides/png-vs-jpg/">PNG vs JPG guide</a> covers how WebP fits alongside both. All conversion runs locally in your browser.</p>
 </div>
     `,
     faqs: [
@@ -237,6 +302,20 @@ export const seoContentMap: Record<string, SEOData> = {
 <div class="content-card">
   <h2>Converting WebP Images back to Lossless PNG.</h2>
   <p>WebP is excellent for web optimization but is less supported by legacy image editing software, desktop applications, and print systems. Converting WebP back to PNG ensures maximum compatibility across all software pipelines and media editors.</p>
+
+  <h3>The "Saved an Image and Nothing Accepts It" Problem.</h3>
+  <p>This conversion exists mostly because of one everyday situation: you right-click and save an image from a website, and it arrives as a .webp file — which your photo editor, an upload form, a print shop, or an older version of Office then refuses to open. Websites increasingly serve WebP for speed, but plenty of software outside the browser has not caught up. Converting to PNG produces a file that effectively everything opens.</p>
+
+  <h3>A Lossless Unwrap.</h3>
+  <p>The conversion decodes the WebP pixels and stores them in PNG without applying any new compression, so the output is pixel-identical to what the WebP displayed — including any transparency. Two expectations to set: the PNG will usually be larger (that is the price of universal compatibility), and an <em>animated</em> WebP converts to a static PNG of its first frame, since standard PNG does not animate. Dimensions, colors, and transparency all carry through unchanged — only the container format differs.</p>
+
+  <h3>Typical Jobs.</h3>
+  <ul>
+    <li><strong>Editing:</strong> bring a downloaded WebP into an editor or slide deck that rejects the format.</li>
+    <li><strong>Uploads:</strong> convert for portals and forms that only whitelist JPG/PNG.</li>
+    <li><strong>Print:</strong> hand a print pipeline the lossless PNG it expects.</li>
+  </ul>
+  <p>If the target is a photo destined for email or further size limits, <a href="/webp-to-jpg/">WebP to JPG</a> produces a smaller file instead. Going the other way for web performance? Use <a href="/png-to-webp/">PNG to WebP</a>, and see the <a href="/guides/png-vs-jpg/">PNG vs JPG guide</a> for choosing between the destination formats. Decoding happens in your browser — downloaded images are never re-uploaded anywhere.</p>
 </div>
     `,
     faqs: [
@@ -252,6 +331,20 @@ export const seoContentMap: Record<string, SEOData> = {
 <div class="content-card">
   <h2>Compiling Plain Text Files into PDF Documents.</h2>
   <p>Plain text (.txt) files are highly compatible but lack fixed margins, page boundaries, headers, and professional layouts. Converting TXT to PDF formats your raw text into standard document pages, making them suitable for distribution, printing, or sharing as business records.</p>
+
+  <h3>How Raw Text Becomes Pages.</h3>
+  <p>A .txt file is a single unbroken stream of characters — it has no idea what a "page" is. The converter measures your chosen font size and line height, wraps long lines at the margin, and inserts page breaks so the stream flows cleanly across A4 or Letter pages. You control font size, line spacing, margins, and orientation, so a dense log file can be packed small in landscape while a letter reads comfortably in portrait. Line endings from any platform (Windows CRLF or Unix LF) and UTF-8 characters are handled automatically.</p>
+
+  <h3>What People Actually Convert.</h3>
+  <ul>
+    <li><strong>Meeting notes and transcripts</strong> that need to be shared as a fixed, uneditable record.</li>
+    <li><strong>Logs and reports</strong> from scripts or systems, frozen for audits and tickets.</li>
+    <li><strong>Manuscripts and drafts</strong> written in plain-text editors, paginated for reviewers.</li>
+    <li><strong>Code listings and configuration files</strong> attached to documentation or coursework.</li>
+  </ul>
+
+  <h3>Why PDF Rather Than Sending the TXT.</h3>
+  <p>Text files open differently everywhere — one recipient sees wrapped lines, another sees one endless row; fonts and spacing are whatever their editor chooses. The PDF freezes pagination and typography so every reader and printer sees the identical document, and the file cannot be casually edited in transit. Extraction works in reverse too: <a href="/pdf-to-txt/">PDF to TXT</a> pulls the raw text back out of any digital PDF. For documents that need styling — headings, bold, images — write in Word and use <a href="/word-to-pdf/">Word to PDF</a> instead, and bundle several converted files into one document with <a href="/merge-pdf/">Merge PDF</a>. The jsPDF compiler runs in your browser, so notes and logs never leave your machine.</p>
 </div>
     `,
     faqs: [
@@ -267,6 +360,22 @@ export const seoContentMap: Record<string, SEOData> = {
 <div class="content-card">
   <h2>Extracting Raw Text Content from PDF Files.</h2>
   <p>PDF is designed for visual layout representation, making it difficult to copy-paste continuous paragraphs, scrape text databases, or edit raw text. Converting PDF to TXT isolates the underlying character strings and compiles them into a plain text document.</p>
+
+  <h3>Check First: Digital PDF or Scanned PDF.</h3>
+  <p>This extractor reads the text objects <em>embedded</em> in the PDF — which digitally created documents (exports from Word, invoicing systems, web pages) always have. A scanned document is different: its pages are photographs, and there are no characters to extract. Quick test: if you can highlight text in your PDF viewer, this tool will extract it; if you cannot, run the pages through <a href="/image-to-text/">Image to Text OCR</a> instead, which recognizes characters from pixels.</p>
+
+  <h3>Stripping Layout Is the Feature, Not a Flaw.</h3>
+  <p>TXT output deliberately discards fonts, colors, columns, and positioning, leaving pure machine-readable text. That is exactly what downstream uses need: feeding a document into a script or data pipeline, indexing content for search, pasting clean paragraphs into notes without dragging formatting along, or preparing text for analysis. Be aware that multi-column layouts are linearized in reading order — usually correct, occasionally surprising in newsletters and academic papers — and tables flatten to plain lines.</p>
+
+  <h3>Common Extraction Jobs.</h3>
+  <ul>
+    <li><strong>Quoting and research:</strong> lift passages from reports and e-books into your own notes.</li>
+    <li><strong>Data pipelines:</strong> convert statements and reports to text a script can parse.</li>
+    <li><strong>Content audits:</strong> extract an entire document, then run it through the <a href="/word-counter/">Word Counter</a> for length and keyword statistics.</li>
+    <li><strong>Re-editing:</strong> when only the words matter, TXT is faster than reconstructing layout.</li>
+    <li><strong>Accessibility:</strong> plain text works with every screen reader and text-to-speech tool without PDF-viewer quirks.</li>
+  </ul>
+  <p>Need the formatting kept — headings, tables, paragraph styles? <a href="/pdf-to-word/">PDF to Word</a> rebuilds an editable document instead. Extraction runs on pdf.js inside your browser sandbox: contracts and statements are never uploaded.</p>
 </div>
     `,
     faqs: [

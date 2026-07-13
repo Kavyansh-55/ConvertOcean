@@ -193,9 +193,63 @@ const categoryFaqsMap: Record<string, { q: string; a: string }[]> = {
 };
 
 const faqList = categoryFaqsMap[category] || [];
+
+// Unique per-category intro prose (rendered between the tool grid and FAQs)
+const categoryIntroMap: Record<string, string> = {
+  'pdf-tools': `
+    <h2>A Complete PDF Toolkit That Never Uploads Your Documents.</h2>
+    <p>PDF work usually means juggling several small jobs around one document: combining scanned pages with <a href="/merge-pdf/">Merge PDF</a>, pulling a signature page out with <a href="/split-pdf/">Split PDF</a>, making a contract editable again via <a href="/pdf-to-word/">PDF to Word</a>, or extracting raw text with <a href="/pdf-to-txt/">PDF to TXT</a>. The catch is that PDFs are usually the documents you least want on someone else's server — contracts, statements, medical records, IDs. Every tool on this page parses and rebuilds PDF structures inside your browser's memory using client-side engines, so files never cross the network. Start with our guide on <a href="/guides/merge-multiple-pdf-files/">merging multiple PDF files</a> if you are assembling a document bundle.</p>
+  `,
+  'image-tools': `
+    <h2>Convert Between Image Formats Without Uploading a Single Pixel.</h2>
+    <p>Each image format earns its place: JPG compresses photographs hard, PNG keeps screenshots and logos pixel-perfect with transparency, and WebP shrinks web assets by a quarter or more. These tools convert between all of them — plus merging, splitting, and turning images into PDFs or editable text with <a href="/image-to-text/">OCR</a> — using your browser's own canvas and WebAssembly engines. Nothing is uploaded, which matters more for images than people think: photos carry location metadata, screenshots carry whatever was on your screen. Not sure which format a job needs? The <a href="/guides/png-vs-jpg/">PNG vs JPG guide</a> explains the trade-offs with examples, including where WebP fits.</p>
+  `,
+  'excel-converter': `
+    <h2>Spreadsheet Conversions That Keep Your Numbers on Your Machine.</h2>
+    <p>Spreadsheets are where businesses keep their most sensitive numbers — payroll, pricing, customer lists — which makes "upload your file to convert it" a bad deal. This suite converts Excel workbooks between XLSX, XLS, CSV, JSON, and XML in both directions, exports print-ready PDFs with <a href="/excel-to-pdf/">Excel to PDF</a>, and merges or splits workbooks, all inside your browser using a client-side spreadsheet engine. Formulas are evaluated locally and only their calculated values are exported, so your pricing logic stays private. Wide sheets getting cut off in PDF exports? Our guide on <a href="/guides/excel-to-pdf/">converting Excel to PDF without losing columns</a> covers the fixes.</p>
+  `,
+  'document-tools': `
+    <h2>Document Conversions for Word, Text, and Presentations — All Local.</h2>
+    <p>Documents move between formats constantly: a Word file becomes a fixed PDF for sending with <a href="/word-to-pdf/">Word to PDF</a>, a received PDF becomes editable again with <a href="/pdf-to-word/">PDF to Word</a>, presentations flatten to PDF, and notes need bundling or splitting. These converters parse DOCX, TXT, and PPTX structures directly in your browser — nothing is uploaded, which is exactly what unpublished manuscripts, contracts, and internal decks require. Conversion quality depends on knowing a few format quirks, so if you are moving between PDF and Word, start with the guide on <a href="/guides/pdf-to-word-without-losing-formatting/">converting PDF to Word without losing formatting</a>.</p>
+  `,
+  'business-tools': `
+    <h2>Business Math and Paperwork, Computed Privately.</h2>
+    <p>Six tools cover the everyday numbers of running a business: the <a href="/profit-margin-calculator/">Profit Margin Calculator</a> and <a href="/break-even-calculator/">Break-Even Calculator</a> answer pricing and survival-volume questions, the <a href="/sales-tax-calculator/">Sales Tax Calculator</a> and Percentage Calculator handle billing math, and the <a href="/invoice-generator/">Invoice Generator</a> and Receipt Generator produce the A4 PDF paperwork. Every calculator shows its formula next to the result so you can verify the arithmetic, and everything computes client-side — costs, margins, and client details are never uploaded. New to margin math? The step-by-step guide on <a href="/guides/how-to-calculate-profit-margin/">how to calculate profit margin</a> walks through the formulas with worked examples.</p>
+  `,
+  'developer-tools': `
+    <h2>Data Format Utilities That Respect Your Payloads.</h2>
+    <p>Developer data is full of things that should never touch a third-party server — API keys in config files, customer records in exports, tokens in webhook payloads. These utilities convert between CSV, JSON, and XML, validate and pretty-print with the <a href="/json-formatter/">JSON Formatter</a>, and analyze text with the <a href="/word-counter/">Word Counter</a>, all using your browser's native parsers. That local-first design also means they work offline and at native speed — a large CSV parses as fast as your machine allows, not as fast as an upload queue. For the mechanics of moving spreadsheet data into application code, see the <a href="/guides/csv-to-json/">CSV to JSON developer guide</a>.</p>
+  `
+};
+const categoryIntro = categoryIntroMap[category];
 ---
 
 <Layout title={title} description={description} lang={lang} category={catInfo.name} categorySlug={category} faqList={faqList}>
+  <style>
+    .category-intro {
+      max-width: 800px;
+      margin: var(--spacing-3xl) auto 0;
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--colors-body);
+    }
+    .category-intro h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      letter-spacing: -0.88px;
+      margin-bottom: var(--spacing-md);
+      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+    }
+    .category-intro a {
+      color: var(--colors-link);
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .category-intro a:hover {
+      color: var(--colors-link-deep);
+    }
+  </style>
   <main class="page-container" style="max-width: 1200px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl);">
     <div class="page-header" style="text-align: center; margin-bottom: var(--spacing-3xl);">
       <div class="category-header-icon-wrapper" style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: var(--rounded-lg); background-color: var(--colors-canvas-soft-2); border: 1px solid var(--colors-hairline); margin-bottom: var(--spacing-md); color: var(--colors-ink); box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.03), inset 0 0 0 1px var(--colors-hairline);">
@@ -233,6 +287,11 @@ const faqList = categoryFaqsMap[category] || [];
         <a href={relLink('/')} class="button button-secondary" style="margin-top: var(--spacing-md); display: inline-flex;">Back to Homepage</a>
       </div>
     )}
+    <!-- Category Intro (unique prose per hub) -->
+    {categoryIntro && (
+      <section class="category-intro" data-reveal set:html={categoryIntro}></section>
+    )}
+
     <!-- FAQ Section -->
     {faqList && faqList.length > 0 && (
       <section class="faq-section" style="margin-top: var(--spacing-3xl);">
