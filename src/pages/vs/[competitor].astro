@@ -26,13 +26,14 @@ const relLink = (target: string) => {
 const faqList = comp.faqs;
 ---
 
-<Layout 
-  title={comp.title} 
-  description={comp.description} 
-  lang={lang} 
-  isTool={true} 
+<Layout
+  title={comp.title}
+  description={comp.description}
+  lang={lang}
+  isTool={true}
   toolName={`${comp.competitorName} Alternative`}
   faqList={faqList}
+  article={{ headline: `ConvertOcean vs ${comp.competitorName}` }}
 >
   <style>
     /* Vercel Stark Design Conforming to DESIGN.md */

@@ -31,6 +31,14 @@ const relLink = (target: string) => {
 
 // Format FAQ list for Layout.astro standard schema
 const faqList = guide.faqs.map(f => ({ q: f.question, a: f.answer }));
+
+// Article schema data — publishDate like "July 8, 2026" parsed to ISO for schema.org.
+// Local getters (not toISOString) so the calendar date survives the build machine's timezone.
+const pubDate = new Date(guide.publishDate);
+const articleData = {
+  headline: guide.h1.replace(/\.$/, ''),
+  datePublished: `${pubDate.getFullYear()}-${String(pubDate.getMonth() + 1).padStart(2, '0')}-${String(pubDate.getDate()).padStart(2, '0')}`
+};
 ---
 
 <Layout 
@@ -39,9 +47,10 @@ const faqList = guide.faqs.map(f => ({ q: f.question, a: f.answer }));
   lang={lang} 
   category="Guides" 
   categorySlug="guides" 
-  isTool={true} 
+  isTool={true}
   toolName={guide.h1.replace(/\.$/, '')}
   faqList={faqList}
+  article={articleData}
 >
   <style>
     /* Premium Guide Specific Styling conforming to DESIGN.md */

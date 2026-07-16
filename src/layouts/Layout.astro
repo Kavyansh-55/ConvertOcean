@@ -3,7 +3,7 @@ import '../styles/theme.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
-const { title, description, lang = 'en', toolName, category, categorySlug, isTool = false, faqList = [] } = Astro.props;
+const { title, description, lang = 'en', toolName, category, categorySlug, isTool = false, faqList = [], article = null } = Astro.props;
 
 // Determine paths for canonicals and alternates
 const canonicalPath = Astro.url.pathname;
@@ -81,7 +81,8 @@ const breadcrumbSchema = {
   "itemListElement": breadcrumbList
 };
 
-const softwareSchema = isTool ? {
+// SoftwareApplication only on actual tool pages — article-type pages (guides, comparisons) get Article schema instead
+const softwareSchema = isTool && !article ? {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": toolName || title,
@@ -91,6 +92,29 @@ const softwareSchema = isTool ? {
     "@type": "Offer",
     "price": "0.00",
     "priceCurrency": "USD"
+  }
+} : null;
+
+const articleSchema = article ? {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": article.headline,
+  "description": description,
+  "mainEntityOfPage": canonicalURL,
+  "inLanguage": lang,
+  ...(article.datePublished ? { "datePublished": article.datePublished } : {}),
+  "author": {
+    "@type": "Organization",
+    "name": "ConvertOcean",
+    "url": "https://convertocean.com/about/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ConvertOcean",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://convertocean.com/favicon.svg"
+    }
   }
 } : null;
 
@@ -219,6 +243,9 @@ const relLink = (target: string) => {
   <script type="application/ld+json" set:html={JSON.stringify(orgSchema)}></script>
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>
   <script type="application/ld+json" set:html={JSON.stringify(webpageSchema)}></script>
+  {articleSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)}></script>
+  )}
   {websiteSchema && (
     <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)}></script>
   )}
