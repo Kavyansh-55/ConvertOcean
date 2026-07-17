@@ -32,6 +32,12 @@ if (slug === 'png-to-jpg') {
 } else if (slug === 'svg-to-webp') {
   acceptMime = "image/svg+xml";
   targetFormat = "WEBP";
+} else if (slug === 'jpg-to-jpeg') {
+  acceptMime = "image/jpeg,image/jpg";
+  targetFormat = "JPEG";
+} else if (slug === 'jpeg-to-jpg') {
+  acceptMime = "image/jpeg,image/jpg";
+  targetFormat = "JPG";
 }
 ---
 
@@ -194,6 +200,10 @@ if (slug === 'png-to-jpg') {
         showError("Invalid file type. Please upload an SVG file.");
         return;
       }
+      if (['jpg-to-jpeg', 'jpeg-to-jpg'].includes(slug) && !['jpg', 'jpeg'].includes(extension)) {
+        showError("Invalid file type. Please upload a JPG or JPEG file.");
+        return;
+      }
 
       showProgress(30, "Loading image bytes…");
       const reader = new FileReader();
@@ -210,12 +220,15 @@ if (slug === 'png-to-jpg') {
 
           let mimeType = 'image/png';
           let outputExt = '.png';
-          if (['png-to-jpg', 'webp-to-jpg', 'svg-to-jpg'].includes(slug)) {
+          if (['png-to-jpg', 'webp-to-jpg', 'svg-to-jpg', 'jpeg-to-jpg'].includes(slug)) {
             mimeType = 'image/jpeg';
             outputExt = '.jpg';
           } else if (['png-to-webp', 'jpg-to-webp', 'svg-to-webp'].includes(slug)) {
             mimeType = 'image/webp';
             outputExt = '.webp';
+          } else if (slug === 'jpg-to-jpeg') {
+            mimeType = 'image/jpeg';
+            outputExt = '.jpeg';
           }
           
           canvas.toBlob(blob => {

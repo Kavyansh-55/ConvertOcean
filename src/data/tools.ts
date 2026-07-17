@@ -6,7 +6,7 @@ import {
   salesTaxCalculatorContent,
   breakEvenCalculatorContent
 } from './business-content';
-import { seoContentMap } from './seo-content';
+import { seoContentMap, imageResizerContent, jpgToJpegContent, jpegToJpgContent } from './seo-content';
 
 export interface ToolData {
   slug: string;
@@ -160,7 +160,7 @@ const rawTools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' }
     ],
-    relatedTools: ['jpg-to-png', 'png-to-webp', 'webp-to-png', 'image-to-text']
+    relatedTools: ['jpg-to-png', 'image-resizer', 'png-to-webp', 'webp-to-png', 'image-to-text']
   },
   {
     slug: 'jpg-to-png',
@@ -176,7 +176,7 @@ const rawTools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' }
     ],
-    relatedTools: ['png-to-jpg', 'png-to-webp', 'webp-to-png', 'image-to-text']
+    relatedTools: ['png-to-jpg', 'image-resizer', 'png-to-webp', 'webp-to-png', 'image-to-text']
   },
   {
     slug: 'png-to-webp',
@@ -935,7 +935,72 @@ const rawTools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' }
     ],
-    relatedTools: ['pdf-to-txt', 'txt-to-pdf', 'merge-pdf', 'split-pdf']
+    relatedTools: ['pdf-to-txt', 'txt-to-pdf', 'merge-pdf', 'split-pdf', 'image-resizer']
+  },
+  {
+    slug: 'image-resizer',
+    name: 'Image Resizer',
+    title: 'Image Resizer - Exact Pixels or KB Size | ConvertOcean',
+    description: 'Resize images to exact pixel dimensions or compress photos to a target size in KB (20 KB, 50 KB) for exam forms and upload limits. 100% private, in-browser.',
+    headline: 'Image Resizer.',
+    subtitle: 'Resize images to exact pixel dimensions or compress them to a target file size in KB — built for exam forms, job portals, and upload limits.',
+    quickAnswer: 'To resize an image for a form upload, either set exact pixel dimensions (for example 200×230 for a photo or 140×60 for a signature) or set a target file size like 20 KB — the resizer re-encodes the image locally in your browser and shows the final size before you download. Nothing is uploaded.',
+    icon: '📐',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'How do I resize an image to 20 KB?', answer: 'Switch to "Compress to File Size" mode, enter 20 (or tap the 20 KB preset), and click Resize Image. The tool searches for the highest JPEG quality that fits under 20 KB — reducing dimensions automatically if needed — and shows the exact final size before you download.' },
+      { question: 'How do I resize a photo for an exam application form?', answer: 'Most exam portals want a photo around 200×230 pixels under 20–50 KB and a signature around 140×60 pixels under 10–20 KB. Use the matching preset (or enter the exact numbers from your form), pick JPG output, and if a size cap also applies, run the result through the file-size mode.' },
+      { question: 'Does resizing reduce image quality?', answer: 'Downscaling dimensions keeps photos looking sharp because pixels are averaged with high-quality smoothing. Compressing to a very small file size (like 10 KB) does visibly soften detail — that is the trade-off the form limit forces, and every tool faces the same physics.' },
+      { question: 'Should I choose JPG or PNG for the resized image?', answer: 'JPG for photographs and anything going into a form — it compresses several times smaller than PNG. Choose PNG only for graphics, screenshots with sharp text, or images that need a transparent background. PNG cannot be compressed to a target KB size, so file-size mode uses JPEG encoding.' },
+      { question: 'Why did the tool change my dimensions in file-size mode?', answer: 'If even the lowest JPEG quality cannot fit your image under the target at its current dimensions, the resizer steps the width and height down proportionally until the target is reachable. The result summary always shows the final dimensions and size before you download.' },
+      { question: 'Is my photo uploaded to a server?', answer: 'No. The image is read, resized, and re-encoded entirely inside your browser using the HTML5 canvas. Personal photos, ID pictures, and signatures never leave your device — and the tool keeps working offline once the page has loaded.' },
+      { question: 'What happens to transparent backgrounds when resizing to JPG?', answer: 'JPG has no transparency, so transparent regions are flattened onto a white background automatically — which is what application forms expect. To keep transparency, choose PNG or WebP as the output format instead.' }
+    ],
+    relatedTools: ['jpg-to-jpeg', 'png-to-jpg', 'image-to-pdf', 'merge-images'],
+    content: imageResizerContent
+  },
+  {
+    slug: 'jpg-to-jpeg',
+    name: 'JPG to JPEG',
+    title: 'Convert JPG to JPEG - Free & Private | ConvertOcean',
+    description: 'Convert JPG to JPEG in your browser — same image format, different extension. Get a clean .jpeg file for upload forms that demand it. No uploads, 100% private.',
+    headline: 'JPG to JPEG.',
+    subtitle: 'Re-encode a .jpg file to a clean, standards-compliant .jpeg — for upload forms and software that insist on the .jpeg extension.',
+    quickAnswer: 'JPG and JPEG are the same image format — only the file extension differs. To convert JPG to JPEG, upload your .jpg above and download the re-encoded .jpeg file. This satisfies upload forms that strictly whitelist the .jpeg extension, and the re-encoding also strips camera EXIF metadata for privacy.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Is there any difference between JPG and JPEG?', answer: 'No. Both extensions denote the identical JPEG image standard. The .jpg spelling exists because old DOS/Windows systems allowed only three-letter extensions. Quality, compression, and compatibility are exactly the same.' },
+      { question: 'Why does an upload form reject my .jpg but ask for .jpeg?', answer: 'Strict upload validators whitelist literal extension strings. If the developer configured "accept .jpeg only", a valid photo named photo.jpg is rejected purely because of its filename. Re-saving it with the .jpeg extension satisfies the check.' },
+      { question: 'Can I just rename the file from .jpg to .jpeg?', answer: 'Usually yes — the format is identical, so a rename is technically valid. This tool additionally re-encodes the image, which passes validators that inspect file contents and strips camera metadata (location, device info) as a privacy bonus.' },
+      { question: 'Does converting JPG to JPEG lose quality?', answer: 'The re-encode runs at 92% quality, which is visually indistinguishable for photos. If you only need the extension changed with zero re-encoding, renaming the file achieves that — but then metadata is kept and structural quirks are not repaired.' },
+      { question: 'Is my photo uploaded anywhere?', answer: 'No. The file is decoded and re-encoded on an HTML5 canvas inside your browser tab. Nothing is transmitted, logged, or stored — and the tool works offline once loaded.' }
+    ],
+    relatedTools: ['jpeg-to-jpg', 'image-resizer', 'png-to-jpg', 'jpg-to-png'],
+    content: jpgToJpegContent
+  },
+  {
+    slug: 'jpeg-to-jpg',
+    name: 'JPEG to JPG',
+    title: 'Convert JPEG to JPG - Free & Private | ConvertOcean',
+    description: 'Convert JPEG to JPG instantly in your browser. Re-encode and rename to the .jpg extension for picky software and upload forms. 100% private, no uploads.',
+    headline: 'JPEG to JPG.',
+    subtitle: 'Re-encode a .jpeg file to a clean .jpg — for upload whitelists, older software, and asset pipelines standardized on the three-letter extension.',
+    quickAnswer: 'JPEG and JPG are one and the same format — .jpg is just the old three-letter DOS spelling of .jpeg. To convert JPEG to JPG, upload your .jpeg above and download the re-encoded .jpg file, ready for upload forms and older software that only accept the .jpg extension.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Why do both .jpeg and .jpg exist for the same format?', answer: 'Early MS-DOS and Windows limited extensions to three characters, so .jpeg was truncated to .jpg on PCs while Mac and Unix kept the full spelling. The limit is long gone, but both spellings survived — .jpg is now the more common one.' },
+      { question: 'Will converting JPEG to JPG change my image quality or size?', answer: 'Visually no — the re-encode runs at 92% quality, indistinguishable for photographs. File size may shift slightly because the image is re-compressed and camera metadata is removed in the process.' },
+      { question: 'When do I actually need a .jpg extension instead of .jpeg?', answer: 'Three common cases: upload forms that whitelist only ".jpg", older Windows software hard-coded for three-letter extensions, and asset pipelines or scripts using *.jpg patterns that silently miss .jpeg files.' },
+      { question: 'Does this tool remove metadata from my photo?', answer: 'Yes, as a side effect of re-encoding through the browser canvas: EXIF data such as GPS location and camera model is stripped. For images headed to public uploads, that is usually a privacy improvement.' },
+      { question: 'Is the conversion done on my device?', answer: 'Yes — decoding and re-encoding happen entirely in your browser sandbox memory. No image data leaves your machine, no account is needed, and the tool functions offline after the page loads.' }
+    ],
+    relatedTools: ['jpg-to-jpeg', 'image-resizer', 'webp-to-jpg', 'png-to-jpg'],
+    content: jpegToJpgContent
   }
 ];
 
