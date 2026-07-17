@@ -1175,3 +1175,65 @@ export const seoContentMap: Record<string, SEOData> = {
     ]
   }
 };
+
+// Named content exports for tools added after the seoContentMap pattern (S8+):
+// referenced directly from tools.ts entries rather than via the override map.
+
+export const imageResizerContent = `
+<div class="content-card">
+  <h2>Resize Images to Exact Pixels or an Exact File Size.</h2>
+  <p>Image resizing is really two different jobs. Sometimes you need exact <strong>pixel dimensions</strong> — a 200×230 photo for an application form, a 1280×720 thumbnail. Just as often you need an exact <strong>file size</strong> — "photo must be under 20 KB" — and no photo editor tells you what quality setting produces 19.8 KB. This resizer does both: set dimensions with an aspect-ratio lock, or set a target size in KB and let the tool find the combination that hits it.</p>
+  <p>Everything runs in your browser — the photo, the resized result, and every step in between stay on your device.</p>
+
+  <h3>Why Upload Forms Reject Your Photos.</h3>
+  <p>Exam portals, job applications, visa systems, and government forms enforce strict upload rules from both directions: exact or maximum dimensions (commonly 200×230 px for photographs, 140×60 px for signatures) <em>and</em> a file-size cap (10, 20, or 50 KB are typical). A phone camera photo is 3–8 <em>megabytes</em> — often two hundred times over the limit — so the form rejects it instantly. The fix is always the same two steps this tool performs: scale the pixels down, then compress the encoding until the byte count fits.</p>
+
+  <h3>How the "Compress to File Size" Mode Works.</h3>
+  <p>Enter a target like 20 KB and the tool searches for the highest JPEG quality that still fits under it, re-encoding several times and measuring each attempt. If even the lowest quality overshoots — common when a huge photo targets a tiny size — it steps the dimensions down and searches again. You see the final dimensions and exact size <em>before</em> downloading, so there is no upload-reject-retry loop with the form. If a target is physically unreachable, the tool says so instead of silently failing.</p>
+
+  <h3>Getting the Best Results.</h3>
+  <ul>
+    <li><strong>Start from the original photo,</strong> not a screenshot of it — every generation loses quality.</li>
+    <li><strong>Use JPG output for photographs and forms</strong> — it compresses far smaller than PNG. Keep PNG only for graphics that need transparency or razor-sharp line art.</li>
+    <li><strong>Crop before resizing</strong> when a form wants a specific ratio like 200×230 — resizing a 4:3 photo to a portrait box will squash it, so crop to the shape first.</li>
+    <li><strong>Transparent sources going to JPG</strong> are flattened onto white automatically, which is what forms expect.</li>
+  </ul>
+  <p>Once resized, forms sometimes also dictate the extension spelling — <a href="/jpg-to-jpeg/">JPG to JPEG</a> handles that in one click. Batch several resized images into one document with <a href="/image-to-pdf/">Image to PDF</a>, convert graphics with <a href="/png-to-jpg/">PNG to JPG</a>, or read the full format trade-offs in the <a href="/guides/png-vs-jpg/">PNG vs JPG guide</a>.</p>
+</div>
+`;
+
+export const jpgToJpegContent = `
+<div class="content-card">
+  <h2>JPG to JPEG: Same Format, Different Extension — Here Is the Truth.</h2>
+  <p>JPG and JPEG are <strong>the exact same image format</strong> — the JPEG standard (Joint Photographic Experts Group), written with two different file extensions. There is no quality difference, no size difference, and no technical conversion happening between them. What actually differs is the label on the file — and unfortunately, some upload forms and older systems check that label strictly.</p>
+
+  <h3>Why a Form Might Demand ".jpeg" Specifically.</h3>
+  <p>Poorly configured upload validators whitelist literal extension strings. If a developer wrote the rule as "accept only .jpeg", a perfectly valid photo named <code>photo.jpg</code> gets rejected — not because of what the file is, but because of what it is called. Application portals, CMS platforms, and legacy enterprise software are the usual offenders. Arguing with the form is not an option; giving it the filename it wants takes two seconds.</p>
+
+  <h3>What This Tool Actually Does.</h3>
+  <p>Honesty first: simply renaming <code>photo.jpg</code> to <code>photo.jpeg</code> is technically valid, and for many forms that is enough. This tool goes one step further — it decodes your image and re-encodes it as a fresh, standards-compliant JPEG with the .jpeg extension. That matters in two cases: validators that inspect the file's internal structure (not just the name), and situations where you want the camera metadata (location, device details) stripped — re-encoding through the browser canvas removes EXIF data as a side effect, which is usually desirable for uploads.</p>
+
+  <h3>Before You Upload.</h3>
+  <p>Extension problems and size problems travel together — the same picky forms usually enforce a KB limit too. If the portal wants your .jpeg under 20 KB or at exact dimensions, run it through the <a href="/image-resizer/">Image Resizer</a> first. Need the opposite rename? Use <a href="/jpeg-to-jpg/">JPEG to JPG</a>. Converting from a different format entirely? <a href="/png-to-jpg/">PNG to JPG</a> handles graphics and screenshots. Everything processes locally in your browser — your photos are never uploaded to us or anyone else.</p>
+</div>
+`;
+
+export const jpegToJpgContent = `
+<div class="content-card">
+  <h2>JPEG to JPG — and Why Two Spellings of One Format Exist at All.</h2>
+  <p>The .jpeg and .jpg extensions point to the identical format. The split is a fossil from early computing: MS-DOS and Windows 3.x limited file extensions to <strong>three characters</strong>, so ".jpeg" — the standard's real name — was truncated to ".jpg" on PCs, while Mac and Unix systems kept the full spelling. The three-letter limit died decades ago, but the .jpg habit stuck; today it is the more common spelling, and some software still expects it exclusively.</p>
+
+  <h3>When You Actually Need the .jpg Spelling.</h3>
+  <ul>
+    <li><strong>Upload whitelists</strong> that accept ".jpg" but reject ".jpeg" — the mirror image of the problem on our <a href="/jpg-to-jpeg/">JPG to JPEG</a> page, and just as arbitrary.</li>
+    <li><strong>Older Windows software and scripts</strong> hard-coded around three-letter extensions.</li>
+    <li><strong>Asset pipeline consistency:</strong> mixed .jpeg/.jpg files break naive build scripts and pattern matches (<code>*.jpg</code> misses half your images) — normalizing to one spelling prevents silent gaps.</li>
+  </ul>
+
+  <h3>What Happens to Your Image.</h3>
+  <p>The tool decodes your .jpeg and re-encodes it as a clean baseline JPEG saved with the .jpg extension. Pixels and visible quality carry straight through at high fidelity; camera EXIF metadata (GPS location, device model) is stripped in the process — a privacy bonus when the image is headed for a public upload. A plain rename would also work in most cases, but the re-encode guarantees the file passes validators that inspect content as well as name.</p>
+
+  <h3>Related Fixes.</h3>
+  <p>If the destination also enforces dimensions or a KB cap — exam portals and job forms usually do — the <a href="/image-resizer/">Image Resizer</a> handles pixel sizes and exact file-size targets in the same client-side way. Downloaded a modern .webp image that some software refuses? <a href="/webp-to-jpg/">WebP to JPG</a> produces the universally accepted format. All processing runs in your browser sandbox: no uploads, no accounts, works offline once loaded.</p>
+</div>
+`;

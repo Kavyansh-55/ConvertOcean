@@ -1,0 +1,476 @@
+---
+import CategoryIcon from '../CategoryIcon.astro';
+const { slug, headline, subtitle } = Astro.props;
+---
+
+<style>
+  .resizer-workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+  }
+  @media (max-width: 900px) {
+    .resizer-workspace { grid-template-columns: 1fr; }
+  }
+  .resizer-panel {
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  }
+  .resizer-panel-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--colors-mute);
+    border-bottom: 1px solid var(--colors-hairline);
+    padding-bottom: var(--spacing-xs);
+  }
+  .mode-tabs {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+  }
+  .mode-tab {
+    padding: 8px 16px;
+    border-radius: var(--rounded-pill);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas);
+    color: var(--colors-body);
+    transition: all 0.2s;
+  }
+  .mode-tab:hover { border-color: var(--colors-hairline-strong); }
+  .mode-tab.active {
+    background-color: var(--colors-ink);
+    color: var(--colors-canvas);
+    border-color: var(--colors-ink);
+  }
+  .preset-chips {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+  }
+  .preset-chip {
+    padding: 5px 12px;
+    border-radius: var(--rounded-pill);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas-soft);
+    color: var(--colors-body);
+    transition: all 0.2s;
+  }
+  .preset-chip:hover {
+    border-color: var(--colors-link);
+    color: var(--colors-link);
+  }
+  .dim-row {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: flex-end;
+  }
+  .dim-row .form-group { flex: 1; }
+  .lock-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--colors-body);
+    cursor: pointer;
+    user-select: none;
+    padding-bottom: 10px;
+    white-space: nowrap;
+  }
+  .img-preview-box {
+    max-width: 100%;
+    max-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--rounded-md);
+    border: 1px solid var(--colors-hairline);
+    background: #1e1e1e;
+    overflow: hidden;
+  }
+  .img-preview {
+    max-width: 100%;
+    max-height: 260px;
+    object-fit: contain;
+  }
+  .result-summary {
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-md);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--colors-body);
+    line-height: 1.8;
+  }
+  .result-summary strong { color: var(--colors-ink); }
+  .result-highlight { color: var(--colors-link); font-weight: 600; }
+</style>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing image…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon"><CategoryIcon icon="📐" width="40" height="40" /></div>
+  <div class="upload-text-primary">Drag and drop an image here, or click to browse</div>
+  <div class="upload-text-secondary">JPG, JPEG, PNG, or WebP (Max 15MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept="image/jpeg,image/jpg,image/png,image/webp" />
+</div>
+
+<div class="resizer-workspace" id="rzWorkspace" style="display: none;">
+  <div class="resizer-panel">
+    <div class="resizer-panel-title">Resize Settings</div>
+
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="dimensions" id="rzTabDims">Resize by Dimensions</button>
+      <button class="mode-tab" data-mode="filesize" id="rzTabSize">Compress to File Size</button>
+    </div>
+
+    <div id="rzDimFields">
+      <div class="resizer-panel-title" style="border: none; padding: 0;">Common Form Presets</div>
+      <div class="preset-chips" style="margin-bottom: var(--spacing-sm);">
+        <button class="preset-chip" data-w="200" data-h="230">Form Photo 200×230</button>
+        <button class="preset-chip" data-w="140" data-h="60">Signature 140×60</button>
+        <button class="preset-chip" data-w="1280" data-h="720">HD 1280×720</button>
+        <button class="preset-chip" data-w="1920" data-h="1080">Full HD 1920×1080</button>
+      </div>
+      <div class="dim-row">
+        <div class="form-group">
+          <label class="form-label" for="rzWidth">Width (px)</label>
+          <input type="number" id="rzWidth" class="form-input" min="1" max="10000" step="1" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rzHeight">Height (px)</label>
+          <input type="number" id="rzHeight" class="form-input" min="1" max="10000" step="1" />
+        </div>
+        <label class="lock-toggle" for="rzLock">
+          <input type="checkbox" id="rzLock" checked /> Lock ratio
+        </label>
+      </div>
+    </div>
+
+    <div id="rzSizeFields" style="display: none;">
+      <div class="resizer-panel-title" style="border: none; padding: 0;">Common Upload Limits</div>
+      <div class="preset-chips" style="margin-bottom: var(--spacing-sm);">
+        <button class="preset-chip" data-kb="10">10 KB</button>
+        <button class="preset-chip" data-kb="20">20 KB</button>
+        <button class="preset-chip" data-kb="50">50 KB</button>
+        <button class="preset-chip" data-kb="100">100 KB</button>
+        <button class="preset-chip" data-kb="200">200 KB</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="rzTargetKB">Target File Size (KB)</label>
+        <input type="number" id="rzTargetKB" class="form-input" value="20" min="2" max="10000" step="1" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="rzFormat">Output Format</label>
+      <select id="rzFormat" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none; width: 100%;">
+        <option value="jpg" selected>JPG (.jpg) — smallest, best for forms</option>
+        <option value="jpeg">JPEG (.jpeg) — same format, .jpeg extension</option>
+        <option value="png">PNG (.png) — lossless, larger files</option>
+        <option value="webp">WebP (.webp) — modern, very small</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="rzQualityGroup">
+      <label class="form-label" for="rzQuality">Quality: <span id="rzQualityVal">90</span>%</label>
+      <input type="range" id="rzQuality" min="30" max="100" value="90" step="1" style="width: 100%;" />
+    </div>
+
+    <button class="button button-primary" id="rzApply" style="align-self: flex-start;">Resize Image</button>
+  </div>
+
+  <div class="resizer-panel">
+    <div class="resizer-panel-title">Preview & Result</div>
+    <div class="img-preview-box">
+      <img id="rzPreview" class="img-preview" alt="Resized image preview" />
+    </div>
+    <div class="result-summary" id="rzSummary">Upload an image to begin.</div>
+    <div class="button-group">
+      <button class="button button-primary" id="rzDownload" disabled>Download</button>
+      <button class="button button-danger" id="rzClear">Clear</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const $ = id => document.getElementById(id);
+    const dropZone = $('dropZone'), fileInput = $('fileInput');
+    let mode = 'dimensions';
+    let srcImg = null, srcW = 0, srcH = 0, srcBytes = 0, srcName = '';
+    let outBlob = null, outW = 0, outH = 0;
+
+    function showError(msg) {
+      $('errorMessage').textContent = msg;
+      $('errorBanner').style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function hideError() { $('errorBanner').style.display = 'none'; }
+    function showProgress(pct, label) {
+      $('progressOverlay').style.display = 'flex';
+      $('progressBarFill').style.width = pct + '%';
+      $('progressLabel').textContent = label;
+    }
+    function hideProgress() { $('progressOverlay').style.display = 'none'; }
+    function fmtKB(bytes) {
+      return bytes < 1024 * 1024 ? (bytes / 1024).toFixed(1) + ' KB' : (bytes / 1024 / 1024).toFixed(2) + ' MB';
+    }
+
+    // Drag & drop
+    ['dragenter', 'dragover'].forEach(ev => dropZone.addEventListener(ev, e => {
+      e.preventDefault(); e.stopPropagation(); dropZone.classList.add('dragover');
+    }));
+    ['dragleave', 'drop'].forEach(ev => dropZone.addEventListener(ev, e => {
+      e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('dragover');
+    }));
+    dropZone.addEventListener('drop', e => {
+      const f = Array.from(e.dataTransfer.files)[0];
+      if (f) loadFile(f);
+    });
+    fileInput.addEventListener('change', e => {
+      const f = e.target.files[0];
+      if (f) loadFile(f);
+    });
+
+    function loadFile(file) {
+      hideError();
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
+        showError('Please upload a JPG, JPEG, PNG, or WebP image.');
+        return;
+      }
+      if (file.size > 15 * 1024 * 1024) {
+        showError('File exceeds the 15MB limit.');
+        return;
+      }
+      srcName = file.name; srcBytes = file.size;
+      showProgress(40, 'Reading image…');
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          srcImg = img; srcW = img.width; srcH = img.height;
+          $('rzWidth').value = srcW;
+          $('rzHeight').value = srcH;
+          $('rzPreview').src = e.target.result;
+          $('rzSummary').innerHTML = `<strong>Original:</strong> ${srcW}×${srcH} px · ${fmtKB(srcBytes)}<br/>Choose settings and click <strong>Resize Image</strong>.`;
+          dropZone.style.display = 'none';
+          $('rzWorkspace').style.display = 'grid';
+          hideProgress();
+        };
+        img.onerror = () => { showError('Failed to parse image data.'); hideProgress(); };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Mode tabs
+    document.querySelectorAll('.mode-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        mode = tab.dataset.mode;
+        $('rzDimFields').style.display = mode === 'dimensions' ? 'block' : 'none';
+        $('rzSizeFields').style.display = mode === 'filesize' ? 'block' : 'none';
+        // KB targeting requires a lossy format; switch away from PNG automatically
+        if (mode === 'filesize' && $('rzFormat').value === 'png') $('rzFormat').value = 'jpg';
+      });
+    });
+
+    // Presets
+    document.querySelectorAll('.preset-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (chip.dataset.kb) {
+          $('rzTargetKB').value = chip.dataset.kb;
+        } else {
+          $('rzLock').checked = false;
+          $('rzWidth').value = chip.dataset.w;
+          $('rzHeight').value = chip.dataset.h;
+        }
+      });
+    });
+
+    // Aspect lock
+    $('rzWidth').addEventListener('input', () => {
+      if ($('rzLock').checked && srcW > 0) {
+        const w = parseInt($('rzWidth').value) || 0;
+        if (w > 0) $('rzHeight').value = Math.max(1, Math.round(w * srcH / srcW));
+      }
+    });
+    $('rzHeight').addEventListener('input', () => {
+      if ($('rzLock').checked && srcH > 0) {
+        const h = parseInt($('rzHeight').value) || 0;
+        if (h > 0) $('rzWidth').value = Math.max(1, Math.round(h * srcW / srcH));
+      }
+    });
+
+    $('rzQuality').addEventListener('input', () => {
+      $('rzQualityVal').textContent = $('rzQuality').value;
+    });
+    $('rzFormat').addEventListener('change', () => {
+      $('rzQualityGroup').style.display = $('rzFormat').value === 'png' ? 'none' : 'block';
+    });
+
+    function drawToCanvas(w, h, encodeMime) {
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      // JPEG has no alpha — flatten transparent sources onto white like upload forms expect
+      if (encodeMime === 'image/jpeg') {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+      }
+      ctx.drawImage(srcImg, 0, 0, w, h);
+      return canvas;
+    }
+
+    function toBlobAsync(canvas, mime, quality) {
+      return new Promise(resolve => canvas.toBlob(resolve, mime, quality));
+    }
+
+    async function compressToTarget(targetBytes, mime) {
+      const QMAX = 0.98;
+      // If maximum quality already fits under the target, that IS the best answer —
+      // the target is a ceiling, never a size to inflate toward.
+      const fullCanvas = drawToCanvas(srcW, srcH, mime);
+      const maxBlob = await toBlobAsync(fullCanvas, mime, QMAX);
+      if (maxBlob && maxBlob.size <= targetBytes) {
+        return { blob: maxBlob, w: srcW, h: srcH, alreadyFits: true };
+      }
+      // Binary-search quality at current dimensions; downscale if even low quality overshoots
+      let w = srcW, h = srcH;
+      for (let scaleStep = 0; scaleStep < 8; scaleStep++) {
+        const canvas = scaleStep === 0 ? fullCanvas : drawToCanvas(w, h, mime);
+        let lo = 0.05, hi = QMAX, best = null;
+        for (let i = 0; i < 10; i++) {
+          const q = (lo + hi) / 2;
+          const blob = await toBlobAsync(canvas, mime, q);
+          if (!blob) break;
+          if (blob.size <= targetBytes) { best = blob; lo = q; } else { hi = q; }
+        }
+        if (best) return { blob: best, w, h };
+        // Still too big at minimum quality — shrink dimensions and retry
+        const lowest = await toBlobAsync(canvas, mime, 0.05);
+        const ratio = Math.sqrt(targetBytes / (lowest ? lowest.size : targetBytes * 4)) * 0.85;
+        w = Math.max(16, Math.round(w * ratio));
+        h = Math.max(16, Math.round(h * ratio));
+      }
+      const finalCanvas = drawToCanvas(w, h, mime);
+      const blob = await toBlobAsync(finalCanvas, mime, 0.05);
+      return { blob, w, h };
+    }
+
+    $('rzApply').addEventListener('click', async () => {
+      if (!srcImg) return;
+      hideError();
+      try {
+        let fmt = $('rzFormat').value;
+        // KB targeting needs a lossy encoder — PNG has no quality dial
+        if (mode === 'filesize' && fmt === 'png') {
+          fmt = 'jpg';
+          $('rzFormat').value = 'jpg';
+        }
+        const mime = fmt === 'png' ? 'image/png' : fmt === 'webp' ? 'image/webp' : 'image/jpeg';
+
+        if (mode === 'dimensions') {
+          const w = parseInt($('rzWidth').value) || 0;
+          const h = parseInt($('rzHeight').value) || 0;
+          if (w < 1 || h < 1 || w > 10000 || h > 10000) {
+            showError('Enter a width and height between 1 and 10000 pixels.');
+            return;
+          }
+          showProgress(60, 'Resizing image…');
+          const canvas = drawToCanvas(w, h, mime);
+          const q = parseInt($('rzQuality').value) / 100;
+          outBlob = await toBlobAsync(canvas, mime, fmt === 'png' ? undefined : q);
+          outW = w; outH = h;
+        } else {
+          const targetKB = parseFloat($('rzTargetKB').value) || 0;
+          if (targetKB < 2) {
+            showError('Enter a target size of at least 2 KB.');
+            return;
+          }
+          showProgress(60, 'Compressing to ' + targetKB + ' KB…');
+          const res = await compressToTarget(targetKB * 1024, mime);
+          outBlob = res.blob; outW = res.w; outH = res.h;
+          window.__rzAlreadyFits = !!res.alreadyFits;
+        }
+
+        if (!outBlob) { showError('Compression failed — try a different output format.'); return; }
+        $('rzPreview').src = URL.createObjectURL(outBlob);
+        let sizeNote = '';
+        if (mode === 'filesize') {
+          const targetB = (parseFloat($('rzTargetKB').value) || 0) * 1024;
+          if (outBlob.size > targetB) {
+            sizeNote = '<br/><span class="result-highlight">Smallest achievable for this image.</span>';
+          } else if (window.__rzAlreadyFits) {
+            sizeNote = '<br/>✅ Already under your ' + $('rzTargetKB').value + ' KB limit at <strong>maximum quality</strong> — the target is an upper limit, so smaller is better, not a problem.';
+          } else {
+            sizeNote = '<br/>✅ Fits under your ' + $('rzTargetKB').value + ' KB limit at the highest quality that fits.';
+          }
+        }
+        $('rzSummary').innerHTML =
+          `<strong>Original:</strong> ${srcW}×${srcH} px · ${fmtKB(srcBytes)}<br/>` +
+          `<strong>Result:</strong> <span class="result-highlight">${outW}×${outH} px · ${fmtKB(outBlob.size)}</span>${sizeNote}`;
+        $('rzDownload').disabled = false;
+      } catch (err) {
+        showError('Something went wrong while processing: ' + (err && err.message ? err.message : err));
+      } finally {
+        hideProgress();
+      }
+    });
+
+    $('rzDownload').addEventListener('click', () => {
+      if (!outBlob) return;
+      const fmt = $('rzFormat').value;
+      const ext = fmt === 'jpeg' ? 'jpeg' : fmt;
+      const outName = srcName.replace(/\.[^/.]+$/, '') + '-resized.' + ext;
+      window.downloadBlob(outBlob, outName, outBlob.type);
+    });
+
+    $('rzClear').addEventListener('click', () => {
+      srcImg = null; outBlob = null;
+      $('rzWorkspace').style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+      $('rzDownload').disabled = true;
+      $('rzSummary').textContent = 'Upload an image to begin.';
+    });
+  })();
+</script>

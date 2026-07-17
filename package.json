@@ -17,6 +17,7 @@
     "astro": "^6.4.8"
   },
   "devDependencies": {
+    "puppeteer-core": "^25.3.0",
     "wrangler": "^4.100.0"
   }
 }

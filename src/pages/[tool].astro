@@ -35,6 +35,7 @@ import MergePptx from '../components/tools/MergePptx.astro';
 import SplitPptx from '../components/tools/SplitPptx.astro';
 import WordCounter from '../components/tools/WordCounter.astro';
 import JsonFormatter from '../components/tools/JsonFormatter.astro';
+import ImageResizer from '../components/tools/ImageResizer.astro';
 
 export function getStaticPaths() {
   return tools.map(t => ({ params: { tool: t.slug } }));
@@ -109,7 +110,10 @@ const toolsMap: Record<string, any> = {
   'split-pptx': SplitPptx,
   'word-counter': WordCounter,
   'json-formatter': JsonFormatter,
-  'image-to-pdf': ImageToPdf
+  'image-to-pdf': ImageToPdf,
+  'image-resizer': ImageResizer,
+  'jpg-to-jpeg': ImageTool,
+  'jpeg-to-jpg': ImageTool
 };
 
 const ToolComponent = toolsMap[toolData.slug];
