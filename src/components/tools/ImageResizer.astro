@@ -345,15 +345,14 @@ const { slug, headline, subtitle } = Astro.props;
       $('rzQualityGroup').style.display = $('rzFormat').value === 'png' ? 'none' : 'block';
     });
 
-    function drawToCanvas(w, h) {
+    function drawToCanvas(w, h, encodeMime) {
       const canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       const ctx = canvas.getContext('2d');
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
       // JPEG has no alpha — flatten transparent sources onto white like upload forms expect
-      const fmt = $('rzFormat').value;
-      if (fmt === 'jpg' || fmt === 'jpeg') {
+      if (encodeMime === 'image/jpeg') {
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, w, h);
       }
@@ -368,10 +367,10 @@ const { slug, headline, subtitle } = Astro.props;
     async function compressToTarget(targetBytes, mime) {
       // Binary-search quality at current dimensions; downscale if even low quality overshoots
       let w = srcW, h = srcH;
-      for (let scaleStep = 0; scaleStep < 6; scaleStep++) {
-        const canvas = drawToCanvas(w, h);
+      for (let scaleStep = 0; scaleStep < 8; scaleStep++) {
+        const canvas = drawToCanvas(w, h, mime);
         let lo = 0.05, hi = 0.95, best = null;
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 10; i++) {
           const q = (lo + hi) / 2;
           const blob = await toBlobAsync(canvas, mime, q);
           if (!blob) break;
@@ -380,11 +379,11 @@ const { slug, headline, subtitle } = Astro.props;
         if (best) return { blob: best, w, h };
         // Still too big at minimum quality — shrink dimensions and retry
         const lowest = await toBlobAsync(canvas, mime, 0.05);
-        const ratio = Math.sqrt(targetBytes / (lowest ? lowest.size : targetBytes * 4)) * 0.9;
+        const ratio = Math.sqrt(targetBytes / (lowest ? lowest.size : targetBytes * 4)) * 0.85;
         w = Math.max(16, Math.round(w * ratio));
         h = Math.max(16, Math.round(h * ratio));
       }
-      const finalCanvas = drawToCanvas(w, h);
+      const finalCanvas = drawToCanvas(w, h, mime);
       const blob = await toBlobAsync(finalCanvas, mime, 0.05);
       return { blob, w, h };
     }
@@ -392,41 +391,51 @@ const { slug, headline, subtitle } = Astro.props;
     $('rzApply').addEventListener('click', async () => {
       if (!srcImg) return;
       hideError();
-      const fmt = $('rzFormat').value;
-      const mime = fmt === 'png' ? 'image/png' : fmt === 'webp' ? 'image/webp' : 'image/jpeg';
+      try {
+        let fmt = $('rzFormat').value;
+        // KB targeting needs a lossy encoder — PNG has no quality dial
+        if (mode === 'filesize' && fmt === 'png') {
+          fmt = 'jpg';
+          $('rzFormat').value = 'jpg';
+        }
+        const mime = fmt === 'png' ? 'image/png' : fmt === 'webp' ? 'image/webp' : 'image/jpeg';
 
-      if (mode === 'dimensions') {
-        const w = parseInt($('rzWidth').value) || 0;
-        const h = parseInt($('rzHeight').value) || 0;
-        if (w < 1 || h < 1 || w > 10000 || h > 10000) {
-          showError('Enter a width and height between 1 and 10000 pixels.');
-          return;
+        if (mode === 'dimensions') {
+          const w = parseInt($('rzWidth').value) || 0;
+          const h = parseInt($('rzHeight').value) || 0;
+          if (w < 1 || h < 1 || w > 10000 || h > 10000) {
+            showError('Enter a width and height between 1 and 10000 pixels.');
+            return;
+          }
+          showProgress(60, 'Resizing image…');
+          const canvas = drawToCanvas(w, h, mime);
+          const q = parseInt($('rzQuality').value) / 100;
+          outBlob = await toBlobAsync(canvas, mime, fmt === 'png' ? undefined : q);
+          outW = w; outH = h;
+        } else {
+          const targetKB = parseFloat($('rzTargetKB').value) || 0;
+          if (targetKB < 2) {
+            showError('Enter a target size of at least 2 KB.');
+            return;
+          }
+          showProgress(60, 'Compressing to ' + targetKB + ' KB…');
+          const res = await compressToTarget(targetKB * 1024, mime);
+          outBlob = res.blob; outW = res.w; outH = res.h;
         }
-        showProgress(60, 'Resizing image…');
-        const canvas = drawToCanvas(w, h);
-        const q = parseInt($('rzQuality').value) / 100;
-        outBlob = await toBlobAsync(canvas, mime, fmt === 'png' ? undefined : q);
-        outW = w; outH = h;
-      } else {
-        const targetKB = parseFloat($('rzTargetKB').value) || 0;
-        if (targetKB < 2) {
-          showError('Enter a target size of at least 2 KB.');
-          return;
-        }
-        showProgress(60, 'Compressing to ' + targetKB + ' KB…');
-        const res = await compressToTarget(targetKB * 1024, mime === 'image/png' ? 'image/jpeg' : mime);
-        outBlob = res.blob; outW = res.w; outH = res.h;
+
+        if (!outBlob) { showError('Compression failed — try a different output format.'); return; }
+        $('rzPreview').src = URL.createObjectURL(outBlob);
+        const sizeNote = mode === 'filesize' && outBlob.size > (parseFloat($('rzTargetKB').value) || 0) * 1024
+          ? ' <span class="result-highlight">(smallest achievable)</span>' : '';
+        $('rzSummary').innerHTML =
+          `<strong>Original:</strong> ${srcW}×${srcH} px · ${fmtKB(srcBytes)}<br/>` +
+          `<strong>Result:</strong> <span class="result-highlight">${outW}×${outH} px · ${fmtKB(outBlob.size)}</span>${sizeNote}`;
+        $('rzDownload').disabled = false;
+      } catch (err) {
+        showError('Something went wrong while processing: ' + (err && err.message ? err.message : err));
+      } finally {
+        hideProgress();
       }
-
-      hideProgress();
-      if (!outBlob) { showError('Compression failed — try a different format.'); return; }
-      $('rzPreview').src = URL.createObjectURL(outBlob);
-      const sizeNote = mode === 'filesize' && outBlob.size > (parseFloat($('rzTargetKB').value) || 0) * 1024
-        ? ' <span class="result-highlight">(smallest achievable)</span>' : '';
-      $('rzSummary').innerHTML =
-        `<strong>Original:</strong> ${srcW}×${srcH} px · ${fmtKB(srcBytes)}<br/>` +
-        `<strong>Result:</strong> <span class="result-highlight">${outW}×${outH} px · ${fmtKB(outBlob.size)}</span>${sizeNote}`;
-      $('rzDownload').disabled = false;
     });
 
     $('rzDownload').addEventListener('click', () => {
