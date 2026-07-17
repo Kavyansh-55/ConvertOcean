@@ -365,11 +365,19 @@ const { slug, headline, subtitle } = Astro.props;
     }
 
     async function compressToTarget(targetBytes, mime) {
+      const QMAX = 0.98;
+      // If maximum quality already fits under the target, that IS the best answer —
+      // the target is a ceiling, never a size to inflate toward.
+      const fullCanvas = drawToCanvas(srcW, srcH, mime);
+      const maxBlob = await toBlobAsync(fullCanvas, mime, QMAX);
+      if (maxBlob && maxBlob.size <= targetBytes) {
+        return { blob: maxBlob, w: srcW, h: srcH, alreadyFits: true };
+      }
       // Binary-search quality at current dimensions; downscale if even low quality overshoots
       let w = srcW, h = srcH;
       for (let scaleStep = 0; scaleStep < 8; scaleStep++) {
-        const canvas = drawToCanvas(w, h, mime);
-        let lo = 0.05, hi = 0.95, best = null;
+        const canvas = scaleStep === 0 ? fullCanvas : drawToCanvas(w, h, mime);
+        let lo = 0.05, hi = QMAX, best = null;
         for (let i = 0; i < 10; i++) {
           const q = (lo + hi) / 2;
           const blob = await toBlobAsync(canvas, mime, q);
@@ -421,12 +429,22 @@ const { slug, headline, subtitle } = Astro.props;
           showProgress(60, 'Compressing to ' + targetKB + ' KB…');
           const res = await compressToTarget(targetKB * 1024, mime);
           outBlob = res.blob; outW = res.w; outH = res.h;
+          window.__rzAlreadyFits = !!res.alreadyFits;
         }
 
         if (!outBlob) { showError('Compression failed — try a different output format.'); return; }
         $('rzPreview').src = URL.createObjectURL(outBlob);
-        const sizeNote = mode === 'filesize' && outBlob.size > (parseFloat($('rzTargetKB').value) || 0) * 1024
-          ? ' <span class="result-highlight">(smallest achievable)</span>' : '';
+        let sizeNote = '';
+        if (mode === 'filesize') {
+          const targetB = (parseFloat($('rzTargetKB').value) || 0) * 1024;
+          if (outBlob.size > targetB) {
+            sizeNote = '<br/><span class="result-highlight">Smallest achievable for this image.</span>';
+          } else if (window.__rzAlreadyFits) {
+            sizeNote = '<br/>✅ Already under your ' + $('rzTargetKB').value + ' KB limit at <strong>maximum quality</strong> — the target is an upper limit, so smaller is better, not a problem.';
+          } else {
+            sizeNote = '<br/>✅ Fits under your ' + $('rzTargetKB').value + ' KB limit at the highest quality that fits.';
+          }
+        }
         $('rzSummary').innerHTML =
           `<strong>Original:</strong> ${srcW}×${srcH} px · ${fmtKB(srcBytes)}<br/>` +
           `<strong>Result:</strong> <span class="result-highlight">${outW}×${outH} px · ${fmtKB(outBlob.size)}</span>${sizeNote}`;
