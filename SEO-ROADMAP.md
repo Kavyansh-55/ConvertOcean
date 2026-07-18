@@ -76,6 +76,7 @@ _(routine appends here as it finds opportunities)_
 - Consider self-hosting Geist font (brand fidelity per DESIGN.md) vs. current Inter — perf tradeoff.
 - ~~Reconsider AdSense on thin/low-traffic tool pages~~ → superseded by the AdSense recovery track above.
 - Proper 1200×630 OG image (current og:image is a 180×180 icon — looks broken when shared).
+- **Monetization ladder (decided 2026-07-18):** stay with AdSense below 10k pageviews/mo (only viable option; resubmit ~Jul 30). Skip Ezoic (script weight vs. CWV, negligible income at this scale). TRIGGER at 10k pageviews/mo → apply Journey by Mediavine (or Monumetric) and replace AdSense. TRIGGER at 50k sessions/mo → apply Mediavine; 100k+ US-heavy → Raptive. Note: exam-form/resizer audience skews India → lower RPMs everywhere; volume compensates.
 - **S10 input (from S6 audit):** 26 tools still have zero guide cards — mostly the excel-converter long-tail (xlsx-to-csv, csv-to-xlsx, json-to-xlsx, xml-to-*…) and the merge/split document family (txt/word/pptx/image). Each category needs 1–2 new guides to close the "every tool ≥2 guides" target honestly.
 - Quick answers now cover 14 high-value pages; extend to remaining tool pages gradually as unique copy can be written (never boilerplate).
 - **vs batch 2 (post-S10):** add remaining top competitors — iLoveIMG (image-tools fit with the new resizer), PDF24, Sejda (3-free-tasks/day angle), TinyWow. Same rules: fair, factual, fairness section, hedged pricing. FreeConvert deprioritized (mostly video — weak fit).
