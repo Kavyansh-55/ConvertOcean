@@ -643,5 +643,347 @@ export const guides: GuideData[] = [
         answer: 'The practical limit is your device\'s RAM, since the file is processed in browser tab memory. Tabular exports up to roughly 100,000 rows convert in seconds. For multi-gigabyte datasets, a streaming command-line pipeline is the better tool.'
       }
     ]
+  },
+  {
+    slug: 'how-to-calculate-break-even-point',
+    title: 'How to Calculate Break-Even Point: Formula & Examples | ConvertOcean',
+    description: 'Learn the break-even point formula step by step — contribution margin, worked café example, target-profit volumes, and the three levers that lower your break-even.',
+    h1: 'How to Calculate Break-Even Point (Formula + Examples).',
+    readTime: '6 min read',
+    publishDate: 'July 18, 2026',
+    relatedTools: ['break-even-calculator', 'profit-margin-calculator', 'percentage-calculator', 'invoice-generator'],
+    relatedGuides: ['how-to-calculate-profit-margin'],
+    intro: 'Break-even point is the sales volume where your revenue exactly covers your costs — the most important number a new business can know, and one of the easiest to calculate once you split your costs correctly. This guide works through the formula with a café example, shows how to plan for a target profit, and covers the three levers that bring a too-high break-even down.',
+    contentHtml: `
+      <h2>The Break-Even Formula</h2>
+      <blockquote><strong>Break-Even Units = Fixed Costs ÷ (Price per Unit − Variable Cost per Unit)</strong></blockquote>
+      <p>The bracket has its own name — <strong>contribution margin</strong> — because it is what each sale contributes toward covering your fixed costs. Once cumulative contributions equal your fixed costs, you have broken even; every unit after that is profit.</p>
+      <p>Everything therefore depends on classifying costs correctly:</p>
+      <ul>
+        <li><strong>Fixed costs</strong> do not change with sales volume: rent, salaries, insurance, equipment leases, software subscriptions.</li>
+        <li><strong>Variable costs</strong> occur per unit sold: ingredients or materials, packaging, payment-processing fees, sales commissions.</li>
+      </ul>
+      <p>Watch for costs with both parts — a card processor's monthly fee is fixed while its per-transaction percentage is variable. Split them, or your break-even will look better than it is.</p>
+
+      <h2>Worked Example: A Small Café</h2>
+      <div class="content-card">
+        <p style="margin-top: 0;">A café pays <strong>₹60,000</strong> a month in rent, wages, and utilities (fixed). An average customer order sells for <strong>₹250</strong> and costs <strong>₹100</strong> in ingredients, packaging, and card fees (variable).</p>
+        <p><code>Contribution margin = ₹250 − ₹100 = ₹150 per order</code><br/>
+        <code>Break-even = ₹60,000 ÷ ₹150 = 400 orders per month</code></p>
+        <p style="margin-bottom: 0;">That is roughly <strong>14 orders a day</strong> — a number the whole team can track on a whiteboard. Order 401 each month is where profit begins.</p>
+      </div>
+
+      <h2>Planning for Profit, Not Just Survival</h2>
+      <p>Breaking even is the floor, not the goal. To find the volume that delivers a target profit, add the target to your fixed costs:</p>
+      <blockquote><strong>Required Units = (Fixed Costs + Target Profit) ÷ Contribution Margin</strong></blockquote>
+      <p>For the café to bank ₹30,000 a month: (₹60,000 + ₹30,000) ÷ ₹150 = <strong>600 orders</strong>, or about 20 a day. Our <a href="/break-even-calculator/">Break-Even Calculator</a> has a dedicated target-profit mode that computes this instantly — and shows the substituted formula with every result.</p>
+
+      <h2>Three Levers When Break-Even Is Too High</h2>
+      <ul>
+        <li><strong>Raise the price.</strong> The most powerful lever, because every rupee of price increase flows straight into contribution margin. Moving the café's average order to ₹275 cuts break-even from 400 to 343 orders — a 14% reduction from a 10% price rise.</li>
+        <li><strong>Cut variable cost per unit.</strong> Cheaper packaging or better supplier terms work the same way: ₹10 saved per order drops break-even to 375.</li>
+        <li><strong>Cut fixed costs.</strong> The linear lever — 10% off the rent bill is 10% off the break-even volume. Powerful, but usually the hardest to move quickly.</li>
+      </ul>
+      <p>Because contribution margin sits in the denominator, small per-unit changes move the answer dramatically — which is why testing scenarios in the calculator beats guessing.</p>
+
+      <h2>Break-Even and Margin Work Together</h2>
+      <p>Contribution margin per unit is the same arithmetic as gross profit per sale, so this guide pairs naturally with <a href="/guides/how-to-calculate-profit-margin/">how to calculate profit margin</a>: margin math sets your price, break-even math tells you whether the volume that price can attract will keep the lights on. Track month-over-month changes with the <a href="/percentage-calculator/">Percentage Calculator</a>, and when sales start flowing, bill them cleanly with the <a href="/invoice-generator/">Invoice Generator</a>. Like every ConvertOcean tool, the calculators run entirely in your browser — cost structures and margins are never uploaded.</p>
+    `,
+    faqs: [
+      {
+        question: 'What is the break-even point formula?',
+        answer: 'Break-Even Units = Fixed Costs ÷ (Price per Unit − Variable Cost per Unit). The denominator is called contribution margin. For example, with ₹60,000 fixed costs, a ₹250 price, and ₹100 variable cost, break-even is ₹60,000 ÷ ₹150 = 400 units per month.'
+      },
+      {
+        question: 'What is contribution margin?',
+        answer: 'Contribution margin is what each sale contributes toward fixed costs after its own variable costs are paid: Price − Variable Cost per Unit. It can also be expressed as a ratio of price — a ₹150 contribution on a ₹250 price is a 60% contribution margin ratio.'
+      },
+      {
+        question: 'How do I calculate break-even in revenue instead of units?',
+        answer: 'Multiply break-even units by your price, or divide fixed costs by the contribution margin ratio. The café example: 400 orders × ₹250 = ₹100,000 of monthly revenue to break even.'
+      },
+      {
+        question: 'What if my selling price is lower than my variable cost?',
+        answer: 'Then no sales volume can ever break even — each additional sale increases the loss. The fix must come from raising the price or cutting the per-unit cost; scale alone cannot save a negative contribution margin.'
+      },
+      {
+        question: 'Is break-even analysis accurate for service businesses?',
+        answer: 'Yes — treat a billable project, client, or hour as the "unit." Monthly overheads are the fixed costs, delivery costs per engagement are the variable costs, and your typical fee is the price. The formula is unchanged.'
+      }
+    ]
+  },
+  {
+    slug: 'resize-photo-signature-for-online-forms',
+    title: 'How to Resize a Photo & Signature for Online Forms | ConvertOcean',
+    description: 'Step-by-step: resize your photo and signature to the exact pixels and KB size online forms demand (200×230, 20 KB, 140×60) — and fix the common rejections.',
+    h1: 'How to Resize a Photo and Signature for Online Forms.',
+    readTime: '6 min read',
+    publishDate: 'July 18, 2026',
+    relatedTools: ['image-resizer', 'jpg-to-jpeg', 'jpeg-to-jpg', 'png-to-jpg', 'image-to-pdf'],
+    relatedGuides: ['png-vs-jpg'],
+    intro: 'Exam portals, job applications, and government forms reject millions of photo uploads a day for the same three reasons: wrong pixel dimensions, file too large, or wrong file extension. This guide walks through the exact fix for each — from taking a usable photo to hitting a 20 KB limit without destroying quality.',
+    contentHtml: `
+      <h2>Why Forms Reject Photos: The Three Rules</h2>
+      <p>Upload validators typically check three things, and fail your file if any one is off:</p>
+      <ul>
+        <li><strong>Pixel dimensions</strong> — many portals demand an exact size, commonly around <strong>200×230 px</strong> for photos and <strong>140×60 px</strong> for signatures (always confirm your specific portal's numbers).</li>
+        <li><strong>File size</strong> — caps like <strong>20 KB, 50 KB, or 100 KB</strong>, sometimes with a minimum too (e.g. "between 20 KB and 50 KB").</li>
+        <li><strong>Format and extension</strong> — usually JPG/JPEG; some validators literally check the extension spelling.</li>
+      </ul>
+      <p>A phone camera photo fails all three at once: it is thousands of pixels wide, several megabytes, and sometimes saved as HEIC or PNG. The workflow below fixes them in order.</p>
+
+      <h2>Step 1: Take a Photo That Can Survive Resizing</h2>
+      <p>Quality lost at capture cannot be recovered later. Shoot against a plain, light background in even lighting, hold the camera square-on (not tilted), and fill the frame with the subject — face for photos, ink on white paper for signatures. Crop away excess background before resizing so the subject stays large within the final small image.</p>
+
+      <h2>Step 2: Resize to the Exact Pixels</h2>
+      <p>Open the <a href="/image-resizer/">Image Resizer</a>, load your photo, and use <em>Resize by Dimensions</em>. Enter the portal's exact width and height — the 200×230 and 140×60 presets cover the most common requirements. Turn the aspect-ratio lock <em>off</em> when a form demands exact dimensions that differ from your photo's natural proportions, and re-crop first if the result looks stretched.</p>
+
+      <h2>Step 3: Compress to the KB Limit</h2>
+      <p>Switch to <em>Compress to File Size</em>, enter the cap (say 20 KB), and the tool re-encodes to the highest quality that fits under it. Two behaviors to understand:</p>
+      <ul>
+        <li>If your image is already smaller than the cap at maximum quality, the result will be <em>well under</em> the target — that is success, not failure. Forms only check that you are under the limit.</li>
+        <li>If the form specifies a <em>minimum</em> size and your file is below it, go back to dimensions mode and increase the pixel size — more pixels legitimately means more kilobytes.</li>
+      </ul>
+
+      <h2>Step 4: Get the Extension Right</h2>
+      <p>Strict validators sometimes whitelist one literal spelling — accepting <code>.jpeg</code> but rejecting <code>.jpg</code>, or the reverse. The formats are identical; only the extension differs. Our <a href="/jpg-to-jpeg/">JPG to JPEG</a> and <a href="/jpeg-to-jpg/">JPEG to JPG</a> tools produce a cleanly re-encoded file with the exact extension the form demands. If your source is a PNG screenshot or scan, convert it with <a href="/png-to-jpg/">PNG to JPG</a> first — JPG compresses photos far smaller.</p>
+
+      <h2>Troubleshooting Rejections</h2>
+      <ul>
+        <li><strong>"Invalid dimensions"</strong> after resizing — recheck the portal's spec; some want width×height, a few list height×width.</li>
+        <li><strong>"File too small"</strong> — upscale dimensions (Step 3, second bullet).</li>
+        <li><strong>Blurry result</strong> — the source was cropped too tight or shot in poor light; retake rather than upscale a bad image.</li>
+        <li><strong>Documents wanted as PDF</strong> — some portals want supporting documents as one PDF; bundle photographed pages with <a href="/image-to-pdf/">Image to PDF</a>.</li>
+      </ul>
+      <p>Everything above runs in your browser — your photograph, signature, and ID documents are never uploaded to any server, which is exactly how identity documents should be handled.</p>
+    `,
+    faqs: [
+      {
+        question: 'How do I resize a photo to exactly 20 KB?',
+        answer: 'Use a compress-to-file-size mode: enter 20 KB as the target and the tool binary-searches the JPEG quality (lowering dimensions only if needed) until the file fits just under 20 KB. Entering exact kilobytes by hand-tuning a quality slider is guesswork; targeting does it in one step.'
+      },
+      {
+        question: 'What size should a photo be for online exam forms?',
+        answer: 'Around 200×230 pixels and 20–50 KB is the most common requirement, with signatures around 140×60 pixels and 10–20 KB — but portals differ, so always use the exact numbers printed on your form\'s instructions.'
+      },
+      {
+        question: 'Why does the form accept .jpeg but reject my .jpg file?',
+        answer: 'Some upload validators check the literal extension string rather than the file contents. JPG and JPEG are the same format with two spellings, so re-encoding the file with the demanded extension (for example with a JPG-to-JPEG tool) satisfies the check without changing the image.'
+      },
+      {
+        question: 'My file is below the form\'s minimum size — how do I make it bigger?',
+        answer: 'Increase the pixel dimensions rather than padding the file: a larger width and height stores more pixel data, which raises the file size legitimately. Doubling both dimensions roughly triples to quadruples a JPEG\'s size.'
+      },
+      {
+        question: 'Is it safe to upload my photo and signature to a resizing website?',
+        answer: 'Only if the site processes images locally. ConvertOcean\'s resizer runs entirely in your browser — the photo never reaches a server — which matters for signatures and ID photos that could otherwise sit in an unknown server\'s storage.'
+      }
+    ]
+  },
+  {
+    slug: 'xlsx-vs-xls-vs-csv',
+    title: 'XLSX vs XLS vs CSV: Which Spreadsheet Format to Use | ConvertOcean',
+    description: 'The practical differences between XLSX, XLS, and CSV — capability, compatibility, and size — plus when to convert between them and the traps to avoid.',
+    h1: 'XLSX vs XLS vs CSV: Which Format Should You Use?',
+    readTime: '6 min read',
+    publishDate: 'July 18, 2026',
+    relatedTools: ['xlsx-to-csv', 'csv-to-xlsx', 'xls-to-csv', 'xls-to-pdf', 'merge-excel', 'split-excel'],
+    relatedGuides: ['excel-to-pdf', 'csv-to-json'],
+    intro: 'Three file extensions cover almost every spreadsheet on earth, and each one makes a different trade between capability, compatibility, and simplicity. Knowing which to use — and when to convert — prevents the classic data disasters: mangled dates, vanished leading zeros, and workbooks nobody can open.',
+    contentHtml: `
+      <h2>What Each Format Actually Is</h2>
+      <ul>
+        <li><strong>XLSX</strong> (2007–today) is a ZIP archive of XML files describing sheets, styles, formulas, and charts. It is the modern default: multiple tabs, a million rows per sheet, formatting, and formulas all travel inside one file.</li>
+        <li><strong>XLS</strong> (1997–2003) is the legacy <em>binary</em> format XLSX replaced. It caps at 65,536 rows and 256 columns per sheet, and support in modern software shrinks every year. Files in old archives are usually XLS.</li>
+        <li><strong>CSV</strong> is not really a spreadsheet at all — it is plain text with commas between values. One sheet, no formatting, no formulas, no types. That poverty is its superpower: every database, script, and system since the 1970s reads it.</li>
+      </ul>
+
+      <h2>The Decision in One Paragraph</h2>
+      <p>Work and share in <strong>XLSX</strong>; exchange data with systems in <strong>CSV</strong>; keep nothing new in <strong>XLS</strong>. A spreadsheet a human will open gets XLSX (formulas, tabs, and formatting survive). Data headed into a database, CRM, or script goes as CSV (universal, but values only). XLS exists to be migrated away from — convert old files with <a href="/xls-to-csv/">XLS to CSV</a> for pipelines, or open-and-resave as XLSX for continued editing.</p>
+
+      <h2>The Conversion Traps</h2>
+      <ul>
+        <li><strong>CSV loses everything but values.</strong> Converting XLSX to CSV evaluates formulas and keeps results only; styles, extra tabs, and charts are gone. Fine for data transfer, catastrophic for your only copy — keep the XLSX master.</li>
+        <li><strong>Excel mangles raw CSVs on open.</strong> Double-clicking a CSV lets Excel guess types: leading zeros vanish from phone numbers, long IDs become scientific notation, and date-like strings get rewritten. Convert the file properly with <a href="/csv-to-xlsx/">CSV to XLSX</a> so values land in typed cells once, deliberately.</li>
+        <li><strong>Only the first sheet exports.</strong> CSV is single-sheet by definition, so converting a multi-tab workbook exports one tab. Split the workbook first with <a href="/split-excel/">Split Excel</a> if you need every sheet as its own CSV.</li>
+        <li><strong>Encoding matters.</strong> Accented names and non-Latin text survive as UTF-8; ancient tools exporting other encodings produce the familiar Ã© corruption. Modern converters read and write UTF-8 throughout.</li>
+      </ul>
+
+      <h2>Common Workflows, Mapped</h2>
+      <ul>
+        <li><strong>Consolidating exports:</strong> twelve monthly CSVs → one workbook via <a href="/merge-excel/">Merge Excel</a>, then analyze with tabs and formulas intact.</li>
+        <li><strong>Feeding a database or script:</strong> XLSX → <a href="/xlsx-to-csv/">CSV</a>, spot-checking IDs and dates after import.</li>
+        <li><strong>Archiving old records:</strong> XLS ledgers → <a href="/xls-to-pdf/">PDF</a> for fixed, future-proof reading copies.</li>
+        <li><strong>Sending data to developers:</strong> often better as JSON — the <a href="/guides/csv-to-json/">CSV to JSON guide</a> covers that route.</li>
+      </ul>
+      <p>Every converter linked above runs client-side in your browser: payroll exports, customer lists, and financial workbooks never touch a server.</p>
+    `,
+    faqs: [
+      {
+        question: 'What is the difference between XLSX and XLS?',
+        answer: 'XLSX (2007 onward) is a ZIP-compressed XML format with a million-row capacity per sheet; XLS (1997–2003) is the older binary format capped at 65,536 rows and 256 columns. XLSX is smaller, more robust, and universally supported by modern software — new files should always be XLSX.'
+      },
+      {
+        question: 'When should I use CSV instead of XLSX?',
+        answer: 'Use CSV when the destination is a system rather than a person: database imports, CRM uploads, scripts, and data pipelines almost all accept CSV. Use XLSX when a human will open the file, because formulas, formatting, and multiple tabs only survive there.'
+      },
+      {
+        question: 'Why did my phone numbers lose their leading zeros in Excel?',
+        answer: 'You opened a raw CSV directly, and Excel auto-detected the column as numbers, discarding leading zeros. Convert the CSV to XLSX with a proper converter (or use Excel\'s import wizard with the column set to Text) so values keep their original form.'
+      },
+      {
+        question: 'Does converting XLSX to CSV keep my formulas?',
+        answer: 'No — CSV stores only values, so formulas are evaluated and their results written out. That is usually what a data pipeline wants, but never convert your only copy: keep the XLSX master and export CSVs from it.'
+      },
+      {
+        question: 'Can I still open old XLS files?',
+        answer: 'Yes — current Excel and LibreOffice still read XLS, and client-side converters parse the binary format directly. But support keeps shrinking, so migrate archives you care about: resave as XLSX for editing, or export to CSV or PDF for data and reading copies.'
+      }
+    ]
+  },
+  {
+    slug: 'json-vs-csv-vs-xml',
+    title: 'JSON vs CSV vs XML: Choosing a Data Format | ConvertOcean',
+    description: 'How JSON, CSV, and XML differ in shape, when each fits, and the rules for converting between them without surprises — a practical developer guide.',
+    h1: 'JSON vs CSV vs XML: Choosing the Right Data Format.',
+    readTime: '6 min read',
+    publishDate: 'July 18, 2026',
+    relatedTools: ['json-formatter', 'xml-to-json', 'xml-to-csv', 'xml-to-xlsx', 'json-to-xlsx', 'xlsx-to-json'],
+    relatedGuides: ['csv-to-json', 'xlsx-vs-xls-vs-csv'],
+    intro: 'Every data exchange on the web travels in one of three shapes: JSON objects, CSV tables, or XML trees. They are not interchangeable — each encodes a different idea of what data is — and most conversion surprises come from ignoring that. This guide gives you the shape of each format, a decision rule, and the conversion caveats that matter.',
+    contentHtml: `
+      <h2>Three Formats, Three Shapes</h2>
+      <ul>
+        <li><strong>JSON</strong> is <em>hierarchical</em>: objects containing values, arrays, and other objects, nested arbitrarily deep. It is native to JavaScript and the default language of modern APIs.</li>
+        <li><strong>CSV</strong> is <em>tabular</em>: rows and columns, nothing else. No nesting, no types, no metadata — and therefore readable by everything from Excel to a 1980s mainframe.</li>
+        <li><strong>XML</strong> is a <em>document tree with attributes</em>: nested elements like JSON, plus attributes on tags, namespaces, and schema validation. It dominates enterprise integrations, SOAP APIs, feeds (RSS), and configuration from the 2000s.</li>
+      </ul>
+
+      <h2>The Decision Rule</h2>
+      <p>Match the shape of the data to the shape of the format. <strong>Nested or irregular data → JSON.</strong> An order containing a customer object and an items array is naturally hierarchical; flattening it into CSV is lossy and awkward. <strong>Uniform records → CSV.</strong> Ten thousand rows with identical fields is a table; wrapping every row in braces adds bytes and nothing else — and analysts can open CSV in a spreadsheet. <strong>XML → usually whatever the other system demands.</strong> Few new systems choose XML, but countless existing ones speak it; your job is normally converting it toward JSON or a table.</p>
+
+      <h2>Conversion Rules Worth Knowing</h2>
+      <ul>
+        <li><strong>XML → JSON:</strong> attributes need a convention (typically an <code>@</code>-prefixed key), repeated sibling elements become arrays, and self-closing tags map to nulls. Our <a href="/xml-to-json/">XML to JSON</a> converter applies these rules predictably — and validates well-formedness for free.</li>
+        <li><strong>Hierarchy → table is lossy:</strong> converting JSON or XML to CSV/Excel flattens nesting into dot-notation columns; deep trees flatten badly. For analyst-ready output, <a href="/xml-to-csv/">XML to CSV</a> and <a href="/json-to-xlsx/">JSON to XLSX</a> handle list-shaped data well; genuinely tree-shaped data should stay hierarchical.</li>
+        <li><strong>Tables convert upward cleanly:</strong> CSV or Excel rows become JSON object arrays losslessly — headers to keys, rows to objects — via <a href="/xlsx-to-json/">XLSX to JSON</a>.</li>
+        <li><strong>CSV has no types:</strong> every value arrives as a string; cast numbers, booleans, and dates at import time.</li>
+      </ul>
+
+      <h2>Practical Habits</h2>
+      <p>Validate before you convert: a stray trailing comma breaks JSON, an unclosed tag breaks XML, and both fail clearest when checked directly — the <a href="/json-formatter/">JSON Formatter</a> reports the exact line and column of a syntax error. Keep the original file until the converted output is verified in its destination. And remember the audience test: if a human in a spreadsheet is the consumer, deliver a table; if code is the consumer, deliver JSON; if a legacy system is the consumer, deliver exactly what its spec says.</p>
+      <p>All the converters linked here parse entirely in your browser — API payloads full of tokens and customer records never leave your machine. For the spreadsheet side of this decision, see <a href="/guides/xlsx-vs-xls-vs-csv/">XLSX vs XLS vs CSV</a>, and for the mechanics of the most common conversion, the <a href="/guides/csv-to-json/">CSV to JSON developer guide</a>.</p>
+    `,
+    faqs: [
+      {
+        question: 'When should I use JSON instead of CSV?',
+        answer: 'Use JSON when data is nested or irregular — objects containing arrays, optional fields, varying structures — and when the consumer is code. Use CSV when records are uniform rows with identical fields and when humans or spreadsheet tools are part of the workflow.'
+      },
+      {
+        question: 'Is XML obsolete?',
+        answer: 'No — new systems rarely choose it, but enormous amounts of enterprise integration, government data, SOAP APIs, and feed formats (like RSS and sitemaps) still run on XML. Modern work with XML is mostly converting it toward JSON or tables, which is why XML-to-JSON converters remain everyday tools.'
+      },
+      {
+        question: 'How are XML attributes handled when converting to JSON?',
+        answer: 'JSON has no concept of attributes, so converters map them to specially-prefixed keys (commonly @id-style names) to keep them distinct from child elements. Repeated sibling elements become JSON arrays, and empty or self-closing tags become nulls or empty objects.'
+      },
+      {
+        question: 'Why did my nested JSON flatten into weird column names in Excel?',
+        answer: 'Tables cannot represent nesting, so converters flatten paths into dot-notation column headers (user.address.city). That is expected for one or two levels; deeply nested structures flatten poorly and are better analyzed in their hierarchical form.'
+      }
+    ]
+  },
+  {
+    slug: 'merge-split-word-powerpoint-text',
+    title: 'How to Merge & Split Word, PowerPoint, and TXT Files | ConvertOcean',
+    description: 'Combine chapters into one Word document, build a team slide deck, split by headings or ranges, and merge logs — cleanly, locally, without copy-paste damage.',
+    h1: 'How to Merge and Split Word, PowerPoint, and Text Files.',
+    readTime: '6 min read',
+    publishDate: 'July 18, 2026',
+    relatedTools: ['merge-word', 'split-word', 'merge-pptx', 'split-pptx', 'merge-txt', 'split-txt', 'pptx-to-pdf'],
+    relatedGuides: ['merge-multiple-pdf-files', 'pdf-to-word-without-losing-formatting'],
+    intro: 'Every team eventually assembles documents from pieces — chapters from co-authors, slides from departments, logs from servers — and the usual method, marathon copy-paste, is exactly where formatting breaks and content goes missing. This guide covers the clean way to merge and split Word documents, PowerPoint decks, and text files, with the small preparation steps that prevent the big cleanup afterward.',
+    contentHtml: `
+      <h2>Word Documents: Assembly Without the Style Collisions</h2>
+      <p>Copy-pasting between Word files invites chaos: numbering restarts, styles collide, images jump. Merging the files directly with <a href="/merge-word/">Merge Word</a> appends each document with its formatting carried in section-wise — tables, images, headers, and margins intact, in the order you arrange the files.</p>
+      <p>The single best preparation: have contributors work from the <strong>same template</strong>. Documents sharing style definitions merge nearly seamlessly; clashing templates keep their own look per section, which is consistent but visibly stitched. Going the other direction, <a href="/split-word/">Split Word</a> cuts a manuscript at every Heading 1 (or the tier you choose) — one file per chapter in a single operation, ideal for sending an editor only the chapter under review.</p>
+
+      <h2>PowerPoint: The Combined Deck Problem</h2>
+      <p>Five presenters, five files, one deck due tomorrow. Merging with <a href="/merge-pptx/">Merge PPTX</a> joins the decks with layouts and master-slide references preserved — no silent restyling. Two checks first: <strong>aspect ratio</strong> (merge 16:9 with 16:9; a 4:3 deck in the mix distorts or letterboxes) and <strong>slide count sanity</strong> (merge each team's key slides, not their archives).</p>
+      <p>The reverse workflow is the master-deck pattern: keep one canonical 80-slide deck, then extract tailored subsets — "1-5, 12, 30-34" — with <a href="/split-pptx/">Split PPTX</a> for each client or occasion. Extraction copies slides at original quality with speaker notes intact, and the master stays untouched.</p>
+
+      <h2>Text Files: Logs, Chapters, and Context Packs</h2>
+      <p>Text concatenation looks trivial but has real craft in the separators. <a href="/merge-txt/">Merge TXT</a> can insert each file's name as a header line — essential provenance when combining a night of rotated server logs into one searchable file, or packing source files into a single block of context for an AI assistant. A distinctive separator also makes the merge reversible: <a href="/split-txt/">Split TXT</a> cuts on any text or regex marker, so a combined log splits back into per-day files at every date boundary, and a giant export breaks into chunks that editors and upload forms accept.</p>
+
+      <h2>After Assembly: Freeze and Ship</h2>
+      <p>Merged documents are working copies; what you distribute should be fixed. A finished manuscript or combined deck ships best as PDF — layout locked, accidental edits impossible — via <a href="/word-to-pdf/">Word to PDF</a> or <a href="/pptx-to-pdf/">PPTX to PDF</a>, and multi-file packages combine with the tools in our <a href="/guides/merge-multiple-pdf-files/">PDF merging guide</a>. If material comes back to you <em>as</em> PDF and needs editing again, the <a href="/guides/pdf-to-word-without-losing-formatting/">PDF to Word guide</a> covers that trip. All merge and split operations here run in your browser's memory — manuscripts, strategy decks, and production logs never upload anywhere.</p>
+    `,
+    faqs: [
+      {
+        question: 'How do I merge multiple Word documents without losing formatting?',
+        answer: 'Use a document merger rather than copy-paste: it appends each DOCX with its styles, tables, images, and margins carried in section-wise. Results are cleanest when all source documents were created from the same template, since clashing style definitions otherwise keep their own look per section.'
+      },
+      {
+        question: 'How do I split a Word document into separate files by chapter?',
+        answer: 'Split at heading boundaries: choose the heading tier that marks your chapters (usually Heading 1) and the splitter cuts at every occurrence, producing one ordered file per chapter. A well-structured document needs no other preparation.'
+      },
+      {
+        question: 'Can I merge PowerPoint presentations with different designs?',
+        answer: 'Yes — slides keep their own layouts and master references, so each section retains its original design. Do match aspect ratios first (16:9 with 16:9), because mixing in a 4:3 deck produces distorted or letterboxed slides.'
+      },
+      {
+        question: 'How do I combine many log files and split them back later?',
+        answer: 'Merge with filename headers or a distinctive separator between files, which preserves provenance and gives you a marker to split on later. A regex-capable splitter can also cut on content boundaries directly — for example at every date line, yielding one file per day.'
+      },
+      {
+        question: 'Are my documents uploaded when merging or splitting them?',
+        answer: 'Not with client-side tools: ConvertOcean parses DOCX, PPTX, and TXT files entirely in browser memory, so contracts, manuscripts, and internal decks never leave your device. The practical size limit is your device\'s RAM rather than an upload cap.'
+      }
+    ]
+  },
+  {
+    slug: 'photos-to-pdf-scanning',
+    title: 'How to Turn Photos and Scans into One PDF | ConvertOcean',
+    description: 'Phone-scan paperwork properly: shoot pages that stay readable, combine images into a single ordered PDF, control the file size, and know when you need OCR.',
+    h1: 'How to Turn Photos and Scans into One Clean PDF.',
+    readTime: '5 min read',
+    publishDate: 'July 18, 2026',
+    relatedTools: ['image-to-pdf', 'merge-pdf', 'split-pdf', 'image-to-text', 'image-resizer', 'merge-images'],
+    relatedGuides: ['merge-multiple-pdf-files', 'how-ocr-works'],
+    intro: 'The phone camera has replaced the scanner, but portals and inboxes still expect documents — one PDF, pages in order, reasonable file size. This guide covers the full workflow: photographing pages so they stay readable, combining them into a single PDF, keeping the size sensible, and knowing when you need OCR instead.',
+    contentHtml: `
+      <h2>Step 1: Photograph Pages Like a Scanner Would</h2>
+      <p>Every later step inherits the quality of the capture, so five seconds of care here beats any amount of processing: place the page on a contrasting flat surface, shoot from directly above (tilted shots turn rectangles into trapezoids), use daylight or even room light rather than flash (which blows out a glossy stripe), and fill the frame with the page. Photograph every page before you start converting — renaming files 01, 02, 03 as you go makes ordering trivial.</p>
+
+      <h2>Step 2: Combine Images into One PDF</h2>
+      <p>Open <a href="/image-to-pdf/">Image to PDF</a>, add the page photos, and arrange them in reading order — the PDF preserves your sequence exactly, one image per page, scaled to fit standard page margins. Match orientation to the content: portrait receipts on portrait pages, wide whiteboard shots on landscape. The result is a proper multi-page document that uploads, emails, and prints the way portals expect — instead of five loose photos arriving in whatever order an inbox chooses. (When the destination prefers a single tall image rather than pages — a chat thread, for instance — <a href="/merge-images/">Merge Images</a> stitches the photos instead.)</p>
+
+      <h2>Step 3: Control the File Size</h2>
+      <p>Page photos are big, and a ten-page scan can balloon past upload limits. Two levers: photograph in JPG rather than PNG (screenshots aside, photographic pages compress far smaller as JPG — convert first if needed), and pre-shrink very large camera images with the <a href="/image-resizer/">Image Resizer</a> before combining; 1500–2000 pixels on the long edge keeps text crisp at a fraction of the size.</p>
+
+      <h2>Step 4: Know What This PDF Is — and Is Not</h2>
+      <p>An image-based PDF is <em>pictures of text</em>: perfect for records, applications, and expense claims, but not searchable and not copyable. If you need the words themselves — to quote, edit, or index — run the pages through <a href="/image-to-text/">Image to Text OCR</a> first and keep the extracted text alongside the visual PDF. (Curious how recognition works? See <a href="/guides/how-ocr-works/">how OCR reads images</a>.)</p>
+
+      <h2>Managing the Result</h2>
+      <p>Scan bundles grow: a new receipt joins the expense report, a missing page turns up. Combine an image-PDF with existing documents using <a href="/merge-pdf/">Merge PDF</a>, or extract a page back out with <a href="/split-pdf/">Split PDF</a> — the <a href="/guides/merge-multiple-pdf-files/">merging guide</a> covers assembling multi-document packages cleanly. And because receipts, IDs, and signed forms are exactly the files that should never sit on a stranger's server, every tool in this workflow runs in your browser — nothing is uploaded at any step.</p>
+    `,
+    faqs: [
+      {
+        question: 'How do I combine multiple photos into one PDF?',
+        answer: 'Use an image-to-PDF tool: add the photos, arrange them in reading order, and download — each image becomes one page of a single PDF, scaled to fit the page. Rename photos numerically before starting and the ordering step takes seconds.'
+      },
+      {
+        question: 'Why is my scanned PDF so large, and how do I shrink it?',
+        answer: 'Camera images are several megabytes each, and PDF page count multiplies that. Shoot or convert pages to JPG (not PNG), and resize very large images to around 1500–2000 pixels on the long edge before combining — text stays readable at a fraction of the file size.'
+      },
+      {
+        question: 'Can I search or copy text from a photo-based PDF?',
+        answer: 'No — the pages are images, so the text is pixels, not characters. Run the images through OCR first if you need searchable, copyable text, and keep the OCR output alongside the visual PDF.'
+      },
+      {
+        question: 'What is the best way to photograph a document with a phone?',
+        answer: 'Directly above the page (never tilted), in even natural light without flash, on a contrasting background, with the page filling the frame. Those four habits eliminate the skew, glare, and blur that make scans unreadable after compression.'
+      }
+    ]
   }
 ];
