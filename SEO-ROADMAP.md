@@ -24,6 +24,7 @@
 - [ ] Quick health scan: build passes, no broken internal links, sitemap still clean, no new console errors.
 - [ ] Do the session's primary task (below) to the quality gate.
 - [ ] Add/verify internal links between new content and related tools (both directions).
+- [ ] **Every new page must be added to ALL hardcoded link surfaces:** `Footer.astro` (including its vs-comparisons block), `sitemap.astro`, and homepage seo-links. Grep the WHOLE file — do not trust truncated output. (Rule added after missing the footer twice.)
 - [ ] Confirm title ≤ ~60 chars, meta ~150–160, exactly one H1, FAQ schema present.
 - [ ] Build + verify; open/refresh PR; **report batch for approval; do not deploy.**
 - [ ] Tick off completed items below and note anything discovered for a future session.
