@@ -77,6 +77,7 @@ _(routine appends here as it finds opportunities)_
 - Proper 1200×630 OG image (current og:image is a 180×180 icon — looks broken when shared).
 - **S10 input (from S6 audit):** 26 tools still have zero guide cards — mostly the excel-converter long-tail (xlsx-to-csv, csv-to-xlsx, json-to-xlsx, xml-to-*…) and the merge/split document family (txt/word/pptx/image). Each category needs 1–2 new guides to close the "every tool ≥2 guides" target honestly.
 - Quick answers now cover 14 high-value pages; extend to remaining tool pages gradually as unique copy can be written (never boilerplate).
+- **vs batch 2 (post-S10):** add remaining top competitors — iLoveIMG (image-tools fit with the new resizer), PDF24, Sejda (3-free-tasks/day angle), TinyWow. Same rules: fair, factual, fairness section, hedged pricing. FreeConvert deprioritized (mostly video — weak fit).
 
 ## Progress log
 _(routine appends a dated one-line entry per session: what shipped, what's pending approval)_
