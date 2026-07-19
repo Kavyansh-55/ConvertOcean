@@ -139,9 +139,9 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="calc-panel">
     <div class="calc-panel-title">Calculation Mode</div>
     <div class="mode-tabs">
-      <button class="mode-tab active" data-mode="units" id="beTabUnits">Break-Even Point</button>
-      <button class="mode-tab" data-mode="profit" id="beTabProfit">Units for Target Profit</button>
-      <button class="mode-tab" data-mode="price" id="beTabPrice">Required Price</button>
+      <button class="mode-tab active" aria-pressed="true" data-mode="units" id="beTabUnits">Break-Even Point</button>
+      <button class="mode-tab" aria-pressed="false" data-mode="profit" id="beTabProfit">Units for Target Profit</button>
+      <button class="mode-tab" aria-pressed="false" data-mode="price" id="beTabPrice">Required Price</button>
     </div>
 
     <div class="calc-panel-title">Currency & Values</div>
@@ -279,8 +279,9 @@ const { slug, headline, subtitle } = Astro.props;
     const tabs = document.querySelectorAll('.mode-tab');
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
+        tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-pressed', 'false'); });
         tab.classList.add('active');
+        tab.setAttribute('aria-pressed', 'true');
         mode = tab.dataset.mode;
         $('beFieldsUnits').style.display = mode === 'units' ? 'block' : 'none';
         $('beFieldsProfit').style.display = mode === 'profit' ? 'block' : 'none';

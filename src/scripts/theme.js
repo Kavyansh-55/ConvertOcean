@@ -123,15 +123,18 @@ function initFAQ() {
     question.addEventListener('click', () => {
       const item = question.closest('.faq-item');
       const isOpen = item.classList.contains('open');
-      
+
       // Close all open items
       document.querySelectorAll('.faq-item.open').forEach(el => {
         el.classList.remove('open');
+        const btn = el.querySelector('.faq-question');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
       });
 
       if (!isOpen) {
         item.classList.add('open');
       }
+      question.setAttribute('aria-expanded', String(!isOpen));
     });
   });
 }

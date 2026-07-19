@@ -165,8 +165,8 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="tax-panel">
     <div class="tax-panel-title">Calculation Mode</div>
     <div class="tax-mode-tabs">
-      <button class="tax-mode-tab active" id="taxTabAdd">Add Sales Tax</button>
-      <button class="tax-mode-tab" id="taxTabRemove">Remove Sales Tax</button>
+      <button class="tax-mode-tab active" aria-pressed="true" id="taxTabAdd">Add Sales Tax</button>
+      <button class="tax-mode-tab" aria-pressed="false" id="taxTabRemove">Remove Sales Tax</button>
     </div>
 
     <div class="tax-panel-title">Tax Rate Presets</div>
@@ -292,8 +292,8 @@ const { slug, headline, subtitle } = Astro.props;
 
     $('taxTabAdd').addEventListener('click', () => {
       taxMode = 'add';
-      $('taxTabAdd').classList.add('active');
-      $('taxTabRemove').classList.remove('active');
+      $('taxTabAdd').classList.add('active'); $('taxTabAdd').setAttribute('aria-pressed', 'true');
+      $('taxTabRemove').classList.remove('active'); $('taxTabRemove').setAttribute('aria-pressed', 'false');
       $('taxFieldsAdd').style.display = 'block';
       $('taxFieldsRemove').style.display = 'none';
       calculate();
@@ -301,8 +301,8 @@ const { slug, headline, subtitle } = Astro.props;
 
     $('taxTabRemove').addEventListener('click', () => {
       taxMode = 'remove';
-      $('taxTabRemove').classList.add('active');
-      $('taxTabAdd').classList.remove('active');
+      $('taxTabRemove').classList.add('active'); $('taxTabRemove').setAttribute('aria-pressed', 'true');
+      $('taxTabAdd').classList.remove('active'); $('taxTabAdd').setAttribute('aria-pressed', 'false');
       $('taxFieldsAdd').style.display = 'none';
       $('taxFieldsRemove').style.display = 'block';
       calculate();
