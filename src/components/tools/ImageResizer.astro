@@ -153,8 +153,8 @@ const { slug, headline, subtitle } = Astro.props;
     <div class="resizer-panel-title">Resize Settings</div>
 
     <div class="mode-tabs">
-      <button class="mode-tab active" data-mode="dimensions" id="rzTabDims">Resize by Dimensions</button>
-      <button class="mode-tab" data-mode="filesize" id="rzTabSize">Compress to File Size</button>
+      <button class="mode-tab active" aria-pressed="true" data-mode="dimensions" id="rzTabDims">Resize by Dimensions</button>
+      <button class="mode-tab" aria-pressed="false" data-mode="filesize" id="rzTabSize">Compress to File Size</button>
     </div>
 
     <div id="rzDimFields">
@@ -303,6 +303,7 @@ const { slug, headline, subtitle } = Astro.props;
       tab.addEventListener('click', () => {
         document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
+        tab.setAttribute('aria-pressed', 'true');
         mode = tab.dataset.mode;
         $('rzDimFields').style.display = mode === 'dimensions' ? 'block' : 'none';
         $('rzSizeFields').style.display = mode === 'filesize' ? 'block' : 'none';

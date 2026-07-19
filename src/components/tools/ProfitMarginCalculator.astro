@@ -139,9 +139,9 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="calc-panel">
     <div class="calc-panel-title">Calculation Mode</div>
     <div class="mode-tabs">
-      <button class="mode-tab active" data-mode="margin" id="pmTabMargin">Cost & Revenue → Margin</button>
-      <button class="mode-tab" data-mode="selling" id="pmTabSelling">Cost & Margin → Price</button>
-      <button class="mode-tab" data-mode="cost" id="pmTabCost">Revenue & Margin → Cost</button>
+      <button class="mode-tab active" aria-pressed="true" data-mode="margin" id="pmTabMargin">Cost & Revenue → Margin</button>
+      <button class="mode-tab" aria-pressed="false" data-mode="selling" id="pmTabSelling">Cost & Margin → Price</button>
+      <button class="mode-tab" aria-pressed="false" data-mode="cost" id="pmTabCost">Revenue & Margin → Cost</button>
     </div>
 
     <div class="calc-panel-title">Currency & Values</div>
@@ -267,8 +267,9 @@ const { slug, headline, subtitle } = Astro.props;
     const tabs = document.querySelectorAll('.mode-tab');
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
+        tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-pressed', 'false'); });
         tab.classList.add('active');
+        tab.setAttribute('aria-pressed', 'true');
         mode = tab.dataset.mode;
         $('pmFieldsMargin').style.display = mode === 'margin' ? 'block' : 'none';
         $('pmFieldsSelling').style.display = mode === 'selling' ? 'block' : 'none';
