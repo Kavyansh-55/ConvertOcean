@@ -49,7 +49,7 @@
 ## Week 4 — Authority, polish, measure
 - [x] **S10 — Guide cluster completion:** fill topical gaps so each tool category has ≥2 supporting guides (pillar → spoke internal linking). *(Done 2026-07-19, branch `seo/s10-guide-cluster`: 6 new guides — break-even point (business #2), photo/signature resize for online forms (supports S8 resizer, high-demand long-tail), XLSX vs XLS vs CSV (excel long-tail coverage), JSON vs CSV vs XML (developer #2), merge/split Word-PPT-TXT (covers 6 previously guideless tools), photos-to-PDF scanning (pdf/image). Guides now 13 (was 7); every category ≥2; zero-guide-card tools 26→11 (remainder: svg trio, misc utilities — acceptable). All 1,100–1,300 words, FAQ+Article schema, 0 broken links. THIS COMPLETES THE ADSENSE RESUBMISSION CHECKLIST once deployed + recrawled.)*
 - [x] **S11 — Technical & CWV pass:** Core Web Vitals check, image/asset optimization, accessibility sweep (web-design-guidelines), fix any bugs found. *(Done 2026-07-19, branch `seo/s11-cwv-a11y`: (1) site-wide WCAG fix — FAQ accordions were mouse-only divs on every page, now real buttons with aria-expanded (6 templates + CSS reset + both toggle scripts), keyboard-verified in headless Edge; (2) backlog og:image fixed — proper branded 1200×630 og-image.png (generated via headless-Edge render), was a 180×180 icon; (3) theme-color metas for light/dark; (4) aria-pressed on all calculator/resizer mode tabs. Fonts already preconnected+swap; scroll-reveal already reduced-motion-safe; focus-visible ring already site-wide.)*
-- [ ] **S12 — Month review:** check Search Console (indexed count, impressions/clicks trend, remaining errors), summarize what moved, and draft the next 30-day roadmap based on what's actually ranking.
+- [x] **S12 — Month review:** check Search Console (indexed count, impressions/clicks trend, remaining errors), summarize what moved, and draft the next 30-day roadmap based on what's actually ranking. *(Done 2026-07-19, branch `seo/s12-month-review` — see "Month 1 Review" + "Cycle 2 Roadmap" sections below. GSC numbers + AdSense resubmit complete on ~Jul 30 via the N1 pre-flight.)*
 
 ---
 
@@ -115,3 +115,74 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 - 2026-07-18 — S9 approved, merged, deployed, verified live (both new vs pages 200 with fairness sections, smallpdf fairness live, footer links live). Also fixed user-spotted footer gap: Break-Even Calculator + Image Resizer added site-wide (~95 inbound links each). Next: S10 — the last AdSense gate; resubmit window opens ~July 30.
 - 2026-07-18 — Footer completion deployed (user caught the vs-block miss twice): vs Zamzar/Convertio + 5 never-listed majors (Word to PDF, PDF to Word, Image to PDF, Word Counter, JSON Formatter); all 51 footer links verified resolving; standing-checklist rule added requiring full-file audits of all hardcoded link surfaces. Also: resizer regression test renamed to .cjs (repo is type:module) and verified from repo root. Next: S10.
 - 2026-07-17 — S8 shipped on branch `seo/s8-image-resizer-jpg-jpeg` (pending approval): NEW /image-resizer/ (ImageResizer.astro — dimensions mode with aspect lock + exam-form presets, compress-to-KB mode with quality binary-search + auto-downscale, JPG/JPEG/PNG/WebP output, transparent→white flattening for forms; 435-word article, 7 FAQs, quick answer); NEW /jpg-to-jpeg/ + /jpeg-to-jpg/ (ImageTool extension; honest same-format content with distinct angles — form-validator vs DOS-history; 321/309 words, 5 FAQs + quick answers each). All verified: 1 H1, titles ≤60ch after trim, links resolve, XML sitemap 3/3, hub cards 3/3, homepage link, resizer script node-checked. Recommend manual browser spot-check of resizer before approval (npm run preview).
+
+---
+
+## Month 1 Review (S12 — 2026-07-19)
+
+**Shipped:** 16 approved batches (S1–S11, A1–A3b, footer completion) across 56 commits, all deployed and verified live. Zero rollbacks.
+
+**Site transformation (Jul 6 → Jul 19):**
+| Metric | Start | Now |
+|---|---|---|
+| Sitemap URLs | 79 | 90 |
+| Guides | 7 | 13 |
+| Tools | 57 | 61 (break-even, image-resizer, jpg↔jpeg pair) |
+| Comparison pages | 4 | 6 (all with fairness sections) |
+| Pages <150 unique words | 54 | 0 |
+| Pages 300+ unique words | 6 | 37+ |
+| AEO quick-answer blocks | 0 | 14 |
+| Schema correctness | guides claimed to be apps | Article/SoftwareApplication per type |
+| AI citation channel | all AI bots blocked | search bots open (Claude-SearchBot crawling daily) |
+| FAQ accessibility | mouse-only divs site-wide | keyboard buttons + aria-expanded |
+| og:image | 180×180 icon | branded 1200×630 |
+
+**Traffic (what we can see so far):** GA went from ~1–2 users/day baseline to 8–12/day mid-July (caveat: includes own testing; GSC clicks is the honest metric). GSC snapshot of 7/10 (predating S8–S11): 35 indexed / 76 not-indexed, the latter dominated by intentional states (51 old-site 404s, redirects, canonicals). 4 enriched pages re-requested for indexing + validation restarted on 7/19.
+
+**What we learned:**
+1. Content thinness was the root blocker (AdSense rejections + crawled-not-indexed) — now fully cleared; effects lag by weeks.
+2. Impressions, not clicks, is the leading indicator to watch through August.
+3. The missing lever is now **authority** — effectively zero referring domains. Cycle 2 is built around this.
+4. The exam-form resizer niche is the seasonal wildcard (Indian exam application windows).
+5. Process lessons now encoded in the standing checklist: audit ALL hardcoded link surfaces with full-file greps; verify runtime features in a real browser (headless-Edge harness in scratch/).
+
+**Carried forward:** 11 niche tools without guide coverage (acceptable); Geist-vs-Inter font decision; quick answers on remaining ~47 tool pages; monetization ladder triggers (10k pv → Journey, 50k sessions → Mediavine).
+
+---
+
+## 30-Day Roadmap — Cycle 2 (≈ Jul 30 – Aug 30, 2026)
+
+**Theme: authority + demand-driven expansion.** Cycle 1 built the site; Cycle 2 makes the web point at it. Operating rules from Cycle 1 carry over unchanged (quality gate, branch → approve → deploy, link-surface checklist).
+
+### N1 — Jul 30 pre-flight + AdSense resubmit *(date-gated: run on/after Jul 30)*
+- [ ] GSC check: crawl dates on /break-even-calculator/, /csv-to-xlsx/, /split-excel/, /csv-to-json/ are post-Jul-19; guides indexing started.
+- [ ] Record in this file: impressions + clicks (28d vs prior 28d), indexed count.
+- [ ] If recrawl confirmed → user ticks AdSense policy box + Resubmit. Log the date; outcome typically arrives in days-to-2-weeks.
+
+### N2–N3 — Authority foundation (directories + listings)
+- [ ] N2: Submit to free tool directories with unique descriptions each (AlternativeTo, SaaSHub, and similar free-tier listings). Build a submissions tracking table here. No paid listings, no link farms — reputable directories only.
+- [ ] N3: Launch-post prep: Show HN / Product Hunt-style asset pack (tagline, screenshots, maker's comment emphasizing the no-upload architecture). Posting is the user's call and timing.
+
+### N4–N5 — vs batch 2 (from backlog)
+- [ ] N4: /vs/iloveimg/ + /vs/pdf24/ (fairness sections included, hedged pricing).
+- [ ] N5: /vs/sejda/ + /vs/tinywow/. Update footer vs-block + sitemap page (checklist rule!).
+
+### N6–N7 — Conversion of attention
+- [ ] N6: Quick answers batch 2 — next ~15 tool pages by traffic priority.
+- [ ] N7: GA4 key events (currently 0 defined): tool_used / file_converted / download events, so "views per user" becomes measurable engagement. Document the weekly GSC snapshot ritual (impressions, clicks, indexed — one row per week below).
+
+### N8–N9 — Demand-driven content (requires N1 GSC data)
+- [ ] N8: New tool chosen from actual GSC impression queries (candidates: PDF compressor, image compressor — decide from data, not guesses).
+- [ ] N9: 2 guides targeting queries with impressions but no clicks (title/content gap-closing).
+
+### N10 — Link magnet
+- [ ] One genuinely shareable asset, e.g. printable "exam form photo size cheat sheet" page (all common portals' px/KB specs in one table) — the kind of page forums and Telegram groups link to. Internal-links to resizer.
+
+### N11 — Polish + coverage
+- [ ] Quick answers batch 3; re-run the S6 link-graph audit; fix anything the month surfaced.
+
+### N12 — Month 2 review
+- [ ] Same drill as S12: GSC trends vs the forecast bands (conservative 20–40/day, base 40–100/day for late Sept), AdSense outcome, monetization-trigger check, draft Cycle 3.
+
+### Weekly GSC snapshot log
+_(one line per week: date — impressions 7d — clicks 7d — indexed count)_
