@@ -164,7 +164,7 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 - [ ] N3: Launch-post prep: Show HN / Product Hunt-style asset pack (tagline, screenshots, maker's comment emphasizing the no-upload architecture). Posting is the user's call and timing.
 
 ### N4–N5 — vs batch 2 (from backlog)
-- [ ] N4: /vs/iloveimg/ + /vs/pdf24/ (fairness sections included, hedged pricing).
+- [x] N4: /vs/iloveimg/ + /vs/pdf24/ (fairness sections included, hedged pricing). *(Done 2026-07-20, branch `seo/n4-vs-iloveimg-pdf24`: 939/922 words, honest tables incl. competitor-wins rows; PDF24 credited as genuinely free with a real Windows offline app — differentiated on privacy/scope not price; iLoveIMG angle = local image resize/compress-to-KB for forms. Footer + sitemap wired. UI-polish lane item shipped same batch: button micro-interactions — replaced `transition: all` with explicit props, added tactile :active press states, touch-action + reduced-motion guards.)*
 - [ ] N5: /vs/sejda/ + /vs/tinywow/. Update footer vs-block + sitemap page (checklist rule!).
 
 ### N6–N7 — Conversion of attention

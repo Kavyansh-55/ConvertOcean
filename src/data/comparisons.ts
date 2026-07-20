@@ -582,5 +582,197 @@ export const comparisons: ComparisonData[] = [
         a: 'No. Video and audio transcoding requires processing power beyond what browser sandboxes provide, and we would rather not pretend otherwise. For MP4, MP3, and similar media conversions, a server-based tool like Convertio or CloudConvert is the right choice.'
       }
     ]
+  },
+  {
+    slug: 'iloveimg',
+    competitorName: 'iLoveIMG',
+    title: 'ConvertOcean vs iLoveIMG - Private Image Tools | ConvertOcean',
+    description: 'Compare ConvertOcean and iLoveIMG for resizing, compressing & converting images. See why in-browser, zero-upload image editing beats cloud tools — free & unlimited.',
+    h1: 'ConvertOcean vs iLoveIMG.',
+    subtitle: 'Resize, compress, and convert images in your browser — nothing uploaded.',
+    intro: 'iLoveIMG is a popular cloud image toolkit for resizing, compressing, and converting photos. It works well, but every image is uploaded to their servers first. ConvertOcean does the same everyday image jobs — resize to exact pixels or a target file size, convert between JPG/PNG/WebP, OCR — entirely inside your browser, so your photos, ID scans, and screenshots never leave your device.',
+    pros: [
+      'Nothing uploaded: images are processed in your browser sandbox.',
+      'Resize by exact pixels or to a target KB size (ideal for exam/job forms).',
+      'Unlimited and free: no daily task caps or file-count limits.',
+      'No account or email required for any tool.',
+      'Works offline once the page has loaded.'
+    ],
+    cons: [
+      'Every task uploads your image to iLoveIMG servers.',
+      'Free tier limits tasks per day and batch sizes.',
+      'Uploaded images sit on their servers until processed and cleared.',
+      'Premium features and larger batches require a paid plan.',
+      'No offline use — the workflow depends on their infrastructure.'
+    ],
+    comparisonTable: [
+      {
+        feature: 'Processing Location',
+        convertocean: 'Your browser (on-device)',
+        competitor: 'iLoveIMG cloud servers',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Resize to Exact File Size (KB)',
+        convertocean: 'Yes — target-KB mode with form presets',
+        competitor: 'Compression only (no exact-KB target)',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Privacy of Photos / ID Scans',
+        convertocean: 'Absolute (never uploaded)',
+        competitor: 'Uploaded and stored briefly',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Daily Limits',
+        convertocean: 'Unlimited',
+        competitor: 'Capped on the free tier',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Offline Use',
+        convertocean: 'Yes (runs after page load)',
+        competitor: 'No',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Image Editing (crop, watermark, meme)',
+        convertocean: 'Convert / resize / OCR only',
+        competitor: 'Broader editing suite',
+        isConvertoceanBetter: false
+      }
+    ],
+    sections: [
+      {
+        title: 'Why Photos Are the Files You Most Want to Keep Local.',
+        paragraphs: [
+          'Images are quietly the most sensitive files people convert: a passport photo for a visa form, an ID scan for a bank, a signature, a screenshot of a private chat. Uploading them to a cloud image tool means a copy exists, however briefly, on infrastructure you do not control.',
+          'ConvertOcean resizes and converts images using your browser\'s own canvas engine. The picture is read, transformed, and downloaded without a single byte crossing the network — which is exactly the guarantee an ID photo or signature deserves.'
+        ]
+      },
+      {
+        title: 'Built for the Form-Upload Problem.',
+        paragraphs: [
+          'The single most common image task online is not artistic — it is "make this photo exactly 200×230 pixels and under 50 KB" for an exam portal or job application. Our Image Resizer targets exact pixel dimensions and an exact file-size ceiling with one-tap presets for the common form limits. iLoveIMG compresses, but does not let you hit a specific KB target, which is precisely what strict upload validators check.'
+        ]
+      },
+      {
+        title: 'When iLoveIMG Is the Better Choice.',
+        paragraphs: [
+          'Fairness first: iLoveIMG is more than a converter. It offers cropping, watermarking, rotation, a meme generator, and photo-editing conveniences that a privacy-first converter deliberately does not, plus polished mobile apps and heavy batch processing. If you need to visually edit or annotate images, or you work primarily from a phone app, iLoveIMG genuinely serves that. Choose ConvertOcean when the task is resizing, compressing, converting, or OCR — and the image is something you would rather not upload anywhere.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'Is ConvertOcean a private alternative to iLoveIMG?',
+        a: 'Yes. For resizing, compressing, converting (JPG/PNG/WebP), and OCR, ConvertOcean does the work entirely in your browser — images are never uploaded — whereas iLoveIMG processes everything on its cloud servers. For photos, ID scans, and signatures, the no-upload approach is the safer default.'
+      },
+      {
+        q: 'Can ConvertOcean resize an image to an exact KB size like a form needs?',
+        a: 'Yes — the Image Resizer has a compress-to-file-size mode with presets for common upload limits (10, 20, 50, 100, 200 KB), plus exact pixel dimensions. It targets the ceiling forms actually check, which most cloud tools only approximate through generic compression.'
+      },
+      {
+        q: 'Does ConvertOcean edit images (crop, watermark) like iLoveIMG?',
+        a: 'No. ConvertOcean focuses on conversion, resizing, compression, and OCR rather than visual editing. For cropping, watermarking, or annotation, a full image editor like iLoveIMG or a desktop tool is the right choice.'
+      }
+    ]
+  },
+  {
+    slug: 'pdf24',
+    competitorName: 'PDF24',
+    title: 'ConvertOcean vs PDF24 - Private Browser PDF Tools | ConvertOcean',
+    description: 'Compare ConvertOcean and PDF24 Tools. Both are free — see the real difference: in-browser processing with no uploads vs cloud tools, plus images, data & business tools.',
+    h1: 'ConvertOcean vs PDF24.',
+    subtitle: 'Free PDF tools that run in your browser with nothing uploaded — plus images, data, and business tools.',
+    intro: 'PDF24 Tools is a genuinely free and well-stocked PDF toolkit — credit where it is due. The honest difference is not price; it is architecture and scope. PDF24\'s online tools upload your files to their servers to process, while ConvertOcean runs every conversion inside your browser with zero uploads — and covers images, spreadsheets, developer data, and business calculators alongside PDFs.',
+    pros: [
+      'Nothing uploaded: PDFs and other files are processed in your browser.',
+      'One toolkit for PDFs, images, spreadsheets, data & business tools.',
+      'No install required — runs in any modern browser, including mobile.',
+      'No account, no email, no limits.',
+      'Works offline once the page has loaded.'
+    ],
+    cons: [
+      'PDF24\'s online tools upload files to their servers to process.',
+      'Its fully-offline option requires installing the Windows Creator app.',
+      'Primarily focused on PDF tasks (less for images/data/business).',
+      'The interface carries advertising.',
+      'No native macOS / Linux / mobile desktop app (Windows-centric offline tool).'
+    ],
+    comparisonTable: [
+      {
+        feature: 'Price',
+        convertocean: 'Free',
+        competitor: 'Free',
+        isConvertoceanBetter: false
+      },
+      {
+        feature: 'Online Processing Location',
+        convertocean: 'Your browser (on-device)',
+        competitor: 'PDF24 cloud servers',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Offline Without Installing Anything',
+        convertocean: 'Yes (browser runs offline)',
+        competitor: 'Only via the installed Windows app',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Scope Beyond PDF',
+        convertocean: 'Images, spreadsheets, data, business tools',
+        competitor: 'Mainly PDF tools',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Ads / Trackers',
+        convertocean: 'None',
+        competitor: 'Ad-supported',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'PDF Feature Depth',
+        convertocean: 'Core convert / merge / split / extract',
+        competitor: 'Very broad PDF feature set',
+        isConvertoceanBetter: false
+      }
+    ],
+    sections: [
+      {
+        title: 'Same Price, Different Privacy Model.',
+        paragraphs: [
+          'PDF24 deserves respect — it is free and comprehensive, which is rare. But its online tools follow the classic model: your file uploads to their servers, gets processed there, and comes back. For a casual document that is fine; for a contract, medical form, or bank statement, "uploaded and processed remotely" is a meaningful difference from "never left my laptop."',
+          'ConvertOcean processes PDFs with client-side engines (pdf-lib, pdf.js) inside your browser tab. There is no upload step to trust, no server retention window, and no account — the privacy is structural, not a policy line.'
+        ]
+      },
+      {
+        title: 'Offline Without an Install.',
+        paragraphs: [
+          'PDF24 does offer true offline processing — but only through its downloadable Windows "Creator" application. That is a great option on Windows, and a non-option on macOS, Linux, ChromeOS, or a locked-down work machine. ConvertOcean runs offline in the browser you already have, on any operating system, with nothing to install — load the page once and the tools keep working with the network off.'
+        ]
+      },
+      {
+        title: 'When PDF24 Is the Better Choice.',
+        paragraphs: [
+          'Honest recommendation: if you live on Windows and want a huge, free PDF feature set — including specialised tasks like PDF/A conversion, OCR-heavy workflows, advanced form handling, and a dedicated desktop Creator app — PDF24 is excellent and hard to beat on breadth of PDF features alone. Choose ConvertOcean when you value never uploading your files, want one privacy-first toolkit that also covers images, spreadsheets, and data, or work on a non-Windows machine where installing software is not an option.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'PDF24 is already free — why use ConvertOcean?',
+        a: 'Price is the same; the difference is privacy and scope. PDF24\'s online tools upload your files to its servers to process, while ConvertOcean runs conversions inside your browser with no uploads at all. ConvertOcean also spans images, spreadsheets, developer data, and business calculators, not just PDFs.'
+      },
+      {
+        q: 'Does PDF24 work offline like ConvertOcean?',
+        a: 'PDF24 offers offline processing only through its installable Windows Creator app. ConvertOcean works offline directly in the browser on any operating system once the page has loaded, with nothing to install.'
+      },
+      {
+        q: 'Which has more PDF features, ConvertOcean or PDF24?',
+        a: 'PDF24 has a broader, more specialised PDF feature set. ConvertOcean focuses on the common, high-value tasks — convert, merge, split, extract text — done privately in the browser, plus tools for images, data, and business that PDF24 does not cover.'
+      }
+    ]
   }
 ];
