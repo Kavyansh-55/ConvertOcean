@@ -76,13 +76,6 @@ const popularTools = popularSlugs
   .map(s => tools.find(t => t.slug === s))
   .filter((t): t is (typeof tools)[number] => Boolean(t));
 
-// Representative tools for the hero product-panel — one per major category, so the
-// panel shows the breadth of the whole toolkit at a glance (auto-updates with the data).
-const panelSlugs = ['pdf-to-word', 'jpg-to-png', 'excel-to-pdf', 'csv-to-json', 'merge-pdf', 'break-even-calculator'];
-const panelTools = panelSlugs
-  .map(s => tools.find(t => t.slug === s))
-  .filter((t): t is (typeof tools)[number] => Boolean(t));
-
 // Nicer chip labels for format tokens (honest — only real formats).
 const fmtLabels: Record<string, string> = {
   jpg: 'JPG', jpeg: 'JPG', png: 'PNG', webp: 'WEBP', svg: 'SVG', gif: 'GIF',
@@ -709,66 +702,91 @@ const toolChips = (slug: string): ToolChips => {
       .hero-lead .hero-cta-group { justify-content: center; }
     }
 
-    /* ─── Hero product panel (real tools = breadth at a glance) ─── */
+    /* ─── Hero product panel — ConvertOcean's own live surface ─── */
     .hero-panel {
       background: var(--colors-canvas);
       border: 1px solid var(--colors-hairline);
       border-radius: var(--rounded-xl);
-      padding: var(--spacing-md);
+      padding: var(--spacing-lg);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03), 0 30px 60px -18px rgba(0, 0, 0, 0.18);
       transform: perspective(1400px) rotateY(-5deg) rotateX(1.5deg);
       transform-origin: center left;
     }
     @media (max-width: 940px) {
-      .hero-panel { transform: none; max-width: 460px; margin: 0 auto; width: 100%; }
+      .hero-panel { transform: none; max-width: 440px; margin: 0 auto; width: 100%; }
     }
-    .hp-bar {
+    /* branded header (not a borrowed macOS window) */
+    .hp-head {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 2px 4px var(--spacing-sm);
+      gap: 8px;
+      padding-bottom: var(--spacing-sm);
       border-bottom: 1px solid var(--colors-hairline);
+      margin-bottom: var(--spacing-lg);
+    }
+    .hp-mark {
+      width: 26px; height: 26px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #007cf0, #00dfd8);
+      color: #fff; flex-shrink: 0;
+    }
+    .hp-brand { font-weight: 600; font-size: 14px; letter-spacing: -0.3px; color: var(--colors-ink); }
+    .hp-live {
+      margin-left: auto;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+      color: var(--colors-mute); text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .hp-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #1a9e7f; }
+
+    /* signature live-conversion demo */
+    .hp-demo {
+      background: var(--colors-canvas-soft);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-lg);
+      text-align: center;
       margin-bottom: var(--spacing-md);
     }
-    .hp-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--colors-hairline-strong); }
-    .hp-dot:nth-child(1) { background: #ff5f57; }
-    .hp-dot:nth-child(2) { background: #febc2e; }
-    .hp-dot:nth-child(3) { background: #28c840; }
-    .hp-bar-title {
-      margin-left: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
-      color: var(--colors-mute);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .hp-demo-main { display: flex; align-items: center; justify-content: center; gap: 12px; }
+    .hp-fmt {
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px;
+      padding: 8px 14px; border-radius: var(--rounded-md); letter-spacing: 0.4px;
+      transition: opacity 0.35s ease, transform 0.35s ease;
     }
-    .hp-tabs { display: flex; gap: 6px; margin-bottom: var(--spacing-md); flex-wrap: wrap; }
+    .hp-from { color: var(--colors-body); background: var(--colors-canvas-soft-2); }
+    .hp-to { color: #007cf0; background: rgba(0, 124, 240, 0.12); }
+    [data-theme="dark"] .hp-to { color: #4db5ff; }
+    .hp-demo-arrow { color: var(--colors-mute); font-size: 18px; }
+    .hp-demo-name {
+      margin-top: 12px; font-size: 14px; font-weight: 600; color: var(--colors-ink);
+      transition: opacity 0.35s ease;
+    }
+    .hp-demo-bar {
+      margin-top: 12px; height: 4px; border-radius: 3px;
+      background: var(--colors-canvas-soft-2); overflow: hidden;
+    }
+    .hp-demo-fill {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, #007cf0, #00dfd8);
+      border-radius: 3px;
+    }
+    .hp-demo-foot {
+      margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+      color: var(--colors-mute);
+    }
+    .hp-check { color: #1a9e7f; font-weight: 700; opacity: 0; transition: opacity 0.3s ease; }
+    .hp-check.on { opacity: 1; }
+
+    .hp-tabs { display: flex; gap: 6px; margin-bottom: var(--spacing-md); flex-wrap: wrap; justify-content: center; }
     .hp-tab {
-      font-size: 12px;
-      font-weight: 500;
-      padding: 3px 11px;
+      font-size: 12px; font-weight: 500; padding: 3px 11px;
       border-radius: var(--rounded-pill);
-      background: var(--colors-canvas-soft-2);
-      color: var(--colors-body);
+      background: var(--colors-canvas-soft-2); color: var(--colors-body);
     }
     .hp-tab-active { background: var(--colors-ink); color: var(--colors-canvas); }
-    .hp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .hp-card {
-      border: 1px solid var(--colors-hairline);
-      border-radius: var(--rounded-md);
-      padding: 11px 12px;
-      background: var(--colors-canvas-soft);
-      border-left: 2px solid var(--accent, var(--colors-link));
-    }
-    .hp-card-name { font-size: 13px; font-weight: 600; color: var(--colors-ink); letter-spacing: -0.2px; }
-    .hp-more {
-      margin-top: 10px;
-      text-align: center;
-      font-size: 11.5px;
-      color: var(--colors-mute);
-      padding: 9px;
-      background: var(--colors-canvas-soft-2);
-      border-radius: var(--rounded-md);
+    .hp-stat {
+      text-align: center; font-size: 11.5px; color: var(--colors-mute);
       font-family: 'JetBrains Mono', monospace;
     }
 
@@ -930,41 +948,37 @@ const toolChips = (slug: string): ToolChips => {
           </div>
         </div>
 
-        <!-- Right: live product panel — real tools, one per category (breadth at a glance) -->
+        <!-- Right: ConvertOcean's own live product surface (auto-rotating conversion demo) -->
         <div class="hero-panel" aria-hidden="true">
-          <div class="hp-bar">
-            <span class="hp-dot"></span><span class="hp-dot"></span><span class="hp-dot"></span>
-            <span class="hp-bar-title">all tools · local</span>
+          <div class="hp-head">
+            <span class="hp-mark">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-4 6-4 9 0s6 4 9 0"/><path d="M3 17c3-4 6-4 9 0s6 4 9 0"/></svg>
+            </span>
+            <span class="hp-brand">ConvertOcean</span>
+            <span class="hp-live"><span class="hp-live-dot"></span>running locally</span>
           </div>
+
+          <!-- Signature: a live conversion that rotates through the toolkit -->
+          <div class="hp-demo" id="hpDemo">
+            <div class="hp-demo-main">
+              <span class="hp-fmt hp-from" id="hpFrom">PDF</span>
+              <span class="hp-demo-arrow" id="hpArrow">→</span>
+              <span class="hp-fmt hp-to" id="hpTo">DOCX</span>
+            </div>
+            <div class="hp-demo-name" id="hpName">PDF to Word</div>
+            <div class="hp-demo-bar"><span class="hp-demo-fill" id="hpFill"></span></div>
+            <div class="hp-demo-foot"><span class="hp-check" id="hpCheck">✓</span> <span id="hpStatus">converted locally · 0 bytes uploaded</span></div>
+          </div>
+
           <div class="hp-tabs">
             <span class="hp-tab hp-tab-active">All</span>
             <span class="hp-tab">PDF</span>
             <span class="hp-tab">Image</span>
             <span class="hp-tab">Sheets</span>
             <span class="hp-tab">Data</span>
+            <span class="hp-tab">Business</span>
           </div>
-          <div class="hp-grid">
-            {panelTools.map(t => {
-              const c = toolChips(t.slug);
-              return (
-                <div class="hp-card" style={`--accent: ${accentFor(t.slug, t.categorySlug)}`}>
-                  <div class="explore-card-chips">
-                    {c.pair ? (
-                      <>
-                        <span class="fmt-chip">{c.from}</span>
-                        <span class="fmt-arrow">→</span>
-                        <span class="fmt-chip">{c.to}</span>
-                      </>
-                    ) : (
-                      <span class="fmt-chip">{c.single}</span>
-                    )}
-                  </div>
-                  <span class="hp-card-name">{t.name}</span>
-                </div>
-              );
-            })}
-          </div>
-          <div class="hp-more">+ 54 more tools — all private, all free</div>
+          <div class="hp-stat">60 tools · 6 categories · everything runs in your browser</div>
         </div>
       </div>
     </section>
@@ -1482,5 +1496,59 @@ const toolChips = (slug: string): ToolChips => {
         });
       });
     });
+  </script>
+
+  <!-- Signature: rotate the hero conversion demo (real tools only; reduced-motion safe) -->
+  <script is:inline>
+    (function () {
+      var demo = document.getElementById('hpDemo');
+      if (!demo) return;
+      var steps = [
+        { from: 'PDF',  to: 'DOCX', name: 'PDF to Word' },
+        { from: 'JPG',  to: 'PNG',  name: 'JPG to PNG' },
+        { from: 'XLSX', to: 'PDF',  name: 'Excel to PDF' },
+        { from: 'CSV',  to: 'JSON', name: 'CSV to JSON' },
+        { from: 'IMG',  to: 'TEXT', name: 'Image to Text (OCR)' },
+        { from: 'PDF',  to: 'PDF',  name: 'Merge PDF' }
+      ];
+      var $from = document.getElementById('hpFrom'),
+          $to = document.getElementById('hpTo'),
+          $name = document.getElementById('hpName'),
+          $fill = document.getElementById('hpFill'),
+          $check = document.getElementById('hpCheck');
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var i = 0;
+
+      function paint(s) {
+        $from.textContent = s.from;
+        $to.textContent = s.to;
+        $name.textContent = s.name;
+      }
+      paint(steps[0]);
+
+      if (reduce) { $fill.style.width = '100%'; $check.classList.add('on'); return; }
+
+      function cycle() {
+        var s = steps[i % steps.length];
+        // fade content in
+        [$from, $to, $name].forEach(function (el) { el.style.opacity = '0'; el.style.transform = 'translateY(4px)'; });
+        $check.classList.remove('on');
+        $fill.style.transition = 'none';
+        $fill.style.width = '0%';
+        setTimeout(function () {
+          paint(s);
+          [$from, $to, $name].forEach(function (el) { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+          // run the progress bar
+          requestAnimationFrame(function () {
+            $fill.style.transition = 'width 1.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            $fill.style.width = '100%';
+          });
+          setTimeout(function () { $check.classList.add('on'); }, 1650);
+        }, 220);
+        i++;
+      }
+      cycle();
+      setInterval(cycle, 2600);
+    })();
   </script>
 </Layout>
