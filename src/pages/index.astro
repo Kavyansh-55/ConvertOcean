@@ -123,19 +123,20 @@ const toolChips = (slug: string): ToolChips => {
       color: var(--colors-ink);
     }
 
+    /* Accent reads like a flowing ocean current, not a glow shimmer */
     .hero-title-accent {
-      background: linear-gradient(90deg, #007cf0, #00dfd8, #007cf0);
-      background-size: 200% 100%;
+      background: linear-gradient(100deg, #007cf0, #00dfd8, #50e3c2, #00dfd8, #007cf0);
+      background-size: 260% 100%;
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
       display: inline-block;
-      animation: accent-pan 6s ease-in-out infinite;
+      animation: water-flow 9s linear infinite;
     }
 
-    @keyframes accent-pan {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
+    @keyframes water-flow {
+      from { background-position: 0% 50%; }
+      to { background-position: 260% 50%; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -725,10 +726,8 @@ const toolChips = (slug: string): ToolChips => {
       margin-bottom: var(--spacing-lg);
     }
     .hp-mark {
-      width: 26px; height: 26px; border-radius: 7px;
-      display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, #007cf0, #00dfd8);
-      color: #fff; flex-shrink: 0;
+      width: 24px; height: 24px; border-radius: 6px;
+      object-fit: contain; flex-shrink: 0;
     }
     .hp-brand { font-weight: 600; font-size: 14px; letter-spacing: -0.3px; color: var(--colors-ink); }
     .hp-live {
@@ -788,6 +787,31 @@ const toolChips = (slug: string): ToolChips => {
     .hp-stat {
       text-align: center; font-size: 11.5px; color: var(--colors-mute);
       font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ─── Delicate ocean wave at the hero's base (atmosphere) ─── */
+    .hero-waves {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -1px;
+      width: 100vw;
+      height: 88px;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .hero-waves svg { width: 100%; height: 100%; display: block; }
+    .wave-a { fill: rgba(0, 124, 240, 0.06); animation: wave-bob 7s ease-in-out infinite; }
+    .wave-b { fill: rgba(0, 223, 216, 0.08); animation: wave-bob 9s ease-in-out infinite reverse; }
+    [data-theme="dark"] .wave-a { fill: rgba(0, 124, 240, 0.12); }
+    [data-theme="dark"] .wave-b { fill: rgba(0, 223, 216, 0.12); }
+    @keyframes wave-bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .wave-a, .wave-b { animation: none; }
     }
 
     /* ─── Signature: live privacy-status strip (brand mono voice) ─── */
@@ -918,7 +942,7 @@ const toolChips = (slug: string): ToolChips => {
           </div>
 
           <h1 class="hero-title">Your files never<br /><span class="hero-title-accent">leave your device.</span></h1>
-          <p class="hero-subtitle">60 free tools for PDFs, images, spreadsheets &amp; data — all running in your browser.</p>
+          <p class="hero-subtitle">60+ free tools for PDFs, images, spreadsheets &amp; more — all running in your browser.</p>
 
           <!-- Homepage Search bar -->
           <div class="search-container" id="searchContainer" data-tools={JSON.stringify(tools.map(t => ({ name: t.name, slug: t.slug, icon: t.icon, desc: t.description })))}>
@@ -951,9 +975,7 @@ const toolChips = (slug: string): ToolChips => {
         <!-- Right: ConvertOcean's own live product surface (auto-rotating conversion demo) -->
         <div class="hero-panel" aria-hidden="true">
           <div class="hp-head">
-            <span class="hp-mark">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-4 6-4 9 0s6 4 9 0"/><path d="M3 17c3-4 6-4 9 0s6 4 9 0"/></svg>
-            </span>
+            <img class="hp-mark" src="/fevicon.png" alt="" width="24" height="24" />
             <span class="hp-brand">ConvertOcean</span>
             <span class="hp-live"><span class="hp-live-dot"></span>running locally</span>
           </div>
@@ -978,8 +1000,16 @@ const toolChips = (slug: string): ToolChips => {
             <span class="hp-tab">Data</span>
             <span class="hp-tab">Business</span>
           </div>
-          <div class="hp-stat">60 tools · 6 categories · everything runs in your browser</div>
+          <div class="hp-stat">60+ tools · 6 categories · everything runs in your browser</div>
         </div>
+      </div>
+
+      <!-- delicate ocean wave — atmosphere, not a heavy graphic -->
+      <div class="hero-waves" aria-hidden="true">
+        <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+          <path class="wave-a" d="M0,50 C180,80 360,20 540,44 C740,70 900,18 1080,40 C1260,62 1360,36 1440,46 L1440,100 L0,100 Z" />
+          <path class="wave-b" d="M0,62 C200,30 380,88 560,60 C760,30 940,84 1120,58 C1280,36 1370,64 1440,56 L1440,100 L0,100 Z" />
+        </svg>
       </div>
     </section>
 
