@@ -1744,9 +1744,34 @@ footer {
   left: 0;
   width: 3px;
   height: 100%;
-  background-color: var(--colors-link);
+  background-color: var(--accent, var(--colors-link));
   opacity: 0;
   transition: opacity 0.2s ease;
+}
+
+/* Format-pair chips (e.g. PDF → DOCX), category-coloured */
+.explore-card-chips {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 7px;
+}
+.fmt-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--accent, var(--colors-link));
+  background: color-mix(in srgb, var(--accent, var(--colors-link)) 13%, transparent);
+}
+.fmt-arrow {
+  color: var(--colors-mute);
+  font-size: 11px;
+  line-height: 1;
 }
 
 .explore-card:hover::before {
