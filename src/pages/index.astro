@@ -796,22 +796,24 @@ const toolChips = (slug: string): ToolChips => {
       transform: translateX(-50%);
       bottom: -1px;
       width: 100vw;
-      height: 88px;
+      height: 170px;
       z-index: -1;
       pointer-events: none;
       overflow: hidden;
     }
     .hero-waves svg { width: 100%; height: 100%; display: block; }
-    .wave-a { fill: rgba(0, 124, 240, 0.06); animation: wave-bob 7s ease-in-out infinite; }
-    .wave-b { fill: rgba(0, 223, 216, 0.08); animation: wave-bob 9s ease-in-out infinite reverse; }
-    [data-theme="dark"] .wave-a { fill: rgba(0, 124, 240, 0.12); }
-    [data-theme="dark"] .wave-b { fill: rgba(0, 223, 216, 0.12); }
+    .wave-c { fill: rgba(0, 112, 243, 0.05); animation: wave-bob 11s ease-in-out infinite; }
+    .wave-a { fill: rgba(0, 124, 240, 0.09); animation: wave-bob 7s ease-in-out infinite; }
+    .wave-b { fill: rgba(0, 223, 216, 0.12); animation: wave-bob 9s ease-in-out infinite reverse; }
+    [data-theme="dark"] .wave-c { fill: rgba(0, 112, 243, 0.10); }
+    [data-theme="dark"] .wave-a { fill: rgba(0, 124, 240, 0.15); }
+    [data-theme="dark"] .wave-b { fill: rgba(0, 223, 216, 0.17); }
     @keyframes wave-bob {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
+      50% { transform: translateY(-7px); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .wave-a, .wave-b { animation: none; }
+      .wave-a, .wave-b, .wave-c { animation: none; }
     }
 
     /* ─── Signature: live privacy-status strip (brand mono voice) ─── */
@@ -1004,11 +1006,12 @@ const toolChips = (slug: string): ToolChips => {
         </div>
       </div>
 
-      <!-- delicate ocean wave — atmosphere, not a heavy graphic -->
+      <!-- layered ocean base — atmospheric depth, not a heavy graphic -->
       <div class="hero-waves" aria-hidden="true">
-        <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
-          <path class="wave-a" d="M0,50 C180,80 360,20 540,44 C740,70 900,18 1080,40 C1260,62 1360,36 1440,46 L1440,100 L0,100 Z" />
-          <path class="wave-b" d="M0,62 C200,30 380,88 560,60 C760,30 940,84 1120,58 C1280,36 1370,64 1440,56 L1440,100 L0,100 Z" />
+        <svg viewBox="0 0 1440 130" preserveAspectRatio="none">
+          <path class="wave-c" d="M0,40 C220,78 420,14 640,42 C860,70 1040,20 1240,44 C1340,56 1400,40 1440,44 L1440,130 L0,130 Z" />
+          <path class="wave-a" d="M0,64 C180,96 360,30 540,58 C740,88 900,28 1080,54 C1260,80 1360,50 1440,60 L1440,130 L0,130 Z" />
+          <path class="wave-b" d="M0,84 C200,50 380,110 560,82 C760,50 940,108 1120,80 C1280,56 1370,86 1440,78 L1440,130 L0,130 Z" />
         </svg>
       </div>
     </section>
