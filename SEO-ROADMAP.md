@@ -184,6 +184,7 @@ Homepage redesign shipped 2026-07-20 (branch `seo/n-design-homepage`, 7 commits)
 - [ ] Cascade the hero's visual language (chips, panel styling) to category + tool pages for consistency.
 - [ ] Optional: rotating search placeholder text; subtle card hover polish.
 - Rule: one small UI item per session MAX; never let polish displace the growth/AdSense work.
+- **Rule: when replacing a component, delete its old CSS in the same change.** Orphaned rules caused a real `.popular-*` collision during the redesign, and left the hero entrance animation pointing at a deleted element. Audit with: for each class, compare CSS defs vs `class="..."` uses across `src/`.
 
 ### N11 — Polish + coverage
 - [ ] Quick answers batch 3; re-run the S6 link-graph audit; fix anything the month surfaced.
@@ -196,3 +197,4 @@ _(one line per week: date — impressions 7d — clicks 7d — indexed count)_
 
 ## Cycle 2 progress log
 - 2026-07-20 — N4 approved, merged, deployed, verified live (/vs/iloveimg/ + /vs/pdf24/ 200 with fairness sections, footer + XML sitemap updated). 8 comparison pages total. UI-polish lane: button micro-interactions shipped. Next: N5 (vs Sejda + TinyWow); AdSense resubmit ~Jul 30.
+- 2026-07-20 — Dead-CSS cleanup deployed (user-prompted audit): removed 131 lines of orphaned styles (.trust-* section, .hero-trust-badges/.trust-badge, .explore-card-icon) and fixed the hero entrance animation that targeted a deleted element. Verified live: homepage identical, dead classes absent from served CSS.
