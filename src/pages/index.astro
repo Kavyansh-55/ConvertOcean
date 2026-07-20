@@ -802,16 +802,16 @@ const toolChips = (slug: string): ToolChips => {
       overflow: hidden;
     }
     .hero-waves svg { width: 100%; height: 100%; display: block; }
-    .wave-c { fill: rgba(0, 112, 243, 0.05); animation: wave-bob 11s ease-in-out infinite; }
-    .wave-a { fill: rgba(0, 124, 240, 0.09); animation: wave-bob 7s ease-in-out infinite; }
-    .wave-b { fill: rgba(0, 223, 216, 0.12); animation: wave-bob 9s ease-in-out infinite reverse; }
-    [data-theme="dark"] .wave-c { fill: rgba(0, 112, 243, 0.10); }
-    [data-theme="dark"] .wave-a { fill: rgba(0, 124, 240, 0.15); }
-    [data-theme="dark"] .wave-b { fill: rgba(0, 223, 216, 0.17); }
-    @keyframes wave-bob {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-7px); }
-    }
+    .wave-c { fill: rgba(0, 112, 243, 0.06); animation: wave-back 13s ease-in-out infinite; }
+    .wave-a { fill: rgba(0, 124, 240, 0.10); animation: wave-mid 9s ease-in-out infinite; }
+    .wave-b { fill: rgba(0, 223, 216, 0.13); animation: wave-front 6.5s ease-in-out infinite; }
+    [data-theme="dark"] .wave-c { fill: rgba(0, 112, 243, 0.11); }
+    [data-theme="dark"] .wave-a { fill: rgba(0, 124, 240, 0.16); }
+    [data-theme="dark"] .wave-b { fill: rgba(0, 223, 216, 0.18); }
+    /* layers drift left/right at different speeds → visible flowing-water parallax */
+    @keyframes wave-front { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-38px, -14px); } }
+    @keyframes wave-mid { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, -10px); } }
+    @keyframes wave-back { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-22px, -7px); } }
     @media (prefers-reduced-motion: reduce) {
       .wave-a, .wave-b, .wave-c { animation: none; }
     }
@@ -1006,12 +1006,12 @@ const toolChips = (slug: string): ToolChips => {
         </div>
       </div>
 
-      <!-- layered ocean base — atmospheric depth, not a heavy graphic -->
+      <!-- layered ocean base — parallax drift reads as flowing water -->
       <div class="hero-waves" aria-hidden="true">
         <svg viewBox="0 0 1440 130" preserveAspectRatio="none">
-          <path class="wave-c" d="M0,40 C220,78 420,14 640,42 C860,70 1040,20 1240,44 C1340,56 1400,40 1440,44 L1440,130 L0,130 Z" />
-          <path class="wave-a" d="M0,64 C180,96 360,30 540,58 C740,88 900,28 1080,54 C1260,80 1360,50 1440,60 L1440,130 L0,130 Z" />
-          <path class="wave-b" d="M0,84 C200,50 380,110 560,82 C760,50 940,108 1120,80 C1280,56 1370,86 1440,78 L1440,130 L0,130 Z" />
+          <path class="wave-c" d="M-120,40 C220,82 420,10 640,42 C900,78 1060,14 1240,44 C1380,60 1460,38 1560,44 L1560,130 L-120,130 Z" />
+          <path class="wave-a" d="M-120,64 C180,100 380,26 560,58 C800,94 940,24 1120,54 C1320,84 1420,50 1560,60 L1560,130 L-120,130 Z" />
+          <path class="wave-b" d="M-120,84 C200,46 400,114 580,82 C820,44 960,112 1140,80 C1340,54 1440,88 1560,78 L1560,130 L-120,130 Z" />
         </svg>
       </div>
     </section>
