@@ -76,6 +76,30 @@ const popularTools = popularSlugs
   .map(s => tools.find(t => t.slug === s))
   .filter((t): t is (typeof tools)[number] => Boolean(t));
 
+// Nicer chip labels for format tokens (honest — only real formats).
+const fmtLabels: Record<string, string> = {
+  jpg: 'JPG', jpeg: 'JPG', png: 'PNG', webp: 'WEBP', svg: 'SVG', gif: 'GIF',
+  pdf: 'PDF', word: 'DOCX', docx: 'DOCX', ppt: 'PPT', pptx: 'PPTX',
+  excel: 'XLSX', xls: 'XLS', xlsx: 'XLSX', csv: 'CSV', json: 'JSON', xml: 'XML',
+  txt: 'TXT', image: 'IMG', text: 'TEXT',
+};
+const chipLabel = (tok: string) => fmtLabels[tok] || tok.toUpperCase();
+
+// Derive scannable chips from a tool slug: a format pair (A → B), or a single action/format chip.
+type ToolChips = { pair: true; from: string; to: string } | { pair: false; single: string };
+const toolChips = (slug: string): ToolChips => {
+  const m = slug.match(/^(.+)-to-(.+)$/);
+  if (m) return { pair: true, from: chipLabel(m[1]), to: chipLabel(m[2]) };
+  if (slug.startsWith('merge-')) return { pair: false, single: 'MERGE' };
+  if (slug.startsWith('split-')) return { pair: false, single: 'SPLIT' };
+  if (slug.endsWith('-calculator')) return { pair: false, single: 'CALC' };
+  if (slug.endsWith('-generator')) return { pair: false, single: 'PDF' };
+  if (slug === 'image-resizer') return { pair: false, single: 'RESIZE' };
+  if (slug === 'word-counter') return { pair: false, single: 'COUNT' };
+  if (slug === 'json-formatter') return { pair: false, single: 'JSON' };
+  return { pair: false, single: chipLabel(slug.split('-')[0]) };
+};
+
 ---
 
 <Layout title={title} description={description} lang={lang} faqList={faqList}>
@@ -408,46 +432,6 @@ const popularTools = popularSlugs
       line-height: 1.5;
     }
 
-    /* Popular Tools style */
-    .popular-section {
-      max-width: 1200px;
-      margin: 0 auto var(--spacing-4xl);
-      padding: 0 var(--spacing-lg);
-    }
-
-    .popular-title {
-      font-size: 28px;
-      font-weight: 600;
-      letter-spacing: -1.2px;
-      margin-bottom: var(--spacing-xl);
-      color: var(--colors-ink);
-      text-align: center;
-    }
-
-    .popular-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--spacing-md);
-    }
-
-    @media (max-width: 990px) {
-      .popular-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    @media (max-width: 768px) {
-      .popular-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 480px) {
-      .popular-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
     .section-divider {
       max-width: 1200px;
       margin: 0 auto var(--spacing-3xl);
@@ -715,19 +699,12 @@ const popularTools = popularSlugs
     }
     .hero-status strong { color: var(--colors-ink); font-weight: 600; }
     .hero-status-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: #29bc9b;
+      background: #1a9e7f;
       flex-shrink: 0;
-      animation: status-pulse 2.4s ease-out infinite;
     }
-    @keyframes status-pulse {
-      0% { box-shadow: 0 0 0 0 rgba(41, 188, 155, 0.45); }
-      70% { box-shadow: 0 0 0 6px rgba(41, 188, 155, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(41, 188, 155, 0); }
-    }
-    @media (prefers-reduced-motion: reduce) { .hero-status-dot { animation: none; } }
     @media (max-width: 480px) { .hero-status { font-size: 11px; padding: 5px 11px; } }
 
     /* ─── Popular Tools ─── */
@@ -900,20 +877,33 @@ const popularTools = popularSlugs
       </div>
 
       <div class="explore-grid" id="exploreGrid">
-        {tools.map(t => (
-          <a href={relLink(`/${t.slug}/`)} class="explore-card" data-category={t.categorySlug}>
-            <div class="explore-card-icon"><CategoryIcon icon={t.icon} width="20" height="20" /></div>
-            <div class="explore-card-info">
-              <span class="explore-card-name">{t.name}</span>
-              <span class="explore-card-desc">{t.description}</span>
-            </div>
-            <div class="explore-card-arrow">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </div>
-          </a>
-        ))}
+        {tools.map(t => {
+          const chips = toolChips(t.slug);
+          return (
+            <a href={relLink(`/${t.slug}/`)} class="explore-card" data-category={t.categorySlug} style={`--accent: ${accentFor(t.slug, t.categorySlug)}`}>
+              <div class="explore-card-info">
+                <div class="explore-card-chips">
+                  {chips.pair ? (
+                    <>
+                      <span class="fmt-chip">{chips.from}</span>
+                      <span class="fmt-arrow" aria-hidden="true">→</span>
+                      <span class="fmt-chip">{chips.to}</span>
+                    </>
+                  ) : (
+                    <span class="fmt-chip">{chips.single}</span>
+                  )}
+                </div>
+                <span class="explore-card-name">{t.name}</span>
+                <span class="explore-card-desc">{t.description}</span>
+              </div>
+              <div class="explore-card-arrow">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </div>
+            </a>
+          );
+        })}
       </div>
     </section>
 
