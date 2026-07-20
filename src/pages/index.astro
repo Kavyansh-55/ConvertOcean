@@ -48,9 +48,9 @@ const getToolCount = (categorySlug: string) => {
     return 30; // 30+ formats
   }
   if (categorySlug === 'pdf-tools') {
-    return tools.filter(t => 
+    return tools.filter(t =>
       t.categorySlug === 'pdf-tools' ||
-      t.slug.toLowerCase().includes('pdf') || 
+      t.slug.toLowerCase().includes('pdf') ||
       t.name.toLowerCase().includes('pdf') ||
       t.slug.toLowerCase().includes('merge') ||
       t.slug.toLowerCase().includes('split')
@@ -58,6 +58,23 @@ const getToolCount = (categorySlug: string) => {
   }
   return tools.filter(t => t.categorySlug === categorySlug).length;
 };
+
+// Per-category accent (from the brand gradient palette) — used to colour tool + category tiles.
+const categoryAccent: Record<string, string> = {
+  'pdf-tools': '#ff4d4d',
+  'image-tools': '#7928ca',
+  'excel-converter': '#29bc9b',
+  'document-tools': '#0070f3',
+  'developer-tools': '#007cf0',
+  'business-tools': '#f5a623',
+};
+const accentFor = (slug: string, cat: string) => categoryAccent[cat] || '#0070f3';
+
+// Curated "most-used" tools for the homepage — high-intent, one-tap entry.
+const popularSlugs = ['pdf-to-word', 'excel-to-pdf', 'image-resizer', 'merge-pdf', 'jpg-to-png', 'image-to-text', 'word-to-pdf', 'split-pdf'];
+const popularTools = popularSlugs
+  .map(s => tools.find(t => t.slug === s))
+  .filter((t): t is (typeof tools)[number] => Boolean(t));
 
 ---
 
@@ -653,34 +670,168 @@ const getToolCount = (categorySlug: string) => {
       color: var(--colors-mute);
       margin-left: 6px;
     }
+
+    /* ─── Hero: contained mesh-gradient moment behind the headline ─── */
+    .hero-container::before {
+      content: "";
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 780px;
+      max-width: 130%;
+      height: 440px;
+      background:
+        radial-gradient(closest-side at 28% 38%, rgba(0, 124, 240, 0.20), transparent 70%),
+        radial-gradient(closest-side at 72% 32%, rgba(0, 223, 216, 0.18), transparent 70%),
+        radial-gradient(closest-side at 58% 68%, rgba(255, 0, 128, 0.13), transparent 70%),
+        radial-gradient(closest-side at 38% 72%, rgba(121, 40, 202, 0.13), transparent 70%);
+      filter: blur(46px);
+      z-index: -1;
+      pointer-events: none;
+    }
+    [data-theme="dark"] .hero-container::before {
+      background:
+        radial-gradient(closest-side at 28% 38%, rgba(0, 124, 240, 0.34), transparent 70%),
+        radial-gradient(closest-side at 72% 32%, rgba(0, 223, 216, 0.30), transparent 70%),
+        radial-gradient(closest-side at 58% 68%, rgba(255, 0, 128, 0.24), transparent 70%),
+        radial-gradient(closest-side at 38% 72%, rgba(121, 40, 202, 0.24), transparent 70%);
+    }
+
+    /* ─── Signature: live privacy-status strip (brand mono voice) ─── */
+    .hero-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      margin-bottom: var(--spacing-lg);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-pill);
+      background: var(--colors-canvas);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      color: var(--colors-body);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+    .hero-status strong { color: var(--colors-ink); font-weight: 600; }
+    .hero-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #29bc9b;
+      flex-shrink: 0;
+      animation: status-pulse 2.4s ease-out infinite;
+    }
+    @keyframes status-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(41, 188, 155, 0.45); }
+      70% { box-shadow: 0 0 0 6px rgba(41, 188, 155, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(41, 188, 155, 0); }
+    }
+    @media (prefers-reduced-motion: reduce) { .hero-status-dot { animation: none; } }
+    @media (max-width: 480px) { .hero-status { font-size: 11px; padding: 5px 11px; } }
+
+    /* ─── Popular Tools ─── */
+    .popular-section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: var(--spacing-md) var(--spacing-lg) var(--spacing-2xl);
+    }
+    .popular-head { text-align: center; margin-bottom: var(--spacing-lg); }
+    .popular-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--colors-link);
+      font-weight: 500;
+    }
+    .popular-title {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -1px;
+      color: var(--colors-ink);
+      margin-top: 4px;
+    }
+    .popular-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-md);
+    }
+    @media (max-width: 860px) { .popular-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .popular-grid { grid-template-columns: 1fr; } }
+    .popular-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      padding: var(--spacing-lg);
+      background: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, box-shadow 0.2s;
+    }
+    .popular-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 3px;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .popular-card:hover {
+      transform: translateY(-3px);
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--colors-hairline));
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+    .popular-card:hover::before { opacity: 1; }
+    .popular-card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--rounded-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+    }
+    .popular-card-name { font-size: 15px; font-weight: 600; color: var(--colors-ink); }
+    .popular-card-cat {
+      font-size: 12px;
+      color: var(--colors-mute);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .popular-all {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: var(--spacing-lg);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--colors-link);
+      text-decoration: none;
+    }
+    .popular-all:hover { color: var(--colors-link-deep); }
   </style>
 
   <main>
     <!-- Hero Section -->
     <section class="hero-container">
-      <h1 class="hero-title">Convert, Merge & Process Files — <span class="hero-title-accent">100% Private.</span></h1>
-      <p class="hero-subtitle">Secure client-side document utilities that run locally in your web browser sandbox. Speed and safety combined.</p>
-      
-      <!-- Inline Trust Badges Row -->
-      <div class="hero-trust-badges">
-        <span class="trust-badge">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #0070f3;"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          100% Private (On-Device)
-        </span>
-        <span class="trust-badge">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #ee0000;"><path d="m2 2 20 20"/><path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 2.227-8.411"/><path d="M15.758 10.143A5 5 0 0 0 10 4.3a6.99 6.99 0 0 0-4.086 2.029"/></svg>
-          No Server Uploads
-        </span>
-        <span class="trust-badge">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #f5a623;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          Works Offline
-        </span>
-        <span class="trust-badge">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #7928ca;"><rect width="18" height="14" x="3" y="8" rx="2"/><path d="M12 5a3 3 0 1 0-3 3h6a3 3 0 1 0-3-3Z"/><path d="M12 8v14"/><path d="M3 12h18"/></svg>
-          Free & Unlimited
-        </span>
+      <!-- Signature: a live-looking privacy status line — the whole value prop, in the brand's mono voice -->
+      <div class="hero-status" role="status">
+        <span class="hero-status-dot" aria-hidden="true"></span>
+        <span class="hero-status-text"><strong>0 bytes uploaded</strong> · runs on your device · works offline</span>
       </div>
-      
+
+      <h1 class="hero-title">Convert &amp; merge files that<br /><span class="hero-title-accent">never leave your device.</span></h1>
+      <p class="hero-subtitle">Sixty free tools for PDFs, images, spreadsheets, and documents — each one runs entirely in your browser. No uploads, no accounts, no limits.</p>
+
       <!-- Homepage Search bar -->
       <div class="search-container" id="searchContainer" data-tools={JSON.stringify(tools.map(t => ({ name: t.name, slug: t.slug, icon: t.icon, desc: t.description })))}>
         <div class="search-input-wrapper">
@@ -708,10 +859,30 @@ const getToolCount = (categorySlug: string) => {
       </div>
 
       <div class="hero-cta-group">
-        <a href="#tools" class="button button-primary">Browse Tools</a>
-        <a href={relLink('/privacy-first/')} class="button button-secondary">How Privacy Works</a>
+        <a href="#popular" class="button button-primary">Browse tools</a>
+        <a href={relLink('/privacy-first/')} class="button button-secondary">How privacy works</a>
       </div>
 
+    </section>
+
+    <!-- Popular Tools — curated one-tap entry, colour-keyed by category -->
+    <section class="popular-section" id="popular" data-reveal>
+      <div class="popular-head">
+        <span class="popular-eyebrow">Most used</span>
+        <h2 class="popular-title">Start with a popular tool</h2>
+      </div>
+      <div class="popular-grid" data-reveal-stagger>
+        {popularTools.map(t => (
+          <a href={relLink(`/${t.slug}/`)} class="popular-card" style={`--accent: ${accentFor(t.slug, t.categorySlug)}`}>
+            <span class="popular-card-icon"><CategoryIcon icon={t.icon} width="22" height="22" /></span>
+            <span class="popular-card-name">{t.name}</span>
+            <span class="popular-card-cat">{t.category}</span>
+          </a>
+        ))}
+      </div>
+      <a href="#tools" class="popular-all">Browse all 60 tools
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
     </section>
 
     <hr class="section-divider">
