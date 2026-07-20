@@ -178,6 +178,13 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 ### N10 — Link magnet
 - [ ] One genuinely shareable asset, e.g. printable "exam form photo size cheat sheet" page (all common portals' px/KB specs in one table) — the kind of page forums and Telegram groups link to. Internal-links to resizer.
 
+### UI-polish lane (recurring — one small craft item per session, alongside growth)
+Homepage redesign shipped 2026-07-20 (branch `seo/n-design-homepage`, 7 commits): split hero + ConvertOcean-branded live product panel (auto-rotating real-conversion demo, reduced-motion safe), category-coloured format-pair chips across the tool grid, flowing-water headline accent, layered parallax ocean wave, real logo, "60+" copy. Verified light/dark/mobile in headless Edge (scratch/shot*.cjs harness). Do NOT keep iterating the hero — improve incrementally here instead:
+- [ ] Button + search micro-interactions (hover lift, press, focus prominence).
+- [ ] Cascade the hero's visual language (chips, panel styling) to category + tool pages for consistency.
+- [ ] Optional: rotating search placeholder text; subtle card hover polish.
+- Rule: one small UI item per session MAX; never let polish displace the growth/AdSense work.
+
 ### N11 — Polish + coverage
 - [ ] Quick answers batch 3; re-run the S6 link-graph audit; fix anything the month surfaced.
 
