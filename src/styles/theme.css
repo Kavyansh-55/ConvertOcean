@@ -164,7 +164,7 @@ select:focus-visible,
 /* Hero: gentle staggered entrance for supporting elements only.
    The H1 (LCP element) is intentionally NOT animated so paint stays instant. */
 @media (prefers-reduced-motion: no-preference) {
-  .hero-trust-badges { animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.05s; }
+  .hero-status       { animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.05s; }
   .search-container  { animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.14s; }
   .hero-cta-group    { animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.22s; }
 }
@@ -1626,41 +1626,6 @@ footer {
 }
 
 /* Inline Trust Badges below Hero */
-.hero-trust-badges {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
-  margin: 0 auto var(--spacing-xl);
-  max-width: 820px;
-}
-
-.trust-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background-color: var(--colors-canvas-soft-2);
-  border: 1px solid var(--colors-hairline);
-  border-radius: var(--rounded-pill);
-  padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--colors-body);
-  transition: transform 0.2s ease, border-color 0.2s, background-color 0.2s;
-}
-
-[data-theme="dark"] .trust-badge {
-  background-color: rgba(255, 255, 255, 0.02);
-}
-
-.trust-badge:hover {
-  transform: translateY(-1px);
-  border-color: var(--colors-hairline-strong);
-  background-color: var(--colors-canvas);
-  color: var(--colors-ink);
-}
-
 /* Explore Section / Interactive Grid styling */
 .explore-section {
   max-width: 1200px;
@@ -1797,25 +1762,6 @@ footer {
 
 .explore-card:hover::before {
   opacity: 1;
-}
-
-.explore-card-icon {
-  font-size: 20px;
-  width: 38px;
-  height: 38px;
-  border-radius: var(--rounded-sm);
-  background-color: var(--colors-canvas-soft-2);
-  border: 1px solid var(--colors-hairline);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background-color 0.25s, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.explore-card:hover .explore-card-icon {
-  background-color: var(--colors-canvas-soft);
-  transform: scale(1.08) rotate(4deg);
 }
 
 .explore-card-info {
