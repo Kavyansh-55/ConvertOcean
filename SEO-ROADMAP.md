@@ -193,3 +193,6 @@ Homepage redesign shipped 2026-07-20 (branch `seo/n-design-homepage`, 7 commits)
 
 ### Weekly GSC snapshot log
 _(one line per week: date — impressions 7d — clicks 7d — indexed count)_
+
+## Cycle 2 progress log
+- 2026-07-20 — N4 approved, merged, deployed, verified live (/vs/iloveimg/ + /vs/pdf24/ 200 with fairness sections, footer + XML sitemap updated). 8 comparison pages total. UI-polish lane: button micro-interactions shipped. Next: N5 (vs Sejda + TinyWow); AdSense resubmit ~Jul 30.
