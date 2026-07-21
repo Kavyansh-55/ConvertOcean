@@ -424,6 +424,35 @@ const toolChips = (slug: string): ToolChips => {
       gap: var(--spacing-xs);
     }
 
+    /* Bento layout for the category grid. A uniform 2-column grid gave all
+       seven categories equal weight, which is false — the universal converter
+       covers 30+ formats and the PDF set is the most-used. Tile size encodes
+       that, so the structure carries information instead of decorating. */
+    .tool-grid--bento {
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--spacing-md);
+    }
+    .tool-grid--bento > :nth-child(1) { grid-column: span 4; }
+    .tool-grid--bento > :nth-child(2) { grid-column: span 2; }
+    .tool-grid--bento > :nth-child(3),
+    .tool-grid--bento > :nth-child(4),
+    .tool-grid--bento > :nth-child(5) { grid-column: span 2; }
+    .tool-grid--bento > :nth-child(6),
+    .tool-grid--bento > :nth-child(7) { grid-column: span 3; }
+
+    /* The lead tile carries the largest category, so it gets the larger type. */
+    .tool-grid--bento > :nth-child(1) .tool-name { font-size: var(--fs-heading); }
+
+    @media (max-width: 900px) {
+      .tool-grid--bento { grid-template-columns: repeat(2, 1fr); }
+      .tool-grid--bento > :nth-child(1) { grid-column: span 2; }
+      .tool-grid--bento > :nth-child(n+2) { grid-column: span 1; }
+    }
+    @media (max-width: 600px) {
+      .tool-grid--bento { grid-template-columns: 1fr; }
+      .tool-grid--bento > * { grid-column: span 1 !important; }
+    }
+
     .section-actions {
       text-align: center;
       margin-top: var(--spacing-xl);
@@ -743,28 +772,7 @@ const toolChips = (slug: string): ToolChips => {
 
 
     /* ─── Delicate ocean wave at the hero's base (atmosphere) ─── */
-    .hero-waves {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: -1px;
-      width: 100vw;
-      height: 170px;
-      z-index: -1;
-      pointer-events: none;
-      overflow: hidden;
-    }
-    .hero-waves svg { width: 100%; height: 100%; display: block; }
-    .wave-c { fill: rgba(0, 112, 243, 0.06); animation: wave-back 13s ease-in-out infinite; }
-    .wave-a { fill: rgba(0, 124, 240, 0.10); animation: wave-mid 9s ease-in-out infinite; }
-    .wave-b { fill: rgba(0, 223, 216, 0.13); animation: wave-front 6.5s ease-in-out infinite; }
-    [data-theme="dark"] .wave-c { fill: rgba(0, 112, 243, 0.11); }
-    [data-theme="dark"] .wave-a { fill: rgba(0, 124, 240, 0.16); }
-    [data-theme="dark"] .wave-b { fill: rgba(0, 223, 216, 0.18); }
-    /* layers drift left/right at different speeds → visible flowing-water parallax */
-    @keyframes wave-front { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-38px, -14px); } }
-    @keyframes wave-mid { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, -10px); } }
-    @keyframes wave-back { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-22px, -7px); } }
+
     @media (prefers-reduced-motion: reduce) {
       .wave-a, .wave-b, .wave-c { animation: none; }
     }
@@ -917,16 +925,6 @@ const toolChips = (slug: string): ToolChips => {
             <div id="searchResults" class="search-results-panel"></div>
 
             <!-- Popular Searches Section -->
-            <div class="popular-searches">
-              <span class="popular-searches-label">Popular:</span>
-              <a href={relLink('/pdf-to-word/')} class="popular-search-link">PDF to Word</a>
-              <span class="popular-search-separator">•</span>
-              <a href={relLink('/jpg-to-png/')} class="popular-search-link">JPG to PNG</a>
-              <span class="popular-search-separator">•</span>
-              <a href={relLink('/merge-pdf/')} class="popular-search-link">Merge PDF</a>
-              <span class="popular-search-separator">•</span>
-              <a href={relLink('/image-resizer/')} class="popular-search-link">Resize image</a>
-            </div>
           </div>
 
           <div class="hero-cta-group">
@@ -936,15 +934,6 @@ const toolChips = (slug: string): ToolChips => {
         </div>
 
 
-      </div>
-
-      <!-- layered ocean base — parallax drift reads as flowing water -->
-      <div class="hero-waves" aria-hidden="true">
-        <svg viewBox="0 0 1440 130" preserveAspectRatio="none">
-          <path class="wave-c" d="M-120,40 C220,82 420,10 640,42 C900,78 1060,14 1240,44 C1380,60 1460,38 1560,44 L1560,130 L-120,130 Z" />
-          <path class="wave-a" d="M-120,64 C180,100 380,26 560,58 C800,94 940,24 1120,54 C1320,84 1420,50 1560,60 L1560,130 L-120,130 Z" />
-          <path class="wave-b" d="M-120,84 C200,46 400,114 580,82 C820,44 960,112 1140,80 C1340,54 1440,88 1560,78 L1560,130 L-120,130 Z" />
-        </svg>
       </div>
     </section>
 
@@ -1018,7 +1007,7 @@ const toolChips = (slug: string): ToolChips => {
     <!-- Categories Grid -->
     <section class="grid-container">
       <h2 class="section-title">Browse Tools by Category</h2>
-      <div class="tool-grid" data-reveal-stagger>
+      <div class="tool-grid tool-grid--bento" data-reveal-stagger>
         <!-- Card 1: File Converter -->
         <a href={relLink('/file-converter/')} class="tool-card">
           <div class="tool-info">
