@@ -920,7 +920,7 @@ export const seoContentMap: Record<string, SEOData> = {
   },
   'ppt-to-pdf': {
     title: 'Convert PPT to PDF Online - slide deck conversion | ConvertOcean',
-    description: 'Convert legacy PPT and modern PPTX slides to PDF sheets locally. Private client-side slide layout compiler.',
+    description: 'Turn a PowerPoint deck into PDF locally in your browser. Legacy .ppt needs a one-step re-save to .pptx first — we show you exactly how.',
     content: `
 <div class="content-card">
   <h2>Converting PowerPoint slide decks to PDF.</h2>
@@ -930,7 +930,7 @@ export const seoContentMap: Record<string, SEOData> = {
   <p>The .ppt extension marks the pre-2007 binary era of PowerPoint — a completely different container from modern XML-based .pptx. These files accumulate in company archives, old training folders, and inherited hard drives, and they get harder to open every year: current mobile apps and web viewers often refuse them, and even desktop PowerPoint renders some legacy layouts imperfectly. Converting the deck to PDF turns an aging, software-dependent file into a document that will still open unchanged a decade from now. Not sure which format you have? Check the extension: .ppt is the pre-2007 binary format this page covers, while .pptx is the modern XML container with its own converter.</p>
 
   <h3>Getting the Best Result from a Legacy File.</h3>
-  <p>The binary format packs charts, WordArt, and embedded objects in old proprietary structures, so extraction fidelity varies with the deck's complexity. Text content and slide structure convert reliably; visually elaborate slides from ancient templates may simplify. For decks that matter, the highest-fidelity path is a two-step: open the .ppt in PowerPoint (or LibreOffice, which reads legacy formats well), save as .pptx, and run it through <a href="/pptx-to-pdf/">PPTX to PDF</a> — the modern format preserves far more detail through conversion.</p>
+  <p>Be aware of one hard limit before you start: a true legacy .ppt file cannot be read in a browser at all. It is an OLE compound binary, not the ZIP-based container every modern converter (ours included) opens — so no browser-based tool can convert it directly, whatever the marketing says. Drop a .ppt here and you will get a clear message telling you exactly this. The fix is a one-step re-save: open the .ppt in PowerPoint (or LibreOffice Impress, which reads legacy formats well), choose File → Save As and pick .pptx, then run that through <a href="/pptx-to-pdf/">PPTX to PDF</a> — the modern format preserves far more detail through conversion.</p>
 
   <h3>Why Archive as PDF Rather Than Keep .ppt.</h3>
   <ul>
@@ -942,7 +942,7 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "How does the tool handle legacy .ppt files?", answer: "The parser extracts the outline structure. For rich visual slides, saving as .pptx in PowerPoint before uploading is recommended." },
+      { question: "How does the tool handle legacy .ppt files?", answer: "It tells you the truth rather than producing a broken file: .ppt is an OLE compound binary that browsers cannot open, so selecting one shows a message asking you to re-save it as .pptx first. Open it in PowerPoint or the free LibreOffice Impress, use File → Save As and choose .pptx, then select that file here. Conversion still runs entirely on your device." },
       { question: "Will embedded videos play in the PDF?", answer: "No, PDF files represent static print pages. Video controls and audio clips are discarded." },
       { question: "Can I run this converter without an internet connection?", answer: "Yes, all conversion libraries load into the browser cache, enabling offline slide compilation." }
     ]
