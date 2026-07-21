@@ -1,0 +1,544 @@
+---
+/**
+ * HeroDropzone — the homepage's proof, not its advertisement.
+ *
+ * The page claims files never leave the device. A simulated progress bar
+ * asserts that; this converts an actual file in front of the visitor before
+ * they navigate anywhere, which demonstrates it.
+ *
+ * Images convert for real, here, on canvas — no WASM, no network, no
+ * dependency, so the interaction stays instant and works offline.
+ * Everything else is identified and handed to the tool that owns it,
+ * rather than pretending to convert and failing.
+ */
+---
+
+<div class="dz" id="heroDropzone">
+  <div class="dz-head">
+    <img class="dz-mark" src="/fevicon.png" alt="" width="24" height="24" />
+    <span class="dz-brand">ConvertOcean</span>
+    <span class="dz-live"><span class="dz-live-dot"></span>running locally</span>
+  </div>
+
+  <!-- Stage 1: idle target. The label is the click/keyboard affordance. -->
+  <div class="dz-stage" id="dzStage">
+    <label class="dz-drop" id="dzDrop" for="dzInput">
+      <input type="file" id="dzInput" class="dz-input"
+             accept="image/png,image/jpeg,image/webp,application/pdf,.docx,.xlsx,.csv,.txt,.pptx,.json" />
+      <svg class="dz-drop-icon" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 13v8"/><path d="m8 17 4-4 4 4"/><path d="M20 16.7A5 5 0 0 0 18 7h-1.3A8 8 0 1 0 4 14.9"/></svg>
+      <span class="dz-drop-title">Drop a file to convert it here</span>
+      <span class="dz-drop-sub">Images convert on this page · nothing is uploaded</span>
+    </label>
+
+    <!-- Stage 2: result. Populated by script, hidden until there is one. -->
+    <div class="dz-result" id="dzResult" hidden>
+      <div class="dz-result-row">
+        <span class="dz-fmt dz-from" id="dzFrom">—</span>
+        <svg class="dz-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <span class="dz-fmt dz-to" id="dzTo">—</span>
+      </div>
+      <div class="dz-file" id="dzFile">file.jpg</div>
+      <div class="dz-actions" id="dzActions"></div>
+      <div class="dz-foot" id="dzFoot"></div>
+      <button type="button" class="dz-reset" id="dzReset">Convert another file</button>
+    </div>
+  </div>
+
+  <p class="dz-stat">60+ tools · 6 categories · everything runs in your browser</p>
+
+  <!-- Announcements for screen readers; visually conveyed by the result panel. -->
+  <p class="dz-sr" role="status" aria-live="polite" id="dzLive"></p>
+</div>
+
+<style>
+  .dz {
+    background: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.07), 0 2px 6px rgba(0, 0, 0, 0.03);
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  [data-theme="dark"] .dz {
+    background: var(--colors-canvas-soft);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Header */
+  .dz-head {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--colors-hairline);
+  }
+  .dz-mark { border-radius: var(--rounded-sm); flex-shrink: 0; }
+  .dz-brand {
+    font-weight: 600;
+    font-size: var(--fs-body);
+    letter-spacing: var(--ls-subhead);
+    color: var(--colors-ink);
+  }
+  .dz-live {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--ls-micro);
+    text-transform: uppercase;
+    color: var(--colors-mute);
+  }
+  .dz-live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--rounded-full);
+    background: var(--colors-cyan-deep, #29bc9b);
+    box-shadow: 0 0 0 3px rgba(41, 188, 155, 0.16);
+  }
+
+  /* `display: flex` below would otherwise beat the [hidden] attribute,
+     leaving both stages on screen at once. */
+  .dz [hidden] { display: none; }
+
+  /* Drop target */
+  .dz-drop {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 190px;
+    padding: var(--spacing-lg);
+    text-align: center;
+    cursor: pointer;
+    border: 1.5px dashed var(--colors-hairline-strong);
+    border-radius: var(--rounded-md);
+    background: var(--colors-canvas-soft);
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+  }
+  [data-theme="dark"] .dz-drop { background: rgba(255, 255, 255, 0.02); }
+
+  .dz-drop:hover,
+  .dz-drop:focus-within {
+    border-color: var(--colors-link);
+    background: var(--colors-link-bg-soft);
+  }
+  [data-theme="dark"] .dz-drop:hover,
+  [data-theme="dark"] .dz-drop:focus-within {
+    background: rgba(0, 112, 243, 0.08);
+  }
+
+  /* Drag state is applied by script on the whole card. */
+  .dz.is-dragging .dz-drop {
+    border-color: var(--colors-link);
+    border-style: solid;
+    background: var(--colors-link-bg-soft);
+    transform: scale(1.015);
+  }
+  [data-theme="dark"] .dz.is-dragging .dz-drop { background: rgba(0, 112, 243, 0.12); }
+
+  .dz-drop-icon { color: var(--colors-mute); transition: color 0.2s ease, transform 0.2s ease; }
+  .dz-drop:hover .dz-drop-icon,
+  .dz.is-dragging .dz-drop-icon {
+    color: var(--colors-link);
+    transform: translateY(-2px);
+  }
+
+  .dz-drop-title {
+    font-size: var(--fs-body);
+    font-weight: 600;
+    color: var(--colors-ink);
+    letter-spacing: var(--ls-body);
+  }
+  .dz-drop-sub {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--colors-mute);
+    letter-spacing: 0.01em;
+  }
+
+  /* The input stays focusable but visually collapsed into the label. */
+  .dz-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Result */
+  .dz-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    min-height: 190px;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    background: var(--colors-canvas-soft);
+    animation: dz-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  [data-theme="dark"] .dz-result { background: rgba(255, 255, 255, 0.02); }
+
+  @keyframes dz-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .dz-result-row { display: flex; align-items: center; gap: var(--spacing-sm); }
+  .dz-arrow { color: var(--colors-mute); }
+
+  .dz-fmt {
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: var(--rounded-sm);
+    background: var(--colors-canvas-soft-2);
+    color: var(--colors-body);
+  }
+  [data-theme="dark"] .dz-fmt { background: rgba(255, 255, 255, 0.06); }
+  .dz-to { background: var(--colors-link-bg-soft); color: var(--colors-link-deep); }
+  [data-theme="dark"] .dz-to { background: rgba(0, 112, 243, 0.18); color: #6cb0ff; }
+
+  .dz-file {
+    font-size: var(--fs-body);
+    font-weight: 600;
+    color: var(--colors-ink);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dz-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-xs); justify-content: center; }
+
+  /* Buttons meet the 44px touch minimum. */
+  :global(.dz-btn) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 var(--spacing-md);
+    border-radius: var(--rounded-pill);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  }
+  :global(.dz-btn-primary) { background: var(--colors-ink); color: var(--colors-canvas); }
+  :global(.dz-btn-primary):hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16); }
+  :global(.dz-btn-secondary) {
+    background: var(--colors-canvas);
+    color: var(--colors-ink);
+    border-color: var(--colors-hairline-strong);
+  }
+  :global(.dz-btn-secondary):hover { transform: translateY(-1px); border-color: var(--colors-ink); }
+  [data-theme="dark"] :global(.dz-btn-secondary) { background: rgba(255, 255, 255, 0.05); }
+
+  .dz-foot {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--colors-mute);
+    text-align: center;
+    letter-spacing: 0.01em;
+  }
+  .dz-foot :global(strong) { color: var(--colors-cyan-deep, #29bc9b); font-weight: 500; }
+  .dz-foot:global(.is-error) { color: var(--colors-error); }
+
+  .dz-reset {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--colors-link);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    min-height: 44px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .dz-stat {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--colors-mute);
+    text-align: center;
+    letter-spacing: 0.01em;
+  }
+
+  .dz-sr {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dz-result { animation: none; }
+    .dz-drop, .dz-btn, .dz-drop-icon { transition: none; }
+    .dz.is-dragging .dz-drop { transform: none; }
+  }
+</style>
+
+<script>
+  // Formats convertible in-page on canvas — no libraries, no network.
+  const IMAGE_TYPES: Record<string, string> = {
+    'image/png': 'PNG',
+    'image/jpeg': 'JPG',
+    'image/webp': 'WEBP',
+  };
+
+  // Everything else: hand off to the tool that actually owns the format.
+  const ROUTES: Record<string, { label: string; from: string; to: string; href: string }> = {
+    'application/pdf': { label: 'PDF to Word', from: 'PDF', to: 'DOCX', href: '/pdf-to-word/' },
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+      { label: 'Word to PDF', from: 'DOCX', to: 'PDF', href: '/word-to-pdf/' },
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+      { label: 'Excel to PDF', from: 'XLSX', to: 'PDF', href: '/excel-to-pdf/' },
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+      { label: 'PowerPoint to PDF', from: 'PPTX', to: 'PDF', href: '/pptx-to-pdf/' },
+    'text/csv': { label: 'CSV to Excel', from: 'CSV', to: 'XLSX', href: '/csv-to-xlsx/' },
+    'text/plain': { label: 'Text to PDF', from: 'TXT', to: 'PDF', href: '/txt-to-pdf/' },
+    'application/json': { label: 'JSON to CSV', from: 'JSON', to: 'CSV', href: '/json-to-csv/' },
+  };
+
+  // Extension fallback: browsers disagree on MIME for csv/json in particular.
+  const EXT_MIME: Record<string, string> = {
+    pdf: 'application/pdf',
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    csv: 'text/csv',
+    txt: 'text/plain',
+    json: 'application/json',
+    png: 'image/png',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    webp: 'image/webp',
+  };
+
+  const MAX_BYTES = 30 * 1024 * 1024;
+
+  const card = document.getElementById('heroDropzone');
+  if (card) {
+    const input = document.getElementById('dzInput') as HTMLInputElement;
+    const drop = document.getElementById('dzDrop');
+    const result = document.getElementById('dzResult');
+    const elFrom = document.getElementById('dzFrom');
+    const elTo = document.getElementById('dzTo');
+    const elFile = document.getElementById('dzFile');
+    const elActions = document.getElementById('dzActions');
+    const elFoot = document.getElementById('dzFoot');
+    const elReset = document.getElementById('dzReset');
+    const live = document.getElementById('dzLive');
+
+    let objectUrl: string | null = null;
+
+    const fmtBytes = (n: number) =>
+      n < 1024 ? `${n} B`
+      : n < 1024 * 1024 ? `${(n / 1024).toFixed(0)} KB`
+      : `${(n / 1024 / 1024).toFixed(1)} MB`;
+
+    const releaseUrl = () => {
+      if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
+    };
+
+    const show = (el: HTMLElement | null, visible: boolean) => {
+      if (el) el.hidden = !visible;
+    };
+
+    const announce = (msg: string) => { if (live) live.textContent = msg; };
+
+    const reset = () => {
+      releaseUrl();
+      show(result, false);
+      show(drop, true);
+      if (input) input.value = '';
+      announce('');
+    };
+
+    const fail = (msg: string) => {
+      show(drop, false);
+      show(result, true);
+      if (elFrom) elFrom.textContent = '—';
+      if (elTo) elTo.textContent = '—';
+      if (elActions) elActions.innerHTML = '';
+      if (elFoot) { elFoot.textContent = msg; elFoot.classList.add('is-error'); }
+      announce(msg);
+    };
+
+    const typeOf = (file: File) => {
+      if (file.type) return file.type;
+      const ext = (file.name.split('.').pop() || '').toLowerCase();
+      return EXT_MIME[ext] || '';
+    };
+
+    /** Convert an image in-page. Returns the encoded blob. */
+    const convertImage = (file: File, targetMime: string): Promise<Blob> =>
+      new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) { reject(new Error('Canvas unavailable')); return; }
+          // JPEG has no alpha channel — flatten onto white so transparent
+          // PNGs don't encode as black.
+          if (targetMime === 'image/jpeg') {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+          }
+          ctx.drawImage(img, 0, 0);
+          canvas.toBlob(
+            (blob) => (blob ? resolve(blob) : reject(new Error('Encoding failed'))),
+            targetMime,
+            0.92
+          );
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Unreadable image')); };
+        img.src = url;
+      });
+
+    const handle = async (file: File) => {
+      if (!file) return;
+      if (file.size > MAX_BYTES) {
+        fail(`That file is ${fmtBytes(file.size)}. Try one under 30 MB, or open the full tool.`);
+        return;
+      }
+
+      const mime = typeOf(file);
+      if (elFoot) elFoot.classList.remove('is-error');
+      if (elFile) elFile.textContent = file.name;
+
+      // Path A — real conversion, right here.
+      if (IMAGE_TYPES[mime]) {
+        const targetMime = mime === 'image/png' ? 'image/jpeg' : 'image/png';
+        const fromLabel = IMAGE_TYPES[mime];
+        const toLabel = IMAGE_TYPES[targetMime];
+
+        if (elFrom) elFrom.textContent = fromLabel;
+        if (elTo) elTo.textContent = toLabel;
+        if (elActions) elActions.innerHTML = '';
+        if (elFoot) elFoot.textContent = 'Converting…';
+        show(drop, false);
+        show(result, true);
+
+        try {
+          const t0 = performance.now();
+          const blob = await convertImage(file, targetMime);
+          const ms = Math.max(1, Math.round(performance.now() - t0));
+
+          releaseUrl();
+          objectUrl = URL.createObjectURL(blob);
+          const base = file.name.replace(/\.[^.]+$/, '');
+          const ext = toLabel.toLowerCase() === 'jpg' ? 'jpg' : toLabel.toLowerCase();
+
+          if (elActions) {
+            const a = document.createElement('a');
+            a.className = 'dz-btn dz-btn-primary';
+            a.href = objectUrl;
+            a.download = `${base}.${ext}`;
+            a.textContent = `Download ${toLabel}`;
+            elActions.appendChild(a);
+
+            const more = document.createElement('a');
+            more.className = 'dz-btn dz-btn-secondary';
+            more.href = '/image-tools/';
+            more.textContent = 'More image tools';
+            elActions.appendChild(more);
+          }
+          if (elFoot) {
+            elFoot.innerHTML =
+              `<strong>done in ${ms} ms</strong> · ${fmtBytes(file.size)} → ${fmtBytes(blob.size)} · 0 bytes uploaded`;
+          }
+          announce(`Converted ${file.name} to ${toLabel}. Ready to download.`);
+        } catch (err) {
+          fail('That image could not be read. Try a PNG, JPG, or WebP.');
+        }
+        return;
+      }
+
+      // Path B — recognised, but owned by a dedicated tool.
+      const route = ROUTES[mime];
+      if (route) {
+        if (elFrom) elFrom.textContent = route.from;
+        if (elTo) elTo.textContent = route.to;
+        if (elActions) {
+          elActions.innerHTML = '';
+          const a = document.createElement('a');
+          a.className = 'dz-btn dz-btn-primary';
+          a.href = route.href;
+          a.textContent = `Open ${route.label}`;
+          elActions.appendChild(a);
+        }
+        if (elFoot) {
+          elFoot.textContent = `${fmtBytes(file.size)} · this format opens in its own tool — still on your device`;
+        }
+        show(drop, false);
+        show(result, true);
+        announce(`${file.name} recognised. Open ${route.label} to convert it.`);
+        return;
+      }
+
+      fail('That format is not supported yet. Browse all 60+ tools below.');
+    };
+
+    input?.addEventListener('change', () => {
+      const f = input.files && input.files[0];
+      if (f) handle(f);
+    });
+
+    elReset?.addEventListener('click', reset);
+
+    // Drag and drop. dragenter/dragleave fire per child, so track depth
+    // rather than toggling on every boundary crossing.
+    let depth = 0;
+    ['dragenter', 'dragover'].forEach((evt) =>
+      card.addEventListener(evt, (e) => {
+        e.preventDefault();
+        if (evt === 'dragenter') depth++;
+        card.classList.add('is-dragging');
+      })
+    );
+    card.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      depth = Math.max(0, depth - 1);
+      if (depth === 0) card.classList.remove('is-dragging');
+    });
+    card.addEventListener('drop', (e) => {
+      e.preventDefault();
+      depth = 0;
+      card.classList.remove('is-dragging');
+      const f = (e as DragEvent).dataTransfer?.files?.[0];
+      if (f) handle(f);
+    });
+
+    // A file dropped outside the card would otherwise navigate away from
+    // the page, which looks like an upload. Suppress it.
+    ['dragover', 'drop'].forEach((evt) =>
+      window.addEventListener(evt, (e) => {
+        if (!card.contains(e.target as Node)) e.preventDefault();
+      })
+    );
+
+    window.addEventListener('pagehide', releaseUrl);
+  }
+</script>

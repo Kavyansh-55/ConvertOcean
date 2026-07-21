@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
 import { guides } from '../data/guides';
 import CategoryIcon from '../components/CategoryIcon.astro';
+import HeroDropzone from '../components/HeroDropzone.astro';
 
 const { lang = 'en' } = Astro.props;
 
@@ -114,11 +115,24 @@ const toolChips = (slug: string): ToolChips => {
       z-index: 1;
     }
 
+    /* Phones: tighten the lead-in so the dropzone — the thing that proves
+       the headline — is on screen without scrolling. */
+    @media (max-width: 940px) {
+      .hero-container {
+        padding-top: var(--spacing-xl);
+        padding-bottom: var(--spacing-xl);
+      }
+      .hero-subtitle {
+        margin-bottom: var(--spacing-xs);
+        max-width: 34ch;
+      }
+    }
+
     .hero-title {
-      font-size: 56px;
+      font-size: var(--fs-display);
       font-weight: 600;
-      line-height: 1.05;
-      letter-spacing: -2.6px;
+      line-height: var(--lh-display);
+      letter-spacing: var(--ls-display);
       margin-bottom: var(--spacing-md);
       color: var(--colors-ink);
     }
@@ -143,32 +157,12 @@ const toolChips = (slug: string): ToolChips => {
       .hero-title-accent { animation: none; }
     }
 
-    @media (max-width: 768px) {
-      .hero-title {
-        font-size: 38px;
-        letter-spacing: -1.6px;
-      }
-    }
-
-    @media (max-width: 420px) {
-      .hero-title {
-        font-size: 30px;
-        letter-spacing: -1.2px;
-      }
-    }
-
     .hero-subtitle {
-      font-size: 19px;
+      font-size: var(--fs-lead);
       color: var(--colors-body);
       max-width: 680px;
       margin: 0 auto var(--spacing-lg);
-      line-height: 1.6;
-    }
-
-    @media (max-width: 480px) {
-      .hero-subtitle {
-        font-size: 15.5px;
-      }
+      line-height: var(--lh-body);
     }
 
     .hero-cta-group {
@@ -231,15 +225,19 @@ const toolChips = (slug: string): ToolChips => {
       left: var(--spacing-md);
       color: var(--colors-mute);
       pointer-events: none;
-      font-size: 18px;
       display: flex;
       align-items: center;
+      transition: color 0.2s ease;
+    }
+
+    .search-input-wrapper:focus-within .search-icon {
+      color: var(--colors-link);
     }
 
     .search-input {
       width: 100%;
       padding: 16px var(--spacing-md) 16px 48px;
-      font-size: 16px;
+      font-size: var(--fs-lead);
       border: none;
       background: transparent;
       color: var(--colors-ink);
@@ -254,7 +252,7 @@ const toolChips = (slug: string): ToolChips => {
       border: 1px solid var(--colors-hairline);
       border-radius: 4px;
       padding: 2px 6px;
-      font-size: 11px;
+      font-size: var(--fs-micro);
       font-family: inherit;
       color: var(--colors-mute);
       pointer-events: none;
@@ -340,13 +338,13 @@ const toolChips = (slug: string): ToolChips => {
     }
 
     .search-result-name {
-      font-size: 14px;
+      font-size: var(--fs-body);
       font-weight: 600;
       color: var(--colors-ink);
     }
 
     .search-result-desc {
-      font-size: 11.5px;
+      font-size: var(--fs-micro);
       color: var(--colors-mute);
       margin-top: 1px;
       overflow: hidden;
@@ -365,10 +363,105 @@ const toolChips = (slug: string): ToolChips => {
       background-color: var(--colors-hairline);
     }
 
+    /* ── Section primitives ───────────────────────────────────────
+       Shared by every band below the fold. Previously these lived as
+       inline style attributes repeated per section, which is why the
+       page had drifted to 22 different font sizes. */
+    .section-title {
+      font-size: var(--fs-title);
+      font-weight: 600;
+      letter-spacing: var(--ls-title);
+      line-height: var(--lh-title);
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+      color: var(--colors-ink);
+    }
+
+    .section-title-sm {
+      font-size: var(--fs-heading);
+      font-weight: 600;
+      letter-spacing: var(--ls-heading);
+      line-height: var(--lh-heading);
+      text-align: center;
+      margin-top: var(--spacing-xl);
+      color: var(--colors-ink);
+    }
+
+    .section-lede {
+      text-align: center;
+      color: var(--colors-body);
+      font-size: var(--fs-body);
+      line-height: var(--lh-body);
+      max-width: 600px;
+      margin: 0 auto var(--spacing-xl);
+    }
+
+    /* A band separated from the previous one by a hairline rule. */
+    .section-ruled {
+      margin-top: var(--spacing-4xl);
+      border-top: 1px solid var(--colors-hairline);
+      padding-top: var(--spacing-3xl);
+    }
+
+    .links-title {
+      font-size: var(--fs-subhead);
+      font-weight: 600;
+      letter-spacing: var(--ls-subhead);
+      text-align: center;
+      margin-bottom: var(--spacing-lg);
+      color: var(--colors-ink);
+    }
+
+    /* Long-form copy block: owns its own heading + list rhythm. */
+    .prose {
+      max-width: 800px;
+      margin: 0 auto;
+      color: var(--colors-body);
+      font-size: var(--fs-body);
+      line-height: 1.7;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+    .prose h3 {
+      font-size: var(--fs-subhead);
+      font-weight: 600;
+      letter-spacing: var(--ls-subhead);
+      color: var(--colors-ink);
+      margin-top: var(--spacing-md);
+    }
+    .prose ul {
+      padding-left: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+
+    .section-actions {
+      text-align: center;
+      margin-top: var(--spacing-xl);
+    }
+
+    .featured-badge--time {
+      color: var(--colors-link);
+      font-weight: 600;
+    }
+
+    .links-grid--centered {
+      grid-template-columns: repeat(4, 1fr);
+      justify-items: center;
+      text-align: center;
+    }
+    @media (max-width: 560px) {
+      .links-grid--centered {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     /* Popular Searches Styling */
     .popular-searches {
       margin-top: var(--spacing-md);
-      font-size: 13.5px;
+      font-size: var(--fs-small);
       color: var(--colors-body);
       display: flex;
       justify-content: center;
@@ -378,7 +471,7 @@ const toolChips = (slug: string): ToolChips => {
     }
     .popular-searches-label {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: var(--fs-micro);
       color: var(--colors-mute);
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -407,7 +500,7 @@ const toolChips = (slug: string): ToolChips => {
       padding: 0 var(--spacing-lg);
     }
     .featured-title {
-      font-size: 28px;
+      font-size: var(--fs-title);
       font-weight: 600;
       letter-spacing: -1.2px;
       margin-bottom: var(--spacing-xl);
@@ -416,18 +509,9 @@ const toolChips = (slug: string): ToolChips => {
     }
     .featured-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      /* auto-fit reflows 3 → 2 → 1 without breakpoints */
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: var(--spacing-lg);
-    }
-    @media (max-width: 900px) {
-      .featured-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    @media (max-width: 600px) {
-      .featured-grid {
-        grid-template-columns: 1fr;
-      }
     }
     .featured-card {
       background-color: var(--colors-canvas);
@@ -448,7 +532,7 @@ const toolChips = (slug: string): ToolChips => {
     }
     .featured-badge {
       align-self: flex-start;
-      font-size: 11px;
+      font-size: var(--fs-micro);
       font-weight: 500;
       padding: 2px 8px;
       border-radius: var(--rounded-pill);
@@ -467,7 +551,7 @@ const toolChips = (slug: string): ToolChips => {
       gap: var(--spacing-sm);
     }
     .featured-card-icon {
-      font-size: 24px;
+      font-size: var(--fs-heading);
       width: 44px;
       height: 44px;
       background-color: var(--colors-canvas-soft-2);
@@ -482,14 +566,14 @@ const toolChips = (slug: string): ToolChips => {
       background-color: rgba(255, 255, 255, 0.03);
     }
     .featured-card-name {
-      font-size: 18px;
+      font-size: var(--fs-subhead);
       font-weight: 600;
       letter-spacing: -0.4px;
       color: var(--colors-ink);
       margin: 0;
     }
     .featured-card-desc {
-      font-size: 13.5px;
+      font-size: var(--fs-small);
       color: var(--colors-body);
       line-height: 1.5;
       flex-grow: 1;
@@ -508,14 +592,14 @@ const toolChips = (slug: string): ToolChips => {
       text-align: center;
     }
     .comparison-title {
-      font-size: 28px;
+      font-size: var(--fs-title);
       font-weight: 600;
       letter-spacing: -1.2px;
       color: var(--colors-ink);
       margin-bottom: var(--spacing-xs);
     }
     .comparison-subtitle {
-      font-size: 15px;
+      font-size: var(--fs-body);
       color: var(--colors-body);
       max-width: 600px;
       margin: 0 auto var(--spacing-xl);
@@ -532,7 +616,7 @@ const toolChips = (slug: string): ToolChips => {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      font-size: 14.5px;
+      font-size: var(--fs-body);
     }
     .comparison-table th, 
     .comparison-table td {
@@ -543,7 +627,7 @@ const toolChips = (slug: string): ToolChips => {
       font-weight: 600;
       color: var(--colors-ink);
       background-color: var(--colors-canvas-soft-2);
-      font-size: 13px;
+      font-size: var(--fs-small);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -567,14 +651,14 @@ const toolChips = (slug: string): ToolChips => {
     .text-success {
       color: #00dfd8;
       font-weight: 700;
-      font-size: 18px;
+      font-size: var(--fs-subhead);
     }
     .text-danger {
       color: var(--colors-mute);
-      font-size: 16px;
+      font-size: var(--fs-lead);
     }
     .category-count {
-      font-size: 14px;
+      font-size: var(--fs-body);
       font-weight: 500;
       color: var(--colors-mute);
       margin-left: 6px;
@@ -608,110 +692,68 @@ const toolChips = (slug: string): ToolChips => {
     }
 
     /* ─── Split hero layout ─── */
+    /* Two columns on desktop, one on mobile. .hero-lead is display:contents
+       so its children are grid items directly — that lets the dropzone sit in
+       column 2 on desktop while keeping a single, correct DOM order for
+       mobile reading and focus sequence. */
     .hero-split {
       display: grid;
       grid-template-columns: 1.02fr 0.98fr;
-      gap: var(--spacing-3xl);
+      column-gap: var(--spacing-3xl);
       align-items: center;
       text-align: left;
     }
-    .hero-lead { min-width: 0; }
-    /* left-align the lead elements that are otherwise centered */
-    .hero-lead .search-container { margin-left: 0; margin-right: 0; max-width: 560px; }
-    .hero-lead .popular-searches { justify-content: flex-start; }
-    .hero-lead .hero-cta-group { justify-content: flex-start; }
+    .hero-lead { display: contents; }
+
+    /* Rows are assigned explicitly: `grid-row: 1 / -1` cannot span
+       implicit rows (-1 resolves against the explicit grid, which would
+       leave the panel stuck in row 1 and stretch it). */
+    /* Grid items stretch by default; the pill must hug its text. */
+    .hero-status            { grid-area: 1 / 1; justify-self: start; }
+    .hero-title             { grid-area: 2 / 1; }
+    .hero-subtitle          { grid-area: 3 / 1; }
+    .hero-split .search-container  { grid-area: 4 / 1; }
+    .hero-split .popular-searches  { grid-area: 5 / 1; }
+    .hero-split .hero-cta-group    { grid-area: 6 / 1; }
+
+    .hero-status,
+    .hero-title,
+    .hero-subtitle,
+    .hero-split .search-container,
+    .hero-split .popular-searches,
+    .hero-split .hero-cta-group { min-width: 0; }
+
+    .hero-panel-col {
+      grid-column: 2;
+      grid-row: 1 / 7;
+      align-self: center;
+      min-width: 0;
+    }
+
+    .hero-split .search-container { margin-left: 0; margin-right: 0; max-width: 560px; }
+    .hero-split .popular-searches { justify-content: flex-start; }
+    .hero-split .hero-cta-group { justify-content: flex-start; }
+
     @media (max-width: 940px) {
-      .hero-split { grid-template-columns: 1fr; gap: var(--spacing-2xl); text-align: center; }
-      .hero-lead .search-container { margin-left: auto; margin-right: auto; }
-      .hero-lead .popular-searches { justify-content: center; }
-      .hero-lead .hero-cta-group { justify-content: center; }
+      /* Single column: source order already reads
+         status → title → subtitle → dropzone → search → links → CTAs */
+      .hero-split {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-lg);
+        text-align: center;
+      }
+      .hero-status, .hero-title, .hero-subtitle,
+      .hero-split .search-container, .hero-split .popular-searches,
+      .hero-split .hero-cta-group, .hero-panel-col { grid-area: auto; }
+      .hero-status { align-self: center; }
+      .hero-panel-col { max-width: 440px; width: 100%; margin: 0 auto; }
+      .hero-split .search-container { margin-left: auto; margin-right: auto; }
+      .hero-split .popular-searches { justify-content: center; }
+      .hero-split .hero-cta-group { justify-content: center; }
     }
 
-    /* ─── Hero product panel — ConvertOcean's own live surface ─── */
-    .hero-panel {
-      background: var(--colors-canvas);
-      border: 1px solid var(--colors-hairline);
-      border-radius: var(--rounded-xl);
-      padding: var(--spacing-lg);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03), 0 30px 60px -18px rgba(0, 0, 0, 0.18);
-      transform: perspective(1400px) rotateY(-5deg) rotateX(1.5deg);
-      transform-origin: center left;
-    }
-    @media (max-width: 940px) {
-      .hero-panel { transform: none; max-width: 440px; margin: 0 auto; width: 100%; }
-    }
-    /* branded header (not a borrowed macOS window) */
-    .hp-head {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding-bottom: var(--spacing-sm);
-      border-bottom: 1px solid var(--colors-hairline);
-      margin-bottom: var(--spacing-lg);
-    }
-    .hp-mark {
-      width: 24px; height: 24px; border-radius: 6px;
-      object-fit: contain; flex-shrink: 0;
-    }
-    .hp-brand { font-weight: 600; font-size: 14px; letter-spacing: -0.3px; color: var(--colors-ink); }
-    .hp-live {
-      margin-left: auto;
-      display: inline-flex; align-items: center; gap: 6px;
-      font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
-      color: var(--colors-mute); text-transform: uppercase; letter-spacing: 0.5px;
-    }
-    .hp-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #1a9e7f; }
 
-    /* signature live-conversion demo */
-    .hp-demo {
-      background: var(--colors-canvas-soft);
-      border: 1px solid var(--colors-hairline);
-      border-radius: var(--rounded-lg);
-      padding: var(--spacing-lg);
-      text-align: center;
-      margin-bottom: var(--spacing-md);
-    }
-    .hp-demo-main { display: flex; align-items: center; justify-content: center; gap: 12px; }
-    .hp-fmt {
-      font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px;
-      padding: 8px 14px; border-radius: var(--rounded-md); letter-spacing: 0.4px;
-      transition: opacity 0.35s ease, transform 0.35s ease;
-    }
-    .hp-from { color: var(--colors-body); background: var(--colors-canvas-soft-2); }
-    .hp-to { color: #007cf0; background: rgba(0, 124, 240, 0.12); }
-    [data-theme="dark"] .hp-to { color: #4db5ff; }
-    .hp-demo-arrow { color: var(--colors-mute); font-size: 18px; }
-    .hp-demo-name {
-      margin-top: 12px; font-size: 14px; font-weight: 600; color: var(--colors-ink);
-      transition: opacity 0.35s ease;
-    }
-    .hp-demo-bar {
-      margin-top: 12px; height: 4px; border-radius: 3px;
-      background: var(--colors-canvas-soft-2); overflow: hidden;
-    }
-    .hp-demo-fill {
-      display: block; height: 100%; width: 0%;
-      background: linear-gradient(90deg, #007cf0, #00dfd8);
-      border-radius: 3px;
-    }
-    .hp-demo-foot {
-      margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
-      color: var(--colors-mute);
-    }
-    .hp-check { color: #1a9e7f; font-weight: 700; opacity: 0; transition: opacity 0.3s ease; }
-    .hp-check.on { opacity: 1; }
-
-    .hp-tabs { display: flex; gap: 6px; margin-bottom: var(--spacing-md); flex-wrap: wrap; justify-content: center; }
-    .hp-tab {
-      font-size: 12px; font-weight: 500; padding: 3px 11px;
-      border-radius: var(--rounded-pill);
-      background: var(--colors-canvas-soft-2); color: var(--colors-body);
-    }
-    .hp-tab-active { background: var(--colors-ink); color: var(--colors-canvas); }
-    .hp-stat {
-      text-align: center; font-size: 11.5px; color: var(--colors-mute);
-      font-family: 'JetBrains Mono', monospace;
-    }
 
     /* ─── Delicate ocean wave at the hero's base (atmosphere) ─── */
     .hero-waves {
@@ -751,7 +793,7 @@ const toolChips = (slug: string): ToolChips => {
       border-radius: var(--rounded-pill);
       background: var(--colors-canvas);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12.5px;
+      font-size: var(--fs-small);
       color: var(--colors-body);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
@@ -763,7 +805,7 @@ const toolChips = (slug: string): ToolChips => {
       background: #1a9e7f;
       flex-shrink: 0;
     }
-    @media (max-width: 480px) { .hero-status { font-size: 11px; padding: 5px 11px; } }
+    @media (max-width: 480px) { .hero-status { font-size: var(--fs-micro); padding: 5px 11px; } }
 
     /* ─── Popular Tools ─── */
     .popular-section {
@@ -774,14 +816,14 @@ const toolChips = (slug: string): ToolChips => {
     .popular-head { text-align: center; margin-bottom: var(--spacing-lg); }
     .popular-eyebrow {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
+      font-size: var(--fs-small);
       text-transform: uppercase;
       letter-spacing: 0.8px;
       color: var(--colors-link);
       font-weight: 500;
     }
     .popular-title {
-      font-size: 26px;
+      font-size: var(--fs-title);
       font-weight: 600;
       letter-spacing: -1px;
       color: var(--colors-ink);
@@ -835,9 +877,9 @@ const toolChips = (slug: string): ToolChips => {
       color: var(--accent);
       background: color-mix(in srgb, var(--accent) 12%, transparent);
     }
-    .popular-card-name { font-size: 15px; font-weight: 600; color: var(--colors-ink); }
+    .popular-card-name { font-size: var(--fs-body); font-weight: 600; color: var(--colors-ink); }
     .popular-card-cat {
-      font-size: 12px;
+      font-size: var(--fs-small);
       color: var(--colors-mute);
       font-family: 'JetBrains Mono', monospace;
     }
@@ -847,7 +889,7 @@ const toolChips = (slug: string): ToolChips => {
       justify-content: center;
       gap: 6px;
       margin-top: var(--spacing-lg);
-      font-size: 14px;
+      font-size: var(--fs-body);
       font-weight: 500;
       color: var(--colors-link);
       text-decoration: none;
@@ -870,10 +912,18 @@ const toolChips = (slug: string): ToolChips => {
           <h1 class="hero-title">Your files never<br /><span class="hero-title-accent">leave your device.</span></h1>
           <p class="hero-subtitle">60+ free tools for PDFs, images, spreadsheets &amp; more — all running in your browser.</p>
 
+          <!-- The claim, demonstrated. Sits here in the DOM so the mobile
+               reading order matches what is on screen. -->
+          <div class="hero-panel-col">
+            <HeroDropzone />
+          </div>
+
           <!-- Homepage Search bar -->
           <div class="search-container" id="searchContainer" data-tools={JSON.stringify(tools.map(t => ({ name: t.name, slug: t.slug, icon: t.icon, desc: t.description })))}>
             <div class="search-input-wrapper">
-              <span class="search-icon">🔍</span>
+              <span class="search-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              </span>
               <input type="text" id="searchInput" class="search-input" placeholder="Search a tool, e.g. pdf to word…" aria-label="Search all tools" autocomplete="off" />
               <kbd class="search-kbd">/</kbd>
             </div>
@@ -898,36 +948,7 @@ const toolChips = (slug: string): ToolChips => {
           </div>
         </div>
 
-        <!-- Right: ConvertOcean's own live product surface (auto-rotating conversion demo) -->
-        <div class="hero-panel" aria-hidden="true">
-          <div class="hp-head">
-            <img class="hp-mark" src="/fevicon.png" alt="" width="24" height="24" />
-            <span class="hp-brand">ConvertOcean</span>
-            <span class="hp-live"><span class="hp-live-dot"></span>running locally</span>
-          </div>
 
-          <!-- Signature: a live conversion that rotates through the toolkit -->
-          <div class="hp-demo" id="hpDemo">
-            <div class="hp-demo-main">
-              <span class="hp-fmt hp-from" id="hpFrom">PDF</span>
-              <span class="hp-demo-arrow" id="hpArrow">→</span>
-              <span class="hp-fmt hp-to" id="hpTo">DOCX</span>
-            </div>
-            <div class="hp-demo-name" id="hpName">PDF to Word</div>
-            <div class="hp-demo-bar"><span class="hp-demo-fill" id="hpFill"></span></div>
-            <div class="hp-demo-foot"><span class="hp-check" id="hpCheck">✓</span> <span id="hpStatus">converted locally · 0 bytes uploaded</span></div>
-          </div>
-
-          <div class="hp-tabs">
-            <span class="hp-tab hp-tab-active">All</span>
-            <span class="hp-tab">PDF</span>
-            <span class="hp-tab">Image</span>
-            <span class="hp-tab">Sheets</span>
-            <span class="hp-tab">Data</span>
-            <span class="hp-tab">Business</span>
-          </div>
-          <div class="hp-stat">60+ tools · 6 categories · everything runs in your browser</div>
-        </div>
       </div>
 
       <!-- layered ocean base — parallax drift reads as flowing water -->
@@ -1009,7 +1030,7 @@ const toolChips = (slug: string): ToolChips => {
 
     <!-- Categories Grid -->
     <section class="grid-container">
-      <h2 style="font-size: 28px; font-weight: 600; text-align: center; margin-bottom: var(--spacing-xl); letter-spacing: -1.2px;">Browse Tools by Category</h2>
+      <h2 class="section-title">Browse Tools by Category</h2>
       <div class="tool-grid" data-reveal-stagger>
         <!-- Card 1: File Converter -->
         <a href={relLink('/file-converter/')} class="tool-card">
@@ -1164,26 +1185,26 @@ const toolChips = (slug: string): ToolChips => {
     </section>
 
     <!-- Guides & Resources Section Conforming to DESIGN.md -->
-    <section class="featured-section" style="margin-top: var(--spacing-4xl); border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-3xl);">
+    <section class="featured-section section-ruled">
       <h2 class="featured-title">Guides & Resources</h2>
-      <p style="text-align: center; color: var(--colors-body); font-size: 15px; margin-top: -10px; margin-bottom: var(--spacing-xl); max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+      <p class="section-lede">
         Learn how to optimize layouts, compare graphics formats, perform offline optical recognition, and merge document streams securely on your local hardware.
       </p>
-      <div class="featured-grid" data-reveal-stagger style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-lg);">
+      <div class="featured-grid" data-reveal-stagger>
         {guides.map(g => (
           <div class="featured-card">
-            <span class="featured-badge" style="color: var(--colors-link); font-weight: 600;">{g.readTime}</span>
-            <div class="featured-card-header" style="margin-top: var(--spacing-xs);">
-              <h3 class="featured-card-name" style="font-size: 16px; font-weight: 600; line-height: 1.3;">{g.title.split(' - ')[0]}</h3>
+            <span class="featured-badge featured-badge--time">{g.readTime}</span>
+            <div class="featured-card-header">
+              <h3 class="featured-card-name">{g.title.split(' - ')[0]}</h3>
             </div>
-            <p class="featured-card-desc" style="font-size: 13px; color: var(--colors-body); line-height: 1.4; flex-grow: 1;">{g.description}</p>
-            <a href={relLink(`/guides/${g.slug}/`)} class="button button-primary-sm featured-cta" style="margin-top: var(--spacing-xs); align-self: flex-start;">
+            <p class="featured-card-desc">{g.description}</p>
+            <a href={relLink(`/guides/${g.slug}/`)} class="button button-primary-sm featured-cta">
               Read Guide
             </a>
           </div>
         ))}
       </div>
-      <div style="text-align: center; margin-top: var(--spacing-xl);">
+      <div class="section-actions">
         <a href={relLink('/guides/')} class="button button-secondary">View All Resources</a>
       </div>
     </section>
@@ -1207,8 +1228,8 @@ const toolChips = (slug: string): ToolChips => {
     </section>
 
     <!-- SEO Links Section -->
-    <section class="links-section" style="margin-top: var(--spacing-2xl);">
-      <h3 style="font-size: 18px; font-weight: 600; text-align: center; margin-bottom: var(--spacing-lg); color: var(--colors-ink);">Related Tools</h3>
+    <section class="links-section">
+      <h3 class="links-title">Related Tools</h3>
       <div class="links-grid">
         <a href={relLink('/invoice-generator/')} class="seo-link">Invoice Generator</a>
         <a href={relLink('/receipt-generator/')} class="seo-link">Receipt Generator</a>
@@ -1230,9 +1251,9 @@ const toolChips = (slug: string): ToolChips => {
     </section>
 
     <!-- Company & Legal Section -->
-    <section class="links-section" style="margin-top: var(--spacing-2xl); border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-xl);">
-      <h3 style="font-size: 18px; font-weight: 600; text-align: center; margin-bottom: var(--spacing-lg); color: var(--colors-ink);">Company & Legal</h3>
-      <div class="links-grid" style="grid-template-columns: repeat(4, 1fr); justify-items: center; text-align: center;">
+    <section class="links-section section-ruled">
+      <h3 class="links-title">Company & Legal</h3>
+      <div class="links-grid links-grid--centered">
         <a href={relLink('/about/')} class="seo-link">ℹ️ About Us</a>
         <a href={relLink('/contact/')} class="seo-link">📧 Contact Us</a>
         <a href={relLink('/privacy/')} class="seo-link">🔒 Privacy Policy</a>
@@ -1241,36 +1262,36 @@ const toolChips = (slug: string): ToolChips => {
     </section>
 
     <!-- SEO Informational Section -->
-    <section class="info-section" data-reveal style="margin-top: var(--spacing-4xl); border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-3xl);">
-      <h2 style="font-size: 28px; font-weight: 600; text-align: center; letter-spacing: -1.2px; margin-bottom: var(--spacing-xl); color: var(--colors-ink);">Why Choose a Private File Converter?</h2>
+    <section class="info-section section-ruled" data-reveal>
+      <h2 class="section-title">Why Choose a Private File Converter?</h2>
       
-      <div style="max-width: 800px; margin: 0 auto; color: var(--colors-body); font-size: 15px; line-height: 1.7; display: flex; flex-direction: column; gap: var(--spacing-lg);">
+      <div class="prose">
         <p>
           In today's digital landscape, document security is more critical than ever. Traditional web utilities require you to upload your files to external cloud servers, exposing sensitive information, financial statements, and personal scans to potential leaks and security risks. <strong>ConvertOcean</strong> offers a revolutionary alternative as a 100% <strong>private file converter</strong>. By using modern web technologies like WebAssembly, all file parsing and formatting occur locally on your machine, ensuring your data never crosses a network boundary.
         </p>
 
-        <h3 style="font-size: 19px; font-weight: 600; color: var(--colors-ink); margin-top: var(--spacing-md); letter-spacing: -0.5px;">100% Client-Side Processing in Browser Sandbox Memory</h3>
+        <h3>100% Client-Side Processing in Browser Sandbox Memory</h3>
         <p>
           ConvertOcean operates entirely as a <strong>client-side file converter</strong>. When you drag and drop a file into our upload area, it is processed directly within your browser's secure sandboxed memory. We utilize WebAssembly compiled engines to inspect, modify, and render files locally. Whether you are using a PDF splitter, a spreadsheet compiler, or an image compressor, the software executes locally on your hardware. This translates to absolute data sovereignty: zero tracking telemetry, zero server uploads, and no subscription walls.
         </p>
 
-        <h3 style="font-size: 19px; font-weight: 600; color: var(--colors-ink); margin-top: var(--spacing-md); letter-spacing: -0.5px;">Offline-Ready Capabilities for Secure Document Management</h3>
+        <h3>Offline-Ready Capabilities for Secure Document Management</h3>
         <p>
           Since all operations run client-side, ConvertOcean is an <strong>offline file converter</strong>. Once the site is initially loaded in your browser tab, you can completely disconnect from the internet and continue using our utilities. This makes our site perfect for processing highly confidential business materials, financial statements, or personal scans in remote areas or secure networks. It also eliminates the bottleneck of long upload times; since your files stay on your machine, conversions begin and end instantly.
         </p>
 
-        <h3 style="font-size: 19px; font-weight: 600; color: var(--colors-ink); margin-top: var(--spacing-md); letter-spacing: -0.5px;">Comprehensive Local File Conversion Formats</h3>
+        <h3>Comprehensive Local File Conversion Formats</h3>
         <p>
           Our web utility platform hosts a wide range of specialized <strong>local file converters</strong>, categorized to handle all common business and creative tasks:
         </p>
-        <ul style="padding-left: var(--spacing-lg); display: flex; flex-direction: column; gap: var(--spacing-xs);">
+        <ul>
           <li><strong>Excel Converter:</strong> Move spreadsheets smoothly between Excel worksheets and flat databases. Convert Excel to PDF, CSV to JSON, JSON to CSV, XLSX to CSV, or compile JSON to Excel client-side without compromising corporate data.</li>
           <li><strong>PDF & Document Tools:</strong> Seamlessly split ranges, merge multiple documents, extract plain text, convert PDF to TXT, or compile Word files to PDF with total confidentiality.</li>
           <li><strong>Image Converter & OCR:</strong> Compress and convert graphic formats locally. Instantly translate files between PNG, JPG, and WebP. Use our secure, offline-ready Image to Text OCR engine to extract edit-ready texts from scans or screenshots.</li>
           <li><strong>Business Tools:</strong> Generate professional invoices and receipts, calculate profit margins and markup, compute percentages, and estimate sales tax — all processed in browser sandbox memory with complete privacy.</li>
         </ul>
 
-        <h2 style="font-size: 24px; font-weight: 600; text-align: center; letter-spacing: -1px; margin-top: var(--spacing-xl); color: var(--colors-ink);">The Benefits of Local, Secure Web Utilities</h2>
+        <h2 class="section-title-sm">The Benefits of Local, Secure Web Utilities</h2>
         <p>
           By adopting a <strong>no upload file converter</strong> model, ConvertOcean sets a new standard for web tool privacy. You don't have to register an account, supply an email address, or consent to data mining to use our utilities. Our business model prioritizes user safety, providing a safe harbor from standard SaaS tools that monetize your metadata. Experience the peace of mind that comes with device-level data security—convert your sensitive files privately on ConvertOcean today.
         </p>
@@ -1455,57 +1476,5 @@ const toolChips = (slug: string): ToolChips => {
     });
   </script>
 
-  <!-- Signature: rotate the hero conversion demo (real tools only; reduced-motion safe) -->
-  <script is:inline>
-    (function () {
-      var demo = document.getElementById('hpDemo');
-      if (!demo) return;
-      var steps = [
-        { from: 'PDF',  to: 'DOCX', name: 'PDF to Word' },
-        { from: 'JPG',  to: 'PNG',  name: 'JPG to PNG' },
-        { from: 'XLSX', to: 'PDF',  name: 'Excel to PDF' },
-        { from: 'CSV',  to: 'JSON', name: 'CSV to JSON' },
-        { from: 'IMG',  to: 'TEXT', name: 'Image to Text (OCR)' },
-        { from: 'PDF',  to: 'PDF',  name: 'Merge PDF' }
-      ];
-      var $from = document.getElementById('hpFrom'),
-          $to = document.getElementById('hpTo'),
-          $name = document.getElementById('hpName'),
-          $fill = document.getElementById('hpFill'),
-          $check = document.getElementById('hpCheck');
-      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var i = 0;
 
-      function paint(s) {
-        $from.textContent = s.from;
-        $to.textContent = s.to;
-        $name.textContent = s.name;
-      }
-      paint(steps[0]);
-
-      if (reduce) { $fill.style.width = '100%'; $check.classList.add('on'); return; }
-
-      function cycle() {
-        var s = steps[i % steps.length];
-        // fade content in
-        [$from, $to, $name].forEach(function (el) { el.style.opacity = '0'; el.style.transform = 'translateY(4px)'; });
-        $check.classList.remove('on');
-        $fill.style.transition = 'none';
-        $fill.style.width = '0%';
-        setTimeout(function () {
-          paint(s);
-          [$from, $to, $name].forEach(function (el) { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-          // run the progress bar
-          requestAnimationFrame(function () {
-            $fill.style.transition = 'width 1.6s cubic-bezier(0.4, 0, 0.2, 1)';
-            $fill.style.width = '100%';
-          });
-          setTimeout(function () { $check.classList.add('on'); }, 1650);
-        }, 220);
-        i++;
-      }
-      cycle();
-      setInterval(cycle, 2600);
-    })();
-  </script>
 </Layout>

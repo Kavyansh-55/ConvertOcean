@@ -41,6 +41,37 @@
   --rounded-lg: 12px;
   --rounded-pill: 100px;
   --rounded-full: 9999px;
+
+  /* ── Type scale ───────────────────────────────────────────────
+     Eight steps, fluid. Sizes interpolate between the mobile and
+     desktop bounds, so a step never needs a media query to resize.
+     Each step pairs a size with the tracking it needs at that size:
+     display type tightens, small type opens up. Use these — a raw
+     px font-size in a component means the scale is missing a step. */
+  --fs-display: clamp(2rem, 1.30rem + 3.1vw, 3.5rem);   /* 32 → 56  hero */
+  --fs-title:   clamp(1.5rem, 1.28rem + 0.98vw, 2rem);  /* 24 → 32  section h2 */
+  --fs-heading: clamp(1.25rem, 1.14rem + 0.49vw, 1.5rem); /* 20 → 24  subsection */
+  --fs-subhead: 1.125rem;                                /* 18       card titles */
+  --fs-lead:    clamp(1rem, 0.95rem + 0.22vw, 1.125rem); /* 16 → 18  hero sub, intros */
+  --fs-body:    0.9375rem;                               /* 15       default prose */
+  --fs-small:   0.8125rem;                               /* 13       meta, captions */
+  --fs-micro:   0.6875rem;                               /* 11       mono eyebrows */
+
+  --ls-display: -0.033em;
+  --ls-title:   -0.028em;
+  --ls-heading: -0.022em;
+  --ls-subhead: -0.017em;
+  --ls-body:    -0.006em;
+  --ls-micro:    0.06em;
+
+  --lh-display: 1.04;
+  --lh-title:   1.15;
+  --lh-heading: 1.25;
+  --lh-body:    1.6;
+  --lh-tight:   1.4;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 [data-theme="dark"] {
@@ -451,8 +482,10 @@ select:focus-visible,
   border: none;
   color: var(--colors-body);
   cursor: pointer;
-  width: 36px;
-  height: 36px;
+  /* 44px minimum touch target (WCAG 2.5.8); the visual
+     circle stays 36px via the :hover background inset. */
+  width: 44px;
+  height: 44px;
   border-radius: var(--rounded-full);
   display: flex;
   align-items: center;
@@ -483,8 +516,8 @@ select:focus-visible,
   border: none;
   color: var(--colors-body);
   cursor: pointer;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--rounded-full);
   align-items: center;
   justify-content: center;
@@ -1811,4 +1844,29 @@ footer {
   opacity: 1;
   transform: translateX(0);
   color: var(--colors-link);
+}
+
+/* ============================================================
+   Touch target sizing (WCAG 2.5.8 / 2.5.5).
+   Scoped to coarse pointers so mouse users keep the compact
+   link lists, while thumbs get the full 44px. These four classes
+   accounted for 83 of the 86 undersized targets on mobile.
+   ============================================================ */
+@media (pointer: coarse) {
+  .footer-link,
+  .seo-link,
+  .popular-search-link,
+  .popular-all {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .filter-tab {
+    min-height: 44px;
+  }
+
+  .nav-brand {
+    min-height: 44px;
+  }
 }
