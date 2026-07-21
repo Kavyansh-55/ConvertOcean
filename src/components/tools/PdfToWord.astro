@@ -114,8 +114,16 @@ const { slug, headline, subtitle } = Astro.props;
       progressOverlay.style.display = 'none';
     }
 
-    function showError(msg) {
+    function showError(msg, link) {
       errorMessage.textContent = msg;
+      if (link) {
+        errorMessage.appendChild(document.createTextNode(' '));
+        const a = document.createElement('a');
+        a.href = link.href;
+        a.textContent = link.label;
+        a.style.cssText = 'color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 2px;';
+        errorMessage.appendChild(a);
+      }
       errorBanner.style.display = 'flex';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -142,6 +150,19 @@ const { slug, headline, subtitle } = Astro.props;
               const textContent = await page.getTextContent();
               const pageText = textContent.items.map(item => item.str).join(" ");
               fullText += pageText + "\n\n";
+            }
+
+            // A scanned PDF is images of text with no text layer, so
+            // extraction legitimately returns nothing. Without this check the
+            // tool reported success and handed over an empty .doc.
+            if (!fullText.replace(/\s/g, '')) {
+              showError(
+                'This PDF has no selectable text — it looks like a scan or a photo, ' +
+                'so there is nothing to extract. Read it with OCR instead:',
+                { label: 'Open Image to Text (OCR)', href: '/image-to-text/' }
+              );
+              hideProgress();
+              return;
             }
 
             extractedResult = fullText;

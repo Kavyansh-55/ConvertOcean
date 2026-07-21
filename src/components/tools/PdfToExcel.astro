@@ -115,8 +115,16 @@ const { slug, headline, subtitle } = Astro.props;
       progressOverlay.style.display = 'none';
     }
 
-    function showError(msg) {
+    function showError(msg, link) {
       errorMessage.textContent = msg;
+      if (link) {
+        errorMessage.appendChild(document.createTextNode(' '));
+        const a = document.createElement('a');
+        a.href = link.href;
+        a.textContent = link.label;
+        a.style.cssText = 'color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 2px;';
+        errorMessage.appendChild(a);
+      }
       errorBanner.style.display = 'flex';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -168,6 +176,20 @@ const { slug, headline, subtitle } = Astro.props;
               
               // Add spacer between pages
               parsedRows.push([`--- Page ${i} Spacer ---`]);
+            }
+
+            // Only the page spacers survived, so the PDF carried no text
+            // layer — a scan. Say so rather than exporting an empty sheet.
+            const dataRows = parsedRows.filter(r => !(r.length === 1 && /^--- Page \d+ Spacer ---$/.test(r[0])));
+            if (dataRows.length === 0) {
+              showError(
+                'This PDF has no selectable text — it looks like a scan or a photo, ' +
+                'so there are no rows to extract. Read it with OCR instead:',
+                { label: 'Open Image to Text (OCR)', href: '/image-to-text/' }
+              );
+              parsedRows = [];
+              hideProgress();
+              return;
             }
 
             // Show text preview

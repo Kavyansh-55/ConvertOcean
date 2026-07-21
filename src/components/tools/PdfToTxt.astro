@@ -114,8 +114,16 @@ const { slug, headline, subtitle } = Astro.props;
       progressOverlay.style.display = 'none';
     }
 
-    function showError(msg) {
+    function showError(msg, link) {
       errorMessage.textContent = msg;
+      if (link) {
+        errorMessage.appendChild(document.createTextNode(' '));
+        const a = document.createElement('a');
+        a.href = link.href;
+        a.textContent = link.label;
+        a.style.cssText = 'color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 2px;';
+        errorMessage.appendChild(a);
+      }
       errorBanner.style.display = 'flex';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -135,13 +143,30 @@ const { slug, headline, subtitle } = Astro.props;
             const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(e.target.result) });
             const pdf = await loadingTask.promise;
             let fullText = "";
+            // Counted separately: fullText always carries the page markers, so
+            // it is never empty even when the PDF has no text layer at all.
+            let extractedChars = 0;
 
             for (let i = 1; i <= pdf.numPages; i++) {
               showProgress(Math.round(10 + (i / pdf.numPages) * 85), `Reading page ${i} of ${pdf.numPages}…`);
               const page = await pdf.getPage(i);
               const textContent = await page.getTextContent();
               const pageText = textContent.items.map(item => item.str).join(" ");
+              extractedChars += pageText.replace(/\s/g, '').length;
               fullText += `--- Page ${i} ---\n` + pageText + "\n\n";
+            }
+
+            // A scan is images of text with no text layer, so extraction
+            // legitimately returns nothing. Say so instead of handing over
+            // a file containing only page headings.
+            if (extractedChars === 0) {
+              showError(
+                'This PDF has no selectable text — it looks like a scan or a photo, ' +
+                'so there is nothing to extract. Read it with OCR instead:',
+                { label: 'Open Image to Text (OCR)', href: '/image-to-text/' }
+              );
+              hideProgress();
+              return;
             }
 
             extractedResult = fullText;
