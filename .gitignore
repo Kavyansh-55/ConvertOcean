@@ -22,3 +22,6 @@ desktop.ini
 *.njsproj
 *.sln
 *.sw?
+
+# Local scratch/one-off scripts and exported analytics (not for the public repo)
+scratch/

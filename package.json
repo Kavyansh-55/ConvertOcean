@@ -5,11 +5,9 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build && node scratch/clean_sitemaps.js",
+    "build": "astro build && node scripts/clean_sitemaps.js",
     "preview": "astro preview",
     "astro": "astro",
-    "sync": "node scratch/sync_headers_footers.js",
-    "update-icons": "node scratch/update_icons.js",
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
