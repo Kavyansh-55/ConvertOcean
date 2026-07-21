@@ -137,24 +137,11 @@ const toolChips = (slug: string): ToolChips => {
       color: var(--colors-ink);
     }
 
-    /* Accent reads like a flowing ocean current, not a glow shimmer */
+    /* Solid, not gradient-animated. The shimmer competed with the wave
+       motion at the base of the hero, and its teal stops fell to 1.60:1
+       against the light canvas — unreadable. One colour, one meaning. */
     .hero-title-accent {
-      background: linear-gradient(100deg, #007cf0, #00dfd8, #50e3c2, #00dfd8, #007cf0);
-      background-size: 260% 100%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: inline-block;
-      animation: water-flow 9s linear infinite;
-    }
-
-    @keyframes water-flow {
-      from { background-position: 0% 50%; }
-      to { background-position: 260% 50%; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .hero-title-accent { animation: none; }
+      color: var(--colors-accent-display);
     }
 
     .hero-subtitle {

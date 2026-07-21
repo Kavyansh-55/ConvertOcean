@@ -34,7 +34,7 @@
     <div class="dz-result" id="dzResult" hidden>
       <div class="dz-result-row">
         <span class="dz-fmt dz-from" id="dzFrom">—</span>
-        <svg class="dz-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <svg class="dz-arrow" id="dzArrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         <span class="dz-fmt dz-to" id="dzTo">—</span>
       </div>
       <div class="dz-file" id="dzFile">file.jpg</div>
@@ -247,6 +247,41 @@
   :global(.dz-btn-secondary):hover { transform: translateY(-1px); border-color: var(--colors-ink); }
   [data-theme="dark"] :global(.dz-btn-secondary) { background: rgba(255, 255, 255, 0.05); }
 
+  /* Alternative output formats, offered after the first conversion so the
+     visitor never waits on a decision before seeing a result. */
+  :global(.dz-alts) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-small);
+    color: var(--colors-mute);
+  }
+
+  :global(.dz-chip) {
+    min-height: 32px;
+    padding: 0 10px;
+    border-radius: var(--rounded-pill);
+    border: 1px solid var(--colors-hairline-strong);
+    background: var(--colors-canvas);
+    color: var(--colors-body);
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+  }
+  :global(.dz-chip):hover {
+    border-color: var(--colors-link);
+    color: var(--colors-link);
+    background: var(--colors-link-bg-soft);
+  }
+  [data-theme="dark"] :global(.dz-chip) { background: rgba(255, 255, 255, 0.05); }
+
+  @media (pointer: coarse) {
+    :global(.dz-chip) { min-height: 44px; padding: 0 var(--spacing-sm); }
+  }
+
   .dz-foot {
     font-family: var(--font-mono);
     font-size: var(--fs-micro);
@@ -304,19 +339,36 @@
   };
 
   // Everything else: hand off to the tool that actually owns the format.
-  const ROUTES: Record<string, { label: string; from: string; to: string; href: string }> = {
-    'application/pdf': { label: 'PDF to Word', from: 'PDF', to: 'DOCX', href: '/pdf-to-word/' },
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-      { label: 'Word to PDF', from: 'DOCX', to: 'PDF', href: '/word-to-pdf/' },
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-      { label: 'Excel to PDF', from: 'XLSX', to: 'PDF', href: '/excel-to-pdf/' },
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-      { label: 'PowerPoint to PDF', from: 'PPTX', to: 'PDF', href: '/pptx-to-pdf/' },
-    'text/csv': { label: 'CSV to Excel', from: 'CSV', to: 'XLSX', href: '/csv-to-xlsx/' },
-    'text/plain': { label: 'Text to PDF', from: 'TXT', to: 'PDF', href: '/txt-to-pdf/' },
-    'application/json': { label: 'JSON to CSV', from: 'JSON', to: 'CSV', href: '/json-to-csv/' },
+  // Formats the hero cannot convert in-page. Each lists the tools that
+  // genuinely own it, so a PDF is not silently assumed to mean "to Word".
+  const ROUTES: Record<string, { from: string; dests: { label: string; to: string; href: string }[] }> = {
+    'application/pdf': { from: 'PDF', dests: [
+      { label: 'PDF to Word', to: 'DOCX', href: '/pdf-to-word/' },
+      { label: 'PDF to Excel', to: 'XLSX', href: '/pdf-to-excel/' },
+      { label: 'PDF to Text', to: 'TXT', href: '/pdf-to-txt/' },
+    ] },
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': { from: 'DOCX', dests: [
+      { label: 'Word to PDF', to: 'PDF', href: '/word-to-pdf/' },
+    ] },
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { from: 'XLSX', dests: [
+      { label: 'Excel to PDF', to: 'PDF', href: '/excel-to-pdf/' },
+      { label: 'Excel to CSV', to: 'CSV', href: '/xlsx-to-csv/' },
+    ] },
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation': { from: 'PPTX', dests: [
+      { label: 'PowerPoint to PDF', to: 'PDF', href: '/pptx-to-pdf/' },
+    ] },
+    'text/csv': { from: 'CSV', dests: [
+      { label: 'CSV to Excel', to: 'XLSX', href: '/csv-to-xlsx/' },
+      { label: 'CSV to JSON', to: 'JSON', href: '/csv-to-json/' },
+    ] },
+    'text/plain': { from: 'TXT', dests: [
+      { label: 'Text to PDF', to: 'PDF', href: '/txt-to-pdf/' },
+    ] },
+    'application/json': { from: 'JSON', dests: [
+      { label: 'JSON to CSV', to: 'CSV', href: '/json-to-csv/' },
+      { label: 'JSON to Excel', to: 'XLSX', href: '/json-to-xlsx/' },
+    ] },
   };
-
   // Extension fallback: browsers disagree on MIME for csv/json in particular.
   const EXT_MIME: Record<string, string> = {
     pdf: 'application/pdf',
@@ -341,6 +393,7 @@
     const result = document.getElementById('dzResult');
     const elFrom = document.getElementById('dzFrom');
     const elTo = document.getElementById('dzTo');
+    const elArrow = document.getElementById('dzArrow');
     const elFile = document.getElementById('dzFile');
     const elActions = document.getElementById('dzActions');
     const elFoot = document.getElementById('dzFoot');
@@ -417,6 +470,74 @@
         img.src = url;
       });
 
+    /** Sensible first target: PNG keeps quality going to JPG, others to PNG. */
+    const defaultTargetFor = (mime: string) =>
+      mime === 'image/png' ? 'image/jpeg' : 'image/png';
+
+    /**
+     * Convert and render the result. Alternative formats are offered as
+     * chips rather than as a picker shown before conversion — the visitor
+     * gets a finished file in one gesture, and can still re-encode in one tap.
+     */
+    const runImage = async (file: File, mime: string, targetMime: string) => {
+      const fromLabel = IMAGE_TYPES[mime];
+      const toLabel = IMAGE_TYPES[targetMime];
+
+      if (elFrom) elFrom.textContent = fromLabel;
+      if (elTo) { elTo.textContent = toLabel; elTo.hidden = false; }
+      if (elArrow) elArrow.hidden = false;
+      if (elActions) elActions.innerHTML = '';
+      if (elFoot) { elFoot.textContent = 'Converting…'; elFoot.classList.remove('is-error'); }
+      if (elFile) elFile.textContent = file.name;
+      show(drop, false);
+      show(result, true);
+
+      try {
+        const t0 = performance.now();
+        const blob = await convertImage(file, targetMime);
+        const ms = Math.max(1, Math.round(performance.now() - t0));
+
+        releaseUrl();
+        objectUrl = URL.createObjectURL(blob);
+        const base = file.name.replace(/\.[^.]+$/, '');
+        const ext = toLabel.toLowerCase();
+
+        if (elActions) {
+          elActions.innerHTML = '';
+          const a = document.createElement('a');
+          a.className = 'dz-btn dz-btn-primary';
+          a.href = objectUrl;
+          a.download = `${base}.${ext === 'jpg' ? 'jpg' : ext}`;
+          a.textContent = `Download ${toLabel}`;
+          elActions.appendChild(a);
+
+          // Re-encode chips for every format that is not the current target.
+          const others = Object.keys(IMAGE_TYPES).filter((m) => m !== targetMime);
+          if (others.length) {
+            const group = document.createElement('span');
+            group.className = 'dz-alts';
+            group.appendChild(document.createTextNode('or'));
+            others.forEach((m) => {
+              const b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'dz-chip';
+              b.textContent = IMAGE_TYPES[m];
+              b.addEventListener('click', () => runImage(file, mime, m));
+              group.appendChild(b);
+            });
+            elActions.appendChild(group);
+          }
+        }
+        if (elFoot) {
+          elFoot.innerHTML =
+            `<strong>done in ${ms} ms</strong> · ${fmtBytes(file.size)} → ${fmtBytes(blob.size)} · 0 bytes uploaded`;
+        }
+        announce(`Converted ${file.name} to ${toLabel}. Ready to download.`);
+      } catch (err) {
+        fail('That image could not be read. Try a PNG, JPG, or WebP.');
+      }
+    };
+
     const handle = async (file: File) => {
       if (!file) return;
       if (file.size > MAX_BYTES) {
@@ -430,71 +551,38 @@
 
       // Path A — real conversion, right here.
       if (IMAGE_TYPES[mime]) {
-        const targetMime = mime === 'image/png' ? 'image/jpeg' : 'image/png';
-        const fromLabel = IMAGE_TYPES[mime];
-        const toLabel = IMAGE_TYPES[targetMime];
-
-        if (elFrom) elFrom.textContent = fromLabel;
-        if (elTo) elTo.textContent = toLabel;
-        if (elActions) elActions.innerHTML = '';
-        if (elFoot) elFoot.textContent = 'Converting…';
-        show(drop, false);
-        show(result, true);
-
-        try {
-          const t0 = performance.now();
-          const blob = await convertImage(file, targetMime);
-          const ms = Math.max(1, Math.round(performance.now() - t0));
-
-          releaseUrl();
-          objectUrl = URL.createObjectURL(blob);
-          const base = file.name.replace(/\.[^.]+$/, '');
-          const ext = toLabel.toLowerCase() === 'jpg' ? 'jpg' : toLabel.toLowerCase();
-
-          if (elActions) {
-            const a = document.createElement('a');
-            a.className = 'dz-btn dz-btn-primary';
-            a.href = objectUrl;
-            a.download = `${base}.${ext}`;
-            a.textContent = `Download ${toLabel}`;
-            elActions.appendChild(a);
-
-            const more = document.createElement('a');
-            more.className = 'dz-btn dz-btn-secondary';
-            more.href = '/image-tools/';
-            more.textContent = 'More image tools';
-            elActions.appendChild(more);
-          }
-          if (elFoot) {
-            elFoot.innerHTML =
-              `<strong>done in ${ms} ms</strong> · ${fmtBytes(file.size)} → ${fmtBytes(blob.size)} · 0 bytes uploaded`;
-          }
-          announce(`Converted ${file.name} to ${toLabel}. Ready to download.`);
-        } catch (err) {
-          fail('That image could not be read. Try a PNG, JPG, or WebP.');
-        }
+        await runImage(file, mime, defaultTargetFor(mime));
         return;
       }
 
-      // Path B — recognised, but owned by a dedicated tool.
+      // Path B — recognised, but owned by dedicated tools.
       const route = ROUTES[mime];
       if (route) {
+        const multi = route.dests.length > 1;
         if (elFrom) elFrom.textContent = route.from;
-        if (elTo) elTo.textContent = route.to;
+        if (elTo) {
+          elTo.textContent = multi ? '' : route.dests[0].to;
+          elTo.hidden = multi;
+        }
+        if (elArrow) elArrow.hidden = multi;
         if (elActions) {
           elActions.innerHTML = '';
-          const a = document.createElement('a');
-          a.className = 'dz-btn dz-btn-primary';
-          a.href = route.href;
-          a.textContent = `Open ${route.label}`;
-          elActions.appendChild(a);
+          route.dests.forEach((d, i) => {
+            const a = document.createElement('a');
+            a.className = i === 0 ? 'dz-btn dz-btn-primary' : 'dz-btn dz-btn-secondary';
+            a.href = d.href;
+            a.textContent = d.label;
+            elActions.appendChild(a);
+          });
         }
         if (elFoot) {
-          elFoot.textContent = `${fmtBytes(file.size)} · this format opens in its own tool — still on your device`;
+          elFoot.textContent = multi
+            ? `${fmtBytes(file.size)} · choose a tool — each one runs on your device`
+            : `${fmtBytes(file.size)} · opens in its own tool — still on your device`;
         }
         show(drop, false);
         show(result, true);
-        announce(`${file.name} recognised. Open ${route.label} to convert it.`);
+        announce(`${file.name} recognised as ${route.from}. ${route.dests.length} tools available.`);
         return;
       }
 

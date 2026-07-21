@@ -24,6 +24,10 @@
   --colors-error: #ee0000;
   --colors-error-soft: #f7d4d6;
   --colors-error-deep: #c50000;
+  /* Display accent for the hero headline. Deep enough to clear AA on the
+     light canvas (5.36:1) — the previous animated gradient dipped to
+     1.60:1 at its teal stops, well under the 3:1 large-text minimum. */
+  --colors-accent-display: #0e7490;
   
   --spacing-xxs: 4px;
   --spacing-xs: 8px;
@@ -87,6 +91,7 @@
   --colors-success-glow: rgba(16, 185, 129, 0.2);
   --colors-link-bg-soft: #1b253c;
   --colors-link: #0070f3;
+  --colors-accent-display: #22d3ee;
 }
 
 body {
