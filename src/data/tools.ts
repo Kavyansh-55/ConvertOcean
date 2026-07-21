@@ -678,9 +678,9 @@ const rawTools: ToolData[] = [
     slug: 'pptx-to-pdf',
     name: 'PowerPoint to PDF',
     title: 'Convert PowerPoint to PDF Online - 100% Private | ConvertOcean',
-    description: 'Convert PowerPoint slide presentations (.pptx) to PDF sheets offline in your browser. 100% secure client-side converter.',
+    description: 'Convert modern PowerPoint (.pptx) files to PDF in your browser. Slides render with their real layout, theme and background — nothing is uploaded.',
     headline: 'PowerPoint to PDF.',
-    subtitle: 'Extract slides outline text and compile it to printable PDF files locally.',
+    subtitle: 'Render slides with their real layout and theme, then compile them to PDF locally.',
     icon: '📊',
     category: 'Document Tools',
     categorySlug: 'document-tools',
@@ -692,17 +692,17 @@ const rawTools: ToolData[] = [
   },
   {
     slug: 'ppt-to-pdf',
-    name: 'PPT to PDF',
+    name: 'PPT to PDF (Legacy)',
     title: 'Convert PPT to PDF Online - 100% Private | ConvertOcean',
-    description: 'Convert legacy and modern PowerPoint presentations (.ppt, .pptx) to PDF sheets offline in your browser. 100% secure client-side converter.',
+    description: 'Got an old .ppt file? Re-save it as .pptx first (we show you how), then render it to PDF locally — no uploads, no signup, nothing leaves your device.',
     headline: 'PPT to PDF.',
-    subtitle: 'Convert PowerPoint presentations (.ppt, .pptx) to printable PDF documents locally.',
-    icon: '📊',
+    subtitle: 'Legacy .ppt needs a one-step re-save to .pptx — then slides render to PDF on your device.',
+    icon: '🗄️',
     category: 'Document Tools',
     categorySlug: 'document-tools',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
-      { question: 'Can I convert legacy .ppt files?', answer: 'Legacy .ppt files are a closed binary format. For 100% client-side privacy, you can save your presentation as .pptx in PowerPoint and upload the .pptx file, or use our interface which guides you through local conversion.' }
+      { question: 'Can I convert legacy .ppt files directly?', answer: 'Not directly — .ppt is a closed binary format that browsers cannot read. The one-step fix: open the file in PowerPoint (or the free LibreOffice Impress), choose File → Save As and pick .pptx, then select that .pptx here. Conversion still happens entirely on your device — nothing is sent to us at any point.' }
     ],
     relatedTools: ['pptx-to-pdf', 'word-to-pdf', 'txt-to-pdf']
   },
