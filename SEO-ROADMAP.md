@@ -155,12 +155,22 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 **Theme: authority + demand-driven expansion.** Cycle 1 built the site; Cycle 2 makes the web point at it. Operating rules from Cycle 1 carry over unchanged (quality gate, branch → approve → deploy, link-surface checklist).
 
 ### N1 — Jul 30 pre-flight + AdSense resubmit *(date-gated: run on/after Jul 30)*
+- [ ] **HOUSEKEEPING (carried from Jul 21):** delete `Desktop/ConvertOcean-backup-pre-rewrite.git` — the pre-open-source mirror backup. It contains the real Gmail in commit metadata. Never push it. Safe to delete any time from early Aug.
 - [ ] GSC check: crawl dates on /break-even-calculator/, /csv-to-xlsx/, /split-excel/, /csv-to-json/ are post-Jul-19; guides indexing started.
 - [ ] Record in this file: impressions + clicks (28d vs prior 28d), indexed count.
 - [ ] If recrawl confirmed → user ticks AdSense policy box + Resubmit. Log the date; outcome typically arrives in days-to-2-weeks.
 
 ### N2–N3 — Authority foundation (directories + listings)
-- [ ] N2: Submit to free tool directories with unique descriptions each (AlternativeTo, SaaSHub, and similar free-tier listings). Build a submissions tracking table here. No paid listings, no link farms — reputable directories only.
+- [ ] N2: **REVISED 2026-07-21 after AlternativeTo rejection — pivot from generic tool directories to open-source/privacy channels.**
+
+  **AlternativeTo: REJECTED, do not resubmit.** Their FAQ excludes this product category explicitly and by name: *"we do not approve ... simple converters, calculators, resizers, compressors, formatters, counters, generators, invoice generators, online PDF tools ... collections of online tools"* and *"we are also declining a lot of apps that are basically the same app but bundled in different ways, like apps to convert various file formats and so on."* ConvertOcean matches ~10 of the listed exclusions. This is a **category policy, not a quality judgment** — no amount of site improvement changes it, there is no appeal, and their FAQ warns that accounts used for promotion get blocked for spam. Treat as permanently closed.
+
+  **Why the pivot works:** the two things that got us rejected by a *generic* directory (client-side converters, bundled tools) are exactly what *privacy and open-source* channels reward — and as of 2026-07-21 the repo is public MIT. "Converts in your browser, nothing uploaded, here's the source" is now a verifiable claim, not marketing.
+  - [ ] GitHub repo as a discovery surface: topics/tags, a strong README hero, a live demo link. The repo is itself a listing now.
+  - [ ] `awesome-*` GitHub lists via PR (awesome-privacy, awesome-open-source-alternatives, awesome-selfhosted-adjacent). Real dofollow links, and a genuine fit.
+  - [ ] Privacy/OSS communities where the no-upload architecture is the story: r/privacy, r/opensource, r/degoogle, r/webdev. Read each sub's self-promo rules first.
+  - [ ] Re-check SaaSHub before submitting — likely the same category exclusion; do not burn another account on a guaranteed no.
+  - Lesson: generic tool directories have hardened against this whole category. Stop spending sessions on them.
 - [ ] N3: Launch-post prep: Show HN / Product Hunt-style asset pack (tagline, screenshots, maker's comment emphasizing the no-upload architecture). Posting is the user's call and timing.
 
 ### N4–N5 — vs batch 2 (from backlog)
