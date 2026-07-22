@@ -1590,8 +1590,14 @@ footer {
 }
 
 @media (max-width: 480px) {
+  /* Stay two-up: a single column turned 54 links into ~3,450px of scroll.
+     The brand block spans both since it carries prose, not links. */
   .footer-top {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg) var(--spacing-md);
+  }
+  .footer-brand {
+    grid-column: 1 / -1;
   }
 }
 
@@ -1720,8 +1726,12 @@ footer {
 }
 
 @media (max-width: 600px) {
+  /* Two-up rather than one: this band was 6,615px stacked, the tallest on
+     the page. The cards carry a format chip pair and a name, which still
+     read at ~180px wide. */
   .explore-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
   }
 }
 

@@ -4,6 +4,7 @@ import { tools } from '../data/tools';
 import { guides } from '../data/guides';
 import CategoryIcon from '../components/CategoryIcon.astro';
 import HeroDropzone from '../components/HeroDropzone.astro';
+import CategoryCard from '../components/CategoryCard.astro';
 
 const { lang = 'en' } = Astro.props;
 
@@ -60,18 +61,55 @@ const getToolCount = (categorySlug: string) => {
   return tools.filter(t => t.categorySlug === categorySlug).length;
 };
 
-// Per-category accent (from the brand gradient palette) — used to colour tool + category tiles.
-const categoryAccent: Record<string, string> = {
-  'pdf-tools': '#ff4d4d',
-  'image-tools': '#7928ca',
-  'excel-converter': '#29bc9b',
-  'document-tools': '#0070f3',
-  'developer-tools': '#007cf0',
-  'business-tools': '#f5a623',
-};
-const accentFor = (slug: string, cat: string) => categoryAccent[cat] || '#0070f3';
+// One accent, not six. The per-category hues (red / violet / green / blue /
+// amber) were decorative — a card's category is already carried by the filter
+// tabs and the tool name — and six competing hues on one grid is what made the
+// page read as assembled rather than designed. Colour now lives in CSS as a
+// single token; nothing is bound per card.
 
 // Curated "most-used" tools for the homepage — high-intent, one-tap entry.
+// Category tiles, in bento order — position determines tile size, so this
+// array is the single place that ordering lives.
+const categoryCards = [
+  {
+    href: '/file-converter/', categorySlug: 'file-converter',
+    name: 'Universal File Converter', count: '30+ formats',
+    action: 'Open File Converter',
+    description: 'Convert files between dozens of formats directly inside your browser. Supports documents, spreadsheets, images, and structured data formats.',
+  },
+  {
+    href: '/pdf-tools/', categorySlug: 'pdf-tools',
+    name: 'PDF, Split & Merge Tools', count: String(getToolCount('pdf-tools')),
+    action: 'Open PDF, Split & Merge Tools',
+    description: 'Merge multiple PDF, Excel, Image, or Text documents, split ranges, extract pages, and compile files offline securely.',
+  },
+  {
+    href: '/image-tools/', categorySlug: 'image-tools',
+    name: 'Image Tools', count: String(getToolCount('image-tools')),
+    description: 'Convert PNG, JPG, WebP, SVG, and BMP formats instantly. Compress, resize, and optimize file sizes client-side in seconds.',
+  },
+  {
+    href: '/document-tools/', categorySlug: 'document-tools',
+    name: 'Document Tools', count: String(getToolCount('document-tools')),
+    description: 'Process text files, compile document PDFs, convert formatting, and combine rich logs securely inside your local browser tab.',
+  },
+  {
+    href: '/excel-converter/', categorySlug: 'excel-converter',
+    name: 'Excel Converter', count: String(getToolCount('excel-converter')),
+    description: 'Inspect CSV and Excel sheets client-side. Convert CSV to JSON, JSON to Excel, XLSX to CSV, or compile reports to PDF offline.',
+  },
+  {
+    href: '/business-tools/', categorySlug: 'business-tools',
+    name: 'Business Tools', count: String(getToolCount('business-tools')),
+    description: 'Create invoices, calculate taxes, and compile print-ready PDFs. Offline-first workflow.',
+  },
+  {
+    href: '/developer-tools/', categorySlug: 'developer-tools',
+    name: 'Developer Tools', count: String(getToolCount('developer-tools')),
+    description: 'Format JSON, minify code, encode base64, and validate data structures locally.',
+  },
+];
+
 const popularSlugs = ['pdf-to-word', 'excel-to-pdf', 'image-resizer', 'merge-pdf', 'jpg-to-png', 'image-to-text', 'word-to-pdf', 'split-pdf'];
 const popularTools = popularSlugs
   .map(s => tools.find(t => t.slug === s))
@@ -451,6 +489,35 @@ const toolChips = (slug: string): ToolChips => {
     @media (max-width: 600px) {
       .tool-grid--bento { grid-template-columns: 1fr; }
       .tool-grid--bento > * { grid-column: span 1 !important; }
+    }
+
+    /* Guides on phones: 13 cards at 291px each made this the tallest band
+       on the page (4,446px). Clamp the description and tighten the padding
+       rather than dropping cards - every guide link stays in the document. */
+    @media (max-width: 600px) {
+      .featured-card {
+        padding: var(--spacing-md);
+        gap: var(--spacing-xs);
+      }
+      .featured-card-desc {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+
+    /* The single accent every tool and category tile draws from. */
+    .popular-card,
+    .explore-card {
+      --accent: var(--colors-accent-display);
+    }
+
+    @media (max-width: 600px) {
+      /* At 165px wide the description truncates to "Convert legacy E…",
+         which carries no meaning the chips and name do not already give. */
+      .explore-card-desc { display: none; }
     }
 
     .section-actions {
@@ -945,7 +1012,7 @@ const toolChips = (slug: string): ToolChips => {
       </div>
       <div class="popular-grid" data-reveal-stagger>
         {popularTools.map(t => (
-          <a href={relLink(`/${t.slug}/`)} class="popular-card" style={`--accent: ${accentFor(t.slug, t.categorySlug)}`}>
+          <a href={relLink(`/${t.slug}/`)} class="popular-card">
             <span class="popular-card-icon"><CategoryIcon icon={t.icon} width="22" height="22" /></span>
             <span class="popular-card-name">{t.name}</span>
             <span class="popular-card-cat">{t.category}</span>
@@ -975,7 +1042,7 @@ const toolChips = (slug: string): ToolChips => {
         {tools.map(t => {
           const chips = toolChips(t.slug);
           return (
-            <a href={relLink(`/${t.slug}/`)} class="explore-card" data-category={t.categorySlug} style={`--accent: ${accentFor(t.slug, t.categorySlug)}`}>
+            <a href={relLink(`/${t.slug}/`)} class="explore-card" data-category={t.categorySlug}>
               <div class="explore-card-info">
                 <div class="explore-card-chips">
                   {chips.pair ? (
@@ -1008,110 +1075,16 @@ const toolChips = (slug: string): ToolChips => {
     <section class="grid-container">
       <h2 class="section-title">Browse Tools by Category</h2>
       <div class="tool-grid tool-grid--bento" data-reveal-stagger>
-        <!-- Card 1: File Converter -->
-        <a href={relLink('/file-converter/')} class="tool-card">
-          <div class="tool-info">
-            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="file-converter" width="20" height="20" /></div>
-            <h3 class="tool-name">Universal File Converter <span class="category-count">(30+ formats)</span></h3>
-            <p class="tool-description">Convert files between dozens of formats directly inside your browser. Supports documents, spreadsheets, images, and structured data formats.</p>
-          </div>
-          <div class="tool-action-link">
-            Open File Converter
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </a>
-
-        <!-- Card 2: PDF, Split & Merge Tools -->
-        <a href={relLink('/pdf-tools/')} class="tool-card">
-          <div class="tool-info">
-            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="pdf-tools" width="20" height="20" /></div>
-            <h3 class="tool-name">PDF, Split & Merge Tools <span class="category-count">({getToolCount('pdf-tools')})</span></h3>
-            <p class="tool-description">Merge multiple PDF, Excel, Image, or Text documents, split ranges, extract pages, and compile files offline securely.</p>
-          </div>
-          <div class="tool-action-link">
-            Open PDF, Split & Merge Tools
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </a>
-
-        <!-- Card 3: Image Tools -->
-        <a href={relLink('/image-tools/')} class="tool-card">
-          <div class="tool-info">
-            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="image-tools" width="20" height="20" /></div>
-            <h3 class="tool-name">Image Tools <span class="category-count">({getToolCount('image-tools')})</span></h3>
-            <p class="tool-description">Convert PNG, JPG, WebP, SVG, and BMP formats instantly. Compress, resize, and optimize file sizes client-side in seconds.</p>
-          </div>
-          <div class="tool-action-link">
-            Open Image Tools
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </a>
-
-        <!-- Card 4: Document Tools -->
-        <a href={relLink('/document-tools/')} class="tool-card">
-          <div class="tool-info">
-            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="document-tools" width="20" height="20" /></div>
-            <h3 class="tool-name">Document Tools <span class="category-count">({getToolCount('document-tools')})</span></h3>
-            <p class="tool-description">Process text files, compile document PDFs, convert formatting, and combine rich logs securely inside your local browser tab.</p>
-          </div>
-          <div class="tool-action-link">
-            Open Document Tools
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </a>
-
-        <!-- Card 5: Excel Converter -->
-        <a href={relLink('/excel-converter/')} class="tool-card">
-          <div class="tool-info">
-            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="excel-converter" width="20" height="20" /></div>
-            <h3 class="tool-name">Excel Converter <span class="category-count">({getToolCount('excel-converter')})</span></h3>
-            <p class="tool-description">Inspect CSV and Excel sheets client-side. Convert CSV to JSON, JSON to Excel, XLSX to CSV, or compile reports to PDF offline.</p>
-          </div>
-          <div class="tool-action-link">
-            Open Excel Converter
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </a>
-
-        <!-- Card 7: Business Tools -->
-        <a href={relLink('/business-tools/')} class="tool-card">
-          <div class="tool-info">
-            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="business-tools" width="20" height="20" /></div>
-            <h3 class="tool-name">Business Tools <span class="category-count">({getToolCount('business-tools')})</span></h3>
-            <p class="tool-description">Create invoices, calculate taxes, and compile print-ready PDFs. Offline-first workflow.</p>
-          </div>
-          <div class="tool-action-link">
-            Open Business Tools
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </a>
-
-        <!-- Card 8: Developer Tools -->
-        <a href={relLink('/developer-tools/')} class="tool-card">
-          <div class="tool-info">
-            <div class="tool-icon-wrapper"><CategoryIcon categorySlug="developer-tools" width="20" height="20" /></div>
-            <h3 class="tool-name">Developer Tools <span class="category-count">({getToolCount('developer-tools')})</span></h3>
-            <p class="tool-description">Format JSON, minify code, encode base64, and validate data structures locally.</p>
-          </div>
-          <div class="tool-action-link">
-            Open Developer Tools
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </a>
+        {categoryCards.map(c => (
+          <CategoryCard
+            href={relLink(c.href)}
+            categorySlug={c.categorySlug}
+            name={c.name}
+            count={c.count}
+            description={c.description}
+            action={c.action}
+          />
+        ))}
       </div>
     </section>
 

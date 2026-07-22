@@ -1,0 +1,41 @@
+---
+/**
+ * CategoryCard — one tile in the homepage bento grid.
+ *
+ * Replaces seven hand-written blocks that differed only in href, icon,
+ * label and copy. The chevron and count markup were duplicated verbatim
+ * in each, so a wording or icon change had to be made seven times.
+ */
+import CategoryIcon from './CategoryIcon.astro';
+
+interface Props {
+  href: string;
+  categorySlug: string;
+  name: string;
+  /** Rendered in muted type beside the name, e.g. "(23)" or "(30+ formats)". */
+  count?: string;
+  description: string;
+  /** Link text. Defaults to "Open <name>". */
+  action?: string;
+}
+
+const { href, categorySlug, name, count, description, action } = Astro.props;
+---
+
+<a href={href} class="tool-card">
+  <div class="tool-info">
+    <div class="tool-icon-wrapper">
+      <CategoryIcon categorySlug={categorySlug} width="20" height="20" />
+    </div>
+    <h3 class="tool-name">
+      {name}{count && <span class="category-count"> ({count})</span>}
+    </h3>
+    <p class="tool-description">{description}</p>
+  </div>
+  <div class="tool-action-link">
+    {action || `Open ${name}`}
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</a>
