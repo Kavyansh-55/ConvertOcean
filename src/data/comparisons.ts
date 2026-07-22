@@ -774,5 +774,230 @@ export const comparisons: ComparisonData[] = [
         a: 'PDF24 has a broader, more specialised PDF feature set. ConvertOcean focuses on the common, high-value tasks — convert, merge, split, extract text — done privately in the browser, plus tools for images, data, and business that PDF24 does not cover.'
       }
     ]
+  },
+  {
+    slug: 'sejda',
+    competitorName: 'Sejda',
+    title: 'ConvertOcean vs Sejda - No Hourly Limits, No Upload',
+    description: 'Compare ConvertOcean and Sejda PDF. Sejda is a serious, privacy-conscious PDF suite — see where its free hourly and page limits bite, and where its editor genuinely wins.',
+    h1: 'ConvertOcean vs Sejda.',
+    subtitle: 'Unlimited free conversions in your browser, versus a strong PDF suite with a metered free tier.',
+    intro: 'Sejda is one of the more respectable names in this category: it deletes uploaded files after two hours, states plainly that it does not access your files without permission, and sells a desktop app that genuinely processes documents locally. So this is not a privacy-versus-no-privacy comparison. The real differences are metering and architecture — Sejda\'s free tier is capped by the hour and by the page, and its local processing sits behind a paid plan, while ConvertOcean does every conversion in your browser, unmetered, for free.',
+    pros: [
+      'No hourly, daily, or per-page caps — convert as much as you need.',
+      'Nothing uploaded: files are processed inside your browser tab.',
+      'Local processing costs nothing and needs no install.',
+      'No account, no email address, no CAPTCHAs.',
+      'Covers images, spreadsheets, developer data, and business calculators too.'
+    ],
+    cons: [
+      'Sejda\'s free tier is limited to 3 tasks per hour and 50 MB per file.',
+      'Free page caps are tighter than the headline suggests (50 pages per task, 20 per conversion, 10 per OCR task).',
+      'Local processing requires Sejda Desktop, which is a paid plan.',
+      'Online tasks upload the document to Sejda\'s servers, held up to 2 hours.',
+      'Sejda has a true PDF text editor and OCR; ConvertOcean does not.'
+    ],
+    comparisonTable: [
+      {
+        feature: 'Price',
+        convertocean: 'Free',
+        competitor: 'Free tier, then roughly €8.50/mo or €71/yr',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Hourly Task Limit',
+        convertocean: 'None',
+        competitor: '3 tasks per hour on the free tier',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Free Processing Location',
+        convertocean: 'Your browser (on-device)',
+        competitor: 'Sejda cloud servers',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Cost of Local Processing',
+        convertocean: 'Free, in-browser',
+        competitor: 'Included with paid Desktop plans',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Server File Retention',
+        convertocean: 'No upload, so nothing to retain',
+        competitor: 'Deleted automatically after 2 hours',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Editing Text Inside a PDF',
+        convertocean: 'Not supported',
+        competitor: 'Full PDF editor',
+        isConvertoceanBetter: false
+      },
+      {
+        feature: 'OCR for Scanned Documents',
+        convertocean: 'Separate image-to-text tool',
+        competitor: 'Built into the PDF workflow',
+        isConvertoceanBetter: false
+      }
+    ],
+    sections: [
+      {
+        title: 'The Free Tier Is Metered by the Hour.',
+        paragraphs: [
+          'Sejda\'s free plan is usable but deliberately rationed: 3 tasks per hour, 50 MB per file, and per-tool page caps that are tighter than the general "up to 200 pages" line implies — 50 pages per task, 20 pages per conversion, 10 pages per OCR task, and one file per task rather than a batch. Hit any of them and the flow stops to offer you an upgrade.',
+          'That rationing is the point of the model, and it is a fair way to run a business. It is simply a different deal from ConvertOcean\'s. Because your files never reach our servers, there is no per-user compute cost to ration — so there is no hourly counter, no page ceiling, and no upgrade prompt at the fourth conversion of the hour.'
+        ]
+      },
+      {
+        title: 'Sejda Is Privacy-Conscious. The Difference Is Structural.',
+        paragraphs: [
+          'Credit where it is due: Sejda\'s privacy posture is better than most of the cloud PDF industry. Files are deleted automatically after two hours, the policy explicitly says they do not access your files without permission, and Sejda Desktop processes documents on your own computer without uploading them at all.',
+          'The distinction worth understanding is what you are relying on. With Sejda\'s free online tools, your document does travel to a server, and its privacy depends on the company honouring its retention policy — a promise that is very probably kept, but still a promise. With ConvertOcean, the conversion happens in your browser tab, so there is no upload to trust and no retention window to expire. Same goal, different guarantee: policy versus architecture.',
+          'Sejda offers the architectural version too — that is exactly what Sejda Desktop is. It is just part of the paid tier, and it means installing software. ConvertOcean gives you on-device processing in the browser you already have, at no cost, on any operating system.'
+        ]
+      },
+      {
+        title: 'When Sejda Is the Better Choice.',
+        paragraphs: [
+          'Be clear about this one, because Sejda has real capabilities we do not match. If you need to edit the text inside an existing PDF, fill and manage forms, run OCR on scanned documents as part of a PDF workflow, sign documents, or chain steps together with saved workflows, Sejda does those things properly and ConvertOcean does not do them at all. Its desktop app is also the better answer for very large documents and for regulated environments where a locally installed, licensed application is a procurement requirement.',
+          'Choose ConvertOcean when your work is conversion rather than deep editing, when the free tier\'s hourly and page limits keep interrupting you, or when you want on-device processing without paying for it or installing anything — and when you would rather have images, spreadsheets, data tools, and business calculators in the same place as your PDF tools.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'What are Sejda\'s free limits exactly?',
+        a: 'Sejda\'s free tier allows 3 tasks per hour with a 50 MB file limit, and applies per-tool page caps — commonly 50 pages per task, 20 pages per conversion, and 10 pages per OCR task, with one file per task rather than batch processing. ConvertOcean applies no hourly, file-count, or page limits.'
+      },
+      {
+        q: 'Is Sejda safe to use for private documents?',
+        a: 'Sejda is one of the more careful cloud services: it deletes uploaded files automatically after 2 hours and states that it does not access your files without permission. Your document does still get uploaded, so its privacy rests on that policy being honoured. ConvertOcean converts inside your browser, so nothing is uploaded in the first place.'
+      },
+      {
+        q: 'Does Sejda process files locally like ConvertOcean?',
+        a: 'Sejda Desktop does process documents on your own computer without uploading them, but it is part of the paid plans and requires installing an application. ConvertOcean processes files on your device for free, in the browser, with nothing to install.'
+      },
+      {
+        q: 'Can ConvertOcean edit text inside a PDF like Sejda?',
+        a: 'No. Sejda has a genuine PDF text editor, form handling, OCR, and signing; ConvertOcean does not. ConvertOcean focuses on converting, merging, splitting, and extracting — done privately and without limits — so Sejda is the better tool if editing existing PDF content is your main task.'
+      },
+      {
+        q: 'How much does Sejda cost if I exceed the free tier?',
+        a: 'Sejda publishes a short-term web pass alongside monthly and annual plans, with the annual Desktop+Web plan around €71 per user per year and the monthly web plan around €8.50 per user — check their pricing page for current figures. ConvertOcean is free with no paid tier.'
+      }
+    ]
+  },
+  {
+    slug: 'tinywow',
+    competitorName: 'TinyWow',
+    title: 'ConvertOcean vs TinyWow - No Ads, No CAPTCHAs, No Upload',
+    description: 'Compare ConvertOcean and TinyWow. Both are free — the difference is ads, CAPTCHAs, and whether your file is uploaded to a server or converted in your browser.',
+    h1: 'ConvertOcean vs TinyWow.',
+    subtitle: 'Free file conversion without advertising, CAPTCHAs, or an upload step.',
+    intro: 'TinyWow is genuinely free and enormously broad — several hundred tools spanning PDFs, images, video, and AI writing, most of them usable without an account. Its economics are the familiar ones: advertising, CAPTCHAs, and a paid tier to remove both. ConvertOcean takes the opposite route. Because conversions run in your browser rather than on our servers, there is no per-file cost to recover, which is why there are no ads, no CAPTCHAs, and no upload.',
+    pros: [
+      'No advertising anywhere in the interface.',
+      'No CAPTCHAs between you and your file.',
+      'Nothing uploaded — conversions run inside your browser tab.',
+      'No account, no email, and no queue for "priority processing".',
+      'Works offline once the page has loaded.'
+    ],
+    cons: [
+      'TinyWow uploads your files to its servers to process them.',
+      'The free tier is ad-supported and gated by CAPTCHAs.',
+      'Removing ads and CAPTCHAs requires a paid plan.',
+      'TinyWow covers far more ground, including video and AI writing tools.',
+      'ConvertOcean has no AI writing, video, or image-generation tools.'
+    ],
+    comparisonTable: [
+      {
+        feature: 'Price',
+        convertocean: 'Free',
+        competitor: 'Free tier, or about $20/mo ($15/mo billed yearly)',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Processing Location',
+        convertocean: 'Your browser (on-device)',
+        competitor: 'TinyWow cloud servers',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Advertising',
+        convertocean: 'None',
+        competitor: 'Ad-supported on the free tier',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'CAPTCHAs',
+        convertocean: 'None',
+        competitor: 'Present on the free tier',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Server File Retention',
+        convertocean: 'No upload, so nothing to retain',
+        competitor: 'Files deleted after 1 hour',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Works Offline',
+        convertocean: 'Yes, once loaded',
+        competitor: 'No — requires a connection',
+        isConvertoceanBetter: true
+      },
+      {
+        feature: 'Breadth of Tools',
+        convertocean: 'Converters, data tools, business calculators',
+        competitor: 'Far broader — adds video and AI writing',
+        isConvertoceanBetter: false
+      }
+    ],
+    sections: [
+      {
+        title: 'Free, But You Pay in Attention.',
+        paragraphs: [
+          'TinyWow\'s free tier is real — you can convert a file today without paying or registering. What it asks for instead is your attention and your patience: advertising around the tools, and CAPTCHAs to clear before your download. Its paid plans are sold explicitly on removing those, promising no advertisements, skipping all CAPTCHAs, and priority processing, at roughly $20 per month or $15 per month billed annually.',
+          'That tells you something useful about the underlying model. When files are processed on a company\'s servers, every conversion costs them compute and bandwidth, and something has to cover it — ads, CAPTCHAs that deter automation, or a subscription. ConvertOcean does not carry that cost, because the conversion happens on your machine. There is nothing to recover, so nothing is inserted between you and your file.'
+        ]
+      },
+      {
+        title: 'Uploaded and Deleted, or Never Uploaded.',
+        paragraphs: [
+          'TinyWow states that all files, processed and unprocessed, are deleted after one hour. That is a reasonable retention policy, and short by industry standards. It still describes a window in which your document exists on someone else\'s infrastructure, and it still requires you to trust that the deletion happens as described.',
+          'ConvertOcean has no equivalent window because it has no upload. Conversions run through client-side engines in your browser tab, so the file stays on your device from start to finish. You can verify it yourself: load a tool page, disconnect from the network, and convert a file anyway. A service that needed your upload could not do that — and since the project is open source, the code doing the work is there to read.'
+        ]
+      },
+      {
+        title: 'When TinyWow Is the Better Choice.',
+        paragraphs: [
+          'TinyWow wins clearly on breadth, and it is not close. It offers several hundred tools, including whole categories ConvertOcean deliberately does not enter: video editing and conversion, AI writing and paraphrasing, image generation, and various one-off web utilities. Those genuinely cannot run comfortably in a browser tab — video transcoding and large language models need server hardware, which is precisely why they sit on the other side of the architectural line.',
+          'So if you need a video trimmed, an essay paraphrased, or the long tail of miscellaneous web utilities in one place, TinyWow is the better destination and an ad break is a fair trade. Choose ConvertOcean for document, image, and data conversion you would rather keep on your own machine — and for a working session with no ads, no CAPTCHAs, and no upload.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'Is TinyWow really free?',
+        a: 'Yes, the core tools are free without an account. The free tier is supported by advertising and CAPTCHAs, and TinyWow sells paid plans — around $20 per month, or $15 per month billed annually — whose main benefit is removing ads, skipping CAPTCHAs, and getting priority processing. ConvertOcean is free with no ads and no CAPTCHAs.'
+      },
+      {
+        q: 'Does TinyWow keep my files?',
+        a: 'TinyWow states that all files, both processed and unprocessed, are deleted after 1 hour. Your file is still uploaded to its servers first. ConvertOcean converts inside your browser, so no upload happens and there is no retention period at all.'
+      },
+      {
+        q: 'Why does ConvertOcean have no ads if it is free?',
+        a: 'Because conversions run on your device, not on our servers, so each conversion costs us nothing in compute or bandwidth. Services that process files in the cloud have real per-file costs, which is generally what ads, CAPTCHAs, and subscriptions are there to cover.'
+      },
+      {
+        q: 'Does TinyWow have more tools than ConvertOcean?',
+        a: 'Yes, considerably — TinyWow spans several hundred tools including video and AI writing, which ConvertOcean does not offer. Those need server hardware to run. ConvertOcean covers file conversion, data tools, and business calculators, and runs all of them locally in your browser.'
+      },
+      {
+        q: 'Can I convert files without an internet connection?',
+        a: 'With ConvertOcean, yes — once a tool page has loaded, conversions keep working with the network switched off, which also demonstrates that nothing is being uploaded. TinyWow processes files on its servers, so it requires a connection.'
+      }
+    ]
   }
 ];
