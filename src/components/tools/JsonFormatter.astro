@@ -403,6 +403,7 @@ const { slug, headline, subtitle } = Astro.props;
       const a = document.createElement('a');
       a.href = url;
       a.download = 'formatted.json';
+      if (window.coTrackFiles) window.coTrackFiles('file_converted', [{ name: a.download, size: blob.size }]);
       a.click();
       URL.revokeObjectURL(url);
     });

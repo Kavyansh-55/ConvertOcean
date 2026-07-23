@@ -321,6 +321,7 @@ const { slug, headline, subtitle } = Astro.props;
         const a = document.createElement('a');
         a.href = url;
         a.download = outputName;
+        if (window.coTrackFiles) window.coTrackFiles('file_converted', [{ name: outputName, size: blob.size }]);
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

@@ -357,6 +357,7 @@ const { slug, headline, subtitle } = Astro.props;
         const link = document.createElement('a');
         link.download = `${baseName}_split.zip`;
         link.href = URL.createObjectURL(content);
+        if (window.coTrackFiles) window.coTrackFiles('file_converted', [{ name: 'split.zip', size: content.size }]);
         link.click();
         
         hideProgress();

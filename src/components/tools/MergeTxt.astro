@@ -361,6 +361,7 @@ const { slug, headline, subtitle } = Astro.props;
       const link = document.createElement('a');
       link.download = 'merged-document.txt';
       link.href = URL.createObjectURL(blob);
+      if (window.coTrackFiles) window.coTrackFiles('file_converted', [{ name: link.download, size: blob.size }]);
       link.click();
       
       hideProgress();

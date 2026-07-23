@@ -328,6 +328,7 @@ const { slug, headline, subtitle } = Astro.props;
             const link = document.createElement('a');
             link.download = name;
             link.href = URL.createObjectURL(blob);
+            if (window.coTrackFiles) window.coTrackFiles('file_converted', [{ name: 'part.' + ext, size: blob.size }], { output: 'single_part' });
             link.click();
           }
         };
@@ -340,6 +341,7 @@ const { slug, headline, subtitle } = Astro.props;
         const link = document.createElement('a');
         link.download = `${baseName}_split.zip`;
         link.href = URL.createObjectURL(content);
+        if (window.coTrackFiles) window.coTrackFiles('file_converted', [{ name: 'split.zip', size: content.size }], { output: 'zip' });
         link.click();
         
         hideProgress();

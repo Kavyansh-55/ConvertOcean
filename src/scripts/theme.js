@@ -210,7 +210,13 @@ function checkLanguageRedirect() {
 }
 
 // Global File Download Helper (Safe memory release)
+// Also the single point where a finished conversion reaches the user,
+// which makes it the honest place to record file_converted. See the
+// coTrack block in Layout.astro for what may and may not be sent.
 function downloadBlob(blob, filename, mimeType) {
+  if (typeof window.coTrack === 'function') {
+    window.coTrackFiles('file_converted', [{ name: filename, size: blob && blob.size }]);
+  }
   if (window.navigator && window.navigator.msSaveOrOpenBlob) {
     window.navigator.msSaveOrOpenBlob(blob, filename);
   } else {

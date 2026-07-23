@@ -437,6 +437,7 @@ const { slug, headline, subtitle } = Astro.props;
           const link = document.createElement('a');
           link.download = 'stitched-image.png';
           link.href = canvas.toDataURL('image/png');
+          if (window.coTrackFiles) window.coTrackFiles('file_converted', [{ name: link.download }]);
           link.click();
           hideProgress();
         } catch (err) {
