@@ -178,7 +178,129 @@ const relLink = (target: string) => {
 
     gtag('config', 'G-7STX0V993V');
   </script>
-  
+
+  <!--
+    Engagement tracking (coTrack).
+
+    This site's promise is that files never leave the device, so the
+    analytics must not quietly break it. Nothing here reads file
+    contents, and filenames are never sent - only an allowlisted
+    extension, a coarse size bucket, and the tool's own path, which
+    GA4 already records as page_path. If you are adding an event,
+    keep it that way: no names, no contents, no exact byte sizes.
+
+    Inline and early on purpose, so the is:inline scripts inside tool
+    components can call window.coTrack without worrying about load order.
+  -->
+  <script is:inline>
+    (function () {
+      // Extensions we are willing to report. Anything else becomes
+      // 'other', so a strange filename cannot smuggle a value through.
+      var KNOWN_EXT = [
+        'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv', 'ppt', 'pptx',
+        'txt', 'json', 'xml', 'html', 'md', 'rtf', 'odt',
+        'png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp', 'svg', 'heic', 'tiff'
+      ];
+
+      function extOf(name) {
+        if (typeof name !== 'string') return 'other';
+        var dot = name.lastIndexOf('.');
+        if (dot < 0) return 'other';
+        var ext = name.slice(dot + 1).toLowerCase();
+        return KNOWN_EXT.indexOf(ext) === -1 ? 'other' : ext;
+      }
+
+      // Coarse buckets only. An exact byte size is close enough to a
+      // fingerprint of a specific file that it is not worth sending.
+      function sizeBucket(bytes) {
+        if (typeof bytes !== 'number' || !isFinite(bytes)) return 'unknown';
+        var mb = bytes / (1024 * 1024);
+        if (mb < 1) return 'under_1mb';
+        if (mb < 5) return '1_5mb';
+        if (mb < 20) return '5_20mb';
+        if (mb < 50) return '20_50mb';
+        return 'over_50mb';
+      }
+
+      // The tool's own path. Already collected by GA4 as page_path, so
+      // this discloses nothing new - it just makes events readable
+      // without a join.
+      function toolId() {
+        var p = (location.pathname || '/').replace(/^\/+|\/+$/g, '');
+        return p === '' ? 'home' : p.slice(0, 100);
+      }
+
+      window.coTrack = function (name, params) {
+        try {
+          if (typeof window.gtag !== 'function') return;
+          var payload = { tool: toolId() };
+          if (params) {
+            for (var k in params) {
+              if (Object.prototype.hasOwnProperty.call(params, k)) {
+                payload[k] = params[k];
+              }
+            }
+          }
+          window.gtag('event', name, payload);
+        } catch (e) {
+          // Analytics must never break a conversion.
+        }
+      };
+
+      window.coTrackFiles = function (name, files, extra) {
+        var list = files ? Array.prototype.slice.call(files, 0, 50) : [];
+        var total = 0;
+        for (var i = 0; i < list.length; i++) total += (list[i] && list[i].size) || 0;
+        var params = {
+          file_count: list.length,
+          file_type: list.length ? extOf(list[0].name) : 'other',
+          size_bucket: sizeBucket(total)
+        };
+        if (extra) {
+          for (var k in extra) {
+            if (Object.prototype.hasOwnProperty.call(extra, k)) params[k] = extra[k];
+          }
+        }
+        window.coTrack(name, params);
+      };
+
+      // tool_used - the visitor actually put a file into a tool.
+      // One document-level listener in the capture phase covers every
+      // file input on the site, including any added later.
+      document.addEventListener('change', function (e) {
+        var t = e.target;
+        if (!t || t.tagName !== 'INPUT' || t.type !== 'file') return;
+        if (!t.files || !t.files.length) return;
+        window.coTrackFiles('tool_used', t.files, { source: 'picker' });
+      }, true);
+
+      // Same signal for drag-and-drop, which never fires a change event.
+      document.addEventListener('drop', function (e) {
+        var dt = e.dataTransfer;
+        if (!dt || !dt.files || !dt.files.length) return;
+        window.coTrackFiles('tool_used', dt.files, { source: 'drop' });
+      }, true);
+
+      // The calculators, word counter, JSON formatter and generators take
+      // typing rather than files, and they recompute on every keystroke.
+      // Fire once per page load so the event means "this visitor actually
+      // used the tool" instead of counting keypresses.
+      var inputCounted = false;
+      document.addEventListener('input', function (e) {
+        if (inputCounted) return;
+        var t = e.target;
+        if (!t || !t.tagName) return;
+        var tag = t.tagName;
+        if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') return;
+        if (tag === 'INPUT' && t.type === 'file') return; // already covered
+        // The homepage tool search is navigation, not tool usage.
+        if (t.id === 'searchInput' || t.closest('#searchContainer')) return;
+        inputCounted = true;
+        window.coTrack('tool_used', { source: 'input' });
+      }, true);
+    })();
+  </script>
+
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8134957335908795"
      crossorigin="anonymous" is:inline></script>

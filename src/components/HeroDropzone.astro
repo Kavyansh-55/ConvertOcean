@@ -509,6 +509,15 @@
           a.href = objectUrl;
           a.download = `${base}.${ext === 'jpg' ? 'jpg' : ext}`;
           a.textContent = `Download ${toLabel}`;
+          // The hero converts on drop, so the download is a separate click.
+          // Record the click rather than the conversion, to keep this event
+          // meaning the same thing it does on the tool pages: the visitor
+          // walked away with a file.
+          a.addEventListener('click', function () {
+            if (window.coTrackFiles) {
+              window.coTrackFiles('file_converted', [{ name: 'output.' + ext, size: blob.size }], { source: 'hero' });
+            }
+          });
           elActions.appendChild(a);
 
           // Re-encode chips for every format that is not the current target.
