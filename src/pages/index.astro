@@ -755,7 +755,13 @@ const toolChips = (slug: string): ToolChips => {
       left: 50%;
       transform: translateX(-50%);
       width: 1200px;
-      max-width: 140%;
+      /* Was 140%, which let the glow bleed past both edges and scroll the
+         page sideways - 79px of it at 390px wide, and anywhere from 901px
+         to 1199px too, since the fixed 1200px is wider than both the
+         viewport there and this container's own 1180px max. Clamping to
+         the container costs 20px off a 50px-blurred gradient, which is
+         not visible, and it holds at every width without a breakpoint. */
+      max-width: 100%;
       height: 560px;
       background:
         radial-gradient(closest-side at 30% 42%, rgba(0, 112, 243, 0.20), transparent 72%),
@@ -897,7 +903,15 @@ const toolChips = (slug: string): ToolChips => {
       gap: var(--spacing-md);
     }
     @media (max-width: 860px) { .popular-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 520px) { .popular-grid { grid-template-columns: 1fr; } }
+    /* Stays two-up on phones. Collapsing to one column gave each card its own
+       row and stretched the section to four screens of scrolling, the same
+       problem the explore grid had. Tighten the card instead of dropping a
+       column: the icon, name and category all still fit at ~160px wide. */
+    @media (max-width: 520px) {
+      .popular-grid { gap: var(--spacing-sm); }
+      .popular-card { padding: var(--spacing-md); gap: 8px; }
+      .popular-card-icon { width: 34px; height: 34px; }
+    }
     .popular-card {
       display: flex;
       flex-direction: column;

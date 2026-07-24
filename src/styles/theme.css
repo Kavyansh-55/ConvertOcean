@@ -1481,13 +1481,6 @@ footer {
   }
 }
 
-/* --- Popular tools grid: 2 col → 1 col at 400px --- */
-@media (max-width: 400px) {
-  .popular-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
-
 /* --- Category count badge hide on small cards --- */
 @media (max-width: 480px) {
   .category-count {
