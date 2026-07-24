@@ -133,7 +133,7 @@ export const comparisons: ComparisonData[] = [
       '100% secure: All processing is done locally; files never leave your computer.',
       'Offline-ready: Functions completely offline once the page loads.',
       'Unlimited batch jobs: Merge, split, or convert multiple files without limits.',
-      'Privacy guarantee: No cookies, trackers, or telemetry tracking your uploads.',
+      'Privacy guarantee: There is no upload to track — files are processed in your browser.',
       'Completely free: No hidden costs, pro tiers, or restricted tools.'
     ],
     cons: [
@@ -270,7 +270,7 @@ export const comparisons: ComparisonData[] = [
         title: 'Bypassing Subscription Paywalls and Signups.',
         paragraphs: [
           'Adobe’s online tools are primarily marketing funnels to capture email addresses and upsell premium subscriptions. Simple tasks like merging two PDF reports or exporting a spreadsheet often prompt you to sign in with an Adobe ID or join a subscription trial.',
-          'ConvertOcean has no registration, no tracking cookies, and no payment gateways. We provide direct access to core utilities. You click, upload locally, convert, and download—with no gates.'
+          'ConvertOcean has no registration, no paywall, and no payment gateways. We provide direct access to core utilities. You pick a file, it converts locally, you download — with no gates.'
         ]
       },
       {
