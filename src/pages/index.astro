@@ -36,8 +36,8 @@ const faqList = [
     a: "No. ConvertOcean does not utilize remote servers for file processing or data storage. All file contents and parsed values reside temporarily in sandboxed browser memory. Once you download the converted file or close the web browser tab, all temporary data is instantly and permanently purged from your device's RAM."
   },
   {
-    q: "Does ConvertOcean collect any user telemetry or conversion metadata?",
-    a: "No. ConvertOcean does not track user activities, store analytics telemetry, use tracking cookies, or collect file metadata (such as names, sizes, or paths). Our tools are strictly client-side static assets, ensuring complete user privacy and anonymity without email logins or server logs."
+    q: "What data does ConvertOcean collect about me?",
+    a: "Never your files. Conversions run inside your browser, so file contents and filenames are never sent anywhere — you can disconnect from the internet and convert anyway. We do use Google Analytics for anonymous usage statistics, which records pages visited plus two events: that a tool was used, and that a conversion finished. Those events carry only the file extension, a coarse size band such as \"1–5 MB\", and the tool page — never a filename, contents, or exact size. The site also serves Google AdSense ads, so analytics and advertising cookies are set. Blocking them leaves every tool fully working. See our Privacy Policy for detail."
   },
   {
     q: "Do I need to register an account or pay for a conversion subscription?",
@@ -755,7 +755,13 @@ const toolChips = (slug: string): ToolChips => {
       left: 50%;
       transform: translateX(-50%);
       width: 1200px;
-      max-width: 140%;
+      /* Was 140%, which let the glow bleed past both edges and scroll the
+         page sideways - 79px of it at 390px wide, and anywhere from 901px
+         to 1199px too, since the fixed 1200px is wider than both the
+         viewport there and this container's own 1180px max. Clamping to
+         the container costs 20px off a 50px-blurred gradient, which is
+         not visible, and it holds at every width without a breakpoint. */
+      max-width: 100%;
       height: 560px;
       background:
         radial-gradient(closest-side at 30% 42%, rgba(0, 112, 243, 0.20), transparent 72%),
@@ -897,7 +903,15 @@ const toolChips = (slug: string): ToolChips => {
       gap: var(--spacing-md);
     }
     @media (max-width: 860px) { .popular-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 520px) { .popular-grid { grid-template-columns: 1fr; } }
+    /* Stays two-up on phones. Collapsing to one column gave each card its own
+       row and stretched the section to four screens of scrolling, the same
+       problem the explore grid had. Tighten the card instead of dropping a
+       column: the icon, name and category all still fit at ~160px wide. */
+    @media (max-width: 520px) {
+      .popular-grid { gap: var(--spacing-sm); }
+      .popular-card { padding: var(--spacing-md); gap: 8px; }
+      .popular-card-icon { width: 34px; height: 34px; }
+    }
     .popular-card {
       display: flex;
       flex-direction: column;
@@ -1221,7 +1235,7 @@ const toolChips = (slug: string): ToolChips => {
 
         <h3>100% Client-Side Processing in Browser Sandbox Memory</h3>
         <p>
-          ConvertOcean operates entirely as a <strong>client-side file converter</strong>. When you drag and drop a file into our upload area, it is processed directly within your browser's secure sandboxed memory. We utilize WebAssembly compiled engines to inspect, modify, and render files locally. Whether you are using a PDF splitter, a spreadsheet compiler, or an image compressor, the software executes locally on your hardware. This translates to absolute data sovereignty: zero tracking telemetry, zero server uploads, and no subscription walls.
+          ConvertOcean operates entirely as a <strong>client-side file converter</strong>. When you drag and drop a file into our upload area, it is processed directly within your browser's secure sandboxed memory. We utilize WebAssembly compiled engines to inspect, modify, and render files locally. Whether you are using a PDF splitter, a spreadsheet compiler, or an image compressor, the software executes locally on your hardware. This translates to real data sovereignty: zero server uploads, no account, and no subscription walls. The site is funded by ads rather than by your files.
         </p>
 
         <h3>Offline-Ready Capabilities for Secure Document Management</h3>

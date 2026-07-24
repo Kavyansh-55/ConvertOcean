@@ -894,7 +894,7 @@ const rawTools: ToolData[] = [
     category: 'Developer Tools',
     categorySlug: 'developer-tools',
     faqs: [
-      { question: 'Is my text stored or sent anywhere?', answer: 'No. All text analysis happens entirely inside your browser using client-side JavaScript. Your text never leaves your device — no server uploads, no tracking, no storage.' },
+      { question: 'Is my text stored or sent anywhere?', answer: 'No. All text analysis happens entirely inside your browser using client-side JavaScript. Your text never leaves your device — it is never uploaded, never stored, and never sent to our analytics or anyone else.' },
       { question: 'How is reading time calculated?', answer: 'Reading time is estimated at an average adult reading speed of 200 words per minute. Speaking time is estimated at 130 words per minute, which is the average conversational speech rate.' },
       { question: 'What are the social media character limit presets?', answer: 'We include presets for Twitter/X (280 characters), Meta Description (160 characters), Instagram captions (2,200 characters), and LinkedIn posts (3,000 characters). Select any to see a real-time fill bar as you type.' },
       { question: 'How does keyword density work?', answer: 'The tool counts all significant words (excluding common stop words like "the", "and", "is") and shows the top 10 most frequent keywords with their occurrence count and a visual frequency bar. This helps identify keyword repetition for SEO.' },

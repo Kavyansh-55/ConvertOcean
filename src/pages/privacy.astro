@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 const { lang = 'en' } = Astro.props;
 
 const title = "Privacy Policy | ConvertOcean Secure File Utility Portal";
-const description = "Read our Privacy Policy to understand how ConvertOcean guarantees absolute file isolation, zero-telemetry, and complete data safety on your device.";
+const description = "How ConvertOcean handles your data: files are processed in your browser and never uploaded. Plainly stated: what our analytics and advertising cookies do collect, and how to block them.";
 ---
 
 <Layout title={title} description={description} lang={lang} category="Privacy Policy" categorySlug="privacy">
@@ -63,27 +63,56 @@ const description = "Read our Privacy Policy to understand how ConvertOcean guar
       </div>
 
       <div class="privacy-section">
-        <h2 class="privacy-subtitle">2. Zero Telemetry & Data Collection</h2>
+        <h2 class="privacy-subtitle">2. What We Never Collect</h2>
         <p class="privacy-text">
-          We believe in complete user anonymity. We do not track, collect, or record any details regarding:
+          Your file data never reaches us, because it never leaves your device. We do not collect, receive, or store:
         </p>
         <ul class="bullet-list">
-          <li>Your files (file contents, filenames, sizes, extensions, or metadata).</li>
-          <li>Your identity (we do not require accounts, signups, email verification, or payment methods).</li>
-          <li>Your conversion history or utility usage statistics.</li>
+          <li>The contents of any file you open in a tool.</li>
+          <li>Your filenames, or the text you type into the word counter, JSON formatter, or any generator.</li>
+          <li>Your identity — we require no account, signup, email verification, or payment method.</li>
         </ul>
-      </div>
-
-      <div class="privacy-section">
-        <h2 class="privacy-subtitle">3. Cookie Policy</h2>
         <p class="privacy-text">
-          ConvertOcean does not use tracking cookies, targeting advertising trackers, or profiling algorithms. 
-          We utilize local browser storage (`localStorage`) solely to store UI preferences, such as your dark mode settings (`light` / `dark`), ensuring a seamless experience when you return.
+          This is guaranteed by how the site is built rather than by policy alone. The conversion runs in your browser, so there is no upload for us to intercept. You can verify it: load a tool, disconnect from the internet, and convert a file anyway. The source code is public at
+          <a href="https://github.com/Kavyansh-55/ConvertOcean" rel="noopener" target="_blank">github.com/Kavyansh-55/ConvertOcean</a>.
         </p>
       </div>
 
       <div class="privacy-section">
-        <h2 class="privacy-subtitle">4. External Libraries & CDN Integrity</h2>
+        <h2 class="privacy-subtitle">3. What We Do Collect: Anonymous Usage Analytics</h2>
+        <p class="privacy-text">
+          We use Google Analytics to understand which tools people find useful. This records ordinary web analytics — pages visited, approximate region, device and browser type — and two events describing tool usage:
+        </p>
+        <ul class="bullet-list">
+          <li><strong>A tool was used</strong> — you selected or dropped a file, or typed into a calculator.</li>
+          <li><strong>A conversion finished</strong> — output was produced and delivered to you.</li>
+        </ul>
+        <p class="privacy-text">
+          Those two events carry the file's <em>extension</em> (for example "pdf"), a <em>coarse size band</em> such as "1–5 MB", and which tool page you were on. They never carry your filename, your file's contents, or its exact size. We chose bands over exact byte counts deliberately, because an exact size can help identify a specific file.
+        </p>
+        <p class="privacy-text">
+          If you would rather not be counted, any browser content blocker or Google's own
+          <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener nofollow" target="_blank">opt-out add-on</a> will stop these events. Blocking them does not affect any tool — every converter works with analytics blocked.
+        </p>
+      </div>
+
+      <div class="privacy-section">
+        <h2 class="privacy-subtitle">4. Cookies & Advertising</h2>
+        <p class="privacy-text">
+          To be straightforward about this: ConvertOcean is free, and advertising is what pays for it. We serve ads through Google AdSense, and both AdSense and Google Analytics set cookies in your browser. These may be used to personalise advertising. Google's use of data from sites that use its services is described in
+          <a href="https://policies.google.com/technologies/partner-sites" rel="noopener nofollow" target="_blank">How Google uses information from sites that use our services</a>, and you can control ad personalisation at
+          <a href="https://myadcenter.google.com/" rel="noopener nofollow" target="_blank">My Ad Center</a>.
+        </p>
+        <p class="privacy-text">
+          Separately from cookies, we use your browser's <code>localStorage</code> to remember interface preferences such as your light or dark theme. That stays on your device and is never transmitted.
+        </p>
+        <p class="privacy-text">
+          None of this touches your files. Advertising and analytics operate on page visits; the file you convert is processed in your browser and is never sent anywhere, to us or to Google.
+        </p>
+      </div>
+
+      <div class="privacy-section">
+        <h2 class="privacy-subtitle">5. External Libraries & CDN Integrity</h2>
         <p class="privacy-text">
           Certain pages fetch script files (such as SheetJS for Excel spreadsheets or html2pdf for PDF compilations) via public CDN services. 
           These script assets are loaded by your browser solely to run the programs locally. CDNs do not receive or inspect your file data, which is parsed only after the script is loaded into your local browser window.
@@ -91,16 +120,22 @@ const description = "Read our Privacy Policy to understand how ConvertOcean guar
       </div>
 
       <div class="privacy-section">
-        <h2 class="privacy-subtitle">5. Children's Privacy</h2>
+        <h2 class="privacy-subtitle">6. Children's Privacy</h2>
         <p class="privacy-text">
-          Since ConvertOcean does not collect any personal data, our platform is completely safe for children and students to use for educational work and document processing without any risk of metadata profiling.
+          ConvertOcean is a general-audience site and is not directed at children under 13, and we do not knowingly collect personal information from them. No account or personal detail is ever required to use a tool, and student coursework converted here stays on the student's own device.
+        </p>
+        <p class="privacy-text">
+          Parents and schools should be aware that the site does carry third-party advertising and analytics cookies as described above. On a school-managed device where that is a concern, blocking those scripts leaves every tool fully working.
         </p>
       </div>
 
       <div class="privacy-section">
-        <h2 class="privacy-subtitle">6. Updates to This Policy</h2>
+        <h2 class="privacy-subtitle">7. Updates to This Policy</h2>
         <p class="privacy-text">
-          We may update this Privacy Policy from time to time. However, our core commitment—that your files are never uploaded to any remote server and processing remains entirely client-side—is non-negotiable and will never change.
+          We may update this Privacy Policy from time to time. Our core commitment — that your files are never uploaded to any remote server and processing remains entirely client-side — is non-negotiable and will never change.
+        </p>
+        <p class="privacy-text">
+          Last updated: 24 July 2026. This revision corrected earlier wording that described the site as carrying no analytics or advertising cookies. That was inaccurate: analytics and AdSense have been present, and this policy now says so plainly. The file-privacy guarantee was accurate then and remains accurate now.
         </p>
       </div>
     </div>
