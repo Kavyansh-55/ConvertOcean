@@ -444,17 +444,17 @@ const { slug, headline, subtitle } = Astro.props;
     }
 
     btnExportPdf.addEventListener('click', () => {
-      const element = previewBody;
       const qualityVal = parseInt(pdfQualityRange.value) || 90;
       const scale = qualityVal < 50 ? 1 : (qualityVal < 80 ? 1.5 : 2);
-      const opt = {
-        margin:       10,
-        filename:     activeFileData.name.replace(/\.[^/.]+$/, "") + '_converted.pdf',
-        image:        { type: 'jpeg', quality: (qualityVal / 100) },
-        html2canvas:  { scale: scale, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: activeFileData.type === 'spreadsheet' ? 'landscape' : 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
+      // Same dark-mode problem as the other exporters: themed preview text
+      // rendered onto a white page. Force paper colours on a clone.
+      window.exportElementToPdf(previewBody, {
+        margin:      10,
+        filename:    activeFileData.name.replace(/\.[^/.]+$/, "") + '_converted.pdf',
+        image:       { type: 'jpeg', quality: (qualityVal / 100) },
+        html2canvas: { scale: scale },
+        jsPDF:       { unit: 'mm', format: 'a4', orientation: activeFileData.type === 'spreadsheet' ? 'landscape' : 'portrait' }
+      });
     });
 
     btnExportJson.addEventListener('click', () => {

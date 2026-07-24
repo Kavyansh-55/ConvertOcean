@@ -166,15 +166,15 @@ const { slug, headline, subtitle } = Astro.props;
 
     btnConvert.addEventListener('click', () => {
       showProgress(40, "Compiling PDF document layout…");
-      const element = previewBody;
-      const opt = {
-        margin:       10,
-        filename:     fileData.name.replace(/\.[^/.]+$/, "") + '.pdf',
-        image:        { type: 'jpeg', quality: 0.95 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
-      };
-      html2pdf().set(opt).from(element).save().then(() => {
+      // Rendered through the shared paper exporter: the preview is styled
+      // with theme tokens, and in dark mode those put near-white text on the
+      // PDF's white page, which came out looking blank.
+      window.exportElementToPdf(previewBody, {
+        margin:   10,
+        filename: fileData.name.replace(/\.[^/.]+$/, "") + '.pdf',
+        image:    { type: 'jpeg', quality: 0.95 },
+        jsPDF:    { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      }).then(() => {
         hideProgress();
       }).catch(err => {
         showError("PDF compilation failed.");

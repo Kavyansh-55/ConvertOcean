@@ -151,7 +151,9 @@ const { slug, headline, subtitle } = Astro.props;
               showProgress(Math.round(10 + (i / pdf.numPages) * 85), `Reading page ${i} of ${pdf.numPages}…`);
               const page = await pdf.getPage(i);
               const textContent = await page.getTextContent();
-              const pageText = textContent.items.map(item => item.str).join(" ");
+              // Positioned fragments, not lines. Rebuild the line structure
+              // rather than flattening the page into one long sentence.
+              const pageText = window.pdfItemsToText(textContent.items);
               extractedChars += pageText.replace(/\s/g, '').length;
               fullText += `--- Page ${i} ---\n` + pageText + "\n\n";
             }

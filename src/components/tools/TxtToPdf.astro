@@ -127,9 +127,34 @@ const { slug, headline, subtitle } = Astro.props;
       hideError();
       originalName = file.name;
       showProgress(20, 'Reading text file…');
+      // Catch an unreadable file here rather than at the download step, where
+      // the only symptom was "No text content to convert" against a file the
+      // person could see had text in it. A 0-byte read is what a OneDrive or
+      // iCloud placeholder that has not been downloaded locally looks like.
+      if (file.size === 0) {
+        showError(
+          `"${file.name}" is empty (0 bytes). If it lives in OneDrive, iCloud or ` +
+          `Google Drive, open it once so the file is downloaded to this device, then try again.`
+        );
+        hideProgress();
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = function(e) {
-        textContents = e.target.result.replace(/\r/g, '');
+        const raw = typeof e.target.result === 'string' ? e.target.result : '';
+        textContents = raw.replace(/\r/g, '');
+
+        if (!textContents.trim()) {
+          showError(
+            `"${file.name}" contains no readable text (read ${raw.length} characters from ` +
+            `${(file.size / 1024).toFixed(1)} KB). If it is not a plain-text file, convert it with the matching tool instead.`
+          );
+          textContents = '';
+          hideProgress();
+          return;
+        }
+
         const lineCount = textContents.split('\n').length;
         const sizeKb    = (file.size / 1024).toFixed(1);
         // Show a truncated preview (first 200 lines) so the <pre> doesn't hang the browser
@@ -161,7 +186,7 @@ const { slug, headline, subtitle } = Astro.props;
       }
 
       if (!textContents) {
-        showError('No text content to convert.');
+        showError('No text content to convert — add the text file again, and if it is stored in OneDrive, iCloud or Google Drive make sure it has been downloaded to this device.');
         return;
       }
 
