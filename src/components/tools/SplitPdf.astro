@@ -156,9 +156,15 @@ const { slug, headline, subtitle } = Astro.props;
       reader.onload = async function(e) {
         try {
           const bytes = new Uint8Array(e.target.result);
-          const loadingTask = pdfjsLib.getDocument({ data: bytes });
+          // pdf.js transfers the buffer it is handed to its worker, which
+          // leaves the original detached and zero-length. Extraction later
+          // read that empty buffer and every split failed with "Failed to
+          // extract pages". Render the thumbnails from a throwaway copy and
+          // keep these bytes intact for pdf-lib.
+          const previewBytes = bytes.slice();
+          const loadingTask = pdfjsLib.getDocument({ data: previewBytes });
           const pdf = await loadingTask.promise;
-          
+
           splitFile = { name: file.name, bytes: bytes, count: pdf.numPages };
           splitOutputName.value = file.name.replace(/\.[^/.]+$/, "") + '_extracted.pdf';
           selectedPages.clear();
@@ -215,13 +221,19 @@ const { slug, headline, subtitle } = Astro.props;
     }
 
     btnExtract.addEventListener('click', async () => {
+      hideError();
       if(selectedPages.size === 0) {
         showError("Please select at least 1 page.");
         return;
       }
       showProgress(20, "Extracting PDF pages…");
       try {
-        const doc = await PDFLib.PDFDocument.load(splitFile.bytes);
+        if (!splitFile || !splitFile.bytes || !splitFile.bytes.byteLength) {
+          throw new Error('PDF data unavailable — reload the page and add the file again.');
+        }
+        // pdf-lib needs its own copy: it also keeps a reference, and a second
+        // extraction from the same bytes would otherwise read a spent buffer.
+        const doc = await PDFLib.PDFDocument.load(splitFile.bytes.slice());
         const sub = await PDFLib.PDFDocument.create();
         const indices = Array.from(selectedPages).sort((a,b)=>a-b).map(x => x - 1);
         
@@ -233,7 +245,9 @@ const { slug, headline, subtitle } = Astro.props;
         if(!name.endsWith('.pdf')) name += '.pdf';
         window.downloadBlob(new Blob([outBytes], { type: "application/pdf" }), name);
       } catch(err) {
-        showError("Failed to extract pages.");
+        // Say what actually went wrong. The bare message hid a detached
+        // buffer for as long as this bug existed.
+        showError("Failed to extract pages: " + (err && err.message ? err.message : 'unknown error'));
       }
       hideProgress();
     });

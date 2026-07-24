@@ -108,7 +108,13 @@ const { slug, headline, subtitle } = Astro.props;
 
   <!-- Sheets Selection Section -->
   <div id="sheetsSection">
-    <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute); margin-bottom: var(--spacing-xs);">Select Worksheets to Extract</div>
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs); flex-wrap: wrap;">
+      <div id="sheetsSectionLabel" style="font-size: 11px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute);">Worksheets to extract</div>
+      <button type="button" id="sheetsToggleAll" onclick="toggleAllSheets()" style="background: none; border: none; padding: 0; font-size: 12px; font-weight: 600; color: var(--colors-link); cursor: pointer; min-height: 24px;">Clear all</button>
+    </div>
+    <p style="font-size: 13px; color: var(--colors-body); margin: 0 0 var(--spacing-sm);">
+      Each selected worksheet becomes its own file, delivered together in a ZIP. Click a card to include or exclude it.
+    </p>
     <div class="sheets-grid" id="sheetsGrid"></div>
   </div>
 
@@ -271,6 +277,28 @@ const { slug, headline, subtitle } = Astro.props;
       });
     }
 
+    function updateSheetCount() {
+      const label = document.getElementById('sheetsSectionLabel');
+      if (!label || !activeFile) return;
+      const total = activeFile.sheets.length;
+      label.textContent = `Worksheets to extract — ${selectedSheets.size} of ${total} selected`;
+      const toggle = document.getElementById('sheetsToggleAll');
+      if (toggle) toggle.textContent = selectedSheets.size === total ? 'Clear all' : 'Select all';
+    }
+
+    window.toggleAllSheets = function () {
+      if (!activeFile) return;
+      const selectAll = selectedSheets.size !== activeFile.sheets.length;
+      activeFile.sheets.forEach((name, i) => {
+        const card = sheetsGrid.children[i];
+        const chk = card.querySelector('.sheet-checkbox');
+        chk.checked = selectAll;
+        card.classList.toggle('selected', selectAll);
+        if (selectAll) selectedSheets.add(name); else selectedSheets.delete(name);
+      });
+      updateSheetCount();
+    };
+
     function renderSheets() {
       sheetsGrid.innerHTML = '';
       activeFile.sheets.forEach((sheetName, index) => {
@@ -280,9 +308,12 @@ const { slug, headline, subtitle } = Astro.props;
         const rows = range.e.r - range.s.r + 1;
 
         const card = document.createElement('div');
-        card.className = 'sheet-card';
+        // Every sheet starts selected. Landing on an empty selection behind a
+        // button reading "Extract Selected Sheets" gave no clue that ticking
+        // something was the missing step; the common intent is all of them.
+        card.className = 'sheet-card selected';
         card.innerHTML = `
-          <input type="checkbox" class="sheet-checkbox" id="sheet-chk-${index}" onchange="toggleSheetSelect(${index})">
+          <input type="checkbox" class="sheet-checkbox" id="sheet-chk-${index}" checked onchange="toggleSheetSelect(${index})">
           <div class="sheet-info">
             <span class="sheet-name">${sheetName}</span>
             <span class="sheet-meta">${rows} rows</span>
@@ -296,7 +327,9 @@ const { slug, headline, subtitle } = Astro.props;
           }
         };
         sheetsGrid.appendChild(card);
+        selectedSheets.add(sheetName);
       });
+      updateSheetCount();
     }
 
     function populateSheetSelect() {
@@ -321,9 +354,13 @@ const { slug, headline, subtitle } = Astro.props;
         selectedSheets.delete(sheetName);
         card.classList.remove('selected');
       }
+      updateSheetCount();
     };
 
     window.processSplit = async function() {
+      // Clear any previous message first. A stale banner outlives the problem
+      // it described and makes a run that actually worked look like it failed.
+      hideError();
       const mode = splitMode.value;
       if (mode === 'sheets') {
         await extractSheets();
