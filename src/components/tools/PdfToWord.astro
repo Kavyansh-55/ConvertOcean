@@ -148,7 +148,10 @@ const { slug, headline, subtitle } = Astro.props;
               showProgress(Math.round(10 + (i / pdf.numPages) * 85), `Reading page ${i} of ${pdf.numPages}…`);
               const page = await pdf.getPage(i);
               const textContent = await page.getTextContent();
-              const pageText = textContent.items.map(item => item.str).join(" ");
+              // Rebuild real lines from the positioned fragments. Joining the
+              // items with a space collapses the whole page into one run-on
+              // paragraph, which is what made the output unreadable.
+              const pageText = window.pdfItemsToText(textContent.items);
               fullText += pageText + "\n\n";
             }
 
@@ -188,9 +191,20 @@ const { slug, headline, subtitle } = Astro.props;
     }
 
     btnDownload.addEventListener('click', () => {
-      // Compile Word-compatible HTML Document
-      const linesHtml = extractedResult.split('\n')
-        .map(line => line.trim() ? `<p>${line}</p>` : `<br/>`)
+      // The text carries the PDF's own structure now: a single newline is a
+      // wrapped line, a blank line is a paragraph break. Map that onto real
+      // Word paragraphs, keeping the internal breaks so addresses, lists and
+      // table-ish rows do not reflow into a block of prose.
+      const esc = (s) => s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      const linesHtml = extractedResult
+        .split(/\n{2,}/)
+        .map(block => block.split('\n').map(l => l.trim()).filter(Boolean))
+        .filter(lines => lines.length)
+        .map(lines => `<p>${lines.map(esc).join('<br/>')}</p>`)
         .join('');
 
       const htmlDoc = `

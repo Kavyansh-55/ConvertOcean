@@ -237,3 +237,165 @@ function downloadBlob(blob, filename, mimeType) {
 // Make globally available to inline scripts in pages
 window.downloadBlob = downloadBlob;
 
+/**
+ * Rebuild readable lines from a pdf.js text layer.
+ *
+ * pdf.js hands back positioned fragments, not lines - a single visual line
+ * is often several items, and a paragraph break is only implied by the gap
+ * between them. Flattening the array with join(" ") throws all of that away
+ * and turns a page into one run-on sentence, which is what the converters
+ * used to do.
+ *
+ * Group items by their baseline (transform[5]), join each line left to
+ * right, insert a space only where there is a real horizontal gap, and read
+ * a blank line as a paragraph break when the vertical step is noticeably
+ * bigger than the usual line height.
+ *
+ * @param {Array} items textContent.items from page.getTextContent()
+ * @returns {string} text with lines and paragraph breaks preserved
+ */
+function pdfItemsToText(items) {
+  if (!items || !items.length) return '';
+
+  var lines = [];
+  var cur = null;
+
+  function pushCur() {
+    if (cur && cur.parts.length) lines.push(cur);
+    cur = null;
+  }
+
+  for (var i = 0; i < items.length; i++) {
+    var it = items[i];
+    if (typeof it.str !== 'string') continue;
+
+    // pdf.js emits explicit end-of-line markers with an empty string.
+    if (!it.str) {
+      if (it.hasEOL) pushCur();
+      continue;
+    }
+
+    var y = it.transform ? it.transform[5] : 0;
+    var x = it.transform ? it.transform[4] : 0;
+    var h = it.height || 10;
+
+    // A new baseline means a new line. Half the glyph height tolerates
+    // subscripts and slight rounding without splitting a real line.
+    if (!cur || Math.abs(cur.y - y) > Math.max(2, h * 0.5)) {
+      pushCur();
+      cur = { y: y, h: h, parts: [], end: null };
+    }
+
+    // Only insert a space where the fragments are actually apart. PDFs
+    // frequently split mid-word, and joining those with a space is what
+    // produced "m e s s y" output.
+    if (cur.end !== null && x - cur.end > h * 0.2) cur.parts.push(' ');
+
+    cur.parts.push(it.str);
+    cur.end = x + (it.width || 0);
+
+    if (it.hasEOL) pushCur();
+  }
+  pushCur();
+
+  if (!lines.length) return '';
+
+  // Typical line step, used to tell a wrapped line from a new paragraph.
+  // Deliberately a low percentile rather than the median: paragraph gaps sit
+  // at the top of this distribution, and on a short page they can drag a
+  // median up until nothing looks like a gap any more.
+  var steps = [];
+  for (var j = 1; j < lines.length; j++) {
+    var d = Math.abs(lines[j - 1].y - lines[j].y);
+    if (d > 0) steps.push(d);
+  }
+  steps.sort(function (a, b) { return a - b; });
+  var median = steps.length ? steps[Math.floor(steps.length * 0.3)] : 0;
+
+  var out = '';
+  for (var k = 0; k < lines.length; k++) {
+    var text = lines[k].parts.join('').replace(/\s+/g, ' ').trim();
+    if (k > 0) {
+      var gap = Math.abs(lines[k - 1].y - lines[k].y);
+      out += (median && gap > median * 1.6) ? '\n\n' : '\n';
+    }
+    out += text;
+  }
+  return out;
+}
+
+window.pdfItemsToText = pdfItemsToText;
+
+/**
+ * Render an element to PDF as if it were on paper.
+ *
+ * html2canvas paints a transparent background as white and copies whatever
+ * colours the element computes to. In dark mode those come from the theme
+ * tokens, so near-white text landed on a white page and the output looked
+ * blank. Every converter that exports a themed preview needs the same
+ * treatment, so it lives here rather than in each tool.
+ *
+ * Works on an off-screen clone, so the visible preview keeps the site theme
+ * and the user never sees a flash of white.
+ *
+ * @param {HTMLElement} element the preview to render
+ * @param {Object} opt html2pdf options (filename, jsPDF, ...)
+ * @returns {Promise}
+ */
+function exportElementToPdf(element, opt) {
+  if (!element || typeof window.html2pdf !== 'function') {
+    return Promise.reject(new Error('html2pdf unavailable'));
+  }
+
+  var clone = element.cloneNode(true);
+
+  // cloneNode copies id attributes, which would put duplicates in the
+  // document for as long as the render takes and make getElementById
+  // ambiguous. The clone is write-only, so the ids are not needed.
+  clone.removeAttribute('id');
+  var ided = clone.querySelectorAll('[id]');
+  for (var n = 0; n < ided.length; n++) ided[n].removeAttribute('id');
+
+  clone.style.position = 'fixed';
+  clone.style.left = '-10000px';
+  clone.style.top = '0';
+  clone.style.zIndex = '-9999';
+  clone.style.width = element.offsetWidth ? element.offsetWidth + 'px' : '794px';
+  clone.style.maxHeight = 'none';
+  clone.style.overflow = 'visible';
+
+  // Paper colours, forced past the theme tokens on the clone and everything
+  // inside it. Backgrounds are cleared rather than set white so borders and
+  // header bands stay visible.
+  clone.style.setProperty('color', '#171717', 'important');
+  clone.style.setProperty('background-color', '#ffffff', 'important');
+  var all = clone.querySelectorAll('*');
+  for (var i = 0; i < all.length; i++) {
+    all[i].style.setProperty('color', '#171717', 'important');
+    all[i].style.setProperty('background-color', 'transparent', 'important');
+    all[i].style.setProperty('border-color', '#d4d4d4', 'important');
+  }
+
+  document.body.appendChild(clone);
+
+  var merged = Object.assign({
+    margin: 10,
+    image: { type: 'jpeg', quality: 0.95 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }, opt || {});
+  merged.html2canvas = Object.assign(
+    { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+    (opt && opt.html2canvas) || {}
+  );
+
+  function cleanup() {
+    if (clone.parentNode) clone.parentNode.removeChild(clone);
+  }
+
+  return window.html2pdf().set(merged).from(clone).save()
+    .then(function (r) { cleanup(); return r; })
+    .catch(function (e) { cleanup(); throw e; });
+}
+
+window.exportElementToPdf = exportElementToPdf;
+
