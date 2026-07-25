@@ -633,15 +633,20 @@ export function detectFigureRegions(boxes, lines, pageW, pageH) {
   // pin down where the arc reaches even when the arc stroke itself is lost.
   const sizes = ls.map((l) => l.maxSize).filter((s) => s > 0).sort((a, b) => a - b);
   const bodySize = sizes.length ? sizes[Math.floor(sizes.length / 2)] : 11;
-  // A line is a "divider" (prose, heading or caption) that bounds a figure —
-  // as opposed to a short diagram label. Long text by width OR character count
-  // is a divider: a wrapped sentence can be only moderately wide yet is plainly
-  // prose, while diagram labels ("S0", "1 / 0", "Memory") stay short.
+  const leftMargin = bodyLeftMargin(ls);
+  // A line is a "divider" (prose, heading or caption) that bounds a figure, as
+  // opposed to a short diagram label. The width/left-margin tests require real
+  // character density too: a diagram's two corner labels sharing a baseline
+  // ("0" … "1") get merged into one wide line by collectPageLines but carry
+  // almost no text — that is a label row, not prose, and must not split the
+  // figure's band. Headings, captions and long lines are always dividers.
+  const dense = (l) => l.text.replace(/\s/g, '').length;
   const isDivider = (l) =>
-    (l.endX - l.minX) > pageW * 0.4 ||
-    l.text.length > 32 ||
     l.maxSize >= bodySize * 1.18 ||
-    /^\s*figure\b/i.test(l.text);
+    /^\s*figure\b/i.test(l.text) ||
+    l.text.length > 32 ||
+    ((l.endX - l.minX) > pageW * 0.4 && dense(l) >= 8) ||
+    (l.minX <= leftMargin + 6 && dense(l) >= 8);
 
   const bounds = [pageH + 20];
   for (const l of ls) if (isDivider(l)) bounds.push(l.y);
@@ -659,22 +664,33 @@ export function detectFigureRegions(boxes, lines, pageW, pageH) {
     });
     if (!ink.length) continue;
 
-    const gx0 = Math.min(...ink.map((b) => b.x0));
-    const gx1 = Math.max(...ink.map((b) => b.x1));
-    const gy0 = Math.min(...ink.map((b) => b.y0));
-    const gy1 = Math.max(...ink.map((b) => b.y1));
-    if (gx1 - gx0 < 40 || gy1 - gy0 < 20) continue;
-
     const curve = ink.some((b) => b.curve);
     const image = ink.some((b) => b.image);
-    if (!(curve || image || ink.length >= 8)) continue;
 
-    // Non-divider labels sitting in this band, near the drawing horizontally.
-    const labels = ls.filter((l) => {
-      if (isDivider(l)) return false;
-      const cx = (l.minX + l.endX) / 2;
-      return l.y > yLo - 2 && l.y < yHi + 2 && cx > gx0 - 90 && cx < gx1 + 90;
-    });
+    // The real drawing is made of small strokes and boxes. Large 2-D
+    // rectangles are table cell borders — and this document's tables draw them
+    // as nested rectangles that bleed well below the table, laying "ink" over
+    // the code and prose beneath. Measure the figure from the small strokes
+    // only, and demand enough of them, so a band that is really a code block
+    // with a table's border-bleed passing through is not mistaken for a figure.
+    const isBigRect = (b) => !b.curve && !b.image && (b.x1 - b.x0) > 90 && (b.y1 - b.y0) > 90;
+    const drawInk = ink.filter((b) => !isBigRect(b));
+    if (!(curve || image || drawInk.length >= 8)) continue;
+
+    const ext = drawInk.length ? drawInk : ink;
+    const gx0 = Math.min(...ext.map((b) => b.x0));
+    const gx1 = Math.max(...ext.map((b) => b.x1));
+    const gy0 = Math.min(...ext.map((b) => b.y0));
+    const gy1 = Math.max(...ext.map((b) => b.y1));
+    if (gx1 - gx0 < 40 || gy1 - gy0 < 20) continue;
+
+    // Every non-divider line in this band is a diagram label — the band is
+    // fenced by real dividers (prose, headings, captions), so anything short
+    // inside it belongs to the drawing. Taking them all (not just those next
+    // to the captured ink) is what pins down an arc's reach: the "1" above a
+    // wide arc and the "0" below it set the figure's true top and bottom even
+    // when the arc stroke itself was never captured as ink.
+    const labels = ls.filter((l) => !isDivider(l) && l.y > yLo - 2 && l.y < yHi + 2);
 
     // Curves or a raster image are always a figure (state diagrams, logos).
     // A straight-line band is trickier: block diagrams, ruled tables, Karnaugh
@@ -729,16 +745,30 @@ export function detectFigureRegions(boxes, lines, pageW, pageH) {
   return merged;
 }
 
+// The left edge of the body text column: the 10th-percentile left start of
+// the reasonably wide lines. A line beginning here is body prose (including
+// the short last line of a wrapped paragraph), not a scattered diagram label.
+function bodyLeftMargin(lines) {
+  const xs = (lines || [])
+    .filter((l) => l.endX - l.minX > 100)
+    .map((l) => l.minX)
+    .sort((a, b) => a - b);
+  if (xs.length) return xs[Math.floor(xs.length * 0.1)];
+  return lines && lines.length ? Math.min(...lines.map((l) => l.minX)) : 72;
+}
+
 // Lines with diagram labels removed. A line is dropped only when it sits
-// inside a figure region AND is short enough to be a label — wide prose is
-// never deleted, so body text can never silently vanish into an image even if
-// a region is drawn a little too large.
+// inside a figure region AND is short enough to be a label — wide or long
+// prose, and any line starting at the body's left margin (a wrapped-paragraph
+// tail like "within the state."), is never deleted, so body text can never
+// silently vanish into an image even if a region is drawn a little too large.
 function linesOutsideRegions(lines, regions, pageW) {
   if (!regions || !regions.length) return lines;
   const proseWidth = (pageW || 612) * 0.4;
+  const leftMargin = bodyLeftMargin(lines);
   return lines.filter((l) => {
-    // Prose (wide or long) is never deleted; only short labels are.
     if (l.endX - l.minX > proseWidth || l.text.length > 32) return true;
+    if (l.minX <= leftMargin + 6) return true; // paragraph tail / short sentence
     const cx = (l.minX + l.endX) / 2;
     return !regions.some((r) =>
       cx >= r.x0 - 2 && cx <= r.x1 + 2 && l.y >= r.y0 - 2 && l.y <= r.y1 + 2);
