@@ -32,14 +32,16 @@ const rawTools: ToolData[] = [
     title: 'Convert Excel to PDF Online - 100% Private | ConvertOcean',
     description: 'Convert XLS, XLSX, and CSV spreadsheets to PDF directly in your browser. No server uploads. 100% private, secure, and offline capable.',
     headline: 'Excel to PDF.',
-    subtitle: 'Convert Excel spreadsheets (.xlsx, .xls, .csv) to print-ready PDF files locally on your device.',
-    quickAnswer: 'To convert Excel to PDF without uploading your file, drop an .xlsx, .xls, or .csv spreadsheet into the tool above and download the print-ready PDF. The conversion runs entirely in your browser — the spreadsheet never leaves your device, and it keeps working offline once the page has loaded.',
+    subtitle: 'Convert Excel spreadsheets (.xlsx, .xls, .csv) into clean, print-ready PDF tables — every sheet, with selectable text.',
+    quickAnswer: 'To convert Excel to PDF without uploading your file, drop an .xlsx, .xls, or .csv spreadsheet into the tool above and download the PDF. Each sheet is drawn as a real, bordered table with a shaded header that repeats on every page, and the text stays selectable and searchable (not a flat image). All sheets in the workbook are included by default. The conversion runs entirely in your browser — the spreadsheet never leaves your device, and it keeps working offline once the page has loaded.',
     icon: '📊',
     category: 'Excel Converter',
     categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' },
+      { question: 'Are all sheets converted?', answer: 'Yes. Every sheet in the workbook is converted by default, each starting on its own page with its name as a heading. You can switch it to just the sheet you are previewing if you prefer.' },
+      { question: 'Is the text selectable in the PDF?', answer: 'Yes. Tables are drawn as real vector tables, so the text stays selectable, searchable and crisp at any zoom — rather than a rasterised screenshot. Long tables paginate automatically and the header row repeats on each page.' },
       { question: 'Do I need to sign up for an account?', answer: 'No. Every converter is immediately unlocked, 100% free, and completely untracked. No signup is required.' }
     ],
     relatedTools: ['csv-to-json', 'json-to-csv', 'xlsx-to-csv', 'csv-to-xlsx', 'json-to-xlsx']

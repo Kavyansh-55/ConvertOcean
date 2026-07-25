@@ -13,10 +13,33 @@ const { slug, headline, subtitle } = Astro.props;
     overflow: auto;
     margin-top: var(--spacing-lg);
   }
+  .sheet-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-bottom: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas-soft);
+  }
+  .sheet-tab {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--colors-hairline);
+    background: none;
+    color: var(--colors-body);
+    cursor: pointer;
+  }
+  .sheet-tab.active {
+    background-color: var(--colors-ink);
+    color: var(--colors-canvas);
+    border-color: var(--colors-ink);
+  }
 </style>
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 
 <div class="page-header">
   <h1 class="page-title">{headline}</h1>
@@ -47,10 +70,21 @@ const { slug, headline, subtitle } = Astro.props;
 
 <!-- Preview Panel -->
 <div id="previewCard" class="preview-card" style="display: none;">
-  <div class="preview-header" style="background-color: var(--colors-canvas-soft); border-bottom: 1px solid var(--colors-hairline); padding: var(--spacing-sm) var(--spacing-lg);">
-    <span class="preview-title" style="font-size: 13px; font-weight: 600; color: var(--colors-body); font-family: 'JetBrains Mono', monospace;">SPREADSHEET PREVIEW</span>
-  </div>
+  <div id="sheetTabs" class="sheet-tabs"></div>
   <div id="previewBody" class="preview-body" style="padding: var(--spacing-lg);"></div>
+</div>
+
+<!-- Options -->
+<div id="optionsRow" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; gap: var(--spacing-lg); align-items: center; flex-wrap: wrap;">
+  <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+    <input type="checkbox" id="optHeader" checked /> First row is a header
+  </label>
+  <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+    <input type="checkbox" id="optLandscape" checked /> Landscape orientation
+  </label>
+  <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+    <input type="checkbox" id="optAllSheets" checked /> Include all sheets
+  </label>
 </div>
 
 <div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
@@ -72,14 +106,19 @@ const { slug, headline, subtitle } = Astro.props;
     const progressLabel = document.getElementById('progressLabel');
     const previewCard = document.getElementById('previewCard');
     const previewBody = document.getElementById('previewBody');
+    const sheetTabs = document.getElementById('sheetTabs');
+    const optionsRow = document.getElementById('optionsRow');
+    const optHeader = document.getElementById('optHeader');
+    const optLandscape = document.getElementById('optLandscape');
+    const optAllSheets = document.getElementById('optAllSheets');
     const actionControls = document.getElementById('actionControls');
     const fileNameDisplay = document.getElementById('fileNameDisplay');
     const btnConvert = document.getElementById('btnConvert');
     const btnClear = document.getElementById('btnClear');
 
-    let fileData = null;
+    let originalName = '';
+    let sheets = []; // [{ name, rows: string[][] }]
 
-    // Drag and drop setup
     ['dragenter', 'dragover'].forEach(eventName => {
       dropZone.addEventListener(eventName, (e) => {
         e.preventDefault();
@@ -87,7 +126,6 @@ const { slug, headline, subtitle } = Astro.props;
         dropZone.classList.add('dragover');
       }, false);
     });
-
     ['dragleave', 'drop'].forEach(eventName => {
       dropZone.addEventListener(eventName, (e) => {
         e.preventDefault();
@@ -95,14 +133,12 @@ const { slug, headline, subtitle } = Astro.props;
         dropZone.classList.remove('dragover');
       }, false);
     });
-
     dropZone.addEventListener('drop', (e) => {
-      let files = Array.from(e.dataTransfer.files).slice(0, 1);
+      const files = Array.from(e.dataTransfer.files).slice(0, 1);
       if (files.length > 0) handleFile(files[0]);
     });
-
     fileInput.addEventListener('change', (e) => {
-      let files = Array.from(e.target.files).slice(0, 1);
+      const files = Array.from(e.target.files).slice(0, 1);
       if (files.length > 0) handleFile(files[0]);
     });
 
@@ -111,83 +147,143 @@ const { slug, headline, subtitle } = Astro.props;
       progressBarFill.style.width = pct + '%';
       progressLabel.textContent = label;
     }
-
-    function hideProgress() {
-      progressOverlay.style.display = 'none';
-    }
-
+    function hideProgress() { progressOverlay.style.display = 'none'; }
     function showError(msg) {
       errorMessage.textContent = msg;
       errorBanner.style.display = 'flex';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    function hideError() { errorBanner.style.display = 'none'; }
 
-    function hideError() {
-      errorBanner.style.display = 'none';
+    // Trim fully-empty trailing rows/columns so a sheet's used range is tight.
+    function trimGrid(rows) {
+      let out = rows.map(r => r.map(c => (c == null ? '' : String(c))));
+      while (out.length && out[out.length - 1].every(c => c === '')) out.pop();
+      let maxCol = 0;
+      out.forEach(r => { for (let i = r.length - 1; i >= 0; i--) { if (r[i] !== '') { maxCol = Math.max(maxCol, i + 1); break; } } });
+      return out.map(r => r.slice(0, maxCol));
+    }
+
+    function renderPreview(activeIndex) {
+      sheetTabs.innerHTML = '';
+      sheets.forEach((s, i) => {
+        const tab = document.createElement('button');
+        tab.className = 'sheet-tab' + (i === activeIndex ? ' active' : '');
+        tab.textContent = s.name + ' (' + s.rows.length + ')';
+        tab.addEventListener('click', () => renderPreview(i));
+        sheetTabs.appendChild(tab);
+      });
+      const rows = sheets[activeIndex].rows;
+      let html = '<table class="preview-table">';
+      const bodyStart = optHeader.checked ? 1 : 0;
+      if (optHeader.checked && rows[0]) {
+        html += '<thead><tr>' + rows[0].map(c => '<th>' + escapeHtml(c) + '</th>').join('') + '</tr></thead>';
+      }
+      html += '<tbody>';
+      for (let i = bodyStart; i < Math.min(rows.length, bodyStart + 60); i++) {
+        html += '<tr>' + rows[i].map(c => '<td>' + escapeHtml(c) + '</td>').join('') + '</tr>';
+      }
+      html += '</tbody></table>';
+      if (rows.length > bodyStart + 60) html += '<div style="padding:8px 0;font-size:12px;color:var(--colors-body);">…' + (rows.length - bodyStart - 60) + ' more rows in the PDF</div>';
+      previewBody.innerHTML = html;
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     function handleFile(file) {
       hideError();
-      showProgress(20, "Parsing Excel sheets…");
+      if (file.size > 25 * 1024 * 1024) { showError('File is larger than the 25MB limit.'); return; }
+      originalName = file.name;
+      showProgress(20, 'Parsing spreadsheet…');
       const reader = new FileReader();
       reader.onload = function(e) {
         try {
           const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          fileData = { name: file.name, wb: workbook };
-          
-          // Render first sheet
-          const sheet = workbook.Sheets[workbook.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-          
-          let html = '<table class="preview-table">';
-          html += '<thead><tr>';
-          rows[0].forEach((col, idx) => html += '<th>' + (col || 'Col ' + (idx + 1)) + '</th>');
-          html += '</tr></thead><tbody>';
-          for(let i = 1; i < rows.length; i++) {
-            html += '<tr>';
-            rows[i].forEach(cell => html += '<td>' + String(cell || '') + '</td>');
-            html += '</tr>';
+          const wb = XLSX.read(data, { type: 'array', cellDates: true });
+          sheets = [];
+          wb.SheetNames.forEach(name => {
+            const sheet = wb.Sheets[name];
+            // raw:false yields display strings (formatted dates/numbers).
+            const rows = trimGrid(XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false, blankrows: false }));
+            if (rows.length) sheets.push({ name, rows });
+          });
+
+          if (!sheets.length) {
+            showError('This workbook has no data to convert.');
+            hideProgress();
+            return;
           }
-          html += '</tbody></table>';
-          
-          previewBody.innerHTML = html;
+
+          renderPreview(0);
           previewCard.style.display = 'flex';
-          fileNameDisplay.textContent = file.name;
+          optionsRow.style.display = 'flex';
+          fileNameDisplay.textContent = file.name + '  •  ' + sheets.length + (sheets.length === 1 ? ' sheet' : ' sheets');
           actionControls.style.display = 'flex';
           dropZone.style.display = 'none';
-        } catch(err) {
-          showError("Failed to parse sheet data. Please ensure this is a valid CSV/Excel file.");
+        } catch (err) {
+          showError('Failed to parse the file. Please ensure it is a valid CSV/Excel workbook.');
         }
         hideProgress();
       };
       reader.readAsArrayBuffer(file);
     }
 
+    optHeader.addEventListener('change', () => { if (sheets.length) renderPreview(currentActive()); });
+    function currentActive() {
+      const tabs = Array.from(sheetTabs.children);
+      const idx = tabs.findIndex(t => t.classList.contains('active'));
+      return idx < 0 ? 0 : idx;
+    }
+
     btnConvert.addEventListener('click', () => {
-      showProgress(40, "Compiling PDF document layout…");
-      // Rendered through the shared paper exporter: the preview is styled
-      // with theme tokens, and in dark mode those put near-white text on the
-      // PDF's white page, which came out looking blank.
-      window.exportElementToPdf(previewBody, {
-        margin:   10,
-        filename: fileData.name.replace(/\.[^/.]+$/, "") + '.pdf',
-        image:    { type: 'jpeg', quality: 0.95 },
-        jsPDF:    { unit: 'mm', format: 'a4', orientation: 'landscape' }
-      }).then(() => {
-        hideProgress();
-      }).catch(err => {
-        showError("PDF compilation failed.");
-        hideProgress();
-      });
+      if (!sheets.length) return;
+      showProgress(40, 'Building PDF tables…');
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: optLandscape.checked ? 'landscape' : 'portrait', unit: 'pt', format: 'a4' });
+        const toRender = optAllSheets.checked ? sheets : [sheets[currentActive()]];
+        const multi = toRender.length > 1;
+
+        toRender.forEach((sheet, si) => {
+          if (si > 0) doc.addPage();
+          const rows = sheet.rows;
+          const hasHeader = optHeader.checked && rows.length > 1;
+          if (multi) {
+            doc.setFontSize(12);
+            doc.setTextColor(20);
+            doc.text(sheet.name, 30, 28);
+          }
+          doc.autoTable({
+            head: hasHeader ? [rows[0]] : undefined,
+            body: hasHeader ? rows.slice(1) : rows,
+            startY: multi ? 38 : 30,
+            margin: { top: 30, left: 30, right: 30, bottom: 30 },
+            styles: { fontSize: 8, cellPadding: 3, overflow: 'linebreak', lineWidth: 0.5, lineColor: [190, 190, 190], textColor: 30 },
+            headStyles: { fillColor: [234, 236, 240], textColor: 20, fontStyle: 'bold', lineWidth: 0.5, lineColor: [190, 190, 190] },
+            alternateRowStyles: { fillColor: [249, 250, 251] },
+            tableWidth: 'auto',
+          });
+        });
+
+        const blob = doc.output('blob');
+        window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, '') + '.pdf', 'application/pdf');
+      } catch (err) {
+        showError('PDF compilation failed.');
+      }
+      hideProgress();
     });
 
     btnClear.addEventListener('click', () => {
-      fileData = null;
+      sheets = [];
       previewCard.style.display = 'none';
+      optionsRow.style.display = 'none';
       actionControls.style.display = 'none';
       dropZone.style.display = 'flex';
       fileInput.value = '';
+      sheetTabs.innerHTML = '';
+      previewBody.innerHTML = '';
     });
   })();
 </script>
