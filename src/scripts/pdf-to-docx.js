@@ -237,12 +237,13 @@ function pageBlocks(lines, wrapGap) {
       if (j > i) {
         const table = tryTable(lines.slice(i, j + 1));
         if (table) {
+          table.y = lines[i].y;
           blocks.push(table);
           i = j + 1;
           continue;
         }
       }
-      blocks.push({ type: 'tabline', line: lines[i] });
+      blocks.push({ type: 'tabline', line: lines[i], y: lines[i].y });
       i++;
       continue;
     }
@@ -258,7 +259,7 @@ function pageBlocks(lines, wrapGap) {
       para.push(lines[i]);
       i++;
     }
-    blocks.push({ type: 'para', lines: para });
+    blocks.push({ type: 'para', lines: para, y: para[0].y });
   }
   return blocks;
 }
@@ -503,15 +504,294 @@ function tableXml(table, ctx) {
 
 /* ---------------------------------------------------------------- package */
 
+/* --------------------------------------------------------- vector graphics */
+
+const matApply = (m, x, y) => [m[0] * x + m[2] * y + m[4], m[1] * x + m[3] * y + m[5]];
+const matMul = (a, b) => [
+  a[0] * b[0] + a[2] * b[1], a[1] * b[0] + a[3] * b[1],
+  a[0] * b[2] + a[2] * b[3], a[1] * b[2] + a[3] * b[3],
+  a[0] * b[4] + a[2] * b[5] + a[4], a[1] * b[4] + a[3] * b[5] + a[5],
+];
+const boxOf = (pts) => {
+  const xs = pts.map((p) => p[0]);
+  const ys = pts.map((p) => p[1]);
+  return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
+};
+
 /**
- * @param {Array} pages [{ lines, width, height }] — width/height in PDF
- *   points from page.getViewport({ scale: 1 }).
- * @returns {{ 'word/document.xml': string, ... } | null} docx parts keyed by
- *   zip path, or null when there is no text at all (scanned PDF).
+ * Collect the bounding boxes of vector drawings and raster images on a page,
+ * in the same coordinate space as the text (PDF points, origin bottom-left).
+ *
+ * pdf.js gives each path a minMax bbox, and every op runs under a current
+ * transformation matrix we track through save/restore/transform. That is what
+ * lets us later find a diagram, cut its stray labels out of the text, and drop
+ * a rendered picture of it in the same place.
+ *
+ * @param {object} opList result of page.getOperatorList()
+ * @param {object} OPS pdfjsLib.OPS enum
+ * @returns {Array} boxes [{ x0, y0, x1, y1, curve, image }]
+ */
+export function collectPageGraphics(opList, OPS) {
+  if (!opList || !OPS) return [];
+  const boxes = [];
+  const stack = [];
+  let ctm = [1, 0, 0, 1, 0, 0];
+  const fn = opList.fnArray;
+  const args = opList.argsArray;
+
+  // Paint operators that actually put ink on the page.
+  const paintOps = new Set([
+    OPS.fill, OPS.eoFill, OPS.stroke, OPS.closeStroke,
+    OPS.fillStroke, OPS.eoFillStroke, OPS.closeFillStroke, OPS.closeEOFillStroke,
+  ]);
+
+  // A path is only recorded once it is painted. Clip paths (constructPath
+  // followed by clip + endPath, no paint) get big bounding boxes but draw
+  // nothing — recording them would bridge a diagram into a neighbouring
+  // table. So hold the last constructPath as pending and commit on paint.
+  let pending = null;
+
+  for (let i = 0; i < fn.length; i++) {
+    const op = fn[i];
+    if (op === OPS.save) {
+      stack.push(ctm.slice());
+    } else if (op === OPS.restore) {
+      ctm = stack.pop() || [1, 0, 0, 1, 0, 0];
+    } else if (op === OPS.transform) {
+      ctm = matMul(ctm, args[i]);
+    } else if (op === OPS.constructPath) {
+      const subOps = args[i][0];
+      const mm = args[i][2];
+      if (mm && mm.length >= 4 && isFinite(mm[0]) && isFinite(mm[2])) {
+        const b = boxOf([
+          matApply(ctm, mm[0], mm[1]), matApply(ctm, mm[2], mm[3]),
+          matApply(ctm, mm[0], mm[3]), matApply(ctm, mm[2], mm[1]),
+        ]);
+        let curve = false;
+        if (subOps && subOps.length) {
+          for (const s of subOps) {
+            if (s === OPS.curveTo || s === OPS.curveTo2 || s === OPS.curveTo3) { curve = true; break; }
+          }
+        }
+        pending = { x0: b[0], y0: b[1], x1: b[2], y1: b[3], curve, image: false };
+      } else {
+        pending = null;
+      }
+    } else if (paintOps.has(op)) {
+      if (pending) { boxes.push(pending); pending = null; }
+    } else if (op === OPS.endPath) {
+      pending = null; // clip-only path: painted nothing
+    } else if (
+      op === OPS.paintImageXObject || op === OPS.paintInlineImageXObject ||
+      op === OPS.paintImageMaskXObject || op === OPS.paintJpegXObject
+    ) {
+      // An image is painted into the unit square, positioned by the CTM.
+      const b = boxOf([
+        matApply(ctm, 0, 0), matApply(ctm, 1, 0),
+        matApply(ctm, 0, 1), matApply(ctm, 1, 1),
+      ]);
+      boxes.push({ x0: b[0], y0: b[1], x1: b[2], y1: b[3], curve: false, image: true });
+    }
+  }
+  return boxes;
+}
+
+/**
+ * Cluster graphic boxes into figure regions and keep only those that read as
+ * a real diagram or picture — not a ruled table, a page rule, or a text
+ * underline. Coordinates are PDF points, origin bottom-left.
+ *
+ * @param {Array} boxes from collectPageGraphics
+ * @param {Array} lines from collectPageLines (used to protect real tables)
+ * @param {number} pageW
+ * @param {number} pageH
+ * @returns {Array} regions [{ x0, y0, x1, y1 }] top-to-bottom
+ */
+export function detectFigureRegions(boxes, lines, pageW, pageH) {
+  if (!boxes || !boxes.length) return [];
+
+  // Drop full-width/height hairlines: page borders, header/footer rules.
+  // (Clip paths are already excluded upstream by paint-gating.)
+  const useful = boxes.filter((b) => {
+    const w = b.x1 - b.x0;
+    const h = b.y1 - b.y0;
+    if (b.image) return true;
+    if (w > pageW * 0.85 && h < 3) return false;
+    if (h > pageH * 0.85 && w < 3) return false;
+    return true;
+  });
+  if (!useful.length) return [];
+
+  const ls = (lines || []).slice().sort((a, b) => b.y - a.y); // top → bottom
+
+  // A diagram lives in the vertical gap between the surrounding body text.
+  // Rather than reconstruct it from fragmented strokes, we bound it by that
+  // text: prose lines, headings and figure captions are "dividers"; the
+  // diagram's own short labels (S0, 1 / 0, Memory, Input(s)…) are not. The
+  // band between two dividers that holds real drawing ink is the figure, and
+  // the labels inside it mark its true extent — the "1" and "0" beside an arc
+  // pin down where the arc reaches even when the arc stroke itself is lost.
+  const sizes = ls.map((l) => l.maxSize).filter((s) => s > 0).sort((a, b) => a - b);
+  const bodySize = sizes.length ? sizes[Math.floor(sizes.length / 2)] : 11;
+  // A line is a "divider" (prose, heading or caption) that bounds a figure —
+  // as opposed to a short diagram label. Long text by width OR character count
+  // is a divider: a wrapped sentence can be only moderately wide yet is plainly
+  // prose, while diagram labels ("S0", "1 / 0", "Memory") stay short.
+  const isDivider = (l) =>
+    (l.endX - l.minX) > pageW * 0.4 ||
+    l.text.length > 32 ||
+    l.maxSize >= bodySize * 1.18 ||
+    /^\s*figure\b/i.test(l.text);
+
+  const bounds = [pageH + 20];
+  for (const l of ls) if (isDivider(l)) bounds.push(l.y);
+  bounds.push(-20);
+
+  const regions = [];
+  for (let i = 0; i < bounds.length - 1; i++) {
+    const yHi = bounds[i];
+    const yLo = bounds[i + 1];
+    if (yHi - yLo < 28) continue;
+
+    const ink = useful.filter((b) => {
+      const cy = (b.y0 + b.y1) / 2;
+      return cy > yLo + 2 && cy < yHi - 2;
+    });
+    if (!ink.length) continue;
+
+    const gx0 = Math.min(...ink.map((b) => b.x0));
+    const gx1 = Math.max(...ink.map((b) => b.x1));
+    const gy0 = Math.min(...ink.map((b) => b.y0));
+    const gy1 = Math.max(...ink.map((b) => b.y1));
+    if (gx1 - gx0 < 40 || gy1 - gy0 < 20) continue;
+
+    const curve = ink.some((b) => b.curve);
+    const image = ink.some((b) => b.image);
+    if (!(curve || image || ink.length >= 8)) continue;
+
+    // Non-divider labels sitting in this band, near the drawing horizontally.
+    const labels = ls.filter((l) => {
+      if (isDivider(l)) return false;
+      const cx = (l.minX + l.endX) / 2;
+      return l.y > yLo - 2 && l.y < yHi + 2 && cx > gx0 - 90 && cx < gx1 + 90;
+    });
+
+    // Curves or a raster image are always a figure (state diagrams, logos).
+    // A straight-line band is trickier: block diagrams, ruled tables, Karnaugh
+    // maps and stray table-border bleed all look similar. Keep it only when it
+    // carries a few real labels (a block diagram) and is not a dense grid (a
+    // table / K-map), so tables stay editable and border artifacts are ignored.
+    if (!curve && !image) {
+      if (labels.length < 2) continue;                       // border bleed
+      const cols = labels.filter((l) => l.segments.length >= 2);
+      if (cols.length >= 2 && tryTable(cols)) continue;      // ruled table
+      if (cols.length >= 4) continue;                        // dense grid
+      const chars = labels.reduce((n, l) => n + l.text.length, 0);
+      if (chars > 220) continue;
+    }
+
+    // Extent = the drawing ink together with its labels.
+    let x0 = gx0;
+    let x1 = gx1;
+    let y0 = gy0;
+    let y1 = gy1;
+    for (const l of labels) {
+      x0 = Math.min(x0, l.minX);
+      x1 = Math.max(x1, l.endX);
+      y0 = Math.min(y0, l.y - 2);
+      y1 = Math.max(y1, l.y + (l.maxSize || 10));
+    }
+    // Stay inside the band the dividers define.
+    y0 = Math.max(y0, yLo);
+    y1 = Math.min(y1, yHi);
+    if (y1 - y0 < 24 || x1 - x0 < 40) continue;
+    regions.push({ x0, y0, x1, y1 });
+  }
+
+  // Merge only regions that genuinely overlap in y — never bridge two stacked
+  // diagrams across the prose sitting between them (that would bury a sentence
+  // inside an image). Sorted top-to-bottom, `last` is higher on the page, so a
+  // real overlap means the current region's top rises above the previous
+  // region's bottom.
+  regions.sort((a, b) => b.y1 - a.y1);
+  const merged = [];
+  for (const r of regions) {
+    const last = merged[merged.length - 1];
+    if (last && r.y1 > last.y0 + 4 && r.x0 <= last.x1 && r.x1 >= last.x0) {
+      last.y0 = Math.min(last.y0, r.y0);
+      last.y1 = Math.max(last.y1, r.y1);
+      last.x0 = Math.min(last.x0, r.x0);
+      last.x1 = Math.max(last.x1, r.x1);
+    } else {
+      merged.push({ ...r });
+    }
+  }
+  return merged;
+}
+
+// Lines with diagram labels removed. A line is dropped only when it sits
+// inside a figure region AND is short enough to be a label — wide prose is
+// never deleted, so body text can never silently vanish into an image even if
+// a region is drawn a little too large.
+function linesOutsideRegions(lines, regions, pageW) {
+  if (!regions || !regions.length) return lines;
+  const proseWidth = (pageW || 612) * 0.4;
+  return lines.filter((l) => {
+    // Prose (wide or long) is never deleted; only short labels are.
+    if (l.endX - l.minX > proseWidth || l.text.length > 32) return true;
+    const cx = (l.minX + l.endX) / 2;
+    return !regions.some((r) =>
+      cx >= r.x0 - 2 && cx <= r.x1 + 2 && l.y >= r.y0 - 2 && l.y <= r.y1 + 2);
+  });
+}
+
+const EMU_PER_PT = 12700;
+
+function inlineImageXml(cx, cy, id, rid) {
+  return (
+    '<w:r><w:drawing>' +
+    '<wp:inline distT="0" distB="0" distL="0" distR="0" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">' +
+    `<wp:extent cx="${cx}" cy="${cy}"/>` +
+    '<wp:effectExtent l="0" t="0" r="0" b="0"/>' +
+    `<wp:docPr id="${id}" name="Figure ${id}"/>` +
+    '<wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr>' +
+    '<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">' +
+    '<pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">' +
+    `<pic:nvPicPr><pic:cNvPr id="${id}" name="Figure ${id}"/><pic:cNvPicPr/></pic:nvPicPr>` +
+    `<pic:blipFill><a:blip r:embed="${rid}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>` +
+    `<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>` +
+    '</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>'
+  );
+}
+
+function imageParaXml(region, ctx, id, rid) {
+  let wPt = region.x1 - region.x0;
+  let hPt = region.y1 - region.y0;
+  const avail = ctx.contentRight - ctx.contentLeft;
+  if (wPt > avail && wPt > 0) { const s = avail / wPt; wPt *= s; hPt *= s; }
+  const cx = Math.max(1, Math.round(wPt * EMU_PER_PT));
+  const cy = Math.max(1, Math.round(hPt * EMU_PER_PT));
+  return (
+    '<w:p><w:pPr><w:spacing w:before="120" w:after="120"/><w:jc w:val="center"/></w:pPr>' +
+    inlineImageXml(cx, cy, id, rid) +
+    '</w:p>'
+  );
+}
+
+/**
+ * @param {Array} pages [{ lines, width, height, regions }] — width/height in
+ *   PDF points from page.getViewport({ scale: 1 }). Each region may carry a
+ *   { png: Uint8Array } rendered by the browser; regions without one still
+ *   have their stray label text removed.
+ * @returns {object | null} docx parts keyed by zip path, or null when there is
+ *   neither text nor any figure image (a scanned PDF).
  */
 export function buildDocxParts(pages) {
-  const allLines = pages.flatMap((p) => p.lines);
-  if (!allLines.length) return null;
+  // Text with diagram labels removed, page by page.
+  const pageLines = pages.map((p) => linesOutsideRegions(p.lines, p.regions, p.width));
+  const allLines = pageLines.flat();
+  const imageRegions = pages.flatMap((p) => (p.regions || []).filter((r) => r && r.png));
+  if (!allLines.length && !imageRegions.length) return null;
 
   const sizeWeight = new Map();
   const fontWeight = new Map();
@@ -530,16 +810,42 @@ export function buildDocxParts(pages) {
   const ctx = {
     bodySize: maxKey(sizeWeight) || 11,
     bodyFont: maxKey(fontWeight) || 'Calibri',
-    contentLeft: xs[Math.floor(xs.length * 0.1)] || 72,
-    contentRight: ends[Math.floor(ends.length * 0.9)] || 540,
+    contentLeft: xs.length ? xs[Math.floor(xs.length * 0.1)] : 72,
+    contentRight: ends.length ? ends[Math.floor(ends.length * 0.9)] : 540,
   };
+
+  // Assign relationship + media ids to every rendered figure.
+  const media = {};
+  let ridSeq = 2;    // rId1 is the styles relationship
+  let figSeq = 1;
+  const rels = ['<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>'];
+  imageRegions.forEach((r) => {
+    const rid = 'rId' + (ridSeq++);
+    const name = 'media/image' + figSeq + '.png';
+    media['word/' + name] = r.png;
+    rels.push(`<Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="${name}"/>`);
+    r._rid = rid;
+    r._id = figSeq;
+    figSeq++;
+  });
 
   let body = '';
   pages.forEach((page, pi) => {
-    const wrapGap = typicalWrapGap(page.lines);
-    for (const block of pageBlocks(page.lines, wrapGap)) {
-      if (block.type === 'table') {
-        // Word merges adjacent tables unless a paragraph separates them.
+    const lines = pageLines[pi];
+    const wrapGap = typicalWrapGap(lines);
+    const textBlocks = pageBlocks(lines, wrapGap);
+    const imgBlocks = (page.regions || [])
+      .filter((r) => r && r.png)
+      .map((r) => ({ type: 'image', region: r, y: r.y1 }));
+
+    // Merge text blocks (already top-to-bottom) with image blocks by vertical
+    // position: emit any image sitting above the next text block first.
+    let bi = 0;
+    imgBlocks.sort((a, b) => b.y - a.y);
+    const emit = (block) => {
+      if (block.type === 'image') {
+        body += imageParaXml(block.region, ctx, block.region._id, block.region._rid);
+      } else if (block.type === 'table') {
         if (body.endsWith('</w:tbl>')) body += '<w:p><w:pPr><w:spacing w:after="0"/></w:pPr></w:p>';
         body += tableXml(block, ctx);
       } else if (block.type === 'tabline') {
@@ -547,7 +853,14 @@ export function buildDocxParts(pages) {
       } else {
         body += paraXml(block.lines, ctx);
       }
+    };
+    for (const tb of textBlocks) {
+      const tbY = tb.y != null ? tb.y : (tb.lines ? tb.lines[0].y : (tb.line ? tb.line.y : 0));
+      while (bi < imgBlocks.length && imgBlocks[bi].y >= tbY) emit(imgBlocks[bi++]);
+      emit(tb);
     }
+    while (bi < imgBlocks.length) emit(imgBlocks[bi++]);
+
     if (pi < pages.length - 1) {
       body += '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
     }
@@ -581,12 +894,17 @@ export function buildDocxParts(pages) {
     '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>' +
     '</w:styles>';
 
+  const pngDefault = imageRegions.length
+    ? '<Default Extension="png" ContentType="image/png"/>'
+    : '';
+
   return {
     '[Content_Types].xml':
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
       '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
       '<Default Extension="xml" ContentType="application/xml"/>' +
+      pngDefault +
       '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
       '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
       '</Types>',
@@ -598,18 +916,20 @@ export function buildDocxParts(pages) {
     'word/_rels/document.xml.rels':
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
-      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
+      rels.join('') +
       '</Relationships>',
     'word/document.xml': documentXml,
     'word/styles.xml': stylesXml,
+    ...media,
   };
 }
 
 /** Plain-text view of the extracted pages, for the preview pane and the
- *  scanned-PDF (no text layer) check. */
+ *  scanned-PDF (no text layer) check. Diagram labels are dropped so the
+ *  preview matches the document. */
 export function pagesPlainText(pages) {
   return pages
-    .map((p) => p.lines.map((l) => l.text).join('\n'))
+    .map((p) => linesOutsideRegions(p.lines, p.regions, p.width).map((l) => l.text).join('\n'))
     .join('\n\n')
     .trim();
 }

@@ -14,6 +14,7 @@ Run:
 ```
 node scripts/tests/pdf-to-docx/test-convert.mjs
 node scripts/tests/pdf-to-docx/convert-real.mjs path\to\any.pdf
+node scripts/tests/pdf-to-docx/test-figures.mjs path\to\diagrams.pdf
 ```
 
 - `test-convert.mjs` builds a synthetic PDF (bold title, wrapped paragraphs,
@@ -25,6 +26,12 @@ node scripts/tests/pdf-to-docx/convert-real.mjs path\to\any.pdf
   unpaired surrogates, and out-of-order `pPr`/`rPr`/`tblPr` children
   (OOXML requires a fixed child sequence). Writes `<name>-converted.docx`
   next to the input — open it in Word as the final check.
+- `test-figures.mjs` runs the figure pipeline on a PDF that contains diagrams:
+  detects the figure regions, drops their stray label text, and packages an
+  inline image per region (a small stand-in PNG, since Node has no browser
+  canvas to rasterize with). Asserts one drawing + media part + relationship
+  per region and re-runs the duplicate-attribute lint. In the browser the real
+  page pixels are rendered into those images by `PdfToWord.astro`.
 
 History: the first release of the converter produced `<w:ind>` with two
 `w:left` attributes (malformed XML) and mis-ordered `pPr`/`tblPr` children;
