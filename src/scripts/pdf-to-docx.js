@@ -351,6 +351,37 @@ function tryTable(rows) {
   return { type: 'table', cols, cellRows };
 }
 
+/* ------------------------------------------------------- spreadsheet rows */
+
+/**
+ * Flatten a page's lines into spreadsheet rows (arrays of cell strings),
+ * reusing the same block + table detection as the Word export. A real table
+ * becomes a properly aligned grid — each row's cells sit under shared column
+ * gutters — instead of a pile of misplaced fragments. Loose columnar lines
+ * emit their segments as cells; prose emits one cell per line.
+ *
+ * @param {Array} lines from collectPageLines
+ * @returns {Array<Array<string>>} rows of cell strings
+ */
+export function extractSheetRows(lines) {
+  if (!lines || !lines.length) return [];
+  const wrapGap = typicalWrapGap(lines);
+  const rows = [];
+  for (const block of pageBlocks(lines, wrapGap)) {
+    if (block.type === 'table') {
+      for (const cellRow of block.cellRows) {
+        rows.push(cellRow.map((cell) =>
+          cell.map((s) => s.text).join(' ').replace(/\s+/g, ' ').trim()));
+      }
+    } else if (block.type === 'tabline') {
+      rows.push(block.line.segments.map((s) => s.text));
+    } else {
+      for (const l of block.lines) rows.push([l.text]);
+    }
+  }
+  return rows;
+}
+
 /* -------------------------------------------------------------- XML emit */
 
 function runXml(r, ctx) {

@@ -58,180 +58,169 @@ const { slug, headline, subtitle } = Astro.props;
   </div>
 </div>
 
-<script is:inline>
-  (function() {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+<script>
+  import { collectPageLines, extractSheetRows } from '../../scripts/pdf-to-docx.js';
 
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const errorBanner = document.getElementById('errorBanner');
-    const errorMessage = document.getElementById('errorMessage');
-    const progressOverlay = document.getElementById('progressOverlay');
-    const progressBarFill = document.getElementById('progressBarFill');
-    const progressLabel = document.getElementById('progressLabel');
-    const textPreview = document.getElementById('textPreview');
-    const actionControls = document.getElementById('actionControls');
-    const fileNameDisplay = document.getElementById('fileNameDisplay');
-    const btnDownload = document.getElementById('btnDownload');
-    const btnClear = document.getElementById('btnClear');
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
-    let parsedRows = [];
-    let originalName = '';
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+  const errorBanner = document.getElementById('errorBanner');
+  const errorMessage = document.getElementById('errorMessage');
+  const progressOverlay = document.getElementById('progressOverlay');
+  const progressBarFill = document.getElementById('progressBarFill');
+  const progressLabel = document.getElementById('progressLabel');
+  const textPreview = document.getElementById('textPreview');
+  const actionControls = document.getElementById('actionControls');
+  const fileNameDisplay = document.getElementById('fileNameDisplay');
+  const btnDownload = document.getElementById('btnDownload');
+  const btnClear = document.getElementById('btnClear');
 
-    // Drag and drop setup
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.add('dragover');
-      }, false);
-    });
+  let parsedRows = [];
+  let originalName = '';
 
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.remove('dragover');
-      }, false);
-    });
+  // Drag and drop setup
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.add('dragover');
+    }, false);
+  });
 
-    dropZone.addEventListener('drop', (e) => {
-      let files = Array.from(e.dataTransfer.files).slice(0, 1);
-      if (files.length > 0) handleFile(files[0]);
-    });
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.remove('dragover');
+    }, false);
+  });
 
-    fileInput.addEventListener('change', (e) => {
-      let files = Array.from(e.target.files).slice(0, 1);
-      if (files.length > 0) handleFile(files[0]);
-    });
+  dropZone.addEventListener('drop', (e) => {
+    const files = Array.from(e.dataTransfer.files).slice(0, 1);
+    if (files.length > 0) handleFile(files[0]);
+  });
 
-    function showProgress(pct, label) {
-      progressOverlay.style.display = 'flex';
-      progressBarFill.style.width = pct + '%';
-      progressLabel.textContent = label;
+  fileInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files).slice(0, 1);
+    if (files.length > 0) handleFile(files[0]);
+  });
+
+  function showProgress(pct, label) {
+    progressOverlay.style.display = 'flex';
+    progressBarFill.style.width = pct + '%';
+    progressLabel.textContent = label;
+  }
+
+  function hideProgress() {
+    progressOverlay.style.display = 'none';
+  }
+
+  function showError(msg, link) {
+    errorMessage.textContent = msg;
+    if (link) {
+      errorMessage.appendChild(document.createTextNode(' '));
+      const a = document.createElement('a');
+      a.href = link.href;
+      a.textContent = link.label;
+      a.style.cssText = 'color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 2px;';
+      errorMessage.appendChild(a);
     }
+    errorBanner.style.display = 'flex';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-    function hideProgress() {
-      progressOverlay.style.display = 'none';
+  function hideError() {
+    errorBanner.style.display = 'none';
+  }
+
+  async function handleFile(file) {
+    hideError();
+    if (!/\.pdf$/i.test(file.name)) {
+      showError('Invalid file format. Please upload a .pdf document.');
+      return;
     }
-
-    function showError(msg, link) {
-      errorMessage.textContent = msg;
-      if (link) {
-        errorMessage.appendChild(document.createTextNode(' '));
-        const a = document.createElement('a');
-        a.href = link.href;
-        a.textContent = link.label;
-        a.style.cssText = 'color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 2px;';
-        errorMessage.appendChild(a);
-      }
-      errorBanner.style.display = 'flex';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (file.size > 25 * 1024 * 1024) {
+      showError('File is larger than the 25MB limit.');
+      return;
     }
-
-    function hideError() {
-      errorBanner.style.display = 'none';
-    }
-
-    async function handleFile(file) {
-      hideError();
-      originalName = file.name;
-      showProgress(10, "Extracting PDF text structures…");
-      try {
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-          try {
-            const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(e.target.result) });
-            const pdf = await loadingTask.promise;
-            parsedRows = [];
-
-            for (let i = 1; i <= pdf.numPages; i++) {
-              showProgress(Math.round(10 + (i / pdf.numPages) * 85), `Aligning columns on page ${i}…`);
-              const page = await pdf.getPage(i);
-              const textContent = await page.getTextContent();
-              
-              // Group text items by similar Y coordinate (representing rows)
-              const yMap = {};
-              textContent.items.forEach(item => {
-                const y = Math.round(item.transform[5]); // Y coordinate
-                const text = item.str.trim();
-                if (!text) return;
-                
-                // Allow a small tolerance for row grouping (e.g. 5 units)
-                let foundY = Object.keys(yMap).find(key => Math.abs(Number(key) - y) < 5);
-                if (foundY === undefined) {
-                  yMap[y] = [{ x: item.transform[4], str: text }];
-                } else {
-                  yMap[foundY].push({ x: item.transform[4], str: text });
-                }
-              });
-
-              // Sort rows from top to bottom
-              const sortedYKeys = Object.keys(yMap).map(Number).sort((a,b) => b - a);
-              sortedYKeys.forEach(y => {
-                // Sort columns inside row from left to right
-                const rowItems = yMap[y].sort((a,b) => a.x - b.x);
-                parsedRows.push(rowItems.map(item => item.str));
-              });
-              
-              // Add spacer between pages
-              parsedRows.push([`--- Page ${i} Spacer ---`]);
-            }
-
-            // Only the page spacers survived, so the PDF carried no text
-            // layer — a scan. Say so rather than exporting an empty sheet.
-            const dataRows = parsedRows.filter(r => !(r.length === 1 && /^--- Page \d+ Spacer ---$/.test(r[0])));
-            if (dataRows.length === 0) {
-              showError(
-                'This PDF has no selectable text — it looks like a scan or a photo, ' +
-                'so there are no rows to extract. Read it with OCR instead:',
-                { label: 'Open Image to Text (OCR)', href: '/image-to-text/' }
-              );
-              parsedRows = [];
-              hideProgress();
-              return;
-            }
-
-            // Show text preview
-            const textPreviewLines = parsedRows.slice(0, 15).map(r => r.join("\t")).join("\n");
-            textPreview.textContent = textPreviewLines + (parsedRows.length > 15 ? "\n…[truncated preview]" : "");
-            textPreview.style.display = 'block';
-            fileNameDisplay.textContent = file.name;
-            actionControls.style.display = 'flex';
-            dropZone.style.display = 'none';
-          } catch(err) {
-            showError("Failed to align spreadsheet rows in PDF.");
-          }
-          hideProgress();
-        };
-        reader.readAsArrayBuffer(file);
-      } catch(err) {
-        showError("Initialization error.");
-        hideProgress();
-      }
-    }
-
-    btnDownload.addEventListener('click', () => {
-      showProgress(40, "Compiling Excel workbook…");
-      try {
-        const ws = XLSX.utils.aoa_to_sheet(parsedRows);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "PDF Data");
-        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-        const blob = new Blob([wbout], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-        window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, "") + '.xlsx', "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-      } catch(err) {
-        showError("Excel compilation failed.");
-      }
-      hideProgress();
-    });
-
-    btnClear.addEventListener('click', () => {
+    originalName = file.name;
+    showProgress(10, 'Reading PDF data structure…');
+    try {
+      const data = new Uint8Array(await file.arrayBuffer());
+      const pdf = await window.pdfjsLib.getDocument({ data }).promise;
       parsedRows = [];
-      textPreview.style.display = 'none';
-      actionControls.style.display = 'none';
-      dropZone.style.display = 'flex';
-      fileInput.value = '';
-    });
-  })();
+
+      for (let i = 1; i <= pdf.numPages; i++) {
+        showProgress(Math.round(10 + (i / pdf.numPages) * 85), `Aligning columns on page ${i} of ${pdf.numPages}…`);
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        // Rebuild real lines and cells (fragments merged, columns aligned to
+        // shared gutters) instead of dropping each raw fragment in its own
+        // cell — that is what kept the old output permanently misaligned.
+        const lines = collectPageLines(textContent, () => '');
+        const rows = extractSheetRows(lines);
+        if (i > 1 && rows.length) parsedRows.push([]); // blank row between pages
+        for (const r of rows) parsedRows.push(r);
+      }
+
+      const hasData = parsedRows.some((r) => r.some((c) => c && c.trim()));
+      if (!hasData) {
+        showError(
+          'This PDF has no selectable text — it looks like a scan or a photo, ' +
+          'so there are no rows to extract. Read it with OCR instead:',
+          { label: 'Open Image to Text (OCR)', href: '/image-to-text/' }
+        );
+        parsedRows = [];
+        hideProgress();
+        return;
+      }
+
+      const preview = parsedRows.slice(0, 15).map((r) => r.join('\t')).join('\n');
+      textPreview.textContent = preview + (parsedRows.length > 15 ? '\n…[truncated preview]' : '');
+      textPreview.style.display = 'block';
+      fileNameDisplay.textContent = file.name;
+      actionControls.style.display = 'flex';
+      dropZone.style.display = 'none';
+    } catch (err) {
+      showError('Failed to extract rows from the PDF.');
+    }
+    hideProgress();
+  }
+
+  function columnWidths(rows) {
+    const widths = [];
+    for (const r of rows) {
+      r.forEach((cell, i) => {
+        const len = cell ? String(cell).length : 0;
+        widths[i] = Math.max(widths[i] || 0, len);
+      });
+    }
+    return widths.map((w) => ({ wch: Math.min(60, Math.max(8, w + 2)) }));
+  }
+
+  btnDownload.addEventListener('click', () => {
+    if (!parsedRows.length) return;
+    showProgress(50, 'Compiling Excel workbook…');
+    try {
+      const ws = window.XLSX.utils.aoa_to_sheet(parsedRows);
+      ws['!cols'] = columnWidths(parsedRows);
+      const wb = window.XLSX.utils.book_new();
+      window.XLSX.utils.book_append_sheet(wb, ws, 'PDF Data');
+      const wbout = window.XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, '') + '.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    } catch (err) {
+      showError('Excel compilation failed.');
+    }
+    hideProgress();
+  });
+
+  btnClear.addEventListener('click', () => {
+    parsedRows = [];
+    textPreview.style.display = 'none';
+    actionControls.style.display = 'none';
+    dropZone.style.display = 'flex';
+    fileInput.value = '';
+  });
 </script>

@@ -714,13 +714,15 @@ const rawTools: ToolData[] = [
     title: 'Convert PDF to Excel Online - 100% Private | ConvertOcean',
     description: 'Convert PDF files to formatted Excel worksheets (.xlsx) offline in your browser. 100% device-level security with no server uploads.',
     headline: 'PDF to Excel.',
-    subtitle: 'Extract tables and aligned cell grids from PDF files and download them as Excel workbooks locally.',
+    subtitle: 'Rebuild PDF tables into aligned Excel rows and columns and download them as a workbook locally.',
+    quickAnswer: 'To convert a PDF to Excel, upload the PDF above and download the .xlsx file. Tables are reconstructed cell by cell: multi-word values are kept whole and every row is aligned to the same columns, instead of scattering each text fragment into its own cell. Digitally created, text-based PDFs convert best; scanned PDFs need OCR first. Everything runs 100% client-side in your browser, so confidential spreadsheets are never uploaded to any server.',
     icon: '📊',
     category: 'Excel Converter',
     categorySlug: 'excel-converter',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
-      { question: 'Does it work offline?', answer: 'Yes. Once loaded, the extraction and Excel compiler run 100% offline.' }
+      { question: 'Does it work offline?', answer: 'Yes. Once loaded, the extraction and Excel compiler run 100% offline.' },
+      { question: 'Are table columns preserved?', answer: 'Yes. The converter detects each table’s columns from the shared vertical gaps between values and aligns every row to them, and it merges the split text fragments that make up one cell back into a single value. Very dense tables with merged header cells may need minor cleanup, but rows stay aligned.' }
     ],
     relatedTools: ['excel-to-pdf', 'csv-to-xlsx', 'json-to-xlsx']
   },
