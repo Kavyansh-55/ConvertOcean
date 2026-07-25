@@ -645,16 +645,18 @@ const rawTools: ToolData[] = [
     slug: 'pdf-to-word',
     name: 'PDF to Word',
     title: 'Convert PDF to Word Online - 100% Private | ConvertOcean',
-    description: 'Convert PDF documents to editable Microsoft Word files (.doc) offline in your browser. Zero server uploads.',
+    description: 'Convert PDF documents to editable Microsoft Word files (.docx) offline in your browser. Keeps headings, bold, tables, diagrams and layout. Zero server uploads.',
     headline: 'PDF to Word.',
-    subtitle: 'Extract PDF text and compile it into an editable Word document format client-side.',
-    quickAnswer: 'To convert a PDF to an editable Word document, upload the PDF above and download the converted file. Digitally created, text-based PDFs convert best with formatting preserved; scanned PDFs need OCR first. Processing happens 100% client-side in your browser, so confidential documents are never uploaded to any server.',
+    subtitle: 'Rebuild PDF text, formatting, tables and diagrams into an editable Word (.docx) document client-side.',
+    quickAnswer: 'To convert a PDF to an editable Word document, upload the PDF above and download the converted .docx file. Headings, bold and italic text, font sizes, indentation and detected tables are rebuilt as native Word formatting, and diagrams, figures and logos are embedded as images at their original position. Digitally created, text-based PDFs convert best; scanned PDFs need OCR first. Processing happens 100% client-side in your browser, so confidential documents are never uploaded to any server.',
     icon: '📄',
     category: 'Document Tools',
     categorySlug: 'document-tools',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
-      { question: 'Does it work offline?', answer: 'Yes. Once loaded, the extraction and compiling run 100% offline.' }
+      { question: 'Does it work offline?', answer: 'Yes. Once loaded, the extraction and compiling run 100% offline.' },
+      { question: 'Is formatting preserved?', answer: 'Yes. The converter reads the font, size, weight and position of every text fragment in the PDF and rebuilds headings, bold and italic runs, indentation, columns and detected tables as native Word formatting in a real .docx file.' },
+      { question: 'Are diagrams and images included?', answer: 'Yes. Diagrams, flowcharts, figures and logos are detected and embedded as pictures at their original position, while the surrounding text and tables stay fully editable. Diagrams come in as images (not editable Word shapes), which matches how other converters handle them.' }
     ],
     relatedTools: ['word-to-pdf', 'pdf-to-txt', 'txt-to-pdf']
   },
