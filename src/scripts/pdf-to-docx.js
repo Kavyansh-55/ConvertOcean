@@ -18,6 +18,10 @@ function esc(s) {
   return String(s)
     // eslint-disable-next-line no-control-regex
     .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
+    .replace(/[\uFFFE\uFFFF]/g, '')
+    // Unpaired surrogates (broken ToUnicode maps) are invalid XML: keep whole
+    // pairs, drop lone halves. No lookbehind so older Safari still parses this file.
+    .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDFFF]/g, (m) => (m.length === 2 ? m : ''))
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -393,22 +397,34 @@ function paraXml(paraLines, ctx) {
   const heading = first.maxSize >= ctx.bodySize * 1.2;
   const centered = paraLines.every((l) => isCentered(l.minX, l.endX, ctx));
 
+  // Children of w:pPr must follow the schema sequence — Word refuses the
+  // whole file otherwise: tabs, spacing, ind, jc.
   const pPr = [];
-  if (centered) {
-    pPr.push('<w:jc w:val="center"/>');
-  } else {
-    const left = paraMinX - ctx.contentLeft;
-    const firstIndent = first.minX - paraMinX;
-    const ind = [];
-    if (left > 3) ind.push(`w:left="${twips(left)}"`);
-    if (firstIndent > 3) ind.push(`w:firstLine="${twips(firstIndent)}"`);
-    if (paraLines.length > 1) {
-      const hang = paraLines[1].minX - first.minX;
-      if (hang > 3) ind.push(`w:left="${twips(paraLines[1].minX - ctx.contentLeft)}" w:hanging="${twips(hang)}"`);
-    }
-    if (ind.length) pPr.push(`<w:ind ${[...new Set(ind)].join(' ')}/>`);
-  }
   pPr.push(heading ? '<w:spacing w:before="200" w:after="120"/>' : '<w:spacing w:after="120"/>');
+  if (!centered) {
+    // w:left is the indent of the paragraph body; the first line then moves
+    // right of it (w:firstLine) or left of it (w:hanging) — never both, and
+    // exactly one w:left.
+    const restMin = paraLines.length > 1
+      ? Math.min(...paraLines.slice(1).map((l) => l.minX))
+      : first.minX;
+    const bodyLeft = Math.max(0, restMin - ctx.contentLeft);
+    const firstDelta = first.minX - restMin;
+    const attrs = [];
+    if (firstDelta > 3) {
+      if (bodyLeft > 3) attrs.push(`w:left="${twips(bodyLeft)}"`);
+      attrs.push(`w:firstLine="${twips(firstDelta)}"`);
+    } else if (firstDelta < -3) {
+      const hang = Math.min(-firstDelta, bodyLeft);
+      if (bodyLeft > 3) attrs.push(`w:left="${twips(bodyLeft)}"`);
+      if (hang > 3) attrs.push(`w:hanging="${twips(hang)}"`);
+    } else if (bodyLeft > 3) {
+      attrs.push(`w:left="${twips(bodyLeft)}"`);
+    }
+    if (attrs.length) pPr.push(`<w:ind ${attrs.join(' ')}/>`);
+  } else {
+    pPr.push('<w:jc w:val="center"/>');
+  }
 
   return `<w:p><w:pPr>${pPr.join('')}</w:pPr>${runs.map((r) => runXml(r, ctx)).join('')}</w:p>`;
 }
@@ -419,10 +435,11 @@ function tablineXml(line, ctx) {
     .slice(1)
     .map((s) => `<w:tab w:val="left" w:pos="${twips(s.x - ctx.contentLeft)}"/>`)
     .join('');
+  // Schema sequence for w:pPr children: tabs, spacing, ind.
   if (stops) pPr.push(`<w:tabs>${stops}</w:tabs>`);
+  pPr.push('<w:spacing w:after="60"/>');
   const left = line.minX - ctx.contentLeft;
   if (left > 3) pPr.push(`<w:ind w:left="${twips(left)}"/>`);
-  pPr.push('<w:spacing w:after="60"/>');
 
   let xml = `<w:p><w:pPr>${pPr.join('')}</w:pPr>`;
   line.segments.forEach((seg, si) => {
@@ -455,9 +472,10 @@ function tableXml(table, ctx) {
     '<w:tbl><w:tblPr>' +
     '<w:tblW w:w="0" w:type="auto"/>' +
     (ind ? `<w:tblInd w:w="${ind}" w:type="dxa"/>` : '') +
+    // Schema sequence for w:tblPr children: tblBorders, tblLayout, tblCellMar.
     tableBorders() +
-    CELL_MARGIN +
     '<w:tblLayout w:type="fixed"/>' +
+    CELL_MARGIN +
     '</w:tblPr><w:tblGrid>' +
     widths.map((w) => `<w:gridCol w:w="${w}"/>`).join('') +
     '</w:tblGrid>';

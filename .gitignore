@@ -25,3 +25,7 @@ desktop.ini
 
 # Local scratch/one-off scripts and exported analytics (not for the public repo)
 scratch/
+
+# pdf-to-docx test artifacts
+scripts/tests/pdf-to-docx/test.pdf
+scripts/tests/pdf-to-docx/out.docx
