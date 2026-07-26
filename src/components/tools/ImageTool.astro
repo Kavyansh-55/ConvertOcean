@@ -211,27 +211,47 @@ if (slug === 'png-to-jpg') {
         const img = new Image();
         img.onload = function() {
           showProgress(70, "Rendering and converting format…");
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          
-          ctx.drawImage(img, 0, 0);
 
           let mimeType = 'image/png';
-          let outputExt = '.png';
-          if (['png-to-jpg', 'webp-to-jpg', 'svg-to-jpg', 'jpeg-to-jpg'].includes(slug)) {
+          if (['png-to-jpg', 'webp-to-jpg', 'svg-to-jpg', 'jpeg-to-jpg', 'jpg-to-jpeg'].includes(slug)) {
             mimeType = 'image/jpeg';
-            outputExt = '.jpg';
           } else if (['png-to-webp', 'jpg-to-webp', 'svg-to-webp'].includes(slug)) {
             mimeType = 'image/webp';
-            outputExt = '.webp';
-          } else if (slug === 'jpg-to-jpeg') {
-            mimeType = 'image/jpeg';
-            outputExt = '.jpeg';
           }
-          
+          const isJpeg = mimeType === 'image/jpeg';
+          const isSvg = ['svg-to-png', 'svg-to-jpg', 'svg-to-webp'].includes(slug);
+
+          // Output dimensions. SVGs frequently report a zero or tiny intrinsic
+          // size, which produced a blank or blurry raster; give them a sensible
+          // resolution and upscale small ones so lines stay crisp.
+          let w = img.naturalWidth || img.width;
+          let h = img.naturalHeight || img.height;
+          if (isSvg) {
+            if (!w || !h) { w = 1024; h = 768; }
+            const minSide = Math.min(w, h);
+            if (minSide < 1024) { const s = 1024 / minSide; w = Math.round(w * s); h = Math.round(h * s); }
+            const maxSide = Math.max(w, h);
+            if (maxSide > 4096) { const s = 4096 / maxSide; w = Math.round(w * s); h = Math.round(h * s); }
+          }
+          if (!w || !h) { showError("Could not read the image dimensions."); hideProgress(); return; }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          // JPEG has no alpha channel: without a fill, transparent pixels turn
+          // black. Lay down white first so transparent PNG/WebP/SVG areas match
+          // what other converters produce.
+          if (isJpeg) {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, w, h);
+          }
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, w, h);
+
           canvas.toBlob(blob => {
+            if (!blob) { showError("This format could not be encoded in your browser."); hideProgress(); return; }
             outBlob = blob;
             imgPreview.src = URL.createObjectURL(blob);
             previewBox.style.display = 'flex';
