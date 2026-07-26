@@ -256,8 +256,7 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
       } else if (slug === 'xml-to-json') {
         reader.onload = function(e) {
           try {
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
+            const xmlDoc = parseXmlStrict(e.target.result);
             const json = xmlNodeToJson(xmlDoc.documentElement);
             resultData = JSON.stringify(json, null, 2);
             showPreview(resultData);
@@ -270,8 +269,7 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
       } else if (slug === 'xml-to-csv') {
         reader.onload = function(e) {
           try {
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
+            const xmlDoc = parseXmlStrict(e.target.result);
             const json = xmlNodeToJson(xmlDoc.documentElement);
             const arr = Array.isArray(json) ? json : [json];
             const ws = XLSX.utils.json_to_sheet(arr);
@@ -286,8 +284,7 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
       } else if (slug === 'xml-to-xlsx') {
         reader.onload = function(e) {
           try {
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
+            const xmlDoc = parseXmlStrict(e.target.result);
             const json = xmlNodeToJson(xmlDoc.documentElement);
             const arr = Array.isArray(json) ? json : [json];
             const ws = XLSX.utils.json_to_sheet(arr);
@@ -302,6 +299,17 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
         };
         reader.readAsText(file);
       }
+    }
+
+    // DOMParser does not throw on malformed XML — it returns a document
+    // containing a <parsererror> element. Detect that so bad input shows a
+    // clear error instead of being turned into garbage rows.
+    function parseXmlStrict(text) {
+      const doc = new DOMParser().parseFromString(text, "text/xml");
+      if (doc.getElementsByTagName('parsererror').length > 0 || !doc.documentElement) {
+        throw new Error('Invalid XML');
+      }
+      return doc;
     }
 
     function xmlNodeToJson(node) {
