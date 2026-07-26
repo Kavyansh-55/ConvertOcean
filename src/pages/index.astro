@@ -462,34 +462,10 @@ const toolChips = (slug: string): ToolChips => {
       gap: var(--spacing-xs);
     }
 
-    /* Bento layout for the category grid. A uniform 2-column grid gave all
-       seven categories equal weight, which is false — the universal converter
-       covers 30+ formats and the PDF set is the most-used. Tile size encodes
-       that, so the structure carries information instead of decorating. */
-    .tool-grid--bento {
-      grid-template-columns: repeat(6, 1fr);
-      gap: var(--spacing-md);
-    }
-    .tool-grid--bento > :nth-child(1) { grid-column: span 4; }
-    .tool-grid--bento > :nth-child(2) { grid-column: span 2; }
-    .tool-grid--bento > :nth-child(3),
-    .tool-grid--bento > :nth-child(4),
-    .tool-grid--bento > :nth-child(5) { grid-column: span 2; }
-    .tool-grid--bento > :nth-child(6),
-    .tool-grid--bento > :nth-child(7) { grid-column: span 3; }
-
-    /* The lead tile carries the largest category, so it gets the larger type. */
-    .tool-grid--bento > :nth-child(1) .tool-name { font-size: var(--fs-heading); }
-
-    @media (max-width: 900px) {
-      .tool-grid--bento { grid-template-columns: repeat(2, 1fr); }
-      .tool-grid--bento > :nth-child(1) { grid-column: span 2; }
-      .tool-grid--bento > :nth-child(n+2) { grid-column: span 1; }
-    }
-    @media (max-width: 600px) {
-      .tool-grid--bento { grid-template-columns: 1fr; }
-      .tool-grid--bento > * { grid-column: span 1 !important; }
-    }
+    /* The category grid layout lives in theme.css (global). It sizes the
+       CategoryCard children, and Astro would scope a child selector here to
+       this page's components — which the cards are not — so the rule would
+       silently never match. Keep it global. */
 
     /* Guides on phones: 13 cards at 291px each made this the tallest band
        on the page (4,446px). Clamp the description and tighten the padding

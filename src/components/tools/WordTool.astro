@@ -32,6 +32,9 @@ if (slug === 'docx-to-txt') {
 </style>
 
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/pdfmake.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/vfs_fonts.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/html-to-pdfmake@2.5.4/browser.js"></script>
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <div class="page-header">
@@ -201,23 +204,59 @@ if (slug === 'docx-to-txt') {
       reader.readAsArrayBuffer(file);
     }
 
+    // Raster fallback: rasterise the on-screen preview to PDF. Only used if the
+    // vector path throws, so users always get a file.
+    function rasterFallback(pdfName) {
+      return window.exportElementToPdf(previewBody, {
+        margin:   15,
+        filename: pdfName,
+        image:    { type: 'jpeg', quality: 0.95 },
+        pagebreak:{ mode: ['avoid-all', 'css', 'legacy'] },
+        jsPDF:    { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      });
+    }
+
     btnDownload.addEventListener('click', () => {
       if (slug === 'word-to-pdf') {
+        const pdfName = originalName.replace(/\.[^/.]+$/, "") + '.pdf';
         showProgress(50, "Generating PDF document…");
-        // The preview inherits --colors-ink, which is near-white in dark mode.
-        // Rendering it straight to a white page produced an invisible
-        // document; the shared exporter forces paper colours on a clone.
-        window.exportElementToPdf(previewBody, {
-          margin:   15,
-          filename: originalName.replace(/\.[^/.]+$/, "") + '.pdf',
-          image:    { type: 'jpeg', quality: 0.95 },
-          jsPDF:    { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).then(() => {
-          hideProgress();
-        }).catch(err => {
-          showError("PDF compilation failed.");
-          hideProgress();
-        });
+        // Render the document as a real vector PDF: the text stays selectable
+        // and searchable, headings/bold/italic/lists/tables carry over, and
+        // pdfmake paginates natively so lines are never sliced across a page
+        // break. (The old path rasterised the themed preview with html2canvas,
+        // producing a blurry, unselectable screenshot.)
+        try {
+          const content = window.htmlToPdfmake(processedOutput, {
+            window: window,
+            tableAutoSize: true,
+            defaultStyles: {
+              h1: { fontSize: 20, bold: true, marginBottom: 6, marginTop: 12 },
+              h2: { fontSize: 15, bold: true, marginBottom: 5, marginTop: 10 },
+              h3: { fontSize: 13, bold: true, marginBottom: 4, marginTop: 8 },
+              h4: { fontSize: 12, bold: true, marginBottom: 4, marginTop: 6 },
+              p:  { margin: [0, 0, 0, 8] },
+              li: { margin: [0, 0, 0, 3] },
+              a:  { color: '#0b5cad', decoration: null },
+              table: { marginBottom: 10 }
+            }
+          });
+          const docDef = {
+            content,
+            pageSize: 'A4',
+            pageMargins: [56, 60, 56, 64],
+            defaultStyle: { fontSize: 11, lineHeight: 1.35, color: '#1a1a1a' },
+            info: { title: originalName.replace(/\.[^/.]+$/, "") }
+          };
+          const pdf = window.pdfMake.createPdf(docDef);
+          pdf.getBlob((blob) => {
+            window.downloadBlob(blob, pdfName, 'application/pdf');
+            hideProgress();
+          });
+        } catch (err) {
+          rasterFallback(pdfName)
+            .then(() => hideProgress())
+            .catch(() => { showError("PDF compilation failed."); hideProgress(); });
+        }
       } else if (slug === 'docx-to-txt') {
         const blob = new Blob([processedOutput], { type: "text/plain;charset=utf-8;" });
         window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, "") + '.txt', "text/plain");

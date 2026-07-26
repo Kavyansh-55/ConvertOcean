@@ -632,14 +632,15 @@ const rawTools: ToolData[] = [
     title: 'Convert Word to PDF Online - 100% Private | ConvertOcean',
     description: 'Convert Word document files (.docx) to print-ready PDF files in your browser. 100% private and offline-capable.',
     headline: 'Word to PDF.',
-    subtitle: 'Convert Word documents (.docx) to PDF locally on your device.',
-    quickAnswer: 'To convert Word to PDF, drop a .docx file into the tool above and download a print-ready PDF that locks fonts, margins, and page layout in place. The conversion runs locally in your browser sandbox — no uploads, no account, and no file-size limits.',
+    subtitle: 'Convert Word documents (.docx) to a clean, selectable-text PDF locally on your device.',
+    quickAnswer: 'To convert Word to PDF, drop a .docx file into the tool above and download the PDF. Headings, bold and italic text, lists and tables carry over, and the result is a real vector PDF — the text stays selectable and searchable, and pages break cleanly without slicing through a line. The conversion runs locally in your browser sandbox — no uploads, no account, and no file-size limits.',
     icon: '📝',
     category: 'Document Tools',
     categorySlug: 'document-tools',
     faqs: [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
-      { question: 'Does it work offline?', answer: 'Yes. The converter loads mammoth.js locally into the browser memory sandbox.' }
+      { question: 'Does it work offline?', answer: 'Yes. Once the page has loaded, the converter runs entirely in your browser with no further network access.' },
+      { question: 'Is the text selectable in the PDF?', answer: 'Yes. The document is rendered as a real vector PDF, so text stays selectable and searchable and headings, bold, italic, lists and tables are preserved — rather than a flat screenshot of the page. Exact Word fonts and complex page layouts (columns, headers/footers) may be simplified.' }
     ],
     relatedTools: ['pdf-to-word', 'docx-to-txt', 'txt-to-pdf']
   },
