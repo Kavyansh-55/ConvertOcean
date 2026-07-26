@@ -718,6 +718,30 @@ select:focus-visible,
   }
 }
 
+/* Category grid (homepage "Browse Tools by Category"). Global on purpose: it
+   sizes the CategoryCard children, and a page-scoped selector would be
+   rewritten to that page's components — which the cards are not — and never
+   match. A wrapping, centred flex row keeps tiles a consistent width, equal
+   height within each row, and centres the final row instead of stranding it. */
+.tool-grid--bento {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  max-width: 1120px;
+  margin-inline: auto;
+}
+.tool-grid--bento > * {
+  flex: 1 1 240px;
+  max-width: 300px;
+}
+@media (max-width: 600px) {
+  .tool-grid--bento > * {
+    flex-basis: 100%;
+    max-width: none;
+  }
+}
+
 /* Premium Card component */
 .tool-card {
   background-color: var(--colors-canvas);
@@ -765,6 +789,9 @@ select:focus-visible,
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
+  /* Grow to fill the card so the action link is pinned to the bottom and
+     every card's CTA lines up regardless of description length. */
+  flex: 1 1 auto;
 }
 
 .tool-icon-wrapper {
