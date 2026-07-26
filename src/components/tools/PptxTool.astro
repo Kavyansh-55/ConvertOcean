@@ -872,14 +872,17 @@ let targetFormat = "PDF";
       if (currentW + ww > maxW && currentLine.length) {
         // Merge consecutive same-style segments
         lines.push(mergeLineSegs(currentLine));
-        currentLine = [{ text: word, ...run }];
+        // Spread run first, then set text: run carries its own full `text`
+        // property, so `{ text: word, ...run }` would overwrite the word with
+        // the whole run string — the cause of duplicated slide text.
+        currentLine = [{ ...run, text: word }];
         currentW    = ww;
       } else {
         const last = currentLine[currentLine.length - 1];
         if (last && last.font === run.font && last.color === run.color) {
           last.text += word;
         } else {
-          currentLine.push({ text: word, ...run });
+          currentLine.push({ ...run, text: word });
         }
         currentW += ww;
       }
@@ -905,7 +908,9 @@ let targetFormat = "PDF";
      TABLE RENDERING
   ================================================================ */
   function drawTable(ctx, gfNode, tbl, scale, theme) {
-    const xfrm = gfNode.getElementsByTagName('a:xfrm')[0];
+    // A graphic frame positions itself with <p:xfrm>, not the <a:xfrm> that
+    // shapes use — looking only for a:xfrm meant tables were never drawn.
+    const xfrm = gfNode.getElementsByTagName('p:xfrm')[0] || gfNode.getElementsByTagName('a:xfrm')[0];
     if (!xfrm) return;
     const off = xfrm.getElementsByTagName('a:off')[0];
     const ext = xfrm.getElementsByTagName('a:ext')[0];
