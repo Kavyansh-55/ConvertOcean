@@ -255,6 +255,26 @@ const { slug, headline, subtitle } = Astro.props;
       renderList();
     };
 
+    const REL_NS = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+    const REL_PKG_NS = 'http://schemas.openxmlformats.org/package/2006/relationships';
+    const CT_NS = 'http://schemas.openxmlformats.org/package/2006/content-types';
+    const MIME_BY_EXT = {
+      png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif',
+      bmp: 'image/bmp', tif: 'image/tiff', tiff: 'image/tiff', emf: 'image/x-emf',
+      wmf: 'image/x-wmf', svg: 'image/svg+xml', webp: 'image/webp'
+    };
+
+    // Resolve a relationship Target (relative to word/document.xml) to a zip path.
+    function resolveRelPath(rel) {
+      if (rel.charAt(0) === '/') return rel.slice(1);           // package-absolute
+      const stack = ['word'];                                    // dir of document.xml
+      for (const part of rel.split('/')) {
+        if (part === '..') stack.pop();
+        else if (part && part !== '.') stack.push(part);
+      }
+      return stack.join('/');
+    }
+
     btnMerge.addEventListener('click', async () => {
       if (mergeFiles.length < 2) {
         showError("Please upload at least 2 Word files.");
@@ -262,57 +282,156 @@ const { slug, headline, subtitle } = Astro.props;
       }
       showProgress(20, "Loading base document ZIP structure…");
       try {
-        // Load the first document as base
-        const firstZip = await JSZip.loadAsync(mergeFiles[0].bytes);
-        const docXmlText = await firstZip.file("word/document.xml").async("string");
-
         const parser = new DOMParser();
-        const firstDoc = parser.parseFromString(docXmlText, "text/xml");
+        const serializer = new XMLSerializer();
+
+        // Load the first document as the base we merge into.
+        const firstZip = await JSZip.loadAsync(mergeFiles[0].bytes);
+        const firstDoc = parser.parseFromString(await firstZip.file("word/document.xml").async("string"), "text/xml");
         const firstBody = firstDoc.getElementsByTagName("w:body")[0];
-        
-        // Find the section properties of first body (to preserve layout details at the very end of combined file)
         const firstSectPr = firstBody.getElementsByTagName("w:sectPr")[0];
 
-        // Loop through subsequent files and extract body contents
+        // Base relationships (.rels) — where image/hyperlink references live.
+        const baseRelsFile = firstZip.file("word/_rels/document.xml.rels");
+        const baseRelsDoc = parser.parseFromString(
+          baseRelsFile ? await baseRelsFile.async("string")
+            : '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>',
+          "application/xml"
+        );
+        const baseRelsRoot = baseRelsDoc.documentElement;
+        let maxRid = 0;
+        for (const rel of Array.from(baseRelsDoc.getElementsByTagName("Relationship"))) {
+          const m = /rId(\d+)/.exec(rel.getAttribute("Id") || "");
+          if (m) maxRid = Math.max(maxRid, parseInt(m[1]));
+        }
+
+        // Content types — image extensions must be declared or Word rejects the file.
+        const ctDoc = parser.parseFromString(await firstZip.file("[Content_Types].xml").async("string"), "application/xml");
+        const ctRoot = ctDoc.documentElement;
+        const knownExts = new Set(Array.from(ctDoc.getElementsByTagName("Default")).map(d => (d.getAttribute("Extension") || "").toLowerCase()));
+        const usedMediaNames = new Set(Object.keys(firstZip.files).filter(n => /^word\/media\//.test(n)).map(n => n.split('/').pop()));
+
+        const ensureDefault = (ext) => {
+          ext = ext.toLowerCase();
+          if (knownExts.has(ext) || !MIME_BY_EXT[ext]) return;
+          // createElementNS so the element stays in the content-types namespace;
+          // a plain createElement lands it in the null namespace and serializes
+          // with xmlns="", which invalidates the part.
+          const d = ctDoc.createElementNS(CT_NS, "Default");
+          d.setAttribute("Extension", ext);
+          d.setAttribute("ContentType", MIME_BY_EXT[ext]);
+          ctRoot.appendChild(d);
+          knownExts.add(ext);
+        };
+        const addRel = (type, target, external) => {
+          const id = "rId" + (++maxRid);
+          const rel = baseRelsDoc.createElementNS(REL_PKG_NS, "Relationship");
+          rel.setAttribute("Id", id);
+          rel.setAttribute("Type", type);
+          rel.setAttribute("Target", target);
+          if (external) rel.setAttribute("TargetMode", "External");
+          baseRelsRoot.appendChild(rel);
+          return id;
+        };
+        // Gather every relationship reference (r:embed / r:id / r:link) in a subtree.
+        const collectRefs = (node, out) => {
+          if (node.nodeType !== 1) return;
+          for (const attr of Array.from(node.attributes)) {
+            if (attr.namespaceURI === REL_NS && attr.value) out.push({ el: node, local: attr.localName, oldId: attr.value });
+          }
+          for (const child of Array.from(node.childNodes)) collectRefs(child, out);
+        };
+
         for (let i = 1; i < mergeFiles.length; i++) {
-          showProgress(20 + Math.round((i / mergeFiles.length) * 50), `Merging document ${i + 1} of ${mergeFiles.length}…`);
+          showProgress(20 + Math.round((i / mergeFiles.length) * 55), `Merging document ${i + 1} of ${mergeFiles.length}…`);
           const zip = await JSZip.loadAsync(mergeFiles[i].bytes);
-          const xmlText = await zip.file("word/document.xml").async("string");
-          const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+          const xmlDoc = parser.parseFromString(await zip.file("word/document.xml").async("string"), "text/xml");
           const body = xmlDoc.getElementsByTagName("w:body")[0];
 
-          // Add page break paragraph before importing elements
+          // Source relationships for this document.
+          const srcRelsFile = zip.file("word/_rels/document.xml.rels");
+          const srcRels = new Map();
+          if (srcRelsFile) {
+            const srcRelsDoc = parser.parseFromString(await srcRelsFile.async("string"), "application/xml");
+            for (const rel of Array.from(srcRelsDoc.getElementsByTagName("Relationship"))) {
+              srcRels.set(rel.getAttribute("Id"), {
+                type: rel.getAttribute("Type"),
+                target: rel.getAttribute("Target"),
+                external: (rel.getAttribute("TargetMode") || "Internal") === "External"
+              });
+            }
+          }
+
+          // Page break before each appended document.
           const pageBreakNode = firstDoc.createElement("w:p");
           const rNode = firstDoc.createElement("w:r");
           const brNode = firstDoc.createElement("w:br");
           brNode.setAttribute("w:type", "page");
           rNode.appendChild(brNode);
           pageBreakNode.appendChild(rNode);
-          
-          if (firstSectPr) {
-            firstBody.insertBefore(pageBreakNode, firstSectPr);
-          } else {
-            firstBody.appendChild(pageBreakNode);
+          if (firstSectPr) firstBody.insertBefore(pageBreakNode, firstSectPr);
+          else firstBody.appendChild(pageBreakNode);
+
+          // Import body elements (skip the trailing sectPr), tracking the copies.
+          const imported = [];
+          for (const node of Array.from(body.childNodes)) {
+            if (node.nodeType === 1 && node.nodeName !== "w:sectPr") {
+              const copy = firstDoc.importNode(node, true);
+              if (firstSectPr) firstBody.insertBefore(copy, firstSectPr);
+              else firstBody.appendChild(copy);
+              imported.push(copy);
+            }
           }
 
-          // Import body elements (paragraphs, tables, lists) excluding the last sectPr
-          const childNodes = Array.from(body.childNodes);
-          for (let node of childNodes) {
-            if (node.nodeName !== "w:sectPr" && node.nodeType === 1) { // Element node
-              const importedNode = firstDoc.importNode(node, true);
-              if (firstSectPr) {
-                firstBody.insertBefore(importedNode, firstSectPr);
-              } else {
-                firstBody.appendChild(importedNode);
-              }
+          // Remap this document's relationship references: copy media into the
+          // base package under fresh names, register new relationship ids and
+          // content types, then rewrite the references to the new ids.
+          const refs = [];
+          for (const node of imported) collectRefs(node, refs);
+          const remap = new Map();
+          for (const ref of refs) {
+            if (remap.has(ref.oldId)) continue;
+            const rel = srcRels.get(ref.oldId);
+            if (!rel) continue;
+            if (rel.external) {
+              remap.set(ref.oldId, addRel(rel.type, rel.target, true));
+            } else {
+              const srcPath = resolveRelPath(rel.target);
+              const srcFile = zip.file(srcPath);
+              if (!srcFile) continue;
+              const ext = (srcPath.split('.').pop() || 'bin').toLowerCase();
+              let newName = `merge${i}_${ref.oldId}.${ext}`;
+              while (usedMediaNames.has(newName)) newName = `merge${i}_${Math.random().toString(36).slice(2, 7)}.${ext}`;
+              usedMediaNames.add(newName);
+              firstZip.file("word/media/" + newName, await srcFile.async("uint8array"));
+              ensureDefault(ext);
+              remap.set(ref.oldId, addRel(rel.type, "media/" + newName, false));
             }
+          }
+          for (const ref of refs) {
+            const newId = remap.get(ref.oldId);
+            if (newId) ref.el.setAttributeNS(REL_NS, "r:" + ref.local, newId);
           }
         }
 
-        showProgress(85, "Saving merged Word archive…");
-        const serializer = new XMLSerializer();
-        const mergedXmlText = serializer.serializeToString(firstDoc);
-        firstZip.file("word/document.xml", mergedXmlText);
+        // Drawing-object ids (wp:docPr / pic:cNvPr) must be unique across the
+        // whole document; each source file numbered its own from 1, so after
+        // merging there are duplicates and Word reports the file as corrupt.
+        // Renumber every one sequentially.
+        let drawingId = 0;
+        const uniquifyIds = (node) => {
+          if (node.nodeType !== 1) return;
+          if ((node.localName === "docPr" || node.localName === "cNvPr") && node.hasAttribute("id")) {
+            node.setAttribute("id", String(++drawingId));
+          }
+          for (const child of Array.from(node.childNodes)) uniquifyIds(child);
+        };
+        uniquifyIds(firstBody);
+
+        showProgress(88, "Saving merged Word archive…");
+        firstZip.file("word/document.xml", serializer.serializeToString(firstDoc));
+        firstZip.file("word/_rels/document.xml.rels", serializer.serializeToString(baseRelsDoc));
+        firstZip.file("[Content_Types].xml", serializer.serializeToString(ctDoc));
 
         const outBytes = await firstZip.generateAsync({ type: "blob" });
         let name = mergeOutputName.value || 'merged.docx';
