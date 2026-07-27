@@ -60,6 +60,13 @@ const articleData = {
       padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-5xl);
       position: relative;
       z-index: 1;
+      /* body is display:flex/column, so this is a flex item with an auto width —
+         it sizes to its widest content, which let a wide table push the whole
+         page sideways on mobile instead of scrolling inside its own container.
+         A definite width makes the containing block the viewport, not the
+         content; max-width still caps it on desktop. */
+      width: 100%;
+      min-width: 0;
     }
 
     .guide-header {
