@@ -178,7 +178,7 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 - [ ] N5: /vs/sejda/ + /vs/tinywow/. Update footer vs-block + sitemap page (checklist rule!).
 
 ### N6–N7 — Conversion of attention
-- [ ] N6: Quick answers batch 2 — next ~15 tool pages by traffic priority.
+- [x] N6: Quick answers batch 2 — next ~15 tool pages by traffic priority. *(Done 2026-07-27, branch `seo/n6-quick-answers-batch2`: 12 AEO quick-answer blocks added, coverage 18→30 tools — png-to-jpg, jpg-to-png, image-to-pdf, pptx-to-pdf, pdf-to-txt, txt-to-pdf, png-to-webp, webp-to-png, json-formatter, word-counter, csv-to-xlsx, xlsx-to-csv. Each ~50 words, Pattern-1 "To… " extractable, unique + accurate to the tool (png-to-jpg names the transparency→white behaviour, pptx notes .ppt must be re-saved), privacy close. Additive only — no indexed page churned during the AdSense window. Remaining lower-priority tools (svg trio, xls/xml legacy variants, merge/split family) → batch 3 at N11. Pending approval.)*
 - [ ] N7: GA4 key events (currently 0 defined): tool_used / file_converted / download events, so "views per user" becomes measurable engagement. Document the weekly GSC snapshot ritual (impressions, clicks, indexed — one row per week below).
 
 ### N8–N9 — Demand-driven content (requires N1 GSC data)
