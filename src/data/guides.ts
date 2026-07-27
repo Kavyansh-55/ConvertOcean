@@ -1,3 +1,12 @@
+import {
+  renderRateTableHtml,
+  AS_OF,
+  SOURCE_NAME,
+  SOURCE_TITLE,
+  SOURCE_URL,
+  US_AVERAGE_COMBINED
+} from './us-sales-tax-rates';
+
 export interface GuideData {
   slug: string;
   title: string;
@@ -983,6 +992,101 @@ export const guides: GuideData[] = [
       {
         question: 'What is the best way to photograph a document with a phone?',
         answer: 'Directly above the page (never tilted), in even natural light without flash, on a contrasting background, with the page filling the frame. Those four habits eliminate the skew, glare, and blur that make scans unreadable after compression.'
+      }
+    ]
+  },
+  {
+    slug: 'us-sales-tax-by-state',
+    title: 'Sales Tax by State 2026 (All 50 States) | ConvertOcean',
+    description: 'Sales tax rates for all 50 states and DC as of July 1, 2026: state rate, average local rate, and combined rate — plus how to find your exact local rate.',
+    h1: 'Sales Tax by State: 2026 Rates for All 50 States.',
+    readTime: '8 min read',
+    publishDate: 'July 27, 2026',
+    relatedTools: ['sales-tax-calculator', 'invoice-generator', 'receipt-generator', 'profit-margin-calculator', 'percentage-calculator'],
+    relatedGuides: ['how-to-calculate-profit-margin', 'how-to-calculate-break-even-point'],
+    intro: `There is no such thing as "the US sales tax rate." Forty-five states and the District of Columbia levy a statewide sales tax, thousands of cities, counties, and special districts stack their own rates on top, and the combination is what a customer actually pays. This page lists the current rate for every state as of ${AS_OF}, explains what the "average local" column can and cannot tell you, and shows how to get from a statewide average to the exact rate you are legally required to charge.`,
+    contentHtml: `
+      <h2>A US Sales Tax Rate Is Two Numbers Added Together</h2>
+      <p>Every rate on this page is built from two parts. The <strong>state rate</strong> is set by the legislature and applies everywhere in the state. The <strong>local rate</strong> is levied by counties, cities, and special-purpose districts — transit authorities, stadium districts, tourism zones — and it varies from one side of a street to the other. What a shopper pays at the register is the sum of the two, which is why the same product can cost more in one suburb than in the town next door.</p>
+      <p>That structure explains most of what looks strange in the table below. Colorado has one of the lowest state rates in the country at 2.90%, yet its combined rate is 7.89% — local governments there do nearly all the taxing. Louisiana's state rate is a middling 5.00%, but its local rates average 5.13% on top, giving it the highest combined rate in the nation. Meanwhile, states like Connecticut, Kentucky, Maine, Maryland, Massachusetts, and Michigan allow no local sales tax at all, so their combined rate is simply the state rate and is the same at every address.</p>
+
+      <h2>Sales Tax Rates by State (${AS_OF})</h2>
+      <p>Rates below are from the ${SOURCE_NAME}'s <a href="${SOURCE_URL}" rel="nofollow noopener" target="_blank">${SOURCE_TITLE}</a>. "Avg. local" is a population-weighted average of the local rates in force across the state, and "Combined" is the state rate plus that average. Rank orders all 50 states by combined rate, 1 being the highest; D.C. is listed but not ranked among the states.</p>
+      ${renderRateTableHtml()}
+      <p>Nationally, the population-weighted average combined rate is <strong>${US_AVERAGE_COMBINED.toFixed(2)}%</strong>. Between January and July 2026 no state changed its statewide rate; the movement in the table comes entirely from local rate changes.</p>
+
+      <h2>What the "Average Local" Column Does Not Tell You</h2>
+      <p>This is the most important caveat on the page, and the one most rate tables leave out. The average local rate is a <em>statistical summary of an entire state</em>, weighted by population. It is the right number for comparing states, forecasting, or estimating a budget. It is the wrong number for an invoice.</p>
+      <p>Nobody actually pays the average. A buyer in a Chicago collar county pays a different rate than a buyer in downstate Illinois, and both differ from the 8.98% Illinois average. If you are charging tax on a real transaction, you need the rate for that specific delivery address — not a state average, and not a ZIP-code lookup either. ZIP codes are postal routing shapes drawn by the USPS; they cross city, county, and district boundaries freely, so a single ZIP can contain two or three different tax rates. Rate services and state revenue departments resolve this with full street addresses and geocoding for exactly that reason.</p>
+      <blockquote>
+        <strong>Rule of thumb</strong>
+        Use the combined average to estimate, compare, or model. Use an address-level lookup from the state's revenue department to bill, collect, or file.
+      </blockquote>
+
+      <h2>The Five States With No Statewide Sales Tax</h2>
+      <p>Alaska, Delaware, Montana, New Hampshire, and Oregon levy no statewide sales tax. Four of them are genuinely tax-free at the register — but <strong>Alaska is not</strong>, and the distinction trips up sellers constantly. Alaska has no state-level tax while permitting its boroughs and municipalities to levy their own, which average 1.82% statewide and reach 7.85% in the highest-taxing localities. An Alaska shipment is not automatically exempt; it depends on the destination.</p>
+      <p>Delaware, Montana, New Hampshire, and Oregon do have narrower excise or lodging taxes on specific goods and services, so "no sales tax" means no general sales tax on retail goods, not the complete absence of consumption taxes.</p>
+
+      <h2>New Jersey's Negative Local Rate</h2>
+      <p>New Jersey shows an average local rate of −0.02%, which looks like an error and is not. Qualifying sellers inside New Jersey's <strong>Urban Enterprise Zones</strong> collect sales tax at half the statewide rate — 3.3125% instead of 6.625% — a policy intended to help retailers near the border compete with sales-tax-free Delaware. Because those discounted zones pull the population-weighted statewide average slightly <em>below</em> the state rate, the local adjustment comes out negative. It is a real feature of the tax code showing up honestly in the arithmetic.</p>
+
+      <h2>Which Rate Applies: Destination vs. Origin</h2>
+      <p>Once you know rates vary by address, the next question is <em>whose</em> address. Most states use <strong>destination sourcing</strong>: the applicable rate is the one where the customer takes delivery. Ship a desk from Reno to Las Vegas and you charge the Las Vegas rate. A minority of states apply <strong>origin sourcing</strong> to sales that stay inside the state, charging the rate at the seller's location instead — Texas is the most commonly cited example — and a few use hybrid rules that treat in-state and interstate sales differently.</p>
+      <p>For sales that cross state lines, destination sourcing is effectively the rule everywhere. Since the Supreme Court's 2018 decision in <em>South Dakota v. Wayfair</em>, a state may require an out-of-state seller to collect its tax once that seller crosses an <strong>economic nexus</strong> threshold — most commonly $100,000 of annual sales into the state. Many states originally paired that with a separate "200 or more transactions" test, but a growing number have repealed the transaction prong and now use the dollar threshold alone, so a small seller with many low-value orders may no longer be caught. Thresholds and effective dates genuinely differ state to state and keep changing; confirm the current rule with the state's department of revenue before registering or deregistering.</p>
+
+      <h2>How to Find the Exact Rate for an Address</h2>
+      <ul>
+        <li><strong>Start with the state's revenue department.</strong> Most publish a free address-level rate lookup, and their figure is the authoritative one for filing. Search for "[state] department of revenue sales tax rate lookup."</li>
+        <li><strong>Give it a full street address</strong>, not a ZIP code, for the boundary reasons described above.</li>
+        <li><strong>Check what is taxable, not just the rate.</strong> Groceries, prescription drugs, clothing, and digital products are treated very differently across states — several exempt groceries entirely, some tax them at a reduced rate, and a handful tax them in full. A correct rate applied to a wrongly-taxed item is still a wrong invoice.</li>
+        <li><strong>Watch effective dates.</strong> Local rates commonly change on January 1, April 1, July 1, and October 1. A rate that was right last quarter may not be right this one.</li>
+        <li><strong>Re-check when you cross a threshold.</strong> Nexus obligations begin when you exceed a state's threshold, not when you notice.</li>
+      </ul>
+
+      <h2>Running the Numbers</h2>
+      <p>Once you have a rate, the arithmetic is straightforward, and our <a href="/sales-tax-calculator/">Sales Tax Calculator</a> handles both directions of it. Its US state selector loads the combined average from the table above as a starting estimate, and any rate can be typed in directly once you have the exact one:</p>
+      <ul>
+        <li><strong>Adding tax to a price:</strong> Tax = Price × (Rate ÷ 100). A $250 order at 8.25% adds $20.63, for a $270.63 total.</li>
+        <li><strong>Extracting tax from a total:</strong> Pre-tax = Total ÷ (1 + Rate ÷ 100). This is the one people get wrong — you cannot simply subtract 8.25% from a tax-inclusive total. A $270.63 gross at 8.25% is $250.00 pre-tax and $20.63 tax, not $248.30.</li>
+      </ul>
+      <p>That reverse calculation matters beyond bookkeeping: sales tax you collect was never your revenue, so it has to come out of gross receipts before you compute margins. Feeding a tax-inclusive figure into a margin calculation inflates the result — see <a href="/guides/how-to-calculate-profit-margin/">how to calculate profit margin</a> for why that number misleads, and the <a href="/guides/how-to-calculate-break-even-point/">break-even guide</a> for how per-unit margin drives the volume you need. When it is time to bill, our <a href="/invoice-generator/">Invoice Generator</a> and <a href="/receipt-generator/">Receipt Generator</a> produce itemized PDFs with tax lines, and the <a href="/percentage-calculator/">Percentage Calculator</a> covers the discount and markup math that usually sits alongside it.</p>
+      <p>Every one of these tools runs entirely in your browser. Order values, customer totals, and tax figures are calculated on your own device and never uploaded — which is the point when the numbers you are checking are your actual books.</p>
+
+      <h2>A Note on What This Page Is</h2>
+      <p>This is a reference for estimating and comparing, compiled from the ${SOURCE_NAME}'s published dataset and dated so you can see how current it is. It is not tax advice, and it cannot account for product-level exemptions, sales-tax holidays, marketplace-facilitator rules, or the particulars of your registration. For anything you are going to file, the state's revenue department — or an accountant who works in that state — is the source that counts.</p>
+    `,
+    faqs: [
+      {
+        question: 'Which state has the highest sales tax in 2026?',
+        answer: 'Louisiana has the highest average combined state and local sales tax rate at 10.13%, followed by Tennessee (9.61%), Washington (9.57%), Arkansas (9.48%), and Alabama (9.46%). California has the highest statewide rate at 7.25%, but its lower average local rates put its combined rate at 9.03%.'
+      },
+      {
+        question: 'Which states have no sales tax?',
+        answer: 'Alaska, Delaware, Montana, New Hampshire, and Oregon have no statewide sales tax. Alaska is the exception worth knowing: it allows local governments to levy their own sales taxes, which average 1.82% and reach 7.85% in some localities, so purchases there are not automatically tax-free.'
+      },
+      {
+        question: 'What is the average sales tax rate in the US?',
+        answer: 'The population-weighted average combined state and local sales tax rate is 7.53% as of July 1, 2026. That is a national average for comparison — it is not the rate at any particular address, and it should not be used to bill a customer.'
+      },
+      {
+        question: 'Why is the sales tax rate different in two towns in the same state?',
+        answer: 'Because counties, cities, and special districts levy their own rates on top of the state rate. Colorado, for example, has a 2.90% state rate but local rates that push the combined rate to 7.89% on average and as high as 12% in some jurisdictions. Only states that prohibit local sales taxes have a single rate everywhere.'
+      },
+      {
+        question: 'Can I use a ZIP code to look up a sales tax rate?',
+        answer: 'Not reliably. ZIP codes are postal delivery routes, not tax jurisdictions, and a single ZIP can span multiple cities, counties, or special districts with different rates. Use a full street address in your state revenue department\'s rate lookup for any rate you intend to charge or file.'
+      },
+      {
+        question: 'Do I charge sales tax based on my location or the customer\'s?',
+        answer: 'Most states use destination sourcing, meaning you charge the rate where the customer takes delivery. A minority apply origin sourcing to sales that stay within the state, charging the rate at the seller\'s location — Texas is the most cited example. For sales across state lines, the destination rate applies once you have economic nexus in that state.'
+      },
+      {
+        question: 'How do I calculate the pre-tax price from a total that includes tax?',
+        answer: 'Divide, do not subtract: Pre-Tax Price = Total ÷ (1 + Rate ÷ 100). A $270.63 total at 8.25% is $250.00 before tax and $20.63 of tax. Subtracting 8.25% from the total instead gives $248.30, which is wrong by more than a dollar and compounds across a full ledger.'
+      },
+      {
+        question: 'How current are these rates?',
+        answer: 'They reflect state and average local rates as of July 1, 2026, from the Tax Foundation\'s midyear 2026 dataset. Local rates commonly change on January 1, April 1, July 1, and October 1, so verify with the state revenue department before relying on a figure for a filing.'
       }
     ]
   }

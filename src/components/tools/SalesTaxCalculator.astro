@@ -1,4 +1,6 @@
 ---
+import { stateSalesTaxRates, AS_OF, US_AVERAGE_COMBINED } from '../../data/us-sales-tax-rates';
+
 const { slug, headline, subtitle } = Astro.props;
 ---
 
@@ -144,6 +146,18 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .tax-breakdown tr:last-child td { border-bottom: none; }
   .tax-breakdown td:last-child, .tax-breakdown th:last-child { text-align: right; }
+  .tax-state-note {
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--colors-mute);
+    margin: var(--spacing-xxs) 0 0;
+  }
+  .tax-state-note a {
+    color: var(--colors-link);
+    text-decoration: underline;
+  }
+  .tax-state-note a:hover { color: var(--colors-link-deep); }
+  .tax-state-note strong { color: var(--colors-body); font-weight: 600; }
   .formula-box {
     background-color: var(--colors-canvas-soft-2);
     border: 1px solid var(--colors-hairline);
@@ -169,15 +183,31 @@ const { slug, headline, subtitle } = Astro.props;
       <button class="tax-mode-tab" aria-pressed="false" id="taxTabRemove">Remove Sales Tax</button>
     </div>
 
+    <div class="tax-panel-title">US State Rate</div>
+    <div class="form-group" style="margin-bottom: 0; display: flex; flex-direction: column; gap: var(--spacing-xxs);">
+      <label class="form-label" for="taxUsState" style="font-size: 13px; font-weight: 500;">Select a state to load its combined rate</label>
+      <select id="taxUsState" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;">
+        <option value="" selected>— Choose a state —</option>
+        {stateSalesTaxRates.map(s => (
+          <option value={s.abbr} data-rate={s.combined.toFixed(2)} data-state={s.state}>
+            {s.state} — {s.combined.toFixed(2)}%
+          </option>
+        ))}
+      </select>
+      <p class="tax-state-note" id="taxStateNote">
+        State rate plus the average local rate, as of {AS_OF}. Local rates vary by address, so treat this as an estimate &mdash; <a href="/guides/us-sales-tax-by-state/">see the full rate table and how to find your exact rate</a>.
+      </p>
+    </div>
+
     <div class="tax-panel-title">Tax Rate Presets</div>
     <div class="preset-grid" id="taxPresetGrid">
-      <button class="preset-btn" data-rate="7.12">🇺🇸 US Avg 7.12%</button>
+      <button class="preset-btn active" data-rate={US_AVERAGE_COMBINED.toFixed(2)}>🇺🇸 US Avg {US_AVERAGE_COMBINED.toFixed(2)}%</button>
       <button class="preset-btn" data-rate="20">🇬🇧 UK VAT 20%</button>
       <button class="preset-btn" data-rate="5">🇨🇦 CA GST 5%</button>
       <button class="preset-btn" data-rate="13">🇨🇦 CA HST 13%</button>
       <button class="preset-btn" data-rate="10">🇦🇺 AU GST 10%</button>
       <button class="preset-btn" data-rate="19">🇩🇪 DE VAT 19%</button>
-      <button class="preset-btn active" data-rate="18">🇮🇳 IN GST 18%</button>
+      <button class="preset-btn" data-rate="18">🇮🇳 IN GST 18%</button>
       <button class="preset-btn" data-rate="10">🇯🇵 JP Tax 10%</button>
       <button class="preset-btn" id="presetBtnCustom" data-rate="custom">✨ Custom Rate</button>
     </div>
@@ -211,18 +241,18 @@ const { slug, headline, subtitle } = Astro.props;
       </div>
       <div class="form-group">
         <label class="form-label" for="taxRate1">Tax Rate (%)</label>
-        <input type="number" id="taxRate1" class="form-input" value="18" min="0" max="100" step="0.01" />
+        <input type="number" id="taxRate1" class="form-input" value="7.53" min="0" max="100" step="0.01" />
       </div>
     </div>
 
     <div id="taxFieldsRemove" style="display:none;">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="taxTotal2" id="taxLblTotal2">Total Price (Tax Inclusive) ($)</label>
-        <input type="number" id="taxTotal2" class="form-input" value="118" min="0" step="0.01" />
+        <input type="number" id="taxTotal2" class="form-input" value="107.53" min="0" step="0.01" />
       </div>
       <div class="form-group">
         <label class="form-label" for="taxRate2">Tax Rate (%)</label>
-        <input type="number" id="taxRate2" class="form-input" value="18" min="0" max="100" step="0.01" />
+        <input type="number" id="taxRate2" class="form-input" value="7.53" min="0" max="100" step="0.01" />
       </div>
     </div>
 
@@ -235,11 +265,11 @@ const { slug, headline, subtitle } = Astro.props;
     <div class="tax-result-card">
       <div class="tax-result-row">
         <span class="tax-result-label" id="taxResGrandLabel">Total (Tax Inclusive)</span>
-        <span class="tax-result-value grand" id="taxResGrand">$118.00</span>
+        <span class="tax-result-value grand" id="taxResGrand">$107.53</span>
       </div>
       <div class="tax-result-row">
         <span class="tax-result-label">Tax Amount</span>
-        <span class="tax-result-value" id="taxResTax">$18.00</span>
+        <span class="tax-result-value" id="taxResTax">$7.53</span>
       </div>
       <div class="tax-result-row">
         <span class="tax-result-label" id="taxResBaseLabel">Pre-Tax Price</span>
@@ -247,7 +277,7 @@ const { slug, headline, subtitle } = Astro.props;
       </div>
       <div class="tax-result-row">
         <span class="tax-result-label">Tax Rate</span>
-        <span class="tax-result-value" id="taxResRate">18.00%</span>
+        <span class="tax-result-value" id="taxResRate">7.53%</span>
       </div>
     </div>
 
@@ -262,16 +292,16 @@ const { slug, headline, subtitle } = Astro.props;
         </thead>
         <tbody id="taxBreakdownBody">
           <tr><td>Base Price</td><td>$100.00</td></tr>
-          <tr><td>Tax (18%)</td><td>$18.00</td></tr>
-          <tr><td style="font-weight:600; color: var(--colors-ink);">Total</td><td style="font-weight:600; color: var(--colors-ink);">$118.00</td></tr>
+          <tr><td>Tax (7.53%)</td><td>$7.53</td></tr>
+          <tr><td style="font-weight:600; color: var(--colors-ink);">Total</td><td style="font-weight:600; color: var(--colors-ink);">$107.53</td></tr>
         </tbody>
       </table>
     </div>
 
     <div class="tax-panel-title" style="margin-top: var(--spacing-sm);">Formula Used</div>
     <div class="formula-box" id="taxFormula">
-      Tax Amount = Price × (Rate ÷ 100) = $100.00 × 0.18 = $18.00<br/>
-      Total = Price + Tax = $100.00 + $18.00 = $118.00
+      Tax Amount = Price × (Rate ÷ 100) = $100.00 × 0.0753 = $7.53<br/>
+      Total = Price + Tax = $100.00 + $7.53 = $107.53
     </div>
   </div>
 </div>
@@ -282,11 +312,9 @@ const { slug, headline, subtitle } = Astro.props;
     let taxMode = 'add';
     let currSym = '$';
 
-    // Currency selector
+    // Currency selector (setCurrency is defined below, alongside the state picker)
     $('taxCurrency').addEventListener('change', function() {
-      currSym = this.value;
-      $('taxLblPrice1').textContent = `Pre-Tax Price (${currSym})`;
-      $('taxLblTotal2').textContent = `Total Price (Tax Inclusive) (${currSym})`;
+      setCurrency(this.value);
       calculate();
     });
 
@@ -308,11 +336,48 @@ const { slug, headline, subtitle } = Astro.props;
       calculate();
     });
 
+    // US state selector — loads that state's combined (state + average local) rate.
+    const stateSelect = $('taxUsState');
+    const stateNote = $('taxStateNote');
+    const stateNoteDefault = stateNote.innerHTML;
+
+    function setCurrency(sym) {
+      currSym = sym;
+      $('taxCurrency').value = sym;
+      $('taxLblPrice1').textContent = `Pre-Tax Price (${sym})`;
+      $('taxLblTotal2').textContent = `Total Price (Tax Inclusive) (${sym})`;
+    }
+
+    // The note names a state, so it must stop naming one the moment the rate
+    // stops being that state's rate — otherwise it mislabels the number.
+    function clearStateSelection() {
+      if (stateSelect.value !== '') {
+        stateSelect.value = '';
+        stateNote.innerHTML = stateNoteDefault;
+      }
+    }
+
+    stateSelect.addEventListener('change', function() {
+      const opt = this.options[this.selectedIndex];
+      const rate = parseFloat(opt.dataset.rate);
+      if (isNaN(rate)) {
+        stateNote.innerHTML = stateNoteDefault;
+        return;
+      }
+      $('taxRate1').value = rate;
+      $('taxRate2').value = rate;
+      setCurrency('$');
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      stateNote.innerHTML = `<strong>${opt.dataset.state}: ${rate.toFixed(2)}%</strong> — state rate plus the <em>average</em> local rate. Local rates vary by address, so use this to estimate and confirm the exact rate with the state revenue department before filing. <a href="/guides/us-sales-tax-by-state/">Full rate table for all 50 states</a>.`;
+      calculate();
+    });
+
     // Preset buttons
     document.querySelectorAll('.preset-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        clearStateSelection();
         if (btn.dataset.rate === 'custom') {
           if (taxMode === 'add') {
             $('taxRate1').focus();
@@ -334,6 +399,7 @@ const { slug, headline, subtitle } = Astro.props;
     ['taxRate1', 'taxRate2'].forEach(id => {
       $(id).addEventListener('input', () => {
         const val = parseFloat($(id).value);
+        clearStateSelection();
         let matched = false;
         document.querySelectorAll('.preset-btn').forEach(btn => {
           if (btn.dataset.rate !== 'custom' && parseFloat(btn.dataset.rate) === val) {
