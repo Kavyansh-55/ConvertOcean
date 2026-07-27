@@ -7,7 +7,11 @@ const { title, description, lang = 'en', toolName, category, categorySlug, isToo
 
 // Determine paths for canonicals and alternates
 const canonicalPath = Astro.url.pathname;
-const cleanPath = canonicalPath.replace(/^\/(hi|es|fr|de|pt|it|nl|ru|tr|pl|uk|ar|fa|ur|bn|pa|ta|te|mr|gu|zh|ja|ko|th|vi|id|ms|fil)/, '');
+// The (?=\/|$) boundary is essential: without it a locale code matches the START
+// of an ordinary path, so /guides/ lost its "/gu" (Gujarati) and canonicalised to
+// convertocean.comides/. Same for /file-converter/ (fil), /developer-tools/ (de)
+// and /terms/ (te). Only strip a locale that is a whole path segment.
+const cleanPath = canonicalPath.replace(/^\/(hi|es|fr|de|pt|it|nl|ru|tr|pl|uk|ar|fa|ur|bn|pa|ta|te|mr|gu|zh|ja|ko|th|vi|id|ms|fil)(?=\/|$)/, '');
 const normalizedCleanPath = cleanPath.endsWith('/') ? cleanPath : `${cleanPath}/`;
 
 // Generate canonical URL (localised for multi-language pages to ensure proper indexing)
