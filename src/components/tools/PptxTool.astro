@@ -1032,8 +1032,13 @@ let targetFormat = "PDF";
      COLOR RESOLVER  –  solidFill, schemeClr, sysClr, prstClr
   ================================================================ */
   function colorFromSolidFill(node, theme) {
-    // Directly the solidFill, OR search within node
-    let solid = node.nodeName === 'a:solidFill' ? node : node.getElementsByTagName('a:solidFill')[0];
+    // Prefer a DIRECT-child solidFill: a table cell's borders (a:lnL/lnR/…)
+    // carry their own nested solidFill that appears first in document order,
+    // so a plain descendant search returned the grey border colour as the
+    // cell fill. Fall back to a descendant only when there is no direct one.
+    let solid;
+    if (node.nodeName === 'a:solidFill') solid = node;
+    else solid = Array.from(node.childNodes).find(n => n.nodeName === 'a:solidFill');
     if (!solid) return null;
 
     // srgbClr
