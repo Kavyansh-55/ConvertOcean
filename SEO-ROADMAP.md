@@ -154,6 +154,24 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 
 **Theme: authority + demand-driven expansion.** Cycle 1 built the site; Cycle 2 makes the web point at it. Operating rules from Cycle 1 carry over unchanged (quality gate, branch → approve → deploy, link-surface checklist).
 
+---
+
+## ⭐ HIGH-RPM PRIORITY QUEUE (added 2026-07-27) — do these in order
+
+**Kavya's new goal (2026-07-27): shift the traffic mix toward high-RPM countries (US/UK/CA/AU), not just raw volume.** Current audience skews India (exam-form niche, ~$1–3 RPM); target markets run ~$10–30. RPM is a geography + niche problem: the tools are language-neutral, so the levers are (a) which queries we target and (b) where backlinks come from. This queue re-weights toward high-CPC niches (finance/business/dev) and Western backlink channels. **The N-numbered tasks below remain the backlog; do THIS queue first.**
+
+**To run:** in a new chat say *"start the next RPM session"* (or *"do the next unchecked task in SEO-ROADMAP.md's high-RPM queue"*). I do ONE item to the quality gate, on a branch, then STOP for approval — no auto-deploy (AdSense window until the resubmit clears).
+
+- [ ] **RPM-1 — High-RPM business/finance tool or content #1.** Highest-CPC ad category + Western intent. If GSC impression data is available, pick from it; else default to a **US sales-tax-by-state** angle (enhance the existing /sales-tax-calculator/ with state rates + a "sales tax by state" reference, or a dedicated page) — clear US demand, high CPC. Full quality gate: unique 300+ words, FAQ + schema, internal links, footer/sitemap/homepage wiring. Additive (new/expanded page, don't churn indexed ones during AdSense window).
+- [ ] **RPM-2 — Authority: GitHub + awesome-lists (real Western dofollow links).** Optimize the public repo as a discovery surface (topics/tags, README hero with live-demo link, screenshots). Draft + open PRs to fitting `awesome-*` lists (awesome-privacy, awesome-open-source-alternatives, awesome-selfhosted-adjacent) — the no-upload + MIT-source story is a genuine fit. Prep a Show HN / r/webdev / r/privacy post asset pack (tagline, screenshots, maker comment on the client-side architecture); POSTING is Kavya's call/timing. These audiences are US/UK-heavy AND high-RPM, and the links build US-SERP ranking authority.
+- [ ] **RPM-3 — Developer-tools content push (Western dev audience, decent RPM).** 1–2 guides targeting Western dev queries that feed the JSON formatter + CSV/JSON converters (e.g. "JSON formatting/validation best practices", "convert CSV to JSON in <language>"). Bidirectional internal links to the dev tools. Same quality gate.
+- [ ] **RPM-4 — Western positioning of the office converters + quick-answers batch 3.** Ensure the top converters (pdf↔word/excel, merge/split) read for US/UK "convert X to Y" intent; extend AEO quick answers (batch 3, ~12 more tools — the N11 item) weighted to the high-value converters. Additive.
+- [ ] **RPM-measure — geo/RPM check (needs GA4 + AdSense data, after resubmit clears).** Read the country split + RPM-by-country in GA4/AdSense; record which Western-intent topics are gaining. Feed the winners into RPM-1's successor and N8. This is the data gate that should steer later sessions.
+
+**Note on N10 (exam-form cheat sheet):** it's a VOLUME play from India — low RPM. Keep it as the seasonal/volume complement, NOT the headline, now that high-RPM is the priority. Build it opportunistically (e.g., ahead of an exam application window), not ahead of the RPM queue.
+
+---
+
 ### N1 — Jul 30 pre-flight + AdSense resubmit *(date-gated: run on/after Jul 30)*
 - [ ] **HOUSEKEEPING (carried from Jul 21):** delete `Desktop/ConvertOcean-backup-pre-rewrite.git` — the pre-open-source mirror backup. It contains the real Gmail in commit metadata. Never push it. Safe to delete any time from early Aug.
 - [ ] GSC check: crawl dates on /break-even-calculator/, /csv-to-xlsx/, /split-excel/, /csv-to-json/ are post-Jul-19; guides indexing started.
@@ -175,11 +193,11 @@ _(routine appends a dated one-line entry per session: what shipped, what's pendi
 
 ### N4–N5 — vs batch 2 (from backlog)
 - [x] N4: /vs/iloveimg/ + /vs/pdf24/ (fairness sections included, hedged pricing). *(Done 2026-07-20, branch `seo/n4-vs-iloveimg-pdf24`: 939/922 words, honest tables incl. competitor-wins rows; PDF24 credited as genuinely free with a real Windows offline app — differentiated on privacy/scope not price; iLoveIMG angle = local image resize/compress-to-KB for forms. Footer + sitemap wired. UI-polish lane item shipped same batch: button micro-interactions — replaced `transition: all` with explicit props, added tactile :active press states, touch-action + reduced-motion guards.)*
-- [ ] N5: /vs/sejda/ + /vs/tinywow/. Update footer vs-block + sitemap page (checklist rule!).
+- [x] N5: /vs/sejda/ + /vs/tinywow/. Update footer vs-block + sitemap page (checklist rule!). *(Done 2026-07-22 — deployed, verified live; see progress log. 10 vs pages / 94 sitemap URLs.)*
 
 ### N6–N7 — Conversion of attention
 - [x] N6: Quick answers batch 2 — next ~15 tool pages by traffic priority. *(Done 2026-07-27, branch `seo/n6-quick-answers-batch2`: 12 AEO quick-answer blocks added, coverage 18→30 tools — png-to-jpg, jpg-to-png, image-to-pdf, pptx-to-pdf, pdf-to-txt, txt-to-pdf, png-to-webp, webp-to-png, json-formatter, word-counter, csv-to-xlsx, xlsx-to-csv. Each ~50 words, Pattern-1 "To… " extractable, unique + accurate to the tool (png-to-jpg names the transparency→white behaviour, pptx notes .ppt must be re-saved), privacy close. Additive only — no indexed page churned during the AdSense window. Remaining lower-priority tools (svg trio, xls/xml legacy variants, merge/split family) → batch 3 at N11. Pending approval.)*
-- [ ] N7: GA4 key events (currently 0 defined): tool_used / file_converted / download events, so "views per user" becomes measurable engagement. Document the weekly GSC snapshot ritual (impressions, clicks, indexed — one row per week below).
+- [x] N7: GA4 key events (currently 0 defined): tool_used / file_converted / download events, so "views per user" becomes measurable engagement. Document the weekly GSC snapshot ritual (impressions, clicks, indexed — one row per week below). *(Done 2026-07-23 — deployed, verified live; tool_used + file_converted events privacy-safe (extension + size-bucket only), transmission to GA4 confirmed. User action: mark as key events in GA4.)*
 
 ### N8–N9 — Demand-driven content (requires N1 GSC data)
 - [ ] N8: New tool chosen from actual GSC impression queries (candidates: PDF compressor, image compressor — decide from data, not guesses).
