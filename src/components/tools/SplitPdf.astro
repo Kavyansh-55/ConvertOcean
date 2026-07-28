@@ -11,6 +11,38 @@ const { slug, headline, subtitle } = Astro.props;
     max-height: 350px;
     overflow-y: auto;
   }
+  .split-range-bar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    padding-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--colors-hairline);
+  }
+  .split-range-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1 1 260px;
+    min-width: 0;
+  }
+  .split-range-field .form-input { max-width: 320px; }
+  .split-range-hint {
+    font-size: 11.5px;
+    color: var(--colors-mute);
+  }
+  .split-range-hint.invalid { color: var(--colors-danger, #b91c1c); }
+  .split-range-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+  }
+  @media (max-width: 600px) {
+    .split-range-bar { align-items: stretch; }
+    .split-range-field .form-input { max-width: none; }
+  }
   .page-thumb-card {
     background-color: var(--colors-canvas-soft);
     border: 1px solid var(--colors-hairline);
@@ -72,6 +104,17 @@ const { slug, headline, subtitle } = Astro.props;
 </div>
 
 <div id="splitWorkspace" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
+  <div class="split-range-bar">
+    <div class="split-range-field">
+      <label class="input-label" for="pageRanges">Pages to extract</label>
+      <input type="text" id="pageRanges" class="form-input" placeholder="e.g. 1-5, 8, 11-13" autocomplete="off" />
+      <span class="split-range-hint" id="pageRangeHint">Type page numbers or ranges — or click the pages below.</span>
+    </div>
+    <div class="split-range-actions">
+      <button type="button" class="button button-secondary" id="btnSelectAllPages">Select all</button>
+      <button type="button" class="button button-secondary" id="btnClearPages">Clear selection</button>
+    </div>
+  </div>
   <div id="pagesGrid" class="pages-grid" style="margin-bottom: var(--spacing-md);"></div>
   <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
     <input type="text" id="splitOutputName" class="form-input" style="max-width: 300px;" value="extracted_pages.pdf" />
@@ -98,6 +141,10 @@ const { slug, headline, subtitle } = Astro.props;
     const splitOutputName = document.getElementById('splitOutputName');
     const btnExtract = document.getElementById('btnExtract');
     const btnClear = document.getElementById('btnClear');
+    const pageRanges = document.getElementById('pageRanges');
+    const pageRangeHint = document.getElementById('pageRangeHint');
+    const btnSelectAllPages = document.getElementById('btnSelectAllPages');
+    const btnClearPages = document.getElementById('btnClearPages');
 
     let splitFile = null;
     let selectedPages = new Set();
@@ -168,7 +215,10 @@ const { slug, headline, subtitle } = Astro.props;
           splitFile = { name: file.name, bytes: bytes, count: pdf.numPages };
           splitOutputName.value = file.name.replace(/\.[^/.]+$/, "") + '_extracted.pdf';
           selectedPages.clear();
-          
+          pageRanges.value = '';
+          editingRanges = false;
+          updateSelectionHint();
+
           pagesGrid.innerHTML = '';
           
           for(let i = 1; i <= pdf.numPages; i++) {
@@ -218,7 +268,121 @@ const { slug, headline, subtitle } = Astro.props;
         selectedPages.delete(pageIndex);
         cardElement.classList.remove('selected');
       }
+      // Touching the grid hands control back to it: without this the field stays
+      // frozen on whatever was last typed and silently disagrees with the pages.
+      editingRanges = false;
+      syncRangeFromSelection();
     }
+
+    // --- Page range input -------------------------------------------------
+    // Clicking 40 thumbnails one at a time is the wrong tool for "pages 1-30",
+    // so ranges and clicking drive the same selection and stay in sync.
+
+    // "1-5, 8, 11-13" -> Set{1,2,3,4,5,8,11,12,13}. Returns null if the text is
+    // malformed so the caller can say so instead of silently selecting nothing.
+    function parsePageRanges(text, maxPage) {
+      if (!text.trim()) return new Set();
+      const out = new Set();
+      for (const rawPart of text.split(',')) {
+        const part = rawPart.trim();
+        if (!part) continue;
+        const range = part.match(/^(\d+)\s*[-–—]\s*(\d+)$/);
+        const single = part.match(/^(\d+)$/);
+        if (range) {
+          let a = parseInt(range[1], 10);
+          let b = parseInt(range[2], 10);
+          if (!a || !b) return null;
+          if (a > b) { const t = a; a = b; b = t; }   // "10-5" reads as 5-10
+          if (a < 1 || b > maxPage) return null;
+          for (let n = a; n <= b; n++) out.add(n);
+        } else if (single) {
+          const n = parseInt(single[1], 10);
+          if (n < 1 || n > maxPage) return null;
+          out.add(n);
+        } else {
+          return null;
+        }
+      }
+      return out;
+    }
+
+    // Set{1,2,3,5,8,9} -> "1-3, 5, 8-9"
+    function formatPageRanges(pages) {
+      const sorted = Array.from(pages).sort((a, b) => a - b);
+      const parts = [];
+      let i = 0;
+      while (i < sorted.length) {
+        let j = i;
+        while (j + 1 < sorted.length && sorted[j + 1] === sorted[j] + 1) j++;
+        parts.push(i === j ? String(sorted[i]) : sorted[i] + '-' + sorted[j]);
+        i = j + 1;
+      }
+      return parts.join(', ');
+    }
+
+    function applySelection(pages) {
+      selectedPages = new Set(pages);
+      pagesGrid.querySelectorAll('.page-thumb-card').forEach((card, idx) => {
+        const pageNo = idx + 1;
+        const box = card.querySelector('.page-thumb-checkbox');
+        const on = selectedPages.has(pageNo);
+        box.checked = on;
+        card.classList.toggle('selected', on);
+      });
+      updateSelectionHint();
+    }
+
+    function updateSelectionHint(msg, invalid) {
+      const total = (splitFile && splitFile.count) || 0;
+      pageRangeHint.classList.toggle('invalid', !!invalid);
+      pageRangeHint.textContent = msg || (
+        selectedPages.size === 0
+          ? 'Type page numbers or ranges — or click the pages below.'
+          : selectedPages.size + ' of ' + total + ' page' + (total === 1 ? '' : 's') + ' selected.'
+      );
+    }
+
+    // Typing wins over the field's own formatting: rewriting the text mid-edit
+    // would fight the cursor, so the field is only reformatted on blur.
+    let editingRanges = false;
+
+    function syncRangeFromSelection() {
+      if (!editingRanges) pageRanges.value = formatPageRanges(selectedPages);
+      updateSelectionHint();
+    }
+
+    pageRanges.addEventListener('input', () => {
+      editingRanges = true;
+      const total = (splitFile && splitFile.count) || 0;
+      const parsed = parsePageRanges(pageRanges.value, total);
+      if (parsed === null) {
+        updateSelectionHint('Use numbers and ranges within 1–' + total + ', e.g. "1-5, 8".', true);
+        return;
+      }
+      applySelection(parsed);
+    });
+
+    pageRanges.addEventListener('blur', () => {
+      editingRanges = false;
+      const total = (splitFile && splitFile.count) || 0;
+      if (parsePageRanges(pageRanges.value, total) !== null) {
+        pageRanges.value = formatPageRanges(selectedPages);
+        updateSelectionHint();
+      }
+    });
+
+    btnSelectAllPages.addEventListener('click', () => {
+      const total = (splitFile && splitFile.count) || 0;
+      const all = [];
+      for (let n = 1; n <= total; n++) all.push(n);
+      applySelection(all);
+      pageRanges.value = formatPageRanges(selectedPages);
+    });
+
+    btnClearPages.addEventListener('click', () => {
+      applySelection([]);
+      pageRanges.value = '';
+    });
 
     btnExtract.addEventListener('click', async () => {
       hideError();
@@ -257,6 +421,9 @@ const { slug, headline, subtitle } = Astro.props;
     function resetFile() {
       splitFile = null;
       selectedPages.clear();
+      pageRanges.value = '';
+      editingRanges = false;
+      updateSelectionHint();
       splitWorkspace.style.display = 'none';
       dropZone.style.display = 'flex';
       fileInput.value = '';
