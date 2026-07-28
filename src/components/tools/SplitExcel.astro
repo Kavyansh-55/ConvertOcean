@@ -90,7 +90,7 @@ const { slug, headline, subtitle } = Astro.props;
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="🥞" width="40" height="40" /></div>
   <div class="upload-text-primary">Drag and drop a spreadsheet file here, or click to browse</div>
-  <div class="upload-text-secondary">Upload XLS, XLSX, or CSV workbook (Max 25MB)</div>
+  <div class="upload-text-secondary">XLS, XLSX, or CSV workbook (Max 25MB)</div>
   <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv" />
 </div>
 
@@ -241,7 +241,7 @@ const { slug, headline, subtitle } = Astro.props;
       hideError();
       const ext = file.name.split('.').pop().toLowerCase();
       if (!['xlsx', 'xls', 'csv'].includes(ext)) {
-        showError("Unsupported format. Upload a valid Excel (.xlsx, .xls) or CSV file.");
+        showError("Unsupported format. Choose a valid Excel (.xlsx, .xls) or CSV file.");
         return;
       }
 

@@ -218,7 +218,7 @@ const { slug, headline, subtitle } = Astro.props;
     <div class="img-preview-box">
       <img id="rzPreview" class="img-preview" alt="Resized image preview" />
     </div>
-    <div class="result-summary" id="rzSummary">Upload an image to begin.</div>
+    <div class="result-summary" id="rzSummary">Choose an image to begin.</div>
     <div class="button-group">
       <button class="button button-primary" id="rzDownload" disabled>Download</button>
       <button class="button button-danger" id="rzClear">Clear</button>
@@ -270,7 +270,7 @@ const { slug, headline, subtitle } = Astro.props;
       hideError();
       const ext = file.name.split('.').pop().toLowerCase();
       if (!['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
-        showError('Please upload a JPG, JPEG, PNG, or WebP image.');
+        showError('Please choose a JPG, JPEG, PNG, or WebP image.');
         return;
       }
       if (file.size > 15 * 1024 * 1024) {
@@ -471,7 +471,7 @@ const { slug, headline, subtitle } = Astro.props;
       dropZone.style.display = 'flex';
       fileInput.value = '';
       $('rzDownload').disabled = true;
-      $('rzSummary').textContent = 'Upload an image to begin.';
+      $('rzSummary').textContent = 'Choose an image to begin.';
     });
   })();
 </script>

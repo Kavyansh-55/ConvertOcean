@@ -3,7 +3,7 @@ import CategoryIcon from '../CategoryIcon.astro';
 const { slug, headline, subtitle } = Astro.props;
 
 let acceptMime = ".docx";
-let uploadLabel = "Upload Word Document (.docx) (Max 15MB)";
+let uploadLabel = "Word document (.docx) (Max 15MB)";
 let targetFormat = "PDF";
 if (slug === 'docx-to-txt') {
   targetFormat = "TXT";
@@ -150,7 +150,7 @@ if (slug === 'docx-to-txt') {
       const extension = file.name.split('.').pop().toLowerCase();
 
       if (extension !== 'docx') {
-        showError("Invalid file format. Please upload a .docx Word document.");
+        showError("Invalid file format. Please choose a .docx Word document.");
         return;
       }
 

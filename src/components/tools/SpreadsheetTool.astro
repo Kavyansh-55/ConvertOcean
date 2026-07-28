@@ -4,51 +4,51 @@ const { slug, name, headline, subtitle } = Astro.props;
 
 // Determine file inputs accept attributes and details
 let acceptMime = ".csv";
-let uploadLabel = "Upload CSV file";
+let uploadLabel = "CSV";
 let targetFormat = "JSON";
 if (slug === 'csv-to-json') {
   acceptMime = ".csv";
-  uploadLabel = "Upload CSV file (Max 25MB)";
+  uploadLabel = "CSV (Max 25MB)";
   targetFormat = "JSON";
 } else if (slug === 'json-to-csv') {
   acceptMime = ".json";
-  uploadLabel = "Upload JSON file (Max 15MB)";
+  uploadLabel = "JSON (Max 15MB)";
   targetFormat = "CSV";
 } else if (slug === 'xlsx-to-csv') {
   acceptMime = ".xlsx,.xls";
-  uploadLabel = "Upload XLSX or XLS file (Max 25MB)";
+  uploadLabel = "XLSX or XLS (Max 25MB)";
   targetFormat = "CSV";
 } else if (slug === 'csv-to-xlsx') {
   acceptMime = ".csv";
-  uploadLabel = "Upload CSV file (Max 25MB)";
+  uploadLabel = "CSV (Max 25MB)";
   targetFormat = "XLSX";
 } else if (slug === 'json-to-xlsx') {
   acceptMime = ".json";
-  uploadLabel = "Upload JSON file (Max 15MB)";
+  uploadLabel = "JSON (Max 15MB)";
   targetFormat = "XLSX";
 } else if (slug === 'xml-to-json') {
   acceptMime = ".xml";
-  uploadLabel = "Upload XML file (Max 15MB)";
+  uploadLabel = "XML (Max 15MB)";
   targetFormat = "JSON";
 } else if (slug === 'xlsx-to-json') {
   acceptMime = ".xlsx";
-  uploadLabel = "Upload XLSX file (Max 25MB)";
+  uploadLabel = "XLSX (Max 25MB)";
   targetFormat = "JSON";
 } else if (slug === 'xls-to-json') {
   acceptMime = ".xls";
-  uploadLabel = "Upload XLS file (Max 25MB)";
+  uploadLabel = "XLS (Max 25MB)";
   targetFormat = "JSON";
 } else if (slug === 'xls-to-csv') {
   acceptMime = ".xls";
-  uploadLabel = "Upload XLS file (Max 25MB)";
+  uploadLabel = "XLS (Max 25MB)";
   targetFormat = "CSV";
 } else if (slug === 'xml-to-csv') {
   acceptMime = ".xml";
-  uploadLabel = "Upload XML file (Max 15MB)";
+  uploadLabel = "XML (Max 15MB)";
   targetFormat = "CSV";
 } else if (slug === 'xml-to-xlsx') {
   acceptMime = ".xml";
-  uploadLabel = "Upload XML file (Max 15MB)";
+  uploadLabel = "XML (Max 15MB)";
   targetFormat = "XLSX";
 }
 

@@ -44,7 +44,7 @@ const { slug, headline, subtitle } = Astro.props;
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="📄" width="40" height="40" /></div>
   <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
-  <div class="upload-text-secondary">Upload PDF file (Max 25MB)</div>
+  <div class="upload-text-secondary">PDF (Max 25MB)</div>
   <input type="file" id="fileInput" class="file-input" accept=".pdf" />
 </div>
 
@@ -174,7 +174,7 @@ const { slug, headline, subtitle } = Astro.props;
   async function handleFile(file) {
     hideError();
     if (!/\.pdf$/i.test(file.name)) {
-      showError('Invalid file format. Please upload a .pdf document.');
+      showError('Invalid file format. Please choose a .pdf document.');
       return;
     }
     if (file.size > 25 * 1024 * 1024) {
