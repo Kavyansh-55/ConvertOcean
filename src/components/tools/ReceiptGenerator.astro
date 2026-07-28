@@ -739,12 +739,15 @@ const { slug, headline, subtitle } = Astro.props;
     $('rcptBtnDownload').addEventListener('click', () => {
       const el = $('receiptPdfContainer');
       const clone = el.cloneNode(true);
+      // Must stay in normal flow — html2canvas measures an out-of-flow element as
+      // zero height, which is what made this PDF blank. See InvoiceGenerator.
       clone.style.transform = 'none';
-      clone.style.position = 'absolute';
-      clone.style.left = '0';
-      clone.style.top = '0';
-      clone.style.zIndex = '-9999';
+      clone.style.position = 'static';
+      clone.style.marginLeft = '-10000px';
       clone.style.width = '794px';
+      clone.style.height = 'auto';
+      clone.removeAttribute('id');
+      clone.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
       document.body.appendChild(clone);
       const fn = (rcptData.No || 'receipt') + '_' + rcptData.ClientName.replace(/\s+/g, '_').toLowerCase() + '.pdf';
       html2pdf().set({

@@ -356,9 +356,13 @@ function exportElementToPdf(element, opt) {
   var ided = clone.querySelectorAll('[id]');
   for (var n = 0; n < ided.length; n++) ided[n].removeAttribute('id');
 
-  clone.style.position = 'fixed';
-  clone.style.left = '-10000px';
-  clone.style.top = '0';
+  // The clone MUST stay in normal flow. html2canvas measures an out-of-flow
+  // element as ZERO HEIGHT, so `position: fixed` here rendered a 1438x0 canvas
+  // and every export came out blank. A negative margin hides it without leaving
+  // the flow, and unlike a negative `left` it adds no horizontal scrollbar.
+  // Verified: fixed -> 1438x0, static -> 1438x1368 on the same content.
+  clone.style.position = 'static';
+  clone.style.marginLeft = '-10000px';
   clone.style.zIndex = '-9999';
   clone.style.width = element.offsetWidth ? element.offsetWidth + 'px' : '794px';
   clone.style.maxHeight = 'none';
