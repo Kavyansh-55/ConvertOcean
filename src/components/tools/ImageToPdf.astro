@@ -156,7 +156,7 @@ const { slug, headline, subtitle } = Astro.props;
       hideError();
       const imageFiles = files.filter(f => f.type.startsWith('image/'));
       if (imageFiles.length === 0) {
-        showError("Please upload valid image files (JPG, PNG, WebP).");
+        showError("Please choose valid image files (JPG, PNG, WebP).");
         return;
       }
 

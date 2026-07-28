@@ -99,7 +99,7 @@ const { slug, headline, subtitle } = Astro.props;
 <div class="workspace-layout merge-txt-container">
   <!-- Upload & Arrange List Panel -->
   <div class="panel-card">
-    <h3 class="panel-section-title">Upload & Arrange Texts</h3>
+    <h3 class="panel-section-title">Add & Arrange Texts</h3>
     
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon"><CategoryIcon icon="📝" width="40" height="40" /></div>
@@ -227,7 +227,7 @@ const { slug, headline, subtitle } = Astro.props;
       );
 
       if (textFiles.length === 0) {
-        showError("Please upload valid text files (.txt, .md, .log, .csv, etc.).");
+        showError("Please choose valid text files (.txt, .md, .log, .csv, etc.).");
         return;
       }
 

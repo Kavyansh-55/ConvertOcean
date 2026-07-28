@@ -68,7 +68,7 @@ const { slug, headline, subtitle } = Astro.props;
 <div class="workspace-layout merge-pdf-container">
   <!-- Upload & Arrange List Panel -->
   <div class="panel-card">
-    <h3 class="panel-section-title">Upload & Arrange PDFs</h3>
+    <h3 class="panel-section-title">Add & Arrange PDFs</h3>
     
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon"><CategoryIcon icon="🥞" width="40" height="40" /></div>
@@ -238,7 +238,7 @@ const { slug, headline, subtitle } = Astro.props;
 
     btnMerge.addEventListener('click', async () => {
       if (mergeFiles.length < 2) {
-        showError("Please upload at least 2 PDF files.");
+        showError("Please add at least 2 PDF files.");
         return;
       }
       showProgress(20, "Compiling PDF merging…");

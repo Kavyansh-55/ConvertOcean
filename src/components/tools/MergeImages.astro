@@ -98,7 +98,7 @@ const { slug, headline, subtitle } = Astro.props;
 <div class="workspace-layout merge-images-container">
   <!-- Upload & List Panel -->
   <div class="panel-card">
-    <h3 class="panel-section-title">Upload & Arrange Images</h3>
+    <h3 class="panel-section-title">Add & Arrange Images</h3>
     
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon"><CategoryIcon icon="🖼️" width="40" height="40" /></div>
@@ -220,7 +220,7 @@ const { slug, headline, subtitle } = Astro.props;
         return;
       }
 
-      showProgress(10, "Reading uploaded images…");
+      showProgress(10, "Reading selected images…");
 
       let readCount = 0;
       imageFiles.forEach(file => {

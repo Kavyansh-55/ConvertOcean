@@ -71,7 +71,7 @@ const { slug, headline, subtitle } = Astro.props;
 <div class="workspace-layout merge-pptx-container">
   <!-- Upload & Arrange List Panel -->
   <div class="panel-card">
-    <h3 class="panel-section-title">Upload & Arrange PowerPoint Presentations</h3>
+    <h3 class="panel-section-title">Add & Arrange PowerPoint Presentations</h3>
     
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon"><CategoryIcon icon="📊" width="40" height="40" /></div>
@@ -266,7 +266,7 @@ const { slug, headline, subtitle } = Astro.props;
 
     btnMerge.addEventListener('click', async () => {
       if (mergeFiles.length < 2) {
-        showError("Please upload at least 2 PowerPoint presentations.");
+        showError("Please add at least 2 PowerPoint presentations.");
         return;
       }
       showProgress(20, "Loading base PowerPoint structure…");

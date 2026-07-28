@@ -99,7 +99,7 @@ const { slug, headline, subtitle } = Astro.props;
 <div class="workspace-layout merge-excel-container">
   <!-- Upload & Arrange List Panel -->
   <div class="panel-card">
-    <h3 class="panel-section-title">Upload & Arrange Spreadsheets</h3>
+    <h3 class="panel-section-title">Add & Arrange Spreadsheets</h3>
     
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon"><CategoryIcon icon="🥞" width="40" height="40" /></div>
@@ -278,7 +278,7 @@ const { slug, headline, subtitle } = Astro.props;
 
     window.mergeSpreadsheets = function() {
       if (mergeQueue.length < 2) {
-        showError("Please upload at least 2 spreadsheet files to merge.");
+        showError("Please add at least 2 spreadsheet files to merge.");
         return;
       }
       showProgress(30, "Merging worksheets client-side…");

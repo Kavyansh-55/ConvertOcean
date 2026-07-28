@@ -203,7 +203,7 @@ export const comparisons: ComparisonData[] = [
       },
       {
         q: 'How does ConvertOcean handle PDF merging client-side?',
-        a: 'Our tools use the PDF-lib WebAssembly binary to read the structural page trees of your uploaded documents directly in the browser. It maps pages to a new document stream and exports the merged output instantly, avoiding network upload/download queues.'
+        a: 'Our tools use the PDF-lib WebAssembly binary to read the structural page trees of your selected documents directly in the browser. It maps pages to a new document stream and exports the merged output instantly, avoiding network upload/download queues.'
       },
       {
         q: 'Does ConvertOcean save files in my browser history?',
