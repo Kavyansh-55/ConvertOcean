@@ -311,7 +311,7 @@ export const guides: GuideData[] = [
       <h2>Step-by-Step: Converting Excel to PDF Securely on ConvertOcean</h2>
       <p>ConvertOcean parses and renders spreadsheet data locally on your device. Follow these steps for clean conversions:</p>
       <div class="content-card">
-        <h3 style="margin-top: 0;">Step 1: Upload Your Sheet</h3>
+        <h3 style="margin-top: 0;">Step 1: Choose Your Sheet</h3>
         <p>Go to the <a href="/excel-to-pdf/">Excel to PDF Converter</a>. Drop your XLS, XLSX, or CSV file. The file parses entirely inside sandboxed browser memory.</p>
         
         <h3>Step 2: Check Layout Preview</h3>
@@ -421,7 +421,7 @@ export const guides: GuideData[] = [
       <p>ConvertOcean uses WebAssembly to run the OCR engine directly inside your browser window. Here is how it works:</p>
       <div class="content-card">
         <h3 style="margin-top: 0;">Step 1: Upload Scan or Screenshot</h3>
-        <p>Go to the <a href="/image-to-text/">Image to Text OCR</a> tool and upload your file. The file loads in sandboxed memory.</p>
+        <p>Go to the <a href="/image-to-text/">Image to Text OCR</a> tool and select your file. The file loads in sandboxed memory.</p>
         
         <h3>Step 2: Recognize Characters Locally</h3>
         <p>The WebAssembly library processes pixel arrays using your local device CPU. No pixel data is sent to external APIs.</p>

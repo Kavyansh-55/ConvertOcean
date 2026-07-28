@@ -4,7 +4,14 @@
 
 **60+ free file tools that run entirely in your browser — your files never leave your device.**
 
-[convertocean.com](https://convertocean.com) · [Guides](https://convertocean.com/guides/) · [How privacy works](https://convertocean.com/privacy-first/)
+[**Try it live →**](https://convertocean.com) · [Guides](https://convertocean.com/guides/) · [How privacy works](https://convertocean.com/privacy-first/)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Built with Astro](https://img.shields.io/badge/built%20with-Astro-ff5d01.svg)](https://astro.build)
+[![No upload](https://img.shields.io/badge/files%20uploaded-0%20bytes-2ea44f.svg)](https://convertocean.com/privacy-first/)
+[![Works offline](https://img.shields.io/badge/works-offline-informational.svg)](#what-it-is)
+
+![ConvertOcean homepage](docs/screenshots/home-light.png)
 
 </div>
 
@@ -25,6 +32,18 @@ That means:
 
 Because the site is fully client-side, you don't have to take the privacy claim on trust — this repository is the code that runs, and your browser's DevTools will confirm no file ever crosses the network.
 
+### Verify the privacy claim in 30 seconds
+
+Don't take our word for it. On any tool page:
+
+1. Open DevTools → **Network** tab, and tick **Preserve log**.
+2. Convert a file.
+3. Filter by `Fetch/XHR` and sort by size. **There is no request carrying your file** — the only traffic is the page's own assets, analytics, and ads.
+
+Stronger still: load a tool page, switch your machine to airplane mode, and convert anyway. It works, because the conversion never needed the network. That is the difference between "we delete your files after an hour" and "your files were never sent."
+
+<sub>Note on transparency: the site does load Google Analytics and AdSense, which set cookies — the no-upload promise is about your *files*, not a claim of zero third-party scripts. Details in the [privacy policy](https://convertocean.com/privacy/).</sub>
+
 ## What's inside
 
 | Category | Examples |
@@ -38,6 +57,16 @@ Because the site is fully client-side, you don't have to take the privacy claim 
 | **Business** | Invoice & receipt generators, profit-margin, break-even, percentage and sales-tax calculators |
 
 Plus a library of long-form guides covering the format decisions behind the tools.
+
+## Screenshots
+
+| A tool page | Dark mode |
+|---|---|
+| ![PDF to Word converter](docs/screenshots/tool-pdf-to-word.png) | ![Dark mode](docs/screenshots/home-dark.png) |
+
+Long-form reference content sits alongside the tools — for example, [sales tax rates for all 50 US states](https://convertocean.com/guides/us-sales-tax-by-state/):
+
+![Sales tax by state guide](docs/screenshots/sales-tax-by-state.png)
 
 ## Tech stack
 

@@ -84,7 +84,7 @@ if (slug === 'png-to-jpg') {
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="🖼️" width="40" height="40" /></div>
   <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
-  <div class="upload-text-secondary">Upload image file (Max 15MB)</div>
+  <div class="upload-text-secondary">Image file (Max 15MB)</div>
   <input type="file" id="fileInput" class="file-input" accept={acceptMime} />
 </div>
 
@@ -173,35 +173,35 @@ if (slug === 'png-to-jpg') {
 
       // Simple verification
       if (slug === 'png-to-jpg' && extension !== 'png') {
-        showError("Invalid file type. Please upload a PNG file.");
+        showError("Invalid file type. Please choose a PNG file.");
         return;
       }
       if (slug === 'jpg-to-png' && !['jpg', 'jpeg'].includes(extension)) {
-        showError("Invalid file type. Please upload a JPG or JPEG file.");
+        showError("Invalid file type. Please choose a JPG or JPEG file.");
         return;
       }
       if (slug === 'png-to-webp' && extension !== 'png') {
-        showError("Invalid file type. Please upload a PNG file.");
+        showError("Invalid file type. Please choose a PNG file.");
         return;
       }
       if (slug === 'webp-to-png' && extension !== 'webp') {
-        showError("Invalid file type. Please upload a WebP file.");
+        showError("Invalid file type. Please choose a WebP file.");
         return;
       }
       if (slug === 'jpg-to-webp' && !['jpg', 'jpeg'].includes(extension)) {
-        showError("Invalid file type. Please upload a JPG or JPEG file.");
+        showError("Invalid file type. Please choose a JPG or JPEG file.");
         return;
       }
       if (slug === 'webp-to-jpg' && extension !== 'webp') {
-        showError("Invalid file type. Please upload a WebP file.");
+        showError("Invalid file type. Please choose a WebP file.");
         return;
       }
       if (['svg-to-png', 'svg-to-jpg', 'svg-to-webp'].includes(slug) && extension !== 'svg') {
-        showError("Invalid file type. Please upload an SVG file.");
+        showError("Invalid file type. Please choose an SVG file.");
         return;
       }
       if (['jpg-to-jpeg', 'jpeg-to-jpg'].includes(slug) && !['jpg', 'jpeg'].includes(extension)) {
-        showError("Invalid file type. Please upload a JPG or JPEG file.");
+        showError("Invalid file type. Please choose a JPG or JPEG file.");
         return;
       }
 

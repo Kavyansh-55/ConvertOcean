@@ -210,7 +210,7 @@ const { slug, headline, subtitle } = Astro.props;
     function handleFile(file) {
       hideError();
       if (!file.type.startsWith('image/')) {
-        showError("Invalid format. Please upload an image file.");
+        showError("Invalid format. Please choose an image file.");
         return;
       }
 
