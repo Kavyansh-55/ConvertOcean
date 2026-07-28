@@ -183,9 +183,23 @@ const { slug, headline, subtitle } = Astro.props;
       <button class="tax-mode-tab" aria-pressed="false" id="taxTabRemove">Remove Sales Tax</button>
     </div>
 
-    <div class="tax-panel-title">US State Rate</div>
+    <div class="tax-panel-title">Country / Region <span style="text-transform: none; font-weight: 400;">&mdash; sales tax, VAT &amp; GST</span></div>
+    <div class="preset-grid" id="taxPresetGrid">
+      <button class="preset-btn active" data-rate={US_AVERAGE_COMBINED.toFixed(2)}>🇺🇸 US Avg {US_AVERAGE_COMBINED.toFixed(2)}%</button>
+      <button class="preset-btn" data-rate="20">🇬🇧 UK VAT 20%</button>
+      <button class="preset-btn" data-rate="5">🇨🇦 CA GST 5%</button>
+      <button class="preset-btn" data-rate="13">🇨🇦 CA HST 13%</button>
+      <button class="preset-btn" data-rate="10">🇦🇺 AU GST 10%</button>
+      <button class="preset-btn" data-rate="19">🇩🇪 DE VAT 19%</button>
+      <button class="preset-btn" data-rate="18">🇮🇳 IN GST 18%</button>
+      <button class="preset-btn" data-rate="10">🇯🇵 JP Tax 10%</button>
+      <button class="preset-btn" id="presetBtnCustom" data-rate="custom">✨ Custom Rate</button>
+    </div>
+    <p class="tax-state-note">Any country works &mdash; pick a preset, or type your own rate below. Currency is set separately.</p>
+
+    <div class="tax-panel-title">United States &mdash; rate by state <span style="text-transform: none; font-weight: 400;">(optional)</span></div>
     <div class="form-group" style="margin-bottom: 0; display: flex; flex-direction: column; gap: var(--spacing-xxs);">
-      <label class="form-label" for="taxUsState" style="font-size: 13px; font-weight: 500;">Select a state to load its combined rate</label>
+      <label class="form-label" for="taxUsState" style="font-size: 13px; font-weight: 500;">US buyers: pick a state to load its combined rate</label>
       <select id="taxUsState" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;">
         <option value="" selected>— Choose a state —</option>
         {stateSalesTaxRates.map(s => (
@@ -197,19 +211,6 @@ const { slug, headline, subtitle } = Astro.props;
       <p class="tax-state-note" id="taxStateNote">
         State rate plus the average local rate, as of {AS_OF}. Local rates vary by address, so treat this as an estimate &mdash; <a href="/guides/us-sales-tax-by-state/">see the full rate table and how to find your exact rate</a>.
       </p>
-    </div>
-
-    <div class="tax-panel-title">Tax Rate Presets</div>
-    <div class="preset-grid" id="taxPresetGrid">
-      <button class="preset-btn active" data-rate={US_AVERAGE_COMBINED.toFixed(2)}>🇺🇸 US Avg {US_AVERAGE_COMBINED.toFixed(2)}%</button>
-      <button class="preset-btn" data-rate="20">🇬🇧 UK VAT 20%</button>
-      <button class="preset-btn" data-rate="5">🇨🇦 CA GST 5%</button>
-      <button class="preset-btn" data-rate="13">🇨🇦 CA HST 13%</button>
-      <button class="preset-btn" data-rate="10">🇦🇺 AU GST 10%</button>
-      <button class="preset-btn" data-rate="19">🇩🇪 DE VAT 19%</button>
-      <button class="preset-btn" data-rate="18">🇮🇳 IN GST 18%</button>
-      <button class="preset-btn" data-rate="10">🇯🇵 JP Tax 10%</button>
-      <button class="preset-btn" id="presetBtnCustom" data-rate="custom">✨ Custom Rate</button>
     </div>
 
     <div class="tax-panel-title">Currency & Values</div>
