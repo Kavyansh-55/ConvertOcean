@@ -1891,3 +1891,37 @@ footer {
     min-height: 44px;
   }
 }
+
+/* ============================================================
+   Code blocks inside guide articles.
+
+   Deliberately a NEW class rather than styling `.guide-body pre/code`
+   globally. Guide bodies are injected with set:html, so Astro's scoped
+   rules never match them (see SEO-ROADMAP.md) and the only way to reach
+   them is a global selector — but a global `.guide-body code` rule would
+   restyle every `<code>` in the 13 already-indexed guides at once. This
+   class is used only by guides that opt into it, so nothing else moves.
+
+   Wide samples scroll inside the block; the page itself must never
+   scroll sideways.
+   ============================================================ */
+.guide-code {
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-md);
+  background-color: var(--colors-canvas-soft-2);
+  border: 1px solid var(--colors-hairline);
+  border-radius: var(--rounded-lg);
+  overflow-x: auto;
+  max-width: 100%;
+  font-size: 13px;
+  line-height: 1.65;
+  tab-size: 2;
+}
+
+.guide-code code {
+  font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+  color: var(--colors-ink);
+  background: none;
+  padding: 0;
+  white-space: pre;
+}
