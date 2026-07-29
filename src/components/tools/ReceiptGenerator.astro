@@ -739,23 +739,36 @@ const { slug, headline, subtitle } = Astro.props;
     $('rcptBtnDownload').addEventListener('click', () => {
       const el = $('receiptPdfContainer');
       const clone = el.cloneNode(true);
-      // Must stay in normal flow — html2canvas measures an out-of-flow element as
-      // zero height, which is what made this PDF blank. See InvoiceGenerator.
+      // In flow, not moved off-screen, AND rendered with the document scrolled to
+      // the top — html2canvas silently returns a blank white page if any of the
+      // three is missing. See the full note in InvoiceGenerator. Measured ink:
+      // 3.51% at scrollY 0, 0% once the page is scrolled down to the button.
+      const savedScroll = window.scrollY || document.documentElement.scrollTop || 0;
+      const pdfHost = document.createElement('div');
+      pdfHost.style.height = '0';
+      pdfHost.style.overflow = 'hidden';
+
       clone.style.transform = 'none';
       clone.style.position = 'static';
-      clone.style.marginLeft = '-10000px';
       clone.style.width = '794px';
       clone.style.height = 'auto';
       clone.removeAttribute('id');
       clone.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
-      document.body.appendChild(clone);
+      pdfHost.appendChild(clone);
+      document.body.insertBefore(pdfHost, document.body.firstChild);
+      window.scrollTo(0, 0);
+
+      const finishPdf = () => {
+        pdfHost.remove();
+        window.scrollTo(0, savedScroll);
+      };
       const fn = (rcptData.No || 'receipt') + '_' + rcptData.ClientName.replace(/\s+/g, '_').toLowerCase() + '.pdf';
       html2pdf().set({
         margin: 0, filename: fn,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, logging: false },
         jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
-      }).from(clone).save().then(() => document.body.removeChild(clone)).catch(() => document.body.removeChild(clone));
+      }).from(clone).save().then(finishPdf).catch(finishPdf);
     });
 
     $('rcptBtnClear').addEventListener('click', () => {

@@ -771,14 +771,24 @@ const { slug, headline, subtitle } = Astro.props;
       const element = document.getElementById('invoicePdfContainer');
       const clone = element.cloneNode(true);
       
-      // The clone MUST stay in normal flow. html2canvas measures an out-of-flow
-      // element as zero height, so `position: absolute` (or fixed) here produced
-      // a 1588x0 canvas and therefore a completely blank PDF — no image, no text.
-      // A negative margin moves it out of sight without taking it out of flow,
-      // and unlike a negative `left` it creates no horizontal scrollbar.
+      // Getting a non-blank page out of html2canvas here needs THREE things, and
+      // each one fails silently on its own — you still get a plausible PDF file:
+      //   1. in normal flow      (position:absolute/fixed -> canvas 1588x0)
+      //   2. not moved off-screen (left:-10000px -> right size, 0% ink, white page)
+      //   3. document scrolled to the top at render time
+      // (3) is why this looked fixed and was not: the download button sits below
+      // the fold, so by the time anyone clicks it the page is scrolled, and every
+      // render came back blank. Measured: scrollY 0 -> 3.07% ink, scrollY 4456 -> 0%.
+      // html2canvas's own scrollY/windowHeight options did not compensate.
+      // So: park the clone at the top of the document, jump to the top, render,
+      // then put the scroll position back.
+      const savedScroll = window.scrollY || document.documentElement.scrollTop || 0;
+      const pdfHost = document.createElement('div');
+      pdfHost.style.height = '0';
+      pdfHost.style.overflow = 'hidden';
+
       clone.style.transform = 'none';
       clone.style.position = 'static';
-      clone.style.marginLeft = '-10000px';
       clone.style.width = '794px';
       clone.style.height = 'auto';
       clone.style.opacity = '1';
@@ -787,7 +797,14 @@ const { slug, headline, subtitle } = Astro.props;
       // and getElementById becomes ambiguous mid-render.
       clone.removeAttribute('id');
       clone.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
-      document.body.appendChild(clone);
+      pdfHost.appendChild(clone);
+      document.body.insertBefore(pdfHost, document.body.firstChild);
+      window.scrollTo(0, 0);
+
+      const finishPdf = () => {
+        pdfHost.remove();
+        window.scrollTo(0, savedScroll);
+      };
 
       const filename = (invoiceData.InvNo || 'invoice') + '_' + (invoiceData.ClientName.replace(/\s+/g, '_').toLowerCase()) + '.pdf';
       
@@ -799,11 +816,9 @@ const { slug, headline, subtitle } = Astro.props;
         jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
       };
 
-      html2pdf().set(opt).from(clone).save().then(() => {
-        document.body.removeChild(clone);
-      }).catch(err => {
+      html2pdf().set(opt).from(clone).save().then(finishPdf).catch(err => {
         console.error("PDF generation error: ", err);
-        document.body.removeChild(clone);
+        finishPdf();
       });
     });
 

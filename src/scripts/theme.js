@@ -356,14 +356,17 @@ function exportElementToPdf(element, opt) {
   var ided = clone.querySelectorAll('[id]');
   for (var n = 0; n < ided.length; n++) ided[n].removeAttribute('id');
 
-  // The clone MUST stay in normal flow. html2canvas measures an out-of-flow
-  // element as ZERO HEIGHT, so `position: fixed` here rendered a 1438x0 canvas
-  // and every export came out blank. A negative margin hides it without leaving
-  // the flow, and unlike a negative `left` it adds no horizontal scrollbar.
-  // Verified: fixed -> 1438x0, static -> 1438x1368 on the same content.
+  // Three conditions, each of which fails SILENTLY into a plausible-looking but
+  // useless PDF, so all three matter:
+  //   1. the clone must be in normal flow   (absolute/fixed -> zero-height canvas)
+  //   2. it must not be moved off-screen    (left:-10000px -> right size, 0% ink)
+  //   3. the document must be scrolled to the top when it renders
+  // (3) is the one that bites in practice: export buttons sit below the fold, so
+  // by the time a user clicks, the page is scrolled and every render is blank.
+  // html2canvas's own scrollY/windowHeight options did not compensate — only
+  // actually scrolling to 0 did. The scroll position is restored afterwards.
   clone.style.position = 'static';
-  clone.style.marginLeft = '-10000px';
-  clone.style.zIndex = '-9999';
+  clone.style.marginLeft = '0';
   clone.style.width = element.offsetWidth ? element.offsetWidth + 'px' : '794px';
   clone.style.maxHeight = 'none';
   clone.style.overflow = 'visible';
@@ -380,7 +383,13 @@ function exportElementToPdf(element, opt) {
     all[i].style.setProperty('border-color', '#d4d4d4', 'important');
   }
 
-  document.body.appendChild(clone);
+  var savedScroll = window.scrollY || document.documentElement.scrollTop || 0;
+  var host = document.createElement('div');
+  host.style.height = '0';
+  host.style.overflow = 'hidden';
+  host.appendChild(clone);
+  document.body.insertBefore(host, document.body.firstChild);
+  window.scrollTo(0, 0);
 
   var merged = Object.assign({
     margin: 10,
@@ -393,7 +402,8 @@ function exportElementToPdf(element, opt) {
   );
 
   function cleanup() {
-    if (clone.parentNode) clone.parentNode.removeChild(clone);
+    if (host.parentNode) host.parentNode.removeChild(host);
+    window.scrollTo(0, savedScroll);
   }
 
   return window.html2pdf().set(merged).from(clone).save()
