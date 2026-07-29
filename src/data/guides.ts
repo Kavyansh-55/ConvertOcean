@@ -562,7 +562,7 @@ export const guides: GuideData[] = [
     readTime: '6 min read',
     publishDate: 'July 9, 2026',
     relatedTools: ['csv-to-json', 'json-to-csv', 'json-formatter', 'xml-to-json', 'xlsx-to-json'],
-    relatedGuides: ['excel-to-pdf', 'how-to-calculate-profit-margin'],
+    relatedGuides: ['convert-csv-to-json-in-code', 'json-syntax-errors', 'json-vs-csv-vs-xml'],
     intro: 'CSV and JSON solve different problems: one is a flat grid built for spreadsheets and database dumps, the other a typed, nested structure built for APIs and application code. This guide explains when converting between them makes sense, exactly how rows become objects, and the type-coercion and quoting pitfalls that silently corrupt data.',
     contentHtml: `
       <h2>Two Formats, Two Shapes of Data</h2>
@@ -858,7 +858,7 @@ export const guides: GuideData[] = [
     readTime: '6 min read',
     publishDate: 'July 18, 2026',
     relatedTools: ['json-formatter', 'xml-to-json', 'xml-to-csv', 'xml-to-xlsx', 'json-to-xlsx', 'xlsx-to-json'],
-    relatedGuides: ['csv-to-json', 'xlsx-vs-xls-vs-csv'],
+    relatedGuides: ['csv-to-json', 'xlsx-vs-xls-vs-csv', 'json-syntax-errors'],
     intro: 'Every data exchange on the web travels in one of three shapes: JSON objects, CSV tables, or XML trees. They are not interchangeable — each encodes a different idea of what data is — and most conversion surprises come from ignoring that. This guide gives you the shape of each format, a decision rule, and the conversion caveats that matter.',
     contentHtml: `
       <h2>Three Formats, Three Shapes</h2>
@@ -1087,6 +1087,243 @@ export const guides: GuideData[] = [
       {
         question: 'How current are these rates?',
         answer: 'They reflect state and average local rates as of July 1, 2026, from the Tax Foundation\'s midyear 2026 dataset. Local rates commonly change on January 1, April 1, July 1, and October 1, so verify with the state revenue department before relying on a figure for a filing.'
+      }
+    ]
+  },
+  {
+    slug: 'json-syntax-errors',
+    title: 'JSON Syntax Errors: Common Causes and Fixes | ConvertOcean',
+    description: 'Why JSON parsing fails and how to fix it: trailing commas, single quotes, "Unexpected token <", bad escapes — plus valid JSON that still corrupts data.',
+    h1: 'JSON Syntax Errors: Why They Happen and How to Fix Them.',
+    readTime: '8 min read',
+    publishDate: 'July 29, 2026',
+    relatedTools: ['json-formatter', 'csv-to-json', 'json-to-csv', 'xml-to-json', 'json-to-xlsx'],
+    relatedGuides: ['csv-to-json', 'json-vs-csv-vs-xml'],
+    intro: 'Almost every JSON error comes from the same root cause: JSON looks like JavaScript, so people write JavaScript. But JSON is a far stricter subset, and the parser rejects perfectly ordinary-looking code. This guide covers every common failure, what the error message is really telling you, and the harder category nobody warns you about — JSON that parses cleanly and is still wrong.',
+    contentHtml: `
+      <h2>JSON Is Stricter Than JavaScript. That Is the Whole Problem.</h2>
+      <p>JSON was derived from JavaScript object syntax, which makes it feel familiar and makes the differences invisible. In a .js file, all of the following are legal: trailing commas, single-quoted strings, unquoted property names, comments, and the values <code>NaN</code> and <code>undefined</code>. In JSON, every single one is a syntax error.</p>
+      <p>That is why the most common way to produce broken JSON is to copy an object literal out of application code and save it as a .json file. It looked right in the editor because the editor was thinking in JavaScript.</p>
+      <p>The formal rules are short. A JSON document is exactly one value. Strings use double quotes only. Property names are strings, so they need double quotes too. Numbers follow a narrow grammar with no leading zeros, no leading plus, and no hexadecimal. There are exactly three bare words — <code>true</code>, <code>false</code>, <code>null</code> — all lowercase. And there are no comments at all.</p>
+
+      <h2>How to Read the Error Message</h2>
+      <p>Before fixing anything, it helps to know that the message you get depends on which engine parsed the file, and that one of the two common shapes tells you far less than the other. Chrome and Node.js both use V8, which reports failures two ways:</p>
+      <div class="content-card">
+        <p style="margin-top: 0;"><code>Expected ',' or '}' after property value in JSON at position 32 (line 5 column 1)</code></p>
+        <p style="margin-bottom: 0;"><code>Unexpected token ']', "[1,2,]" is not valid JSON</code></p>
+      </div>
+      <p>The first names a position. The second does not — it quotes a fragment of your document instead. This matters more than it looks: the positionless form is what you get for a trailing comma inside an array and for a response that is not JSON at all, which are two of the most frequent failures there are. If your tooling extracts a line number by searching the message for a position, it silently gives you nothing on exactly those cases.</p>
+      <p>Firefox and Safari word their messages differently again, so an error string from a Stack Overflow answer may not match yours even when the underlying mistake is identical. Match on the <em>cause</em> described below, not on the exact wording.</p>
+      <p>This is also why our <a href="/json-formatter/">JSON Formatter and Validator</a> does not rely on the engine's message for the location. It validates with the browser's native parser — so a document that passes will parse in your application — but it finds the position with its own strict scan, and shows you the line, the column, and a caret under the offending character.</p>
+
+      <h2>The Error Catalogue</h2>
+      <h3>Trailing commas</h3>
+      <p>The single most common JSON error. A comma separates items; it cannot follow the last one. Both <code>{"a": 1,}</code> and <code>[1, 2,]</code> are invalid. This bites hardest when you delete the last entry from a hand-maintained config file and leave the previous line's comma behind.</p>
+
+      <h3>Single quotes and smart quotes</h3>
+      <p>JSON strings are double-quoted, always. <code>{'name': 'test'}</code> is a syntax error even though it is valid Python and valid JavaScript. A subtler variant: text pasted from a word processor, chat app, or CMS often arrives with curly typographic quotes (&ldquo; &rdquo;) substituted for straight ones. They look almost identical in a proportional font and are not quotes as far as the parser is concerned.</p>
+
+      <h3>Unquoted property names</h3>
+      <p><code>{name: "test"}</code> is a valid JavaScript object and invalid JSON. Keys are strings and must be wrapped in double quotes.</p>
+
+      <h3>Comments</h3>
+      <p>JSON has no comment syntax — neither <code>//</code> nor block comments. This is the most-requested feature JSON does not have, and it is deliberate. If you need annotated configuration, either use a format that allows comments (JSON5, YAML, TOML) or add a real key such as <code>"_comment"</code> that your application ignores.</p>
+
+      <h3>Values borrowed from another language</h3>
+      <p>Python writes <code>True</code>, <code>False</code>, and <code>None</code>; JSON writes <code>true</code>, <code>false</code>, and <code>null</code>. SQL-flavoured exports sometimes emit <code>NULL</code> in capitals. JavaScript adds <code>NaN</code>, <code>Infinity</code>, and <code>undefined</code>, none of which JSON can represent — <code>JSON.stringify</code> quietly converts <code>NaN</code> and <code>Infinity</code> to <code>null</code> and drops <code>undefined</code> properties entirely, so a round trip through JSON is not always lossless.</p>
+
+      <h3>Broken strings</h3>
+      <p>Three distinct faults share the same symptom. A missing closing quote swallows the rest of the document. A literal line break inside a string is illegal — JSON strings cannot span lines, so a multi-line value has to use the <code>\\n</code> escape. And only a fixed set of escapes is valid: <code>\\"</code>, <code>\\\\</code>, <code>\\/</code>, <code>\\b</code>, <code>\\f</code>, <code>\\n</code>, <code>\\r</code>, <code>\\t</code>, and <code>\\u</code> followed by exactly four hex digits. A Windows path pasted in raw, like <code>"C:\\Users\\test"</code> written with single backslashes, fails because <code>\\U</code> is not a valid escape.</p>
+
+      <h3>Number formatting</h3>
+      <p>JSON's number grammar is narrower than most languages'. No leading zeros (<code>01</code> is invalid, which matters because ZIP codes and IDs must therefore be strings). No leading plus sign. No bare decimal point, so write <code>0.5</code> rather than <code>.5</code>. No hexadecimal, octal, or underscore separators. And no quoted-number leniency in either direction — <code>"42"</code> is a string, <code>42</code> is a number, and they are not interchangeable.</p>
+
+      <h3>Missing separators</h3>
+      <p>A missing comma between properties, or a missing colon between a key and its value, usually reports at the point where the parser gave up rather than where you left the character out. If the reported position looks like a perfectly good token, check the end of the preceding line.</p>
+
+      <h2>"Unexpected token &lt;" — When the Response Is Not JSON at All</h2>
+      <p>If an error mentions an unexpected <code>&lt;</code>, stop debugging your JSON. You are almost certainly parsing an HTML page. A request that returned a 404, a 502, a login redirect, or a framework error page hands back HTML with a <code>&lt;!DOCTYPE html&gt;</code> or <code>&lt;html&gt;</code> opening tag, and the parser fails on the very first character.</p>
+      <p>The fix is never in the JSON. Check the response status code and the <code>Content-Type</code> header before parsing, and log the first hundred characters of the body when parsing fails — that one habit turns this from a recurring mystery into a one-glance diagnosis. The same symptom with a different opening character can mean a proxy error page, a stray byte-order mark, or an empty body.</p>
+
+      <h2>Valid JSON That Is Still Wrong</h2>
+      <p>This is the category that causes production incidents, because there is no error to see. The document parses; the data is damaged.</p>
+      <ul>
+        <li><strong>Duplicate keys silently resolve to the last one.</strong> <code>{"a": 1, "a": 2}</code> is legal JSON. Parsers are not required to complain, and in practice the second value wins — parsing that document yields <code>{"a": 2}</code>. A generator that emits a key twice loses data with no warning anywhere.</li>
+        <li><strong>Large integers lose precision.</strong> JSON has no integer type; JavaScript numbers are 64-bit floats, exact only up to 9007199254740991. Parse <code>{"id": 9007199254740993}</code> and you get back 9007199254740992 — off by one, silently. A 20-digit order ID fares far worse. Long identifiers, account numbers, and Twitter-style snowflake IDs must travel as strings.</li>
+        <li><strong>Decimals are binary floats.</strong> The usual consequence is that money should not be a JSON number: store minor units as an integer, or a string, and never rely on <code>0.1 + 0.2</code> behaving.</li>
+        <li><strong>A byte-order mark can precede the document.</strong> Files exported as "UTF-8 with BOM" begin with an invisible U+FEFF. Some parsers strip it, some reject it, and it renders as nothing at all in most editors — so the file looks perfect and fails anyway.</li>
+      </ul>
+
+      <h2>Fixing It Fast</h2>
+      <div class="content-card">
+        <h3 style="margin-top: 0;">Step 1: Paste it into a validator</h3>
+        <p>Open the <a href="/json-formatter/">JSON Formatter and Validator</a> and paste the document. It reports the line and column of the first fault and prints the offending line with a caret under the exact character.</p>
+        <h3>Step 2: Fix the first error only, then re-check</h3>
+        <p>Parsers stop at the first problem, so a single missing brace can make everything after it look wrong. Resist the urge to rewrite the file. Fix one fault, validate again, repeat — the count usually collapses fast.</p>
+        <h3>Step 3: Format it and read the structure</h3>
+        <p>Once it parses, pretty-print it. Syntax highlighting and indentation make a misplaced nesting level obvious in a way that a single minified line never will, and the key count and depth readouts are a quick sanity check that you received what you expected.</p>
+        <h3>Step 4: Check the data, not just the syntax</h3>
+        <p>Spot-check identifier columns for the precision problem above, and confirm that values you expect to be numbers are not quoted strings.</p>
+      </div>
+
+      <h2>Preventing the Next One</h2>
+      <p>Generate JSON with a serializer rather than string concatenation — <code>JSON.stringify</code>, Python's <code>json.dumps</code>, or your language's equivalent handle escaping and commas correctly by construction, and hand-built JSON is where escaping bugs come from. Validate configuration files in continuous integration so a broken commit fails the build instead of the deployment. And when a file is edited by people, consider a format designed for that: JSON's strictness is a virtue for machine interchange and a liability for hand-maintained config.</p>
+
+      <h2>Debugging Payloads Without Sending Them Anywhere</h2>
+      <p>The JSON you most need to debug is usually the JSON you least want to paste into an unknown website: API responses carrying access tokens, webhook payloads containing customer records, exported configuration holding connection strings. ConvertOcean's formatter runs entirely inside your browser — load the page, disconnect from the network, and it keeps working. Nothing is transmitted, logged, or stored. If the data started life in a spreadsheet, <a href="/csv-to-json/">CSV to JSON</a> and <a href="/xlsx-to-json/">XLSX to JSON</a> follow the same rule, and <a href="/json-to-csv/">JSON to CSV</a> takes it back the other way.</p>
+    `,
+    faqs: [
+      {
+        question: 'What does "Unexpected token < in JSON at position 0" mean?',
+        answer: 'It means the response was not JSON — it was HTML. A 404 page, a 502 error, a login redirect, or a server error page all return HTML starting with a tag, and the parser fails on the first character. Check the HTTP status code and the Content-Type header of the response rather than looking for a mistake in your JSON, and log the first hundred characters of the body so the cause is visible next time.'
+      },
+      {
+        question: 'Why is a trailing comma invalid in JSON when JavaScript allows it?',
+        answer: 'JSON is a stricter subset of JavaScript object syntax, standardised separately and deliberately kept minimal so that parsers in every language agree. Trailing commas, comments, single quotes, and unquoted keys are all legal JavaScript and all invalid JSON. Copying an object literal out of application code into a .json file is the most common way to hit this.'
+      },
+      {
+        question: 'Can JSON files contain comments?',
+        answer: 'No. JSON has no comment syntax, and this is intentional rather than an oversight. If you need annotated configuration, use a format that supports comments such as JSON5, YAML, or TOML, or add a regular key like "_comment" that your application ignores. Some tools accept comments in their own config files, but that is a non-standard extension, not JSON.'
+      },
+      {
+        question: 'My JSON is valid but the numbers are wrong. What happened?',
+        answer: 'JSON has no integer type, and parsers typically read numbers as 64-bit floats, which are exact only up to 9007199254740991. A longer value is silently rounded — 9007199254740993 comes back as 9007199254740992. Long identifiers, account numbers, and order IDs should be sent as strings. The same limitation makes JSON numbers a poor choice for currency; store minor units as integers or use strings.'
+      },
+      {
+        question: 'What happens if a JSON object has the same key twice?',
+        answer: 'It is legal JSON and no error is raised. The specification does not require parsers to reject duplicates, and in practice the last occurrence wins, so parsing {"a": 1, "a": 2} gives you {"a": 2}. This makes duplicate keys a silent data-loss bug: check the generator that produced the file, since a validator will not flag it.'
+      },
+      {
+        question: 'Why does my JSON file fail even though it looks completely correct?',
+        answer: 'Look for characters that are invisible or that render almost identically to valid ones. A byte-order mark at the start of a "UTF-8 with BOM" export shows as nothing in most editors. Curly typographic quotes pasted from a word processor look nearly the same as straight double quotes. A raw line break inside a string is illegal but looks like ordinary formatting. Pasting the file into a validator that reports an exact column is the quickest way to find these.'
+      },
+      {
+        question: 'Is it safe to paste an API response into an online JSON validator?',
+        answer: 'It depends entirely on the tool. Many online validators send your input to a server to be processed. ConvertOcean validates in your browser using client-side JavaScript, so the payload is never transmitted, logged, or stored — you can verify this by loading the page, disconnecting from the network, and confirming the tool still works. That matters because the payloads worth debugging usually contain tokens or customer data.'
+      }
+    ]
+  },
+  {
+    slug: 'convert-csv-to-json-in-code',
+    title: 'CSV to JSON in Python, JavaScript & PowerShell | ConvertOcean',
+    description: 'Working CSV-to-JSON recipes for Python (stdlib and pandas), Node.js, and PowerShell — plus the type-inference and quoting traps each one hides.',
+    h1: 'How to Convert CSV to JSON in Python, JavaScript, and PowerShell.',
+    readTime: '7 min read',
+    publishDate: 'July 29, 2026',
+    relatedTools: ['csv-to-json', 'json-to-csv', 'json-formatter', 'xlsx-to-json', 'csv-to-xlsx'],
+    relatedGuides: ['csv-to-json', 'json-syntax-errors', 'json-vs-csv-vs-xml'],
+    intro: 'When a conversion has to run inside a script, a build step, or a scheduled job, you need code rather than a converter page. These are working recipes for the four environments people reach for most — with the trap each one hides, because the default behaviour differs sharply between them and the differences are silent.',
+    contentHtml: `
+      <h2>Start With the Question Nobody Asks: What Should the Types Be?</h2>
+      <p>CSV has no type system. Every value in the file is text, including <code>42</code>, <code>true</code>, and <code>2026-07-29</code>. JSON does have types. So every conversion has to decide, for every column, whether a value becomes a string, a number, or a boolean — and the environments below make that decision very differently.</p>
+      <p>Python's standard library converts nothing: everything arrives as a string. pandas infers aggressively. PowerShell converts nothing. A hand-written JavaScript parser does whatever you tell it to. None of these is wrong, but picking one without knowing which you picked is how ZIP codes lose their leading zeros. Every example below uses the same three-row file:</p>
+      <pre class="guide-code"><code>id,name,city,active
+1,Asha,Mumbai,true
+2,Leo,"Berlin, DE",false</code></pre>
+      <p>Note the second data row: the city contains a comma, so the field is wrapped in double quotes. That single row is the reason you cannot convert CSV by splitting on commas, and it is the first thing to test any implementation against.</p>
+
+      <h2>Python: the Standard Library</h2>
+      <p>No dependencies, and correct quoting handling for free. <code>DictReader</code> uses the first row as keys.</p>
+      <pre class="guide-code"><code>import csv, json
+
+with open('people.csv', newline='', encoding='utf-8-sig') as f:
+    rows = list(csv.DictReader(f))
+
+with open('people.json', 'w', encoding='utf-8') as f:
+    json.dump(rows, f, indent=2, ensure_ascii=False)</code></pre>
+      <p>Two details in that snippet do real work. <code>newline=''</code> is required by the csv module so that line breaks inside quoted fields are handled correctly. And <code>encoding='utf-8-sig'</code> strips the byte-order mark that Excel writes when you choose "CSV UTF-8" — without it, your first key becomes something like <code>\\ufeffid</code> and every lookup for <code>id</code> fails for reasons invisible on screen.</p>
+      <p>The output is all strings: <code>"id": "1"</code> and <code>"active": "true"</code>. If that is what you want, you are done. If it is not, convert explicitly rather than reaching for a library that guesses:</p>
+      <pre class="guide-code"><code>import csv, json
+
+def to_bool(v):
+    return v.strip().lower() in ('true', '1', 'yes')
+
+SCHEMA = {'id': int, 'active': to_bool}   # anything unlisted stays a string
+
+with open('people.csv', newline='', encoding='utf-8-sig') as f:
+    rows = [
+        {k: SCHEMA.get(k, str)(v) for k, v in row.items()}
+        for row in csv.DictReader(f)
+    ]
+
+print(json.dumps(rows, indent=2, ensure_ascii=False))</code></pre>
+      <p>This is more typing than a one-liner and it is usually the right trade. An explicit per-column schema means a new column cannot silently change type when someone edits the spreadsheet upstream.</p>
+
+      <h2>Python: pandas</h2>
+      <p>If pandas is already a dependency, the conversion is two lines — but read the warning below before using it on identifiers.</p>
+      <pre class="guide-code"><code>import pandas as pd
+
+df = pd.read_csv('people.csv', dtype={'id': str})
+df.to_json('people.json', orient='records', indent=2)</code></pre>
+      <p><code>orient='records'</code> is the option that produces an array of objects; the default produces a column-oriented shape that is rarely what an API consumer expects.</p>
+      <p>The <code>dtype</code> argument is not optional decoration. pandas infers types by default, and on a file containing a ZIP code column the result is unambiguous — a value of <code>02139</code> is read as the integer 2139, and the JSON output contains <code>{"zip": 2139}</code>. The leading zero is gone and nothing warns you. Force <code>str</code> on every column that is an identifier rather than a quantity: ZIP and postal codes, phone numbers, account and order numbers, product SKUs, anything with leading zeros, and anything longer than about 15 digits.</p>
+
+      <h2>JavaScript and Node.js, Without Dependencies</h2>
+      <p>Plenty of good CSV libraries exist, and for anything complicated you should use one. But a correct minimal parser is short, and worth reading once because it shows exactly what <code>split(',')</code> fails to do:</p>
+      <pre class="guide-code"><code>const fs = require('fs');
+
+function parseCsv(text) {
+  const rows = [[]];
+  let field = '';
+  let inQuotes = false;
+  text = text.replace(/^\\uFEFF/, '').replace(/\\r\\n/g, '\\n');
+
+  for (let i = 0; i &lt; text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"' &amp;&amp; text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') inQuotes = false;
+      else field += c;
+    } else if (c === '"') inQuotes = true;
+    else if (c === ',') { rows[rows.length - 1].push(field); field = ''; }
+    else if (c === '\\n') { rows[rows.length - 1].push(field); field = ''; rows.push([]); }
+    else field += c;
+  }
+  rows[rows.length - 1].push(field);
+  return rows.filter(r =&gt; r.length &gt; 1 || r[0] !== '');
+}
+
+const [header, ...body] = parseCsv(fs.readFileSync('people.csv', 'utf8'));
+const out = body.map(r =&gt; Object.fromEntries(header.map((h, i) =&gt; [h, r[i]])));
+fs.writeFileSync('people.json', JSON.stringify(out, null, 2));</code></pre>
+      <p>The <code>inQuotes</code> flag is the entire point. Inside a quoted field, a comma is data and a doubled quote (<code>""</code>) means one literal quote character — the RFC 4180 escaping rule. A naive split produces three fields for the Leo row instead of four, and every column after it shifts. Like the Python stdlib version, this yields strings throughout; cast deliberately if you need otherwise.</p>
+
+      <h2>PowerShell: a One-Liner</h2>
+      <p>On Windows this needs nothing installed at all:</p>
+      <pre class="guide-code"><code>Import-Csv .\\people.csv | ConvertTo-Json | Set-Content people.json -Encoding utf8</code></pre>
+      <p><code>Import-Csv</code> handles RFC 4180 quoting properly and, like the other no-dependency options, emits every value as a string. One caveat that catches people out: <code>ConvertTo-Json</code> defaults to a depth of 2, which is plenty for the flat rows a CSV produces but will silently truncate anything more nested — pass <code>-Depth 10</code> if you build a hierarchy before serialising.</p>
+
+      <h2>Large Files</h2>
+      <p>Every recipe above builds the whole document in memory, which is fine into the hundreds of thousands of rows and wrong for a multi-gigabyte export. Two approaches scale. Stream row by row and write JSON incrementally, so memory stays flat. Or switch format: <strong>newline-delimited JSON</strong> (one JSON object per line, no enclosing array) is the standard answer for large datasets, streams naturally, appends cheaply, and is what most data-warehouse loaders expect. It is not a JSON document — a parser reading the whole file at once will reject it — so it is a deliberate choice, not a drop-in substitute.</p>
+
+      <h2>When Not to Write Code at All</h2>
+      <p>Scripting is the right answer for a repeatable pipeline. For a file you need converted once, it is overhead — and if the CSV contains customer records, payroll, or a sales pipeline, uploading it to a cloud converter to save five minutes is a poor trade. Our <a href="/csv-to-json/">CSV to JSON converter</a> runs entirely in your browser: it auto-detects comma, semicolon, tab, and pipe delimiters, strips the Excel BOM, and never transmits the file. Check the result with the <a href="/json-formatter/">JSON Formatter and Validator</a>, which reports the exact line and column of any fault, and use <a href="/json-to-csv/">JSON to CSV</a> for the return trip. If the data is still in a workbook, <a href="/xlsx-to-json/">XLSX to JSON</a> skips the CSV step entirely — worth doing, since exporting to CSV is itself where Excel rewrites dates and strips leading zeros.</p>
+      <p>For the conceptual side of this conversion — how nesting maps onto a flat grid, what dot notation buys you, and which pitfalls corrupt data quietly — see the <a href="/guides/csv-to-json/">CSV to JSON developer guide</a>. If your output will not parse, <a href="/guides/json-syntax-errors/">JSON syntax errors</a> covers every common cause.</p>
+    `,
+    faqs: [
+      {
+        question: 'How do I convert CSV to JSON in Python without installing anything?',
+        answer: 'Use the standard library: csv.DictReader reads the header row as keys, and json.dump writes the result. Open the file with newline=\'\' so quoted fields containing line breaks parse correctly, and with encoding=\'utf-8-sig\' so the byte-order mark in Excel\'s "CSV UTF-8" export is stripped. Every value comes out as a string, because the csv module does no type inference at all.'
+      },
+      {
+        question: 'Why does pandas turn my ZIP code 02139 into 2139?',
+        answer: 'read_csv infers column types by default, and a column of digits is read as an integer, which cannot carry a leading zero. Pass dtype={\'zip\': str} to force it to stay text. Apply the same treatment to phone numbers, account and order numbers, SKUs, and any identifier longer than about 15 digits, where float precision starts rounding values silently.'
+      },
+      {
+        question: 'Why can I not just split each CSV line on commas?',
+        answer: 'Because a comma inside a quoted field is data, not a separator. A row such as 2,Leo,"Berlin, DE",false has four fields, but splitting on commas produces five and shifts every column after it. The CSV quoting rules also let a field contain line breaks and escaped double quotes (written as ""), so a correct parser has to track whether it is currently inside quotes.'
+      },
+      {
+        question: 'Should CSV values become numbers and booleans in the JSON output?',
+        answer: 'Only where you have decided they should. Type inference is convenient and lossy: it strips leading zeros from identifiers, rounds long numeric IDs, and turns the literal text "true" into a boolean. The safer pattern is an explicit per-column schema, so a spreadsheet edit upstream cannot silently change a column\'s type in your output.'
+      },
+      {
+        question: 'What is the best way to convert a very large CSV file to JSON?',
+        answer: 'Do not build the whole document in memory. Either stream the rows and write output incrementally, or use newline-delimited JSON — one object per line with no enclosing array — which streams naturally, appends cheaply, and is what most data-warehouse loaders expect. Note that NDJSON is not a valid JSON document, so a parser that reads the entire file at once will reject it.'
+      },
+      {
+        question: 'Is an online converter safe for confidential CSV exports?',
+        answer: 'It depends on whether the file leaves your device. Most online converters upload it to a server for processing. ConvertOcean parses the file in your browser with client-side JavaScript, so customer lists, payroll, and financial exports never get transmitted — load the page, disconnect from the network, and the converter still works.'
       }
     ]
   }

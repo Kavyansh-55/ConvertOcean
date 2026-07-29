@@ -84,7 +84,7 @@ const { slug, headline, subtitle } = Astro.props;
     box-sizing: border-box;
   }
   .jf-textarea::placeholder { color: var(--colors-mute); font-style: italic; }
-  [data-theme="dark"] .jf-textarea { background-color: var(--colors-canvas); }
+  :global([data-theme="dark"]) .jf-textarea { background-color: var(--colors-canvas); }
 
   /* Output area */
   .jf-output-area {
@@ -107,17 +107,34 @@ const { slug, headline, subtitle } = Astro.props;
     font-size: 13.5px;
   }
 
-  /* Syntax highlighting */
-  .jf-output-area .jf-key   { color: #0761d1; }
-  .jf-output-area .jf-str   { color: #29bc9b; }
-  .jf-output-area .jf-num   { color: #7928ca; }
-  .jf-output-area .jf-bool  { color: #f5a623; }
-  .jf-output-area .jf-null  { color: #888; }
-  .jf-output-area .jf-punc  { color: var(--colors-body); }
-  [data-theme="dark"] .jf-output-area .jf-key  { color: #79b8ff; }
-  [data-theme="dark"] .jf-output-area .jf-str  { color: #50e3c2; }
-  [data-theme="dark"] .jf-output-area .jf-num  { color: #c792ea; }
-  [data-theme="dark"] .jf-output-area .jf-bool { color: #f5a623; }
+  /* Syntax highlighting.
+     `:global()` is load-bearing on BOTH halves of these selectors:
+     1. The token spans are built by innerHTML in syntaxHighlight(), so Astro
+        never stamps them with this component's scope id. A plain
+        `.jf-output-area .jf-key` compiles to `.jf-key[data-astro-cid-…]` and
+        matches nothing — which is why the syntax highlighting this page
+        advertises had never actually rendered, in either theme.
+     2. `[data-theme]` lives on <html>, which likewise has no scope id, so a
+        bare `[data-theme="dark"] .x` compiles to `[cid][data-theme=dark] .x[cid]`
+        and is dead too.
+     Same trap as the `.guide-body` rules recorded in SEO-ROADMAP.md. The
+     wrapper stays scoped, so none of these colours leak out of the component.
+
+     Light values are NOT the originals: the dead ones were #29bc9b (2.30:1),
+     #f5a623 (1.94:1) and #888 (3.40:1) on #fafafa, so switching the rules on
+     as-written would have shipped three new WCAG AA failures. Retuned within
+     the same hue families; every token is >= 4.5:1 in both themes. */
+  .jf-output-area :global(.jf-key)   { color: #0550ae; }
+  .jf-output-area :global(.jf-str)   { color: #0a7055; }
+  .jf-output-area :global(.jf-num)   { color: #6221b8; }
+  .jf-output-area :global(.jf-bool)  { color: #8a5200; }
+  .jf-output-area :global(.jf-null)  { color: #646464; }
+  .jf-output-area :global(.jf-punc)  { color: var(--colors-body); }
+  :global([data-theme="dark"]) .jf-output-area :global(.jf-key)  { color: #79b8ff; }
+  :global([data-theme="dark"]) .jf-output-area :global(.jf-str)  { color: #50e3c2; }
+  :global([data-theme="dark"]) .jf-output-area :global(.jf-num)  { color: #c792ea; }
+  :global([data-theme="dark"]) .jf-output-area :global(.jf-bool) { color: #f5a623; }
+  :global([data-theme="dark"]) .jf-output-area :global(.jf-null) { color: #9a9a9a; }
 
   /* Status Bar */
   .jf-status-bar {
@@ -163,6 +180,50 @@ const { slug, headline, subtitle } = Astro.props;
     display: flex;
     gap: var(--spacing-md);
   }
+
+  /* Error location: line/col + the offending line with a caret under it */
+  .jf-error-detail {
+    padding: 0 var(--spacing-md) 10px;
+    border-top: 1px solid var(--colors-hairline);
+    background-color: var(--colors-error-soft);
+  }
+  .jf-error-detail[hidden] { display: none; }
+  .jf-error-loc {
+    display: block;
+    padding-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--colors-error-deep);
+  }
+  .jf-error-excerpt {
+    margin: 6px 0 0;
+    padding: 8px 10px;
+    border-radius: var(--rounded-md);
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--colors-ink);
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .jf-error-caret {
+    display: block;
+    color: var(--colors-error-deep);
+    font-weight: 700;
+    white-space: pre;
+  }
+
+  /* --colors-error-soft is a light pink with no dark-theme override, so on a
+     dark page it lands as a glaring light block. Scoped here rather than fixed
+     in theme.css on purpose: that token is shared with error banners across the
+     site, and restyling those means churning indexed pages. Logged as backlog. */
+  :global([data-theme="dark"]) .jf-error-detail { background-color: #2a1416; }
+  :global([data-theme="dark"]) .jf-error-loc,
+  :global([data-theme="dark"]) .jf-error-caret { color: #ff9d9d; }
+  :global([data-theme="dark"]) .jf-error-excerpt { border-color: #4a2226; }
 
   /* Toggle switch for minify */
   .jf-toggle-wrap {
@@ -219,6 +280,10 @@ const { slug, headline, subtitle } = Astro.props;
       <span class="jf-status-badge jf-status-idle" id="jf-badge">IDLE</span>
       <span class="jf-status-msg" id="jf-msg">Paste JSON to validate and format.</span>
     </div>
+    <div class="jf-error-detail" id="jf-error-detail" hidden>
+      <span class="jf-error-loc" id="jf-error-loc"></span>
+      <pre class="jf-error-excerpt" aria-label="The line containing the error"><code id="jf-error-code"></code><span class="jf-error-caret" id="jf-error-caret"></span></pre>
+    </div>
   </div>
 
   <!-- RIGHT: Output Panel -->
@@ -242,6 +307,8 @@ const { slug, headline, subtitle } = Astro.props;
 </div>
 
 <script>
+  import { locateJsonError } from '../../scripts/json-locate.js';
+
   (function() {
     const inputEl    = document.getElementById('jf-input');
     const outputEl   = document.getElementById('jf-output');
@@ -254,6 +321,10 @@ const { slug, headline, subtitle } = Astro.props;
     const copyBtn    = document.getElementById('jf-copy-btn');
     const downloadBtn = document.getElementById('jf-download-btn');
     const minifyToggle = document.getElementById('jf-minify-toggle');
+    const detailEl   = document.getElementById('jf-error-detail');
+    const locEl      = document.getElementById('jf-error-loc');
+    const errCodeEl  = document.getElementById('jf-error-code');
+    const caretEl    = document.getElementById('jf-error-caret');
     let isMinify = false;
     let lastParsed = null;
 
@@ -302,6 +373,7 @@ const { slug, headline, subtitle } = Astro.props;
       badge.textContent = '✓ VALID';
       badge.className = 'jf-status-badge jf-status-valid';
       msgEl.textContent = 'JSON is valid.';
+      detailEl.hidden = true;
       renderOutput(parsed);
     }
 
@@ -309,17 +381,25 @@ const { slug, headline, subtitle } = Astro.props;
       lastParsed = null;
       badge.textContent = '✗ INVALID';
       badge.className = 'jf-status-badge jf-status-invalid';
-      // Extract line info if available
-      const match = err.message.match(/position (\d+)/i);
-      if (match) {
-        const pos = parseInt(match[1]);
-        const src = inputEl.value;
-        const before = src.substring(0, pos);
-        const line = (before.match(/\n/g) || []).length + 1;
-        const col  = pos - before.lastIndexOf('\n');
-        msgEl.textContent = `${err.message} — Line ${line}, Col ${col}`;
+
+      // JSON.parse decides *whether* the document is valid; it is a poor guide
+      // to *where* and *why*. Its message carries a position for some faults
+      // and, for a trailing comma in an array or an HTML page returned instead
+      // of JSON, none at all — so the old code showed no location on exactly
+      // the most common errors. Our own scan always yields an offset.
+      // Located on the untrimmed value so the line number matches the textarea.
+      const found = locateJsonError(inputEl.value);
+      if (found) {
+        msgEl.textContent = found.message + '.';
+        locEl.textContent = 'Line ' + found.line + ', Column ' + found.column;
+        errCodeEl.textContent = found.excerpt + '\n';
+        caretEl.textContent = found.caret;
+        detailEl.hidden = false;
       } else {
+        // The scan and the engine disagreed, which should not happen. Report
+        // what the browser said rather than inventing a location.
         msgEl.textContent = err.message;
+        detailEl.hidden = true;
       }
       outputEl.innerHTML = '<span class="jf-placeholder-msg">Fix the JSON error to see formatted output.</span>';
       metaEl.textContent = '';
@@ -330,6 +410,7 @@ const { slug, headline, subtitle } = Astro.props;
       badge.textContent = 'IDLE';
       badge.className = 'jf-status-badge jf-status-idle';
       msgEl.textContent = 'Paste JSON to validate and format.';
+      detailEl.hidden = true;
       outputEl.innerHTML = '<span class="jf-placeholder-msg">Formatted JSON will appear here with syntax highlighting…</span>';
       metaEl.textContent = '';
     }
