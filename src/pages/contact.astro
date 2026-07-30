@@ -3,8 +3,30 @@ import Layout from '../layouts/Layout.astro';
 
 const { lang = 'en' } = Astro.props;
 
-const title = "Contact Us | ConvertOcean secure utilities";
-const description = "Get in touch with the ConvertOcean support and development team. Submit feedback, report bugs, or make corporate partnership inquiries.";
+const title = "Contact ConvertOcean — Support, Bug Reports & Feedback";
+const description = "Reach the ConvertOcean developers by email or on GitHub — how to report a conversion bug, request a tool, and what we can and cannot help with.";
+
+const SUPPORT_EMAIL = 'kavyanshtech7@gmail.com';
+const REPO = 'https://github.com/Kavyansh-55/ConvertOcean';
+
+const contactSchema = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Contact ConvertOcean",
+  "url": "https://convertocean.com/contact/",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "ConvertOcean",
+    "url": "https://convertocean.com",
+    "email": SUPPORT_EMAIL,
+    "contactPoint": [{
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "email": SUPPORT_EMAIL,
+      "availableLanguage": ["English"]
+    }]
+  }
+};
 ---
 
 <Layout title={title} description={description} lang={lang} category="Contact Us" categorySlug="contact">
@@ -55,6 +77,72 @@ const description = "Get in touch with the ConvertOcean support and development 
       align-items: flex-start;
       gap: 6px;
     }
+    .contact-channels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-lg);
+    }
+    @media (max-width: 620px) {
+      .contact-channels { grid-template-columns: 1fr; }
+    }
+    .channel {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-lg);
+    }
+    .channel-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--colors-mute);
+      margin: 0 0 6px;
+    }
+    .channel-value {
+      font-size: 16px;
+      font-weight: 600;
+      word-break: break-word;
+    }
+    .channel-value a { color: var(--colors-link); text-decoration: none; }
+    .channel-value a:hover { text-decoration: underline; }
+    /* --colors-link (#0070f3) measures 4.35:1 on the dark canvas — just under
+       AA for this 16px weight. Scoped here rather than changing the shared
+       token, which would restyle links site-wide during the AdSense window.
+       :global() on the ancestor is required: <html> carries data-theme but not
+       this component's scope id, so a bare selector would compile to nothing. */
+    :global([data-theme="dark"]) .channel-value a { color: #58a6ff; }
+    .channel-note {
+      font-size: 13px;
+      color: var(--colors-body);
+      line-height: 1.55;
+      margin: 8px 0 0;
+    }
+
+    .contact-section { margin-top: var(--spacing-2xl); }
+    .contact-section h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-xs);
+    }
+    .contact-section h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      margin: var(--spacing-md) 0 4px;
+    }
+    .contact-section p,
+    .contact-section li {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--colors-body);
+    }
+    .contact-section ul { padding-left: 1.15rem; margin: 6px 0 0; }
+    .contact-section li { margin-bottom: 5px; }
+    .contact-section a { color: var(--colors-link); }
+
     .submit-success {
       background-color: var(--colors-link-bg-soft);
       border: 1px solid var(--colors-link);
@@ -74,7 +162,20 @@ const description = "Get in touch with the ConvertOcean support and development 
     <div class="contact-container">
       <div class="page-header">
         <h1 class="page-title">Contact Us.</h1>
-        <p class="contact-lead">Have questions, bugs to report, or ideas for new client-side tools? Reach out directly and let us know how we can make ConvertOcean better.</p>
+        <p class="contact-lead">Questions, bug reports, or ideas for new client-side tools — they all reach the people who actually build ConvertOcean. There is no ticket queue and no outsourced support desk in between.</p>
+      </div>
+
+      <div class="contact-channels">
+        <div class="channel">
+          <p class="channel-label">Email</p>
+          <p class="channel-value"><a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a></p>
+          <p class="channel-note">Best for anything private, or when you want to attach a screenshot. Write in English if you can.</p>
+        </div>
+        <div class="channel">
+          <p class="channel-label">GitHub Issues</p>
+          <p class="channel-value"><a href={`${REPO}/issues`} rel="noopener">github.com/Kavyansh-55/ConvertOcean</a></p>
+          <p class="channel-note">Best for bugs and tool requests. ConvertOcean is open source under the MIT licence, so you can read the code that produced your file — and the fix, when it lands.</p>
+        </div>
       </div>
 
       <!-- Contact Form Card -->
@@ -84,7 +185,7 @@ const description = "Get in touch with the ConvertOcean support and development 
           <span>Thank you for your message! Since we run entirely client-side, your email client will open to send this message securely.</span>
         </div>
 
-        <form id="contactForm" onsubmit="event.preventDefault(); handleContactSubmit();">
+        <form id="contactForm">
           <div class="form-group">
             <label for="contactName" class="form-label">Name</label>
             <input type="text" id="contactName" class="form-input" placeholder="Your name" required />
@@ -116,29 +217,75 @@ const description = "Get in touch with the ConvertOcean support and development 
 
         <p class="contact-privacy-note">
           <span>🔒</span>
-          <span><strong>Privacy Note:</strong> We do not store form data in any cloud databases. Sending this form opens a local secure mail link to forward your message directly from your browser.</span>
+          <span><strong>How this form works:</strong> there is no server behind it. Pressing Send assembles your message and hands it to your own email program, so nothing is posted to us or stored in a database — the message only exists once you send it yourself. If your device has no mail app configured, nothing will happen, so email the address above directly instead.</span>
         </p>
       </div>
+
+      <section class="contact-section">
+        <h2>Reporting a Conversion Bug</h2>
+        <p>Conversion bugs are the reports we most want, and the hardest to act on without detail. Because every conversion runs on your own machine, we cannot reproduce a problem by looking at our servers — there is nothing on them to look at. What makes a report immediately actionable:</p>
+        <ul>
+          <li><strong>The tool's address</strong>, for example <code>/pdf-to-word/</code> — many tools look similar and several share an engine.</li>
+          <li><strong>Your browser and version</strong>, plus the operating system. A surprising share of conversion faults are specific to one browser engine.</li>
+          <li><strong>What the file was</strong> — its format, rough size, and whether it came from a scanner, a phone camera, or an export from another program.</li>
+          <li><strong>What you expected against what you got.</strong> "The table lost its columns" tells us far more than "it did not work".</li>
+        </ul>
+        <p><strong>Please do not attach confidential files.</strong> We do not want them and cannot store them safely. A screenshot of the result, or a small file that reproduces the same fault, is both safer and more useful.</p>
+
+        <h3>Security disclosures</h3>
+        <p>If you have found a security issue, email it rather than opening a public GitHub issue, and give us a reasonable window to ship a fix before publishing. Because the site is static and processes files in your browser, the realistic surface is the page itself — a cross-site scripting hole or a compromised third-party library — rather than a server-side data breach.</p>
+
+        <h2>What We Cannot Help With</h2>
+        <p>Being straightforward about the limits saves everyone time:</p>
+        <ul>
+          <li><strong>We cannot recover a file you converted.</strong> This is not a policy but a consequence of the architecture: your file never reached us, so there is no copy to retrieve. Once the tab closes, it is gone.</li>
+          <li><strong>We cannot see your data</strong>, which means we cannot look up "the conversion I ran yesterday". Nothing about your files is logged.</li>
+          <li><strong>We cannot unlock password-protected or DRM-restricted documents.</strong></li>
+          <li><strong>We do not offer legal, tax, or accounting advice.</strong> The business calculators show their formulas so you can check the arithmetic, but a figure from a calculator is not professional advice.</li>
+        </ul>
+
+        <h2>Response Times</h2>
+        <p>ConvertOcean is an independent, self-funded project rather than a staffed support operation, so please allow a few days for a reply — and longer at weekends. Every message is read. Bug reports with the detail listed above tend to be answered fastest, because they can go straight to a fix instead of a round of questions. If a report leads to a change, it ships to everyone at once; there are no accounts or tiers here.</p>
+
+        <h2>Partnership and Press</h2>
+        <p>For integration questions, licensing, or press enquiries, use the same email and pick the matching reason in the form. Worth knowing up front: the code is MIT-licensed and already public, so if you want to build on ConvertOcean or self-host it, you do not need our permission — the <a href={REPO} rel="noopener">repository</a> is the fastest place to start.</p>
+      </section>
     </div>
   </main>
 
-  <script is:inline>
-    function handleContactSubmit() {
-      const name = document.getElementById('contactName').value;
-      const email = document.getElementById('contactEmail').value;
-      const reason = document.getElementById('contactReason').value;
-      const message = document.getElementById('contactMessage').value;
+  <script type="application/ld+json" set:html={JSON.stringify(contactSchema)} />
 
-      const subject = encodeURIComponent(`ConvertOcean [${reason}] - From ${name}`);
-      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nInquiry: ${reason}\n\nMessage:\n${message}`);
-      
-      const mailtoUrl = `mailto:kavyanshtech7@gmail.com?subject=${subject}&body=${body}`;
-      
-      document.getElementById('submitSuccess').style.display = 'flex';
-      document.getElementById('contactForm').reset();
-      
-      // Open mailto link
-      window.location.href = mailtoUrl;
-    }
+  <script is:inline define:vars={{ SUPPORT_EMAIL }}>
+    // NOTE: `define:vars` wraps this script in an IIFE, so nothing declared here
+    // is global. The form used to call an inline `onsubmit="handleContactSubmit()"`
+    // attribute, which could no longer see the function — pressing Send threw
+    // "handleContactSubmit is not defined" and silently did nothing. Bound with
+    // addEventListener instead, which is also the CSP-friendly form.
+    (function () {
+      var form = document.getElementById('contactForm');
+      if (!form) return;
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var name = document.getElementById('contactName').value;
+        var email = document.getElementById('contactEmail').value;
+        var reason = document.getElementById('contactReason').value;
+        var message = document.getElementById('contactMessage').value;
+
+        var subject = encodeURIComponent('ConvertOcean [' + reason + '] - From ' + name);
+        var body = encodeURIComponent(
+          'Name: ' + name + '\nEmail: ' + email + '\nInquiry: ' + reason + '\n\nMessage:\n' + message
+        );
+
+        // SUPPORT_EMAIL comes from the page frontmatter, so the address shown on
+        // the page and the one the form uses cannot drift apart.
+        var mailtoUrl = 'mailto:' + SUPPORT_EMAIL + '?subject=' + subject + '&body=' + body;
+
+        document.getElementById('submitSuccess').style.display = 'flex';
+        form.reset();
+        window.location.href = mailtoUrl;
+      });
+    })();
   </script>
 </Layout>
