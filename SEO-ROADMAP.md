@@ -195,8 +195,14 @@ The roadmap assumed the no-upload + MIT story made us a fit for these lists. It 
 - [x] **Technical pre-flight (2026-07-30).** All key pages 200; `ads.txt` serves the correct publisher ID; `robots.txt` is the repo's own file, so Cloudflare Managed robots.txt is **OFF** — which resolves the S7 open decision: AI *citation* crawlers (OAI-SearchBot, PerplexityBot, ChatGPT-User) are allowed while training-only crawlers (GPTBot, ClaudeBot, CCBot) are blocked, so the deployed AEO quick-answer blocks are actually reachable. Sitemap declared in robots, 97 URLs.
 - [x] **Independent thin-content audit (2026-07-30) — the A1–A3b claim holds.** Measured unique-vs-boilerplate prose across all 98 built pages rather than trusting the log: **median 522 unique words**, zero genuinely thin pages. `/ocr-tools/` reports 0 but is a correct `noindex` meta-refresh stub. Tooling caveat recorded below.
 - [x] **Contact page rebuilt (branch `seo/n1-contact-page`)** — it was the one real weak spot: 54 unique words and **no contact address displayed anywhere**. See progress log.
-- [ ] GSC check: crawl dates on /break-even-calculator/, /csv-to-xlsx/, /split-excel/, /csv-to-json/ are post-Jul-19; guides indexing started. **BLOCKED — needs Kavya, no GSC access from here.**
-- [ ] Record in this file: impressions + clicks (28d vs prior 28d), indexed count. **BLOCKED — same.**
+- [x] **GSC check (2026-07-30, Kavya supplied URL Inspection + Performance).** All four watch-list pages return **"URL is on Google — Page is indexed"**: `/break-even-calculator/`, `/csv-to-xlsx/`, `/split-excel/`, `/csv-to-json/`. HTTPS valid and 1 valid Breadcrumb item on each. **This is the indexing recovery the thin-content track was aiming at** — these were the "crawled — not indexed" pages, and a page cannot move from that state to indexed without being re-crawled *and* re-evaluated after the fix. Literal "Last crawl" timestamps not captured (the Page indexing panel was collapsed), so the post-Jul-19 recrawl is inferred from the state change rather than read directly.
+- [x] **GSC snapshot recorded (range as supplied: custom ~Jun 13 → Jul 28, 2026 — NOT the 28d-vs-28d comparison, so do not treat it as one).**
+  - **Impressions 2.17K · clicks 14 · CTR 0.6% · average position 68.9**
+  - **Impressions are the story: the curve is near-flat through June, lifts from ~Jul 8, and climbs steeply to ~225/day by Jul 28.** That is the leading indicator, and it is moving in the right direction.
+  - **Average position 68.9 means roughly page 7.** Clicks are near-zero because of rank, not because of missing or weak content — the top-impression queries are ones we already have dedicated pages for. **The bottleneck is authority, not content**, which points straight at the stars/Show HN track rather than at more writing.
+  - Top queries (592 total, all top-10 at 0 clicks): `csv to json` 90 · `retail margin calculator` 57 · `profit margin calculator` 52 · `how to calculate profit margin` 46 · `how to calculate margin` 38 · `export csv to json` 25 · `how to open pdf in word without losing formatting` 23 · `connect csv to json` 20 · `convert pdf to word without losing formatting` 18 · `break even sales calculator` 18.
+  - **Strategically important: every one of those is business/finance or developer intent — the high-RPM categories — and the India exam-form niche appears nowhere in the top 10.** The RPM re-weighting is already visible in demand data. Feeds RPM-measure and N8/N9.
+  - **N9 is partly answered by this data:** the "impressions but no clicks" queries are not content gaps. `how to calculate profit margin`, `how to open pdf in word without losing formatting` and the CSV-to-JSON cluster all have dedicated guides already. Re-scope N9 from "write 2 new guides" to "improve rank for pages that already exist".
 - [ ] If recrawl confirmed → user ticks AdSense policy box + Resubmit. Log the date; outcome typically arrives in days-to-2-weeks.
 
 ### N2–N3 — Authority foundation (directories + listings)
@@ -243,6 +249,8 @@ Homepage redesign shipped 2026-07-20 (branch `seo/n-design-homepage`, 7 commits)
 
 ### Weekly GSC snapshot log
 _(one line per week: date — impressions 7d — clicks 7d — indexed count)_
+
+- **2026-07-30** — custom range Jun 13 → Jul 28: **impressions 2.17K, clicks 14, CTR 0.6%, avg position 68.9**, 592 distinct queries. Daily impressions ~225 by Jul 28, up from ~0 through June. 4/4 watch-list pages confirmed indexed. *(Range is ~46d, not 7d — future rows should use a consistent 7d window so the log is comparable.)*
 
 ## Cycle 2 progress log
 - 2026-07-30 — **N1 pre-flight: the contact page was the one thing standing out** (branch `seo/n1-contact-page`, pending approval). Resubmit itself is still gated on GSC data only Kavya can read.
