@@ -743,6 +743,70 @@ export const seoContentMap: Record<string, SEOData> = {
       { question: "Is my image uploaded during the conversion?", answer: "No. The conversion is drawn on an off-screen HTML5 Canvas directly in browser memory." }
     ]
   },
+  'avif-to-jpg': {
+    title: 'Convert AVIF to JPG Online - Free, No Upload | ConvertOcean',
+    description: 'Convert AVIF images to universal JPG right in your browser — free, private, offline-capable. Fix files that email clients and upload forms reject.',
+    content: `
+<div class="content-card">
+  <h2>Converting AVIF Images to Standard JPG.</h2>
+  <p>AVIF is the web's newest mainstream image format — built on the AV1 video codec, it packs the same visual quality as a JPG into roughly half the bytes, which is exactly why websites increasingly serve it. That is also where these files usually come from: right-click and save a picture from a modern site, and the download is often an .avif whether you wanted one or not. The trouble begins the moment that file meets software written before the format existed.</p>
+
+  <h3>Why an AVIF Won't Open Where You Need It.</h3>
+  <p>Browser support for AVIF is excellent; almost everything else lags behind. Many email clients will not display it inline, chat and office apps are hit-or-miss with previews, stock photo viewers on older Windows versions frequently need a codec add-on before they show anything, and upload forms that whitelist .jpg and .png reject the extension outright. Older releases of desktop editors simply refuse the file. JPG is the opposite case — thirty years of software treats it as the definition of a photograph — so converting is the reliable fix when a saved image will not open, attach, or upload.</p>
+
+  <h3>How the Conversion Works.</h3>
+  <p>Your browser already ships a complete AVIF decoder — the same one it uses to render AVIF images on web pages. This tool hands your file to that decoder locally, draws the decoded pixels onto an off-screen canvas, and re-encodes them as a JPEG at 92% quality, which is visually indistinguishable for photographs. Two format differences worth knowing: JPG has no alpha channel, so transparent regions are flattened onto a white background, and JPG is strictly static, so an animated AVIF exports its first frame. Expect the JPG to come out larger than the AVIF — that is AVIF's compression advantage running in reverse, not quality being wasted.</p>
+
+  <h3>Common Reasons for This Conversion.</h3>
+  <ul>
+    <li><strong>Saved from the web:</strong> an image downloaded from a modern site arrived as .avif and nothing on the PC opens it.</li>
+    <li><strong>Upload rejections:</strong> a portal or form accepts only .jpg/.jpeg/.png extensions.</li>
+    <li><strong>Email attachments:</strong> a JPG is the safe format to send when the recipient's setup is unknown.</li>
+    <li><strong>Editing:</strong> an older image editor that predates AVIF needs a format it understands.</li>
+  </ul>
+  <p>If the image is a logo or graphic whose transparency matters, <a href="/avif-to-png/">AVIF to PNG</a> keeps the alpha channel instead of flattening it. The same compatibility trip exists for the web's other modern format via <a href="/webp-to-jpg/">WebP to JPG</a>, and if the destination also enforces pixel dimensions or a KB cap, the <a href="/image-resizer/">Image Resizer</a> handles that in the same client-side way. The <a href="/guides/png-vs-jpg/">PNG vs JPG guide</a> covers choosing between the destination formats. Decoding and re-encoding both run inside your browser — the image is never uploaded anywhere.</p>
+</div>
+    `,
+    faqs: [
+      { question: "Why won't my AVIF file open in my photo viewer or editor?", answer: "AVIF is newer than most installed software. Browsers decode it natively, but many desktop viewers and older editors need updates or codec add-ons that are often missing. Converting to JPG produces a file every application understands." },
+      { question: "Does converting AVIF to JPG lose quality?", answer: "The tool re-encodes the decoded image at 92% JPEG quality, which is visually indistinguishable for photos. The AVIF's own compression is already baked into its pixels, so a single conversion is safe — just avoid repeatedly converting back and forth between lossy formats." },
+      { question: "Why is the JPG larger than my AVIF file?", answer: "AVIF compresses roughly twice as efficiently as JPEG at similar quality, so recreating the image as a JPG genuinely needs more bytes. The size increase is the price of universal compatibility, not a flaw in the conversion." },
+      { question: "What happens to an animated AVIF?", answer: "JPG is a static format, so the export contains the animation's first frame only. If you need the motion preserved, keep the original AVIF alongside the JPG copy." },
+      { question: "Is my image uploaded during the conversion?", answer: "No. The file is decoded by your browser's own AVIF engine and re-encoded on an off-screen canvas in local memory. Nothing is transmitted, and the tool keeps working offline once the page has loaded." }
+    ]
+  },
+  'avif-to-png': {
+    title: 'Convert AVIF to PNG Online - Keep Transparency | ConvertOcean',
+    description: 'Convert AVIF to lossless PNG with transparency preserved, entirely in your browser. No uploads — ideal for editing, documents, and picky upload forms.',
+    content: `
+<div class="content-card">
+  <h2>Converting AVIF Images to Lossless PNG.</h2>
+  <p>PNG is the workhorse format for anything that is not a photograph: logos, screenshots, diagrams, interface graphics, and any image where transparency or pixel-exact fidelity matters. When one of those arrives as an AVIF — usually saved from a website that serves the modern format to cut bandwidth — converting it to PNG restores a file that every editor, office suite, and upload form accepts without complaint.</p>
+
+  <h3>Why PNG Is the Right Target for Graphics.</h3>
+  <p>The choice between this tool and <a href="/avif-to-jpg/">AVIF to JPG</a> comes down to what the image is. Photographs tolerate JPG's lossy compression and benefit from its smaller files; graphics do not. Hard edges, flat colour areas, and text develop visible compression artifacts in a JPG, and its missing alpha channel means a transparent logo gets flattened onto a solid background. PNG sidesteps both problems: the encoding is lossless, so the pixels your browser decodes from the AVIF are stored exactly, and the alpha channel carries across untouched — a logo with a transparent background stays transparent.</p>
+
+  <h3>What to Expect from the Output.</h3>
+  <p>The conversion happens with your browser's own AVIF decoder: the file is decoded to raw pixels locally and rewritten as a PNG on an off-screen canvas, with no further quality decisions to make because PNG has no lossy setting. One honest trade-off: the PNG will be substantially larger than the AVIF, especially for photographic content, because it stores every pixel without AVIF's aggressive compression. For a photo you intend to share or upload rather than edit, <a href="/avif-to-jpg/">JPG output</a> is usually the more practical size. An animated AVIF exports its first frame, since PNG here is a single-image target.</p>
+
+  <h3>Typical Uses.</h3>
+  <ul>
+    <li><strong>Editing pipelines:</strong> get a lossless master into an editor that cannot read AVIF, without adding compression artifacts before the work starts.</li>
+    <li><strong>Logos and UI assets:</strong> preserve transparency for use in documents, slides, and design tools.</li>
+    <li><strong>Screenshots and diagrams:</strong> keep text and hard edges pixel-crisp.</li>
+    <li><strong>Strict upload forms:</strong> satisfy platforms that accept PNG but reject modern formats.</li>
+  </ul>
+  <p>The same route exists for WebP files via <a href="/webp-to-png/">WebP to PNG</a>, and a finished PNG headed back to the web can be shrunk again with <a href="/png-to-webp/">PNG to WebP</a>. Everything runs in your browser sandbox — the image never leaves your device, and the tool works offline once loaded.</p>
+</div>
+    `,
+    faqs: [
+      { question: "Is the AVIF's transparency preserved in the PNG?", answer: "Yes. PNG has a full alpha channel, so transparent and semi-transparent regions in the AVIF carry across exactly as they are — nothing is flattened onto a background colour." },
+      { question: "Is AVIF to PNG conversion truly lossless?", answer: "The PNG stores the decoded pixels exactly, with no new compression loss. Note that if the AVIF itself was saved with lossy compression, that is already part of its pixels — the PNG faithfully preserves the image as it decodes, and never degrades it further." },
+      { question: "Why is the PNG so much bigger than the AVIF?", answer: "AVIF uses modern lossy compression; PNG stores data losslessly. For photographs the difference can be dramatic, which is why PNG suits graphics and editing masters while JPG suits photos headed for sharing." },
+      { question: "Which browsers can run this conversion?", answer: "The tool relies on the browser's native AVIF decoder: Chrome and Edge 85+, Firefox 93+, and Safari 16.4 or newer. On an older browser the file cannot be decoded and the tool will say so rather than failing silently." },
+      { question: "Does my image get uploaded?", answer: "No. Decoding and PNG encoding both happen in your browser's local memory. The file is never transmitted to a server, and the conversion works offline once the page has loaded." }
+    ]
+  },
   'svg-to-png': {
     title: 'Convert SVG to PNG Online - Vector Rasterizer | ConvertOcean',
     description: 'Convert vector SVG files to transparent PNG images in your browser. High resolution scaling client-side.',

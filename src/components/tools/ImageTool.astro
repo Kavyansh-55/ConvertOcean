@@ -38,6 +38,12 @@ if (slug === 'png-to-jpg') {
 } else if (slug === 'jpeg-to-jpg') {
   acceptMime = "image/jpeg,image/jpg";
   targetFormat = "JPG";
+} else if (slug === 'avif-to-jpg') {
+  acceptMime = "image/avif,.avif";
+  targetFormat = "JPG";
+} else if (slug === 'avif-to-png') {
+  acceptMime = "image/avif,.avif";
+  targetFormat = "PNG";
 }
 ---
 
@@ -204,16 +210,20 @@ if (slug === 'png-to-jpg') {
         showError("Invalid file type. Please choose a JPG or JPEG file.");
         return;
       }
+      if (['avif-to-jpg', 'avif-to-png'].includes(slug) && extension !== 'avif') {
+        showError("Invalid file type. Please choose an AVIF file.");
+        return;
+      }
 
       showProgress(30, "Loading image bytes…");
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
+      const isAvif = ['avif-to-jpg', 'avif-to-png'].includes(slug);
+      const img = new Image();
+      img.onload = function() {
+          if (isAvif) URL.revokeObjectURL(img.src);
           showProgress(70, "Rendering and converting format…");
 
           let mimeType = 'image/png';
-          if (['png-to-jpg', 'webp-to-jpg', 'svg-to-jpg', 'jpeg-to-jpg', 'jpg-to-jpeg'].includes(slug)) {
+          if (['png-to-jpg', 'webp-to-jpg', 'svg-to-jpg', 'jpeg-to-jpg', 'jpg-to-jpeg', 'avif-to-jpg'].includes(slug)) {
             mimeType = 'image/jpeg';
           } else if (['png-to-webp', 'jpg-to-webp', 'svg-to-webp'].includes(slug)) {
             mimeType = 'image/webp';
@@ -260,14 +270,26 @@ if (slug === 'png-to-jpg') {
             dropZone.style.display = 'none';
             hideProgress();
           }, mimeType, 0.92);
-        };
-        img.onerror = function() {
-          showError("Failed to parse image data.");
-          hideProgress();
-        };
-        img.src = e.target.result;
       };
-      reader.readAsDataURL(file);
+      img.onerror = function() {
+        if (img.src) URL.revokeObjectURL(img.src);
+        if (isAvif) {
+          showError("Your browser could not decode this AVIF file. AVIF needs Chrome/Edge 85+, Firefox 93+, or Safari 16.4+ — on an older browser, try updating it first. If your browser is current, the file itself may be damaged.");
+        } else {
+          showError("Failed to parse image data.");
+        }
+        hideProgress();
+      };
+      if (isAvif) {
+        // Windows often has no MIME registration for .avif, so file.type comes
+        // back empty and a data URL would carry application/octet-stream —
+        // which the image decoder rejects. Force the type via a Blob URL.
+        img.src = URL.createObjectURL(new Blob([file], { type: 'image/avif' }));
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(e) { img.src = e.target.result; };
+        reader.readAsDataURL(file);
+      }
     }
 
     btnDownload.addEventListener('click', () => {

@@ -195,7 +195,7 @@ export const guides: GuideData[] = [
     h1: 'PNG vs JPG: Which Format Should You Use?',
     readTime: '6 min read',
     publishDate: 'June 20, 2026',
-    relatedTools: ['png-to-jpg', 'jpg-to-png', 'png-to-webp', 'webp-to-png', 'jpg-to-webp', 'webp-to-jpg'],
+    relatedTools: ['png-to-jpg', 'jpg-to-png', 'png-to-webp', 'webp-to-png', 'jpg-to-webp', 'webp-to-jpg', 'avif-to-jpg', 'avif-to-png'],
     relatedGuides: ['how-ocr-works'],
     intro: 'Choosing the correct image extension determines your website\'s loading speed, graphic rendering quality, and layout presentation. Understand the differences between PNG and JPG to make the right choice.',
     contentHtml: `
