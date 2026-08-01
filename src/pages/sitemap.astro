@@ -31,6 +31,18 @@ const description = "Navigate ConvertOcean using our HTML sitemap. Access secure
       .sitemap-grid {
         grid-template-columns: 1fr;
       }
+      /* The Guides card carries an inline `grid-column: span 2`. In a
+         single-column grid that does not clamp — it makes the grid create an
+         IMPLICIT second column sized to content, which is why this page still
+         measured two columns (188px + 194px) and scrolled sideways at 390px
+         even though the rule above says 1fr. Reset the span, and the inner
+         two-up link list, for narrow screens. */
+      .sitemap-grid > .sitemap-card {
+        grid-column: auto !important;
+      }
+      .sitemap-card > .sitemap-list {
+        grid-template-columns: 1fr !important;
+      }
     }
     .sitemap-card {
       background-color: var(--colors-canvas);
