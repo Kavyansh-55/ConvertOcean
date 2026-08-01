@@ -260,6 +260,11 @@ const { slug, headline, subtitle } = Astro.props;
   .jf-toggle.on::after { left: 16px; }
 </style>
 
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
 <div class="jf-workspace" id="jf-root">
   <!-- LEFT: Input Panel -->
   <div class="jf-panel">
