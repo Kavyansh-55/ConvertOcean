@@ -167,6 +167,23 @@ export const profitMarginCalculatorContent = `
     Because markup uses cost as the base and margin uses revenue as the base, markup percentage is always higher than profit margin percentage. Neglecting this distinction can lead to selling items below cost.
   </p>
 
+  <h3>Retail Margin: Margin Measured on the Shelf Price.</h3>
+  <p>
+    <strong>Retail margin</strong> is the same calculation as gross profit margin, applied to the pair of numbers a retailer actually works with: what you paid a supplier, and what the customer pays you. The formula is <code>Retail Margin = ((Retail Price − Wholesale Cost) ÷ Retail Price) × 100</code>. Buy a product for $20 and shelve it at $40 and your retail margin is 50%, because half of the shelf price is gross profit.
+  </p>
+  <p>
+    That same example is a <strong>100% markup</strong> — you doubled the cost. This is the doubling convention known as <strong>keystone pricing</strong>, and it is the clearest illustration of why the two numbers must never be swapped: one transaction, two correct percentages, and they differ by a factor of two. A supplier quoting "keystone" and a finance report showing "50% margin" are describing the identical deal.
+  </p>
+  <p>
+    The conversion that matters in practice runs in both directions. To turn a target margin into the markup you need to apply to cost, use <code>Markup = Margin ÷ (1 − Margin)</code>. To go the other way, <code>Margin = Markup ÷ (1 + Markup)</code>. Worth memorising: a 25% margin needs a 33.33% markup, a 33.33% margin needs a 50% markup, a 40% margin needs a 66.67% markup, and a 50% margin needs the full 100% keystone.
+  </p>
+  <p>
+    To price from a target retail margin, divide rather than multiply: <code>Retail Price = Wholesale Cost ÷ (1 − Target Margin)</code>. A $18 item at a 45% target margin has to be shelved at $32.73, which is a gross profit of $14.73 and an 81.82% markup on cost. Adding 45% to the cost instead would give $26.10 and a real margin of just 31% — the single most common pricing error in retail, and one that quietly costs a fixed share of every sale. The calculator above runs this in either direction, so you can enter either the margin you need or the price you are testing.
+  </p>
+  <p>
+    Two cautions when applying this. Retail margin is a <em>gross</em> figure: it accounts for what the goods cost, not rent, staff, payment processing, returns, or shrinkage, so a healthy retail margin is not the same as a profitable shop. And margins are not comparable across categories — grocery, apparel, and jewellery operate on structurally different numbers because their stock turnover rates differ, so compare against your own category and your own history rather than a general benchmark.
+  </p>
+
   <h3>Pricing Use Cases and Industries.</h3>
   <p>
     Accurate margin calculations are vital across several sectors:

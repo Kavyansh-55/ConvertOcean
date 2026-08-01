@@ -38,11 +38,18 @@ const faqList = comp.faqs;
   <style>
     /* Vercel Stark Design Conforming to DESIGN.md */
     .vs-main-container {
+      /* `body` is display:flex/column, so this is a flex item and without a
+         definite width it sizes to its widest content — measured 510px at a
+         390px viewport, which scrolled the whole page sideways. max-width
+         alone does not help, because the item was never filling the line in
+         the first place. Same cause and same fix as .guide-main-container. */
+      width: 100%;
       max-width: 900px;
       margin: 0 auto;
       padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-5xl);
       position: relative;
       z-index: 1;
+      box-sizing: border-box;
     }
 
     .vs-header {

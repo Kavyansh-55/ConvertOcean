@@ -352,8 +352,8 @@ const rawTools: ToolData[] = [
   {
     slug: 'profit-margin-calculator',
     name: 'Profit Margin Calculator',
-    title: 'Profit Margin Calculator - Calculate Markup & Profitability | ConvertOcean',
-    description: 'Calculate profit margin, markup percentage, and profitability instantly. Free online profit margin calculator with gross margin, net margin, and markup formulas. 100% private.',
+    title: 'Profit Margin & Retail Margin Calculator | ConvertOcean',
+    description: 'Work out profit margin, retail margin, and markup from cost and price. Free calculator with every formula shown — and why margin and markup differ.',
     headline: 'Profit Margin Calculator.',
     subtitle: 'Calculate profit margin, markup percentage, gross profit, and net profitability from cost and revenue figures instantly.',
     quickAnswer: 'Profit margin is the percentage of revenue you keep as profit: Margin = ((Revenue − Cost) ÷ Revenue) × 100. Buying at $60 and selling at $100 gives a 40% margin — and a 66.7% markup, which is a different number. This calculator computes margin, markup, and gross profit entirely in your browser.',

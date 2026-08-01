@@ -216,13 +216,9 @@ const { slug, headline, subtitle } = Astro.props;
     white-space: pre;
   }
 
-  /* --colors-error-soft is a light pink with no dark-theme override, so on a
-     dark page it lands as a glaring light block. Scoped here rather than fixed
-     in theme.css on purpose: that token is shared with error banners across the
-     site, and restyling those means churning indexed pages. Logged as backlog. */
-  :global([data-theme="dark"]) .jf-error-detail { background-color: #2a1416; }
-  :global([data-theme="dark"]) .jf-error-loc,
-  :global([data-theme="dark"]) .jf-error-caret { color: #ff9d9d; }
+  /* These used to hardcode #2a1416/#ff9d9d because the shared error tokens had
+     no dark values. They do now, so the local copies are gone and this panel
+     follows the same tokens as every other error surface. */
   :global([data-theme="dark"]) .jf-error-excerpt { border-color: #4a2226; }
 
   /* Toggle switch for minify */

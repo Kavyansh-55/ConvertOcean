@@ -89,6 +89,14 @@
   --colors-hairline-strong: #4d4d4d;
   --colors-success: #10b981;
   --colors-success-glow: rgba(16, 185, 129, 0.2);
+  /* The error tokens had NO dark override at all, so every error banner on the
+     site rendered as a glaring light-pink block (#f7d4d6) on a near-black page,
+     and the #ee0000 text on it measured only 3.83:1. These values clear 4.5:1
+     on all three dark surfaces the tokens land on — the soft panel (#2a1416),
+     the canvas (#0a0a0a) and canvas-soft (#121212). */
+  --colors-error: #ff6b6b;
+  --colors-error-soft: #2a1416;
+  --colors-error-deep: #ff9d9d;
   --colors-link-bg-soft: #1b253c;
   --colors-link: #0070f3;
   --colors-accent-display: #22d3ee;
@@ -312,7 +320,14 @@ select:focus-visible,
 
 .brand-text-sub {
   font-weight: 400;
-  color: var(--colors-mute);
+  /* Was --colors-mute, which measured 3.36:1 in light and 3.33:1 in dark
+     against the translucent header — sampled from rendered pixels, because the
+     nav's computed background is rgba(255,255,255,0.75) in BOTH themes and so
+     tells you nothing about what is actually on screen. WCAG exempts logotypes
+     from contrast, so this was never a compliance failure, but half the brand
+     name was genuinely hard to read. --colors-body keeps "ocean" visually
+     secondary to "Convert" while making it legible. */
+  color: var(--colors-body);
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   margin-left: 2px;
