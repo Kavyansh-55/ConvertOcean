@@ -1,0 +1,247 @@
+---
+import CategoryIcon from '../CategoryIcon.astro';
+const { slug, name, headline, subtitle } = Astro.props;
+
+const targetFormat = slug === 'heic-to-png' ? 'PNG' : 'JPG';
+---
+
+<style>
+  .img-preview-box {
+    max-width: 100%;
+    max-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--rounded-md);
+    border: 1px solid var(--colors-hairline);
+    background: #1e1e1e;
+    overflow: hidden;
+    margin-top: var(--spacing-lg);
+  }
+  .img-preview {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+  }
+</style>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Processing file…</div>
+</div>
+
+<!-- Upload Card -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon"><CategoryIcon icon="🖼️" width="40" height="40" /></div>
+  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-secondary">HEIC / HEIF photo (Max 15MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".heic,.heif,image/heic,image/heif" />
+</div>
+
+<div id="previewBox" class="img-preview-box" style="display: none;">
+  <img id="imgPreview" class="img-preview" alt="Converted Preview" />
+</div>
+
+<div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
+  <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
+  <div class="button-group">
+    <button class="button button-primary" id="btnDownload">Download {targetFormat}</button>
+    <button class="button button-danger" id="btnClear">Clear</button>
+  </div>
+</div>
+
+<script is:inline define:vars={{ slug, targetFormat }}>
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const previewBox = document.getElementById('previewBox');
+    const imgPreview = document.getElementById('imgPreview');
+    const actionControls = document.getElementById('actionControls');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnClear = document.getElementById('btnClear');
+
+    const outMime = slug === 'heic-to-png' ? 'image/png' : 'image/jpeg';
+    let outBlob = null;
+    let originalName = '';
+    let decoderPromise = null;
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files).slice(0, 1);
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+
+    function hideProgress() {
+      progressOverlay.style.display = 'none';
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+    }
+
+    // The libheif decoder is ~1MB, so it is fetched on the FIRST file only —
+    // never on page load — and cached for the rest of the session.
+    function loadDecoder() {
+      if (window.heic2any) return Promise.resolve();
+      if (decoderPromise) return decoderPromise;
+      decoderPromise = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';
+        s.onload = () => resolve();
+        s.onerror = () => { decoderPromise = null; reject(new Error('decoder-load')); };
+        document.head.appendChild(s);
+      });
+      return decoderPromise;
+    }
+
+    function finish(blob, fileName) {
+      outBlob = blob;
+      imgPreview.src = URL.createObjectURL(blob);
+      previewBox.style.display = 'flex';
+      fileNameDisplay.textContent = fileName;
+      actionControls.style.display = 'flex';
+      dropZone.style.display = 'none';
+      hideProgress();
+    }
+
+    // Fallback for files that carry a .heic name but are really JPG/PNG —
+    // common after messaging apps or transfer tools re-encode a photo without
+    // renaming it. If the browser can decode it natively, convert via canvas.
+    function tryNativeFallback(file) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = function() {
+          URL.revokeObjectURL(img.src);
+          const w = img.naturalWidth, h = img.naturalHeight;
+          if (!w || !h) return reject(new Error('no-dims'));
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          if (outMime === 'image/jpeg') {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, w, h);
+          }
+          ctx.drawImage(img, 0, 0, w, h);
+          canvas.toBlob(b => b ? resolve(b) : reject(new Error('encode')), outMime, 0.92);
+        };
+        img.onerror = function() {
+          URL.revokeObjectURL(img.src);
+          reject(new Error('native-decode'));
+        };
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    async function handleFile(file) {
+      hideError();
+      originalName = file.name;
+      const extension = file.name.split('.').pop().toLowerCase();
+
+      if (!['heic', 'heif'].includes(extension)) {
+        showError("Invalid file type. Please choose a HEIC or HEIF file.");
+        return;
+      }
+
+      try {
+        showProgress(20, window.heic2any ? "Decoding HEIC…" : "Loading HEIC decoder (first file only)…");
+        try {
+          await loadDecoder();
+        } catch (e) {
+          showError("Could not load the HEIC decoder. Check your internet connection and try again — the first conversion needs a one-time ~1MB download. Your photo itself is never uploaded.");
+          hideProgress();
+          return;
+        }
+
+        showProgress(60, "Decoding HEIC and converting…");
+        let result;
+        try {
+          result = await window.heic2any({ blob: file, toType: outMime, quality: 0.92 });
+        } catch (e) {
+          // heic2any rejects browser-readable images (a JPG renamed .heic).
+          showProgress(80, "Not a HEIC container — trying direct conversion…");
+          try {
+            result = await tryNativeFallback(file);
+          } catch (e2) {
+            showError("This file could not be decoded. It does not appear to be a valid HEIC/HEIF photo — if it came from an iPhone, try re-exporting or re-transferring it, and make sure the transfer completed fully.");
+            hideProgress();
+            return;
+          }
+        }
+
+        // Multi-image HEIC (bursts) can yield an array; keep the primary image.
+        const blob = Array.isArray(result) ? result[0] : result;
+        finish(blob, file.name);
+      } catch (e) {
+        showError("Conversion failed unexpectedly. Please try the file again.");
+        hideProgress();
+      }
+    }
+
+    btnDownload.addEventListener('click', () => {
+      const ext = targetFormat.toLowerCase();
+      const outName = originalName.replace(/\.[^/.]+$/, "") + '.' + ext;
+      window.downloadBlob(outBlob, outName, outBlob.type);
+    });
+
+    btnClear.addEventListener('click', () => {
+      outBlob = null;
+      previewBox.style.display = 'none';
+      actionControls.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+    });
+  })();
+</script>

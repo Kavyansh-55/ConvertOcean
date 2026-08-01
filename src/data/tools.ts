@@ -598,6 +598,40 @@ const rawTools: ToolData[] = [
     relatedTools: ['webp-to-png', 'jpg-to-webp', 'png-to-jpg', 'avif-to-jpg']
   },
   {
+    slug: 'heic-to-jpg',
+    name: 'HEIC to JPG',
+    title: 'Convert HEIC to JPG Online - Free, No Upload | ConvertOcean',
+    description: "Convert iPhone HEIC photos to universal JPG right in your browser — free and private, nothing uploaded. Fix photos that Windows and upload forms can't open.",
+    headline: 'HEIC to JPG.',
+    subtitle: "Convert iPhone HEIC/HEIF photos into universally supported JPG format — decoded entirely on your device.",
+    quickAnswer: 'To convert HEIC to JPG, select your .heic photo above — an open-source decoder converts it to a JPG at 92% quality that opens on Windows, Android, and every upload form. The decoder itself is a one-time ~1MB download on your first file; your photo is never uploaded anywhere. Camera metadata such as GPS location is not carried into the output.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes, after the first conversion — the HEIC decoder is fetched once and cached, and your photos are always processed locally.' }
+    ],
+    relatedTools: ['heic-to-png', 'avif-to-jpg', 'image-resizer', 'jpg-to-jpeg']
+  },
+  {
+    slug: 'heic-to-png',
+    name: 'HEIC to PNG',
+    title: 'Convert HEIC to PNG Online - Free, Lossless | ConvertOcean',
+    description: "Convert HEIC photos to lossless PNG entirely in your browser. No uploads — ideal for editing, transparency, and software that cannot read Apple's format.",
+    headline: 'HEIC to PNG.',
+    subtitle: 'Convert Apple HEIC/HEIF images into lossless PNG files, decoded and re-encoded entirely client-side.',
+    quickAnswer: 'To convert HEIC to PNG, select your .heic file above and download a lossless PNG that every editor and platform accepts. The open-source decoder loads once (~1MB) on your first file and runs entirely in your browser — the photo itself never leaves your device. Expect the PNG to be larger than the HEIC original, since PNG stores pixels without lossy compression.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes, after the first conversion — the HEIC decoder is fetched once and cached, and your photos are always processed locally.' }
+    ],
+    relatedTools: ['heic-to-jpg', 'avif-to-png', 'webp-to-png', 'png-to-jpg']
+  },
+  {
     slug: 'avif-to-jpg',
     name: 'AVIF to JPG',
     title: 'Convert AVIF to JPG Online - Free, No Upload | ConvertOcean',
@@ -612,7 +646,7 @@ const rawTools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
     ],
-    relatedTools: ['avif-to-png', 'webp-to-jpg', 'png-to-jpg', 'image-resizer']
+    relatedTools: ['avif-to-png', 'heic-to-jpg', 'webp-to-jpg', 'png-to-jpg', 'image-resizer']
   },
   {
     slug: 'avif-to-png',
@@ -629,7 +663,7 @@ const rawTools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
     ],
-    relatedTools: ['avif-to-jpg', 'webp-to-png', 'png-to-webp', 'jpg-to-png']
+    relatedTools: ['avif-to-jpg', 'heic-to-png', 'webp-to-png', 'png-to-webp', 'jpg-to-png']
   },
   {
     slug: 'svg-to-png',

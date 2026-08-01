@@ -36,6 +36,7 @@ import SplitPptx from '../components/tools/SplitPptx.astro';
 import WordCounter from '../components/tools/WordCounter.astro';
 import JsonFormatter from '../components/tools/JsonFormatter.astro';
 import ImageResizer from '../components/tools/ImageResizer.astro';
+import HeicTool from '../components/tools/HeicTool.astro';
 
 export function getStaticPaths() {
   return tools.map(t => ({ params: { tool: t.slug } }));
@@ -115,7 +116,9 @@ const toolsMap: Record<string, any> = {
   'jpg-to-jpeg': ImageTool,
   'jpeg-to-jpg': ImageTool,
   'avif-to-jpg': ImageTool,
-  'avif-to-png': ImageTool
+  'avif-to-png': ImageTool,
+  'heic-to-jpg': HeicTool,
+  'heic-to-png': HeicTool
 };
 
 const ToolComponent = toolsMap[toolData.slug];

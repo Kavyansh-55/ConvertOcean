@@ -743,6 +743,69 @@ export const seoContentMap: Record<string, SEOData> = {
       { question: "Is my image uploaded during the conversion?", answer: "No. The conversion is drawn on an off-screen HTML5 Canvas directly in browser memory." }
     ]
   },
+  'heic-to-jpg': {
+    title: 'Convert HEIC to JPG Online - Free, No Upload | ConvertOcean',
+    description: "Convert iPhone HEIC photos to universal JPG right in your browser — free and private, nothing uploaded. Fix photos that Windows and upload forms can't open.",
+    content: `
+<div class="content-card">
+  <h2>Converting iPhone HEIC Photos to Standard JPG.</h2>
+  <p>Every photo an iPhone takes is, by default, a HEIC file — Apple's implementation of the HEIF standard, using HEVC compression to store the same picture in roughly half the space of a JPG. That efficiency is invisible until the photo leaves the Apple ecosystem: copy it to a Windows PC, attach it to an email, or feed it to an upload form, and the file that looked perfectly normal on the phone suddenly refuses to open.</p>
+
+  <h3>Why HEIC Photos Fail Outside the iPhone.</h3>
+  <p>Windows frequently cannot display HEIC out of the box — on many systems the required HEVC codec is a separate add-on from the Microsoft Store rather than something preinstalled. Upload forms are stricter still: portals that whitelist .jpg and .png reject the extension before the file is even inspected. Older photo software, printing kiosks, and plenty of email recipients have the same gap. JPG is the format three decades of software agrees on, which is why converting is the standard fix for a photo that needs to work anywhere.</p>
+
+  <h3>How This Tool Converts Without Uploading.</h3>
+  <p>Most HEIC converters upload your photo to their servers. This one does not — it fetches an open-source decoder (about 1MB, downloaded once on your first file and cached) and runs it inside your browser, so the conversion happens on your own device. The distinction matters: code downloads to you; your photo never travels the other way. The decoded image is re-encoded as a JPG at 92% quality, visually indistinguishable for photographs, and camera metadata such as GPS location is not carried into the output — a privacy bonus for photos headed to public uploads.</p>
+
+  <h3>Worth Knowing Before You Convert.</h3>
+  <ul>
+    <li><strong>Live Photos:</strong> the motion part lives in a separate video file on the phone. Converting the HEIC gives you the still image, which is normally exactly what forms and documents need.</li>
+    <li><strong>Burst / multi-image files:</strong> a HEIC container can hold several frames; the primary image is converted.</li>
+    <li><strong>Stopping the problem at the source:</strong> on the iPhone, Settings → Camera → Formats → "Most Compatible" makes the camera shoot JPG directly — useful if you constantly share to non-Apple devices, at the cost of larger files on the phone.</li>
+  </ul>
+  <p>If the destination also enforces pixel dimensions or a file-size cap — passport photos, exam portals, job applications — the <a href="/image-resizer/">Image Resizer</a> handles that next step the same client-side way. Need a lossless copy for editing instead? <a href="/heic-to-png/">HEIC to PNG</a> keeps every pixel exact. The web's other modern formats have the same escape hatch via <a href="/avif-to-jpg/">AVIF to JPG</a> and <a href="/webp-to-jpg/">WebP to JPG</a>, and the <a href="/guides/resize-photo-signature-for-online-forms/">photo-for-online-forms guide</a> walks through the full upload-requirements workflow.</p>
+</div>
+    `,
+    faqs: [
+      { question: "Why can't Windows open my iPhone photos?", answer: "iPhones save photos as HEIC, and many Windows systems lack the HEVC codec needed to display them — it is often a separate Microsoft Store add-on rather than preinstalled. Converting to JPG produces a file that opens on any Windows version with no extra software." },
+      { question: "Is my photo uploaded to a server during conversion?", answer: "No. The tool downloads an open-source decoder (about 1MB, once) and runs it in your browser — the photo itself is decoded and re-encoded entirely on your device and never transmitted. This is the reverse of most HEIC converters, which upload your photo to process it." },
+      { question: "Does converting HEIC to JPG lose quality?", answer: "The JPG is encoded at 92% quality, which is visually indistinguishable for photos. HEIC's own compression is already part of the source pixels, so a single conversion is safe; just avoid repeatedly re-saving between lossy formats." },
+      { question: "What happens to a Live Photo?", answer: "A Live Photo's motion is stored as a separate video file on the iPhone. The .heic contains the still image, and that is what gets converted — for upload forms and documents, the still is what you need." },
+      { question: "Can I stop my iPhone from creating HEIC files?", answer: "Yes: Settings → Camera → Formats → 'Most Compatible' switches the camera to JPG. Photos will take roughly twice the storage on the phone, but they will work everywhere without conversion." }
+    ]
+  },
+  'heic-to-png': {
+    title: 'Convert HEIC to PNG Online - Free, Lossless | ConvertOcean',
+    description: "Convert HEIC photos to lossless PNG entirely in your browser. No uploads — ideal for editing, transparency, and software that cannot read Apple's format.",
+    content: `
+<div class="content-card">
+  <h2>Converting HEIC Images to Lossless PNG.</h2>
+  <p>When a HEIC file needs to become something editable rather than merely shareable, PNG is the better destination than JPG. PNG stores the decoded image losslessly — no second round of compression stacked on top of the original — which makes it the right master copy to open in an editor, place into a document, or archive before retouching. Every design tool, office suite, and upload form accepts it without complaint.</p>
+
+  <h3>JPG or PNG: Choosing the Destination.</h3>
+  <p>The rule of thumb is the same one that governs all photo formats: photographs headed for sharing or upload suit <a href="/heic-to-jpg/">JPG</a>, whose smaller files are indistinguishable to the eye; images headed for editing, and any graphic with hard edges, text, or transparency, suit PNG. A JPG re-encode adds its own compression each time a file is saved, so if the picture will pass through an editor before its final destination, converting to PNG first means the editing starts from exact pixels instead of already-recompressed ones.</p>
+
+  <h3>What to Expect from the Output.</h3>
+  <p>The conversion runs on an open-source HEIC decoder fetched once (about 1MB) on your first file and cached afterwards; the decoding and PNG encoding both happen inside your browser, so the image itself is never uploaded. If the HEIC carries an alpha channel — some apps export cut-out subjects and stickers in the format — the transparency survives into the PNG rather than being flattened. The honest trade-off is size: PNG stores every pixel without lossy compression, so for an ordinary photograph the output will be several times larger than the HEIC. That is the correct price for an editing master, and the wrong one for an email attachment — pick the destination by the job.</p>
+
+  <h3>Typical Uses.</h3>
+  <ul>
+    <li><strong>Editing masters:</strong> start retouching from exact decoded pixels, not re-compressed ones.</li>
+    <li><strong>Documents and slides:</strong> place iPhone photos into Word or PowerPoint as a format they embed reliably.</li>
+    <li><strong>Cut-outs and stickers:</strong> keep transparent backgrounds transparent.</li>
+    <li><strong>Software gaps:</strong> feed HEIC-illiterate tools a format every application reads.</li>
+  </ul>
+  <p>The same lossless route exists for the web's formats via <a href="/webp-to-png/">WebP to PNG</a> and <a href="/avif-to-png/">AVIF to PNG</a>, and the <a href="/guides/png-vs-jpg/">PNG vs JPG guide</a> covers the destination decision in depth. A finished PNG headed back to the web can be shrunk again with <a href="/png-to-webp/">PNG to WebP</a>.</p>
+</div>
+    `,
+    faqs: [
+      { question: "Is HEIC to PNG conversion lossless?", answer: "The PNG stores the decoded pixels exactly, with no additional compression loss. The HEIC's own original compression is already part of its pixels — the PNG preserves the image precisely as it decodes and never degrades it further." },
+      { question: "Why is the PNG so much larger than my HEIC?", answer: "HEIC uses modern lossy compression roughly twice as efficient as JPG; PNG stores data losslessly. For photographs the output can be several times larger, which is the right trade for editing masters and the wrong one for sharing — use JPG output for that." },
+      { question: "Is transparency preserved?", answer: "Yes. If the HEIC carries an alpha channel — cut-out subjects and stickers exported by some apps — it survives into the PNG's transparency rather than being flattened onto a background." },
+      { question: "Does my photo get uploaded?", answer: "No. An open-source decoder (about 1MB) is downloaded once and runs in your browser; the photo is decoded and re-encoded entirely on your device. Nothing is transmitted, and after the first conversion the tool keeps working offline." },
+      { question: "What is the difference between .heic and .heif?", answer: "HEIF is the container standard; .heic is that container holding HEVC-compressed images, which is what Apple devices produce. This tool accepts both extensions and treats them the same way." }
+    ]
+  },
   'avif-to-jpg': {
     title: 'Convert AVIF to JPG Online - Free, No Upload | ConvertOcean',
     description: 'Convert AVIF images to universal JPG right in your browser — free, private, offline-capable. Fix files that email clients and upload forms reject.',
