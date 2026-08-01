@@ -218,7 +218,7 @@ const rawTools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools. The conversion models are loaded directly into browser cache memory.' }
     ],
-    relatedTools: ['png-to-jpg', 'jpg-to-png', 'png-to-webp', 'image-to-text']
+    relatedTools: ['png-to-jpg', 'jpg-to-png', 'png-to-webp', 'image-to-text', 'avif-to-png']
   },
   {
     slug: 'txt-to-pdf',
@@ -595,7 +595,41 @@ const rawTools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
     ],
-    relatedTools: ['webp-to-png', 'jpg-to-webp', 'png-to-jpg']
+    relatedTools: ['webp-to-png', 'jpg-to-webp', 'png-to-jpg', 'avif-to-jpg']
+  },
+  {
+    slug: 'avif-to-jpg',
+    name: 'AVIF to JPG',
+    title: 'Convert AVIF to JPG Online - Free, No Upload | ConvertOcean',
+    description: 'Convert AVIF images to universal JPG right in your browser — free, private, offline-capable. Fix files that email clients and upload forms reject.',
+    headline: 'AVIF to JPG.',
+    subtitle: 'Convert next-generation AVIF images into universally supported JPG format, decoded and re-encoded locally.',
+    quickAnswer: 'To convert AVIF to JPG, select your .avif file above — the browser decodes it with its built-in AVIF engine and re-encodes a JPG at 92% quality that opens in any software, email client, or upload form. Transparent areas are flattened to white, and an animated AVIF exports its first frame. The conversion runs on your device; the image is never uploaded.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['avif-to-png', 'webp-to-jpg', 'png-to-jpg', 'image-resizer']
+  },
+  {
+    slug: 'avif-to-png',
+    name: 'AVIF to PNG',
+    title: 'Convert AVIF to PNG Online - Keep Transparency | ConvertOcean',
+    description: 'Convert AVIF to lossless PNG with transparency preserved, entirely in your browser. No uploads — ideal for editing, documents, and picky upload forms.',
+    headline: 'AVIF to PNG.',
+    subtitle: 'Convert AVIF images into lossless PNG files with transparency preserved, entirely client-side.',
+    quickAnswer: 'To convert AVIF to PNG, select your .avif file above and download a lossless PNG with any transparency preserved. PNG opens in every editor and passes upload forms that reject modern formats, though it will be noticeably larger than the AVIF original. Decoding and re-encoding run entirely in your browser, so the image never leaves your device.',
+    icon: '🖼️',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
+      { question: 'Does it work offline?', answer: 'Yes. You can completely disconnect from the internet and run these tools.' }
+    ],
+    relatedTools: ['avif-to-jpg', 'webp-to-png', 'png-to-webp', 'jpg-to-png']
   },
   {
     slug: 'svg-to-png',
