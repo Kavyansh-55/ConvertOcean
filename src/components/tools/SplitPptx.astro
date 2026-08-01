@@ -377,13 +377,37 @@ const { slug, headline, subtitle } = Astro.props;
           const zipClone = await JSZip.loadAsync(docBytes);
 
           // 3. Remove actual files from zipClone
-          slidesToDelete.forEach(slide => {
+          //
+          // A deleted slide's SPEAKER NOTES have to go with it. The notesSlide
+          // part is only reachable through that slide's own .rels file, so it
+          // must be resolved BEFORE the rels are removed — otherwise the notes
+          // stay behind as an orphan that nothing references but every reader
+          // can still extract. Splitting a deck used to put EVERY slide's
+          // private notes into EVERY output file: send one slide to a client
+          // and they received your commentary on all the others.
+          const notesToDelete = [];
+          for (const slide of slidesToDelete) {
             const slidePath = `ppt/${slide.target}`;
-            zipClone.remove(slidePath);
-            
             const slideRelsPath = `ppt/slides/_rels/${slide.slideFileName}.rels`;
+
+            const relsFile = zipClone.file(slideRelsPath);
+            if (relsFile) {
+              const relsText = await relsFile.async("string");
+              const relsDoc = parser.parseFromString(relsText, "text/xml");
+              Array.from(relsDoc.getElementsByTagName("Relationship")).forEach(rel => {
+                if ((rel.getAttribute("Type") || "").indexOf("notesSlide") === -1) return;
+                const target = (rel.getAttribute("Target") || "").replace(/^\.\.\//, "").replace(/^\/?ppt\//, "");
+                if (!target) return;
+                const notesPath = `ppt/${target}`;
+                notesToDelete.push(notesPath);
+                zipClone.remove(notesPath);
+                zipClone.remove(`ppt/notesSlides/_rels/${notesPath.split("/").pop()}.rels`);
+              });
+            }
+
+            zipClone.remove(slidePath);
             zipClone.remove(slideRelsPath);
-          });
+          }
 
           // 4. Remove entries from [Content_Types].xml
           const contentTypesText = await zipClone.file("[Content_Types].xml").async("string");
@@ -398,6 +422,16 @@ const { slug, headline, subtitle } = Astro.props;
             const overrideNode = contentTypesDoc.querySelector(`[PartName="${partName}"]`);
             if (overrideNode) {
               contentTypesRoot.removeChild(overrideNode);
+            }
+          });
+
+          // Every removed notesSlide needs its Override dropped too — a
+          // Content_Types entry pointing at a part that no longer exists is
+          // exactly what makes PowerPoint call a file corrupted.
+          notesToDelete.forEach(notesPath => {
+            const node = contentTypesDoc.querySelector(`[PartName="/${notesPath}"]`);
+            if (node) {
+              contentTypesRoot.removeChild(node);
             }
           });
 
