@@ -195,7 +195,7 @@ export const guides: GuideData[] = [
     h1: 'PNG vs JPG: Which Format Should You Use?',
     readTime: '6 min read',
     publishDate: 'June 20, 2026',
-    relatedTools: ['png-to-jpg', 'jpg-to-png', 'png-to-webp', 'webp-to-png', 'jpg-to-webp', 'webp-to-jpg', 'avif-to-jpg', 'avif-to-png'],
+    relatedTools: ['png-to-jpg', 'jpg-to-png', 'png-to-webp', 'webp-to-png', 'jpg-to-webp', 'webp-to-jpg', 'avif-to-jpg', 'avif-to-png', 'heic-to-png'],
     relatedGuides: ['how-ocr-works'],
     intro: 'Choosing the correct image extension determines your website\'s loading speed, graphic rendering quality, and layout presentation. Understand the differences between PNG and JPG to make the right choice.',
     contentHtml: `
@@ -728,7 +728,7 @@ export const guides: GuideData[] = [
     h1: 'How to Resize a Photo and Signature for Online Forms.',
     readTime: '6 min read',
     publishDate: 'July 18, 2026',
-    relatedTools: ['image-resizer', 'jpg-to-jpeg', 'jpeg-to-jpg', 'png-to-jpg', 'image-to-pdf'],
+    relatedTools: ['image-resizer', 'jpg-to-jpeg', 'jpeg-to-jpg', 'png-to-jpg', 'image-to-pdf', 'heic-to-jpg'],
     relatedGuides: ['png-vs-jpg'],
     intro: 'Exam portals, job applications, and government forms reject millions of photo uploads a day for the same three reasons: wrong pixel dimensions, file too large, or wrong file extension. This guide walks through the exact fix for each — from taking a usable photo to hitting a 20 KB limit without destroying quality.',
     contentHtml: `
