@@ -279,6 +279,11 @@ const { slug, headline, subtitle } = Astro.props;
   }
 </style>
 
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
 <div class="wc-workspace" id="wc-root">
   <!-- LEFT: Editor Panel -->
   <div class="wc-editor-panel">
