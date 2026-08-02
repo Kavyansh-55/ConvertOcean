@@ -38,6 +38,7 @@ import JsonFormatter from '../components/tools/JsonFormatter.astro';
 import ImageResizer from '../components/tools/ImageResizer.astro';
 import HeicTool from '../components/tools/HeicTool.astro';
 import BankFileTool from '../components/tools/BankFileTool.astro';
+import ExifTool from '../components/tools/ExifTool.astro';
 
 export function getStaticPaths() {
   return tools.map(t => ({ params: { tool: t.slug } }));
@@ -122,7 +123,9 @@ const toolsMap: Record<string, any> = {
   'heic-to-png': HeicTool,
   'ofx-to-csv': BankFileTool,
   'qfx-to-csv': BankFileTool,
-  'qbo-to-csv': BankFileTool
+  'qbo-to-csv': BankFileTool,
+  'exif-viewer': ExifTool,
+  'exif-remover': ExifTool
 };
 
 const ToolComponent = toolsMap[toolData.slug];

@@ -1,0 +1,531 @@
+---
+import CategoryIcon from '../CategoryIcon.astro';
+const { slug, headline, subtitle } = Astro.props;
+
+// Same engine either way. The viewer opens with the full tag table expanded
+// because inspecting is the job; the remover keeps it collapsed behind a toggle
+// so the clean-and-download action is what you land on.
+const isRemover = slug === 'exif-remover';
+---
+
+<style>
+  .xf-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--spacing-md);
+  }
+  @media (min-width: 760px) {
+    .xf-layout { grid-template-columns: 240px minmax(0, 1fr); align-items: start; }
+  }
+  .xf-thumb-box {
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    background-color: var(--colors-canvas-soft-2);
+    padding: var(--spacing-sm);
+    text-align: center;
+  }
+  .xf-thumb {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: var(--rounded-sm, 4px);
+  }
+  .xf-filename {
+    font-size: 12px;
+    color: var(--colors-mute);
+    margin-top: 6px;
+    word-break: break-all;
+  }
+  .xf-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+  @media (min-width: 620px) {
+    .xf-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  .xf-stat {
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  .xf-stat-label {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--colors-mute);
+    margin-bottom: 2px;
+  }
+  .xf-stat-value {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--colors-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The GPS panel is the point of the viewer: it is the finding people do not
+     expect. Styled as an alert rather than a row in a table. */
+  .xf-gps {
+    border: 1px solid var(--colors-error-deep);
+    border-left-width: 3px;
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    background-color: var(--colors-canvas-soft-2);
+  }
+  .xf-gps-title {
+    font-weight: 600;
+    color: var(--colors-error-deep);
+    margin-bottom: 4px;
+  }
+  .xf-gps-coords {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    color: var(--colors-ink);
+    margin-bottom: 6px;
+  }
+  .xf-gps-note { font-size: 12px; color: var(--colors-mute); }
+
+  .xf-clean {
+    border: 1px solid var(--colors-hairline);
+    border-left: 3px solid var(--colors-accent-display);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    background-color: var(--colors-canvas-soft-2);
+    font-size: 14px;
+  }
+
+  .xf-options { margin-bottom: var(--spacing-md); }
+  .xf-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--colors-body);
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .xf-check input { margin-top: 2px; flex-shrink: 0; }
+  .xf-check-hint { color: var(--colors-mute); }
+
+  .xf-table-outer { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .xf-table-wrap {
+    overflow-x: auto;
+    min-width: 0;
+    max-width: 100%;
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+  }
+  /* Rows are script-injected, so these need :global() — a scoped rule never
+     reaches an element the component template did not itself emit. */
+  .xf-table-wrap :global(table) {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13px;
+  }
+  .xf-table-wrap :global(th),
+  .xf-table-wrap :global(td) {
+    padding: 7px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--colors-hairline);
+    vertical-align: top;
+  }
+  .xf-table-wrap :global(th) {
+    background-color: var(--colors-canvas-soft-2);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--colors-mute);
+  }
+  .xf-table-wrap :global(td.xf-name) { font-weight: 500; white-space: nowrap; }
+  .xf-table-wrap :global(td.xf-value) { word-break: break-word; }
+  .xf-table-wrap :global(tr.xf-sensitive td.xf-name) { color: var(--colors-error-deep); }
+  .xf-table-wrap :global(tr:last-child td) { border-bottom: none; }
+  .xf-group-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--colors-mute);
+  }
+
+  .xf-toggle {
+    background: none;
+    border: none;
+    color: var(--colors-link);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 0;
+    text-decoration: underline;
+  }
+  .xf-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: var(--spacing-md);
+  }
+  .xf-result {
+    font-size: 13px;
+    color: var(--colors-body);
+    margin-right: auto;
+  }
+</style>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Reading photo…</div>
+</div>
+
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon"><CategoryIcon icon="🔍" width="40" height="40" /></div>
+  <div class="upload-text-primary">Drag and drop a photo here, or click to browse</div>
+  <div class="upload-text-secondary">JPG, PNG or WebP (Max 25MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
+</div>
+
+<div id="resultPanel" class="panel-card" style="display: none; margin-top: var(--spacing-md);">
+  <div class="xf-layout">
+    <div class="xf-thumb-box">
+      <img id="xfThumb" class="xf-thumb" alt="Preview of the photo you selected" />
+      <div class="xf-filename" id="xfFilename"></div>
+    </div>
+
+    <div>
+      <div class="xf-stats" id="xfStats"></div>
+      <div id="xfGps" class="xf-gps" style="display: none;"></div>
+      <div id="xfClean" class="xf-clean" style="display: none;"></div>
+
+      <div class="xf-options">
+        <label class="xf-check">
+          <input type="checkbox" id="optOrientation" checked />
+          <span>
+            Keep the rotation flag
+            <span class="xf-check-hint">— it is not private, and removing it makes photos taken sideways display sideways.</span>
+          </span>
+        </label>
+        <label class="xf-check">
+          <input type="checkbox" id="optIcc" checked />
+          <span>
+            Keep the colour profile
+            <span class="xf-check-hint">— ICC data describes colour, not you. Removing it can visibly shift colours.</span>
+          </span>
+        </label>
+      </div>
+
+      <button type="button" class="xf-toggle" id="xfToggle" aria-expanded={isRemover ? 'false' : 'true'} aria-controls="xfTableOuter"></button>
+      <div class="xf-table-outer" id="xfTableOuter">
+        <div class="xf-table-wrap" id="xfTableWrap"></div>
+      </div>
+
+      <div class="xf-actions">
+        <span class="xf-result" id="xfResult"></span>
+        <button class="button button-primary" id="btnDownload">Download cleaned photo</button>
+        <button class="button button-danger" id="btnClear">Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { readImageMetadata, stripMetadata, summarizeMetadata } from '../../scripts/exif-parse.js';
+
+  (function () {
+    const root = document.getElementById('resultPanel');
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    if (!dropZone || !fileInput || !root) return;
+
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const thumb = document.getElementById('xfThumb');
+    const filenameEl = document.getElementById('xfFilename');
+    const statsEl = document.getElementById('xfStats');
+    const gpsEl = document.getElementById('xfGps');
+    const cleanEl = document.getElementById('xfClean');
+    const tableWrap = document.getElementById('xfTableWrap');
+    const tableOuter = document.getElementById('xfTableOuter');
+    const toggleBtn = document.getElementById('xfToggle');
+    const resultEl = document.getElementById('xfResult');
+    const optOrientation = document.getElementById('optOrientation');
+    const optIcc = document.getElementById('optIcc');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnClear = document.getElementById('btnClear');
+
+    const MAX_BYTES = 25 * 1024 * 1024;
+    let bytes = null;
+    let meta = null;
+    let originalName = '';
+    let objectUrl = null;
+    let tableOpen = toggleBtn.getAttribute('aria-expanded') === 'true';
+
+    ['dragenter', 'dragover'].forEach(n => dropZone.addEventListener(n, e => {
+      e.preventDefault(); e.stopPropagation(); dropZone.classList.add('dragover');
+    }, false));
+    ['dragleave', 'drop'].forEach(n => dropZone.addEventListener(n, e => {
+      e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('dragover');
+    }, false));
+    dropZone.addEventListener('drop', e => {
+      const files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length) handleFile(files[0]);
+    });
+    fileInput.addEventListener('change', e => {
+      const files = Array.from(e.target.files).slice(0, 1);
+      if (files.length) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+    function hideProgress() { progressOverlay.style.display = 'none'; }
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      hideProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function hideError() { errorBanner.style.display = 'none'; }
+
+    function formatBytes(n) {
+      if (n < 1024) return n + ' B';
+      if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+      return (n / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function handleFile(file) {
+      hideError();
+      originalName = file.name;
+      const extension = (file.name.split('.').pop() || '').toLowerCase();
+
+      if (['jpg', 'jpeg', 'png', 'webp'].indexOf(extension) === -1) {
+        if (extension === 'heic' || extension === 'heif') {
+          showError('HEIC photos are not supported here yet — their metadata sits in a different container format. Convert the photo first with the HEIC to JPG tool, then run the JPG through this one.');
+        } else {
+          showError('That is a .' + extension + ' file. This tool reads JPG, PNG and WebP images.');
+        }
+        return;
+      }
+      if (file.size > MAX_BYTES) {
+        showError('That file is ' + (file.size / 1048576).toFixed(1) + 'MB, over the 25MB limit.');
+        return;
+      }
+      if (file.size === 0) {
+        showError('That file is empty (0 bytes). If it is synced by OneDrive, iCloud or Google Drive, it may still be a placeholder — open its folder and let it download fully first.');
+        return;
+      }
+
+      showProgress(30, 'Reading photo…');
+      const reader = new FileReader();
+      reader.onerror = () => showError('The file could not be read from disk. If it is synced by a cloud drive, make sure it has finished downloading to this device.');
+      reader.onload = e => {
+        try {
+          showProgress(70, 'Reading metadata…');
+          bytes = new Uint8Array(e.target.result);
+          meta = readImageMetadata(bytes);
+        } catch (err) {
+          showError('This image could not be read. If it opens normally in a photo viewer, please report it through the contact page — a real sample is what makes a parser bug fixable.');
+          return;
+        }
+
+        if (!meta.ok) {
+          showError('This does not look like a JPG, PNG or WebP image. The file extension may not match its real contents — check by opening it in a photo viewer.');
+          return;
+        }
+
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        objectUrl = URL.createObjectURL(file);
+        thumb.src = objectUrl;
+        filenameEl.textContent = file.name + ' · ' + formatBytes(file.size);
+
+        render();
+        showProgress(100, 'Done');
+        setTimeout(hideProgress, 150);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function render() {
+      const s = summarizeMetadata(meta);
+
+      const stats = [
+        ['Format', (meta.format || '').toUpperCase()],
+        ['Metadata found', String(s.tagCount) + (s.tagCount === 1 ? ' tag' : ' tags')],
+        ['Identifying', String(s.sensitiveCount)],
+        ['Metadata size', formatBytes(s.metadataBytes) + (s.percentOfFile ? ' (' + s.percentOfFile + '%)' : '')]
+      ];
+      statsEl.replaceChildren();
+      for (const [label, value] of stats) {
+        const box = document.createElement('div');
+        box.className = 'xf-stat';
+        const l = document.createElement('div');
+        l.className = 'xf-stat-label';
+        l.textContent = label;
+        const v = document.createElement('div');
+        v.className = 'xf-stat-value';
+        v.textContent = value;
+        box.append(l, v);
+        statsEl.appendChild(box);
+      }
+
+      // GPS
+      if (meta.gps) {
+        gpsEl.replaceChildren();
+        const title = document.createElement('div');
+        title.className = 'xf-gps-title';
+        title.textContent = 'This photo records where it was taken';
+        const coords = document.createElement('div');
+        coords.className = 'xf-gps-coords';
+        coords.textContent = meta.gps.latitude + ', ' + meta.gps.longitude;
+        const note = document.createElement('div');
+        note.className = 'xf-gps-note';
+        // No map is embedded and no tiles are fetched: loading a map would send
+        // these coordinates to a third-party server, which is the exact thing
+        // someone using this tool is trying to avoid. The link is opt-in and
+        // says what it does.
+        const link = document.createElement('a');
+        link.href = 'https://www.openstreetmap.org/?mlat=' + encodeURIComponent(meta.gps.latitude) +
+          '&mlon=' + encodeURIComponent(meta.gps.longitude) + '#map=16/' +
+          encodeURIComponent(meta.gps.latitude) + '/' + encodeURIComponent(meta.gps.longitude);
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = 'Open in OpenStreetMap';
+        note.append(
+          document.createTextNode('No map is loaded on this page, because fetching one would send these coordinates to another server. '),
+          link,
+          document.createTextNode(' opens them there deliberately, if you want to see the spot.')
+        );
+        gpsEl.append(title, coords, note);
+        gpsEl.style.display = 'block';
+      } else {
+        gpsEl.style.display = 'none';
+      }
+
+      // "Already clean" state — an honest, useful answer in its own right.
+      if (meta.tags.length === 0 && meta.items.filter(i => i.removable).length === 0) {
+        cleanEl.textContent = 'No metadata found. This image carries no EXIF, XMP or comment data — there is nothing here to remove. Photos posted through most social networks come back like this, because the platform stripped it on upload.';
+        cleanEl.style.display = 'block';
+      } else {
+        cleanEl.style.display = 'none';
+      }
+
+      renderTable();
+      applyToggle();
+      resultEl.textContent = '';
+      root.style.display = 'block';
+      dropZone.style.display = 'none';
+    }
+
+    function renderTable() {
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const headRow = document.createElement('tr');
+      for (const col of ['Group', 'Tag', 'Value']) {
+        const th = document.createElement('th');
+        th.textContent = col;
+        headRow.appendChild(th);
+      }
+      thead.appendChild(headRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      if (!meta.tags.length) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 3;
+        td.textContent = 'No readable metadata tags in this image.';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+      }
+      for (const tag of meta.tags) {
+        const tr = document.createElement('tr');
+        if (tag.sensitive) tr.className = 'xf-sensitive';
+        const group = document.createElement('td');
+        group.className = 'xf-group-label';
+        group.textContent = tag.ifd;
+        const name = document.createElement('td');
+        name.className = 'xf-name';
+        name.textContent = tag.name;
+        const value = document.createElement('td');
+        value.className = 'xf-value';
+        value.textContent = tag.value;
+        tr.append(group, name, value);
+        tbody.appendChild(tr);
+      }
+      table.appendChild(tbody);
+      tableWrap.replaceChildren(table);
+    }
+
+    function applyToggle() {
+      tableOuter.style.display = tableOpen ? 'grid' : 'none';
+      toggleBtn.setAttribute('aria-expanded', tableOpen ? 'true' : 'false');
+      const count = meta ? meta.tags.length : 0;
+      toggleBtn.textContent = tableOpen
+        ? 'Hide the full metadata table'
+        : 'Show all ' + count + ' metadata ' + (count === 1 ? 'tag' : 'tags');
+    }
+
+    toggleBtn.addEventListener('click', () => { tableOpen = !tableOpen; applyToggle(); });
+
+    btnDownload.addEventListener('click', () => {
+      if (!bytes) return;
+      let result;
+      try {
+        result = stripMetadata(bytes, {
+          keepOrientation: optOrientation.checked,
+          keepColourProfile: optIcc.checked
+        });
+      } catch (err) {
+        showError('Removing the metadata failed unexpectedly. Please report this file through the contact page.');
+        return;
+      }
+      if (!result.ok) {
+        showError('This image format could not be rewritten. JPG, PNG and WebP are supported.');
+        return;
+      }
+
+      const mime = result.format === 'png' ? 'image/png'
+        : result.format === 'webp' ? 'image/webp' : 'image/jpeg';
+      const base = originalName.replace(/\.[^/.]+$/, '') || 'photo';
+      const extension = originalName.split('.').pop() || (result.format === 'jpeg' ? 'jpg' : result.format);
+      const blob = new Blob([result.output], { type: mime });
+      window.downloadBlob(blob, base + '-no-metadata.' + extension, mime);
+
+      const removedNames = result.removed.map(r => r.name);
+      resultEl.textContent = removedNames.length
+        ? 'Removed ' + removedNames.join(', ').toLowerCase() + ' — ' +
+          formatBytes(result.removedBytes) + ' smaller. The image itself is untouched.'
+        : 'Nothing to remove — this image had no metadata. The copy you downloaded is identical.';
+    });
+
+    btnClear.addEventListener('click', () => {
+      bytes = null;
+      meta = null;
+      if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
+      thumb.removeAttribute('src');
+      root.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+      hideError();
+    });
+  })();
+</script>
