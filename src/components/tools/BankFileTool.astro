@@ -1,0 +1,629 @@
+---
+import CategoryIcon from '../CategoryIcon.astro';
+const { slug, headline, subtitle } = Astro.props;
+
+// All three slugs read the same format — OFX is the container, QFX and QBO are
+// Intuit's variants of it. The page leads with the extension the visitor came
+// for, but the picker accepts all of them, because a bank that labels its
+// download "QFX" and a bank that labels it "OFX" hand you the same bytes.
+const PRIMARY = { 'ofx-to-csv': 'OFX', 'qfx-to-csv': 'QFX', 'qbo-to-csv': 'QBO' };
+const primary = PRIMARY[slug] || 'OFX';
+const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
+---
+
+<style>
+  /* Rows are injected by script, so every selector that has to reach them is
+     :global() — an Astro scoped style never stamps its cid on a JS-created
+     element, and a scoped rule that targets one silently matches nothing. */
+  /* Explicit column counts with a minmax floor of 0, rather than
+     `auto-fit, minmax(140px, 1fr)`. The floor of 0 means these tiles can never
+     contribute a min-content width that widens an ancestor, and the breakpoints
+     keep six stats readable on a phone instead of six 140px columns in a row.
+     (This was not the cause of the page-level overflow — the preview table was;
+     measured by hiding each element in turn. It is still the right track list.) */
+  .bft-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+  @media (min-width: 620px) {
+    .bft-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (min-width: 900px) {
+    .bft-summary { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  }
+  .bft-stat {
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  .bft-stat-label {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--colors-mute);
+    margin-bottom: 2px;
+  }
+  .bft-stat-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--colors-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .bft-option-row {
+    margin-bottom: var(--spacing-md);
+  }
+  .bft-option-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--colors-body);
+    margin-bottom: 6px;
+  }
+  .bft-tabs {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+  }
+  .bft-tab {
+    padding: 7px 14px;
+    border-radius: var(--rounded-pill);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--colors-hairline);
+    background-color: var(--colors-canvas);
+    color: var(--colors-body);
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .bft-tab:hover { border-color: var(--colors-hairline-strong); }
+  .bft-tab.active {
+    background-color: var(--colors-ink);
+    color: var(--colors-canvas);
+    border-color: var(--colors-ink);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bft-tab { transition: none; }
+  }
+
+  /* The wrapper is what stops a wide table dragging the whole page sideways,
+     and `overflow-x: auto` on its own is NOT enough to do it.
+     `body` is a column flex container, so `.page-container` is a flex item with
+     `min-width: auto` — its automatic minimum is its min-content width, and the
+     scroll box's contents were still propagating up through it. Measured at a
+     390px viewport: the page reached 885px.
+     A grid track of `minmax(0, 1fr)` gives the scroll box a definite maximum
+     with a floor of zero, so nothing inside it can widen an ancestor.
+     `contain: inline-size` fixes it identically but only from Chrome/Edge 105,
+     Firefox 110 and Safari 16; a grid track works everywhere.
+     Verified: page 885px -> 390px, table still scrolls (client 306, scroll 801). */
+  .bft-preview-outer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bft-preview-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-md);
+    margin-bottom: var(--spacing-sm);
+    max-width: 100%;
+    min-width: 0;
+  }
+  .bft-preview-wrap :global(table) {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .bft-preview-wrap :global(th),
+  .bft-preview-wrap :global(td) {
+    padding: 7px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--colors-hairline);
+  }
+  .bft-preview-wrap :global(th) {
+    background-color: var(--colors-canvas-soft-2);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--colors-mute);
+  }
+  .bft-preview-wrap :global(td.bft-num) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  /* error-deep, not error: #ee0000 measures 4.36:1 on the light canvas, under
+     the 4.5:1 minimum. The minus sign already carries the meaning, so the
+     colour is a scanning aid rather than the only signal. */
+  .bft-preview-wrap :global(td.bft-neg) { color: var(--colors-error-deep); }
+  .bft-preview-wrap :global(tr:last-child td) { border-bottom: none; }
+
+  .bft-note {
+    font-size: 12px;
+    color: var(--colors-mute);
+    margin-bottom: var(--spacing-md);
+  }
+  .bft-warnings {
+    background-color: var(--colors-canvas-soft-2);
+    border: 1px solid var(--colors-hairline);
+    border-left: 3px solid var(--colors-accent-display);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    font-size: 13px;
+    color: var(--colors-body);
+  }
+  .bft-warnings :global(ul) { margin: 6px 0 0; padding-left: 18px; }
+  .bft-warnings :global(li) { margin-bottom: 3px; }
+  .bft-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .bft-filename {
+    font-weight: 600;
+    font-size: 14px;
+    margin-right: auto;
+    word-break: break-all;
+  }
+</style>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<!-- Error Banner -->
+<div id="errorBanner" class="error-banner">
+  <span>⚠️</span>
+  <span id="errorMessage"></span>
+</div>
+
+<!-- Progress Indicator -->
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Reading statement…</div>
+</div>
+
+<!-- File picker -->
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon"><CategoryIcon icon="🏦" width="40" height="40" /></div>
+  <div class="upload-text-primary">Drag and drop your statement here, or click to browse</div>
+  <div class="upload-text-secondary">{primary} file — {others[0]} and {others[1]} work too (Max 25MB)</div>
+  <input type="file" id="fileInput" class="file-input" accept=".ofx,.qfx,.qbo,.OFX,.QFX,.QBO" />
+</div>
+
+<div id="resultPanel" class="panel-card" style="display: none; margin-top: var(--spacing-md);">
+  <div class="bft-summary" id="bftSummary"></div>
+  <div id="bftWarnings" class="bft-warnings" style="display: none;"></div>
+
+  <div class="bft-option-row">
+    <span class="bft-option-label" id="lblOutput">Download as</span>
+    <div class="bft-tabs" role="group" aria-labelledby="lblOutput">
+      <button type="button" class="bft-tab active" aria-pressed="true" data-opt="output" data-value="csv">CSV</button>
+      <button type="button" class="bft-tab" aria-pressed="false" data-opt="output" data-value="xlsx">Excel (.xlsx)</button>
+    </div>
+  </div>
+
+  <div class="bft-option-row">
+    <span class="bft-option-label" id="lblLayout">Columns</span>
+    <div class="bft-tabs" role="group" aria-labelledby="lblLayout">
+      <button type="button" class="bft-tab active" aria-pressed="true" data-opt="layout" data-value="full">Full detail</button>
+      <button type="button" class="bft-tab" aria-pressed="false" data-opt="layout" data-value="three">Date, Description, Amount</button>
+      <button type="button" class="bft-tab" aria-pressed="false" data-opt="layout" data-value="four">Date, Description, Debit, Credit</button>
+    </div>
+  </div>
+
+  <div class="bft-option-row">
+    <span class="bft-option-label" id="lblDate">Date format</span>
+    <div class="bft-tabs" role="group" aria-labelledby="lblDate">
+      <button type="button" class="bft-tab active" aria-pressed="true" data-opt="dateFormat" data-value="iso">2026-01-31</button>
+      <button type="button" class="bft-tab" aria-pressed="false" data-opt="dateFormat" data-value="us">01/31/2026</button>
+      <button type="button" class="bft-tab" aria-pressed="false" data-opt="dateFormat" data-value="uk">31/01/2026</button>
+    </div>
+  </div>
+
+  <div class="bft-preview-outer">
+    <div class="bft-preview-wrap" id="bftPreviewWrap"></div>
+  </div>
+  <p class="bft-note" id="bftNote"></p>
+
+  <div class="bft-actions">
+    <span class="bft-filename" id="fileNameDisplay"></span>
+    <button class="button button-primary" id="btnDownload">Download CSV</button>
+    <button class="button button-danger" id="btnClear">Clear</button>
+  </div>
+</div>
+
+<script>
+  import { parseOfx, buildRows, toCsv, summarize, excelSerial } from '../../scripts/ofx-parse.js';
+
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const resultPanel = document.getElementById('resultPanel');
+    const summaryEl = document.getElementById('bftSummary');
+    const warningsEl = document.getElementById('bftWarnings');
+    const previewWrap = document.getElementById('bftPreviewWrap');
+    const noteEl = document.getElementById('bftNote');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnClear = document.getElementById('btnClear');
+
+    if (!dropZone || !fileInput) return;
+
+    const MAX_BYTES = 25 * 1024 * 1024;
+    const PREVIEW_ROWS = 8;
+
+    const options = { output: 'csv', layout: 'full', dateFormat: 'iso' };
+    let parsed = null;
+    let originalName = '';
+    let xlsxPromise = null;
+
+    ['dragenter', 'dragover'].forEach(name => {
+      dropZone.addEventListener(name, e => {
+        e.preventDefault(); e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+    ['dragleave', 'drop'].forEach(name => {
+      dropZone.addEventListener(name, e => {
+        e.preventDefault(); e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+    dropZone.addEventListener('drop', e => {
+      const files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length) handleFile(files[0]);
+    });
+    fileInput.addEventListener('change', e => {
+      const files = Array.from(e.target.files).slice(0, 1);
+      if (files.length) handleFile(files[0]);
+    });
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+    function hideProgress() { progressOverlay.style.display = 'none'; }
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      hideProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function hideError() { errorBanner.style.display = 'none'; }
+
+    /**
+     * Decode the file's bytes. Statements are frequently windows-1252 (the
+     * CHARSET:1252 header is near-universal in OFX 1.x), which turns an accented
+     * merchant name into mojibake if it is read as UTF-8. Strict UTF-8 is tried
+     * first because bytes that decode cleanly as UTF-8 essentially never come
+     * from a 1252 file by accident; the declared charset is the fallback.
+     */
+    function decodeBytes(buffer) {
+      const bytes = new Uint8Array(buffer);
+      try {
+        return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+      } catch (e) {
+        const head = new TextDecoder('ascii').decode(bytes.slice(0, 1024));
+        const xmlDecl = /<\?xml[^>]*encoding\s*=\s*["']([^"']+)["']/i.exec(head);
+        const declared = /(?:^|[\r\n])\s*CHARSET\s*:\s*([^\r\n]+)/i.exec(head);
+        let label = xmlDecl ? xmlDecl[1].trim() : (declared ? declared[1].trim() : '');
+        if (/^1252$/.test(label)) label = 'windows-1252';
+        try {
+          return new TextDecoder(label || 'windows-1252').decode(bytes);
+        } catch (e2) {
+          return new TextDecoder('windows-1252').decode(bytes);
+        }
+      }
+    }
+
+    function money(n) {
+      return (n < 0 ? '-' : '') + '$' + Math.abs(n).toLocaleString('en-US', {
+        minimumFractionDigits: 2, maximumFractionDigits: 2
+      });
+    }
+
+    function handleFile(file) {
+      // Clear any previous failure before the new run, so a stale message can
+      // never sit through a successful conversion.
+      hideError();
+      originalName = file.name;
+
+      const extension = (file.name.split('.').pop() || '').toLowerCase();
+      if (['ofx', 'qfx', 'qbo'].indexOf(extension) === -1) {
+        showError('That is a .' + extension + ' file. This converter reads OFX, QFX and QBO statements — the file your bank offers as "Download for Quicken / QuickBooks / Money". A PDF or CSV statement is a different format.');
+        return;
+      }
+      if (file.size > MAX_BYTES) {
+        showError('That file is ' + (file.size / 1048576).toFixed(1) + 'MB, over the 25MB limit. Statement files are normally well under 1MB — download a shorter date range if your bank produced something unusually large.');
+        return;
+      }
+      if (file.size === 0) {
+        showError('That file is empty (0 bytes). If it is stored in OneDrive, iCloud or Google Drive, it may still be a placeholder — open its folder and let it download fully, then try again.');
+        return;
+      }
+
+      showProgress(25, 'Reading statement…');
+      const reader = new FileReader();
+      reader.onerror = function() {
+        showError('The file could not be read from disk. If it is synced by OneDrive, iCloud or Google Drive, make sure it has finished downloading to this device.');
+      };
+      reader.onload = function(e) {
+        let result;
+        try {
+          showProgress(60, 'Parsing transactions…');
+          result = parseOfx(decodeBytes(e.target.result));
+        } catch (err) {
+          showError('This file could not be parsed. If it opens as readable text in Notepad and starts with OFXHEADER or <OFX>, please report it through the contact page — a real sample is what makes a parser bug fixable.');
+          return;
+        }
+
+        if (!result.ok) {
+          showError('This does not look like an OFX/QFX/QBO statement — no <OFX> section was found. Files named .qbo that are really PDFs or CSVs are the usual cause; open it in Notepad to check. Your bank’s download page may call it "Web Connect".');
+          return;
+        }
+
+        // Never hand back an empty file and call it a success.
+        if (result.transactionCount === 0) {
+          if (result.unsupportedInvestmentCount > 0) {
+            showError('This is a brokerage statement containing ' + result.unsupportedInvestmentCount + ' securities trade' + (result.unsupportedInvestmentCount === 1 ? '' : 's') + ' and no cash transactions. Trades carry units, unit price and a security ID, which do not fit a bank-statement row — this converter handles bank, credit-card and cash activity.');
+          } else if (result.accounts.length === 0) {
+            showError('No account statement was found in this file. It parsed correctly but contains no bank or credit-card section — some banks emit a profile or signon-only file when a download fails.');
+          } else {
+            const w = result.warnings.length ? ' ' + result.warnings[0] : '';
+            showError('This statement contains no transactions for the period it covers.' + w + ' Try downloading a wider date range from your bank.');
+          }
+          return;
+        }
+
+        parsed = result;
+        render();
+        showProgress(100, 'Done');
+        setTimeout(hideProgress, 150);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function render() {
+      const s = summarize(parsed);
+
+      const period = parsed.accounts
+        .map(a => (a.periodStart ? a.periodStart.iso : '') + (a.periodEnd ? ' → ' + a.periodEnd.iso : ''))
+        .filter(Boolean)[0] || '—';
+
+      const stats = [
+        ['Transactions', String(s.transactions)],
+        ['Accounts', String(s.accounts)],
+        ['Statement period', period],
+        ['Money in', money(s.creditTotal)],
+        ['Money out', money(s.debitTotal)],
+        ['Net', money(s.net)]
+      ];
+      summaryEl.replaceChildren();
+      for (const [label, value] of stats) {
+        const box = document.createElement('div');
+        box.className = 'bft-stat';
+        const l = document.createElement('div');
+        l.className = 'bft-stat-label';
+        l.textContent = label;
+        const v = document.createElement('div');
+        v.className = 'bft-stat-value';
+        v.textContent = value;
+        box.append(l, v);
+        summaryEl.appendChild(box);
+      }
+
+      const notes = parsed.warnings.slice();
+      if (parsed.unsupportedInvestmentCount > 0) {
+        notes.push(parsed.unsupportedInvestmentCount + ' securities trade' +
+          (parsed.unsupportedInvestmentCount === 1 ? ' was' : 's were') +
+          ' found and left out: a trade carries units, unit price and a security ID, which a bank-statement row cannot represent. Cash transactions in the same file are included.');
+      }
+      if (notes.length) {
+        warningsEl.replaceChildren();
+        const intro = document.createElement('strong');
+        intro.textContent = 'Worth knowing about this file';
+        const list = document.createElement('ul');
+        for (const n of notes) {
+          const li = document.createElement('li');
+          li.textContent = n;
+          list.appendChild(li);
+        }
+        warningsEl.append(intro, list);
+        warningsEl.style.display = 'block';
+      } else {
+        warningsEl.style.display = 'none';
+      }
+
+      renderPreview();
+      fileNameDisplay.textContent = originalName;
+      resultPanel.style.display = 'block';
+      dropZone.style.display = 'none';
+    }
+
+    /** The account number is masked on screen; the download keeps it in full. */
+    function maskAccountNumbers(text) {
+      let out = text;
+      for (const account of parsed.accounts) {
+        const id = account.accountId;
+        if (id && id.length > 4 && out.indexOf(id) !== -1) {
+          out = out.split(id).join('••••' + id.slice(-4));
+        }
+      }
+      return out;
+    }
+
+    function renderPreview() {
+      const { columns, rows } = buildRows(parsed, options);
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const headRow = document.createElement('tr');
+      for (const col of columns) {
+        const th = document.createElement('th');
+        th.textContent = col;
+        headRow.appendChild(th);
+      }
+      thead.appendChild(headRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      for (const row of rows.slice(0, PREVIEW_ROWS)) {
+        const tr = document.createElement('tr');
+        row.forEach((cell, i) => {
+          const td = document.createElement('td');
+          const isNumber = cell.kind === 'number';
+          td.textContent = isNumber ? cell.text : maskAccountNumbers(cell.text);
+          if (isNumber) {
+            td.className = cell.value !== null && cell.value < 0 ? 'bft-num bft-neg' : 'bft-num';
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      }
+      table.appendChild(tbody);
+      previewWrap.replaceChildren(table);
+
+      const hidden = rows.length - Math.min(rows.length, PREVIEW_ROWS);
+      noteEl.textContent = hidden > 0
+        ? 'Showing the first ' + PREVIEW_ROWS + ' of ' + rows.length + ' rows. Account numbers are masked in this preview only — the downloaded file keeps them in full.'
+        : 'Showing all ' + rows.length + ' rows. Account numbers are masked in this preview only — the downloaded file keeps them in full.';
+
+      btnDownload.textContent = options.output === 'xlsx' ? 'Download Excel' : 'Download CSV';
+    }
+
+    document.querySelectorAll('.bft-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const group = tab.getAttribute('data-opt');
+        options[group] = tab.getAttribute('data-value');
+        document.querySelectorAll('.bft-tab[data-opt="' + group + '"]').forEach(t => {
+          const active = t === tab;
+          t.classList.toggle('active', active);
+          t.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+        if (parsed) renderPreview();
+      });
+    });
+
+    /**
+     * SheetJS is ~900KB and only the Excel path needs it, so it is fetched on
+     * the first Excel download rather than on page load. Choosing CSV never
+     * downloads it at all.
+     */
+    function loadXlsx() {
+      if (window.XLSX) return Promise.resolve();
+      if (xlsxPromise) return xlsxPromise;
+      xlsxPromise = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+        s.onload = () => resolve();
+        s.onerror = () => { xlsxPromise = null; reject(new Error('xlsx-load')); };
+        document.head.appendChild(s);
+      });
+      return xlsxPromise;
+    }
+
+    const NUMBER_FORMAT = '#,##0.00';
+    const DATE_FORMATS = { iso: 'yyyy-mm-dd', us: 'mm/dd/yyyy', uk: 'dd/mm/yyyy' };
+
+    function buildWorkbook(columns, rows) {
+      const sheet = {};
+      const lastCol = columns.length - 1;
+      let lastRow = 0;
+
+      columns.forEach((col, c) => {
+        sheet[window.XLSX.utils.encode_cell({ r: 0, c })] = { t: 's', v: col };
+      });
+
+      rows.forEach((row, r) => {
+        lastRow = r + 1;
+        row.forEach((cell, c) => {
+          const ref = window.XLSX.utils.encode_cell({ r: r + 1, c });
+          if (cell.kind === 'date' && cell.date) {
+            // A real Excel date, from calendar parts — never via a Date object,
+            // which would reintroduce the timezone shift avoided everywhere else.
+            sheet[ref] = {
+              t: 'n',
+              v: excelSerial(cell.date.year, cell.date.month, cell.date.day),
+              z: DATE_FORMATS[options.dateFormat] || DATE_FORMATS.iso
+            };
+          } else if (cell.kind === 'number' && cell.value !== null && cell.value !== undefined) {
+            sheet[ref] = { t: 'n', v: cell.value, z: NUMBER_FORMAT };
+          } else if (cell.text !== '') {
+            // Explicitly typed as a string, so a value beginning with "=" is
+            // stored as text and never evaluated as a formula.
+            sheet[ref] = { t: 's', v: cell.text };
+          }
+        });
+      });
+
+      sheet['!ref'] = window.XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: lastRow, c: lastCol } });
+      sheet['!cols'] = columns.map(col => ({
+        wch: col === 'Description' || col === 'Memo' ? 34 : Math.max(12, col.length + 2)
+      }));
+
+      const wb = window.XLSX.utils.book_new();
+      window.XLSX.utils.book_append_sheet(wb, sheet, 'Transactions');
+
+      const summaryRows = [['Account', 'Type', 'Currency', 'Period start', 'Period end', 'Ledger balance', 'Transactions']];
+      for (const a of parsed.accounts) {
+        summaryRows.push([
+          a.accountId, a.accountType || a.kind, a.currency,
+          a.periodStart ? a.periodStart.iso : '',
+          a.periodEnd ? a.periodEnd.iso : '',
+          a.ledgerBalance && a.ledgerBalance.amount !== null ? a.ledgerBalance.amount : '',
+          a.transactions.length
+        ]);
+      }
+      window.XLSX.utils.book_append_sheet(wb, window.XLSX.utils.aoa_to_sheet(summaryRows), 'Summary');
+      return wb;
+    }
+
+    btnDownload.addEventListener('click', async () => {
+      if (!parsed) return;
+      const { columns, rows } = buildRows(parsed, options);
+      const base = originalName.replace(/\.[^/.]+$/, '') || 'statement';
+
+      if (options.output === 'xlsx') {
+        try {
+          showProgress(40, window.XLSX ? 'Building workbook…' : 'Loading the Excel writer (first time only)…');
+          await loadXlsx();
+          showProgress(80, 'Building workbook…');
+          const wb = buildWorkbook(columns, rows);
+          const out = window.XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+          const blob = new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          window.downloadBlob(blob, base + '.xlsx', blob.type);
+          hideProgress();
+        } catch (err) {
+          showError('The Excel writer could not be loaded. Check your connection and try again, or download CSV instead — CSV needs no extra download and opens in Excel just as well.');
+        }
+        return;
+      }
+
+      const blob = new Blob([toCsv(columns, rows)], { type: 'text/csv;charset=utf-8;' });
+      window.downloadBlob(blob, base + '.csv', blob.type);
+    });
+
+    btnClear.addEventListener('click', () => {
+      parsed = null;
+      resultPanel.style.display = 'none';
+      dropZone.style.display = 'flex';
+      fileInput.value = '';
+      hideError();
+    });
+  })();
+</script>

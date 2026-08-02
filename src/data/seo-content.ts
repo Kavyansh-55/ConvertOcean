@@ -1300,6 +1300,74 @@ export const seoContentMap: Record<string, SEOData> = {
       { question: "Are slide notes preserved in the split presentation files?", answer: "Yes. Speaker notes associated with the slides remain inside the split presentation." },
       { question: "Does the splitting process degrade image resolutions?", answer: "No, slide properties and media are copied directly, maintaining their original dimensions." }
     ]
+  },
+  'ofx-to-csv': {
+    title: 'Convert OFX to CSV & Excel Online - Free | ConvertOcean',
+    description: 'Convert OFX bank statements to CSV or Excel right in your browser. Reads both OFX versions, keeps every account, and never uploads your financial data.',
+    content: `
+<div class="content-card">
+  <h2>Turning an OFX Bank Statement Into a Spreadsheet.</h2>
+  <p>OFX — Open Financial Exchange — is the format banks have used to hand transaction data to accounting software since 1997. It is the file behind the download button labelled "Web Connect", "for Microsoft Money", or simply "for accounting software", and it holds far more structure than the PDF sitting next to it: every transaction as a discrete record with a type, a posted date, an amount, a payee and a unique identifier the bank assigns so the same transaction is never imported twice. The trouble is that almost nothing except accounting software will open one. Converting to CSV or Excel turns that structure into rows you can actually sort, filter and total.</p>
+
+  <h3>Why So Many OFX Converters Choke on Real Files.</h3>
+  <p>There are two OFX dialects, and the older one is not XML. OFX 1.x is SGML, where a tag is allowed to omit its closing counterpart entirely — a line reads <code>&lt;TRNAMT&gt;-42.50</code> and simply stops. Feed that to a strict XML parser and it rejects the whole document. Most banks still issue this dialect today. On top of that, real payee names contain raw ampersands: "AT&amp;T", "H&amp;M", "BARNES &amp; NOBLE" go into the file unescaped, which is invalid XML even in version 2.x. This converter reads the markup with a tolerant scanner built for exactly those conditions, so both dialects and both quirks come through intact rather than producing a parse error on a file that opened fine in your bank's own software.</p>
+
+  <h3>What Lands in Your Spreadsheet.</h3>
+  <p>Full detail gives you date, transaction type, description, memo, amount, cheque number, currency and the bank's transaction ID. Two compact layouts are available for import wizards: Date, Description and Amount, or a version splitting money out and money in into separate Debit and Credit columns. Dates can be written ISO, US or UK style, and the Excel export writes genuine date and number cells rather than text, so sorting and totals work the moment the file opens. If your statement covers several accounts, all of them are converted and an Account column identifies each row — a converter that quietly keeps only the first account loses data without telling you.</p>
+
+  <h3>One Deliberate Choice About Dates.</h3>
+  <p>OFX timestamps often carry a timezone, like <code>20260101120000[-5:EST]</code>. Converting those into whatever zone the reader happens to sit in is how a January 1 transaction shows up as December 31 and quietly crosses a tax year. This tool reports the date the file states, with no shifting at all.</p>
+  <p>Everything runs in your browser, which matters more here than for an ordinary file conversion: an OFX file typically contains your account number, your routing number and your complete transaction history. Once the spreadsheet exists you can move it onward with <a href="/csv-to-xlsx/">CSV to XLSX</a> or flatten a workbook back down with <a href="/xlsx-to-csv/">XLSX to CSV</a>, and the <a href="/guides/xlsx-vs-xls-vs-csv/">XLSX vs XLS vs CSV guide</a> explains which of those formats to keep for the long term. Statements from Quicken and QuickBooks use the same underlying format under different extensions — see <a href="/qfx-to-csv/">QFX to CSV</a> and <a href="/qbo-to-csv/">QBO to CSV</a>.</p>
+</div>
+    `,
+    faqs: []
+  },
+  'qfx-to-csv': {
+    title: 'QFX to CSV - Convert Quicken Files Free | ConvertOcean',
+    description: 'Convert Quicken QFX files to CSV or Excel without Quicken and without uploading. Reads Web Connect bank statements straight in your browser, completely free.',
+    content: `
+<div class="content-card">
+  <h2>Reading a Quicken QFX File Without Quicken.</h2>
+  <p>A QFX file is a bank statement you own but frequently cannot open. It is Quicken's Web Connect format, and the reason other software turns it away has nothing to do with the data inside: QFX is Intuit's licensed variant of the open OFX standard, carrying extra identifiers that mark the file as intended for Quicken. Banks pay to issue it. Applications that are not Quicken tend to refuse it on sight. Meanwhile the transactions themselves sit there in a plain text structure, perfectly readable, waiting for something willing to read them.</p>
+
+  <h3>QFX and OFX Are the Same File Wearing Different Badges.</h3>
+  <p>Strip away the Intuit header block and a QFX file is an OFX file — same tags, same transaction records, same everything that matters. The distinction is commercial rather than technical, which is why converting works so cleanly: there is no lossy translation step, no guessing at what a field meant. The tool reads the transaction list directly and writes it out as rows. What you get is what the bank sent.</p>
+
+  <h3>When This Is the Tool You Need.</h3>
+  <ul>
+    <li><strong>A lapsed Quicken subscription.</strong> The QFX your bank generates does not need Quicken to unlock it. Convert it and the transactions are yours in a spreadsheet, independent of any renewal.</li>
+    <li><strong>Software that is not Quicken.</strong> Spreadsheet-based bookkeeping, a different accounting package, or your own analysis — all of them read CSV.</li>
+    <li><strong>Building a record that outlives the software.</strong> A CSV or XLSX file will still open in thirty years. A proprietary format tied to a subscription is a weaker bet.</li>
+    <li><strong>Checking the numbers.</strong> Sorting by amount or filtering by payee in a spreadsheet is simply faster than clicking through a register.</li>
+  </ul>
+
+  <h3>Brokerage Files, Honestly Handled.</h3>
+  <p>If your QFX comes from a broker rather than a bank, part of it will not convert — and the tool says so rather than pretending otherwise. Cash activity such as dividends swept to cash, transfers and fees converts normally, because those are ordinary transactions. Securities trades are a different shape: a trade records units, a unit price and a security identifier, none of which fits a bank-statement row without inventing meaning. Those rows are counted and reported on screen, so you know exactly what was left out instead of discovering a short file later.</p>
+  <p>The conversion happens entirely inside your browser — relevant when the file lists your account number alongside every transaction on the statement. Once exported, <a href="/csv-to-xlsx/">CSV to XLSX</a> converts the result into a formatted workbook, and figures pulled from a statement feed naturally into the <a href="/profit-margin-calculator/">profit margin calculator</a> or the <a href="/break-even-calculator/">break-even calculator</a>. The same conversion exists for the other two extensions in this family: <a href="/ofx-to-csv/">OFX to CSV</a> and <a href="/qbo-to-csv/">QBO to CSV</a>.</p>
+</div>
+    `,
+    faqs: []
+  },
+  'qbo-to-csv': {
+    title: 'QBO to CSV - Convert QuickBooks Files Free | ConvertOcean',
+    description: 'Convert QuickBooks QBO Web Connect files to CSV or Excel in your browser. Review and fix transactions before they reach your books — nothing is uploaded.',
+    content: `
+<div class="content-card">
+  <h2>Converting a QuickBooks Web Connect File to a Spreadsheet.</h2>
+  <p>A .qbo file is QuickBooks Web Connect: the format a bank produces when you choose to download transactions for QuickBooks specifically. Internally it is the long-established OFX structure with Intuit's identifiers attached. Two situations send people looking for a converter, and they are opposites. In the first, QuickBooks refuses the file. In the second, it accepts it a little too readily — straight into the books, unreviewed, where a mislabelled or duplicated batch is considerably harder to remove than it would have been to check beforehand.</p>
+
+  <h3>Review Before Import, Not After.</h3>
+  <p>Converting the statement to a spreadsheet first puts a checkpoint where bookkeeping practice says one belongs. You see the statement period and the transaction count before anything is committed, so a file covering the wrong month is obvious immediately. You can total the debits and credits against the closing balance the bank stated. Descriptions can be cleaned up or categorised in bulk while they are still rows in a sheet rather than entries in a ledger. It is the difference between reading a batch and undoing one.</p>
+
+  <h3>When QuickBooks Rejects the File.</h3>
+  <p>Import failures on a valid QBO file are usually about the file's bank identifier rather than its contents — the transactions are intact even when the import is refused. Converting to CSV routes around the problem: the manual CSV upload path accepts the data that the Web Connect path would not. Choose the 3-column layout for Date, Description and Amount with money out as negative numbers, or the 4-column layout to split those into separate Debit and Credit columns. Import wizards ask you to map columns onto their own fields, so check that mapping step and pick whichever layout matches your setup.</p>
+
+  <h3>Client Data That Stays on Your Machine.</h3>
+  <p>For anyone keeping other people's books this is the part that decides it. Uploading a client's complete transaction history — account number included — to an unknown web service is a disclosure you would have to be able to justify. Here there is nothing to justify, because the parsing runs in your browser and the file never leaves your device. That property holds whether you are converting one month or a year of statements, and it does not depend on trusting a privacy policy.</p>
+  <p>Exported figures fit naturally alongside the rest of the bookkeeping set: raise a document against them with the <a href="/invoice-generator/">invoice generator</a>, check margins in the <a href="/profit-margin-calculator/">profit margin calculator</a>, or work out tax positions with the <a href="/sales-tax-calculator/">sales tax calculator</a>. Files carrying the other two extensions in this family convert the same way — <a href="/ofx-to-csv/">OFX to CSV</a> and <a href="/qfx-to-csv/">QFX to CSV</a> — and <a href="/csv-to-xlsx/">CSV to XLSX</a> turns any of the exports into a formatted workbook.</p>
+</div>
+    `,
+    faqs: []
   }
 };
 
