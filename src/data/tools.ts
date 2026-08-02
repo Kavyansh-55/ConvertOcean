@@ -729,6 +729,48 @@ const rawTools: ToolData[] = [
     relatedTools: ['avif-to-jpg', 'heic-to-png', 'webp-to-png', 'png-to-webp', 'jpg-to-png']
   },
   {
+    slug: 'exif-viewer',
+    name: 'EXIF Viewer',
+    title: "EXIF Viewer - See Your Photo's Hidden Data | ConvertOcean",
+    description: 'See the hidden data inside your photos — GPS location, camera, serial number, date taken. Read entirely in your browser; the photo is never uploaded.',
+    headline: 'EXIF Viewer.',
+    subtitle: 'See exactly what your photo records about you — location, device, and timestamps — read on your own machine.',
+    quickAnswer: 'To view EXIF data, select a JPG, PNG or WebP photo above and the tool lists every metadata tag it contains — camera make and model, the date it was taken, lens and exposure settings, and any GPS coordinates. Tags that identify a person, a device or a place are highlighted. The photo is read inside your browser and never uploaded, so inspecting a private picture stays private.',
+    icon: '🔍',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'What is EXIF data?', answer: 'EXIF is a block of information cameras and phones write into a photo file alongside the picture itself. It records the camera make and model, the exposure settings, the date and time, and — if location services were on — the exact coordinates where the shot was taken. None of it is visible when you look at the image.' },
+      { question: 'Can this show where a photo was taken?', answer: 'If the photo carries GPS tags, yes. The coordinates are stored as degrees, minutes and seconds, and the tool converts them to decimal and shows them. Deliberately, no map is loaded on the page — fetching map tiles would send those coordinates to another server, which defeats the point. A link is offered so you can open them somewhere else by choice.' },
+      { question: 'Is my photo uploaded to read its metadata?', answer: 'No. The file is read as bytes in your browser and parsed there. Nothing is transmitted, which matters more here than for most tools: the whole reason to inspect a photo is that you do not yet know what it reveals.' },
+      { question: 'Why does my photo show no metadata at all?', answer: 'Most likely a platform already stripped it. Facebook, Instagram, WhatsApp and X remove EXIF when you upload, so a picture saved back from any of them is usually clean. Screenshots and images exported by many editors also carry nothing.' },
+      { question: 'Which formats can it read?', answer: 'JPG, PNG and WebP. JPG is where camera EXIF normally lives; PNG metadata sits in text and eXIf chunks, and WebP keeps it in EXIF and XMP chunks. HEIC photos from an iPhone are not supported yet — convert one to JPG first, then read that.' },
+      { question: 'What does the "identifying" count mean?', answer: 'It counts the tags that point to a person, a device or a place — GPS coordinates, camera owner name, body and lens serial numbers, the artist and copyright fields, and the timestamps. Exposure settings and image dimensions are metadata too, but they say nothing about you, so they are not counted.' }
+    ],
+    relatedTools: ['exif-remover', 'image-resizer', 'heic-to-jpg', 'png-to-jpg', 'image-to-pdf']
+  },
+  {
+    slug: 'exif-remover',
+    name: 'EXIF Remover',
+    title: 'Remove EXIF Data from Photos Online Free | ConvertOcean',
+    description: 'Strip GPS location and camera metadata from photos without re-compressing them. Runs in your browser — the image data is left byte-for-byte identical.',
+    headline: 'EXIF Remover.',
+    subtitle: 'Strip location and camera data out of a photo without touching a single pixel of the image itself.',
+    quickAnswer: 'To remove EXIF data, select a JPG, PNG or WebP photo above and download the cleaned copy. GPS coordinates, camera and serial numbers, timestamps, XMP and comments are deleted, while the compressed image data is copied across byte for byte — so there is no quality loss at all, unlike tools that redraw the photo. The rotation flag is kept by default so the picture does not display sideways.',
+    icon: '🧹',
+    category: 'Image Tools',
+    categorySlug: 'image-tools',
+    faqs: [
+      { question: 'Does removing EXIF reduce my photo\'s quality?', answer: 'Not here. Metadata is stored beside the compressed image data, not inside it, so removing it is a copy operation — the image data is written out byte for byte identical. Many browser-based tools instead redraw the photo onto a canvas and re-export it, which strips the metadata by generating a brand-new lossy file, adding compression artefacts every time.' },
+      { question: 'Will my photo end up sideways?', answer: 'Not by default. Rotation is stored in EXIF as the orientation flag, so stripping everything makes a photo taken sideways display sideways. This tool keeps a minimal block containing only that flag — it says nothing about you, your camera or your location. You can switch it off if you want absolutely everything gone.' },
+      { question: 'What exactly gets removed?', answer: 'The EXIF block (camera, lens, serial numbers, timestamps and GPS), XMP metadata, IPTC and Photoshop resource blocks, and embedded comments. In PNG it removes text, international-text and eXIf chunks; in WebP the EXIF and XMP chunks. The colour profile is kept by default, since ICC data describes colour rather than you.' },
+      { question: 'Why does the file get smaller?', answer: 'Because the metadata was real bytes. An EXIF block with a thumbnail and maker notes can run to tens of kilobytes, and on a small photo that is a noticeable share of the file. The saving comes entirely from deleted metadata — none of it comes from the picture.' },
+      { question: 'Is the photo uploaded to strip it?', answer: 'No. The rewriting happens in your browser, so the photo never leaves your device. That is the point: sending a picture to a server in order to remove the location it records means handing that location to the server first.' },
+      { question: 'Do I still need this if I post to social media?', answer: 'For the big platforms, usually not — Facebook, Instagram, WhatsApp and X strip EXIF on upload. It matters when you send a file directly: email attachments, marketplace listings, forum and dating-site uploads, cloud links and messaging apps that send "as a document" all preserve metadata exactly as it was.' }
+    ],
+    relatedTools: ['exif-viewer', 'image-resizer', 'heic-to-jpg', 'png-to-jpg', 'jpg-to-png']
+  },
+  {
     slug: 'svg-to-png',
     name: 'SVG to PNG',
     title: 'Convert SVG to PNG Online - 100% Private | ConvertOcean',

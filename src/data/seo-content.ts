@@ -1368,6 +1368,62 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: []
+  },
+  'exif-viewer': {
+    title: "EXIF Viewer - See Your Photo's Hidden Data | ConvertOcean",
+    description: 'See the hidden data inside your photos — GPS location, camera, serial number, date taken. Read entirely in your browser; the photo is never uploaded.',
+    content: `
+<div class="content-card">
+  <h2>What Your Photos Record That You Cannot See.</h2>
+  <p>Every photo a camera or phone takes carries a second payload alongside the picture: a block of structured data called EXIF, written by the device at the moment of capture. It notes the make and model, the lens, the shutter speed and aperture, the date and time to the second, and — whenever location services were switched on — the latitude and longitude where you were standing. None of this appears when you open the image. It travels with the file regardless.</p>
+
+  <h3>The Coordinates Are the Part People Do Not Expect.</h3>
+  <p>Camera settings are harmless. Location is not. GPS tags are stored as degrees, minutes and seconds, which resolve to a spot far more precise than a neighbourhood — typically the room, not the postcode. A photo of an item for sale, taken at home and sent to a buyer, carries the address it was taken at. So does a picture sent to someone you have only met online. This is not a hypothetical: it is the ordinary behaviour of a phone with location on, and the file gives no indication it is happening.</p>
+
+  <h3>Reading It Without Handing the Photo Over.</h3>
+  <p>There is an obvious problem with an online metadata viewer that uploads your photo: to find out whether a picture reveals your address, you have given the picture — and its address — to a stranger's server. This one parses the file's bytes inside your browser, so nothing is transmitted. The same reasoning drives a smaller decision: when coordinates are found, <strong>no map is loaded on the page</strong>, because fetching map tiles would send those coordinates to a tile server. The numbers are shown as text, and a link lets you open them elsewhere if you actively want to.</p>
+
+  <h3>What You Will See.</h3>
+  <ul>
+    <li><strong>Location:</strong> latitude and longitude converted to decimal, plus altitude and GPS timestamps where present.</li>
+    <li><strong>Device:</strong> camera make and model, lens, software version, and in many files a body or lens serial number that ties every photo from that camera together.</li>
+    <li><strong>Time:</strong> when the shot was taken, digitised and last modified.</li>
+    <li><strong>Attribution:</strong> artist, copyright and the Windows title, author and comment fields, which quietly pick up your account name.</li>
+    <li><strong>Capture settings:</strong> exposure, aperture, ISO and focal length — genuinely useful, and the part that says nothing about you.</li>
+  </ul>
+  <p>Tags that identify a person, a device or a place are marked, so the list separates what is merely technical from what is worth acting on. If a photo comes back empty, that is a real answer too: the major social platforms strip metadata when you upload, so a picture saved back from one is usually clean already.</p>
+  <p>Once you can see what is there, <a href="/exif-remover/">EXIF Remover</a> takes it out without re-compressing the image. iPhone photos need converting first with <a href="/heic-to-jpg/">HEIC to JPG</a>, since Apple's format stores metadata in a different container. If the picture is also headed for a form with size limits, the <a href="/image-resizer/">Image Resizer</a> handles dimensions and file size, and the <a href="/privacy-first/">privacy-first approach</a> explains why all of these run on your device rather than ours.</p>
+</div>
+    `,
+    faqs: []
+  },
+  'exif-remover': {
+    title: 'Remove EXIF Data from Photos Online Free | ConvertOcean',
+    description: 'Strip GPS location and camera metadata from photos without re-compressing them. Runs in your browser — the image data is left byte-for-byte identical.',
+    content: `
+<div class="content-card">
+  <h2>Removing Photo Metadata Without Damaging the Photo.</h2>
+  <p>Stripping EXIF sounds like it should be free of consequences, and done properly it is. Done the usual way it is not. The common approach in a browser is to draw the photo onto a canvas and export it again — which does remove the metadata, by discarding the original compressed data and generating a completely new JPEG. The metadata goes, and so does a generation of image quality, every single time. For a job that requires no decoding whatsoever, that is a poor trade.</p>
+
+  <h3>Why This One Does Not Lose Quality.</h3>
+  <p>Metadata does not live inside the compressed image data; it sits beside it, in separate container structures — APP segments in a JPEG, ancillary chunks in a PNG, RIFF chunks in a WebP. Removing them is a copying operation, not an image operation. In a JPEG every metadata segment appears before the first Start-of-Scan marker, so everything from that marker to the end of the file is copied across untouched. The result is not "visually identical" or "almost lossless" — the compressed image data in the output is byte for byte the same as the input's. Nothing was decoded, so nothing could degrade.</p>
+
+  <h3>The Rotation Trap.</h3>
+  <p>One EXIF field deserves to survive. Orientation is the flag that tells a viewer a photo was shot sideways and should be turned before display. Strip it along with everything else and portrait photos suddenly appear on their side — a familiar and baffling result of naive metadata removal. Orientation says nothing about you, your camera or where you were, so by default a minimal block containing only that flag is written back and everything else is deleted. If you would rather have nothing at all, that is one checkbox away, with the consequence stated rather than discovered later. The colour profile is treated the same way: ICC data describes colour, not you, and dropping it can visibly shift the colours of a wide-gamut photo.</p>
+
+  <h3>When Metadata Actually Leaks.</h3>
+  <p>It is worth being accurate about the risk instead of overselling it. Facebook, Instagram, WhatsApp and X all strip EXIF when you upload, so posting to them is not where the exposure lies. It lies in every route where the file travels as a file:</p>
+  <ul>
+    <li><strong>Marketplace and classified listings</strong> where the photo was taken at home.</li>
+    <li><strong>Email attachments and cloud-drive links,</strong> which preserve the original bytes exactly.</li>
+    <li><strong>Messaging apps sending "as a document"</strong> or "original quality", which deliberately skip the re-compression that would have stripped it.</li>
+    <li><strong>Forums, dating profiles and job applications</strong> that accept a direct file upload.</li>
+    <li><strong>Photos you publish yourself</strong> on a site you run, where nothing sits in between to clean them.</li>
+  </ul>
+  <p>Check first with the <a href="/exif-viewer/">EXIF Viewer</a> if you want to see what is actually there before deciding — an image that has already been through a platform is often clean, and the tool will say so rather than inventing work. iPhone HEIC files need <a href="/heic-to-jpg/">HEIC to JPG</a> first. For photos that also need to meet dimension or file-size rules, the <a href="/image-resizer/">Image Resizer</a> covers that step, and <a href="/png-to-jpg/">PNG to JPG</a> handles format changes. Everything here runs on your own machine, which is the only arrangement that makes sense for a tool whose entire job is to stop a file telling strangers where you live.</p>
+</div>
+    `,
+    faqs: []
   }
 };
 
