@@ -1326,5 +1326,114 @@ fs.writeFileSync('people.json', JSON.stringify(out, null, 2));</code></pre>
         answer: 'It depends on whether the file leaves your device. Most online converters upload it to a server for processing. ConvertOcean parses the file in your browser with client-side JavaScript, so customer lists, payroll, and financial exports never get transmitted — load the page, disconnect from the network, and the converter still works.'
       }
     ]
+  },
+  {
+    slug: 'what-your-photos-reveal',
+    title: 'What Your Photos Reveal About You | ConvertOcean',
+    description: 'Your photos carry hidden EXIF data — GPS coordinates, timestamps, and a serial number unique to your camera. Learn what each field gives away, and check yours.',
+    h1: 'What Your Photos Reveal About You (And How to Check).',
+    readTime: '7 min read',
+    publishDate: 'August 2, 2026',
+    relatedTools: ['exif-viewer', 'exif-remover', 'image-resizer', 'heic-to-jpg', 'png-to-jpg'],
+    relatedGuides: ['png-vs-jpg', 'resize-photo-signature-for-online-forms'],
+    intro: 'Every photo your phone or camera takes stores a second, invisible payload alongside the picture: where you were, when, which device, and sometimes who you are. This guide explains what each field actually records, which claims about it are overstated, and how to check a photo for yourself.',
+    contentHtml: `
+      <h2>Every Photo Carries a Second File</h2>
+      <p>When a camera writes a JPEG, it writes two things. One is the compressed picture. The other is a structured block of information called EXIF — Exchangeable Image File Format — recorded at the instant of capture and stored beside the pixels rather than inside them. It never appears when you open the image. It travels with the file wherever the file goes.</p>
+      <p>Most of it is mundane: shutter speed, aperture, ISO, focal length. Photographers rely on it. But the same block has room for the exact coordinates where you were standing, the second the shutter fired, and an identifier unique to the individual camera body in your hands. None of that is an accident or a bug — it is what the format is specified to hold.</p>
+
+      <h2>The Fields That Identify You</h2>
+      <p>Out of the dozens of tags in a typical file, a small number are about you rather than about the photograph. These are the ones worth knowing by name:</p>
+      <div style="overflow-x: auto; margin: var(--spacing-lg) 0;">
+        <table style="width: 100%; border-collapse: collapse; border: 1px solid var(--colors-hairline); font-size: 14px; text-align: left;">
+          <thead>
+            <tr style="background-color: var(--colors-canvas-soft-2);">
+              <th style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Field</th>
+              <th style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">What it records</th>
+              <th style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Why it matters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline); font-weight: 600;">GPS Latitude / Longitude</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Coordinates, stored as degrees, minutes and seconds</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Resolves to a spot, not an area — see below</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline); font-weight: 600;">Date Taken</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">The moment of capture, to the second</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Places you somewhere at a precise time</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline); font-weight: 600;">Camera Make &amp; Model</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">The device class, e.g. a specific phone model</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Narrows who could have taken it</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline); font-weight: 600;">Body Serial Number</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">The serial of one physical camera</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Links every photo that camera ever took</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline); font-weight: 600;">Camera Owner / Artist / Copyright</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Free-text name fields</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Often literally your name, if ever configured</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; font-weight: 600;">Software</td>
+              <td style="padding: 10px;">Firmware or editing app and version</td>
+              <td style="padding: 10px;">A weak but real fingerprinting signal</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Why the Coordinates Are the Part That Matters</h2>
+      <p>GPS tags are not stored as a rounded-off decimal. The specification holds latitude and longitude as three rational numbers each — degrees, minutes and seconds, every one of them a numerator and a denominator. Converted, that yields something like <code>37.808333, -122.419167</code>. A figure at that precision does not describe a neighbourhood or a postcode. It describes a spot you could walk to.</p>
+      <p>The consequence is easy to picture. A photograph of something you are selling, taken on the kitchen table, carries the address of the kitchen. So does a picture sent to someone you have met only online, or a snapshot attached to a support ticket. Nothing warns you, because from the file's point of view nothing unusual has happened.</p>
+
+      <h2>The Serial Number Nobody Thinks About</h2>
+      <p>Dedicated cameras, and some phones, write a body serial number into the file. Its intended purpose is legitimate: photographers use it to prove which camera produced which frames, and it matters in forensics for the same reason. The side effect is that every photo a given camera has ever produced shares one value. Two pictures posted under two unrelated names, from what appear to be two unconnected people, can carry the same serial — which is a stronger link than most people realise they are publishing. This is worth understanding rather than panicking about: it only matters where a file is published untouched, which is a narrower set of situations than it first sounds.</p>
+
+      <h2>Where Metadata Survives, and Where It Does Not</h2>
+      <p>Claims on this subject are frequently overstated, so it helps to reason from the mechanism instead of memorising a list. <strong>Any service that re-compresses your photo for display discards the metadata as a side effect of re-encoding it.</strong> That is why an ordinary post to a major social platform is generally not where your exposure lies — the platform rebuilds the image for its own bandwidth reasons and the original block does not survive the rebuild.</p>
+      <p>Exposure lives in every route that moves the file <em>as a file</em>:</p>
+      <ul>
+        <li><strong>Email attachments and cloud-drive links</strong>, which preserve the original bytes exactly.</li>
+        <li><strong>Messaging apps sending "as a document" or "original quality"</strong> — these modes exist precisely to skip the re-compression that would otherwise have cleaned the file.</li>
+        <li><strong>Marketplace and classified listings</strong>, where the photo was very likely taken at home.</li>
+        <li><strong>Forums, dating profiles and job applications</strong> that accept a direct file upload.</li>
+        <li><strong>Sites you publish yourself</strong>, where nothing sits in between to strip anything.</li>
+      </ul>
+      <p>Treat any published list of "safe" apps as a starting point rather than a guarantee. Sharing modes differ between apps, change between versions, and often differ between a feed post and a direct message within the same app. Checking one photo takes a few seconds and beats trusting a rule of thumb.</p>
+
+      <h2>How to Check a Photo Yourself</h2>
+      <p>You do not have to take anyone's word for this, including ours. Several routes give the same answer:</p>
+      <ul>
+        <li><strong>In your browser:</strong> the <a href="/exif-viewer/">EXIF Viewer</a> lists every tag it finds and flags the identifying ones. It reads the file on your own machine — worth caring about, because a metadata viewer that uploads your photo has taken the location you were trying to check.</li>
+        <li><strong>On Windows:</strong> right-click the file, choose Properties, then the Details tab. It shows a subset, including GPS on many files.</li>
+        <li><strong>On macOS:</strong> open in Preview, then Tools → Show Inspector, and look at the Exif and GPS tabs.</li>
+        <li><strong>On the command line:</strong> <code>exiftool photo.jpg</code> prints everything, including vendor sections other readers skip.</li>
+      </ul>
+      <p>If two of those disagree, believe the more detailed one — most viewers show a curated subset rather than the full block.</p>
+
+      <h2>Removing It Without Wrecking the Photo</h2>
+      <p>There is a right and a wrong way to strip metadata, and the wrong way is unfortunately the common one. Many browser tools draw your photo onto a canvas and export it again. That does remove the metadata — by discarding the original compressed data and generating a brand-new lossy file. You lose a generation of image quality on every pass, for a task that requires no decoding at all.</p>
+      <p>Metadata sits beside the compressed data, not inside it, so removing it properly is a copy operation that leaves the image data byte for byte identical. Two things are worth keeping while everything else goes:</p>
+      <ul>
+        <li><strong>The orientation flag.</strong> Rotation is stored in EXIF, so a blanket strip makes photos shot sideways display sideways. The flag says nothing about you, your camera, or where you were.</li>
+        <li><strong>The colour profile.</strong> ICC data describes colour, not you, and dropping it can visibly shift the colours of a wide-gamut photo.</li>
+      </ul>
+      <p>The <a href="/exif-remover/">EXIF Remover</a> does exactly that, on your device. If your photos are iPhone HEIC files, convert them with <a href="/heic-to-jpg/">HEIC to JPG</a> first. And if the picture is also headed somewhere with size or dimension rules, the <a href="/image-resizer/">Image Resizer</a> handles that step — though note the order matters: resizing re-encodes the image anyway, so do it first and strip afterwards.</p>
+    `,
+    faqs: [
+      { question: 'Does every photo contain EXIF data?', answer: 'Almost every photo straight from a camera or phone does. Screenshots usually do not, and neither do images exported by some editors or already processed by a service that re-compressed them. The only reliable way to know is to check the specific file rather than assume from its source.' },
+      { question: 'Do photos always contain GPS coordinates?', answer: 'No — only if location services were enabled for the camera at the time. Coordinates are among the most common tags on phone photos and among the least common on photos from dedicated cameras without GPS hardware. A photo can carry a full camera and timestamp record with no location at all.' },
+      { question: 'How precise are the coordinates in a photo?', answer: 'Precise enough to identify a spot rather than an area. The format stores latitude and longitude as degrees, minutes and seconds, which converts to a decimal figure well below the resolution of a street address. Treat any photo with GPS tags as carrying the place it was taken, not the general area.' },
+      { question: 'Do social media platforms remove metadata for me?', answer: 'Usually for an ordinary feed post, because they re-compress the image and the metadata does not survive re-encoding. That is a side effect rather than a promise, and it does not extend to every sharing mode — direct file sends, "send as document" and original-quality options exist specifically to preserve the file untouched. Check rather than rely on it.' },
+      { question: 'Does removing EXIF data reduce image quality?', answer: 'It should not, and with a tool that edits the container rather than the picture it does not at all — the compressed image data can be copied across byte for byte. Quality is only lost by tools that redraw the photo onto a canvas and re-export it, which produces a new lossy file every time.' },
+      { question: 'Will my photo appear rotated after removing EXIF?', answer: 'It will if the tool strips the orientation flag, which is the usual cause of photos suddenly appearing sideways. Keeping that single field preserves correct display and gives nothing away, since it records how the camera was held rather than anything about you or where you were.' },
+      { question: 'Can I see metadata without uploading my photo anywhere?', answer: 'Yes. A browser can read the file locally, and desktop tools like exiftool or your operating system\'s file properties never touch the network. This matters more than for most tasks: uploading a photo in order to discover whether it reveals your address means handing that address to whoever runs the server.' }
+    ]
   }
 ];
