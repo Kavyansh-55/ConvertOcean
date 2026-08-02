@@ -445,6 +445,69 @@ const rawTools: ToolData[] = [
     content: salesTaxCalculatorContent
   },
   {
+    slug: 'ofx-to-csv',
+    name: 'OFX to CSV',
+    title: 'Convert OFX to CSV & Excel Online - Free | ConvertOcean',
+    description: 'Convert OFX bank statements to CSV or Excel right in your browser. Reads both OFX versions, keeps every account, and never uploads your financial data.',
+    headline: 'OFX to CSV.',
+    subtitle: 'Turn an OFX bank statement into a clean spreadsheet — CSV or Excel, with the columns your accounting software expects.',
+    quickAnswer: 'To convert OFX to CSV, drop your .ofx statement above and download a spreadsheet of every transaction: date, type, description, memo, amount, cheque number and transaction ID. You can switch to an Excel workbook or to a 3-column layout for bank-import wizards. The statement is parsed inside your browser and never uploaded, which matters because an OFX file carries your account and routing numbers.',
+    icon: '🏦',
+    category: 'Business Tools',
+    categorySlug: 'business-tools',
+    faqs: [
+      { question: 'What is an OFX file, and where do I get one?', answer: 'OFX (Open Financial Exchange) is the format banks use to hand transaction data to accounting software. On most online banking sites the download option is labelled "OFX", "Web Connect", "Money" or sometimes just "for accounting software", alongside the PDF and CSV options.' },
+      { question: 'Does this read both OFX versions?', answer: 'Yes. OFX 1.x is SGML — its tags are frequently left unclosed, which a strict XML parser rejects outright — and OFX 2.x is true XML. Both are read by the same tolerant parser, along with the unescaped ampersands that real payee names like "AT&T" put into these files.' },
+      { question: 'What if my file contains more than one account?', answer: 'Every account is converted, not just the first. When a file holds several, an Account column is added so each row says which one it came from, and the Excel export gains a Summary sheet listing each account with its statement period and closing balance.' },
+      { question: 'Are the dates converted to my timezone?', answer: 'No, deliberately. OFX timestamps often carry a zone, such as 20260101120000[-5:EST]. Shifting those into the reader\'s local zone is how a January 1 transaction lands on December 31 and moves between tax periods. The date in your spreadsheet is the date the file states.' },
+      { question: 'Is my bank data uploaded anywhere?', answer: 'No. The parser is JavaScript running in your browser, so the statement is read on your own device and no part of it is transmitted. An OFX file typically contains your account number, routing number and full transaction history, which is precisely the data you should not be posting to an unknown server.' },
+      { question: 'Can I open the CSV in Excel or Google Sheets?', answer: 'Yes, both open it directly. If you want real date and number cells rather than text that needs converting, pick the Excel (.xlsx) output instead — it writes typed cells, so dates sort chronologically and amounts total correctly straight away.' }
+    ],
+    relatedTools: ['qfx-to-csv', 'qbo-to-csv', 'csv-to-xlsx', 'xlsx-to-csv', 'profit-margin-calculator']
+  },
+  {
+    slug: 'qfx-to-csv',
+    name: 'QFX to CSV',
+    title: 'QFX to CSV - Convert Quicken Files Free | ConvertOcean',
+    description: 'Convert Quicken QFX files to CSV or Excel without Quicken and without uploading. Reads Web Connect bank statements straight in your browser, completely free.',
+    headline: 'QFX to CSV.',
+    subtitle: 'Open a Quicken Web Connect statement without Quicken — convert it to CSV or Excel entirely on your own device.',
+    quickAnswer: 'To convert QFX to CSV, select your .qfx file above and download the transactions as a spreadsheet. QFX is Quicken\'s licensed variant of OFX, so a file that only Quicken will import becomes a plain CSV or Excel workbook that any software reads. Choose the full detail layout or a 3-column Date, Description, Amount layout. Nothing is uploaded — the file is parsed in your browser.',
+    icon: '🏦',
+    category: 'Business Tools',
+    categorySlug: 'business-tools',
+    faqs: [
+      { question: 'Do I need Quicken to open a QFX file?', answer: 'Not with this converter. QFX is Quicken\'s branded version of OFX and other software often refuses it, because Intuit\'s format carries a bank identifier that non-Quicken apps will not accept. Converting to CSV or Excel sidesteps that entirely — you get the transactions as data, with no application requirement.' },
+      { question: 'What is the difference between QFX and OFX?', answer: 'Structurally, almost nothing. QFX is OFX with an extra Intuit header block, and the transaction records inside are identical. The difference is licensing rather than technology: banks pay to issue QFX, and Quicken checks for those Intuit markers when deciding whether to accept a file.' },
+      { question: 'My Quicken subscription lapsed — can I still get my data out?', answer: 'Yes. The QFX file your bank produces is readable on its own; it does not need Quicken to be unlocked. Convert it here and you have your transactions in a spreadsheet you own, independent of any subscription.' },
+      { question: 'Which columns can I export?', answer: 'Three layouts. Full detail gives date, type, description, memo, amount, cheque number, currency and transaction ID. The 3-column layout gives Date, Description and Amount — the shape most bank-import wizards ask for. The 4-column layout splits money out and money in into separate Debit and Credit columns.' },
+      { question: 'Is my financial data sent to a server?', answer: 'No. The conversion is done by JavaScript in your own browser, so the statement never leaves your device. That is worth caring about here: a QFX file lists your account number and every transaction on the statement.' },
+      { question: 'What happens to a brokerage QFX file?', answer: 'Cash activity — dividends swept to cash, transfers, fees — converts normally. Securities trades do not: a trade carries units, unit price and a security identifier, which cannot honestly be flattened into a bank-statement row. Rather than dropping them silently, the tool counts them and tells you how many were left out.' }
+    ],
+    relatedTools: ['qbo-to-csv', 'ofx-to-csv', 'csv-to-xlsx', 'xlsx-to-csv', 'profit-margin-calculator']
+  },
+  {
+    slug: 'qbo-to-csv',
+    name: 'QBO to CSV',
+    title: 'QBO to CSV - Convert QuickBooks Files Free | ConvertOcean',
+    description: 'Convert QuickBooks QBO Web Connect files to CSV or Excel in your browser. Review and fix transactions before they reach your books — nothing is uploaded.',
+    headline: 'QBO to CSV.',
+    subtitle: 'Convert a QuickBooks Web Connect file into a spreadsheet you can read, check, and correct before importing.',
+    quickAnswer: 'To convert QBO to CSV, select your .qbo Web Connect file above and download the transactions as CSV or Excel. This is the usual fix when QuickBooks refuses a bank\'s QBO file, and it lets you review the rows before they reach your books. A 3-column Date, Description, Amount layout is available for CSV bank import. The file is parsed in your browser and never uploaded.',
+    icon: '🏦',
+    category: 'Business Tools',
+    categorySlug: 'business-tools',
+    faqs: [
+      { question: 'Why would I convert a QBO file instead of importing it?', answer: 'Because a QBO import goes straight into your books, unreviewed. Converting first lets you see every row in a spreadsheet, check the statement period and totals, and correct or categorise descriptions before anything is committed — which is far easier than unpicking a bad import afterwards.' },
+      { question: 'QuickBooks rejected my bank\'s QBO file. Does this help?', answer: 'It gives you a route around it. QBO import failures usually come from the file\'s bank identifier rather than the transactions themselves, so the data is fine even when the import is refused. Converting to CSV produces a file you can bring in through the manual CSV upload instead.' },
+      { question: 'Which layout should I choose for a CSV bank import?', answer: 'The 3-column layout produces Date, Description and Amount, with money out as negative numbers. The 4-column layout splits those into separate Debit and Credit columns instead. Import wizards ask you to map columns to their own fields, so check the mapping step and pick whichever your setup expects.' },
+      { question: 'What is actually inside a QBO file?', answer: 'The same OFX structure that banks have used since 1997, plus Intuit\'s identifiers. Each transaction record holds a type, a posted date, an amount, a unique transaction ID and a payee name — which is why a QBO file converts to a spreadsheet cleanly, with no information invented along the way.' },
+      { question: 'Does my client data leave my computer?', answer: 'No. Everything runs in your browser, so the statement stays on your machine. For anyone handling other people\'s books this is the deciding difference: uploading a client\'s full transaction history to a third-party converter is a disclosure you would have to justify, and here there is nothing to justify.' },
+      { question: 'Can I convert several months at once?', answer: 'Yes — one file at a time, but a file covering any date range converts in full, and files containing multiple accounts are converted in full too, with an Account column identifying each row. The on-screen summary reports the statement period and transaction count so you can confirm the range is what you expected.' }
+    ],
+    relatedTools: ['qfx-to-csv', 'ofx-to-csv', 'csv-to-xlsx', 'invoice-generator', 'profit-margin-calculator']
+  },
+  {
     slug: 'xls-to-pdf',
     name: 'XLS to PDF',
     title: 'Convert XLS to PDF Online - 100% Private | ConvertOcean',
@@ -1124,7 +1187,10 @@ export const tools: ToolData[] = rawTools.map(t => {
     ...t,
     title: seo ? seo.title : t.title,
     description: seo ? seo.description : t.description,
-    faqs: seo ? seo.faqs : t.faqs,
+    // Fall back to the tool's own FAQs when the SEO entry supplies none. A bare
+    // `seo ? seo.faqs : t.faqs` lets an entry that defines content but no FAQs
+    // silently strip the page's FAQPage schema, which is invisible in the build.
+    faqs: seo && seo.faqs && seo.faqs.length ? seo.faqs : t.faqs,
     content: t.content || (seo ? seo.content : undefined)
   };
 });
