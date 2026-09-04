@@ -29,3 +29,7 @@ scratch/
 # pdf-to-docx test artifacts
 scripts/tests/pdf-to-docx/test.pdf
 scripts/tests/pdf-to-docx/out.docx
+
+# Unrelated nested git repos that live in this folder (never part of the site)
+test-repo/
+galactic-group/

@@ -66,3 +66,12 @@
 # Fix noindex old WP feeds
 /best-backend-frameworks-in-2025-which-one-fits-your-project/* / 301
 /7-figma-plugins-that-save-your-time/* / 301
+
+# Pre-Astro URLs that 404'd after the migration (targets verified 200)
+/spreadsheet-tools /excel-converter/ 301
+/spreadsheet-tools/* /excel-converter/ 301
+/document-converter.html /file-converter/ 301
+/file-splitter-merger.html /pdf-tools/ 301
+/image-optimizer.html /image-tools/ 301
+/ocr-extractor.html /image-to-text/ 301
+/video-to-gif.html /image-tools/ 301
