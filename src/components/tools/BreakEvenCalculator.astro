@@ -118,6 +118,16 @@ const { slug, headline, subtitle } = Astro.props;
     transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
     min-width: 30px;
   }
+  /* The accent lightens in dark mode (#2E96B0), so the white label that clears
+     AA on the light accent (5.36:1) falls to 3.44:1. Flipping the label dark
+     gives 5.76:1. --colors-ink would NOT do it: it inverts to #f5f5f5 in dark
+     and measures 3.15:1, worse than the white it replaces. :global() on the
+     ancestor is required - <html> carries data-theme but not this component's
+     scope id, so a bare selector would compile to nothing. */
+  :global([data-theme="dark"]) .be-bar-cm {
+    color: var(--colors-canvas);
+  }
+
   .formula-box {
     background-color: var(--colors-canvas-soft-2);
     border: 1px solid var(--colors-hairline);

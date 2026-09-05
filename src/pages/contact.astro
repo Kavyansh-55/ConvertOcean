@@ -107,12 +107,6 @@ const contactSchema = {
     }
     .channel-value a { color: var(--colors-link); text-decoration: none; }
     .channel-value a:hover { text-decoration: underline; }
-    /* --colors-link (#0070f3) measures 4.35:1 on the dark canvas — just under
-       AA for this 16px weight. Scoped here rather than changing the shared
-       token, which would restyle links site-wide during the AdSense window.
-       :global() on the ancestor is required: <html> carries data-theme but not
-       this component's scope id, so a bare selector would compile to nothing. */
-    :global([data-theme="dark"]) .channel-value a { color: #58a6ff; }
     .channel-note {
       font-size: 13px;
       color: var(--colors-body);
