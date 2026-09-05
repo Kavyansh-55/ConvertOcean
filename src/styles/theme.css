@@ -29,6 +29,10 @@
 
   --colors-error: #B4322C;
   --colors-error-wash: #F7E7E6;
+  /* One step down from --colors-error-wash, for hover on error surfaces. This
+     is the darkest step that still clears AA for --colors-error text sitting on
+     it (4.57:1); #F0D5D3 and darker drop under 4.5:1. */
+  --colors-error-wash-strong: #F2D9D7;
   /* Derived from the new --colors-error; DESIGN.md names no deep error. */
   --colors-error-deep: #8F2823;
 
@@ -108,6 +112,11 @@
      token is used as a text color in ~20 rules. #2E96B0 measures 5.76 / 5.45 /
      4.85 / 5.06:1 on those same four surfaces. */
   --colors-accent: #2E96B0;
+  /* Likewise a tonal lightening, not a new color. In light mode -deep is darker
+     than the accent; on a dark ground the hover step has to run the other way,
+     so this sits above #2E96B0 in value. Measures 9.12:1 on the canvas, 8.63:1
+     on canvas-soft, 7.68:1 on canvas-soft-2 and 8.02:1 on surface. */
+  --colors-accent-deep: #5FBDD0;
   /* The wash inverts so accent-tinted panels stay dark rather than flashing a
      light block on a near-black page. */
   --colors-accent-wash: #0C2429;
@@ -118,6 +127,9 @@
      canvas (#0a0a0a) and canvas-soft (#121212). */
   --colors-error: #ff6b6b;
   --colors-error-wash: #2a1416;
+  /* Inverted for the same reason as the accent: on a dark ground the hover step
+     goes up in value, not down. #ff6b6b on it measures 5.42:1. */
+  --colors-error-wash-strong: #3D1D20;
   --colors-error-deep: #ff9d9d;
 }
 
@@ -668,7 +680,7 @@ select:focus-visible,
 }
 
 .button-danger:hover:not(:disabled) {
-  background-color: var(--colors-error-wash);
+  background-color: var(--colors-error-wash-strong);
   border-color: var(--colors-error);
   transform: translateY(-2px);
 }
