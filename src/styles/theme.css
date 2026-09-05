@@ -27,6 +27,13 @@
   --colors-accent-deep: #0A5A70;
   --colors-accent-wash: #E3F0F2;
 
+  /* Ink that does NOT invert with the theme. For text sitting on a fill that
+     is itself theme-independent - the hardcoded red/amber cost segments in the
+     calculators - where every other ink token would flip to near-white in dark
+     and drop the label to 1.42:1. Clears AA across the whole red-to-amber ramp
+     (5.05:1 at its darkest point) in both themes. */
+  --colors-ink-static: #16211F;
+
   --colors-error: #B4322C;
   --colors-error-wash: #F7E7E6;
   /* One step down from --colors-error-wash, for hover on error surfaces. This
