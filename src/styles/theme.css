@@ -8,26 +8,39 @@
 }
 
 :root {
-  --colors-canvas: #ffffff;
-  --colors-canvas-soft: #fafafa;
-  --colors-canvas-soft-2: #f5f5f5;
-  --colors-ink: #171717;
-  --colors-body: #4d4d4d;
-  --colors-mute: #888888;
-  --colors-hairline: #ebebeb;
-  --colors-hairline-strong: #a1a1a1;
-  --colors-link: #0070f3;
-  --colors-link-deep: #0761d1;
-  --colors-link-bg-soft: #d3e5ff;
-  --colors-success: #0070f3;
-  --colors-success-glow: rgba(0, 112, 243, 0.2);
-  --colors-error: #ee0000;
-  --colors-error-soft: #f7d4d6;
-  --colors-error-deep: #c50000;
-  /* Display accent for the hero headline. Deep enough to clear AA on the
-     light canvas (5.36:1) — the previous animated gradient dipped to
-     1.60:1 at its teal stops, well under the 3:1 large-text minimum. */
-  --colors-accent-display: #0e7490;
+  /* DESIGN.md palette. The canvas is a pale sea-stone, so a white
+     --colors-surface lifts off it on value contrast alone — no shadow needed. */
+  --colors-canvas: #F3F5F4;
+  --colors-canvas-soft: #E9EDEB;
+  /* Third canvas step, derived. DESIGN.md names only canvas and canvas-soft,
+     but 15 rules use this one for hover fills; kept one step below canvas-soft
+     so the ramp stays monotonic on the new base. */
+  --colors-canvas-soft-2: #DFE4E2;
+  --colors-surface: #FFFFFF;
+  --colors-ink: #16211F;
+  --colors-body: #4A5654;
+  --colors-mute: #7C8886;
+  --colors-hairline: #DCE2E0;
+  --colors-hairline-strong: #B4BEBB;
+
+  --colors-accent: #0E7490;
+  --colors-accent-deep: #0A5A70;
+  --colors-accent-wash: #E3F0F2;
+
+  --colors-error: #B4322C;
+  --colors-error-wash: #F7E7E6;
+  /* Derived from the new --colors-error; DESIGN.md names no deep error. */
+  --colors-error-deep: #8F2823;
+
+  /* Deprecated aliases — NOT additional colors. 26 component files still
+     reference these names; each resolves to the single accent, so no blue or
+     teal survives anywhere. Retarget those call sites, then delete these six. */
+  --colors-link: var(--colors-accent);
+  --colors-link-deep: var(--colors-accent-deep);
+  --colors-link-bg-soft: var(--colors-accent-wash);
+  --colors-accent-display: var(--colors-accent);
+  --colors-success: var(--colors-accent);
+  --colors-error-soft: var(--colors-error-wash);
   
   --spacing-xxs: 4px;
   --spacing-xs: 8px;
@@ -87,19 +100,25 @@
   --colors-mute: #666666;
   --colors-hairline: #2c2c2c;
   --colors-hairline-strong: #4d4d4d;
-  --colors-success: #10b981;
-  --colors-success-glow: rgba(16, 185, 129, 0.2);
+  --colors-surface: #161B1A;
+  /* A tonal lightening of the light-mode accent (#0E7490), not a second accent:
+     same hue, raised value so it clears WCAG AA as text on dark backgrounds.
+     #0E7490 measures 3.70:1 on the canvas, 3.50:1 on canvas-soft, 3.11:1 on
+     canvas-soft-2 and 3.25:1 on surface — all under the 4.5:1 minimum, and this
+     token is used as a text color in ~20 rules. #2E96B0 measures 5.76 / 5.45 /
+     4.85 / 5.06:1 on those same four surfaces. */
+  --colors-accent: #2E96B0;
+  /* The wash inverts so accent-tinted panels stay dark rather than flashing a
+     light block on a near-black page. */
+  --colors-accent-wash: #0C2429;
   /* The error tokens had NO dark override at all, so every error banner on the
-     site rendered as a glaring light-pink block (#f7d4d6) on a near-black page,
-     and the #ee0000 text on it measured only 3.83:1. These values clear 4.5:1
-     on all three dark surfaces the tokens land on — the soft panel (#2a1416),
-     the canvas (#0a0a0a) and canvas-soft (#121212). */
+     site rendered as a glaring light-pink block on a near-black page, and the
+     error text on it measured only 3.83:1. These values clear 4.5:1 on all
+     three dark surfaces the tokens land on — the soft panel (#2a1416), the
+     canvas (#0a0a0a) and canvas-soft (#121212). */
   --colors-error: #ff6b6b;
-  --colors-error-soft: #2a1416;
+  --colors-error-wash: #2a1416;
   --colors-error-deep: #ff9d9d;
-  --colors-link-bg-soft: #1b253c;
-  --colors-link: #0070f3;
-  --colors-accent-display: #22d3ee;
 }
 
 body {
@@ -162,7 +181,6 @@ html.js-reveal [data-reveal-stagger].is-visible > *:nth-child(8) { transition-de
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  .hero-glow { animation: none !important; }
   html.js-reveal [data-reveal],
   html.js-reveal [data-reveal-stagger] > * {
     opacity: 1 !important;
@@ -188,9 +206,8 @@ select:focus-visible,
   border-radius: var(--rounded-sm);
 }
 
-/* Primary button: soft top-light gradient + deeper hover glow + press */
+/* Primary button: hover and press feedback. */
 .button-primary {
-  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 55%);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 .button-primary:hover:not(:disabled) {
@@ -217,58 +234,12 @@ select:focus-visible,
   to   { opacity: 1; transform: none; }
 }
 
-/* Advanced Mesh Gradient Hero Backdrop */
-@keyframes ambient-glow {
-  0% { transform: translate(0px, 0px) scale(1); }
-  33% { transform: translate(30px, -40px) scale(1.1); }
-  66% { transform: translate(-20px, 20px) scale(0.95); }
-  100% { transform: translate(0px, 0px) scale(1); }
-}
-
-.hero-glow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 620px;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-  opacity: 1;
-  transition: opacity 0.5s ease;
-}
-
-.hero-glow::before {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: -20%;
-  right: -20%;
-  bottom: -20%;
-  filter: blur(95px);
-  pointer-events: none;
-}
-
-.hero-glow::before {
-  background:
-    radial-gradient(circle at 22% 28%, rgba(0, 124, 240, 0.16) 0%, transparent 55%),
-    radial-gradient(circle at 78% 22%, rgba(0, 223, 216, 0.15) 0%, transparent 55%),
-    radial-gradient(circle at 55% 78%, rgba(14, 116, 144, 0.10) 0%, transparent 55%);
-}
-
-[data-theme="dark"] .hero-glow::before {
-  background:
-    radial-gradient(circle at 22% 28%, rgba(0, 124, 240, 0.20) 0%, transparent 55%),
-    radial-gradient(circle at 78% 22%, rgba(0, 223, 216, 0.18) 0%, transparent 55%),
-    radial-gradient(circle at 55% 78%, rgba(34, 211, 238, 0.10) 0%, transparent 55%);
-}
-
 /* Navigation */
 .nav-bar {
   height: 64px;
-  background-color: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  /* Opaque. The blur that made a translucent bar legible is gone (DESIGN.md
+     bans blurred shapes), so the bar sits on --colors-surface instead. */
+  background-color: var(--colors-surface);
   border-bottom: 1px solid var(--colors-hairline);
   display: flex;
   align-items: center;
@@ -277,11 +248,11 @@ select:focus-visible,
   position: sticky;
   top: 0;
   z-index: 100;
-  transition: background-color 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 [data-theme="dark"] .nav-bar {
-  background-color: rgba(10, 10, 10, 0.75);
+  background-color: var(--colors-surface);
 }
 
 .nav-brand {
@@ -307,9 +278,6 @@ select:focus-visible,
   transition: fill 0.3s;
 }
 
-.brand-logo-path {
-  fill: url(#brand-logo-grad);
-}
 
 .brand-text {
   font-weight: 700;
@@ -700,7 +668,7 @@ select:focus-visible,
 }
 
 .button-danger:hover:not(:disabled) {
-  background-color: #fbd5d7;
+  background-color: var(--colors-error-wash);
   border-color: var(--colors-error);
   transform: translateY(-2px);
 }
@@ -777,11 +745,11 @@ select:focus-visible,
 
 .tool-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(0, 223, 216, 0.25);
+  border-color: var(--colors-accent);
   box-shadow: 
     0 12px 30px -10px rgba(0, 0, 0, 0.06), 
-    0 0 0 1px rgba(0, 223, 216, 0.25),
-    0 0 20px rgba(0, 223, 216, 0.04);
+    0 0 0 1px var(--colors-accent),
+    0 0 20px color-mix(in srgb, var(--colors-accent) 4%, transparent);
 }
 
 .tool-card::before {
@@ -791,7 +759,7 @@ select:focus-visible,
   left: 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, var(--colors-link), #00dfd8);
+  background: var(--colors-link);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -825,7 +793,7 @@ select:focus-visible,
 .tool-card:hover .tool-icon-wrapper {
   background-color: var(--colors-canvas-soft);
   transform: scale(1.08) rotate(3deg);
-  border-color: rgba(0, 223, 216, 0.2);
+  border-color: var(--colors-accent);
 }
 
 .tool-name {
@@ -1235,10 +1203,10 @@ select:focus-visible,
 .progress-bar-fill {
   width: 0%;
   height: 100%;
-  background: linear-gradient(90deg, var(--colors-link), #00dfd8);
+  background: var(--colors-link);
   border-radius: var(--rounded-pill);
   transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 8px rgba(0, 223, 216, 0.4);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--colors-accent) 40%, transparent);
 }
 
 .progress-label {
@@ -1361,8 +1329,8 @@ footer {
 }
 
 .privacy-disclaimer-wrapper:hover {
-  border-color: rgba(0, 223, 216, 0.25);
-  box-shadow: 0 0 12px rgba(0, 223, 216, 0.03);
+  border-color: var(--colors-accent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--colors-accent) 3%, transparent);
 }
 
 .privacy-disclaimer-icon {
@@ -1788,8 +1756,8 @@ footer {
 
 .explore-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(0, 223, 216, 0.25);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02), 0 12px 20px -6px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 223, 216, 0.25);
+  border-color: var(--colors-accent);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02), 0 12px 20px -6px rgba(0, 0, 0, 0.04), 0 0 0 1px var(--colors-accent);
 }
 
 .explore-card::before {
