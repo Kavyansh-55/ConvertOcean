@@ -97,8 +97,8 @@
     width: 6px;
     height: 6px;
     border-radius: var(--rounded-full);
-    background: var(--colors-cyan-deep, #29bc9b);
-    box-shadow: 0 0 0 3px rgba(41, 188, 155, 0.16);
+    background: var(--colors-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--colors-accent) 16%, transparent);
   }
 
   /* `display: flex` below would otherwise beat the [hidden] attribute,
@@ -131,7 +131,7 @@
   }
   [data-theme="dark"] .dz-drop:hover,
   [data-theme="dark"] .dz-drop:focus-within {
-    background: rgba(0, 112, 243, 0.08);
+    background: color-mix(in srgb, var(--colors-accent) 8%, transparent);
   }
 
   /* Drag state is applied by script on the whole card. */
@@ -141,7 +141,7 @@
     background: var(--colors-link-bg-soft);
     transform: scale(1.015);
   }
-  [data-theme="dark"] .dz.is-dragging .dz-drop { background: rgba(0, 112, 243, 0.12); }
+  [data-theme="dark"] .dz.is-dragging .dz-drop { background: color-mix(in srgb, var(--colors-accent) 12%, transparent); }
 
   .dz-drop-icon { color: var(--colors-mute); transition: color 0.2s ease, transform 0.2s ease; }
   .dz-drop:hover .dz-drop-icon,
@@ -207,7 +207,7 @@
   }
   [data-theme="dark"] .dz-fmt { background: rgba(255, 255, 255, 0.06); }
   .dz-to { background: var(--colors-link-bg-soft); color: var(--colors-link-deep); }
-  [data-theme="dark"] .dz-to { background: rgba(0, 112, 243, 0.18); color: #6cb0ff; }
+  [data-theme="dark"] .dz-to { background: color-mix(in srgb, var(--colors-accent) 18%, transparent); color: var(--colors-accent-deep); }
 
   .dz-file {
     font-size: var(--fs-body);
@@ -289,7 +289,7 @@
     text-align: center;
     letter-spacing: 0.01em;
   }
-  .dz-foot :global(strong) { color: var(--colors-cyan-deep, #29bc9b); font-weight: 500; }
+  .dz-foot :global(strong) { color: var(--colors-accent); font-weight: 500; }
   .dz-foot:global(.is-error) { color: var(--colors-error); }
 
   .dz-reset {

@@ -27,7 +27,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .sheet-card.selected {
     border-color: var(--colors-link);
-    background-color: rgba(0, 223, 216, 0.03);
+    background-color: color-mix(in srgb, var(--colors-accent) 3%, transparent);
     box-shadow: 0 0 0 1px var(--colors-link);
   }
   .sheet-checkbox {

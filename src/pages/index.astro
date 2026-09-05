@@ -228,8 +228,8 @@ const toolChips = (slug: string): ToolChips => {
     }
 
     .search-input-wrapper:focus-within {
-      border-color: rgba(0, 112, 243, 0.45);
-      box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.12), 0 10px 40px rgba(0, 0, 0, 0.06);
+      border-color: color-mix(in srgb, var(--colors-accent) 45%, transparent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--colors-accent) 12%, transparent), 0 10px 40px rgba(0, 0, 0, 0.06);
       transform: translateY(-1px);
     }
 
@@ -241,8 +241,8 @@ const toolChips = (slug: string): ToolChips => {
     }
 
     [data-theme="dark"] .search-input-wrapper:focus-within {
-      border-color: rgba(0, 223, 216, 0.45);
-      box-shadow: 0 0 0 3px rgba(0, 223, 216, 0.18), 0 10px 40px rgba(0, 0, 0, 0.35);
+      border-color: color-mix(in srgb, var(--colors-accent) 45%, transparent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--colors-accent) 18%, transparent), 0 10px 40px rgba(0, 0, 0, 0.35);
     }
 
     .search-icon {
@@ -701,14 +701,14 @@ const toolChips = (slug: string): ToolChips => {
       color: var(--colors-ink);
     }
     .col-highlight {
-      background-color: rgba(0, 223, 216, 0.02);
+      background-color: color-mix(in srgb, var(--colors-accent) 2%, transparent);
       font-weight: 600;
     }
     [data-theme="dark"] .col-highlight {
-      background-color: rgba(0, 223, 216, 0.04);
+      background-color: color-mix(in srgb, var(--colors-accent) 4%, transparent);
     }
     .text-success {
-      color: #00dfd8;
+      color: var(--colors-accent);
       font-weight: 700;
       font-size: var(--fs-subhead);
     }
@@ -721,39 +721,6 @@ const toolChips = (slug: string): ToolChips => {
       font-weight: 500;
       color: var(--colors-mute);
       margin-left: 6px;
-    }
-
-    /* ─── Hero: bolder oceanic mesh-gradient, weighted behind the product panel ─── */
-    .hero-container::before {
-      content: "";
-      position: absolute;
-      top: -80px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 1200px;
-      /* Was 140%, which let the glow bleed past both edges and scroll the
-         page sideways - 79px of it at 390px wide, and anywhere from 901px
-         to 1199px too, since the fixed 1200px is wider than both the
-         viewport there and this container's own 1180px max. Clamping to
-         the container costs 20px off a 50px-blurred gradient, which is
-         not visible, and it holds at every width without a breakpoint. */
-      max-width: 100%;
-      height: 560px;
-      background:
-        radial-gradient(closest-side at 30% 42%, rgba(0, 112, 243, 0.20), transparent 72%),
-        radial-gradient(closest-side at 66% 30%, rgba(0, 223, 216, 0.26), transparent 72%),
-        radial-gradient(closest-side at 80% 62%, rgba(80, 227, 194, 0.22), transparent 72%),
-        radial-gradient(closest-side at 52% 74%, rgba(0, 124, 240, 0.16), transparent 72%);
-      filter: blur(50px);
-      z-index: -1;
-      pointer-events: none;
-    }
-    [data-theme="dark"] .hero-container::before {
-      background:
-        radial-gradient(closest-side at 30% 42%, rgba(0, 112, 243, 0.36), transparent 72%),
-        radial-gradient(closest-side at 66% 30%, rgba(0, 223, 216, 0.40), transparent 72%),
-        radial-gradient(closest-side at 80% 62%, rgba(80, 227, 194, 0.32), transparent 72%),
-        radial-gradient(closest-side at 52% 74%, rgba(0, 124, 240, 0.26), transparent 72%);
     }
 
     /* ─── Split hero layout ─── */

@@ -144,7 +144,7 @@ const { slug, headline, subtitle } = Astro.props;
   .wc-char-limit-fill {
     height: 100%;
     border-radius: 2px;
-    background: linear-gradient(90deg, #0070f3, #00dfd8);
+    background: var(--colors-accent);
     transition: width 0.25s ease, background 0.25s;
     width: 0%;
   }
@@ -268,7 +268,7 @@ const { slug, headline, subtitle } = Astro.props;
   .wc-keyword-card :global(.wc-keyword-bar) {
     height: 4px;
     border-radius: 2px;
-    background: linear-gradient(90deg, #0070f3, #00dfd8);
+    background: var(--colors-accent);
   }
   .wc-empty-kw {
     font-size: 13px;
