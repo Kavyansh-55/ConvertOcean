@@ -224,7 +224,7 @@ const categoryIntroMap: Record<string, string> = {
 const categoryIntro = categoryIntroMap[category];
 ---
 
-<Layout title={title} description={description} lang={lang} category={catInfo.name} categorySlug={category} faqList={faqList}>
+<Layout band="lime" title={title} description={description} lang={lang} category={catInfo.name} categorySlug={category} faqList={faqList}>
   <style>
     .category-intro {
       max-width: 800px;
@@ -249,17 +249,46 @@ const categoryIntro = categoryIntroMap[category];
     .category-intro a:hover {
       color: var(--colors-link-deep);
     }
+
+  /* The category header: icon beside the title, not stacked above a
+     centred column — it matches the hero and every section heading. */
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-3xl);
+    flex-wrap: wrap;
+  }
+  .category-header-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    border-radius: var(--rounded-card);
+    background-color: var(--colors-action);
+    color: var(--colors-action-ink);
+  }
+  .category-header > div:last-child { min-width: 0; }
+
+  /* Three across on wide screens. Two 600px-wide cards per row turned a
+     22-tool category into five screens of scrolling. */
+  .tool-grid { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 1100px) { .tool-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 700px)  { .tool-grid { grid-template-columns: 1fr; } }
+  .tool-card { min-height: 0; }
   </style>
-  <main class="page-container" style="max-width: 1200px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl);">
-    <div class="page-header" style="text-align: center; margin-bottom: var(--spacing-3xl);">
-      <div class="category-header-icon-wrapper" style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: var(--rounded-lg); background-color: var(--colors-canvas-soft-2); border: 1px solid var(--colors-hairline); margin-bottom: var(--spacing-md); color: var(--colors-ink); box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.03), inset 0 0 0 1px var(--colors-hairline);">
+  <main id="main-content" tabindex="-1" class="page-container" style="max-width: 1200px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl);">
+    <div class="page-header category-header">
+      <div class="category-header-icon-wrapper">
         <CategoryIcon categorySlug={category} width="40" height="40" />
       </div>
-      <h1 class="page-title" style="font-size: 38px; font-weight: 600; letter-spacing: -1.5px; color: var(--colors-ink);">{catInfo.name}</h1>
-      <p class="page-description" style="font-size: 16px; color: var(--colors-body); max-width: 600px; margin: var(--spacing-xs) auto 0; line-height: 1.5;">{catInfo.description}</p>
+      <h1 class="page-title">{catInfo.name}</h1>
+      <p class="page-description">{catInfo.description}</p>
     </div>
 
-    <hr class="section-divider" style="max-width: 100%; margin-bottom: var(--spacing-2xl); border: 0; height: 1px; background-color: var(--colors-hairline);">
+    
 
     <div class="tool-grid">
       {filteredTools.map(tool => (

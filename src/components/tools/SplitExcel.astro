@@ -22,13 +22,13 @@ const { slug, headline, subtitle } = Astro.props;
     align-items: center;
     gap: var(--spacing-sm);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
     user-select: none;
   }
   .sheet-card.selected {
     border-color: var(--colors-link);
-    background-color: rgba(0, 223, 216, 0.03);
-    box-shadow: 0 0 0 1px var(--colors-link);
+    background-color: color-mix(in srgb, var(--colors-accent) 3%, transparent);
+    /* elevation removed — separation comes from colour, not shadow */
   }
   .sheet-checkbox {
     accent-color: var(--colors-ink);
@@ -109,7 +109,7 @@ const { slug, headline, subtitle } = Astro.props;
   <!-- Sheets Selection Section -->
   <div id="sheetsSection">
     <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs); flex-wrap: wrap;">
-      <div id="sheetsSectionLabel" style="font-size: 11px; font-weight: 600; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; color: var(--colors-mute);">Worksheets to extract</div>
+      <div id="sheetsSectionLabel" style="font-size: 11px; font-weight: 600; text-transform: uppercase; font-family: var(--font-sans); color: var(--colors-mute);">Worksheets to extract</div>
       <button type="button" id="sheetsToggleAll" onclick="toggleAllSheets()" style="background: none; border: none; padding: 0; font-size: 12px; font-weight: 600; color: var(--colors-link); cursor: pointer; min-height: 24px;">Clear all</button>
     </div>
     <p style="font-size: 13px; color: var(--colors-body); margin: 0 0 var(--spacing-sm);">

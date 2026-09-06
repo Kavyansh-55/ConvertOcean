@@ -60,7 +60,7 @@ const { slug, headline, subtitle } = Astro.props;
     justify-content: center;
     cursor: pointer;
     color: var(--colors-body);
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   }
   .merge-images-container .action-btn:hover {
     background-color: var(--colors-canvas-soft-2);
@@ -321,7 +321,7 @@ const { slug, headline, subtitle } = Astro.props;
       if (uploadedFiles.length === 0) return;
 
       const mode = mergeMode.value;
-      showProgress(15, "Initializing merger...");
+      showProgress(15, "Initializing merger…");
 
       if (mode === 'pdf') {
         try {
@@ -379,7 +379,7 @@ const { slug, headline, subtitle } = Astro.props;
             doc.addImage(file.dataUrl, mime, dx, dy, imgWidth, imgHeight, undefined, 'FAST');
           }
 
-          showProgress(95, "Compiling PDF download...");
+          showProgress(95, "Compiling PDF download…");
           doc.save('merged-images.pdf');
           hideProgress();
         } catch (err) {
@@ -433,7 +433,7 @@ const { slug, headline, subtitle } = Astro.props;
             });
           }
 
-          showProgress(90, "Stitching images canvas...");
+          showProgress(90, "Stitching images canvas…");
           const link = document.createElement('a');
           link.download = 'stitched-image.png';
           link.href = canvas.toDataURL('image/png');

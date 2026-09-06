@@ -28,12 +28,12 @@ const { slug, headline, subtitle } = Astro.props;
     max-height: 400px;
     object-fit: contain;
     border-radius: var(--rounded-sm);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    /* elevation removed — separation comes from colour, not shadow */
   }
   .grid-overlay {
     position: absolute;
     pointer-events: none;
-    border: 2px dashed #00dfd8;
+    border: 2px dashed var(--colors-accent);
   }
 </style>
 
@@ -215,7 +215,7 @@ const { slug, headline, subtitle } = Astro.props;
       }
 
       originalName = file.name;
-      showProgress(30, "Loading image preview...");
+      showProgress(30, "Loading image preview…");
 
       const reader = new FileReader();
       reader.onload = function(event) {
@@ -265,7 +265,7 @@ const { slug, headline, subtitle } = Astro.props;
         line.style.top = (imgH / rows) * r + 'px';
         line.style.left = '0';
         line.style.width = '100%';
-        line.style.borderTop = '1px dashed #00dfd8';
+        line.style.borderTop = '1px dashed var(--colors-accent)';
         gridOverlayContainer.appendChild(line);
       }
 
@@ -276,7 +276,7 @@ const { slug, headline, subtitle } = Astro.props;
         line.style.left = (imgW / cols) * c + 'px';
         line.style.top = '0';
         line.style.height = '100%';
-        line.style.borderLeft = '1px dashed #00dfd8';
+        line.style.borderLeft = '1px dashed var(--colors-accent)';
         gridOverlayContainer.appendChild(line);
       }
     }
@@ -296,7 +296,7 @@ const { slug, headline, subtitle } = Astro.props;
       hideError();
       if (!currentImgSrc) return;
 
-      showProgress(10, "Extracting dimensions...");
+      showProgress(10, "Extracting dimensions…");
       
       const mode = splitMode.value;
       let rows = 1, cols = 1;
@@ -320,7 +320,7 @@ const { slug, headline, subtitle } = Astro.props;
         const tileW = fullW / cols;
         const tileH = fullH / rows;
 
-        showProgress(25, "Slicing image grids...");
+        showProgress(25, "Slicing image grids…");
         
         const zip = new JSZip();
         const baseName = originalName.replace(/\.[^/.]+$/, "");
@@ -351,7 +351,7 @@ const { slug, headline, subtitle } = Astro.props;
           }
         }
 
-        showProgress(85, "Zipping tiles archive...");
+        showProgress(85, "Zipping tiles archive…");
         const content = await zip.generateAsync({ type: 'blob' });
         
         const link = document.createElement('a');

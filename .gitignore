@@ -26,6 +26,9 @@ desktop.ini
 # Local scratch/one-off scripts and exported analytics (not for the public repo)
 scratch/
 
+# Superseded design doc, replaced by DESIGN.md
+vercel-design-analysis.md.bak
+
 # pdf-to-docx test artifacts
 scripts/tests/pdf-to-docx/test.pdf
 scripts/tests/pdf-to-docx/out.docx

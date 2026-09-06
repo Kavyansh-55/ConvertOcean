@@ -63,18 +63,18 @@ const relLink = (target: string) => {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-sm);
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
-      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.01), inset 0px 0px 0px 1px var(--colors-hairline);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+      /* elevation removed — separation comes from colour, not shadow */
     }
 
     .hub-card:hover {
       transform: translateY(-4px);
       border-color: var(--colors-hairline-strong);
-      box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.04), inset 0px 0px 0px 1px var(--colors-hairline-strong);
+      /* elevation removed — separation comes from colour, not shadow */
     }
 
     .hub-card-tag {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-sans);
       font-size: 10px;
       color: var(--colors-link);
       text-transform: uppercase;
@@ -128,7 +128,7 @@ const relLink = (target: string) => {
     }
   </style>
 
-  <main class="hub-container">
+  <main id="main-content" tabindex="-1" class="hub-container">
     <div class="page-header" style="text-align: center;">
       <h1 class="page-title" style="font-size: 38px; font-weight: 600; letter-spacing: -1.5px; color: var(--colors-ink);">Guides & Resources.</h1>
       <p class="hub-lead">Practical handbooks and comparisons to help you optimize document properties, configure graphic settings, and manage private local conversions.</p>

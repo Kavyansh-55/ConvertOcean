@@ -49,7 +49,7 @@ const description = "Navigate ConvertOcean using our HTML sitemap. Access secure
       border: 1px solid var(--colors-hairline);
       border-radius: var(--rounded-lg);
       padding: var(--spacing-lg);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+      /* elevation removed — separation comes from colour, not shadow */
       transition: border-color 0.2s;
     }
     .sitemap-card:hover {
@@ -94,7 +94,7 @@ const description = "Navigate ConvertOcean using our HTML sitemap. Access secure
     }
   </style>
 
-  <main class="app-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl); position: relative; z-index: 1;">
+  <main id="main-content" tabindex="-1" class="app-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl); position: relative; z-index: 1;">
     <div class="sitemap-container">
       <div class="page-header" style="text-align: center;">
         <h1 class="page-title">Sitemap.</h1>

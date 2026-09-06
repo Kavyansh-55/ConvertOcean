@@ -27,7 +27,7 @@ const { slug, headline, subtitle } = Astro.props;
     font-weight: 700;
     color: var(--colors-ink);
     text-transform: uppercase;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     margin-bottom: var(--spacing-xs);
     border-bottom: 1px solid var(--colors-hairline);
     padding-bottom: 4px;
@@ -64,7 +64,7 @@ const { slug, headline, subtitle } = Astro.props;
     background-color: var(--colors-canvas);
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-lg);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    /* elevation removed — separation comes from colour, not shadow */
     display: flex;
     flex-direction: column;
     min-height: 250px;
@@ -83,7 +83,7 @@ const { slug, headline, subtitle } = Astro.props;
     font-size: 13px;
     font-weight: 600;
     color: var(--colors-body);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
   }
   .preview-body {
     flex: 1;
@@ -91,7 +91,7 @@ const { slug, headline, subtitle } = Astro.props;
     padding: var(--spacing-lg);
   }
   .text-preview {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     font-size: 13px;
     line-height: 1.6;
     white-space: pre-wrap;

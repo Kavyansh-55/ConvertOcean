@@ -55,16 +55,16 @@
     background: var(--colors-canvas);
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-lg);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.07), 0 2px 6px rgba(0, 0, 0, 0.03);
+    /* elevation removed — separation comes from colour, not shadow */
     padding: var(--spacing-md);
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
   }
 
-  [data-theme="dark"] .dz {
+  :global([data-theme="dark"]) .dz {
     background: var(--colors-canvas-soft);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    /* elevation removed — separation comes from colour, not shadow */
   }
 
   /* Header */
@@ -97,8 +97,8 @@
     width: 6px;
     height: 6px;
     border-radius: var(--rounded-full);
-    background: var(--colors-cyan-deep, #29bc9b);
-    box-shadow: 0 0 0 3px rgba(41, 188, 155, 0.16);
+    background: var(--colors-accent);
+    /* elevation removed — separation comes from colour, not shadow */
   }
 
   /* `display: flex` below would otherwise beat the [hidden] attribute,
@@ -122,16 +122,16 @@
     background: var(--colors-canvas-soft);
     transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
   }
-  [data-theme="dark"] .dz-drop { background: rgba(255, 255, 255, 0.02); }
+  :global([data-theme="dark"]) .dz-drop { background: var(--colors-canvas-soft); }
 
   .dz-drop:hover,
   .dz-drop:focus-within {
     border-color: var(--colors-link);
     background: var(--colors-link-bg-soft);
   }
-  [data-theme="dark"] .dz-drop:hover,
-  [data-theme="dark"] .dz-drop:focus-within {
-    background: rgba(0, 112, 243, 0.08);
+  :global([data-theme="dark"]) .dz-drop:hover,
+  :global([data-theme="dark"]) .dz-drop:focus-within {
+    background: color-mix(in srgb, var(--colors-accent) 8%, transparent);
   }
 
   /* Drag state is applied by script on the whole card. */
@@ -141,7 +141,7 @@
     background: var(--colors-link-bg-soft);
     transform: scale(1.015);
   }
-  [data-theme="dark"] .dz.is-dragging .dz-drop { background: rgba(0, 112, 243, 0.12); }
+  :global([data-theme="dark"]) .dz.is-dragging .dz-drop { background: color-mix(in srgb, var(--colors-accent) 12%, transparent); }
 
   .dz-drop-icon { color: var(--colors-mute); transition: color 0.2s ease, transform 0.2s ease; }
   .dz-drop:hover .dz-drop-icon,
@@ -186,7 +186,7 @@
     background: var(--colors-canvas-soft);
     animation: dz-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  [data-theme="dark"] .dz-result { background: rgba(255, 255, 255, 0.02); }
+  :global([data-theme="dark"]) .dz-result { background: var(--colors-canvas-soft); }
 
   @keyframes dz-in {
     from { opacity: 0; transform: translateY(6px); }
@@ -205,9 +205,9 @@
     background: var(--colors-canvas-soft-2);
     color: var(--colors-body);
   }
-  [data-theme="dark"] .dz-fmt { background: rgba(255, 255, 255, 0.06); }
+  :global([data-theme="dark"]) .dz-fmt { background: var(--colors-canvas-soft-2); }
   .dz-to { background: var(--colors-link-bg-soft); color: var(--colors-link-deep); }
-  [data-theme="dark"] .dz-to { background: rgba(0, 112, 243, 0.18); color: #6cb0ff; }
+  :global([data-theme="dark"]) .dz-to { background: color-mix(in srgb, var(--colors-accent) 18%, transparent); color: var(--colors-accent-deep); }
 
   .dz-file {
     font-size: var(--fs-body);
@@ -235,17 +235,17 @@
     cursor: pointer;
     text-decoration: none;
     border: 1px solid transparent;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    transition: transform 0.15s ease, background-color 0.15s ease;
   }
   :global(.dz-btn-primary) { background: var(--colors-ink); color: var(--colors-canvas); }
-  :global(.dz-btn-primary):hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16); }
+  :global(.dz-btn-primary):hover { transform: translateY(-1px); /* elevation removed — separation comes from colour, not shadow */ }
   :global(.dz-btn-secondary) {
     background: var(--colors-canvas);
     color: var(--colors-ink);
     border-color: var(--colors-hairline-strong);
   }
   :global(.dz-btn-secondary):hover { transform: translateY(-1px); border-color: var(--colors-ink); }
-  [data-theme="dark"] :global(.dz-btn-secondary) { background: rgba(255, 255, 255, 0.05); }
+  [data-theme="dark"] :global(.dz-btn-secondary) { background: var(--colors-canvas-soft-2); }
 
   /* Alternative output formats, offered after the first conversion so the
      visitor never waits on a decision before seeing a result. */
@@ -276,7 +276,7 @@
     color: var(--colors-link);
     background: var(--colors-link-bg-soft);
   }
-  [data-theme="dark"] :global(.dz-chip) { background: rgba(255, 255, 255, 0.05); }
+  [data-theme="dark"] :global(.dz-chip) { background: var(--colors-canvas-soft-2); }
 
   @media (pointer: coarse) {
     :global(.dz-chip) { min-height: 44px; padding: 0 var(--spacing-sm); }
@@ -289,7 +289,7 @@
     text-align: center;
     letter-spacing: 0.01em;
   }
-  .dz-foot :global(strong) { color: var(--colors-cyan-deep, #29bc9b); font-weight: 500; }
+  .dz-foot :global(strong) { color: var(--colors-accent); font-weight: 500; }
   .dz-foot:global(.is-error) { color: var(--colors-error); }
 
   .dz-reset {
@@ -595,7 +595,7 @@
         return;
       }
 
-      fail('That format is not supported yet. Browse all 60+ tools below.');
+      fail('That format is not supported yet. Browse all tools below.');
     };
 
     input?.addEventListener('change', () => {

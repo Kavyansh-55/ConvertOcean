@@ -64,14 +64,16 @@ function initDropdowns() {
 function initMobileMenu() {
   const mobileMenuBtn = document.getElementById('mobileMenuBtn');
   const mobileNavMenu = document.getElementById('mobileNavMenu');
-  const header = document.querySelector('.nav-bar');
+  // The sticky element is the shell, not the pill inside it — measuring the
+  // pill left the panel overlapping the shell's padding by 24px.
+  const header = document.querySelector('.nav-shell');
 
   if (!mobileMenuBtn || !mobileNavMenu) return;
 
   // Pin the fixed panel directly beneath the sticky header, at its exact
   // height, so it opens where the user is — not at the top of the page.
   function positionMenu() {
-    const h = header ? header.offsetHeight : 60;
+    const h = header ? header.getBoundingClientRect().height : 88;
     mobileNavMenu.style.top = h + 'px';
     mobileNavMenu.style.maxHeight = (window.innerHeight - h) + 'px';
   }

@@ -21,13 +21,13 @@ const { slug, headline, subtitle } = Astro.props;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    /* elevation removed — separation comes from colour, not shadow */
   }
   .resizer-panel-title {
     font-size: 13px;
     font-weight: 600;
     text-transform: uppercase;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     color: var(--colors-mute);
     border-bottom: 1px solid var(--colors-hairline);
     padding-bottom: var(--spacing-xs);
@@ -46,7 +46,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     background-color: var(--colors-canvas);
     color: var(--colors-body);
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   }
   .mode-tab:hover { border-color: var(--colors-hairline-strong); }
   .mode-tab.active {
@@ -68,7 +68,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     background-color: var(--colors-canvas-soft);
     color: var(--colors-body);
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   }
   .preset-chip:hover {
     border-color: var(--colors-link);
@@ -112,7 +112,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-md);
     padding: var(--spacing-md);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     font-size: 13px;
     color: var(--colors-body);
     line-height: 1.8;
@@ -197,7 +197,7 @@ const { slug, headline, subtitle } = Astro.props;
 
     <div class="form-group">
       <label class="form-label" for="rzFormat">Output Format</label>
-      <select id="rzFormat" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none; width: 100%;">
+      <select id="rzFormat" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); width: 100%;">
         <option value="jpg" selected>JPG (.jpg) — smallest, best for forms</option>
         <option value="jpeg">JPEG (.jpeg) — same format, .jpeg extension</option>
         <option value="png">PNG (.png) — lossless, larger files</option>
@@ -441,9 +441,9 @@ const { slug, headline, subtitle } = Astro.props;
           if (outBlob.size > targetB) {
             sizeNote = '<br/><span class="result-highlight">Smallest achievable for this image.</span>';
           } else if (window.__rzAlreadyFits) {
-            sizeNote = '<br/>✅ Already under your ' + $('rzTargetKB').value + ' KB limit at <strong>maximum quality</strong> — the target is an upper limit, so smaller is better, not a problem.';
+            sizeNote = '<br/>Already under your ' + $('rzTargetKB').value + ' KB limit at <strong>maximum quality</strong> — the target is an upper limit, so smaller is better, not a problem.';
           } else {
-            sizeNote = '<br/>✅ Fits under your ' + $('rzTargetKB').value + ' KB limit at the highest quality that fits.';
+            sizeNote = '<br/>Fits under your ' + $('rzTargetKB').value + ' KB limit at the highest quality that fits.';
           }
         }
         $('rzSummary').innerHTML =
