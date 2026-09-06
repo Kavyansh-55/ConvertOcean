@@ -25,7 +25,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .resizer-panel-title {
     font-size: 13px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     text-transform: uppercase;
     font-family: var(--font-sans);
     color: var(--colors-mute);
@@ -118,7 +118,7 @@ const { slug, headline, subtitle } = Astro.props;
     line-height: 1.8;
   }
   .result-summary strong { color: var(--colors-ink); }
-  .result-highlight { color: var(--colors-link); font-weight: 600; }
+  .result-highlight { color: var(--colors-link); font-weight: var(--fw-bold); }
 </style>
 
 <div class="page-header">

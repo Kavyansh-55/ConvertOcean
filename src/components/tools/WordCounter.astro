@@ -35,7 +35,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .wc-toolbar-label {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     text-transform: uppercase;
     font-family: var(--font-sans);
     color: var(--colors-mute);
@@ -175,7 +175,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .wc-stat-value {
     font-size: 26px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     color: var(--colors-ink);
     letter-spacing: -1px;
     line-height: 1;
@@ -198,7 +198,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .wc-time-title {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     text-transform: uppercase;
     font-family: var(--font-sans);
     color: var(--colors-mute);
@@ -215,7 +215,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .wc-time-row:last-child { border-bottom: none; }
   .wc-time-label { color: var(--colors-body); }
-  .wc-time-value { font-weight: 600; color: var(--colors-ink); font-size: 14px; }
+  .wc-time-value { font-weight: var(--fw-bold); color: var(--colors-ink); font-size: 14px; }
 
   /* Keyword Density */
   .wc-keyword-card {
@@ -227,7 +227,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .wc-keyword-title {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     text-transform: uppercase;
     font-family: var(--font-sans);
     color: var(--colors-mute);

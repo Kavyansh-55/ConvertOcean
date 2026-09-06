@@ -46,7 +46,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .form-card-title {
     font-size: 13px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     text-transform: uppercase;
     font-family: var(--font-sans);
     color: var(--colors-mute);
@@ -131,7 +131,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .pdf-doc-type {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     text-transform: uppercase;
     font-family: var(--font-sans);
     color: #888888;
@@ -151,7 +151,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .address-col-title {
     font-size: 10px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     text-transform: uppercase;
     font-family: var(--font-sans);
     color: #888888;
@@ -204,7 +204,7 @@ const { slug, headline, subtitle } = Astro.props;
     color: #4d4d4d;
   }
   .pdf-totals-table tr.grand-total td {
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     color: #171717;
     font-size: 16px;
     border-top: 2px solid #171717;
@@ -265,7 +265,7 @@ const { slug, headline, subtitle } = Astro.props;
     .item-edit-row td:nth-child(1)::before {
       content: "Description";
       font-size: 11px;
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       text-transform: uppercase;
       color: var(--colors-mute);
       display: block;
@@ -274,7 +274,7 @@ const { slug, headline, subtitle } = Astro.props;
     .item-edit-row td:nth-child(2)::before {
       content: "Quantity";
       font-size: 11px;
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       text-transform: uppercase;
       color: var(--colors-mute);
       display: block;
@@ -283,7 +283,7 @@ const { slug, headline, subtitle } = Astro.props;
     .item-edit-row td:nth-child(3)::before {
       content: "Rate";
       font-size: 11px;
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       text-transform: uppercase;
       color: var(--colors-mute);
       display: block;

@@ -160,7 +160,7 @@ const { slug, headline, subtitle } = Astro.props;
       const a = document.createElement('a');
       a.href = link.href;
       a.textContent = link.label;
-      a.style.cssText = 'color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 2px;';
+      a.style.cssText = 'color: inherit; font-weight: var(--fw-bold); text-decoration: underline; text-underline-offset: 2px;';
       errorMessage.appendChild(a);
     }
     errorBanner.style.display = 'flex';

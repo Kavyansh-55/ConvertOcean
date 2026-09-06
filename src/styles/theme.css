@@ -796,7 +796,7 @@ select:focus-visible,
 }
 
 .dropdown-item-title {
-  font-weight: 600;
+  font-weight: var(--fw-bold);
   color: var(--colors-ink);
   display: flex;
   align-items: center;
@@ -833,7 +833,7 @@ select:focus-visible,
   background-color: var(--colors-link-bg-soft);
   color: var(--colors-link-deep);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: var(--fw-bold);
   padding: 4px 10px;
   border-radius: var(--rounded-pill);
 }
@@ -1287,7 +1287,7 @@ select:focus-visible,
 }
 
 .upload-text-primary {
-  font-weight: 600;
+  font-weight: var(--fw-bold);
   font-size: 16px;
   color: var(--colors-ink);
 }
@@ -1327,7 +1327,7 @@ select:focus-visible,
 
 .panel-section-title {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: var(--fw-bold);
   text-transform: uppercase;
   font-family: var(--font-sans);
   color: var(--colors-mute);
@@ -1345,7 +1345,7 @@ select:focus-visible,
 
 .form-label {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--colors-body);
@@ -1529,14 +1529,14 @@ select:focus-visible,
 .info-card-step {
   font-family: var(--font-sans);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: var(--fw-bold);
   color: var(--colors-link);
   text-transform: uppercase;
 }
 
 .info-card-title {
   font-size: 17px;
-  font-weight: 600;
+  font-weight: var(--fw-bold);
   color: var(--colors-ink);
   display: flex;
   align-items: center;
@@ -1857,7 +1857,7 @@ footer {
 
 .popular-card-name {
   font-size: 14.5px;
-  font-weight: 600;
+  font-weight: var(--fw-bold);
   letter-spacing: -0.3px;
   color: var(--colors-ink);
   transition: color 0.2s;
@@ -2216,7 +2216,7 @@ footer {
 .fmt-chip {
   font-family: var(--font-sans);
   font-size: var(--fs-micro);
-  font-weight: 600;
+  font-weight: var(--fw-bold);
   letter-spacing: 0.3px;
   padding: 2px 7px;
   border-radius: 5px;
@@ -2245,7 +2245,7 @@ footer {
 
 .explore-card-name {
   font-size: 14.5px;
-  font-weight: 600;
+  font-weight: var(--fw-bold);
   letter-spacing: -0.3px;
   color: var(--colors-ink);
   transition: color 0.2s;

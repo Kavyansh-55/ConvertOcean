@@ -59,7 +59,7 @@ const faqList = comp.faqs;
 
     .vs-title {
       font-size: 48px;
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       line-height: 1.1;
       letter-spacing: -2.4px;
       color: var(--colors-ink);
@@ -113,7 +113,7 @@ const faqList = comp.faqs;
 
     .spotlight-title {
       font-size: 24px;
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       letter-spacing: -0.96px;
       color: var(--colors-ink);
       margin-bottom: var(--spacing-xs);
@@ -172,7 +172,7 @@ const faqList = comp.faqs;
     }
 
     .feature-name {
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       color: var(--colors-ink);
     }
 
@@ -217,7 +217,7 @@ const faqList = comp.faqs;
 
     .compare-card-title {
       font-size: 18px;
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       letter-spacing: -0.6px;
       margin-bottom: var(--spacing-md);
       display: flex;
@@ -258,7 +258,7 @@ const faqList = comp.faqs;
 
     .rich-text h2 {
       font-size: 24px;
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       color: var(--colors-ink);
       margin: var(--spacing-xl) 0 var(--spacing-md);
       letter-spacing: -0.96px;
@@ -285,7 +285,7 @@ const faqList = comp.faqs;
     .faq-question {
       padding: var(--spacing-md) var(--spacing-lg);
       font-size: 15px;
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       color: var(--colors-ink);
       cursor: pointer;
       display: flex;
@@ -362,7 +362,7 @@ const faqList = comp.faqs;
 
     <!-- Comparison Matrix Table -->
     <section>
-      <h2 style="font-size: 20px; font-weight: 600; color: var(--colors-ink); margin-bottom: var(--spacing-md); letter-spacing: -0.6px; text-align: center;">Comparison Matrix.</h2>
+      <h2 style="font-size: 20px; font-weight: var(--fw-bold); color: var(--colors-ink); margin-bottom: var(--spacing-md); letter-spacing: -0.6px; text-align: center;">Comparison Matrix.</h2>
       <div class="table-container">
         <table class="comparison-table">
           <thead>
@@ -466,7 +466,7 @@ const faqList = comp.faqs;
     <!-- Frequently Asked Questions -->
     {faqList && faqList.length > 0 && (
       <section class="faq-section" style="max-width: 100%; padding: 0; margin-top: var(--spacing-xl);">
-        <h2 style="font-size: 22px; font-weight: 600; color: var(--colors-ink); margin-bottom: var(--spacing-lg); letter-spacing: -0.6px; text-align: center;">Frequently Asked Questions.</h2>
+        <h2 style="font-size: 22px; font-weight: var(--fw-bold); color: var(--colors-ink); margin-bottom: var(--spacing-lg); letter-spacing: -0.6px; text-align: center;">Frequently Asked Questions.</h2>
         <div class="faq-container">
           {faqList.map(faq => (
             <div class="faq-item">

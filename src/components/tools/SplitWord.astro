@@ -19,7 +19,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .input-label {
     font-size: 13.5px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     color: var(--colors-ink);
   }
   .select-input, .number-input {
@@ -96,7 +96,7 @@ const { slug, headline, subtitle } = Astro.props;
   </div>
 
   <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-md); margin-top: var(--spacing-lg);">
-    <span id="fileNameDisplay" style="font-weight: 600; font-size: 14px;"></span>
+    <span id="fileNameDisplay" style="font-weight: var(--fw-bold); font-size: 14px;"></span>
     <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
       <button class="button button-primary" id="btnSplit">Split & Download</button>
       <button class="button button-danger" id="btnClear">Clear File</button>

@@ -537,7 +537,7 @@ const filterKey = (slug: string, categorySlug: string) => {
 
     .search-result-name {
       font-size: var(--fs-body);
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       color: var(--colors-ink);
     }
 
@@ -565,7 +565,7 @@ const filterKey = (slug: string, categorySlug: string) => {
        page had drifted to 22 different font sizes. */
     .section-title {
       font-size: var(--fs-title);
-      font-weight: 600;
+      font-weight: var(--fw-extrabold);
       letter-spacing: var(--ls-title);
       line-height: var(--lh-title);
       margin-bottom: var(--spacing-xl);
@@ -574,7 +574,7 @@ const filterKey = (slug: string, categorySlug: string) => {
 
     .section-title-sm {
       font-size: var(--fs-heading);
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       letter-spacing: var(--ls-heading);
       line-height: var(--lh-heading);
       margin-top: var(--spacing-xl);
@@ -598,7 +598,7 @@ const filterKey = (slug: string, categorySlug: string) => {
 
     .links-title {
       font-size: var(--fs-subhead);
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       letter-spacing: var(--ls-subhead);
       margin-bottom: var(--spacing-lg);
       color: var(--colors-display);
@@ -617,7 +617,7 @@ const filterKey = (slug: string, categorySlug: string) => {
     }
     .prose h3 {
       font-size: var(--fs-subhead);
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       letter-spacing: var(--ls-subhead);
       color: var(--colors-ink);
       margin-top: var(--spacing-md);
@@ -669,7 +669,7 @@ const filterKey = (slug: string, categorySlug: string) => {
 
     .featured-badge--time {
       color: var(--colors-link);
-      font-weight: 600;
+      font-weight: var(--fw-bold);
     }
 
     .links-grid--centered {
@@ -690,8 +690,8 @@ const filterKey = (slug: string, categorySlug: string) => {
     }
     .featured-title {
       font-size: var(--fs-title);
-      font-weight: 600;
-      letter-spacing: -1.2px;
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-title);
       margin-bottom: var(--spacing-xl);
       color: var(--colors-display);
     }
@@ -755,7 +755,7 @@ const filterKey = (slug: string, categorySlug: string) => {
     }
     .featured-card-name {
       font-size: var(--fs-subhead);
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       letter-spacing: -0.4px;
       color: var(--colors-ink);
       margin: 0;
@@ -780,8 +780,8 @@ const filterKey = (slug: string, categorySlug: string) => {
     }
     .comparison-title {
       font-size: var(--fs-title);
-      font-weight: 600;
-      letter-spacing: -1.2px;
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-title);
       color: var(--colors-display);
       margin-bottom: var(--spacing-xs);
     }
@@ -811,7 +811,7 @@ const filterKey = (slug: string, categorySlug: string) => {
       border-bottom: 1px solid var(--colors-hairline);
     }
     .comparison-table th {
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       color: var(--colors-ink);
       background-color: var(--colors-canvas-soft-2);
       font-size: var(--fs-small);
@@ -830,7 +830,7 @@ const filterKey = (slug: string, categorySlug: string) => {
     }
     .col-highlight {
       background-color: color-mix(in srgb, var(--colors-accent) 2%, transparent);
-      font-weight: 600;
+      font-weight: var(--fw-bold);
     }
     :global([data-theme="dark"]) .col-highlight {
       background-color: color-mix(in srgb, var(--colors-accent) 4%, transparent);
@@ -898,7 +898,7 @@ const filterKey = (slug: string, categorySlug: string) => {
     .popular-head { margin-bottom: var(--spacing-lg); }
     .popular-title {
       font-size: var(--fs-title);
-      font-weight: 600;
+      font-weight: var(--fw-bold);
       letter-spacing: var(--ls-title);
       color: var(--colors-display);
     }
@@ -958,7 +958,7 @@ const filterKey = (slug: string, categorySlug: string) => {
       color: var(--accent);
       background: color-mix(in srgb, var(--accent) 12%, transparent);
     }
-    .popular-card-name { font-size: var(--fs-body); font-weight: 600; color: var(--colors-ink); }
+    .popular-card-name { font-size: var(--fs-body); font-weight: var(--fw-bold); color: var(--colors-ink); }
     .popular-card-cat {
       font-size: var(--fs-small);
       color: var(--colors-mute);
@@ -1298,7 +1298,7 @@ const filterKey = (slug: string, categorySlug: string) => {
     {/* Related tools, company links and the long-form copy */}
     <div class="band band--bone">
     <section class="links-section">
-      <h3 class="links-title">Related Tools</h3>
+      <h2 class="links-title">Related Tools</h2>
       <div class="links-grid">
         <a href={relLink('/invoice-generator/')} class="seo-link">Invoice Generator</a>
         <a href={relLink('/receipt-generator/')} class="seo-link">Receipt Generator</a>
@@ -1321,7 +1321,7 @@ const filterKey = (slug: string, categorySlug: string) => {
 
     <!-- Company & Legal Section -->
     <section class="links-section section-ruled">
-      <h3 class="links-title">Company & Legal</h3>
+      <h2 class="links-title">Company &amp; Legal</h2>
       <div class="links-grid links-grid--centered">
         <a href={relLink('/about/')} class="seo-link">About Us</a>
         <a href={relLink('/contact/')} class="seo-link">Contact Us</a>
@@ -1360,7 +1360,7 @@ const filterKey = (slug: string, categorySlug: string) => {
           <li><strong>Business Tools:</strong> Generate professional invoices and receipts, calculate profit margins and markup, compute percentages, and estimate sales tax — all processed in browser sandbox memory with complete privacy.</li>
         </ul>
 
-        <h2 class="section-title-sm">The Benefits of Local, Secure Web Utilities</h2>
+        <h3 class="section-title-sm">The Benefits of Local, Secure Web Utilities</h3>
         <p>
           By adopting a <strong>no upload file converter</strong> model, ConvertOcean sets a new standard for web tool privacy. You don't have to register an account, supply an email address, or consent to data mining to use our utilities. Our business model prioritizes user safety, providing a safe harbor from standard SaaS tools that monetize your metadata. Experience the peace of mind that comes with device-level data security—convert your sensitive files privately on ConvertOcean today.
         </p>

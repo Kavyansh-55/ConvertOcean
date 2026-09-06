@@ -81,7 +81,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .preview-title {
     font-size: 13px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     color: var(--colors-body);
     font-family: var(--font-sans);
   }
@@ -160,16 +160,16 @@ const { slug, headline, subtitle } = Astro.props;
 <div id="controlsPanel" class="controls-panel panel-card" style="display: none; margin-top: var(--spacing-lg);">
   <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: var(--spacing-md);">
     <div class="file-metadata">
-      <div id="fileName" class="file-name-display" style="font-weight: 600;">document.xlsx</div>
+      <div id="fileName" class="file-name-display" style="font-weight: var(--fw-bold);">document.xlsx</div>
       <div id="fileSize" class="file-size-display" style="font-family: monospace; font-size: 12px; color: var(--colors-mute);">0.00 MB</div>
     </div>
     
     <!-- Export Options -->
     <div class="compression-settings" id="compressionSettings">
       <div class="form-group" id="pdfQualityContainer" style="display: flex; flex-direction: column; gap: 4px;">
-        <div class="control-label" style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; gap: var(--spacing-sm);">
+        <div class="control-label" style="font-size: 11px; font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; gap: var(--spacing-sm);">
           <span>PDF Export Quality</span>
-          <span id="pdfQualityVal" style="font-family: monospace; font-weight: 600; color: var(--colors-link);">90%</span>
+          <span id="pdfQualityVal" style="font-family: monospace; font-weight: var(--fw-bold); color: var(--colors-link);">90%</span>
         </div>
         <input type="range" id="pdfQualityRange" min="10" max="100" value="90" style="width: 140px; accent-color: var(--colors-ink); height: 6px; cursor: pointer;" />
       </div>
@@ -209,7 +209,7 @@ const { slug, headline, subtitle } = Astro.props;
 
 <!-- Supported Formats Info Section -->
 <section class="supported-formats-box">
-  <h3 style="font-size: 18px; font-weight: 600; color: var(--colors-ink);">Supported Conversion Formats</h3>
+  <h3 style="font-size: 18px; font-weight: var(--fw-bold); color: var(--colors-ink);">Supported Conversion Formats</h3>
   <p style="font-size: 14px; color: var(--colors-body); margin-top: 4px;">Convert Ocean supports offline, in-browser compilation of the following categories:</p>
   <div class="formats-grid">
     <div>

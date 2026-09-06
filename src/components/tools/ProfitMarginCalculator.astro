@@ -24,7 +24,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .calc-panel-title {
     font-size: 13px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     text-transform: uppercase;
     font-family: var(--font-sans);
     color: var(--colors-mute);
@@ -76,7 +76,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .result-value {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     color: var(--colors-ink);
     font-family: var(--font-sans);
   }
@@ -101,7 +101,7 @@ const { slug, headline, subtitle } = Astro.props;
     align-items: center;
     justify-content: center;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     /* Dark, and static: this fill does not change with the theme, so the label
        must not either. White measured 3.27:1 on the red end and 1.54:1 on the
        amber. */
@@ -116,7 +116,7 @@ const { slug, headline, subtitle } = Astro.props;
     align-items: center;
     justify-content: center;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     color: #fff;
     transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
     min-width: 30px;

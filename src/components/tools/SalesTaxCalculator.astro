@@ -26,7 +26,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .tax-panel-title {
     font-size: 13px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     text-transform: uppercase;
     font-family: var(--font-sans);
     color: var(--colors-mute);
@@ -85,7 +85,7 @@ const { slug, headline, subtitle } = Astro.props;
     border-color: var(--colors-link);
     background-color: var(--colors-link-bg-soft);
     color: var(--colors-link-deep);
-    font-weight: 600;
+    font-weight: var(--fw-bold);
   }
   .tax-result-card {
     background-color: var(--colors-canvas-soft);
@@ -110,7 +110,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .tax-result-value {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: var(--fw-bold);
     color: var(--colors-ink);
     font-family: var(--font-sans);
   }
@@ -157,7 +157,7 @@ const { slug, headline, subtitle } = Astro.props;
     text-decoration: underline;
   }
   .tax-state-note a:hover { color: var(--colors-link-deep); }
-  .tax-state-note strong { color: var(--colors-body); font-weight: 600; }
+  .tax-state-note strong { color: var(--colors-body); font-weight: var(--fw-bold); }
   .formula-box {
     background-color: var(--colors-canvas-soft-2);
     border: 1px solid var(--colors-hairline);
