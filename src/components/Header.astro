@@ -11,9 +11,9 @@ const relLink = (target: string) => {
 const isMoreActive = ['developer-tools', 'document-tools', 'business-tools'].includes(categorySlug);
 ---
 
-<!-- Floating pill nav. The shell carries the opening band's colour so the
+{/* Floating pill nav. The shell carries the opening band's colour so the
      white pill visibly floats on it; once scrolled it settles to an opaque
-     surface (see the sentinel script at the foot of this file). -->
+     surface (see the sentinel script at the foot of this file). */}
 <header class={`nav-shell band--${band}`} id="navShell">
 <div class="nav-bar">
   <a href={relLink('/')} class="nav-brand">
@@ -107,15 +107,15 @@ const isMoreActive = ['developer-tools', 'document-tools', 'business-tools'].inc
     </button>
   </div>
 </div>
-  <!-- Reading progress. Purely scroll-driven in CSS — decorative if the
-       browser has no scroll timelines, never a layout or JS cost. -->
+  {/* Reading progress. Purely scroll-driven in CSS — decorative if the
+       browser has no scroll timelines, never a layout or JS cost. */}
   <div class="nav-progress" aria-hidden="true"></div>
 </header>
 
-<!-- Zero-height sentinel directly under the nav. When it scrolls out of
+{/* Zero-height sentinel directly under the nav. When it scrolls out of
      view the shell has left the hero, so the band colour gives way to an
      opaque surface. An observer rather than a scroll listener: no layout
-     reads, nothing running per frame. -->
+     reads, nothing running per frame. */}
 <div id="navSentinel" aria-hidden="true" style="height: 1px; margin-top: -1px;"></div>
 
 <!-- Mobile Dropdown Menu -->

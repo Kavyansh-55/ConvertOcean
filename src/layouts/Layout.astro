@@ -334,7 +334,7 @@ const relLink = (target: string) => {
     <link rel="alternate" hreflang={alt.lang} href={alt.href} />
   ))}
   
-  <!--
+  {/*
     Satoshi (Fontshare, ITF free licence) stands in for Linktree's Linksans,
     which is proprietary — DESIGN.md sanctions a geometric-sans substitute
     and this is the closest free one. Weight 900 carries the display sizes
@@ -344,7 +344,7 @@ const relLink = (target: string) => {
     round trips, and Inter in particular is the default every templated site
     already wears. Code samples fall back to the platform monospace, which
     costs no request at all.
-  -->
+  */}
   <link rel="preconnect" href="https://api.fontshare.com">
   <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f%5B%5D=satoshi@400,500,700,900&display=swap">
