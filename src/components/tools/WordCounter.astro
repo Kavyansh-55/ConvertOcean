@@ -20,7 +20,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-lg);
     overflow: hidden;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    /* elevation removed — separation comes from colour, not shadow */
     display: flex;
     flex-direction: column;
   }
@@ -37,7 +37,7 @@ const { slug, headline, subtitle } = Astro.props;
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     color: var(--colors-mute);
     letter-spacing: 0.5px;
     margin-right: auto;
@@ -51,7 +51,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     background-color: var(--colors-canvas);
     color: var(--colors-body);
-    transition: all 0.18s;
+    transition: background-color 0.18s, border-color 0.18s, color 0.18s;
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -84,11 +84,10 @@ const { slug, headline, subtitle } = Astro.props;
     color: var(--colors-ink);
     background-color: var(--colors-canvas);
     border: none;
-    outline: none;
     resize: vertical;
     box-sizing: border-box;
   }
-  [data-theme="dark"] .wc-textarea {
+  :global([data-theme="dark"]) .wc-textarea {
     background-color: var(--colors-canvas);
     color: var(--colors-ink);
   }
@@ -122,7 +121,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     background-color: var(--colors-canvas);
     color: var(--colors-body);
-    transition: all 0.18s;
+    transition: background-color 0.18s, border-color 0.18s, color 0.18s;
   }
   .preset-chip:hover {
     border-color: var(--colors-link);
@@ -148,8 +147,8 @@ const { slug, headline, subtitle } = Astro.props;
     transition: width 0.25s ease, background 0.25s;
     width: 0%;
   }
-  .wc-char-limit-fill.warn { background: linear-gradient(90deg, #f5a623, #f9cb28); }
-  .wc-char-limit-fill.danger { background: linear-gradient(90deg, #ee0000, #ff4d4d); }
+  .wc-char-limit-fill.warn { background-color: var(--p-saffron); }
+  .wc-char-limit-fill.danger { background-color: var(--colors-error); }
 
   /* Stats Panel */
   .wc-stats-panel {
@@ -163,7 +162,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-lg);
     padding: var(--spacing-md) var(--spacing-lg);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    /* elevation removed — separation comes from colour, not shadow */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-sm);
@@ -186,7 +185,7 @@ const { slug, headline, subtitle } = Astro.props;
     color: var(--colors-mute);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     font-weight: 500;
   }
 
@@ -195,13 +194,13 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-lg);
     padding: var(--spacing-md) var(--spacing-lg);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    /* elevation removed — separation comes from colour, not shadow */
   }
   .wc-time-title {
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     color: var(--colors-mute);
     margin-bottom: var(--spacing-sm);
     letter-spacing: 0.5px;
@@ -224,13 +223,13 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-lg);
     padding: var(--spacing-md) var(--spacing-lg);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    /* elevation removed — separation comes from colour, not shadow */
   }
   .wc-keyword-title {
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     color: var(--colors-mute);
     margin-bottom: var(--spacing-sm);
     letter-spacing: 0.5px;
@@ -255,7 +254,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .wc-keyword-card :global(.wc-keyword-count) {
     color: var(--colors-mute);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     font-size: 12px;
     min-width: 28px;
     text-align: right;
@@ -293,7 +292,7 @@ const { slug, headline, subtitle } = Astro.props;
         📋 Paste
       </button>
       <button class="wc-btn" id="wc-copy-btn" title="Copy text">
-        📄 Copy
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span>Copy</span>
       </button>
       <button class="wc-btn wc-btn-danger" id="wc-clear-btn" title="Clear all">
         🗑️ Clear
@@ -302,7 +301,7 @@ const { slug, headline, subtitle } = Astro.props;
     <textarea
       id="wc-textarea"
       class="wc-textarea"
-      placeholder="Paste or type your text here to instantly analyze word count, character count, reading time, and keyword density..."
+      placeholder="Paste or type your text here to instantly analyze word count, character count, reading time, and keyword density…"
       spellcheck="false"
     ></textarea>
     <div class="wc-char-limit-bar" id="wc-limit-bar-wrap" style="display:none;">
@@ -494,8 +493,8 @@ const { slug, headline, subtitle } = Astro.props;
       if (!textarea.value) return;
       try {
         await navigator.clipboard.writeText(textarea.value);
-        copyBtn.textContent = '✅ Copied!';
-        setTimeout(() => { copyBtn.innerHTML = '📄 Copy'; }, 1800);
+        copyBtn.innerHTML = '<span>Copied</span>';
+        setTimeout(() => { copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span>Copy</span>'; }, 1800);
       } catch(e) {}
     });
 

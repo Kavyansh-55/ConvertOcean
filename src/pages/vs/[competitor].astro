@@ -92,14 +92,14 @@ const faqList = comp.faqs;
       border-radius: var(--rounded-lg);
       padding: var(--spacing-xl);
       margin-bottom: var(--spacing-3xl);
-      box-shadow: 0px 2px 2px #00000005, 0px 8px 16px -4px #0000000a, inset 0px 0px 0px 1px var(--colors-hairline);
+      /* elevation removed — separation comes from colour, not shadow */
       text-align: center;
       position: relative;
       overflow: hidden;
     }
 
     .spotlight-badge {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-sans);
       font-size: 11px;
       color: var(--colors-link);
       background-color: var(--colors-link-bg-soft);
@@ -135,7 +135,7 @@ const faqList = comp.faqs;
       border-radius: var(--rounded-lg);
       background-color: var(--colors-canvas);
       margin-bottom: var(--spacing-3xl);
-      box-shadow: 0px 1px 1px #00000005, inset 0px 0px 0px 1px var(--colors-hairline);
+      /* elevation removed — separation comes from colour, not shadow */
     }
 
     .comparison-table {
@@ -148,7 +148,7 @@ const faqList = comp.faqs;
     .comparison-table th {
       background-color: var(--colors-canvas-soft);
       color: var(--colors-body);
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-sans);
       font-size: 12px;
       font-weight: 500;
       text-transform: uppercase;
@@ -212,7 +212,7 @@ const faqList = comp.faqs;
       border: 1px solid var(--colors-hairline);
       border-radius: var(--rounded-lg);
       padding: var(--spacing-xl);
-      box-shadow: 0px 1px 1px #00000005, inset 0px 0px 0px 1px var(--colors-hairline);
+      /* elevation removed — separation comes from colour, not shadow */
     }
 
     .compare-card-title {
@@ -331,9 +331,9 @@ const faqList = comp.faqs;
     }
   </style>
 
-  <main class="vs-main-container">
+  <main id="main-content" tabindex="-1" class="vs-main-container">
     <!-- Breadcrumbs navigation -->
-    <nav class="breadcrumbs" aria-label="Breadcrumb" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-bottom: var(--spacing-lg); color: var(--colors-mute);">
+    <nav class="breadcrumbs" aria-label="Breadcrumb" style="font-family: var(--font-sans); font-size: 11px; margin-bottom: var(--spacing-lg); color: var(--colors-mute);">
       <a href={relLink('/')} style="text-decoration: none; color: var(--colors-mute); transition: color 0.15s;">HOME</a>
       <span style="margin: 0 var(--spacing-xs); color: var(--colors-hairline-strong);">/</span>
       <span style="color: var(--colors-ink); font-weight: 500; text-transform: uppercase;">VS {comp.competitorName.toUpperCase()}</span>

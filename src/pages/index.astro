@@ -3,7 +3,6 @@ import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
 import { guides } from '../data/guides';
 import CategoryIcon from '../components/CategoryIcon.astro';
-import HeroDropzone from '../components/HeroDropzone.astro';
 import CategoryCard from '../components/CategoryCard.astro';
 
 const { lang = 'en' } = Astro.props;
@@ -139,226 +138,400 @@ const toolChips = (slug: string): ToolChips => {
   return { pair: false, single: chipLabel(slug.split('-')[0]) };
 };
 
+// ── Tool grid filter buckets ─────────────────────────────────────────
+// categorySlug is how the tools are filed, not how someone shops for one:
+// most PDF tools sit under document-tools, and "excel-converter" is not a
+// word anyone reaches for. Derive the bucket from the slug instead so every
+// pill lands on a populated set (documents 7, pdf 12, images 22,
+// spreadsheets 10, other 14).
+const filterGroups = [
+  { key: 'all', label: 'All' },
+  { key: 'documents', label: 'Documents' },
+  { key: 'pdf', label: 'PDF' },
+  { key: 'images', label: 'Images' },
+  { key: 'spreadsheets', label: 'Spreadsheets' },
+  { key: 'other', label: 'Other' },
+];
+
+const filterKey = (slug: string, categorySlug: string) => {
+  if (categorySlug === 'image-tools') return 'images';
+  if (slug.includes('pdf')) return 'pdf';
+  if (categorySlug === 'excel-converter') return 'spreadsheets';
+  if (categorySlug === 'document-tools') return 'documents';
+  return 'other';
+};
+
 ---
 
-<Layout title={title} description={description} lang={lang} faqList={faqList}>
+<Layout title={title} description={description} lang={lang} faqList={faqList} band="lime">
   <style>
-    /* Homepage Specific CSS */
-    .hero-container {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: var(--spacing-3xl) var(--spacing-lg) var(--spacing-2xl);
-      text-align: center;
-      position: relative;
-      z-index: 1;
+    /* ─── Hero ────────────────────────────────────────────────────────
+       DESIGN.md's hero pattern: a two-column split, oversized
+       left-aligned headline and supporting paragraph on the left, a
+       contained visual on the right. The right column here is the eight
+       most-used tools rather than a stock photo — on a utility site the
+       most useful thing to put beside the promise is the work itself. */
+    .hero-band { padding-block-start: clamp(2rem, 1.2rem + 4vw, 4rem); }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: clamp(2rem, 1rem + 5vw, 5rem);
+      align-items: center;
     }
 
-    /* Phones: tighten the lead-in so the dropzone — the thing that proves
-       the headline — is on screen without scrolling. */
     @media (max-width: 940px) {
-      .hero-container {
-        padding-top: var(--spacing-xl);
-        padding-bottom: var(--spacing-xl);
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-2xl);
       }
-      .hero-subtitle {
-        margin-bottom: var(--spacing-xs);
-        max-width: 34ch;
-      }
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
 
     .hero-title {
       font-size: var(--fs-display);
-      font-weight: 600;
+      font-weight: var(--fw-extrabold);
       line-height: var(--lh-display);
       letter-spacing: var(--ls-display);
-      margin-bottom: var(--spacing-md);
-      color: var(--colors-ink);
+      margin-bottom: var(--spacing-lg);
+      color: var(--colors-display);
+      /* Two-line editorial stack without a hardcoded <br>, which broke in
+         the wrong place at every width between the two it was tuned for. */
+      max-width: 15ch;
+      text-wrap: balance;
     }
 
-    /* Solid, not gradient-animated. The shimmer competed with the wave
-       motion at the base of the hero, and its teal stops fell to 1.60:1
-       against the light canvas — unreadable. One colour, one meaning. */
-    .hero-title-accent {
-      color: var(--colors-accent-display);
-    }
-
+    /* DESIGN.md: body blocks are left-aligned in a generous measure,
+       never centred. */
     .hero-subtitle {
       font-size: var(--fs-lead);
+      letter-spacing: var(--ls-lead);
       color: var(--colors-body);
-      max-width: 680px;
-      margin: 0 auto var(--spacing-lg);
+      max-width: 46ch;
+      margin-bottom: var(--spacing-xl);
       line-height: var(--lh-body);
     }
 
     .hero-cta-group {
       display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+    }
+
+    .hero-proof {
+      margin-top: var(--spacing-lg);
+      font-size: var(--fs-small);
+    }
+
+    .hero-proof a {
+      display: inline-flex;
+      /* flex-start, so the mark stays on the first line when the sentence
+         wraps on a narrow column rather than floating beside the middle. */
+      align-items: flex-start;
+      gap: 8px;
+      padding-block: var(--spacing-xs);
+      color: var(--colors-ink);
+      font-weight: var(--fw-medium);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-thickness: 1.5px;
+      /* On lime the ink underline is the emphasis; a second colour here
+         would be a fourth hue in a band that is allowed one. */
+      text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    }
+
+    .hero-proof a:hover { text-decoration-color: currentColor; }
+    .hero-proof svg { flex-shrink: 0; margin-top: 2px; }
+
+    /* ─── Hero panel: the white lozenge on the lime field ─── */
+    .hero-panel {
+      background-color: var(--colors-surface);
+      border-radius: var(--rounded-card-lg);
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      /* The panel is paper, so it keeps the paper contrast pair rather
+         than inheriting the lime band's. */
+      --colors-ink: var(--p-ink);
+      --colors-body: #5f6357;
+      --colors-mute: #61655a;
+      --colors-hairline: #dcd9d0;
+      --colors-canvas-soft: #eeece7;
+      --colors-accent: var(--p-cobalt-ink);
+    }
+
+    :global([data-theme="dark"]) .hero-panel {
+      --colors-ink: var(--p-bone);
+      --colors-body: #a9ae9f;
+      --colors-mute: #8d9285;
+      --colors-hairline: #2f3547;
+      --colors-canvas-soft: #262c3c;
+      --colors-accent: var(--p-lime);
+      background-color: var(--p-ink);
+    }
+
+    .hero-panel-title {
+      font-size: var(--fs-micro);
+      font-weight: var(--fw-bold);
+      letter-spacing: var(--ls-micro);
+      text-transform: uppercase;
+      color: var(--colors-mute);
+      padding-inline: var(--spacing-sm);
+      margin-bottom: var(--spacing-xxs);
+    }
+
+    .hero-tool-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .hero-tool {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      min-height: 48px;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--rounded-pill);
+      text-decoration: none;
+      color: var(--colors-ink);
+      transition: background-color 0.15s ease, color 0.15s ease;
+      touch-action: manipulation;
+    }
+
+    .hero-tool:hover {
+      background-color: var(--colors-canvas-soft);
+    }
+
+    .hero-tool-icon {
+      display: flex;
+      align-items: center;
       justify-content: center;
-      gap: var(--spacing-md);
-      margin-bottom: var(--spacing-2xl);
+      flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--rounded-full);
+      background-color: var(--colors-canvas-soft);
+      color: var(--colors-ink);
+      transition: background-color 0.15s ease, color 0.15s ease;
     }
 
-    /* Hide /⌘K kbd hint on touch devices — no keyboard shortcut */
-    @media (max-width: 640px) {
-      .search-kbd {
-        display: none;
-      }
+    /* The lime lands on the icon on hover — one small, deliberate flash of
+       the action colour, rather than a glow around everything. */
+    .hero-tool:hover .hero-tool-icon {
+      background-color: var(--p-lime);
+      color: var(--p-ink);
     }
 
+    .hero-tool-name {
+      font-size: var(--fs-body);
+      font-weight: var(--fw-medium);
+      /* min-width:0 so a long tool name can ellipsize instead of
+         stretching the panel. */
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .hero-tool-arrow {
+      flex-shrink: 0;
+      color: var(--colors-mute);
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .hero-tool:hover .hero-tool-arrow,
+    .hero-tool:focus-visible .hero-tool-arrow {
+      opacity: 1;
+      transform: none;
+    }
+
+    .hero-panel-all {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 44px;
+      margin-top: var(--spacing-xxs);
+      border-top: 1.5px solid var(--colors-hairline);
+      padding-top: var(--spacing-sm);
+      font-size: var(--fs-small);
+      font-weight: var(--fw-bold);
+      color: var(--colors-accent);
+      text-decoration: none;
+    }
+
+    .hero-panel-all:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-tool-arrow { opacity: 1; transform: none; }
+    }
   </style>
   <style is:global>
-    /* Premium Autocomplete Search Bar */
-    .search-container {
+    /* ── Tool search ────────────────────────────────────────────────
+       Rendered by this page and relocated into the nav bar (see the
+       portal script below), because the nav lives in the shared Header
+       component and only the homepage carries a search field.
+
+       Global rather than scoped: the result rows are built by script, so
+       a scoped hash would never reach them. */
+    .nav-search {
       position: relative;
-      max-width: 600px;
-      width: 100%;
-      margin: var(--spacing-xl) auto;
-      z-index: 10;
+      flex: 1 1 auto;
+      min-width: 0;
+      max-width: 360px;
+      margin: 0 var(--spacing-lg);
     }
 
     .search-input-wrapper {
       position: relative;
       display: flex;
       align-items: center;
-      border-radius: var(--rounded-lg);
-      background-color: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(8px);
       border: 1px solid var(--colors-hairline);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: var(--rounded-md);
+      background-color: var(--colors-canvas);
+      transition: border-color 160ms cubic-bezier(0.4, 0, 0.2, 1),
+                  background-color 160ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    .search-input-wrapper:hover {
+      border-color: var(--colors-hairline-strong);
+    }
+
+    /* The input suppresses its own outline, so the wrapper carries the
+       focus ring for the whole compound control. */
     .search-input-wrapper:focus-within {
-      border-color: color-mix(in srgb, var(--colors-accent) 45%, transparent);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--colors-accent) 12%, transparent), 0 10px 40px rgba(0, 0, 0, 0.06);
-      transform: translateY(-1px);
-    }
-
-    [data-theme="dark"] .search-input-wrapper {
-      background-color: rgba(18, 18, 18, 0.8);
-      backdrop-filter: blur(8px);
-      border-color: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
-    }
-
-    [data-theme="dark"] .search-input-wrapper:focus-within {
-      border-color: color-mix(in srgb, var(--colors-accent) 45%, transparent);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--colors-accent) 18%, transparent), 0 10px 40px rgba(0, 0, 0, 0.35);
+      border-color: var(--colors-accent);
+      background-color: var(--colors-surface);
+      outline: 2px solid var(--colors-accent);
+      outline-offset: 1px;
     }
 
     .search-icon {
       position: absolute;
-      left: var(--spacing-md);
-      color: var(--colors-mute);
-      pointer-events: none;
+      left: 10px;
       display: flex;
       align-items: center;
-      transition: color 0.2s ease;
-    }
-
-    .search-input-wrapper:focus-within .search-icon {
-      color: var(--colors-link);
+      color: var(--colors-mute);
+      pointer-events: none;
     }
 
     .search-input {
       width: 100%;
-      padding: 16px var(--spacing-md) 16px 48px;
-      font-size: var(--fs-lead);
+      min-width: 0;
+      padding: 7px 34px 7px 32px;
+      font-family: inherit;
+      font-size: var(--fs-body);
       border: none;
       background: transparent;
       color: var(--colors-ink);
-      outline: none;
-      box-shadow: none !important;
+      /* elevation removed — separation comes from colour, not shadow */
     }
+
+    .search-input::placeholder { color: var(--colors-mute); }
 
     .search-kbd {
       position: absolute;
-      right: var(--spacing-md);
-      background: var(--colors-canvas-soft-2);
+      right: 8px;
+      padding: 1px 6px;
       border: 1px solid var(--colors-hairline);
-      border-radius: 4px;
-      padding: 2px 6px;
+      border-radius: var(--rounded-sm);
+      background: var(--colors-canvas-soft);
+      font-family: var(--font-mono);
       font-size: var(--fs-micro);
-      font-family: inherit;
       color: var(--colors-mute);
       pointer-events: none;
-      transition: opacity 0.2s ease;
+      transition: opacity 120ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .search-input-wrapper:focus-within .search-kbd {
-      opacity: 0;
+    .search-input-wrapper:focus-within .search-kbd { opacity: 0; }
+
+    /* Below .nav-links' own breakpoint the search inherits that space. */
+    @media (max-width: 990px) {
+      .nav-search { max-width: none; }
     }
 
-    [data-theme="dark"] .search-kbd {
-      background: rgba(255, 255, 255, 0.05);
+    /* No keyboard, no shortcut hint — and the width is wanted for text. */
+    @media (max-width: 640px) {
+      .search-kbd { display: none; }
+      .nav-search { margin: 0 var(--spacing-sm); }
+      .search-input { padding-right: var(--spacing-sm); }
     }
 
-    /* Results Dropdown */
+    /* ── Results panel ─────────────────────────────────────────────── */
     .search-results-panel {
       position: absolute;
-      top: calc(100% + 8px);
+      top: calc(100% + 6px);
       left: 0;
       right: 0;
-      background-color: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--colors-hairline);
-      border-radius: var(--rounded-lg);
-      max-height: 380px;
-      overflow-y: auto;
-      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.08);
       display: none;
       flex-direction: column;
+      max-height: 380px;
+      overflow-y: auto;
+      padding: var(--spacing-xxs);
+      background-color: var(--colors-surface);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      /* A popover is the one place DESIGN.md still asks for elevation;
+         this is its --shadow-lg value, single-layer and uncoloured. */
+      /* elevation removed — separation comes from colour, not shadow */
       z-index: 999;
-      padding: var(--spacing-xs) 0;
-      animation: dropdown-fade-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    [data-theme="dark"] .search-results-panel {
-      background-color: rgba(18, 18, 18, 0.95);
-      border-color: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.4);
+    /* On a phone the field is narrower than the shortest useful result
+       row, so the panel breaks out of it and hangs off the right edge. */
+    @media (max-width: 520px) {
+      .search-results-panel {
+        left: auto;
+        width: calc(100vw - var(--spacing-md) * 2);
+        max-width: 340px;
+      }
     }
 
     .search-result-item {
       display: flex;
       align-items: center;
-      gap: var(--spacing-md);
-      padding: var(--spacing-sm) var(--spacing-md);
+      gap: var(--spacing-sm);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--rounded-sm);
       text-decoration: none;
       color: var(--colors-ink);
-      transition: all 0.2s ease;
-      margin: 2px var(--spacing-xs);
-      border-radius: var(--rounded-sm);
+      transition: background-color 120ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .search-result-item:hover, .search-result-item.selected {
-      background-color: var(--colors-canvas-soft-2);
-      transform: translateX(4px);
-    }
-
-    [data-theme="dark"] .search-result-item:hover, [data-theme="dark"] .search-result-item.selected {
-      background-color: rgba(255, 255, 255, 0.05);
+    .search-result-item:hover,
+    .search-result-item.selected {
+      background-color: var(--colors-accent-wash);
     }
 
     .search-result-icon {
-      font-size: 20px;
-      width: 38px;
-      height: 38px;
-      border-radius: 8px;
-      background-color: var(--colors-canvas-soft-2);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      width: 32px;
+      height: 32px;
       border: 1px solid var(--colors-hairline);
-    }
-
-    [data-theme="dark"] .search-result-icon {
-      background-color: rgba(255, 255, 255, 0.03);
+      border-radius: var(--rounded-sm);
+      color: var(--colors-mute);
     }
 
     .search-result-info {
       display: flex;
       flex-direction: column;
+      min-width: 0;
       text-align: left;
     }
 
@@ -369,13 +542,11 @@ const toolChips = (slug: string): ToolChips => {
     }
 
     .search-result-desc {
-      font-size: var(--fs-micro);
+      font-size: var(--fs-small);
       color: var(--colors-mute);
-      margin-top: 1px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      max-width: 440px;
     }
   </style>
   <style>
@@ -397,9 +568,8 @@ const toolChips = (slug: string): ToolChips => {
       font-weight: 600;
       letter-spacing: var(--ls-title);
       line-height: var(--lh-title);
-      text-align: center;
       margin-bottom: var(--spacing-xl);
-      color: var(--colors-ink);
+      color: var(--colors-display);
     }
 
     .section-title-sm {
@@ -407,18 +577,16 @@ const toolChips = (slug: string): ToolChips => {
       font-weight: 600;
       letter-spacing: var(--ls-heading);
       line-height: var(--lh-heading);
-      text-align: center;
       margin-top: var(--spacing-xl);
-      color: var(--colors-ink);
+      color: var(--colors-display);
     }
 
     .section-lede {
-      text-align: center;
       color: var(--colors-body);
       font-size: var(--fs-body);
       line-height: var(--lh-body);
       max-width: 600px;
-      margin: 0 auto var(--spacing-xl);
+      margin: 0 0 var(--spacing-xl);
     }
 
     /* A band separated from the previous one by a hairline rule. */
@@ -432,9 +600,8 @@ const toolChips = (slug: string): ToolChips => {
       font-size: var(--fs-subhead);
       font-weight: 600;
       letter-spacing: var(--ls-subhead);
-      text-align: center;
       margin-bottom: var(--spacing-lg);
-      color: var(--colors-ink);
+      color: var(--colors-display);
     }
 
     /* Long-form copy block: owns its own heading + list rhythm. */
@@ -497,7 +664,6 @@ const toolChips = (slug: string): ToolChips => {
     }
 
     .section-actions {
-      text-align: center;
       margin-top: var(--spacing-xl);
     }
 
@@ -509,47 +675,11 @@ const toolChips = (slug: string): ToolChips => {
     .links-grid--centered {
       grid-template-columns: repeat(4, 1fr);
       justify-items: center;
-      text-align: center;
     }
     @media (max-width: 560px) {
       .links-grid--centered {
         grid-template-columns: repeat(2, 1fr);
       }
-    }
-
-    /* Popular Searches Styling */
-    .popular-searches {
-      margin-top: var(--spacing-md);
-      font-size: var(--fs-small);
-      color: var(--colors-body);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .popular-searches-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: var(--fs-micro);
-      color: var(--colors-mute);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-right: 4px;
-    }
-    .popular-search-link {
-      color: var(--colors-link);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s ease;
-    }
-    .popular-search-link:hover {
-      color: var(--colors-link-deep);
-      text-decoration: underline;
-    }
-    .popular-search-separator {
-      color: var(--colors-hairline-strong);
-      user-select: none;
-      margin: 0 2px;
     }
 
     /* Featured Tools Styling */
@@ -563,8 +693,7 @@ const toolChips = (slug: string): ToolChips => {
       font-weight: 600;
       letter-spacing: -1.2px;
       margin-bottom: var(--spacing-xl);
-      color: var(--colors-ink);
-      text-align: center;
+      color: var(--colors-display);
     }
     .featured-grid {
       display: grid;
@@ -581,13 +710,13 @@ const toolChips = (slug: string): ToolChips => {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-sm);
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.02), inset 0px 0px 0px 1px var(--colors-hairline);
+      transition: transform 0.2s, border-color 0.2s;
+      /* elevation removed — separation comes from colour, not shadow */
     }
     .featured-card:hover {
       transform: translateY(-2px);
       border-color: var(--colors-hairline-strong);
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05), inset 0px 0px 0px 1px var(--colors-hairline-strong);
+      /* elevation removed — separation comes from colour, not shadow */
     }
     .featured-badge {
       align-self: flex-start;
@@ -597,12 +726,12 @@ const toolChips = (slug: string): ToolChips => {
       border-radius: var(--rounded-pill);
       background-color: var(--colors-canvas-soft-2);
       color: var(--colors-body);
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-sans);
       text-transform: uppercase;
       letter-spacing: 0.2px;
     }
-    [data-theme="dark"] .featured-badge {
-      background-color: rgba(255, 255, 255, 0.05);
+    :global([data-theme="dark"]) .featured-badge {
+      background-color: var(--colors-canvas-soft-2);
     }
     .featured-card-header {
       display: flex;
@@ -621,8 +750,8 @@ const toolChips = (slug: string): ToolChips => {
       flex-shrink: 0;
       border: 1px solid var(--colors-hairline);
     }
-    [data-theme="dark"] .featured-card-icon {
-      background-color: rgba(255, 255, 255, 0.03);
+    :global([data-theme="dark"]) .featured-card-icon {
+      background-color: var(--colors-canvas-soft-2);
     }
     .featured-card-name {
       font-size: var(--fs-subhead);
@@ -648,20 +777,19 @@ const toolChips = (slug: string): ToolChips => {
       max-width: 1200px;
       margin: 0 auto var(--spacing-4xl);
       padding: 0 var(--spacing-lg);
-      text-align: center;
     }
     .comparison-title {
       font-size: var(--fs-title);
       font-weight: 600;
       letter-spacing: -1.2px;
-      color: var(--colors-ink);
+      color: var(--colors-display);
       margin-bottom: var(--spacing-xs);
     }
     .comparison-subtitle {
       font-size: var(--fs-body);
       color: var(--colors-body);
       max-width: 600px;
-      margin: 0 auto var(--spacing-xl);
+      margin: 0 0 var(--spacing-xl);
       line-height: 1.5;
     }
     .table-wrapper {
@@ -669,7 +797,7 @@ const toolChips = (slug: string): ToolChips => {
       border: 1px solid var(--colors-hairline);
       border-radius: var(--rounded-lg);
       background-color: var(--colors-canvas);
-      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.01);
+      /* elevation removed — separation comes from colour, not shadow */
     }
     .comparison-table {
       width: 100%;
@@ -690,8 +818,8 @@ const toolChips = (slug: string): ToolChips => {
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    [data-theme="dark"] .comparison-table th {
-      background-color: rgba(255, 255, 255, 0.02);
+    :global([data-theme="dark"]) .comparison-table th {
+      background-color: var(--colors-canvas-soft);
     }
     .comparison-table tr:last-child td {
       border-bottom: none;
@@ -704,7 +832,7 @@ const toolChips = (slug: string): ToolChips => {
       background-color: color-mix(in srgb, var(--colors-accent) 2%, transparent);
       font-weight: 600;
     }
-    [data-theme="dark"] .col-highlight {
+    :global([data-theme="dark"]) .col-highlight {
       background-color: color-mix(in srgb, var(--colors-accent) 4%, transparent);
     }
     .text-success {
@@ -723,69 +851,11 @@ const toolChips = (slug: string): ToolChips => {
       margin-left: 6px;
     }
 
-    /* ─── Split hero layout ─── */
-    /* Two columns on desktop, one on mobile. .hero-lead is display:contents
-       so its children are grid items directly — that lets the dropzone sit in
-       column 2 on desktop while keeping a single, correct DOM order for
-       mobile reading and focus sequence. */
-    .hero-split {
-      display: grid;
-      grid-template-columns: 1.02fr 0.98fr;
-      column-gap: var(--spacing-3xl);
-      align-items: center;
-      text-align: left;
-    }
-    .hero-lead { display: contents; }
-
-    /* Rows are assigned explicitly: `grid-row: 1 / -1` cannot span
-       implicit rows (-1 resolves against the explicit grid, which would
-       leave the panel stuck in row 1 and stretch it). */
-    /* Grid items stretch by default; the pill must hug its text. */
-    .hero-status            { grid-area: 1 / 1; justify-self: start; }
-    .hero-title             { grid-area: 2 / 1; }
-    .hero-subtitle          { grid-area: 3 / 1; }
-    .hero-split .search-container  { grid-area: 4 / 1; }
-    .hero-split .popular-searches  { grid-area: 5 / 1; }
-    .hero-split .hero-cta-group    { grid-area: 6 / 1; }
-
-    .hero-status,
-    .hero-title,
-    .hero-subtitle,
-    .hero-split .search-container,
-    .hero-split .popular-searches,
-    .hero-split .hero-cta-group { min-width: 0; }
-
-    .hero-panel-col {
-      grid-column: 2;
-      grid-row: 1 / 7;
-      align-self: center;
-      min-width: 0;
-    }
-
-    .hero-split .search-container { margin-left: 0; margin-right: 0; max-width: 560px; }
-    .hero-split .popular-searches { justify-content: flex-start; }
-    .hero-split .hero-cta-group { justify-content: flex-start; }
-
-    @media (max-width: 940px) {
-      /* Single column: source order already reads
-         status → title → subtitle → dropzone → search → links → CTAs */
-      .hero-split {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-lg);
-        text-align: center;
-      }
-      .hero-status, .hero-title, .hero-subtitle,
-      .hero-split .search-container, .hero-split .popular-searches,
-      .hero-split .hero-cta-group, .hero-panel-col { grid-area: auto; }
-      .hero-status { align-self: center; }
-      .hero-panel-col { max-width: 440px; width: 100%; margin: 0 auto; }
-      .hero-split .search-container { margin-left: auto; margin-right: auto; }
-      .hero-split .popular-searches { justify-content: center; }
-      .hero-split .hero-cta-group { justify-content: center; }
-    }
-
-
+    /* ─── Hero ─── */
+    /* One centred column. The two-column split existed only to seat the
+       drop zone beside the headline; a homepage drop zone is ambiguous
+       (merge, split, compress, convert?), so what is left is a headline,
+       one line of subtext and one action — .hero-container centres it. */
 
     /* ─── Delicate ocean wave at the hero's base (atmosphere) ─── */
 
@@ -793,30 +863,31 @@ const toolChips = (slug: string): ToolChips => {
       .wave-a, .wave-b, .wave-c { animation: none; }
     }
 
-    /* ─── Signature: live privacy-status strip (brand mono voice) ─── */
+    /* ─── Signature: the privacy claim, stated as a fact not a badge ───
+       An ink pill on the lime field — the same float as the nav, one step
+       smaller, and the one place lime appears as type rather than fill. */
     .hero-status {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
+      gap: var(--spacing-xs);
+      padding: 8px 16px;
       margin-bottom: var(--spacing-lg);
-      border: 1px solid var(--colors-hairline);
       border-radius: var(--rounded-pill);
-      background: var(--colors-canvas);
-      font-family: 'JetBrains Mono', monospace;
+      background-color: var(--p-ink);
+      color: var(--p-bone);
       font-size: var(--fs-small);
-      color: var(--colors-body);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+      font-weight: var(--fw-medium);
+      letter-spacing: 0;
     }
-    .hero-status strong { color: var(--colors-ink); font-weight: 600; }
+    .hero-status strong { color: var(--p-lime); font-weight: var(--fw-bold); }
     .hero-status-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: #1a9e7f;
+      background: var(--p-lime);
       flex-shrink: 0;
     }
-    @media (max-width: 480px) { .hero-status { font-size: var(--fs-micro); padding: 5px 11px; } }
+    @media (max-width: 480px) { .hero-status { font-size: var(--fs-micro); padding: 6px 12px; } }
 
     /* ─── Popular Tools ─── */
     .popular-section {
@@ -824,21 +895,12 @@ const toolChips = (slug: string): ToolChips => {
       margin: 0 auto;
       padding: var(--spacing-md) var(--spacing-lg) var(--spacing-2xl);
     }
-    .popular-head { text-align: center; margin-bottom: var(--spacing-lg); }
-    .popular-eyebrow {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: var(--fs-small);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--colors-link);
-      font-weight: 500;
-    }
+    .popular-head { margin-bottom: var(--spacing-lg); }
     .popular-title {
       font-size: var(--fs-title);
       font-weight: 600;
-      letter-spacing: -1px;
-      color: var(--colors-ink);
-      margin-top: 4px;
+      letter-spacing: var(--ls-title);
+      color: var(--colors-display);
     }
     .popular-grid {
       display: grid;
@@ -867,7 +929,7 @@ const toolChips = (slug: string): ToolChips => {
       text-decoration: none;
       position: relative;
       overflow: hidden;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s;
     }
     .popular-card::before {
       content: "";
@@ -883,7 +945,7 @@ const toolChips = (slug: string): ToolChips => {
     .popular-card:hover {
       transform: translateY(-3px);
       border-color: color-mix(in srgb, var(--accent) 45%, var(--colors-hairline));
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      /* elevation removed — separation comes from colour, not shadow */
     }
     .popular-card:hover::before { opacity: 1; }
     .popular-card-icon {
@@ -900,7 +962,7 @@ const toolChips = (slug: string): ToolChips => {
     .popular-card-cat {
       font-size: var(--fs-small);
       color: var(--colors-mute);
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-sans);
     }
     .popular-all {
       display: flex;
@@ -914,92 +976,182 @@ const toolChips = (slug: string): ToolChips => {
       text-decoration: none;
     }
     .popular-all:hover { color: var(--colors-link-deep); }
+
+    /* ─── Tool grid category filter ───
+       Pills, per DESIGN.md's radius scale: --rounded-pill is the token for
+       filter and status pills. These replace the old square .filter-tab
+       (whose rules still live in theme.css, now unused by any page). */
+    .tool-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .tool-filter-pill {
+      font-family: inherit;
+      font-size: var(--fs-small);
+      font-weight: 500;
+      /* 8px/16px keeps the hit target at 34px; --spacing-* only. */
+      padding: var(--spacing-xs) var(--spacing-md);
+      border: 1.5px solid var(--colors-hairline);
+      border-radius: var(--rounded-pill);
+      background-color: var(--colors-surface);
+      color: var(--colors-body);
+      cursor: pointer;
+      touch-action: manipulation;
+      white-space: nowrap;
+      transition: border-color 120ms cubic-bezier(0.4, 0, 0.2, 1),
+                  background-color 120ms cubic-bezier(0.4, 0, 0.2, 1),
+                  color 120ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tool-filter-pill:hover {
+      border-color: var(--colors-hairline-strong);
+      color: var(--colors-ink);
+    }
+
+    .tool-filter-pill:focus-visible {
+      outline: 2px solid var(--colors-accent);
+      outline-offset: 2px;
+    }
+
+    /* The active state is one of the accent's few permitted appearances:
+       it marks where you are, it is not decoration. */
+    .tool-filter-pill[aria-pressed="true"] {
+      background-color: var(--colors-action);
+      border-color: var(--colors-action);
+      color: var(--colors-action-ink);
+    }
+
+    .tool-filter-count {
+      margin-left: var(--spacing-xxs);
+      font-variant-numeric: tabular-nums;
+      opacity: 0.7;
+    }
   </style>
 
-  <main>
-    <!-- Hero Section -->
-    <section class="hero-container">
-      <div class="hero-split">
-        <!-- Left: value prop + search -->
-        <div class="hero-lead">
-          <!-- Signature: a live privacy status line — the value prop in the brand's mono voice -->
-          <div class="hero-status" role="status">
+  <!-- Tool search. It belongs in the nav bar, but the nav bar is rendered by
+       the shared Header component and only the homepage carries a search
+       field — so it is authored here and moved into place by the inline
+       script below, which runs during parse, before first paint. -->
+  <div class="nav-search" id="searchContainer" data-tools={JSON.stringify(tools.map(t => ({ name: t.name, slug: t.slug, icon: t.icon, desc: t.description })))}>
+    <div class="search-input-wrapper">
+      <span class="search-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </span>
+      <input
+        type="text"
+        id="searchInput"
+        class="search-input"
+        placeholder="Search tools…"
+        aria-label="Search all tools"
+        role="combobox"
+        aria-expanded="false"
+        aria-controls="searchResults"
+        aria-autocomplete="list"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <kbd class="search-kbd">/</kbd>
+    </div>
+    <div id="searchResults" class="search-results-panel" role="listbox" aria-label="Tool search results"></div>
+  </div>
+
+  <script is:inline>
+    // Runs synchronously at parse time: .nav-bar is already in the document
+    // and the search field is the node immediately above, so this lands
+    // before the browser paints either one.
+    (function () {
+      var bar = document.querySelector('.nav-bar');
+      var box = document.getElementById('searchContainer');
+      var right = bar && bar.querySelector('.nav-right-group');
+      if (bar && box && right) bar.insertBefore(box, right);
+    })();
+  </script>
+
+  <main id="main-content" tabindex="-1">
+    <!-- Hero — the lime band the nav pill floats on -->
+    <section class="band band--lime hero-band">
+      <div class="band__inner hero-grid">
+        <div class="hero-copy">
+          <p class="hero-status">
             <span class="hero-status-dot" aria-hidden="true"></span>
-            <span class="hero-status-text"><strong>0 bytes uploaded</strong> · runs on your device</span>
-          </div>
+            <span class="hero-status-text"><strong>0&nbsp;bytes uploaded.</strong> Works with your Wi-Fi off.</span>
+          </p>
 
-          <h1 class="hero-title">Your files never<br /><span class="hero-title-accent">leave your device.</span></h1>
-          <p class="hero-subtitle">60+ free tools for PDFs, images, spreadsheets &amp; more — all running in your browser.</p>
-
-          <!-- The claim, demonstrated. Sits here in the DOM so the mobile
-               reading order matches what is on screen. -->
-          <div class="hero-panel-col">
-            <HeroDropzone />
-          </div>
-
-          <!-- Homepage Search bar -->
-          <div class="search-container" id="searchContainer" data-tools={JSON.stringify(tools.map(t => ({ name: t.name, slug: t.slug, icon: t.icon, desc: t.description })))}>
-            <div class="search-input-wrapper">
-              <span class="search-icon" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              </span>
-              <input type="text" id="searchInput" class="search-input" placeholder="Search a tool, e.g. pdf to word…" aria-label="Search all tools" autocomplete="off" />
-              <kbd class="search-kbd">/</kbd>
-            </div>
-            <div id="searchResults" class="search-results-panel"></div>
-
-            <!-- Popular Searches Section -->
-          </div>
+          <!-- Two clauses, four words, one promise. "Convert files" carries
+               the primary keyword; "Upload nothing" carries the reason to
+               choose this over Smallpdf, and it is the only claim on the
+               page a competitor cannot copy. -->
+          <h1 class="hero-title">Convert files. Upload nothing.</h1>
+          <p class="hero-subtitle">{tools.length} free tools for PDFs, images, spreadsheets and documents — every one of them runs inside this browser tab. No account, no upload queue, no file leaving your machine.</p>
 
           <div class="hero-cta-group">
-            <a href="#popular" class="button button-primary">Browse tools</a>
-            <a href={relLink('/privacy-first/')} class="button button-secondary">How privacy works</a>
+            <a href="#tools" class="button button-primary">Browse All Tools</a>
+            <a href={relLink('/privacy-first/')} class="button button-secondary">How It Works</a>
           </div>
+
+          <!-- "Your files never leave" is a claim every converter makes and
+               none of them lets you check. This one is checkable, and that
+               is the whole difference — so it belongs above the fold, not
+               buried in the privacy policy. -->
+          <p class="hero-proof">
+            <a href="https://github.com/Kavyansh-55/ConvertOcean" rel="noopener" target="_blank">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.69-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.74.8 1.18 1.83 1.18 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
+              Open source, MIT licensed — read the code that runs on your machine
+            </a>
+          </p>
         </div>
 
-
-      </div>
-    </section>
-
-    <!-- Popular Tools — curated one-tap entry, colour-keyed by category -->
-    <section class="popular-section" id="popular" data-reveal>
-      <div class="popular-head">
-        <span class="popular-eyebrow">Most used</span>
-        <h2 class="popular-title">Start with a popular tool</h2>
-      </div>
-      <div class="popular-grid" data-reveal-stagger>
-        {popularTools.map(t => (
-          <a href={relLink(`/${t.slug}/`)} class="popular-card">
-            <span class="popular-card-icon"><CategoryIcon icon={t.icon} width="22" height="22" /></span>
-            <span class="popular-card-name">{t.name}</span>
-            <span class="popular-card-cat">{t.category}</span>
+        <!-- The eight most-used tools, one tap from landing. -->
+        <div class="hero-panel" id="popular">
+          <h2 class="hero-panel-title">Popular Right Now</h2>
+          <ul class="hero-tool-list">
+            {popularTools.map(t => (
+              <li>
+                <a href={relLink(`/${t.slug}/`)} class="hero-tool">
+                  <span class="hero-tool-icon" aria-hidden="true"><CategoryIcon icon={t.icon} width="18" height="18" /></span>
+                  <span class="hero-tool-name">{t.name}</span>
+                  <svg class="hero-tool-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a href="#tools" class="hero-panel-all">Browse all {tools.length} tools
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
-        ))}
+        </div>
       </div>
-      <a href="#tools" class="popular-all">Browse all 60 tools
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
     </section>
 
-    <hr class="section-divider">
-
-    <!-- Explore Tools Section (Interactive Tabbed Console) -->
+    <!-- Explore Tools — the directory proper, filtered by the pill row -->
+    <div class="band band--paper">
     <section class="explore-section" id="tools" data-reveal>
       <h2 class="explore-title">Explore Tools</h2>
-      <div class="filter-tab-container">
-        <button class="filter-tab active" data-category="all">All Tools</button>
-        <button class="filter-tab" data-category="pdf-tools">PDF & Merge</button>
-        <button class="filter-tab" data-category="image-tools">Image Tools</button>
-        <button class="filter-tab" data-category="excel-converter">Spreadsheets</button>
-        <button class="filter-tab" data-category="developer-tools">Developer</button>
-        <button class="filter-tab" data-category="business-tools">Business</button>
+      <div class="tool-filter" role="group" aria-label="Filter tools by category">
+        {filterGroups.map(g => {
+          const count = g.key === 'all'
+            ? tools.length
+            : tools.filter(t => filterKey(t.slug, t.categorySlug) === g.key).length;
+          return (
+            <button
+              type="button"
+              class="tool-filter-pill"
+              data-filter={g.key}
+              aria-pressed={g.key === 'all' ? 'true' : 'false'}
+            >
+              {g.label}<span class="tool-filter-count">{count}</span>
+            </button>
+          );
+        })}
       </div>
 
       <div class="explore-grid" id="exploreGrid">
         {tools.map(t => {
           const chips = toolChips(t.slug);
           return (
-            <a href={relLink(`/${t.slug}/`)} class="explore-card" data-category={t.categorySlug}>
+            <a href={relLink(`/${t.slug}/`)} class="explore-card" data-filter={filterKey(t.slug, t.categorySlug)}>
               <div class="explore-card-info">
                 <div class="explore-card-chips">
                   {chips.pair ? (
@@ -1025,10 +1177,10 @@ const toolChips = (slug: string): ToolChips => {
         })}
       </div>
     </section>
-
-    <hr class="section-divider" id="categories">
+    </div>
 
     <!-- Categories Grid -->
+    <div class="band band--bone" id="categories">
     <section class="grid-container">
       <h2 class="section-title">Browse Tools by Category</h2>
       <div class="tool-grid tool-grid--bento" data-reveal-stagger>
@@ -1044,8 +1196,10 @@ const toolChips = (slug: string): ToolChips => {
         ))}
       </div>
     </section>
+    </div>
 
-    <!-- Conversion Comparison Section -->
+    <!-- Why ConvertOcean — the cobalt band -->
+    <div class="band band--cobalt">
     <section class="comparison-section" data-reveal>
       <h2 class="comparison-title">Why ConvertOcean?</h2>
       <p class="comparison-subtitle">See how we compare to typical online converters. We prioritize your data privacy and processing speed.</p>
@@ -1090,8 +1244,11 @@ const toolChips = (slug: string): ToolChips => {
       </div>
     </section>
 
-    <!-- Guides & Resources Section Conforming to DESIGN.md -->
-    <section class="featured-section section-ruled">
+    </div>
+
+    <!-- Guides & Resources -->
+    <div class="band band--paper">
+    <section class="featured-section">
       <h2 class="featured-title">Guides & Resources</h2>
       <p class="section-lede">
         Learn how to optimize layouts, compare graphics formats, perform offline optical recognition, and merge document streams securely on your local hardware.
@@ -1115,7 +1272,10 @@ const toolChips = (slug: string): ToolChips => {
       </div>
     </section>
 
-    <!-- Reusable FAQ Component -->
+    </div>
+
+    <!-- FAQ — the deep band -->
+    <div class="band band--maroon">
     <section class="faq-section">
       <h2 class="faq-title">Frequently Asked Questions</h2>
       <div class="faq-container">
@@ -1133,7 +1293,10 @@ const toolChips = (slug: string): ToolChips => {
       </div>
     </section>
 
-    <!-- SEO Links Section -->
+    </div>
+
+    <!-- Related tools, company links and the long-form copy -->
+    <div class="band band--bone">
     <section class="links-section">
       <h3 class="links-title">Related Tools</h3>
       <div class="links-grid">
@@ -1160,10 +1323,10 @@ const toolChips = (slug: string): ToolChips => {
     <section class="links-section section-ruled">
       <h3 class="links-title">Company & Legal</h3>
       <div class="links-grid links-grid--centered">
-        <a href={relLink('/about/')} class="seo-link">ℹ️ About Us</a>
-        <a href={relLink('/contact/')} class="seo-link">📧 Contact Us</a>
-        <a href={relLink('/privacy/')} class="seo-link">🔒 Privacy Policy</a>
-        <a href={relLink('/terms/')} class="seo-link">📄 Terms & Conditions</a>
+        <a href={relLink('/about/')} class="seo-link">About Us</a>
+        <a href={relLink('/contact/')} class="seo-link">Contact Us</a>
+        <a href={relLink('/privacy/')} class="seo-link">Privacy Policy</a>
+        <a href={relLink('/terms/')} class="seo-link">Terms &amp; Conditions</a>
       </div>
     </section>
 
@@ -1203,6 +1366,7 @@ const toolChips = (slug: string): ToolChips => {
         </p>
       </div>
     </section>
+    </div>
   </main>
 
   <script is:inline>
@@ -1238,10 +1402,18 @@ const toolChips = (slug: string): ToolChips => {
         return svgs[emoji] || emoji;
       }
 
+      // The field is a combobox: the panel's open/closed state and the
+      // highlighted row both have to be announced, not just painted.
+      function closePanel() {
+        searchResults.style.display = 'none';
+        searchInput.setAttribute('aria-expanded', 'false');
+        searchInput.removeAttribute('aria-activedescendant');
+      }
+
       function renderResults(filteredTools) {
         searchResults.innerHTML = '';
         if (filteredTools.length === 0) {
-          searchResults.style.display = 'none';
+          closePanel();
           return;
         }
 
@@ -1256,6 +1428,9 @@ const toolChips = (slug: string): ToolChips => {
           const item = document.createElement('a');
           item.href = lang === 'en' ? `/${tool.slug}/` : `/${lang}/${tool.slug}/`;
           item.className = 'search-result-item';
+          item.id = `searchResult-${index}`;
+          item.setAttribute('role', 'option');
+          item.setAttribute('aria-selected', String(index === selectedIndex));
           if (index === selectedIndex) {
             item.classList.add('selected');
           }
@@ -1269,7 +1444,7 @@ const toolChips = (slug: string): ToolChips => {
           `;
 
           item.addEventListener('click', () => {
-            searchResults.style.display = 'none';
+            closePanel();
             searchInput.value = '';
           });
 
@@ -1277,13 +1452,14 @@ const toolChips = (slug: string): ToolChips => {
         });
 
         searchResults.style.display = 'flex';
+        searchInput.setAttribute('aria-expanded', 'true');
       }
 
       searchInput.addEventListener('input', () => {
         const query = searchInput.value.toLowerCase().trim();
         selectedIndex = -1;
         if (!query) {
-          searchResults.style.display = 'none';
+          closePanel();
           return;
         }
 
@@ -1314,25 +1490,26 @@ const toolChips = (slug: string): ToolChips => {
             items[selectedIndex].click();
           }
         } else if (e.key === 'Escape') {
-          searchResults.style.display = 'none';
+          closePanel();
           searchInput.blur();
         }
       });
 
       function updateSelection(items) {
         items.forEach((item, index) => {
-          if (index === selectedIndex) {
-            item.classList.add('selected');
+          const isSelected = index === selectedIndex;
+          item.classList.toggle('selected', isSelected);
+          item.setAttribute('aria-selected', String(isSelected));
+          if (isSelected) {
             item.scrollIntoView({ block: 'nearest' });
-          } else {
-            item.classList.remove('selected');
+            searchInput.setAttribute('aria-activedescendant', item.id);
           }
         });
       }
 
       document.addEventListener('click', (e) => {
         if (!searchContainer.contains(e.target)) {
-          searchResults.style.display = 'none';
+          closePanel();
         }
       });
 
@@ -1355,27 +1532,22 @@ const toolChips = (slug: string): ToolChips => {
     });
   </script>
 
-  <!-- Interactive Grid Category Filter Controller -->
+  <!-- Tool grid category filter -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const tabs = document.querySelectorAll('.filter-tab');
-      const cards = document.querySelectorAll('.explore-card');
+      const pills = document.querySelectorAll<HTMLButtonElement>('.tool-filter-pill');
+      const cards = document.querySelectorAll<HTMLElement>('.explore-card');
 
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          // Toggle active tab state
-          tabs.forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
+      pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          // aria-pressed is the state, not a companion to a class: the
+          // pill's active styling keys off the attribute directly.
+          pills.forEach(p => p.setAttribute('aria-pressed', String(p === pill)));
 
-          // Toggle tool cards display state based on selected category
-          const category = tab.getAttribute('data-category');
+          const key = pill.getAttribute('data-filter');
           cards.forEach(card => {
-            const cardCat = card.getAttribute('data-category');
-            if (category === 'all' || cardCat === category) {
-              (card as HTMLElement).style.display = 'flex';
-            } else {
-              (card as HTMLElement).style.display = 'none';
-            }
+            const match = key === 'all' || card.getAttribute('data-filter') === key;
+            card.style.display = match ? 'flex' : 'none';
           });
         });
       });

@@ -16,11 +16,11 @@ let targetFormat = "PDF";
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-md);
     overflow: hidden;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    /* elevation removed — separation comes from colour, not shadow */
   }
   .pptx-tool-container .slide-card-label {
     font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     color: var(--colors-mute);
     text-transform: uppercase;
     padding: 4px 8px;

@@ -39,3 +39,23 @@ const { href, categorySlug, name, count, description, action } = Astro.props;
     </svg>
   </div>
 </a>
+
+<style>
+  /*
+   * The count lives here, not in the page that renders these cards.
+   *
+   * index.astro styled `.category-count`, but Astro scopes a component's
+   * CSS to that component's own markup — and this span belongs to
+   * CategoryCard, so the rule never matched and the count rendered at full
+   * headline size. Anything that styles this file's markup has to live in
+   * this file.
+   */
+  .category-count {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-medium);
+    color: var(--colors-mute);
+    letter-spacing: var(--ls-body);
+    /* No nowrap: "(30+ formats)" is longer than the space left on the
+       title's last line and was running past the card's right edge. */
+  }
+</style>

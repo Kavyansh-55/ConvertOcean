@@ -22,7 +22,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     border-radius: 6px;
     font-size: 13px;
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   }
   .merge-excel-container .file-item:hover {
     border-color: var(--colors-hairline-strong);
@@ -61,7 +61,7 @@ const { slug, headline, subtitle } = Astro.props;
     justify-content: center;
     cursor: pointer;
     font-size: 11px;
-    transition: all 0.15s;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
   }
   .merge-excel-container .icon-btn:hover:not(:disabled) {
     background-color: var(--colors-canvas-soft-2);

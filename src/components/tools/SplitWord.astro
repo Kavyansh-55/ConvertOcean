@@ -30,14 +30,13 @@ const { slug, headline, subtitle } = Astro.props;
     height: 40px;
     font-size: 14px;
     color: var(--colors-ink);
-    outline: none;
     transition: border-color 0.2s;
   }
   .select-input:focus, .number-input:focus {
     border-color: var(--colors-link);
   }
   .doc-info {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     font-size: 12.5px;
     color: var(--colors-body);
     background-color: var(--colors-canvas-soft-2);

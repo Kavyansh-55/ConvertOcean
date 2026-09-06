@@ -22,13 +22,13 @@ const { slug, headline, subtitle } = Astro.props;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    /* elevation removed — separation comes from colour, not shadow */
   }
   .tax-panel-title {
     font-size: 13px;
     font-weight: 600;
     text-transform: uppercase;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     color: var(--colors-mute);
     border-bottom: 1px solid var(--colors-hairline);
     padding-bottom: var(--spacing-xs);
@@ -47,7 +47,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     background-color: var(--colors-canvas);
     color: var(--colors-body);
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
     text-align: center;
   }
   .tax-mode-tab:hover { border-color: var(--colors-hairline-strong); }
@@ -73,7 +73,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     background-color: var(--colors-canvas-soft);
     color: var(--colors-body);
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
     text-align: center;
   }
   .preset-btn:hover {
@@ -112,7 +112,7 @@ const { slug, headline, subtitle } = Astro.props;
     font-size: 16px;
     font-weight: 600;
     color: var(--colors-ink);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
   }
   .tax-result-value.grand {
     font-size: 26px;
@@ -131,7 +131,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .tax-breakdown th {
     background-color: var(--colors-canvas-soft-2);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     font-size: 11px;
     text-transform: uppercase;
     color: var(--colors-mute);
@@ -163,7 +163,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-md);
     padding: var(--spacing-md);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     font-size: 12px;
     color: var(--colors-body);
     line-height: 1.8;
@@ -193,14 +193,14 @@ const { slug, headline, subtitle } = Astro.props;
       <button class="preset-btn" data-rate="19">🇩🇪 DE VAT 19%</button>
       <button class="preset-btn" data-rate="18">🇮🇳 IN GST 18%</button>
       <button class="preset-btn" data-rate="10">🇯🇵 JP Tax 10%</button>
-      <button class="preset-btn" id="presetBtnCustom" data-rate="custom">✨ Custom Rate</button>
+      <button class="preset-btn" id="presetBtnCustom" data-rate="custom">Custom Rate</button>
     </div>
     <p class="tax-state-note">Any country works &mdash; pick a preset, or type your own rate below. Currency is set separately.</p>
 
     <div class="tax-panel-title">United States &mdash; rate by state <span style="text-transform: none; font-weight: 400;">(optional)</span></div>
     <div class="form-group" style="margin-bottom: 0; display: flex; flex-direction: column; gap: var(--spacing-xxs);">
       <label class="form-label" for="taxUsState" style="font-size: 13px; font-weight: 500;">US buyers: pick a state to load its combined rate</label>
-      <select id="taxUsState" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;">
+      <select id="taxUsState" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink);">
         <option value="" selected>— Choose a state —</option>
         {stateSalesTaxRates.map(s => (
           <option value={s.abbr} data-rate={s.combined.toFixed(2)} data-state={s.state}>
@@ -216,7 +216,7 @@ const { slug, headline, subtitle } = Astro.props;
     <div class="tax-panel-title">Currency & Values</div>
     <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
       <label class="form-label" for="taxCurrency" style="font-size: 13px; font-weight: 500;">Currency</label>
-      <select id="taxCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;">
+      <select id="taxCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink);">
         <option value="$" selected>$ &ndash; US Dollar (USD)</option>
         <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
         <option value="&pound;">&pound; &ndash; British Pound (GBP)</option>

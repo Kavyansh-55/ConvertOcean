@@ -98,12 +98,12 @@ const aboutSchema = {
       padding: 6px 12px;
       border-radius: var(--rounded-sm);
       font-size: 12.5px;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-sans);
       color: var(--colors-body);
     }
   </style>
 
-  <main class="app-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl); position: relative; z-index: 1;">
+  <main id="main-content" tabindex="-1" class="app-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl); position: relative; z-index: 1;">
     <div class="about-container">
       <div class="page-header">
         <h1 class="page-title">About ConvertOcean.</h1>
@@ -124,13 +124,13 @@ const aboutSchema = {
         <h2 class="about-section-title">Core Principles</h2>
         <div class="values-grid">
           <div class="value-card">
-            <h3 class="value-title">🔒 Privacy First</h3>
+            <h3 class="value-title">Privacy First</h3>
             <p class="value-text">
               Your files are processed on your device and never uploaded — no server storage, ever. Ads and anonymous analytics keep the site free; neither one ever sees your files.
             </p>
           </div>
           <div class="value-card">
-            <h3 class="value-title">⚡ High Performance</h3>
+            <h3 class="value-title">High Performance</h3>
             <p class="value-text">
               By running files locally, we bypass network upload bottlenecks. Conversions start instantly, even for large formats.
             </p>
@@ -191,7 +191,7 @@ const aboutSchema = {
             </p>
           </div>
           <div class="value-card">
-            <h3 class="value-title">✅ Reference-checked outputs</h3>
+            <h3 class="value-title">Reference-checked outputs</h3>
             <p class="value-text">
               File converters are tested against reference files: we convert known documents, spreadsheets, and images and compare the output against expected results before and after every significant update.
             </p>

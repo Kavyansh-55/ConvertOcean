@@ -7,149 +7,446 @@
   padding: 0;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   TOKENS — poster system, per DESIGN.md (Linktree style reference).
+
+   Two layers, deliberately:
+
+     1. RAW PALETTE   --p-*        the named colours. Components never
+                                   read these directly.
+     2. SEMANTIC      --colors-*   what components actually read.
+
+   Every colour band further down re-declares the SEMANTIC layer *on
+   itself*. So a card, button, link or table dropped inside a cobalt band
+   re-pairs to cobalt's contrast logic automatically, with no per-band
+   component variants. That is the whole system, and it is what DESIGN.md
+   means by "colour is the layout, not decoration".
+
+   Every pairing was measured, not eyeballed. The two that fall under
+   4.5:1 — lime on cobalt (3.91) and lilac on cobalt (3.37) — are
+   restricted to display type by rule below, never to body copy.
+   ═══════════════════════════════════════════════════════════════════════ */
 :root {
-  /* DESIGN.md palette. The canvas is a pale sea-stone, so a white
-     --colors-surface lifts off it on value contrast alone — no shadow needed. */
-  --colors-canvas: #F3F5F4;
-  --colors-canvas-soft: #E9EDEB;
-  /* Third canvas step, derived. DESIGN.md names only canvas and canvas-soft,
-     but 15 rules use this one for hover fills; kept one step below canvas-soft
-     so the ramp stays monotonic on the new base. */
-  --colors-canvas-soft-2: #DFE4E2;
-  --colors-surface: #FFFFFF;
-  --colors-ink: #16211F;
-  --colors-body: #4A5654;
-  --colors-mute: #7C8886;
-  --colors-hairline: #DCE2E0;
-  --colors-hairline-strong: #B4BEBB;
+  color-scheme: light;
 
-  --colors-accent: #0E7490;
-  --colors-accent-deep: #0A5A70;
-  --colors-accent-wash: #E3F0F2;
+  /* ── Raw palette ──────────────────────────────────────────────────── */
+  --p-lime:        #d2e823;  /* Voltage Lime — the single action colour  */
+  --p-lime-deep:   #b8cc17;  /* derived hover step; 8.73:1 under ink     */
+  --p-cobalt:      #2665d6;  /* Cobalt Signal                            */
+  --p-cobalt-ink:  #2258c4;  /* derived; 5.80:1 on bone as link text     */
+  --p-maroon:      #780016;  /* Bordeaux Maroon                          */
+  --p-maroon-deep: #5a0010;  /* derived; the dark-theme maroon band      */
+  --p-maroon-lift: #8f0f26;  /* derived; card fill inside a maroon band  */
+  --p-ink:         #1e2330;  /* Midnight Ink                             */
+  --p-white:       #ffffff;  /* Plaster White                            */
+  --p-bone:        #f3f3f1;  /* Bone Canvas                              */
+  --p-slate:       #676b5f;  /* Slate Mute                               */
+  --p-carbon:      #222222;  /* Carbon                                   */
+  --p-lilac:       #e9c0e9;  /* Lilac Whisper                            */
+  --p-indigo:      #061492;  /* Indigo Abyss                             */
+  --p-forest:      #254f1a;  /* Forest Depth                             */
+  --p-saffron:     #d6a337;  /* Saffron                                  */
+  --p-cement:      #adadad;  /* Cement Gray                              */
 
-  /* Ink that does NOT invert with the theme. For text sitting on a fill that
-     is itself theme-independent - the hardcoded red/amber cost segments in the
-     calculators - where every other ink token would flip to near-white in dark
-     and drop the label to 1.42:1. Clears AA across the whole red-to-amber ramp
-     (5.05:1 at its darkest point) in both themes. */
-  --colors-ink-static: #16211F;
+  /* ── Semantic: the default (Bone Canvas) context ──────────────────── */
+  --colors-canvas:        var(--p-bone);
+  --colors-canvas-soft:   #eeece7;
+  --colors-canvas-soft-2: #e6e3db;   /* hover fills only                 */
+  --colors-surface:       var(--p-white);
 
-  --colors-error: #B4322C;
-  --colors-error-wash: #F7E7E6;
-  /* One step down from --colors-error-wash, for hover on error surfaces. This
-     is the darkest step that still clears AA for --colors-error text sitting on
-     it (4.57:1); #F0D5D3 and darker drop under 4.5:1. */
-  --colors-error-wash-strong: #F2D9D7;
-  /* Derived from the new --colors-error; DESIGN.md names no deep error. */
-  --colors-error-deep: #8F2823;
+  --colors-ink:            var(--p-ink);      /* 14.12:1 on canvas       */
+  /* Display type only — see the band overrides. Defaults to the ink. */
+  --colors-display:        var(--p-ink);
+  --colors-body:           #5f6357;           /*  5.54:1 on canvas       */
+  --colors-mute:           #61655a;           /*  5.29:1 on canvas       */
+  --colors-hairline:       #dcd9d0;
+  --colors-hairline-strong:var(--p-ink);      /* structural edges are ink */
 
-  /* Deprecated aliases — NOT additional colors. 26 component files still
-     reference these names; each resolves to the single accent, so no blue or
-     teal survives anywhere. Retarget those call sites, then delete these six. */
-  --colors-link: var(--colors-accent);
-  --colors-link-deep: var(--colors-accent-deep);
-  --colors-link-bg-soft: var(--colors-accent-wash);
+  /* Interactive TEXT — not the CTA fill, see --colors-action below.
+     Cobalt is DESIGN.md's stated link accent; the deepened step keeps it
+     above 4.5:1 on the tinted surfaces as well as on white. */
+  --colors-accent:      var(--p-cobalt-ink);
+  --colors-accent-deep: var(--p-indigo);
+  --colors-accent-wash: #e4ecfb;
+
+  /* The CTA. One fill colour for the whole site; bands invert it rather
+     than substituting a different hue. */
+  --colors-action:       var(--p-lime);
+  --colors-action-hover: var(--p-lime-deep);
+  --colors-action-ink:   var(--p-ink);        /* 11.44:1 on lime         */
+
+  /* Ink that must NOT invert with the theme — for text on fills that are
+     themselves theme-independent (the hardcoded cost segments in the
+     calculators), where every other ink token would flip to near-white. */
+  --colors-ink-static: var(--p-ink);
+
+  --colors-error:             var(--p-maroon);
+  --colors-error-wash:        #f6e4e6;
+  --colors-error-wash-strong: #efd3d6;
+  --colors-error-deep:        var(--p-maroon-deep);
+
+  /* Deprecated aliases. 26 component files still reference these names;
+     each resolves to a token above, so no stray hue survives anywhere.
+     Retarget those call sites, then delete these six. */
+  --colors-link:           var(--colors-accent);
+  --colors-link-deep:      var(--colors-accent-deep);
+  --colors-link-bg-soft:   var(--colors-accent-wash);
   --colors-accent-display: var(--colors-accent);
-  --colors-success: var(--colors-accent);
-  --colors-error-soft: var(--colors-error-wash);
-  
+  --colors-success:        var(--p-forest);
+  --colors-error-soft:     var(--colors-error-wash);
+
+  /* ── Spacing ──────────────────────────────────────────────────────── */
   --spacing-xxs: 4px;
-  --spacing-xs: 8px;
-  --spacing-sm: 12px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
+  --spacing-xs:  8px;
+  --spacing-sm:  12px;
+  --spacing-md:  16px;
+  --spacing-lg:  24px;
+  --spacing-xl:  32px;
   --spacing-2xl: 40px;
   --spacing-3xl: 48px;
   --spacing-4xl: 64px;
   --spacing-5xl: 96px;
 
-  --rounded-sm: 6px;
-  --rounded-md: 8px;
-  --rounded-lg: 12px;
-  --rounded-pill: 100px;
-  --rounded-full: 9999px;
+  /* ── Shape ────────────────────────────────────────────────────────────
+     "Everything clickable is a pill or a lozenge." Inputs are the one
+     exception DESIGN.md carves out, and they keep 8px. */
+  --rounded-sm:      8px;    /* inputs, form fields — the exception      */
+  --rounded-md:      12px;
+  --rounded-lg:      18px;   /* popovers, panels, code blocks            */
+  --rounded-card:    24px;   /* dense cards                              */
+  --rounded-card-lg: 32px;   /* big lozenge tiles                        */
+  --rounded-pill:    9999px;
+  --rounded-full:    9999px;
 
-  /* ── Type scale ───────────────────────────────────────────────
-     Eight steps, fluid. Sizes interpolate between the mobile and
-     desktop bounds, so a step never needs a media query to resize.
-     Each step pairs a size with the tracking it needs at that size:
-     display type tightens, small type opens up. Use these — a raw
-     px font-size in a component means the scale is missing a step. */
-  --fs-display: clamp(2rem, 1.30rem + 3.1vw, 3.5rem);   /* 32 → 56  hero */
-  --fs-title:   clamp(1.5rem, 1.28rem + 0.98vw, 2rem);  /* 24 → 32  section h2 */
-  --fs-heading: clamp(1.25rem, 1.14rem + 0.49vw, 1.5rem); /* 20 → 24  subsection */
-  --fs-subhead: 1.125rem;                                /* 18       card titles */
-  --fs-lead:    clamp(1rem, 0.95rem + 0.22vw, 1.125rem); /* 16 → 18  hero sub, intros */
-  --fs-body:    0.9375rem;                               /* 15       default prose */
-  --fs-small:   0.8125rem;                               /* 13       meta, captions */
-  --fs-micro:   0.6875rem;                               /* 11       mono eyebrows */
+  /* ── Type ─────────────────────────────────────────────────────────────
+     Satoshi stands in for Linksans (DESIGN.md sanctions a geometric-sans
+     substitute; Satoshi is the closest free one — Fontshare, ITF free
+     licence). Weight 900 stands in for Linksans 800.
 
-  --ls-display: -0.033em;
-  --ls-title:   -0.028em;
-  --ls-heading: -0.022em;
-  --ls-subhead: -0.017em;
-  --ls-body:    -0.006em;
-  --ls-micro:    0.06em;
+     Tracking tightens only at display sizes, per DESIGN.md's explicit
+     "don't": 16px and below sit at normal or near-normal. */
+  --fs-display: clamp(2.5rem, 1.30rem + 6.00vw, 5rem);       /* 40 → 80 */
+  --fs-title:   clamp(1.875rem, 1.36rem + 2.57vw, 3.5rem);   /* 30 → 56 */
+  --fs-heading: clamp(1.5rem, 1.39rem + 0.55vw, 1.75rem);    /* 24 → 28 */
+  --fs-subhead: 1.25rem;                                     /* 20      */
+  --fs-lead:    clamp(1.0625rem, 1.00rem + 0.31vw, 1.25rem); /* 17 → 20 */
+  --fs-body:    1rem;                                        /* 16      */
+  --fs-small:   0.875rem;                                    /* 14      */
+  --fs-micro:   0.75rem;                                     /* 12      */
 
-  --lh-display: 1.04;
-  --lh-title:   1.15;
-  --lh-heading: 1.25;
-  --lh-body:    1.6;
-  --lh-tight:   1.4;
+  --ls-display: -0.043em;
+  --ls-title:   -0.024em;
+  --ls-heading: -0.020em;
+  --ls-subhead: -0.020em;
+  --ls-lead:    -0.013em;
+  --ls-body:    -0.010em;
+  --ls-micro:    0.06em;   /* micro labels open up, never tighten */
 
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --lh-display: 1.0;
+  --lh-title:   1.06;
+  --lh-heading: 1.2;
+  --lh-body:    1.5;
+  --lh-tight:   1.31;
+
+  --fw-regular:   400;
+  --fw-medium:    500;
+  --fw-bold:      700;
+  --fw-extrabold: 900;   /* Satoshi Black — the poster weight */
+
+  --font-sans: 'Satoshi', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* ── Layout ───────────────────────────────────────────────────────── */
+  --page-max: 1280px;
+  --band-pad: clamp(3.5rem, 2.40rem + 5.50vw, 6.5rem);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   DARK — the night rotation.
+
+   Not an inversion. The saturated bands step down to three deep colours
+   already in the palette (Forest Depth, Indigo Abyss, a deepened
+   Bordeaux) so the page keeps its colour-block identity at night rather
+   than collapsing into grey cards — and lime becomes the ink instead of
+   the fill, where cobalt as link text would sit at 2.6:1 and fail.
+   ═══════════════════════════════════════════════════════════════════════ */
 [data-theme="dark"] {
-  --colors-canvas: #0a0a0a;
-  --colors-canvas-soft: #121212;
-  --colors-canvas-soft-2: #1e1e1e;
-  --colors-ink: #f5f5f5;
-  --colors-body: #a1a1a1;
-  --colors-mute: #666666;
-  --colors-hairline: #2c2c2c;
-  --colors-hairline-strong: #4d4d4d;
-  --colors-surface: #161B1A;
-  /* A tonal lightening of the light-mode accent (#0E7490), not a second accent:
-     same hue, raised value so it clears WCAG AA as text on dark backgrounds.
-     #0E7490 measures 3.70:1 on the canvas, 3.50:1 on canvas-soft, 3.11:1 on
-     canvas-soft-2 and 3.25:1 on surface — all under the 4.5:1 minimum, and this
-     token is used as a text color in ~20 rules. #2E96B0 measures 5.76 / 5.45 /
-     4.85 / 5.06:1 on those same four surfaces. */
-  --colors-accent: #2E96B0;
-  /* Likewise a tonal lightening, not a new color. In light mode -deep is darker
-     than the accent; on a dark ground the hover step has to run the other way,
-     so this sits above #2E96B0 in value. Measures 9.12:1 on the canvas, 8.63:1
-     on canvas-soft, 7.68:1 on canvas-soft-2 and 8.02:1 on surface. */
-  --colors-accent-deep: #5FBDD0;
-  /* The wash inverts so accent-tinted panels stay dark rather than flashing a
-     light block on a near-black page. */
-  --colors-accent-wash: #0C2429;
-  /* The error tokens had NO dark override at all, so every error banner on the
-     site rendered as a glaring light-pink block on a near-black page, and the
-     error text on it measured only 3.83:1. These values clear 4.5:1 on all
-     three dark surfaces the tokens land on — the soft panel (#2a1416), the
-     canvas (#0a0a0a) and canvas-soft (#121212). */
-  --colors-error: #ff6b6b;
-  --colors-error-wash: #2a1416;
-  /* Inverted for the same reason as the accent: on a dark ground the hover step
-     goes up in value, not down. #ff6b6b on it measures 5.42:1. */
-  --colors-error-wash-strong: #3D1D20;
-  --colors-error-deep: #ff9d9d;
+  color-scheme: dark;
+
+  --colors-canvas:        #14171f;
+  --colors-canvas-soft:   #1a1e28;
+  --colors-canvas-soft-2: #272d3d;
+  --colors-surface:       var(--p-ink);
+
+  --colors-ink:            var(--p-bone);   /* 16.13:1 on canvas */
+  --colors-display:        var(--p-bone);
+  --colors-body:           #a9ae9f;         /*  7.89:1 on canvas */
+  --colors-mute:           #979d8f;         /*  6.20:1 on canvas, 5.05:1 on the disabled fill */
+  --colors-hairline:       #2f3547;
+  --colors-hairline-strong:#5a6178;
+
+  --colors-accent:      var(--p-lime);      /* 13.06:1 on canvas */
+  --colors-accent-deep: #e2f45c;
+  --colors-accent-wash: #22271a;
+
+  --colors-action:       var(--p-lime);
+  --colors-action-hover: #e2f45c;
+  --colors-action-ink:   var(--p-ink);
+
+  --colors-error:             #ff8fa0;
+  --colors-error-wash:        #2c1218;
+  --colors-error-wash-strong: #3f1a22;
+  --colors-error-deep:        #ffc0c9;
+
+  --colors-success: var(--p-lime);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BANDS — full-bleed colour blocks. The primary layout device.
+
+   A band paints edge-to-edge and re-declares the semantic layer for
+   everything inside it. Bottom edges are hard cuts, never gradient
+   fades. Bands are for wayfinding — hero, section breaks, FAQ, footer.
+   The surfaces people actually WORK on (tool workspaces, drop zones,
+   result tables) deliberately stay on paper or bone so a long conversion
+   is never fatiguing.
+   ═══════════════════════════════════════════════════════════════════════ */
+.band {
+  background-color: var(--band-bg, var(--colors-canvas));
+  padding-block: var(--band-pad);
+  width: 100%;
+  position: relative;
+}
+
+.band__inner {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--spacing-lg);
+  width: 100%;
+}
+
+.band--tight { padding-block: clamp(2rem, 1.4rem + 3vw, 3.5rem); }
+.band--flush-top { padding-block-start: 0; }
+
+/* ── Lime. Midnight Ink on lime is the only text pairing. The CTA
+      inverts here: ink fill, lime label — lime on lime would vanish, and
+      DESIGN.md's rule is one action COLOUR, which inversion keeps. ── */
+.band--lime {
+  --band-bg: var(--p-lime);
+  --colors-canvas:        var(--p-lime);
+  --colors-canvas-soft:   #c7dc1c;
+  --colors-canvas-soft-2: #bcd016;
+  --colors-surface:       var(--p-white);
+  --colors-ink:           var(--p-ink);      /* 11.44:1 */
+  --colors-display:       var(--p-ink);
+  --colors-body:          #343a30;           /*  8.53:1 */
+  --colors-mute:          #454b40;           /*  6.56:1 */
+  --colors-hairline:      rgba(30, 35, 48, 0.22);
+  --colors-hairline-strong: var(--p-ink);
+  --colors-accent:        var(--p-indigo);   /* 10.05:1 */
+  --colors-accent-deep:   var(--p-ink);
+  --colors-accent-wash:   rgba(255, 255, 255, 0.55);
+  --colors-action:        var(--p-ink);
+  --colors-action-hover:  #12161f;
+  --colors-action-ink:    var(--p-lime);
+}
+
+/* ── Cobalt. White carries the body copy (5.36:1); lime is reserved for
+      display type only, where 3.91:1 clears the large-text threshold. ── */
+.band--cobalt {
+  --band-bg: var(--p-cobalt);
+  --colors-canvas:        var(--p-cobalt);
+  --colors-canvas-soft:   #1f57bd;
+  --colors-canvas-soft-2: #1b4da8;
+  --colors-surface:       #1f57bd;
+  --colors-ink:           var(--p-white);
+  --colors-display:       var(--p-lime);     /*  3.91:1 — display only */
+  --colors-body:          var(--p-white);
+  --colors-mute:          #e2ecfb;           /*  4.50:1 */
+  --colors-hairline:      rgba(255, 255, 255, 0.30);
+  --colors-hairline-strong: var(--p-white);
+  --colors-accent:        var(--p-lime);
+  --colors-accent-deep:   var(--p-white);
+  --colors-accent-wash:   rgba(255, 255, 255, 0.14);
+  --colors-action:        var(--p-lime);
+  --colors-action-hover:  var(--p-lime-deep);
+  --colors-action-ink:    var(--p-ink);
+}
+
+/* ── Maroon. Lilac for display, white for body, a lifted maroon for the
+      cards that sit on it — depth from a hue jump, never a shadow. ── */
+.band--maroon {
+  --band-bg: var(--p-maroon);
+  --colors-canvas:        var(--p-maroon);
+  --colors-canvas-soft:   var(--p-maroon-lift);
+  --colors-canvas-soft-2: #a3162e;
+  --colors-surface:       var(--p-maroon-lift);
+  --colors-ink:           var(--p-white);
+  --colors-display:       var(--p-lilac);    /*  7.28:1 */
+  --colors-body:          var(--p-white);
+  --colors-mute:          #e3b9bd;           /*  6.60:1 */
+  --colors-hairline:      rgba(233, 192, 233, 0.38);
+  --colors-hairline-strong: var(--p-lilac);
+  --colors-accent:        var(--p-lilac);    /*  7.28:1 */
+  --colors-accent-deep:   var(--p-white);
+  --colors-accent-wash:   rgba(233, 192, 233, 0.14);
+  --colors-action:        var(--p-lime);
+  --colors-action-hover:  var(--p-lime-deep);
+  --colors-action-ink:    var(--p-ink);
+}
+
+/* ── Paper. A white band between saturated ones; the calm register. ── */
+.band--paper {
+  --band-bg: var(--p-white);
+  --colors-canvas:        var(--p-white);
+  --colors-canvas-soft:   var(--p-bone);
+  --colors-canvas-soft-2: #eeece7;
+  --colors-surface:       var(--p-white);
+}
+
+/* ── Bone. The default page ground. ── */
+.band--bone { --band-bg: var(--colors-canvas); }
+
+/* The band owns the vertical rhythm. Sections inside it were each
+   carrying their own top/bottom margin from before bands existed, which
+   stacked on top of the band padding and left uneven gaps between the
+   colour blocks. Horizontal padding and max-width stay with the section. */
+.band > section,
+.band > div:not(.band__inner) {
+  margin-block: 0;
+}
+
+/* DESIGN.md pairs every band with exactly one display colour: Midnight Ink
+   on lime, Voltage Lime on blue, Lilac Whisper on maroon. Only the display
+   type takes it — body copy stays white on both dark bands, where lime
+   measures 3.91:1 and lilac 3.37:1 against cobalt and would fail as prose.
+   The split is the point: the headline is large enough to carry a colour
+   that a paragraph cannot. */
+/* Hairline rules and dividers are redundant once a hue jump separates the
+   sections — DESIGN.md wants a hard colour cut, not a line. */
+.band .section-ruled {
+  margin-top: var(--spacing-3xl);
+  border-top: 0;
+  padding-top: 0;
+}
+.band .section-divider { display: none; }
+
+/* Dark-theme band rotation: the deep members of the same palette. */
+[data-theme="dark"] .band--lime {
+  --band-bg: var(--p-forest);
+  --colors-canvas:        var(--p-forest);
+  --colors-canvas-soft:   #2d6020;
+  --colors-canvas-soft-2: #356f26;
+  --colors-surface:       #2d6020;
+  --colors-ink:           var(--p-lime);     /*  6.92:1 */
+  --colors-display:       var(--p-lime);
+  --colors-body:          var(--p-white);    /*  9.49:1 */
+  --colors-mute:          #cfe0c6;
+  --colors-hairline:      rgba(210, 232, 35, 0.28);
+  --colors-hairline-strong: var(--p-lime);
+  --colors-accent:        var(--p-lime);
+  --colors-accent-deep:   var(--p-white);
+  --colors-accent-wash:   rgba(210, 232, 35, 0.14);
+  --colors-action:        var(--p-lime);
+  --colors-action-hover:  #e2f45c;
+  --colors-action-ink:    var(--p-ink);
+}
+
+[data-theme="dark"] .band--cobalt {
+  --band-bg: var(--p-indigo);
+  --colors-canvas:        var(--p-indigo);
+  --colors-canvas-soft:   #0a1caf;
+  --colors-canvas-soft-2: #0d22c9;
+  --colors-surface:       #0a1caf;
+  --colors-ink:           var(--p-lime);     /* 10.05:1 */
+  --colors-display:       var(--p-lime);
+  --colors-body:          var(--p-white);
+  --colors-mute:          #ccd6f7;
+}
+
+[data-theme="dark"] .band--maroon {
+  --band-bg: var(--p-maroon-deep);
+  --colors-canvas:        var(--p-maroon-deep);
+  --colors-canvas-soft:   var(--p-maroon);
+  --colors-canvas-soft-2: #8f0f26;
+  --colors-surface:       var(--p-maroon);
+  --colors-ink:           var(--p-lilac);    /*  9.14:1 */
+  --colors-display:       var(--p-lilac);
+  --colors-body:          var(--p-white);
+  --colors-mute:          #e3b9bd;
+}
+
+[data-theme="dark"] .band--paper {
+  --band-bg: var(--p-ink);
+  --colors-canvas:        var(--p-ink);
+  --colors-canvas-soft:   #262c3c;
+  --colors-canvas-soft-2: #303749;
+  --colors-surface:       #262c3c;
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--colors-canvas-soft);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  background-color: var(--colors-canvas);
   color: var(--colors-ink);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  line-height: 1.5;
+  line-height: var(--lh-body);
+  letter-spacing: var(--ls-body);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s, color 0.3s;
+}
+
+/* Full-bleed bands run to the display edge, so notch insets belong on
+   the page container rather than on each band. */
+body > main,
+body > header,
+body > footer {
+  padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
+}
+
+/* ── Heading defaults ──────────────────────────────────────────────────
+   The poster voice, applied once. Weight 900 with tight tracking is the
+   signature; `text-wrap: balance` keeps two-line editorial stacks from
+   stranding a single word on line two. */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-extrabold);
+  color: var(--colors-display);
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); }
+h2 { font-size: var(--fs-title);   line-height: var(--lh-title);   letter-spacing: var(--ls-title); }
+h3 { font-size: var(--fs-heading); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); }
+h4, h5, h6 { font-size: var(--fs-subhead); line-height: var(--lh-tight); letter-spacing: var(--ls-subhead); }
+
+p { text-wrap: pretty; }
+
+/* Anchored headings must clear the floating nav when jumped to. */
+:target { scroll-margin-top: 96px; }
+
+/* Skip link — first tab stop, invisible until focused. */
+.skip-link {
+  position: absolute;
+  left: var(--spacing-md);
+  top: -100px;
+  z-index: 500;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--rounded-pill);
+  background-color: var(--p-ink);
+  color: var(--p-lime);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-bold);
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: var(--spacing-md);
 }
 
 /* ============================================================
@@ -220,26 +517,16 @@ input:focus-visible,
 textarea:focus-visible,
 select:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--colors-link);
+  /* No border-radius here: forcing 8px squared off every pill it landed
+     on. The outline follows whatever radius the element already has. */
+  outline: 3px solid var(--colors-accent);
   outline-offset: 2px;
-  border-radius: var(--rounded-sm);
 }
 
-/* Primary button: hover and press feedback. */
-.button-primary {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.10);
-}
-.button-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-}
-.button-primary:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16);
-}
-.button-secondary:active:not(:disabled) {
-  transform: translateY(0);
-}
+/* Button hover/press feedback now lives with the button rules themselves,
+   further down — it was a second, competing definition of the same three
+   selectors, and its translateY lift was standing in for a shadow that
+   DESIGN.md no longer allows. */
 
 /* Hero: gentle staggered entrance for supporting elements only.
    The H1 (LCP element) is intentionally NOT animated so paint stays instant. */
@@ -254,24 +541,107 @@ select:focus-visible,
 }
 
 /* Navigation */
+/* ── Floating pill navigation ─────────────────────────────────────────
+   DESIGN.md: a white pill that floats over a full-bleed colour section
+   and "should never sit on a flat white page edge". So the shell behind
+   it carries the page's opening band colour, and the pill floats inside
+   it with the band showing on all four sides.
+
+   Once you scroll past the hero the shell fades to an opaque surface with
+   a hairline: a saturated strip trailing you down a 60-tool directory is
+   exactly the kind of thing that gets tiring. Colour marks the entrance;
+   it does not follow you around while you work. */
+.nav-shell {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--band-bg, var(--colors-canvas));
+  border-bottom: 1.5px solid transparent;
+  transition: background-color 0.25s ease, border-color 0.25s ease, padding 0.25s ease;
+}
+
+/* Explicit paper values, not --colors-surface: the shell carries a band
+   class, so --colors-surface here resolves to that band's card fill (a
+   blue, on a cobalt page) rather than to paper. */
+.nav-shell.is-stuck {
+  background-color: var(--p-white);
+  border-bottom-color: #dcd9d0;
+  padding-block: var(--spacing-xs);
+}
+
+[data-theme="dark"] .nav-shell.is-stuck {
+  background-color: var(--p-ink);
+  border-bottom-color: #2f3547;
+}
+
+/* The pill keeps the paper context no matter which band it floats on —
+   white fill, ink type — so the brand mark never re-tints per page.
+   --colors-canvas and --colors-surface have to be in this list: the
+   search field inside the pill paints from them, and without the reset
+   it inherited the band and rendered as a lime input on a lime page. */
 .nav-bar {
-  height: 64px;
-  /* Opaque. The blur that made a translucent bar legible is gone (DESIGN.md
-     bans blurred shapes), so the bar sits on --colors-surface instead. */
-  background-color: var(--colors-surface);
-  border-bottom: 1px solid var(--colors-hairline);
+  --colors-canvas: var(--p-white);
+  --colors-canvas-soft: #f3f3f1;
+  --colors-canvas-soft-2: #e6e3db;
+  --colors-surface: var(--p-white);
+  --colors-ink:  var(--p-ink);
+  --colors-body: #5f6357;
+  --colors-mute: #61655a;
+  --colors-hairline: #dcd9d0;
+  --colors-hairline-strong: var(--p-ink);
+  --colors-accent: var(--p-cobalt-ink);
+  --colors-link: var(--p-cobalt-ink);
+  --colors-link-bg-soft: #e4ecfb;
+  --colors-action: var(--p-lime);
+  --colors-action-ink: var(--p-ink);
+
+  min-height: 64px;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  background-color: var(--p-white);
+  border-radius: var(--rounded-pill);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--spacing-lg);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  transition: background-color 0.3s, border-color 0.3s;
+  transition: background-color 0.3s;
 }
 
 [data-theme="dark"] .nav-bar {
-  background-color: var(--colors-surface);
+  --colors-canvas: var(--p-ink);
+  --colors-canvas-soft: #262c3c;
+  --colors-canvas-soft-2: #272d3d;
+  --colors-surface: var(--p-ink);
+  --colors-ink:  var(--p-bone);
+  --colors-body: #a9ae9f;
+  --colors-mute: #8d9285;
+  --colors-hairline: #2f3547;
+  --colors-hairline-strong: #5a6178;
+  --colors-accent: var(--p-lime);
+  --colors-link: var(--p-lime);
+  --colors-link-bg-soft: #22271a;
+  background-color: var(--p-ink);
+}
+
+/* Phones: the pill becomes two rows rather than crushing the search field
+   to a 40px stub between the wordmark and the menu button. Still a
+   lozenge, just a taller one. */
+@media (max-width: 760px) {
+  .nav-shell { padding-inline: var(--spacing-sm); }
+  .nav-bar {
+    flex-wrap: wrap;
+    row-gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--rounded-card-lg);
+  }
+  .nav-bar .nav-search {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+    margin: 0;
+  }
 }
 
 .nav-brand {
@@ -299,9 +669,9 @@ select:focus-visible,
 
 
 .brand-text {
-  font-weight: 700;
-  font-size: 19px;
-  letter-spacing: -0.8px;
+  font-weight: var(--fw-extrabold);
+  font-size: var(--fs-subhead);
+  letter-spacing: var(--ls-subhead);
   color: var(--colors-ink);
 }
 
@@ -315,10 +685,10 @@ select:focus-visible,
      name was genuinely hard to read. --colors-body keeps "ocean" visually
      secondary to "Convert" while making it legible. */
   color: var(--colors-body);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  margin-left: 2px;
-  letter-spacing: -0.3px;
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-subhead);
+  margin-left: 1px;
+  letter-spacing: var(--ls-subhead);
 }
 
 .nav-links {
@@ -332,11 +702,11 @@ select:focus-visible,
   border: none;
   font-family: inherit;
   text-decoration: none;
-  color: var(--colors-body);
-  font-size: 13.5px;
-  font-weight: 500;
-  padding: 6px 12px;
-  border-radius: var(--rounded-sm);
+  color: var(--colors-ink);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+  padding: 8px 14px;
+  border-radius: var(--rounded-pill);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -363,10 +733,9 @@ select:focus-visible,
 }
 
 .nav-link.active {
-  color: var(--colors-link);
-  font-weight: 600;
-  background-color: var(--colors-link-bg-soft);
-  box-shadow: inset 0 0 0 2px var(--colors-link);
+  color: var(--colors-action-ink);
+  font-weight: var(--fw-bold);
+  background-color: var(--colors-action);
 }
 
 /* Central tools dropdown */
@@ -381,9 +750,9 @@ select:focus-visible,
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: var(--colors-canvas);
+  background-color: var(--colors-surface);
   width: 580px;
-  box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--colors-hairline);
+  border: 2px solid var(--colors-hairline-strong);
   border-radius: var(--rounded-lg);
   padding: var(--spacing-sm);
   z-index: 200;
@@ -528,24 +897,23 @@ select:focus-visible,
 .mobile-nav-menu {
   display: none;
   position: fixed;
+  /* A scroll that reaches the end of this panel must not chain to the
+     page behind it. */
+  overscroll-behavior: contain;
   top: 60px; /* overridden by JS to the exact header height */
   left: 0;
   right: 0;
   z-index: 99; /* below the sticky header (100), above page content */
   max-height: calc(100dvh - 60px);
   overflow-y: auto;
-  background-color: var(--colors-canvas);
-  border-bottom: 1px solid var(--colors-hairline);
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.10);
+  background-color: var(--colors-surface);
+  border-bottom: 2px solid var(--colors-hairline-strong);
   padding: var(--spacing-sm) var(--spacing-lg);
   flex-direction: column;
   gap: var(--spacing-xs);
   transition: background-color 0.3s, border-color 0.3s;
 }
 
-[data-theme="dark"] .mobile-nav-menu {
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.5);
-}
 
 .mobile-nav-menu.active {
   display: flex;
@@ -564,11 +932,11 @@ select:focus-visible,
 
 .mobile-nav-link {
   text-decoration: none;
-  color: var(--colors-body);
-  font-size: 14px;
-  font-weight: 500;
-  padding: 8px 12px;
-  border-radius: var(--rounded-sm);
+  color: var(--colors-ink);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+  padding: 12px 16px;
+  border-radius: var(--rounded-pill);
   transition: background-color 0.2s;
   display: flex;
   align-items: center;
@@ -581,10 +949,9 @@ select:focus-visible,
 }
 
 .mobile-nav-link.active {
-  color: var(--colors-link);
-  font-weight: 600;
-  background-color: var(--colors-link-bg-soft);
-  box-shadow: inset 0 0 0 2px var(--colors-link);
+  color: var(--colors-action-ink);
+  font-weight: var(--fw-bold);
+  background-color: var(--colors-action);
 }
 
 /* Containers */
@@ -604,73 +971,106 @@ select:focus-visible,
 }
 
 .page-title {
-  font-size: 36px;
-  font-weight: 600;
-  letter-spacing: -1.8px;
-  margin-bottom: var(--spacing-xs);
-  color: var(--colors-ink);
+  font-size: var(--fs-title);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--lh-title);
+  letter-spacing: var(--ls-title);
+  margin-bottom: var(--spacing-md);
+  color: var(--colors-display);
+  text-wrap: balance;
 }
 
 .page-description {
-  font-size: 17px;
+  font-size: var(--fs-lead);
+  letter-spacing: var(--ls-lead);
   color: var(--colors-body);
-  max-width: 750px;
-  line-height: 1.6;
+  /* DESIGN.md: body blocks are left-aligned in a generous measure. */
+  max-width: 62ch;
+  line-height: var(--lh-body);
 }
 
 /* Button Premium styling */
+/* ── Buttons ──────────────────────────────────────────────────────────
+   One action colour on the whole site. Bands invert the pair rather than
+   swapping in a different hue, so a CTA is always the same *thing* even
+   when it is ink-on-lime in one band and lime-on-ink in the next. */
 .button {
-  height: 44px;
-  padding: 0 var(--spacing-lg);
+  min-height: 48px;
+  padding: var(--spacing-md) var(--spacing-lg);
   border-radius: var(--rounded-pill);
-  font-size: 14px;
-  font-weight: 500;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-body);
+  line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-xs);
   cursor: pointer;
-  /* explicit properties (not `all`) — smoother, compositor-friendly */
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-  border: none;
+  /* explicit properties (not `all`) — compositor-friendly */
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  border: 2px solid transparent;
   text-decoration: none;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .button-primary {
-  background-color: var(--colors-ink);
-  color: var(--colors-canvas);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  background-color: var(--colors-action);
+  color: var(--colors-action-ink);
+  border-color: var(--colors-action);
 }
 
 .button-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  background-color: var(--colors-action-hover);
+  border-color: var(--colors-action-hover);
 }
 
+/* Press is the one place a transform earns its keep: it is feedback on a
+   real event, not decoration standing in for depth. */
 .button-primary:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  transform: scale(0.975);
   transition-duration: 0.05s;
 }
 
 .button-secondary {
-  background-color: var(--colors-canvas);
+  background-color: transparent;
   color: var(--colors-ink);
-  border: 1px solid var(--colors-hairline);
+  border: 2px solid var(--colors-hairline-strong);
 }
 
 .button-secondary:hover:not(:disabled) {
-  background-color: var(--colors-canvas-soft-2);
-  border-color: var(--colors-hairline-strong);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  background-color: var(--colors-ink);
+  color: var(--colors-canvas);
+  border-color: var(--colors-ink);
 }
 
 .button-secondary:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transform: scale(0.975);
   transition-duration: 0.05s;
+}
+
+/* Compact variant used by card CTAs. */
+.button-primary-sm {
+  min-height: 40px;
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-bold);
+  border-radius: var(--rounded-pill);
+  background-color: var(--colors-action);
+  color: var(--colors-action-ink);
+  border: 2px solid var(--colors-action);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+.button-primary-sm:hover {
+  background-color: var(--colors-action-hover);
+  border-color: var(--colors-action-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -692,11 +1092,18 @@ select:focus-visible,
   transform: translateY(-2px);
 }
 
-.button:disabled {
-  opacity: 0.4;
+/* A flat neutral, not a faded lime. At 0.4 opacity the action colour read
+   as a rendering fault rather than as "not yet" — and on a tool page the
+   primary button is disabled until a file is added, so it is the first
+   thing most visitors see. */
+.button:disabled,
+.button[disabled] {
+  background-color: var(--colors-canvas-soft-2);
+  border-color: var(--colors-canvas-soft-2);
+  color: var(--colors-mute);
+  opacity: 1;
   cursor: not-allowed;
   transform: none !important;
-  box-shadow: none !important;
 }
 
 /* Grid layout for categories and selector grids */
@@ -746,9 +1153,9 @@ select:focus-visible,
 
 /* Premium Card component */
 .tool-card {
-  background-color: var(--colors-canvas);
-  border: 1px solid var(--colors-hairline);
-  border-radius: var(--rounded-lg);
+  background-color: var(--colors-surface);
+  border: 1.5px solid var(--colors-hairline);
+  border-radius: var(--rounded-card-lg);
   padding: var(--spacing-xl);
   text-decoration: none;
   color: var(--colors-ink);
@@ -756,19 +1163,16 @@ select:focus-visible,
   flex-direction: column;
   justify-content: space-between;
   min-height: 220px;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, background-color 0.3s;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.01), 0 2px 2px rgba(0, 0, 0, 0.01);
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+  /* elevation removed — separation comes from colour, not shadow */
   position: relative;
   overflow: hidden;
 }
 
 .tool-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--colors-accent);
-  box-shadow: 
-    0 12px 30px -10px rgba(0, 0, 0, 0.06), 
-    0 0 0 1px var(--colors-accent),
-    0 0 20px color-mix(in srgb, var(--colors-accent) 4%, transparent);
+  border-color: var(--colors-hairline-strong);
+  background-color: var(--colors-canvas-soft);
+  /* elevation removed — separation comes from colour, not shadow */
 }
 
 .tool-card::before {
@@ -816,15 +1220,16 @@ select:focus-visible,
 }
 
 .tool-name {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.5px;
+  font-size: var(--fs-heading);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-heading);
 }
 
 .tool-description {
-  font-size: 14px;
+  font-size: var(--fs-small);
   color: var(--colors-body);
-  line-height: 1.6;
+  line-height: var(--lh-body);
 }
 
 .tool-action-link {
@@ -854,27 +1259,26 @@ select:focus-visible,
 
 .upload-card {
   position: relative;
-  background-color: var(--colors-canvas);
-  border: 1.5px dashed var(--colors-hairline-strong);
-  border-radius: var(--rounded-lg);
+  background-color: var(--colors-surface);
+  border: 2px dashed var(--colors-hairline-strong);
+  border-radius: var(--rounded-card-lg);
   padding: var(--spacing-2xl) var(--spacing-lg);
   text-align: center;
   cursor: pointer;
-  transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
   min-height: 220px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01);
+  /* elevation removed — separation comes from colour, not shadow */
 }
 
 .upload-card:hover, .upload-card.dragover {
-  border-color: var(--colors-ink);
-  background-color: var(--colors-canvas-soft-2);
-  transform: scale(0.992);
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02);
+  border-color: var(--colors-action);
+  background-color: var(--colors-canvas-soft);
+  /* elevation removed — separation comes from colour, not shadow */
 }
 
 .upload-icon {
@@ -911,21 +1315,21 @@ select:focus-visible,
 }
 
 .panel-card {
-  background-color: var(--colors-canvas);
-  border: 1px solid var(--colors-hairline);
-  border-radius: var(--rounded-lg);
+  background-color: var(--colors-surface);
+  border: 1.5px solid var(--colors-hairline);
+  border-radius: var(--rounded-card);
   padding: var(--spacing-lg);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.02);
+  /* elevation removed — separation comes from colour, not shadow */
 }
 
 .panel-section-title {
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-sans);
   color: var(--colors-mute);
   border-bottom: 1px solid var(--colors-hairline);
   padding-bottom: 6px;
@@ -948,20 +1352,24 @@ select:focus-visible,
 }
 
 .select-input, .form-input {
-  height: 40px;
+  height: 48px;
   width: 100%;
   border-radius: var(--rounded-sm);
-  border: 1px solid var(--colors-hairline);
-  padding: 0 var(--spacing-sm);
-  font-size: 14px;
-  background-color: var(--colors-canvas);
-  outline: none;
+  border: 1.5px solid var(--colors-hairline-strong);
+  padding: 0 var(--spacing-md);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  /* Explicit pair — a native select with only one of the two inherits
+     the Windows dark-mode system colours for the other. */
+  background-color: var(--colors-surface);
   color: var(--colors-ink);
   transition: border-color 0.2s;
 }
 
-.select-input:focus, .form-input:focus {
-  border-color: var(--colors-ink);
+.select-input:focus-visible, .form-input:focus-visible {
+  border-color: var(--colors-accent);
+  outline: 3px solid var(--colors-accent);
+  outline-offset: 1px;
 }
 
 /* Tables inside preview panels */
@@ -975,7 +1383,7 @@ select:focus-visible,
 .preview-table th {
   background-color: var(--colors-canvas-soft-2);
   color: var(--colors-ink);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-sans);
   font-weight: 500;
   text-transform: uppercase;
   font-size: 11px;
@@ -1007,12 +1415,13 @@ select:focus-visible,
 }
 
 .faq-title {
-  text-align: center;
-  font-size: 28px;
-  font-weight: 600;
-  letter-spacing: -1.2px;
+  font-size: var(--fs-title);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--lh-title);
+  letter-spacing: var(--ls-title);
   margin-bottom: var(--spacing-xl);
-  color: var(--colors-ink);
+  color: var(--colors-display);
+  text-wrap: balance;
 }
 
 .faq-container {
@@ -1022,9 +1431,9 @@ select:focus-visible,
 }
 
 .faq-item {
-  background-color: var(--colors-canvas);
-  border: 1px solid var(--colors-hairline);
-  border-radius: var(--rounded-md);
+  background-color: var(--colors-surface);
+  border: 1.5px solid var(--colors-hairline);
+  border-radius: var(--rounded-card);
   overflow: hidden;
   transition: border-color 0.2s, background-color 0.2s;
 }
@@ -1041,15 +1450,18 @@ select:focus-visible,
   width: 100%;
   text-align: left;
   font-family: inherit;
-  padding: var(--spacing-md) var(--spacing-lg);
-  font-size: 15px;
-  font-weight: 600;
+  padding: var(--spacing-lg);
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-lead);
+  gap: var(--spacing-md);
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
   user-select: none;
   color: var(--colors-ink);
+  touch-action: manipulation;
 }
 
 .faq-answer {
@@ -1057,9 +1469,9 @@ select:focus-visible,
   overflow: hidden;
   transition: max-height 0.25s cubic-bezier(0.16, 1, 0.3, 1), padding 0.2s;
   padding: 0 var(--spacing-lg);
-  font-size: 14px;
+  font-size: var(--fs-body);
   color: var(--colors-body);
-  line-height: 1.6;
+  line-height: var(--lh-body);
 }
 
 .faq-item.open .faq-answer {
@@ -1097,25 +1509,25 @@ select:focus-visible,
 }
 
 .info-card {
-  background-color: var(--colors-canvas);
-  border: 1px solid var(--colors-hairline);
-  border-radius: var(--rounded-md);
+  background-color: var(--colors-surface);
+  border: 1.5px solid var(--colors-hairline);
+  border-radius: var(--rounded-card);
   padding: var(--spacing-lg);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01), inset 0px 0px 0px 1px var(--colors-hairline);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+  /* elevation removed — separation comes from colour, not shadow */
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
 }
 
 .info-card:hover {
-  transform: translateY(-4px);
   border-color: var(--colors-hairline-strong);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), inset 0px 0px 0px 1px var(--colors-hairline-strong);
+  background-color: var(--colors-canvas-soft);
+  /* elevation removed — separation comes from colour, not shadow */
 }
 
 .info-card-step {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 600;
   color: var(--colors-link);
@@ -1216,7 +1628,7 @@ select:focus-visible,
   border-radius: var(--rounded-pill);
   overflow: hidden;
   position: relative;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+  /* elevation removed — separation comes from colour, not shadow */
 }
 
 .progress-bar-fill {
@@ -1225,25 +1637,27 @@ select:focus-visible,
   background: var(--colors-link);
   border-radius: var(--rounded-pill);
   transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--colors-accent) 40%, transparent);
+  /* elevation removed — separation comes from colour, not shadow */
 }
 
 .progress-label {
   font-size: 12px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-sans);
   color: var(--colors-body);
   font-weight: 500;
   letter-spacing: -0.2px;
 }
 
 /* Footer Section */
+/* The closing band. A page that opens on colour should not end on a grey
+   list of links — the maroon block is the hard bottom cut DESIGN.md asks
+   for, and it re-pairs every link inside it through the band tokens. */
 footer {
   margin-top: auto;
-  background-color: var(--colors-canvas);
-  border-top: 1px solid var(--colors-hairline);
-  padding: var(--spacing-2xl) var(--spacing-lg);
+  background-color: var(--band-bg);
+  padding: var(--band-pad) var(--spacing-lg) var(--spacing-2xl);
   z-index: 1;
-  transition: background-color 0.3s, border-color 0.3s;
+  transition: background-color 0.3s;
 }
 
 .footer-content {
@@ -1275,10 +1689,10 @@ footer {
 }
 
 .footer-desc {
-  font-size: 13.5px;
+  font-size: var(--fs-small);
   color: var(--colors-body);
-  max-width: 320px;
-  line-height: 1.6;
+  max-width: 34ch;
+  line-height: var(--lh-body);
 }
 
 .footer-column {
@@ -1288,12 +1702,11 @@ footer {
 }
 
 .footer-title {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-bold);
   text-transform: uppercase;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--colors-mute);
-  letter-spacing: 0.5px;
+  color: var(--colors-accent);
+  letter-spacing: var(--ls-micro);
 }
 
 .footer-links {
@@ -1304,20 +1717,22 @@ footer {
 
 .footer-link {
   text-decoration: none;
-  font-size: 13px;
+  font-size: var(--fs-small);
   color: var(--colors-body);
   transition: color 0.15s;
 }
 
 .footer-link:hover {
-  color: var(--colors-ink);
+  color: var(--colors-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .footer-bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid var(--colors-hairline);
+  border-top: 1.5px solid var(--colors-hairline);
   padding-top: var(--spacing-lg);
   flex-wrap: wrap;
   gap: var(--spacing-md);
@@ -1334,22 +1749,22 @@ footer {
   display: flex;
   align-items: flex-start;
   gap: var(--spacing-sm);
-  background-color: var(--colors-canvas-soft-2);
-  border: 1px solid var(--colors-hairline);
-  border-radius: var(--rounded-md);
+  background-color: var(--colors-surface);
+  border: 1.5px solid var(--colors-hairline);
+  border-radius: var(--rounded-card);
   padding: var(--spacing-sm) var(--spacing-md);
   max-width: 820px;
   text-align: left;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s;
 }
 
 [data-theme="dark"] .privacy-disclaimer-wrapper {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: var(--colors-canvas-soft);
 }
 
 .privacy-disclaimer-wrapper:hover {
   border-color: var(--colors-accent);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--colors-accent) 3%, transparent);
+  /* elevation removed — separation comes from colour, not shadow */
 }
 
 .privacy-disclaimer-icon {
@@ -1384,25 +1799,25 @@ footer {
 
 /* Premium Popular/Recommended Card Component */
 .popular-card {
-  background-color: var(--colors-canvas);
-  border: 1px solid var(--colors-hairline);
-  border-radius: var(--rounded-md);
+  background-color: var(--colors-surface);
+  border: 1.5px solid var(--colors-hairline);
+  border-radius: var(--rounded-card);
   padding: var(--spacing-md);
   text-decoration: none;
   color: var(--colors-ink);
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.3s;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.02), 0 2px 2px rgba(0, 0, 0, 0.02);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, background-color 0.3s;
+  /* elevation removed — separation comes from colour, not shadow */
   position: relative;
   overflow: hidden;
 }
 
 .popular-card:hover {
-  transform: translateY(-3px);
   border-color: var(--colors-hairline-strong);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03), 0 12px 16px -6px rgba(0, 0, 0, 0.05), 0 0 0 1px var(--colors-hairline-strong);
+  background-color: var(--colors-canvas-soft);
+  /* elevation removed — separation comes from colour, not shadow */
 }
 
 .popular-card::before {
@@ -1686,12 +2101,13 @@ footer {
 }
 
 .explore-title {
-  font-size: 32px;
-  font-weight: 600;
-  letter-spacing: -1.4px;
-  text-align: center;
+  font-size: var(--fs-title);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--lh-title);
+  letter-spacing: var(--ls-title);
   margin-bottom: var(--spacing-lg);
-  color: var(--colors-ink);
+  color: var(--colors-display);
+  text-wrap: balance;
 }
 
 .filter-tab-container {
@@ -1704,16 +2120,15 @@ footer {
 }
 
 .filter-tab {
-  background-color: var(--colors-canvas);
-  border: 1px solid var(--colors-hairline);
+  background-color: var(--colors-surface);
+  border: 1.5px solid var(--colors-hairline);
   border-radius: var(--rounded-pill);
-  padding: 8px 18px;
-  font-size: 13px;
+  padding: 10px 20px;
+  font-size: var(--fs-small);
   font-weight: 500;
   color: var(--colors-body);
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  outline: none;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
 .filter-tab:hover {
@@ -1722,17 +2137,17 @@ footer {
 }
 
 .filter-tab.active {
-  background-color: var(--colors-ink);
-  color: var(--colors-canvas);
-  border-color: var(--colors-ink);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background-color: var(--colors-action);
+  color: var(--colors-action-ink);
+  border-color: var(--colors-action);
+  /* elevation removed — separation comes from colour, not shadow */
 }
 
 [data-theme="dark"] .filter-tab.active {
-  background-color: var(--colors-ink);
-  color: var(--colors-canvas);
-  border-color: var(--colors-ink);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.03);
+  background-color: var(--colors-action);
+  color: var(--colors-action-ink);
+  border-color: var(--colors-action);
+  /* elevation removed — separation comes from colour, not shadow */
 }
 
 .explore-grid {
@@ -1758,25 +2173,25 @@ footer {
 }
 
 .explore-card {
-  background-color: var(--colors-canvas);
-  border: 1px solid var(--colors-hairline);
-  border-radius: var(--rounded-md);
+  background-color: var(--colors-surface);
+  border: 1.5px solid var(--colors-hairline);
+  border-radius: var(--rounded-card);
   padding: var(--spacing-md);
   text-decoration: none;
   color: var(--colors-ink);
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.3s;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.01), 0 2px 2px rgba(0, 0, 0, 0.01);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, background-color 0.3s;
+  /* elevation removed — separation comes from colour, not shadow */
   position: relative;
   overflow: hidden;
 }
 
 .explore-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--colors-accent);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02), 0 12px 20px -6px rgba(0, 0, 0, 0.04), 0 0 0 1px var(--colors-accent);
+  border-color: var(--colors-hairline-strong);
+  background-color: var(--colors-canvas-soft);
+  /* elevation removed — separation comes from colour, not shadow */
 }
 
 .explore-card::before {
@@ -1799,16 +2214,16 @@ footer {
   margin-bottom: 7px;
 }
 .fmt-chip {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-micro);
   font-weight: 600;
   letter-spacing: 0.3px;
   padding: 2px 7px;
   border-radius: 5px;
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--accent, var(--colors-link));
-  background: color-mix(in srgb, var(--accent, var(--colors-link)) 13%, transparent);
+  color: var(--colors-accent-deep);
+  background: color-mix(in srgb, var(--accent, var(--colors-link)) 15%, transparent);
 }
 .fmt-arrow {
   color: var(--colors-mute);
@@ -1921,9 +2336,142 @@ footer {
 }
 
 .guide-code code {
-  font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+  font-family: var(--font-mono);
   color: var(--colors-ink);
   background: none;
   padding: 0;
   white-space: pre;
+}
+
+/* ── Copy buttons ─────────────────────────────────────────────────────
+   These carried an emoji as their icon and swapped to "✅ Copied!" on
+   success. Now a Lucide glyph sits beside a real label, so the row needs
+   to lay out as icon + text rather than as a run of characters. */
+.jf-btn,
+.wc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.jf-btn svg,
+.wc-btn svg { flex-shrink: 0; }
+
+/* Footer privacy note: the padlock is a real glyph now, so it aligns to
+   the first line of text rather than sitting on the emoji baseline. */
+.privacy-disclaimer-icon {
+  display: flex;
+  align-items: center;
+  color: var(--colors-accent);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SCROLL MOTION
+
+   Three pieces, all scroll-linked rather than time-linked, so movement
+   tracks the user's own gesture instead of playing at them. Everything
+   here is progressive enhancement layered on the existing reveal system:
+   no JS and no scroll-timeline support means content is simply visible,
+   which keeps crawlers and no-JS users unaffected.
+
+   The H1 is deliberately never animated — it is the LCP element.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Reveals become scroll-linked ──────────────────────────────────
+   The IntersectionObserver path fires once at a threshold, so an element
+   entering slowly still snapped through a fixed 0.6s. Driving the same
+   keyframes from `view()` ties the movement to how far the element has
+   actually travelled into the viewport — and each child of a stagger row
+   gets its own timeline, so the stagger falls out of the geometry rather
+   than a hardcoded delay ladder.
+
+   Nested inside html.js-reveal on purpose: that class is only present
+   when JS ran AND reduced motion is off, so both guarantees still hold. */
+@supports (animation-timeline: view()) {
+  html.js-reveal [data-reveal],
+  html.js-reveal [data-reveal-stagger] > * {
+    animation: co-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+
+  /* The observer still adds .is-visible; the animation outranks its
+     transition, so the two cannot fight — but drop the delay ladder,
+     which would otherwise offset an already-correct position. */
+  html.js-reveal [data-reveal-stagger].is-visible > * {
+    transition: none;
+    transition-delay: 0s;
+  }
+}
+
+@keyframes co-rise {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── 2. Reading-progress rule in the nav ──────────────────────────────
+   The homepage is ~11,700px. A hairline of the action colour along the
+   bottom edge of the nav answers "how much of this is left?" without
+   adding a widget. Scroll-driven, so it costs no JS and no frame work;
+   where scroll timelines are unsupported it stays at zero width and is
+   invisible against the shell. */
+.nav-progress {
+  position: absolute;
+  left: 0;
+  bottom: -1.5px;
+  height: 3px;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  border-radius: 0 var(--rounded-pill) var(--rounded-pill) 0;
+  pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .nav-progress {
+    animation: co-progress linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes co-progress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* The rule sits on the shell, so its colour has to survive four grounds:
+   the band at rest, and the paper the shell fades to once stuck. Ink
+   covers lime, bone and paper; only the cobalt band is dark enough to
+   need the inversion. In dark mode every one of those grounds is dark,
+   so lime covers all of them. */
+.nav-progress { background-color: var(--p-ink); }
+.nav-shell.band--cobalt:not(.is-stuck) .nav-progress { background-color: var(--p-lime); }
+.nav-shell.band--maroon:not(.is-stuck) .nav-progress { background-color: var(--p-lilac); }
+[data-theme="dark"] .nav-progress { background-color: var(--p-lime); }
+
+/* ── 3. The tool filter follows you down the grid ─────────────────────
+   The Explore band is ~2,600px of cards. Pinning the filter row under the
+   nav means a visitor who scrolls halfway and realises they wanted only
+   PDFs can act on it there, instead of scrolling back to the top — the
+   single most likely place on this page for someone to give up. */
+.tool-filter {
+  position: sticky;
+  /* The stuck nav is 8px + 64px + 8px; the filter only ever pins well
+     below the fold, where the shell is always in its stuck state. */
+  top: 80px;
+  z-index: 40;
+  /* Opaque, or 65 cards scroll through it. */
+  background-color: var(--colors-canvas);
+  padding-block: var(--spacing-sm);
+  margin-inline: calc(var(--spacing-sm) * -1);
+  padding-inline: var(--spacing-sm);
+}
+
+@media (max-width: 760px) {
+  /* The mobile nav pill is two rows tall. */
+  .tool-filter { top: 116px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-progress { display: none; }
 }

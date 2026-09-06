@@ -3,7 +3,18 @@ import '../styles/theme.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
-const { title, description, lang = 'en', toolName, category, categorySlug, isTool = false, faqList = [], article = null } = Astro.props;
+const {
+  title, description, lang = 'en', toolName, category, categorySlug,
+  isTool = false, faqList = [], article = null,
+  /**
+   * Colour of the band the floating nav pill sits on: 'lime' | 'cobalt' |
+   * 'maroon' | 'paper' | 'bone'. DESIGN.md is explicit that the pill must
+   * never sit on a flat white page edge, so the page's opening band colour
+   * has to reach the header — and the header renders here, above the slot.
+   * Pages set this to whatever their first band is.
+   */
+  band = 'bone',
+} = Astro.props;
 
 // Determine paths for canonicals and alternates
 const canonicalPath = Astro.url.pathname;
@@ -45,6 +56,10 @@ const orgSchema = {
   "logo": "https://convertocean.com/web-app-manifest-512x512.png",
   "foundingDate": "2026",
   "description": "An independent, privacy-first suite of client-side file converters, PDF utilities, and business calculators that run entirely in the browser with no server uploads.",
+  // The public repository is the evidence behind the no-upload claim, so it
+  // belongs in the entity graph: sameAs is how a search engine ties the site
+  // to a verifiable off-site identity.
+  "sameAs": ["https://github.com/Kavyansh-55/ConvertOcean"],
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "customer support",
@@ -319,9 +334,20 @@ const relLink = (target: string) => {
     <link rel="alternate" hreflang={alt.lang} href={alt.href} />
   ))}
   
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!--
+    Satoshi (Fontshare, ITF free licence) stands in for Linktree's Linksans,
+    which is proprietary — DESIGN.md sanctions a geometric-sans substitute
+    and this is the closest free one. Weight 900 carries the display sizes
+    where the reference uses Linksans 800.
+
+    This replaces Inter + JetBrains Mono: two families, two Google Fonts
+    round trips, and Inter in particular is the default every templated site
+    already wears. Code samples fall back to the platform monospace, which
+    costs no request at all.
+  -->
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f%5B%5D=satoshi@400,500,700,900&display=swap">
   
   <!-- Favicon and App Icons -->
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
@@ -347,9 +373,10 @@ const relLink = (target: string) => {
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content="https://convertocean.com/og-image.png" />
 
-  <!-- Browser chrome color matches page background per theme -->
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0f" />
+  <!-- Browser chrome colour matches the page ground per theme
+       (Bone Canvas / the dark canvas), not the old white-and-near-black. -->
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f3f1" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#14171f" />
 
   {faqSchema && (
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}></script>
@@ -387,7 +414,9 @@ const relLink = (target: string) => {
   )}
 </head>
 <body>
-  <Header lang={lang} categorySlug={categorySlug} />
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <Header lang={lang} categorySlug={categorySlug} band={band} />
 
   <slot />
 

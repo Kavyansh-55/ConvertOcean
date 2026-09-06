@@ -20,7 +20,7 @@ const { slug, headline, subtitle } = Astro.props;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    /* elevation removed — separation comes from colour, not shadow */
     transition: border-color 0.2s, transform 0.2s;
   }
   .pct-card:hover {
@@ -74,7 +74,6 @@ const { slug, headline, subtitle } = Astro.props;
     font-size: 14px;
     background-color: var(--colors-canvas);
     color: var(--colors-ink);
-    outline: none;
     text-align: center;
     transition: border-color 0.2s;
   }
@@ -98,12 +97,12 @@ const { slug, headline, subtitle } = Astro.props;
     font-size: 22px;
     font-weight: 700;
     color: var(--colors-link);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
   }
   .pct-formula-text {
     font-size: 11px;
     color: var(--colors-mute);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     line-height: 1.6;
   }
 </style>

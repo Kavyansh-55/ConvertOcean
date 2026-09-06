@@ -75,7 +75,7 @@ const articleData = {
     }
 
     .guide-meta {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-sans);
       font-size: 11px;
       color: var(--colors-mute);
       text-transform: uppercase;
@@ -121,18 +121,18 @@ const articleData = {
       border: 1px solid var(--colors-hairline);
       border-radius: var(--rounded-lg);
       padding: var(--spacing-lg);
-      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.02), inset 0px 0px 0px 1px var(--colors-hairline);
+      /* elevation removed — separation comes from colour, not shadow */
       display: flex;
       align-items: center;
       gap: var(--spacing-lg);
       margin: var(--spacing-xl) 0;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
     }
 
     .tool-callout-card:hover {
       transform: translateY(-2px);
       border-color: var(--colors-hairline-strong);
-      box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.04), inset 0px 0px 0px 1px var(--colors-hairline-strong);
+      /* elevation removed — separation comes from colour, not shadow */
     }
 
     @media (max-width: 600px) {
@@ -265,7 +265,7 @@ const articleData = {
       border-radius: var(--rounded-lg);
       padding: var(--spacing-xl);
       margin: var(--spacing-xl) 0;
-      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.01);
+      /* elevation removed — separation comes from colour, not shadow */
     }
 
     /* FAQ accordion integration */
@@ -377,18 +377,18 @@ const articleData = {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-xs);
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.01);
+      transition: transform 0.2s, border-color 0.2s;
+      /* elevation removed — separation comes from colour, not shadow */
     }
 
     .related-guide-card:hover {
       transform: translateY(-2px);
       border-color: var(--colors-hairline-strong);
-      box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.03);
+      /* elevation removed — separation comes from colour, not shadow */
     }
 
     .related-guide-tag {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-sans);
       font-size: 10px;
       color: var(--colors-link);
       text-transform: uppercase;
@@ -422,7 +422,7 @@ const articleData = {
     }
   </style>
 
-  <main class="guide-main-container">
+  <main id="main-content" tabindex="-1" class="guide-main-container">
     <!-- Guide Header Section -->
     <article class="guide-header">
       <div class="guide-meta">

@@ -20,13 +20,13 @@ const { slug, headline, subtitle } = Astro.props;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    /* elevation removed — separation comes from colour, not shadow */
   }
   .calc-panel-title {
     font-size: 13px;
     font-weight: 600;
     text-transform: uppercase;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     color: var(--colors-mute);
     border-bottom: 1px solid var(--colors-hairline);
     padding-bottom: var(--spacing-xs);
@@ -45,7 +45,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     background-color: var(--colors-canvas);
     color: var(--colors-body);
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   }
   .mode-tab:hover { border-color: var(--colors-hairline-strong); }
   .mode-tab.active {
@@ -78,7 +78,7 @@ const { slug, headline, subtitle } = Astro.props;
     font-size: 16px;
     font-weight: 600;
     color: var(--colors-ink);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
   }
   .result-value.highlight {
     font-size: 24px;
@@ -96,7 +96,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .margin-bar-cost {
     height: 100%;
-    background: linear-gradient(135deg, #ff4d4d, #f9cb28);
+    background-color: var(--p-saffron);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -136,7 +136,7 @@ const { slug, headline, subtitle } = Astro.props;
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-md);
     padding: var(--spacing-md);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     font-size: 12px;
     color: var(--colors-body);
     line-height: 1.8;
@@ -160,7 +160,7 @@ const { slug, headline, subtitle } = Astro.props;
     <div class="calc-panel-title">Currency & Values</div>
     <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
       <label class="form-label" for="pmCurrency" style="font-size: 13px; font-weight: 500;">Currency</label>
-      <select id="pmCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); outline: none;">
+      <select id="pmCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink);">
         <option value="$" selected>$ – US Dollar (USD)</option>
         <option value="€">€ – Euro (EUR)</option>
         <option value="£">£ – British Pound (GBP)</option>
