@@ -4,6 +4,12 @@ compatibility_date = "2026-06-12"
 
 [assets]
 directory = "./dist"
+# Serve dist/404.html for URLs that match no asset. Without this the
+# default is an empty 404 body, so every mistyped or stale link landed on
+# the browser's own error page — no nav, no way back into the site — while
+# a fully built 404 page sat in dist/ unused. Cloudflare still returns a
+# real 404 status, so this is not a soft 404.
+not_found_handling = "404-page"
 
 [[routes]]
 pattern = "convertocean.com"
