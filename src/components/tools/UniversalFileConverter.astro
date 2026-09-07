@@ -144,7 +144,7 @@ const { slug, headline, subtitle } = Astro.props;
 
 <!-- Error Banner -->
 <div id="errorBanner" class="error-banner">
-  <span>⚠️</span>
+  <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
   <span id="errorMessage"></span>
 </div>
 
@@ -171,7 +171,7 @@ const { slug, headline, subtitle } = Astro.props;
           <span>PDF Export Quality</span>
           <span id="pdfQualityVal" style="font-family: monospace; font-weight: var(--fw-bold); color: var(--colors-link);">90%</span>
         </div>
-        <input type="range" id="pdfQualityRange" min="10" max="100" value="90" style="width: 140px; accent-color: var(--colors-ink); height: 6px; cursor: pointer;" />
+        <input type="range" id="pdfQualityRange" aria-label="PDF image quality (percent)" min="10" max="100" value="90" style="width: 140px; accent-color: var(--colors-ink); height: 6px; cursor: pointer;" />
       </div>
       <label style="font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; color: var(--colors-body);">
         <input type="checkbox" id="minifyJsonCheck" checked style="accent-color: var(--colors-ink); cursor: pointer; width: 15px; height: 15px;" />
@@ -209,18 +209,18 @@ const { slug, headline, subtitle } = Astro.props;
 
 <!-- Supported Formats Info Section -->
 <section class="supported-formats-box">
-  <h3 style="font-size: 18px; font-weight: var(--fw-bold); color: var(--colors-ink);">Supported Conversion Formats</h3>
+  <h2 style="font-size: var(--fs-subhead); font-weight: var(--fw-bold); letter-spacing: var(--ls-subhead); color: var(--colors-ink);">Supported Conversion Formats</h2>
   <p style="font-size: 14px; color: var(--colors-body); margin-top: 4px;">Convert Ocean supports offline, in-browser compilation of the following categories:</p>
   <div class="formats-grid">
     <div>
-      <h4 class="format-category-title">Documents</h4>
+      <h3 class="format-category-title">Documents</h3>
       <ul class="format-list">
         <li class="format-item">TXT (.txt)</li>
         <li class="format-item">PDF (.pdf)</li>
       </ul>
     </div>
     <div>
-      <h4 class="format-category-title">Spreadsheets</h4>
+      <h3 class="format-category-title">Spreadsheets</h3>
       <ul class="format-list">
         <li class="format-item">XLSX (.xlsx)</li>
         <li class="format-item">XLS (.xls)</li>
@@ -228,7 +228,7 @@ const { slug, headline, subtitle } = Astro.props;
       </ul>
     </div>
     <div>
-      <h4 class="format-category-title">Images</h4>
+      <h3 class="format-category-title">Images</h3>
       <ul class="format-list">
         <li class="format-item">PNG (.png)</li>
         <li class="format-item">JPG / JPEG</li>
@@ -237,7 +237,7 @@ const { slug, headline, subtitle } = Astro.props;
       </ul>
     </div>
     <div>
-      <h4 class="format-category-title">Structured Data</h4>
+      <h3 class="format-category-title">Structured Data</h3>
       <ul class="format-list">
         <li class="format-item">JSON (.json)</li>
         <li class="format-item">XML (.xml)</li>

@@ -82,9 +82,9 @@ const { slug, headline, subtitle } = Astro.props;
     background-color: var(--colors-link-bg-soft);
   }
   .preset-btn.active {
-    border-color: var(--colors-link);
-    background-color: var(--colors-link-bg-soft);
-    color: var(--colors-link-deep);
+    background-color: var(--colors-action);
+    color: var(--colors-action-ink);
+    border-color: var(--colors-action);
     font-weight: var(--fw-bold);
   }
   .tax-result-card {
@@ -185,14 +185,14 @@ const { slug, headline, subtitle } = Astro.props;
 
     <div class="tax-panel-title">Country / Region <span style="text-transform: none; font-weight: 400;">&mdash; sales tax, VAT &amp; GST</span></div>
     <div class="preset-grid" id="taxPresetGrid">
-      <button class="preset-btn active" data-rate={US_AVERAGE_COMBINED.toFixed(2)}>🇺🇸 US Avg {US_AVERAGE_COMBINED.toFixed(2)}%</button>
-      <button class="preset-btn" data-rate="20">🇬🇧 UK VAT 20%</button>
-      <button class="preset-btn" data-rate="5">🇨🇦 CA GST 5%</button>
-      <button class="preset-btn" data-rate="13">🇨🇦 CA HST 13%</button>
-      <button class="preset-btn" data-rate="10">🇦🇺 AU GST 10%</button>
-      <button class="preset-btn" data-rate="19">🇩🇪 DE VAT 19%</button>
-      <button class="preset-btn" data-rate="18">🇮🇳 IN GST 18%</button>
-      <button class="preset-btn" data-rate="10">🇯🇵 JP Tax 10%</button>
+      <button class="preset-btn active" data-rate={US_AVERAGE_COMBINED.toFixed(2)}>US Avg {US_AVERAGE_COMBINED.toFixed(2)}%</button>
+      <button class="preset-btn" data-rate="20">UK VAT 20%</button>
+      <button class="preset-btn" data-rate="5">CA GST 5%</button>
+      <button class="preset-btn" data-rate="13">CA HST 13%</button>
+      <button class="preset-btn" data-rate="10">AU GST 10%</button>
+      <button class="preset-btn" data-rate="19">DE VAT 19%</button>
+      <button class="preset-btn" data-rate="18">IN GST 18%</button>
+      <button class="preset-btn" data-rate="10">JP Tax 10%</button>
       <button class="preset-btn" id="presetBtnCustom" data-rate="custom">Custom Rate</button>
     </div>
     <p class="tax-state-note">Any country works &mdash; pick a preset, or type your own rate below. Currency is set separately.</p>

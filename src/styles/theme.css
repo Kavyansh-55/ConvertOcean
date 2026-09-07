@@ -2475,3 +2475,84 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   .nav-progress { display: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TOUCH TARGETS — tool controls.
+
+   The existing coarse-pointer block covers the link lists; it never
+   reached the controls inside the tools themselves, which is where an
+   undersized target actually costs someone a conversion. Measured on a
+   390px viewport with a touch pointer: the invoice row's delete button
+   was 12x19, the word-counter and JSON presets 22px tall, the toolbar
+   buttons 29px, and the FAQ rows 42px — two short of the WCAG 2.5.8
+   minimum.
+
+   Scoped to coarse pointers so mouse users keep the compact controls.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (pointer: coarse) {
+  /* Already block-level or flex; they only need the height. Setting a
+     display here would break .faq-question, which is a full-width flex
+     row with space-between. */
+  .item-delete-btn,
+  .wc-btn,
+  .jf-btn,
+  .faq-question {
+    min-height: 44px;
+  }
+
+  /* Inline anchors and chips: min-height does nothing on an inline box,
+     so these need the display change as well. */
+  .breadcrumbs a,
+  .sitemap-item-link,
+  .preset-chip,
+  .preset-btn,
+  .mode-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  /* Width matters too for the icon-only controls. */
+  .item-delete-btn {
+    min-width: 44px;
+  }
+
+  /* Form fields that had been squeezed to 36px inline. */
+  .form-input,
+  .select-input {
+    min-height: 44px;
+  }
+
+}
+
+/* The warning glyph in a tool's error banner is a real icon now, so it
+   needs to sit on the text baseline rather than the emoji baseline. */
+.banner-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Three controls sit under the 24x24 WCAG 2.5.8 minimum for every pointer
+   type, not just touch, and none of them qualifies for the spacing
+   exception the way the stacked link lists do:
+     - the invoice row's delete button was 12x19 and icon-only
+     - the word-counter / JSON preset chips were 22px tall
+     - the comparison-page breadcrumb was 14px tall
+   Fixed unconditionally rather than inside the coarse-pointer block. */
+.item-delete-btn {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.preset-chip,
+.preset-btn {
+  min-height: 24px;
+}
+
+.breadcrumbs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
