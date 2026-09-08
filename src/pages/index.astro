@@ -480,8 +480,9 @@ const filterKey = (slug: string, categorySlug: string) => {
 
     .search-input-wrapper:focus-within .search-kbd { opacity: 0; }
 
-    /* Below .nav-links' own breakpoint the search inherits that space. */
-    @media (max-width: 990px) {
+    /* Below .nav-links' own breakpoint the search inherits that space.
+       Kept in step with it — see the nav breakpoint note in theme.css. */
+    @media (max-width: 1120px) {
       .nav-search { max-width: none; }
     }
 

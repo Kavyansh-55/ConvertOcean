@@ -74,6 +74,11 @@ const { slug, headline, subtitle } = Astro.props;
        actually in it; `resize: vertical` still lets people grow it. */
     line-height: 1.5;
     min-height: calc(3 * 1.5em + 2 * var(--spacing-sm) + 2px);
+    /* Three lines of content wrap to four in a phone-width box, so a fixed
+       three-row floor clips again at 390px. Where supported the box simply
+       grows to fit what is in it; elsewhere the floor above still applies
+       and `resize: vertical` remains the manual escape hatch. */
+    field-sizing: content;
     font-family: inherit;
   }
   .textarea-input:focus {
@@ -84,7 +89,7 @@ const { slug, headline, subtitle } = Astro.props;
     border-collapse: collapse;
     font-size: 13px;
   }
-  .item-edit-table th {
+  .item-edit-table :global(th) {
     text-align: left;
     font-family: var(--font-sans);
     font-size: 11px;
@@ -92,7 +97,7 @@ const { slug, headline, subtitle } = Astro.props;
     text-transform: uppercase;
     padding-bottom: 6px;
   }
-  .item-edit-row td {
+  :global(.item-edit-row) :global(td) {
     padding: var(--spacing-xs) 0;
   }
   .item-delete-btn {
@@ -247,17 +252,17 @@ const { slug, headline, subtitle } = Astro.props;
       gap: var(--spacing-xs) !important;
     }
     .item-edit-table,
-    .item-edit-table thead,
-    .item-edit-table tbody,
-    .item-edit-table tr,
-    .item-edit-table td {
+    .item-edit-table :global(thead),
+    .item-edit-table :global(tbody),
+    .item-edit-table :global(tr),
+    .item-edit-table :global(td) {
       display: block !important;
       width: 100% !important;
     }
-    .item-edit-table thead {
+    .item-edit-table :global(thead) {
       display: none !important;
     }
-    .item-edit-row {
+    :global(.item-edit-row) {
       position: relative !important;
       padding: var(--spacing-sm) 0 !important;
       border-bottom: 1px solid var(--colors-hairline) !important;
@@ -265,10 +270,10 @@ const { slug, headline, subtitle } = Astro.props;
       flex-direction: column !important;
       gap: var(--spacing-xs) !important;
     }
-    .item-edit-row td {
+    :global(.item-edit-row) :global(td) {
       padding: 0 !important;
     }
-    .item-edit-row td:nth-child(1)::before {
+    :global(.item-edit-row) :global(td:nth-child(1))::before {
       content: "Description";
       font-size: 11px;
       font-weight: var(--fw-bold);
@@ -277,7 +282,7 @@ const { slug, headline, subtitle } = Astro.props;
       display: block;
       margin-bottom: 4px;
     }
-    .item-edit-row td:nth-child(2)::before {
+    :global(.item-edit-row) :global(td:nth-child(2))::before {
       content: "Quantity";
       font-size: 11px;
       font-weight: var(--fw-bold);
@@ -286,7 +291,7 @@ const { slug, headline, subtitle } = Astro.props;
       display: block;
       margin-bottom: 4px;
     }
-    .item-edit-row td:nth-child(3)::before {
+    :global(.item-edit-row) :global(td:nth-child(3))::before {
       content: "Rate";
       font-size: 11px;
       font-weight: var(--fw-bold);
@@ -295,10 +300,14 @@ const { slug, headline, subtitle } = Astro.props;
       display: block;
       margin-bottom: 4px;
     }
-    .item-edit-row td:nth-child(4) {
+    :global(.item-edit-row) :global(td:nth-child(4)) {
       position: absolute !important;
+      /* width:auto undoes the `width: 100%` every td gets from the block
+         rule above — without it this box spanned the full card and the
+         button sat at its left edge, over the description field. */
+      width: auto !important;
       right: 0 !important;
-      top: 24px !important;
+      top: 0 !important;
     }
     .item-delete-btn {
       padding: 4px !important;
