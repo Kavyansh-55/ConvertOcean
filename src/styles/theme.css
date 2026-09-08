@@ -956,7 +956,14 @@ select:focus-visible,
   justify-content: center;
 }
 
-@media (max-width: 990px) {
+/* Was 990px, which was ~110px too low: the desktop links stayed visible
+   down to 991px but the bar needs 1053px to lay out (measured, homepage
+   with the search field), and at a 1000px viewport the pill only gets
+   952px. The result was horizontal overflow on every page between 1000px
+   and 1070px — iPad landscape and small laptops could drag the whole page
+   sideways. 1120px hands over to the mobile menu while there is still
+   room to spare. */
+@media (max-width: 1120px) {
   .nav-links {
     display: none;
   }
@@ -1035,6 +1042,39 @@ select:focus-visible,
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+}
+
+/* body is a column flex container, so every <main> is a flex item and
+   inherits `min-width: auto` — an automatic minimum equal to its
+   min-content width, which content can push past the viewport. That is
+   what made /file-converter/ 329px wide in a 320px window. The same trap
+   is documented at .bft-preview-outer in BankFileTool.astro.
+
+   Gutters also tighten on the narrowest phones: 24px a side out of 320px
+   is a tenth of the screen spent on nothing, and it was the last few
+   pixels of that padding the layout could not find. */
+.page-container,
+.tool-main {
+  min-width: 0;
+}
+
+.page-container {
+  padding-inline: var(--spacing-lg);
+}
+
+@media (max-width: 380px) {
+  .page-container {
+    padding-inline: var(--spacing-md);
+  }
+  .tool-main {
+    grid-template-columns:
+      1fr
+      min(1000px, 100% - 2 * var(--spacing-md))
+      1fr;
+  }
+  .tool-main > .page-header {
+    padding-inline: var(--spacing-md);
+  }
 }
 
 /* ── Tool page shell ─────────────────────────────────────────────────
