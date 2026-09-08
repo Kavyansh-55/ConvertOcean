@@ -233,20 +233,20 @@ const categoryIntro = categoryIntroMap[category];
       line-height: 1.7;
       color: var(--colors-body);
     }
-    .category-intro h2 {
+    .category-intro :global(h2){
       font-size: 22px;
       font-weight: var(--fw-bold);
       color: var(--colors-ink);
       letter-spacing: -0.88px;
       margin-bottom: var(--spacing-md);
-      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+      font-family: var(--font-sans);
     }
-    .category-intro a {
+    .category-intro :global(a){
       color: var(--colors-link);
       text-decoration: underline;
       transition: color 0.2s;
     }
-    .category-intro a:hover {
+    .category-intro :global(a:hover){
       color: var(--colors-link-deep);
     }
 

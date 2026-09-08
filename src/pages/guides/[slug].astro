@@ -98,7 +98,7 @@ const articleData = {
       letter-spacing: -1.6px;
       color: var(--colors-ink);
       margin: var(--spacing-xs) 0 var(--spacing-sm);
-      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+      font-family: var(--font-sans);
     }
 
     @media (max-width: 600px) {
@@ -201,40 +201,40 @@ const articleData = {
       color: var(--colors-body);
     }
 
-    .guide-body h2 {
+    .guide-body :global(h2){
       font-size: 22px;
       font-weight: var(--fw-bold);
       letter-spacing: -0.8px;
       color: var(--colors-ink);
       margin-top: var(--spacing-2xl);
       margin-bottom: var(--spacing-sm);
-      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+      font-family: var(--font-sans);
     }
 
-    .guide-body h3 {
+    .guide-body :global(h3){
       font-size: 17px;
       font-weight: var(--fw-bold);
       letter-spacing: -0.4px;
       color: var(--colors-ink);
       margin-top: var(--spacing-lg);
       margin-bottom: var(--spacing-xs);
-      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+      font-family: var(--font-sans);
     }
 
-    .guide-body p {
+    .guide-body :global(p){
       margin-bottom: var(--spacing-md);
     }
 
-    .guide-body ul, .guide-body ol {
+    .guide-body :global(ul), .guide-body :global(ol){
       margin-bottom: var(--spacing-md);
       padding-left: var(--spacing-lg);
     }
 
-    .guide-body li {
+    .guide-body :global(li){
       margin-bottom: var(--spacing-xs);
     }
 
-    .guide-body blockquote {
+    .guide-body :global(blockquote){
       border-left: 3px solid var(--colors-link);
       padding: var(--spacing-sm) var(--spacing-md);
       margin: var(--spacing-lg) 0;
@@ -244,22 +244,22 @@ const articleData = {
       font-size: 14.5px;
     }
 
-    .guide-body blockquote strong {
+    .guide-body :global(blockquote strong){
       display: block;
       margin-bottom: 2px;
     }
 
-    .guide-body a {
+    .guide-body :global(a){
       color: var(--colors-link);
       text-decoration: underline;
       transition: color 0.15s;
     }
 
-    .guide-body a:hover {
+    .guide-body :global(a:hover){
       color: var(--colors-link-deep);
     }
 
-    .guide-body .content-card {
+    .guide-body :global(.content-card){
       background-color: var(--colors-canvas);
       border: 1px solid var(--colors-hairline);
       border-radius: var(--rounded-lg);

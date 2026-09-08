@@ -2333,10 +2333,21 @@ footer {
   font-size: 11.5px;
   color: var(--colors-mute);
   margin-top: 2px;
-  line-height: 1.3;
+  line-height: 1.35;
+  /* Was a single nowrap line with an ellipsis. At this width that clipped
+     every one of the 65 descriptions — all of them are 100+ characters —
+     and it clipped mid-word, so the whole grid read as broken rather than
+     abbreviated ("...spreadsheets to PDF directly in y…"). A two-line
+     clamp roughly doubles the useful text and, because it breaks at a
+     line boundary, looks deliberate. The fixed min-height keeps the cards
+     in a row the same height whether a description runs to one line or
+     two. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  min-height: calc(2 * 1.35em);
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .explore-card-arrow {

@@ -337,36 +337,36 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
       color: var(--colors-body);
       margin-top: var(--spacing-3xl);
     }
-    .rich-text h2 {
+    .rich-text :global(h2){
       font-size: 24px;
       font-weight: var(--fw-bold);
       color: var(--colors-ink);
       margin-top: var(--spacing-xl);
       margin-bottom: var(--spacing-md);
       letter-spacing: -0.96px;
-      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+      font-family: var(--font-sans);
     }
-    .rich-text h3 {
+    .rich-text :global(h3){
       font-size: 18px;
       font-weight: var(--fw-bold);
       color: var(--colors-ink);
       margin-top: var(--spacing-lg);
       margin-bottom: var(--spacing-sm);
       letter-spacing: -0.6px;
-      font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+      font-family: var(--font-sans);
     }
-    .rich-text p {
+    .rich-text :global(p){
       margin-bottom: var(--spacing-md);
     }
-    .rich-text ul {
+    .rich-text :global(ul){
       margin-bottom: var(--spacing-md);
       padding-left: var(--spacing-lg);
       list-style-type: disc;
     }
-    .rich-text li {
+    .rich-text :global(li){
       margin-bottom: var(--spacing-xs);
     }
-    .rich-text blockquote {
+    .rich-text :global(blockquote){
       border-left: 3px solid var(--colors-link);
       padding: var(--spacing-sm) var(--spacing-md);
       margin: var(--spacing-md) 0;
@@ -375,22 +375,22 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
       background-color: var(--colors-canvas-soft-2);
       border-radius: var(--rounded-sm);
     }
-    .rich-text a {
+    .rich-text :global(a){
       color: var(--colors-link);
       text-decoration: underline;
       transition: color 0.2s;
     }
-    .rich-text a:hover {
+    .rich-text :global(a:hover){
       color: var(--colors-link-deep);
     }
-    .rich-text code {
+    .rich-text :global(code){
       font-family: var(--font-sans);
       background-color: var(--colors-canvas-soft-2);
       padding: 2px 6px;
       border-radius: 4px;
       font-size: 13px;
     }
-    .rich-text .content-card {
+    .rich-text :global(.content-card){
       background-color: var(--colors-canvas);
       border: 1px solid var(--colors-hairline);
       border-radius: var(--rounded-lg);
