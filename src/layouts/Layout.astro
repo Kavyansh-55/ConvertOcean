@@ -188,6 +188,119 @@ const relLink = (target: string) => {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  
+  <!-- Canonical & Alternates -->
+  <link rel="canonical" href={canonicalURL} />
+  {alternates.map(alt => (
+    <link rel="alternate" hreflang={alt.lang} href={alt.href} />
+  ))}
+  
+  {/*
+    Satoshi (ITF Free Font Licence) stands in for Linktree's Linksans, which
+    is proprietary — DESIGN.md sanctions a geometric-sans substitute and this
+    is the closest free one. Weight 900 carries the display sizes where the
+    reference uses Linksans 800. It also replaced Inter + JetBrains Mono, so
+    code samples fall back to the platform monospace and cost no request.
+
+    Now served from /public/fonts; the @font-face rules are at the top of
+    theme.css. What used to sit here — two preconnects and a stylesheet from
+    api.fontshare.com — was a render-blocking request chain: that CSS had to
+    come back from one third-party host before the browser even learned the
+    font URLs, which lived on a *second* third-party host needing its own
+    DNS, TCP and TLS. Two serial round trips before a glyph could download,
+    and the late swap was the visible reflow of a 72px headline. Same-origin,
+    the chain is gone and the files ride the connection already open.
+
+    Only 400 and 900 are preloaded. 900 sets every <h1> — the LCP element on
+    nearly every page — and 400 sets body copy; those two are what the first
+    screen is made of. 500 and 700 are discovered from theme.css a beat later
+    and swap in without holding anything up, and preloading all four would
+    only have made the two that matter wait their turn.
+  */}
+  <link rel="preload" href="/fonts/satoshi-900.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/satoshi-400.woff2" as="font" type="font/woff2" crossorigin>
+  
+  <!-- Favicon and App Icons -->
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="COcean" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:image" content="https://convertocean.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="ConvertOcean — convert files without uploading them. 100% in your browser, private, free." />
+  <meta property="og:site_name" content="ConvertOcean" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content="https://convertocean.com/og-image.png" />
+
+  <!-- Browser chrome colour matches the page ground per theme
+       (Bone Canvas / the dark canvas), not the old white-and-near-black. -->
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f3f1" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#14171f" />
+
+  {faqSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}></script>
+  )}
+
+  <!-- Pre-render theme code to prevent flashing -->
+  <script is:inline>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      // Enable scroll-reveal ONLY when JS is active, IntersectionObserver
+      // is supported, and the user has not requested reduced motion.
+      // Otherwise content is never hidden (SEO/no-JS/a11y safe).
+      try {
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!reduce && 'IntersectionObserver' in window) {
+          document.documentElement.classList.add('js-reveal');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Schemas -->
+  <script type="application/ld+json" set:html={JSON.stringify(orgSchema)}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(webpageSchema)}></script>
+  {articleSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)}></script>
+  )}
+  {websiteSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)}></script>
+  )}
+  {softwareSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(softwareSchema)}></script>
+  )}
+  {/*
+    Third-party tags, deliberately last in <head>.
+
+    They used to be the first thing after <meta viewport> — ahead of the
+    title, the canonical, the font preloads and Astro's stylesheet links.
+    Both loaders are async, so they never blocked parsing, but they were
+    still the first two origins the preload scanner reached, and they
+    opened their DNS/TCP/TLS handshakes while the browser had not yet
+    been told about the CSS and fonts the first paint actually needs.
+    Nothing about their behaviour changes down here: same tags, same
+    async, still on every page. They simply stop going first.
+
+    coTrack has to stay in <head> — the is:inline scripts inside tool
+    components call window.coTrack, and this still runs before any of
+    them, since the whole <body> is parsed after this point.
+  */}
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-7STX0V993V" is:inline></script>
   <script is:inline>
@@ -325,93 +438,6 @@ const relLink = (target: string) => {
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9876671630598283"
      crossorigin="anonymous" is:inline></script>
 
-  <title>{title}</title>
-  <meta name="description" content={description}>
-  
-  <!-- Canonical & Alternates -->
-  <link rel="canonical" href={canonicalURL} />
-  {alternates.map(alt => (
-    <link rel="alternate" hreflang={alt.lang} href={alt.href} />
-  ))}
-  
-  {/*
-    Satoshi (Fontshare, ITF free licence) stands in for Linktree's Linksans,
-    which is proprietary — DESIGN.md sanctions a geometric-sans substitute
-    and this is the closest free one. Weight 900 carries the display sizes
-    where the reference uses Linksans 800.
-
-    This replaces Inter + JetBrains Mono: two families, two Google Fonts
-    round trips, and Inter in particular is the default every templated site
-    already wears. Code samples fall back to the platform monospace, which
-    costs no request at all.
-  */}
-  <link rel="preconnect" href="https://api.fontshare.com">
-  <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
-  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f%5B%5D=satoshi@400,500,700,900&display=swap">
-  
-  <!-- Favicon and App Icons -->
-  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-  <link rel="shortcut icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <meta name="apple-mobile-web-app-title" content="COcean" />
-  <link rel="manifest" href="/site.webmanifest" />
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content={title} />
-  <meta property="og:description" content={description} />
-  <meta property="og:url" content={canonicalURL} />
-  <meta property="og:image" content="https://convertocean.com/og-image.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="ConvertOcean — convert files without uploading them. 100% in your browser, private, free." />
-  <meta property="og:site_name" content="ConvertOcean" />
-
-  <!-- Twitter / X -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={title} />
-  <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content="https://convertocean.com/og-image.png" />
-
-  <!-- Browser chrome colour matches the page ground per theme
-       (Bone Canvas / the dark canvas), not the old white-and-near-black. -->
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f3f1" />
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#14171f" />
-
-  {faqSchema && (
-    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}></script>
-  )}
-
-  <!-- Pre-render theme code to prevent flashing -->
-  <script is:inline>
-    (function() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-      // Enable scroll-reveal ONLY when JS is active, IntersectionObserver
-      // is supported, and the user has not requested reduced motion.
-      // Otherwise content is never hidden (SEO/no-JS/a11y safe).
-      try {
-        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (!reduce && 'IntersectionObserver' in window) {
-          document.documentElement.classList.add('js-reveal');
-        }
-      } catch (e) {}
-    })();
-  </script>
-
-  <!-- Schemas -->
-  <script type="application/ld+json" set:html={JSON.stringify(orgSchema)}></script>
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>
-  <script type="application/ld+json" set:html={JSON.stringify(webpageSchema)}></script>
-  {articleSchema && (
-    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)}></script>
-  )}
-  {websiteSchema && (
-    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)}></script>
-  )}
-  {softwareSchema && (
-    <script type="application/ld+json" set:html={JSON.stringify(softwareSchema)}></script>
-  )}
 </head>
 <body>
   <a href="#main-content" class="skip-link">Skip to main content</a>
