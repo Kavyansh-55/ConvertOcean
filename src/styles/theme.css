@@ -1,5 +1,52 @@
 /* ConvertOcean Design System - Shared theme.css */
 
+/* ═══════════════════════════════════════════════════════════════════════
+   SATOSHI — self-hosted (Fontshare / ITF Free Font Licence).
+
+   Was two render-blocking round trips to a third party: the stylesheet
+   came from api.fontshare.com and only *then* revealed four .woff2 URLs
+   on cdn.fontshare.com — a different host, so another DNS + TCP + TLS
+   handshake before a single glyph started downloading. The <h1> is the
+   LCP element on nearly every page, so that chain was the page's slowest
+   step, and the swap when it finally resolved was the visible "jump".
+
+   Served from our own origin the connection is already open, the files
+   are discovered while the HTML is still parsing (see the preloads in
+   Layout.astro), and the whole second hop disappears.
+
+   woff2 only. Every browser that has supported this site for years
+   supports it, and the .woff/.ttf fallbacks Fontshare shipped were dead
+   weight in the src list.
+   ═══════════════════════════════════════════════════════════════════════ */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/satoshi-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/satoshi-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/satoshi-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/satoshi-900.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Reset & Variables */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -559,7 +606,14 @@ select:focus-visible,
   padding: var(--spacing-sm) var(--spacing-lg);
   background-color: var(--band-bg, var(--colors-canvas));
   border-bottom: 1.5px solid transparent;
-  transition: background-color 0.25s ease, border-color 0.25s ease, padding 0.25s ease;
+  /* Colour only. `padding` was in this list, and the shell is
+     position: sticky — so it occupies flow space, and animating its
+     padding reflowed the entire page below it on every frame for 250ms
+     each time you crossed the hero boundary. On a 65-tool directory
+     that is the most expensive thing the page does while scrolling.
+     The 4px compaction still happens, it just lands in one step
+     instead of fifteen, which mid-scroll reads as identical. */
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 /* Explicit paper values, not --colors-surface: the shell carries a band
@@ -651,6 +705,23 @@ select:focus-visible,
   text-decoration: none;
   color: var(--colors-ink);
   letter-spacing: -0.7px;
+  /* The pill is `justify-content: space-between` across four children,
+     and at the 1280px max width the links, the search field and the
+     controls consume nearly all of it — so the free space that was
+     supposed to separate the wordmark from the first nav link rounded
+     down to almost nothing and "Convertocean" sat against the Home
+     pill's edge. Every other seam in the bar is spaced deliberately
+     (the search field carries 24px of its own margin); this one was the
+     only one left to chance. A hard minimum fixes it at any width. */
+  margin-inline-end: var(--spacing-md);
+}
+
+/* Above the point where the links would start to crowd, take the wider
+   step — the bar has the room, and DESIGN.md asks for a generous rhythm. */
+@media (min-width: 1120px) {
+  .nav-brand {
+    margin-inline-end: var(--spacing-lg);
+  }
 }
 
 .brand-logo-svg {

@@ -410,13 +410,35 @@ const filterKey = (slug: string, categorySlug: string) => {
       border-color: var(--colors-hairline-strong);
     }
 
-    /* The input suppresses its own outline, so the wrapper carries the
-       focus ring for the whole compound control. */
+    /* The wrapper carries the focus ring for the whole compound control
+       (field + icon + shortcut hint), so it is the thing with a radius to
+       follow. This comment always claimed the input suppressed its own
+       outline — it never did, and that was the bug: theme.css gives every
+       `input:focus-visible` a 3px ring, and .search-input has `border:
+       none` and no radius, so it drew a hard-cornered rectangle 3px wide
+       and 2px out, sitting *outside* this rounded 2px one and hiding it.
+       Chrome matches :focus-visible on text inputs even for mouse clicks,
+       so it appeared on every click, not just on Tab.
+
+       The suppression rule now directly below is the missing half; this
+       ring is its replacement, so the field is still obviously focused. */
     .search-input-wrapper:focus-within {
       border-color: var(--colors-accent);
       background-color: var(--colors-surface);
-      outline: 2px solid var(--colors-accent);
-      outline-offset: 1px;
+      /* Matches the 3px/2px ring theme.css uses everywhere else, so the
+         search field is not the one control with a thinner focus state.
+         An outline's own corners are the element's radius plus the
+         offset, so this stays concentric with the field's 12px. */
+      outline: 3px solid var(--colors-accent);
+      outline-offset: 2px;
+    }
+
+    /* Focus belongs to the wrapper above, not to the bare input inside
+       it. Without this the global input:focus-visible ring in theme.css
+       squares off the corner. */
+    .search-input:focus,
+    .search-input:focus-visible {
+      outline: none;
     }
 
     .search-icon {

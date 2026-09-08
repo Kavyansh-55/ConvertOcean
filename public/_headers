@@ -1,0 +1,38 @@
+# Cache policy for Cloudflare Workers static assets.
+#
+# Without this file every asset is served `max-age=0, must-revalidate`,
+# so a returning visitor paid a conditional request for the 42 KB
+# stylesheet, all four font faces and every icon before the page could
+# paint — a full round trip each, on a page whose own HTML is the only
+# thing that actually changes between visits.
+#
+# HTML is deliberately absent below: it keeps the revalidating default,
+# which is what lets a deploy go live immediately.
+
+# Astro's build output is content-hashed — the filename changes whenever
+# the bytes do, so these can never go stale.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Self-hosted Satoshi. The names are hand-written rather than hashed, so
+# if a face is ever re-cut, rename the file rather than editing in place.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# Icons, the wordmark and the social card. Long-lived but not immutable —
+# a week means a change still reaches people quickly.
+/logo.png
+  Cache-Control: public, max-age=604800
+/og-image.png
+  Cache-Control: public, max-age=604800
+/favicon.ico
+  Cache-Control: public, max-age=604800
+/favicon-96x96.png
+  Cache-Control: public, max-age=604800
+/apple-touch-icon.png
+  Cache-Control: public, max-age=604800
+/web-app-manifest-192x192.png
+  Cache-Control: public, max-age=604800
+/web-app-manifest-512x512.png
+  Cache-Control: public, max-age=604800
