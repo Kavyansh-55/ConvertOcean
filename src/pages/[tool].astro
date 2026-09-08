@@ -457,7 +457,15 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     }
   </style>
 
-  <main id="main-content" tabindex="-1" class="page-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl); position: relative; z-index: 1;">
+  {/*
+    A full-bleed grid rather than a max-width box. The tool's own
+    .page-header is a direct child of <main> (Astro components render
+    without a wrapper), so the grid can hand that one row the full width
+    and hold everything else to the 1000px measure — which is what lets
+    the entrance band break out without a 100vw trick, and 100vw would
+    have overflowed by the scrollbar width. See .tool-main in theme.css.
+  */}
+  <main id="main-content" tabindex="-1" class="tool-main">
     <!-- Active Tool Interface -->
     <ToolComponent slug={toolData.slug} headline={toolData.headline} subtitle={toolData.subtitle} />
 
