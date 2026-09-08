@@ -20,6 +20,25 @@ const relLink = (target: string) => {
           <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
         </a>
         <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+
+        {/* The comparison pages used to hang off the bottom of the
+            "Resources & Company" list, which made that column 18 rows
+            tall. The grid row takes its height from the tallest column,
+            so the brand cell sat above ~420px of empty maroon. They are
+            their own thing anyway, and this is the space they fill. */}
+        <span class="footer-title footer-title--compare">Compare</span>
+        <div class="footer-links footer-links--compare">
+          <a href={relLink('/vs/smallpdf/')} class="footer-link">vs Smallpdf</a>
+          <a href={relLink('/vs/ilovepdf/')} class="footer-link">vs iLovePDF</a>
+          <a href={relLink('/vs/adobe-acrobat/')} class="footer-link">vs Adobe Acrobat</a>
+          <a href={relLink('/vs/cloudconvert/')} class="footer-link">vs CloudConvert</a>
+          <a href={relLink('/vs/zamzar/')} class="footer-link">vs Zamzar</a>
+          <a href={relLink('/vs/convertio/')} class="footer-link">vs Convertio</a>
+          <a href={relLink('/vs/iloveimg/')} class="footer-link">vs iLoveIMG</a>
+          <a href={relLink('/vs/pdf24/')} class="footer-link">vs PDF24</a>
+          <a href={relLink('/vs/sejda/')} class="footer-link">vs Sejda</a>
+          <a href={relLink('/vs/tinywow/')} class="footer-link">vs TinyWow</a>
+        </div>
       </div>
       
       <div class="footer-column">
@@ -103,17 +122,6 @@ const relLink = (target: string) => {
           <a href={relLink('/privacy/')} class="footer-link">Privacy Policy</a>
           <a href={relLink('/terms/')} class="footer-link">Terms &amp; Conditions</a>
           <a href={relLink('/sitemap/')} class="footer-link">Sitemap</a>
-          <div style="height: 1px; background-color: var(--colors-hairline); margin: 6px 0;"></div>
-          <a href={relLink('/vs/smallpdf/')} class="footer-link">vs Smallpdf</a>
-          <a href={relLink('/vs/ilovepdf/')} class="footer-link">vs iLovePDF</a>
-          <a href={relLink('/vs/adobe-acrobat/')} class="footer-link">vs Adobe Acrobat</a>
-          <a href={relLink('/vs/cloudconvert/')} class="footer-link">vs CloudConvert</a>
-          <a href={relLink('/vs/zamzar/')} class="footer-link">vs Zamzar</a>
-          <a href={relLink('/vs/convertio/')} class="footer-link">vs Convertio</a>
-          <a href={relLink('/vs/iloveimg/')} class="footer-link">vs iLoveIMG</a>
-          <a href={relLink('/vs/pdf24/')} class="footer-link">vs PDF24</a>
-          <a href={relLink('/vs/sejda/')} class="footer-link">vs Sejda</a>
-          <a href={relLink('/vs/tinywow/')} class="footer-link">vs TinyWow</a>
         </div>
       </div>
     </div>

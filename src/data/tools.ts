@@ -1037,7 +1037,7 @@ const rawTools: ToolData[] = [
     headline: 'Merge Word',
     subtitle: 'Stitch multiple DOCX documents together client-side in your browser memory.',
     quickAnswer: 'To merge Word documents, add two or more .docx files above and download a single combined document. Inline images from every source file are carried across and re-linked correctly, which is where most browser-based mergers fail. One honest limit: style and numbering definitions are not merged across documents, so heading appearance follows the first file. The merge runs entirely in your browser.',
-    icon: '🥞',
+    icon: '📝',
     category: 'Document Tools',
     categorySlug: 'document-tools',
     faqs: [
@@ -1055,7 +1055,7 @@ const rawTools: ToolData[] = [
     headline: 'Split Word',
     subtitle: 'Partition DOCX documents into separate downloadable files locally in browser memory.',
     quickAnswer: 'To split a Word document, select your .docx above and choose where to break it: at every Heading 1, or after a set number of paragraphs. Heading-based splitting is the useful one for chapters, sections, and reports, because it follows the document\'s own structure rather than an arbitrary count. Each section downloads as its own .docx. The file is processed in your browser.',
-    icon: '✂️',
+    icon: '📝',
     category: 'Document Tools',
     categorySlug: 'document-tools',
     faqs: [
@@ -1072,7 +1072,7 @@ const rawTools: ToolData[] = [
     headline: 'Merge PowerPoint',
     subtitle: 'Combine slides from multiple PPTX files client-side into a single presentation locally.',
     quickAnswer: 'To merge PowerPoint presentations, add two or more .pptx files above and download one combined deck, with each source presentation\'s slides copied in order along with their layouts. Legacy .ppt files are not supported — open them in PowerPoint or LibreOffice and save as .pptx first. The merge is performed on your own device, so unreleased decks never leave your machine.',
-    icon: '🥞',
+    icon: '📝',
     category: 'Document Tools',
     categorySlug: 'document-tools',
     faqs: [
@@ -1089,7 +1089,7 @@ const rawTools: ToolData[] = [
     headline: 'Split PowerPoint',
     subtitle: 'Select specific slide ranges or split every slide into a separate presentation locally.',
     quickAnswer: 'To split a PowerPoint, add your .pptx above and choose either to break every slide into its own presentation, or to extract custom ranges such as 1-5, 8, 11-13. Each extracted slide keeps its layout and embedded media at original quality, because the tool copies from the original file rather than re-rendering anything. Legacy .ppt is not supported — save it as .pptx first. The split runs entirely in your browser.',
-    icon: '✂️',
+    icon: '📝',
     category: 'Document Tools',
     categorySlug: 'document-tools',
     faqs: [

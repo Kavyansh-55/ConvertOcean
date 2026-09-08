@@ -67,7 +67,13 @@ const { slug, headline, subtitle } = Astro.props;
     background-color: var(--colors-canvas);
     color: var(--colors-ink);
     resize: vertical;
-    min-height: 60px;
+    /* Every one of these ships three lines of default content. At the
+       browser's default rows=2 the third line was clipped in half on
+       first paint, so the tool looked broken before anyone touched it.
+       Three rows plus an explicit line-height makes the box fit what is
+       actually in it; `resize: vertical` still lets people grow it. */
+    line-height: 1.5;
+    min-height: calc(3 * 1.5em + 2 * var(--spacing-sm) + 2px);
     font-family: inherit;
   }
   .textarea-input:focus {
@@ -382,7 +388,7 @@ const { slug, headline, subtitle } = Astro.props;
       </div>
       <div class="form-group">
         <label class="form-label" for="inputVendorAddress">Address & Contact Info</label>
-        <textarea id="inputVendorAddress" class="textarea-input">12 Developer Lane, Indiranagar&#10;Bengaluru, KA 560038&#10;hello@kavyaj.studio</textarea>
+        <textarea id="inputVendorAddress" class="textarea-input" rows="3">12 Developer Lane, Indiranagar&#10;Bengaluru, KA 560038&#10;hello@kavyaj.studio</textarea>
       </div>
       <div class="form-group">
         <label class="form-label" for="inputVendorTaxId">Business GSTIN / VAT ID / Tax ID (Optional)</label>
@@ -399,7 +405,7 @@ const { slug, headline, subtitle } = Astro.props;
       </div>
       <div class="form-group">
         <label class="form-label" for="inputClientAddress">Address & Details</label>
-        <textarea id="inputClientAddress" class="textarea-input">45 Cloud Towers, Tech City&#10;Mumbai, MH 400001&#10;billing@galactic.com</textarea>
+        <textarea id="inputClientAddress" class="textarea-input" rows="3">45 Cloud Towers, Tech City&#10;Mumbai, MH 400001&#10;billing@galactic.com</textarea>
       </div>
       <div class="form-group">
         <label class="form-label" for="inputClientTaxId">Customer GSTIN / VAT ID / Tax ID (Optional)</label>
@@ -430,7 +436,7 @@ const { slug, headline, subtitle } = Astro.props;
       <div class="form-card-title">Terms & Bank Notes</div>
       <div class="form-group">
         <label class="form-label" for="inputTerms">Payment Terms & Instructions</label>
-        <textarea id="inputTerms" class="textarea-input">Bank: HDFC Bank | A/C: 9876543210&#10;IFSC: HDFC0000123&#10;Payment is due within 15 days of invoice date.</textarea>
+        <textarea id="inputTerms" class="textarea-input" rows="3">Bank: HDFC Bank | A/C: 9876543210&#10;IFSC: HDFC0000123&#10;Payment is due within 15 days of invoice date.</textarea>
       </div>
     </div>
 

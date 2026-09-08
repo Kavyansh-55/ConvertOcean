@@ -1037,6 +1037,68 @@ select:focus-visible,
   gap: var(--spacing-lg);
 }
 
+/* ── Tool page shell ─────────────────────────────────────────────────
+   Tool pages had no band at all: an 89px cobalt strip behind the nav and
+   then flat bone for the rest of the page. DESIGN.md is explicit that the
+   pill must never sit on a flat page edge, and these are the pages people
+   actually land on from search — so the site's whole voice was missing
+   exactly where it counts.
+
+   The grid is what makes the band possible without touching 36 tool
+   components: their .page-header is a direct child of <main>, so it can
+   be handed the full width while every other row stays in the centre
+   1000px column. min() rather than 100vw — 100vw includes the scrollbar
+   and would overflow by its width. */
+.tool-main {
+  display: grid;
+  grid-template-columns:
+    1fr
+    min(1000px, 100% - 2 * var(--spacing-lg))
+    1fr;
+  padding-block-end: var(--spacing-4xl);
+  position: relative;
+  z-index: 1;
+}
+
+.tool-main > * {
+  grid-column: 2;
+}
+
+/* The entrance. Colour stops at the headline: DESIGN.md's own rule is
+   that bands mark entrances while tool workspaces stay on paper, so the
+   dropzone and results keep their bone ground below this. */
+.tool-main > .page-header {
+  grid-column: 1 / -1;
+
+  /* The cobalt band's semantic layer, so .page-title's --colors-display
+     resolves to lime-on-blue — DESIGN.md's stated pairing for this band —
+     without the component needing a band class it cannot receive. */
+  --colors-canvas:          var(--p-cobalt);
+  --colors-surface:         #1f57bd;
+  --colors-ink:             var(--p-white);
+  --colors-display:         var(--p-lime);
+  --colors-body:            var(--p-white);
+  --colors-mute:            #e2ecfb;
+  --colors-hairline:        rgba(255, 255, 255, 0.30);
+  --colors-hairline-strong: var(--p-white);
+  --colors-accent:          var(--p-lime);
+  --colors-action:          var(--p-lime);
+  --colors-action-ink:      var(--p-ink);
+
+  background-color: var(--p-cobalt);
+  padding-block: var(--spacing-2xl) var(--spacing-3xl);
+  padding-inline: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+/* Hold the headline to the same measure as the workspace below it, so the
+   band is full-bleed but the type still lines up with the tool. */
+.tool-main > .page-header > * {
+  max-width: 1000px;
+  margin-inline: auto;
+  width: 100%;
+}
+
 .page-header {
   margin-bottom: var(--spacing-sm);
 }
@@ -1366,6 +1428,48 @@ select:focus-visible,
 .upload-text-secondary {
   font-size: 13px;
   color: var(--colors-mute);
+}
+
+/* The dropzone's call to action.
+
+   Two problems, one fix. Visually the primary action on every tool page
+   was a dashed rectangle with no button and no colour in it, on a site
+   whose homepage CTA is a solid pill — so the most important control on
+   the page read as decoration. Structurally it was worse: .upload-card is
+   a <div> with an inline onclick, no tabindex, no role and no key
+   handler, and the real <input type="file"> is display:none — so the
+   primary action of all 28 file tools could not be reached by keyboard at
+   all. A real <button> fixes both: it is a native tab stop, Enter and
+   Space activate it, and the click bubbles to the card's existing handler
+   so no second code path is introduced.
+
+   Lime, because DESIGN.md allows exactly one action colour and forbids
+   substituting another hue for a CTA. */
+.upload-cta {
+  margin-top: var(--spacing-xs);
+  min-height: 48px;
+  padding: var(--spacing-sm) var(--spacing-xl);
+  border: 2px solid var(--colors-action);
+  border-radius: var(--rounded-pill);
+  background-color: var(--colors-action);
+  color: var(--colors-action-ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.upload-cta:hover {
+  background-color: var(--colors-action-hover);
+  border-color: var(--colors-action-hover);
+}
+
+.upload-cta:active {
+  transform: scale(0.975);
+  transition-duration: 0.05s;
 }
 
 .file-input {
@@ -1784,6 +1888,37 @@ footer {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
+}
+
+/* The comparison list lives in the brand cell now. Two columns rather
+   than one so ten links fill the width that was empty instead of
+   replacing one tall column with another. */
+.footer-links--compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--spacing-md);
+  row-gap: var(--spacing-xs);
+}
+
+.footer-title--compare {
+  margin-top: var(--spacing-md);
+}
+
+/* "Resources & Company" wraps to two lines while every other heading is
+   one, which pushed that column's links half a line below the rest. A
+   two-line floor lines every list up regardless of heading length. */
+.footer-column .footer-title {
+  /* Explicit line-height so the floor is derived from the same number the
+     wrap uses: two lines at 1.5 is exactly what the longest heading needs. */
+  line-height: 1.5;
+  min-height: 3em;
+}
+
+@media (max-width: 768px) {
+  /* Stacked on phones, so nothing is aligning to anything. */
+  .footer-column .footer-title {
+    min-height: 0;
+  }
 }
 
 .footer-link {
@@ -2333,10 +2468,21 @@ footer {
   font-size: 11.5px;
   color: var(--colors-mute);
   margin-top: 2px;
-  line-height: 1.3;
+  line-height: 1.35;
+  /* Was a single nowrap line with an ellipsis. At this width that clipped
+     every one of the 65 descriptions — all of them are 100+ characters —
+     and it clipped mid-word, so the whole grid read as broken rather than
+     abbreviated ("...spreadsheets to PDF directly in y…"). A two-line
+     clamp roughly doubles the useful text and, because it breaks at a
+     line boundary, looks deliberate. The fixed min-height keeps the cards
+     in a row the same height whether a description runs to one line or
+     two. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  min-height: calc(2 * 1.35em);
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .explore-card-arrow {
@@ -2488,14 +2634,33 @@ footer {
    invisible against the shell. */
 .nav-progress {
   position: absolute;
-  left: 0;
-  bottom: -1.5px;
+  /* Was full-bleed at the shell's bottom edge, while the pill it belongs
+     to floats inset and centred — so at any scroll position it showed up
+     as a dark bar starting at the far left of the window, unattached to
+     anything, and read as a rendering artefact rather than progress.
+     Matching the pill's own width and sitting on its bottom edge makes it
+     legible as what it is: an underline that fills as you read. */
+  left: 50%;
+  translate: -50% 0;
+  width: min(var(--page-max), 100% - 2 * var(--spacing-lg));
+  bottom: calc(var(--spacing-sm) - 1.5px);
   height: 3px;
-  width: 100%;
   transform-origin: 0 50%;
   transform: scaleX(0);
-  border-radius: 0 var(--rounded-pill) var(--rounded-pill) 0;
+  border-radius: var(--rounded-pill);
   pointer-events: none;
+}
+
+/* The shell tightens its padding once stuck, so the pill's bottom edge
+   moves with it. */
+.nav-shell.is-stuck .nav-progress {
+  bottom: calc(var(--spacing-xs) - 1.5px);
+}
+
+@media (max-width: 760px) {
+  .nav-progress {
+    width: min(var(--page-max), 100% - 2 * var(--spacing-sm));
+  }
 }
 
 @supports (animation-timeline: scroll()) {
