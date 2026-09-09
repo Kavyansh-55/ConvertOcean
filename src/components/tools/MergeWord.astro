@@ -290,7 +290,15 @@ const { slug, headline, subtitle } = Astro.props;
         const firstZip = await JSZip.loadAsync(mergeFiles[0].bytes);
         const firstDoc = parser.parseFromString(await firstZip.file("word/document.xml").async("string"), "text/xml");
         const firstBody = firstDoc.getElementsByTagName("w:body")[0];
-        const firstSectPr = firstBody.getElementsByTagName("w:sectPr")[0];
+        // The final section properties are a DIRECT child of w:body. A
+        // getElementsByTagName search finds descendants too, and a document
+        // with a section break carries a w:sectPr nested inside a paragraph's
+        // w:pPr — that node's parent is w:pPr, so insertBefore(…, it) throws
+        // NotFoundError and the merge failed with "ensure none of the files
+        // are corrupted" on a perfectly valid document. Landscape pages and
+        // per-section headers both produce exactly that shape.
+        const firstSectPr = Array.from(firstBody.childNodes)
+          .find((n) => n.nodeType === 1 && n.nodeName === "w:sectPr") || null;
 
         // Base relationships (.rels) — where image/hyperlink references live.
         const baseRelsFile = firstZip.file("word/_rels/document.xml.rels");

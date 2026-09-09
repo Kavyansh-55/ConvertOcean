@@ -237,7 +237,13 @@ if (slug === 'docx-to-txt') {
               h4: { fontSize: 12, bold: true, marginBottom: 4, marginTop: 6 },
               p:  { margin: [0, 0, 0, 8] },
               li: { margin: [0, 0, 0, 3] },
-              a:  { color: '#0b5cad', decoration: null },
+              // No `decoration: null` here. pdfmake resolves that null while
+              // measuring the line and never calls the getBlob callback, so a
+              // document containing a single hyperlink used to leave the tool
+              // stuck on "Generating PDF document…" forever — no file, no
+              // error, and not even the raster fallback, because the failure
+              // is asynchronous and escapes the try/catch below.
+              a:  { color: '#0b5cad' },
               table: { marginBottom: 10 }
             }
           });
@@ -248,15 +254,42 @@ if (slug === 'docx-to-txt') {
             defaultStyle: { fontSize: 11, lineHeight: 1.35, color: '#1a1a1a' },
             info: { title: originalName.replace(/\.[^/.]+$/, "") }
           };
+          // pdfmake can fail *asynchronously* — it swallows the error inside
+          // its layout pass and simply never calls back. A bare getBlob() call
+          // therefore has a silent-hang failure mode that no try/catch can
+          // see, which is how a single hyperlink used to freeze this tool with
+          // the progress bar still running. The watchdog converts that into
+          // the raster fallback, so the user always ends up with a file or an
+          // explanation, never an spinner that never stops.
+          let settled = false;
+          const finish = (fn) => { if (!settled) { settled = true; fn(); } };
+
+          const watchdog = setTimeout(() => {
+            finish(() => {
+              rasterFallback(pdfName)
+                .then(() => hideProgress())
+                .catch(() => {
+                  showError("This document took too long to lay out as a PDF. Try splitting it into fewer pages, or use Word → TXT if you only need the text.");
+                  hideProgress();
+                });
+            });
+          }, 20000);
+
           const pdf = window.pdfMake.createPdf(docDef);
           pdf.getBlob((blob) => {
-            window.downloadBlob(blob, pdfName, 'application/pdf');
-            hideProgress();
+            clearTimeout(watchdog);
+            finish(() => {
+              window.downloadBlob(blob, pdfName, 'application/pdf');
+              hideProgress();
+            });
           });
         } catch (err) {
           rasterFallback(pdfName)
             .then(() => hideProgress())
-            .catch(() => { showError("PDF compilation failed."); hideProgress(); });
+            .catch(() => {
+              showError("This document could not be rendered as a PDF. Try Word → TXT if you only need the text, or re-save the file from Word and try again.");
+              hideProgress();
+            });
         }
       } else if (slug === 'docx-to-txt') {
         const blob = new Blob([processedOutput], { type: "text/plain;charset=utf-8;" });
