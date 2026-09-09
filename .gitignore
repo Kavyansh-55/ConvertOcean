@@ -33,6 +33,11 @@ vercel-design-analysis.md.bak
 scripts/tests/pdf-to-docx/test.pdf
 scripts/tests/pdf-to-docx/out.docx
 
+# Fidelity harness: fixtures and converted output are generated, not authored.
+# The builders and recipes are checked in; what they produce is not.
+scripts/fidelity/fixtures/files/
+scripts/fidelity/out/
+
 # Unrelated nested git repos that live in this folder (never part of the site)
 test-repo/
 galactic-group/
