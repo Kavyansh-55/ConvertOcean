@@ -31,10 +31,9 @@ if (slug === 'docx-to-txt') {
   }
 </style>
 
-<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script is:inline src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/pdfmake.min.js"></script>
 <script is:inline src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/vfs_fonts.js"></script>
-<script is:inline src="https://cdn.jsdelivr.net/npm/html-to-pdfmake@2.5.4/browser.js"></script>
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <div class="page-header">
@@ -65,6 +64,10 @@ if (slug === 'docx-to-txt') {
   <input type="file" id="fileInput" class="file-input" accept={acceptMime} />
 </div>
 
+<!-- The script below is a bundled module (it imports the DOCX reader), and
+     Astro define:vars only works on inline scripts, so config goes via the DOM. -->
+<div id="toolConfig" hidden data-slug={slug} data-target={targetFormat}></div>
+
 <!-- Preview Panel -->
 <div id="previewCard" class="preview-card" style="display: none;">
   <div id="previewBody" class="preview-html-content"></div>
@@ -79,8 +82,15 @@ if (slug === 'docx-to-txt') {
   </div>
 </div>
 
-<script is:inline define:vars={{ slug, targetFormat }}>
+<script>
+  import { buildDocDefinition, fontsNeeded } from '../../scripts/docx-to-pdf.js';
+  import { registerPdfmakeFonts } from '../../scripts/pdf-fonts.js';
+
   (function() {
+    const cfg = document.getElementById('toolConfig');
+    const slug = cfg.dataset.slug;
+    const targetFormat = cfg.dataset.target;
+
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
     const errorBanner = document.getElementById('errorBanner');
@@ -95,34 +105,27 @@ if (slug === 'docx-to-txt') {
     const btnDownload = document.getElementById('btnDownload');
     const btnClear = document.getElementById('btnClear');
 
-    let processedOutput = null;
     let originalName = '';
+    let docBytes = null;      // the uploaded .docx
+    let plainText = '';       // for the docx-to-txt path
 
-    // Drag and drop setup
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.add('dragover');
+    ['dragenter', 'dragover'].forEach((ev) => {
+      dropZone.addEventListener(ev, (e) => {
+        e.preventDefault(); e.stopPropagation(); dropZone.classList.add('dragover');
       }, false);
     });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.remove('dragover');
+    ['dragleave', 'drop'].forEach((ev) => {
+      dropZone.addEventListener(ev, (e) => {
+        e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('dragover');
       }, false);
     });
-
     dropZone.addEventListener('drop', (e) => {
-      let files = Array.from(e.dataTransfer.files).slice(0, 1);
-      if (files.length > 0) handleFile(files[0]);
+      const files = Array.from(e.dataTransfer.files).slice(0, 1);
+      if (files.length) handleFile(files[0]);
     });
-
     fileInput.addEventListener('change', (e) => {
-      let files = Array.from(e.target.files).slice(0, 1);
-      if (files.length > 0) handleFile(files[0]);
+      const files = Array.from(e.target.files).slice(0, 1);
+      if (files.length) handleFile(files[0]);
     });
 
     function showProgress(pct, label) {
@@ -130,175 +133,200 @@ if (slug === 'docx-to-txt') {
       progressBarFill.style.width = pct + '%';
       progressLabel.textContent = label;
     }
-
-    function hideProgress() {
-      progressOverlay.style.display = 'none';
-    }
-
+    function hideProgress() { progressOverlay.style.display = 'none'; }
     function showError(msg) {
       errorMessage.textContent = msg;
       errorBanner.style.display = 'flex';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    function hideError() { errorBanner.style.display = 'none'; }
 
-    function hideError() {
-      errorBanner.style.display = 'none';
+    const parseXml = (text) => new DOMParser().parseFromString(text, 'application/xml');
+
+    /**
+     * Open the .docx and pull out every part the converter needs.
+     *
+     * Reading the package directly is the point of this path. The previous
+     * implementation went through a docx-to-semantic-HTML step, which by design
+     * discards direct formatting — alignment, colour, shading, fonts, headers,
+     * footers and section geometry all disappeared before the PDF stage ever
+     * saw them.
+     */
+    async function readDocxParts(bytes) {
+      const zip = await JSZip.loadAsync(bytes);
+      const readXml = async (path) => {
+        const f = zip.file(path);
+        return f ? parseXml(await f.async('string')) : null;
+      };
+
+      const document = await readXml('word/document.xml');
+      if (!document || !document.documentElement || document.getElementsByTagName('parsererror').length) {
+        throw new Error('unreadable document.xml');
+      }
+
+      const styles = await readXml('word/styles.xml');
+      const numbering = await readXml('word/numbering.xml');
+
+      /* Relationships resolve images, hyperlink targets and the header/footer
+         parts. Without them a picture is a dangling id. */
+      const relsDoc = await readXml('word/_rels/document.xml.rels');
+      const images = new Map();
+      const links = new Map();
+      const running = new Map();
+
+      if (relsDoc && relsDoc.documentElement) {
+        for (const rel of Array.from(relsDoc.getElementsByTagName('Relationship'))) {
+          const id = rel.getAttribute('Id');
+          const type = rel.getAttribute('Type') || '';
+          const target = rel.getAttribute('Target') || '';
+          if (!id) continue;
+
+          if (/\/hyperlink$/.test(type)) {
+            if (rel.getAttribute('TargetMode') === 'External') links.set(id, target);
+          } else if (/\/image$/.test(type)) {
+            const path = 'word/' + target.replace(/^\.\//, '');
+            const f = zip.file(path) || zip.file(path.replace('word/../', ''));
+            if (f) {
+              const ext = (target.split('.').pop() || 'png').toLowerCase();
+              const mime = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg'
+                : ext === 'gif' ? 'image/gif' : 'image/png';
+              images.set(id, 'data:' + mime + ';base64,' + await f.async('base64'));
+            }
+          } else if (/\/(header|footer)$/.test(type)) {
+            const doc = await readXml('word/' + target.replace(/^\.\//, ''));
+            if (doc) running.set(id, doc);
+          }
+        }
+      }
+
+      return { document, styles, numbering, images, links, running };
     }
 
-    function handleFile(file) {
+    /** Visible text, for the preview and for the TXT output. */
+    function extractText(documentDoc) {
+      const paras = Array.from(documentDoc.getElementsByTagName('w:p'));
+      return paras.map((p) => {
+        let s = '';
+        for (const t of Array.from(p.getElementsByTagName('w:t'))) s += t.textContent;
+        for (const tab of Array.from(p.getElementsByTagName('w:tab'))) s = '\t' + s;
+        return s;
+      }).join('\n');
+    }
+
+    async function handleFile(file) {
       hideError();
       originalName = file.name;
-      const extension = file.name.split('.').pop().toLowerCase();
 
-      if (extension !== 'docx') {
-        showError("Invalid file format. Please choose a .docx Word document.");
+      if (!/\.docx$/i.test(file.name)) {
+        showError('That is not a .docx file. Word 97-2003 .doc is a different format — open it in Word or LibreOffice and save as .docx first.');
         return;
       }
 
-      showProgress(30, "Reading Word document bytes…");
-      const reader = new FileReader();
+      showProgress(25, 'Reading Word document…');
+      try {
+        docBytes = await file.arrayBuffer();
+        const parts = await readDocxParts(docBytes);
+        plainText = extractText(parts.document);
 
-      reader.onload = function(e) {
-        const arrayBuffer = e.target.result;
-        
-        if (slug === 'word-to-pdf') {
-          showProgress(60, "Converting Document text structure to HTML…");
-          mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
-            .then(result => {
-              processedOutput = result.value; // HTML string
-              previewBody.innerHTML = processedOutput;
-              previewCard.style.display = 'block';
-              fileNameDisplay.textContent = file.name;
-              actionControls.style.display = 'flex';
-              dropZone.style.display = 'none';
-              hideProgress();
-            })
-            .catch(err => {
-              showError("Failed to parse Word document formatting.");
-              hideProgress();
-            });
-        } else if (slug === 'docx-to-txt') {
-          showProgress(60, "Extracting text nodes…");
-          mammoth.extractRawText({ arrayBuffer: arrayBuffer })
-            .then(result => {
-              processedOutput = result.value; // Plain text
-              const pre = document.createElement('pre');
-              pre.style.fontFamily = "monospace";
-              pre.style.whiteSpace = "pre-wrap";
-              pre.textContent = processedOutput;
-              previewBody.innerHTML = '';
-              previewBody.appendChild(pre);
-              
-              previewCard.style.display = 'block';
-              fileNameDisplay.textContent = file.name;
-              actionControls.style.display = 'flex';
-              dropZone.style.display = 'none';
-              hideProgress();
-            })
-            .catch(err => {
-              showError("Failed to extract text from document.");
-              hideProgress();
-            });
-        }
-      };
+        const pre = document.createElement('pre');
+        pre.style.whiteSpace = 'pre-wrap';
+        pre.style.fontFamily = 'inherit';
+        pre.style.margin = '0';
+        pre.textContent = plainText.slice(0, 4000) + (plainText.length > 4000 ? '\n…' : '');
+        previewBody.innerHTML = '';
+        previewBody.appendChild(pre);
 
-      reader.readAsArrayBuffer(file);
+        previewCard.style.display = 'block';
+        fileNameDisplay.textContent = file.name;
+        actionControls.style.display = 'flex';
+        dropZone.style.display = 'none';
+      } catch (err) {
+        showError('Could not read that Word document. If it opens correctly in Word, try re-saving it as .docx and converting again.');
+      }
+      hideProgress();
     }
 
-    // Raster fallback: rasterise the on-screen preview to PDF. Only used if the
-    // vector path throws, so users always get a file.
+    /* Rasterising the on-screen preview is the last resort: it produces a
+       screenshot of the *preview*, not of the document, so it is only ever
+       reached when the real renderer has failed. */
     function rasterFallback(pdfName) {
       return window.exportElementToPdf(previewBody, {
-        margin:   15,
+        margin: 15,
         filename: pdfName,
-        image:    { type: 'jpeg', quality: 0.95 },
-        pagebreak:{ mode: ['avoid-all', 'css', 'legacy'] },
-        jsPDF:    { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        image: { type: 'jpeg', quality: 0.95 },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       });
     }
 
-    btnDownload.addEventListener('click', () => {
-      if (slug === 'word-to-pdf') {
-        const pdfName = originalName.replace(/\.[^/.]+$/, "") + '.pdf';
-        showProgress(50, "Generating PDF document…");
-        // Render the document as a real vector PDF: the text stays selectable
-        // and searchable, headings/bold/italic/lists/tables carry over, and
-        // pdfmake paginates natively so lines are never sliced across a page
-        // break. (The old path rasterised the themed preview with html2canvas,
-        // producing a blurry, unselectable screenshot.)
-        try {
-          const content = window.htmlToPdfmake(processedOutput, {
-            window: window,
-            tableAutoSize: true,
-            defaultStyles: {
-              h1: { fontSize: 20, bold: true, marginBottom: 6, marginTop: 12 },
-              h2: { fontSize: 15, bold: true, marginBottom: 5, marginTop: 10 },
-              h3: { fontSize: 13, bold: true, marginBottom: 4, marginTop: 8 },
-              h4: { fontSize: 12, bold: true, marginBottom: 4, marginTop: 6 },
-              p:  { margin: [0, 0, 0, 8] },
-              li: { margin: [0, 0, 0, 3] },
-              // No `decoration: null` here. pdfmake resolves that null while
-              // measuring the line and never calls the getBlob callback, so a
-              // document containing a single hyperlink used to leave the tool
-              // stuck on "Generating PDF document…" forever — no file, no
-              // error, and not even the raster fallback, because the failure
-              // is asynchronous and escapes the try/catch below.
-              a:  { color: '#0b5cad' },
-              table: { marginBottom: 10 }
-            }
-          });
-          const docDef = {
-            content,
-            pageSize: 'A4',
-            pageMargins: [56, 60, 56, 64],
-            defaultStyle: { fontSize: 11, lineHeight: 1.35, color: '#1a1a1a' },
-            info: { title: originalName.replace(/\.[^/.]+$/, "") }
-          };
-          // pdfmake can fail *asynchronously* — it swallows the error inside
-          // its layout pass and simply never calls back. A bare getBlob() call
-          // therefore has a silent-hang failure mode that no try/catch can
-          // see, which is how a single hyperlink used to freeze this tool with
-          // the progress bar still running. The watchdog converts that into
-          // the raster fallback, so the user always ends up with a file or an
-          // explanation, never an spinner that never stops.
-          let settled = false;
-          const finish = (fn) => { if (!settled) { settled = true; fn(); } };
+    btnDownload.addEventListener('click', async () => {
+      if (slug === 'docx-to-txt') {
+        const blob = new Blob([plainText], { type: 'text/plain;charset=utf-8;' });
+        window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, '') + '.txt', 'text/plain');
+        return;
+      }
 
-          const watchdog = setTimeout(() => {
-            finish(() => {
-              rasterFallback(pdfName)
-                .then(() => hideProgress())
-                .catch(() => {
-                  showError("This document took too long to lay out as a PDF. Try splitting it into fewer pages, or use Word → TXT if you only need the text.");
-                  hideProgress();
-                });
-            });
-          }, 20000);
+      if (!docBytes) return;
+      const pdfName = originalName.replace(/\.[^/.]+$/, '') + '.pdf';
+      showProgress(40, 'Rendering PDF…');
 
-          const pdf = window.pdfMake.createPdf(docDef);
-          pdf.getBlob((blob) => {
-            clearTimeout(watchdog);
-            finish(() => {
-              window.downloadBlob(blob, pdfName, 'application/pdf');
-              hideProgress();
-            });
-          });
-        } catch (err) {
-          rasterFallback(pdfName)
-            .then(() => hideProgress())
-            .catch(() => {
-              showError("This document could not be rendered as a PDF. Try Word → TXT if you only need the text, or re-save the file from Word and try again.");
-              hideProgress();
-            });
+      try {
+        const parts = await readDocxParts(docBytes);
+
+        /* Substitute faces are fetched only for the categories this document
+           actually uses, so an all-Calibri file downloads nothing. */
+        const needed = fontsNeeded(parts.document, parts.styles);
+        const fontState = await registerPdfmakeFonts(window.pdfMake, needed,
+          (msg) => showProgress(55, msg));
+
+        const def = buildDocDefinition(Object.assign({}, parts, {
+          fontsReady: fontState.ready,
+          title: originalName.replace(/\.[^/.]+$/, ''),
+        }));
+
+        if (fontState.failed.length) {
+          showError('Could not load the ' + fontState.failed.join(' and ') +
+            ' substitute font, so those passages use the default face. The rest of the document is unaffected.');
         }
-      } else if (slug === 'docx-to-txt') {
-        const blob = new Blob([processedOutput], { type: "text/plain;charset=utf-8;" });
-        window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, "") + '.txt', "text/plain");
+
+        showProgress(75, 'Building pages…');
+
+        /* pdfmake can fail asynchronously — it swallows the error inside its
+           layout pass and simply never calls back — so a bare getBlob has a
+           silent-hang failure mode no try/catch can see. */
+        let settled = false;
+        const finish = (fn) => { if (!settled) { settled = true; fn(); } };
+        const watchdog = setTimeout(() => {
+          finish(() => {
+            rasterFallback(pdfName)
+              .then(() => hideProgress())
+              .catch(() => {
+                showError('This document took too long to lay out as a PDF. Try splitting it into fewer pages, or use Word → TXT if you only need the text.');
+                hideProgress();
+              });
+          });
+        }, 25000);
+
+        window.pdfMake.createPdf(def).getBlob((blob) => {
+          clearTimeout(watchdog);
+          finish(() => {
+            window.downloadBlob(blob, pdfName, 'application/pdf');
+            hideProgress();
+          });
+        });
+      } catch (err) {
+        rasterFallback(pdfName)
+          .then(() => hideProgress())
+          .catch(() => {
+            showError('This document could not be rendered as a PDF. Try Word → TXT if you only need the text, or re-save the file from Word and try again.');
+            hideProgress();
+          });
       }
     });
 
     btnClear.addEventListener('click', () => {
-      processedOutput = null;
+      docBytes = null;
+      plainText = '';
       previewCard.style.display = 'none';
       previewBody.innerHTML = '';
       actionControls.style.display = 'none';

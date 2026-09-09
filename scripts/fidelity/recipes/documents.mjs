@@ -28,6 +28,23 @@ export const documentRecipes = [
       const gone = missing(out.text, DOCX_MARKERS);
       const last = out.sizes[out.sizes.length - 1];
       const first = out.sizes[0];
+
+      /** Left edge of the first text item containing a marker. */
+      const xOf = (marker) => {
+        const it = out.items.find((i) => i.str.includes(marker));
+        return it ? it.x : -1;
+      };
+      /** Font actually used to set the run carrying a marker. */
+      const fontOf = (marker) => {
+        const it = out.items.find((i) => i.str.includes(marker));
+        return it ? String(it.font).replace(/^[A-Z]{6}\+/, '') : null;
+      };
+      /** Was this RGB actually painted, within a tolerance for rounding? */
+      const hasFill = (pdf, [r, g, b]) => pdf.fills.some((f) => {
+        const [fr, fg, fb] = f.split(',').map(Number);
+        return Math.abs(fr - r) < 14 && Math.abs(fg - g) < 14 && Math.abs(fb - b) < 14;
+      });
+
       return [
         ok('opens', 'Output is a readable PDF', out.pages > 0, `${out.pages} pages`, 'blocker'),
         ok('text', 'All 20 source markers survive',
@@ -40,9 +57,21 @@ export const documentRecipes = [
         ok('landscape', 'Final section stays landscape',
            last && last.orientation === 'landscape',
            last ? `${last.width}×${last.height} ${last.orientation}` : 'n/a', 'major'),
-        ok('fonts', 'Named fonts (Georgia, Courier) carried over',
-           out.fonts.some((f) => /georgia/i.test(f)) && out.fonts.some((f) => /courier|mono/i.test(f)),
-           `fonts in output: ${out.fonts.join(', ') || 'none'}`, 'major'),
+        /* Not "is it still Georgia". Georgia and Calibri are licensed faces
+           that cannot be redistributed, so no client-side converter can embed
+           them — LibreOffice substitutes too. The achievable standard, and the
+           one a reader actually notices, is that the *category* survives: the
+           Georgia body stays serif and the Courier line stays monospace,
+           rather than everything flattening to one face. */
+        ok('font-category', 'Serif body stays serif and the monospace line stays monospace',
+           /serif|georgia|times/i.test(fontOf('M02') || '') &&
+           /mono|courier/i.test(fontOf('M11') || ''),
+           `M02 (Georgia) -> ${fontOf('M02') || 'none'}; M11 (Courier) -> ${fontOf('M11') || 'none'}`,
+           'major'),
+        ok('font-size', 'Source font sizes survive, not a single flattened body size',
+           out.sizes_pt.includes(24) && out.sizes_pt.includes(13),
+           `sizes: ${out.sizes_pt.join(', ')}pt — expected the 24pt heading and 13pt Georgia body`,
+           'major'),
         ok('sizes', 'More than two distinct text sizes (heading vs body vs small)',
            out.sizes_pt.length > 2, `sizes: ${out.sizes_pt.join(', ')}pt`, 'major'),
         ok('header', 'Running header (M19) present', out.text.includes('M19'),
@@ -54,6 +83,29 @@ export const documentRecipes = [
         ok('link', 'Hyperlink survives as a real link annotation',
            out.links.some((l) => /example\.com/.test(l.url)),
            out.links.length ? out.links.map((l) => l.url).join(' ') : 'no link annotations', 'minor'),
+
+        /* Alignment, colour and shading were not measured at first, and their
+           absence is the single most visible thing about the output: a
+           centred line, a right-aligned line and a body line all landing at
+           the same x is what makes the PDF stop looking like the document. */
+        ok('align-centre', 'Centred paragraph is actually centred',
+           xOf('M05') > xOf('M02') + 40,
+           `M05 at x=${xOf('M05')}, body M02 at x=${xOf('M02')}`, 'major'),
+        ok('align-right', 'Right-aligned paragraph is actually right-aligned',
+           xOf('M06') > xOf('M02') + 100,
+           `M06 at x=${xOf('M06')}, body M02 at x=${xOf('M02')}`, 'major'),
+        ok('colour-red', 'Red run keeps its colour',
+           hasFill(out, [255, 0, 0]),
+           `fills: ${out.fills.join(' ') || 'none'}`, 'major'),
+        ok('colour-heading', 'Navy heading keeps its colour (1F4E79)',
+           hasFill(out, [31, 78, 121]), '', 'major'),
+        ok('table-shading', 'Table header shading survives',
+           hasFill(out, [31, 78, 121]) || hasFill(out, [239, 239, 239]),
+           'looking for the navy header fill or the grey merged-cell fill', 'major'),
+        ok('font-variety', 'Serif, monospace and sans runs stay visually distinct',
+           new Set(out.fonts.map((f) => f.replace(/^[A-Z]{6}\+/, '').split('-')[0])).size >= 2,
+           `families: ${[...new Set(out.fonts.map((f) => f.replace(/^[A-Z]{6}\+/, '').split('-')[0]))].join(', ')}`,
+           'major'),
         ok('src-sanity', 'Fixture really did carry these features',
            src.fonts.length >= 2 && src.sections.length === 2 && src.tables === 1,
            `fixture fonts=${src.fonts.join('/')} sections=${src.sections.length}`, 'minor'),

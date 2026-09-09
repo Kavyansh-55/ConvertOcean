@@ -326,3 +326,107 @@ export function wrapText(doc, text, maxWidth, opts = {}) {
 }
 
 export { FONTS };
+
+/* ------------------------------------------------- pdfmake substitutes */
+
+/**
+ * Substitute families for pdfmake, used by the DOCX converter.
+ *
+ * A .docx names fonts it does not contain, and Georgia and Calibri are
+ * licensed faces that cannot be redistributed. Substituting by category is
+ * what LibreOffice does with a missing font: the distinction between a serif
+ * body and a monospace code line survives, which is what a reader notices.
+ *
+ * Italic is mapped to the regular file where no italic is fetched — pdfmake
+ * refuses to lay out a family whose four variants are not all defined, and an
+ * upright italic is a smaller loss than a failed conversion.
+ */
+const NOTO = 'https://cdn.jsdelivr.net/gh/googlefonts/noto-fonts@main/hinted/ttf/';
+
+export const PDFMAKE_SUBSTITUTES = {
+  NotoSerif: {
+    files: {
+      'NotoSerif-Regular.ttf': NOTO + 'NotoSerif/NotoSerif-Regular.ttf',
+      'NotoSerif-Bold.ttf': NOTO + 'NotoSerif/NotoSerif-Bold.ttf',
+      'NotoSerif-Italic.ttf': NOTO + 'NotoSerif/NotoSerif-Italic.ttf',
+    },
+    definition: {
+      normal: 'NotoSerif-Regular.ttf',
+      bold: 'NotoSerif-Bold.ttf',
+      italics: 'NotoSerif-Italic.ttf',
+      bolditalics: 'NotoSerif-Bold.ttf',
+    },
+    label: 'serif',
+  },
+  NotoMono: {
+    files: {
+      'NotoSansMono-Regular.ttf': NOTO + 'NotoSansMono/NotoSansMono-Regular.ttf',
+      'NotoSansMono-Bold.ttf': NOTO + 'NotoSansMono/NotoSansMono-Bold.ttf',
+    },
+    definition: {
+      normal: 'NotoSansMono-Regular.ttf',
+      bold: 'NotoSansMono-Bold.ttf',
+      italics: 'NotoSansMono-Regular.ttf',
+      bolditalics: 'NotoSansMono-Bold.ttf',
+    },
+    label: 'monospace',
+  },
+};
+
+const vfsCache = new Map();
+
+async function fetchBase64(url) {
+  if (vfsCache.has(url)) return vfsCache.get(url);
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('font fetch failed: ' + r.status);
+  const b64 = toBase64(await r.arrayBuffer());
+  vfsCache.set(url, b64);
+  return b64;
+}
+
+/**
+ * Register substitute families into a pdfmake instance.
+ *
+ * Roboto is re-declared alongside them because assigning pdfMake.fonts
+ * replaces the built-in map wholesale, and losing the default family would
+ * break every document that needs no substitute at all.
+ *
+ * @param {object} pdfMake
+ * @param {string[]} families e.g. ['NotoSerif']
+ * @param {(msg:string)=>void} [onProgress]
+ * @returns {Promise<{ready:Set<string>, failed:string[]}>}
+ */
+export async function registerPdfmakeFonts(pdfMake, families, onProgress) {
+  const ready = new Set();
+  const failed = [];
+
+  const definitions = {
+    Roboto: {
+      normal: 'Roboto-Regular.ttf',
+      bold: 'Roboto-Medium.ttf',
+      italics: 'Roboto-Italic.ttf',
+      bolditalics: 'Roboto-MediumItalic.ttf',
+    },
+  };
+
+  for (const family of families || []) {
+    const spec = PDFMAKE_SUBSTITUTES[family];
+    if (!spec) continue;
+    try {
+      if (onProgress) onProgress('Loading ' + spec.label + ' font…');
+      for (const [name, url] of Object.entries(spec.files)) {
+        pdfMake.vfs[name] = await fetchBase64(url);
+      }
+      definitions[family] = spec.definition;
+      ready.add(family);
+    } catch {
+      failed.push(spec.label);
+    }
+  }
+
+  pdfMake.fonts = Object.assign(definitions, pdfMake.fonts && pdfMake.fonts.Roboto ? {} : {});
+  // Keep any families a previous conversion already registered.
+  for (const [k, v] of Object.entries(definitions)) pdfMake.fonts[k] = v;
+
+  return { ready, failed };
+}
