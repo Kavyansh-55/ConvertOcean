@@ -154,6 +154,141 @@ export function coerceValue(raw) {
   return { t: 's', v: s };
 }
 
+/* --------------------------------------------- numbers recovered from text */
+
+/** Currency symbols worth recognising on a business document. */
+const CURRENCY = '$€£¥₹₽₩₪₺R$CHFkr';
+
+/**
+ * Recover the number hiding inside a formatted string.
+ *
+ * This is a different question from `coerceValue`, and deliberately a looser
+ * rule. In a CSV, "1,440" is ambiguous across locales and is safest left as
+ * text. In a table lifted off a PDF page, the thousands separator and the
+ * currency symbol *are* the formatting — the whole point of converting to a
+ * spreadsheet is to get a number back that SUM() can add. pdf-to-excel used to
+ * write every cell as a string, so the output looked right and totalled
+ * nothing.
+ *
+ * The returned `numFmt` reproduces how the value looked on the page, so the
+ * cell reads as "$1,440.00" while holding 1440.
+ *
+ * @param {string} raw
+ * @returns {{value:number, numFmt:string}|null} null when it is not a number
+ */
+export function parseNumericCell(raw) {
+  let s = String(raw == null ? '' : raw).trim();
+  if (!s) return null;
+
+  // Accounting negatives: (450.00) and a trailing minus.
+  let negative = false;
+  if (/^\(.*\)$/.test(s)) { negative = true; s = s.slice(1, -1).trim(); }
+  if (/-$/.test(s)) { negative = true; s = s.slice(0, -1).trim(); }
+
+  const percent = /%$/.test(s);
+  if (percent) s = s.slice(0, -1).trim();
+
+  /* Sign and currency symbol appear in either order — "-$450.00" and
+     "$-450.00" are both written — so strip whichever is in front until
+     neither is, rather than assuming a fixed sequence. */
+  let symbol = '';
+  const symbolRe = new RegExp('^([' + CURRENCY + ']+)\\s*');
+  for (let guard = 0; guard < 4; guard++) {
+    const m = s.match(symbolRe);
+    if (m) { symbol = symbol || m[1]; s = s.slice(m[0].length).trim(); continue; }
+    if (/^-/.test(s)) { negative = true; s = s.slice(1).trim(); continue; }
+    if (/^\+/.test(s)) { s = s.slice(1).trim(); continue; }
+    break;
+  }
+  // A trailing symbol, as in "1,440.00 £".
+  const trailing = s.match(new RegExp('\\s*([' + CURRENCY + ']+)$'));
+  if (trailing) { symbol = symbol || trailing[1]; s = s.slice(0, trailing.index).trim(); }
+
+  // What is left must be digits and separators only.
+  if (!/^\d[\d.,\s]*$/.test(s)) return null;
+  s = s.replace(/\s/g, '');
+
+  /* Leading zeros mean the string is an identifier, not a quantity — an
+     account or phone number that must not be turned into arithmetic. */
+  if (/^0\d/.test(s)) return null;
+
+  const commas = (s.match(/,/g) || []).length;
+  const dots = (s.match(/\./g) || []).length;
+
+  /* Which separator is the decimal point. With both present the last one
+     wins. With one of a kind it is a judgement call, resolved the way an
+     English-language document usually means it: a lone dot is decimal, and a
+     lone comma is a thousands separator only when exactly three digits
+     follow it. Repeated separators are always grouping. */
+  let decimalSep = null;
+  if (commas && dots) {
+    decimalSep = s.lastIndexOf(',') > s.lastIndexOf('.') ? ',' : '.';
+  } else if (commas === 1) {
+    decimalSep = /,\d{3}$/.test(s) ? null : ',';
+  } else if (dots === 1) {
+    decimalSep = '.';
+  }
+
+  /* Whatever is not the decimal point is grouping. With no decimal point at
+     all — "1.234.567" — the grouping separator is simply whichever one the
+     string actually uses; defaulting to a comma there left the dots in place
+     and the parse failed. */
+  let groupSep;
+  if (decimalSep === ',') groupSep = '.';
+  else if (decimalSep === '.') groupSep = ',';
+  else groupSep = dots ? '.' : ',';
+
+  const grouped = s.includes(groupSep);
+
+  let normalised = s.split(groupSep).join('');
+  if (decimalSep) normalised = normalised.replace(decimalSep, '.');
+
+  if (!/^\d+(\.\d+)?$/.test(normalised)) return null;
+
+  // More precision than a double can hold would be corrupted by converting.
+  if (normalised.replace('.', '').replace(/^0+/, '').length > 15) return null;
+
+  let value = Number(normalised);
+  if (!Number.isFinite(value)) return null;
+  if (negative) value = -value;
+
+  const decimals = decimalSep ? (normalised.split('.')[1] || '').length : 0;
+  if (percent) value = value / 100;
+
+  /* Rebuild the look of the original. */
+  const digits = (grouped ? '#,##0' : '0') + (decimals ? '.' + '0'.repeat(decimals) : '');
+  let numFmt;
+  if (percent) numFmt = (decimals ? '0.' + '0'.repeat(decimals) : '0') + '%';
+  else if (symbol) numFmt = '"' + symbol + '"' + digits;
+  else numFmt = digits;
+
+  return { value, numFmt };
+}
+
+/**
+ * Decide what a cell lifted off a PDF page should become.
+ * Falls back to the raw string whenever it is not confidently a number or date.
+ *
+ * @param {string} raw
+ * @returns {{t:'s'|'n'|'d', v:string|number, numFmt?:string}}
+ */
+export function typedCellFromText(raw) {
+  const s = String(raw == null ? '' : raw);
+
+  const iso = /^\s*(\d{4})-(\d{2})-(\d{2})\s*$/.exec(s);
+  if (iso) {
+    const y = +iso[1], m = +iso[2], d = +iso[3];
+    if (m >= 1 && m <= 12 && d >= 1 && d <= 31) {
+      return { t: 'd', v: isoDateToSerial(y, m, d), numFmt: 'yyyy-mm-dd' };
+    }
+  }
+
+  const num = parseNumericCell(s);
+  if (num) return { t: 'n', v: num.value, numFmt: num.numFmt };
+
+  return { t: 's', v: s };
+}
+
 /* ------------------------------------------------------------ flattening */
 
 /**

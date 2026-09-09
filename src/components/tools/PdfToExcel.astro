@@ -61,6 +61,7 @@ const { slug, headline, subtitle } = Astro.props;
 
 <script>
   import { collectPageLines, extractSheetRows } from '../../scripts/pdf-to-docx.js';
+  import { typedCellFromText } from '../../scripts/tabular.js';
 
   window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
@@ -204,7 +205,28 @@ const { slug, headline, subtitle } = Astro.props;
     if (!parsedRows.length) return;
     showProgress(50, 'Compiling Excel workbook…');
     try {
-      const ws = window.XLSX.utils.aoa_to_sheet(parsedRows);
+      /* Type the cells before writing them.
+         Every value arrives from the page as a string, and writing them
+         through as strings produced a workbook that looked right and totalled
+         nothing — SUM() over a column of text is zero, which defeats the
+         point of converting to Excel at all. Each cell is now examined: a
+         currency amount, a grouped number, a percentage or an ISO date
+         becomes a real value, carrying a number format that reproduces how it
+         looked on the page. Anything not confidently numeric stays text, so
+         an account number keeps its leading zeros. */
+      const typed = parsedRows.map((row) => row.map((cell) => typedCellFromText(cell)));
+
+      const ws = window.XLSX.utils.aoa_to_sheet(typed.map((row) => row.map((c) => c.v)));
+
+      for (let r = 0; r < typed.length; r++) {
+        for (let c = 0; c < typed[r].length; c++) {
+          const cell = typed[r][c];
+          if (cell.t === 's' || !cell.numFmt) continue;
+          const ref = window.XLSX.utils.encode_cell({ r, c });
+          if (ws[ref]) { ws[ref].t = 'n'; ws[ref].z = cell.numFmt; }
+        }
+      }
+
       ws['!cols'] = columnWidths(parsedRows);
       const wb = window.XLSX.utils.book_new();
       window.XLSX.utils.book_append_sheet(wb, ws, 'PDF Data');

@@ -11,6 +11,7 @@ import assert from 'node:assert/strict';
 import {
   parseCsv, sniffDelimiter, coerceValue, isoDateToSerial,
   flatten, recordsToRows, pickRecords, csvCell, rowsToCsv,
+  parseNumericCell, typedCellFromText,
 } from '../../src/scripts/tabular.js';
 
 let passed = 0;
@@ -181,6 +182,105 @@ test('rowsToCsv round-trips through parseCsv', () => {
 
 test('rowsToCsv emits a BOM so Excel reads UTF-8', () => {
   assert.ok(rowsToCsv([['Ünïcodé']]).startsWith('﻿'));
+});
+
+/* ------------------------------------------- numbers recovered from text */
+
+test('a currency amount becomes a number that keeps its look', () => {
+  const r = parseNumericCell('$1,440.00');
+  assert.equal(r.value, 1440);
+  assert.equal(r.numFmt, '"$"#,##0.00');
+});
+
+test('a negative currency amount keeps its sign', () => {
+  assert.equal(parseNumericCell('-$450.00').value, -450);
+});
+
+test('accounting parentheses mean negative', () => {
+  assert.equal(parseNumericCell('(450.00)').value, -450);
+  assert.equal(parseNumericCell('($1,250.75)').value, -1250.75);
+});
+
+test('a trailing minus means negative', () => {
+  assert.equal(parseNumericCell('450.00-').value, -450);
+});
+
+test('thousands separators are recovered, not kept as text', () => {
+  const r = parseNumericCell('1,240');
+  assert.equal(r.value, 1240);
+  assert.equal(r.numFmt, '#,##0');
+});
+
+test('a plain integer needs no grouping in its format', () => {
+  assert.deepEqual(parseNumericCell('12'), { value: 12, numFmt: '0' });
+});
+
+test('percentages become their decimal value', () => {
+  const r = parseNumericCell('18.4%');
+  assert.ok(Math.abs(r.value - 0.184) < 1e-12);
+  assert.equal(r.numFmt, '0.0%');
+});
+
+test('European grouping is read correctly', () => {
+  // 1.234,56 — the last separator is the decimal point.
+  assert.equal(parseNumericCell('1.234,56').value, 1234.56);
+});
+
+test('a lone comma before three digits is grouping, not a decimal', () => {
+  assert.equal(parseNumericCell('1,440').value, 1440);
+});
+
+test('a lone comma before two digits is a European decimal', () => {
+  assert.equal(parseNumericCell('1,44').value, 1.44);
+});
+
+test('repeated separators are always grouping', () => {
+  assert.equal(parseNumericCell('1.234.567').value, 1234567);
+  assert.equal(parseNumericCell('1,234,567').value, 1234567);
+});
+
+test('other currency symbols are recognised', () => {
+  assert.equal(parseNumericCell('₹2,058.50').value, 2058.5);
+  assert.equal(parseNumericCell('€1.234,56').value, 1234.56);
+  assert.equal(parseNumericCell('1,440.00 £').value, 1440);
+});
+
+test('an identifier with leading zeros is NOT converted', () => {
+  // Turning an account number into arithmetic loses the leading zeros.
+  assert.equal(parseNumericCell('0044123456'), null);
+  assert.equal(parseNumericCell('007'), null);
+});
+
+test('prose is not mistaken for a number', () => {
+  assert.equal(parseNumericCell('M05 Widget, large'), null);
+  assert.equal(parseNumericCell('Item'), null);
+  assert.equal(parseNumericCell(''), null);
+  assert.equal(parseNumericCell('12 units'), null);
+});
+
+test('precision beyond a double is left as text', () => {
+  assert.equal(parseNumericCell('12345678901234567890'), null);
+});
+
+/* ----------------------------------------------------------- typed cells */
+
+test('typedCellFromText types the fixture table correctly', () => {
+  assert.deepEqual(typedCellFromText('$1,440.00'), { t: 'n', v: 1440, numFmt: '"$"#,##0.00' });
+  assert.deepEqual(typedCellFromText('-3'), { t: 'n', v: -3, numFmt: '0' });
+  assert.equal(typedCellFromText('M09 Total').t, 's');
+});
+
+test('typedCellFromText recognises an ISO date', () => {
+  const r = typedCellFromText('2025-01-01');
+  assert.equal(r.t, 'd');
+  assert.equal(r.v, 45658);
+  assert.equal(r.numFmt, 'yyyy-mm-dd');
+});
+
+test('a summable column really does sum', () => {
+  const column = ['$1,440.00', '$18,600.00', '$2,058.50', '-$450.00'];
+  const total = column.reduce((n, c) => n + typedCellFromText(c).v, 0);
+  assert.equal(total, 21648.5, 'must match the fixture total on the page');
 });
 
 /* --------------------------------------------------------------- runner */
