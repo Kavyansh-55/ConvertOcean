@@ -100,6 +100,11 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
   <input type="file" id="fileInput" class="file-input" accept={acceptMime} />
 </div>
 
+<!-- The script below is a bundled module (it imports the conversion core), and
+     Astro's define:vars only works on inline scripts. So the per-tool config
+     travels through the DOM instead. -->
+<div id="toolConfig" hidden data-slug={slug} data-target={targetFormat} data-json={String(isJsonOutput)}></div>
+
 <pre id="textPreview" class="preview-area" style="display: none;"></pre>
 
 <div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
@@ -110,8 +115,18 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
   </div>
 </div>
 
-<script is:inline define:vars={{ slug, targetFormat, isJsonOutput }}>
+<script>
+  import {
+    parseCsv, coerceValue, recordsToRows, pickRecords,
+    pickXmlRecords, xmlElementToObject, rowsToCsv,
+  } from '../../scripts/tabular.js';
+
   (function() {
+    const cfg = document.getElementById('toolConfig');
+    const slug = cfg.dataset.slug;
+    const targetFormat = cfg.dataset.target;
+    const isJsonOutput = cfg.dataset.json === 'true';
+
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
     const errorBanner = document.getElementById('errorBanner');
@@ -174,181 +189,212 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
     function hideError() {
       errorBanner.style.display = 'none';
     }
+
+    /* Read a text file as UTF-8, explicitly.
 
-    function handleFile(file) {
+       The previous code handed the raw bytes of a CSV to the spreadsheet
+       library, which decoded them with its default codepage — so every
+       non-ASCII character came back as mojibake ("Ünïcodé" → "ÃnÃ¯codÃ©").
+       Naming the encoding is the whole fix for that class of bug. */
+    function readTextUtf8(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(String(e.target.result));
+        reader.onerror = () => reject(new Error('read failed'));
+        reader.readAsText(file, 'utf-8');
+      });
+    }
+
+    function readBytes(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(new Uint8Array(e.target.result));
+        reader.onerror = () => reject(new Error('read failed'));
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    /* A CSV field becomes a typed value, except when the output is JSON: a
+       date there should stay the ISO string the user wrote, not the Excel
+       serial that only means something inside a spreadsheet. */
+    function valueFor(raw, forJson) {
+      const c = coerceValue(raw);
+      if (c.t === 'd' && forJson) return String(raw).trim();
+      return c.v;
+    }
+
+    /** Header row + data rows from a parsed CSV, with a parallel type grid. */
+    function csvToGrid(text, forJson) {
+      const parsed = parseCsv(text);
+      if (!parsed.length) return { rows: [], types: [] };
+
+      const header = parsed[0].map((h, i) => (String(h).trim() || 'column' + (i + 1)));
+      const rows = [header];
+      const types = [header.map(() => 's')];
+
+      for (let r = 1; r < parsed.length; r++) {
+        const src = parsed[r];
+        const row = [];
+        const trow = [];
+        for (let c = 0; c < header.length; c++) {
+          const raw = src[c] === undefined ? '' : src[c];
+          const coerced = coerceValue(raw);
+          row.push(valueFor(raw, forJson));
+          trow.push(coerced.t);
+        }
+        rows.push(row);
+        types.push(trow);
+      }
+      return { rows, types };
+    }
+
+    /** Records (objects) from a header + data grid. */
+    function gridToRecords(grid) {
+      const [header, ...body] = grid.rows;
+      if (!header) return [];
+      return body.map((row) => {
+        const rec = {};
+        header.forEach((h, i) => { rec[h] = row[i]; });
+        return rec;
+      });
+    }
+
+    /**
+     * Build a worksheet, re-applying a date format to the cells that hold a
+     * date serial. Without the format Excel shows a bare 45658.
+     */
+    function gridToSheet(grid) {
+      const ws = window.XLSX.utils.aoa_to_sheet(grid.rows);
+      for (let r = 1; r < grid.types.length; r++) {
+        for (let c = 0; c < grid.types[r].length; c++) {
+          if (grid.types[r][c] !== 'd') continue;
+          const ref = window.XLSX.utils.encode_cell({ r, c });
+          if (ws[ref]) { ws[ref].t = 'n'; ws[ref].z = 'yyyy-mm-dd'; }
+        }
+      }
+      return ws;
+    }
+
+    function sheetToWorkbook(ws, name) {
+      const wb = window.XLSX.utils.book_new();
+      window.XLSX.utils.book_append_sheet(wb, ws, name || 'Data');
+      return window.XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    }
+
+    /** Rows from an arbitrary JSON value, keeping nested data. */
+    function jsonToGrid(text) {
+      const picked = pickRecords(JSON.parse(text));
+      const rows = recordsToRows(picked.records);
+      return { rows, types: rows.map((r) => r.map(() => 's')), note: picked.source };
+    }
+
+    /** Rows from an XML document, using its repeating element as the record. */
+    function xmlToGrid(text) {
+      const doc = parseXmlStrict(text);
+      const picked = pickXmlRecords(doc.documentElement);
+      const records = picked.elements.map((el) => {
+        const obj = xmlElementToObject(el);
+        return (obj && typeof obj === 'object') ? obj : { value: obj };
+      });
+      const rows = recordsToRows(records);
+      return { rows, types: rows.map((r) => r.map(() => 's')), note: '<' + picked.name + '> × ' + picked.elements.length };
+    }
+
+    async function handleFile(file) {
       hideError();
       originalName = file.name;
-      const reader = new FileReader();
+      showProgress(20, 'Reading file content…');
 
-      showProgress(20, "Reading file content…");
+      try {
+        if (slug === 'csv-to-json') {
+          const grid = csvToGrid(await readTextUtf8(file), true);
+          resultData = JSON.stringify(gridToRecords(grid), null, 2);
+          showPreview(resultData);
 
-      if (['csv-to-json', 'xlsx-to-json', 'xls-to-json'].includes(slug)) {
-        reader.onload = function(e) {
-          try {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const json = XLSX.utils.sheet_to_json(sheet);
-            resultData = JSON.stringify(json, null, 2);
-            showPreview(resultData);
-          } catch(err) {
-            showError("Failed to convert file to JSON.");
-          }
-          hideProgress();
-        };
-        reader.readAsArrayBuffer(file);
-      } else if (slug === 'json-to-csv') {
-        reader.onload = function(e) {
-          try {
-            const rawJson = JSON.parse(e.target.result);
-            const arr = Array.isArray(rawJson) ? rawJson : [rawJson];
-            const ws = XLSX.utils.json_to_sheet(arr);
-            resultData = XLSX.utils.sheet_to_csv(ws);
-            showPreview(resultData);
-          } catch(err) {
-            showError("Failed to parse JSON file content. Make sure it contains valid JSON arrays or objects.");
-          }
-          hideProgress();
-        };
-        reader.readAsText(file);
-      } else if (['xlsx-to-csv', 'xls-to-csv'].includes(slug)) {
-        reader.onload = function(e) {
-          try {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            resultData = XLSX.utils.sheet_to_csv(sheet);
-            showPreview(resultData);
-          } catch(err) {
-            showError("Failed to parse Excel workbook sheet.");
-          }
-          hideProgress();
-        };
-        reader.readAsArrayBuffer(file);
-      } else if (slug === 'csv-to-xlsx') {
-        reader.onload = function(e) {
-          try {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            resultData = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-            showPreview("[Excel binary data loaded ready to download]");
-          } catch(err) {
-            showError("Failed to convert CSV to XLSX.");
-          }
-          hideProgress();
-        };
-        reader.readAsArrayBuffer(file);
-      } else if (slug === 'json-to-xlsx') {
-        reader.onload = function(e) {
-          try {
-            const rawJson = JSON.parse(e.target.result);
-            const arr = Array.isArray(rawJson) ? rawJson : [rawJson];
-            const ws = XLSX.utils.json_to_sheet(arr);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Data");
-            resultData = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-            showPreview("[Excel binary data compiled ready to download]");
-          } catch(err) {
-            showError("Failed to convert JSON to XLSX.");
-          }
-          hideProgress();
-        };
-        reader.readAsText(file);
-      } else if (slug === 'xml-to-json') {
-        reader.onload = function(e) {
-          try {
-            const xmlDoc = parseXmlStrict(e.target.result);
-            const json = xmlNodeToJson(xmlDoc.documentElement);
-            resultData = JSON.stringify(json, null, 2);
-            showPreview(resultData);
-          } catch(err) {
-            showError("Failed to parse XML syntax trees.");
-          }
-          hideProgress();
-        };
-        reader.readAsText(file);
-      } else if (slug === 'xml-to-csv') {
-        reader.onload = function(e) {
-          try {
-            const xmlDoc = parseXmlStrict(e.target.result);
-            const json = xmlNodeToJson(xmlDoc.documentElement);
-            const arr = Array.isArray(json) ? json : [json];
-            const ws = XLSX.utils.json_to_sheet(arr);
-            resultData = XLSX.utils.sheet_to_csv(ws);
-            showPreview(resultData);
-          } catch(err) {
-            showError("Failed to convert XML to CSV.");
-          }
-          hideProgress();
-        };
-        reader.readAsText(file);
-      } else if (slug === 'xml-to-xlsx') {
-        reader.onload = function(e) {
-          try {
-            const xmlDoc = parseXmlStrict(e.target.result);
-            const json = xmlNodeToJson(xmlDoc.documentElement);
-            const arr = Array.isArray(json) ? json : [json];
-            const ws = XLSX.utils.json_to_sheet(arr);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Data");
-            resultData = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-            showPreview("[Excel binary data compiled from XML ready to download]");
-          } catch(err) {
-            showError("Failed to convert XML to XLSX.");
-          }
-          hideProgress();
-        };
-        reader.readAsText(file);
+        } else if (slug === 'csv-to-xlsx') {
+          const grid = csvToGrid(await readTextUtf8(file), false);
+          resultData = sheetToWorkbook(gridToSheet(grid));
+          showPreview(previewGrid(grid.rows));
+
+        } else if (slug === 'json-to-csv') {
+          const grid = jsonToGrid(await readTextUtf8(file));
+          resultData = rowsToCsv(grid.rows);
+          showPreview(resultData);
+
+        } else if (slug === 'json-to-xlsx') {
+          const grid = jsonToGrid(await readTextUtf8(file));
+          resultData = sheetToWorkbook(gridToSheet(grid));
+          showPreview(previewGrid(grid.rows));
+
+        } else if (slug === 'xml-to-json') {
+          const doc = parseXmlStrict(await readTextUtf8(file));
+          resultData = JSON.stringify(xmlElementToObject(doc.documentElement), null, 2);
+          showPreview(resultData);
+
+        } else if (slug === 'xml-to-csv') {
+          const grid = xmlToGrid(await readTextUtf8(file));
+          resultData = rowsToCsv(grid.rows);
+          showPreview(resultData);
+
+        } else if (slug === 'xml-to-xlsx') {
+          const grid = xmlToGrid(await readTextUtf8(file));
+          resultData = sheetToWorkbook(gridToSheet(grid));
+          showPreview(previewGrid(grid.rows));
+
+        } else if (slug === 'xlsx-to-json' || slug === 'xls-to-json') {
+          const wb = window.XLSX.read(await readBytes(file), { type: 'array' });
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          // raw:false gives the formatted text, so a currency or date cell
+          // reads the way it looked in Excel rather than as a bare serial.
+          resultData = JSON.stringify(
+            window.XLSX.utils.sheet_to_json(sheet, { defval: '', raw: false }), null, 2);
+          showPreview(resultData);
+
+        } else if (slug === 'xlsx-to-csv' || slug === 'xls-to-csv') {
+          const wb = window.XLSX.read(await readBytes(file), { type: 'array' });
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          const rows = window.XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false });
+          resultData = rowsToCsv(rows);
+          showPreview(resultData);
+
+        } else {
+          throw new Error('unsupported conversion: ' + slug);
+        }
+      } catch (err) {
+        showError(errorFor(slug, err));
       }
+      hideProgress();
+    }
+
+    /** A readable text preview of a grid that will be written as a binary workbook. */
+    function previewGrid(rows) {
+      return rows.slice(0, 20)
+        .map((r) => r.map((c) => (c === null || c === undefined ? '' : String(c))).join('\t'))
+        .join('\n') + (rows.length > 20 ? '\n…[' + (rows.length - 20) + ' more rows]' : '');
+    }
+
+    /* Error copy that says what to do next, not just that something failed. */
+    function errorFor(slug, err) {
+      const from = String(slug).split('-to-')[0].toUpperCase();
+      if (err && /JSON/i.test(err.message) && from === 'JSON') {
+        return 'That file is not valid JSON. Check it in the JSON Formatter first, then try again.';
+      }
+      if (err && /Invalid XML/i.test(err.message)) {
+        return 'That file is not valid XML — it may be truncated or contain an unescaped & or < character.';
+      }
+      return 'Could not read that ' + from + ' file. If it opens correctly elsewhere, try re-saving it as ' +
+             from + ' and converting again.';
     }
 
     // DOMParser does not throw on malformed XML — it returns a document
     // containing a <parsererror> element. Detect that so bad input shows a
     // clear error instead of being turned into garbage rows.
     function parseXmlStrict(text) {
-      const doc = new DOMParser().parseFromString(text, "text/xml");
+      const doc = new DOMParser().parseFromString(text, 'text/xml');
       if (doc.getElementsByTagName('parsererror').length > 0 || !doc.documentElement) {
         throw new Error('Invalid XML');
       }
       return doc;
-    }
-
-    function xmlNodeToJson(node) {
-      let obj = {};
-      if (node.nodeType === 1) { // element
-        if (node.attributes.length > 0) {
-          obj["@attributes"] = {};
-          for (let j = 0; j < node.attributes.length; j++) {
-            const attribute = node.attributes.item(j);
-            obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
-          }
-        }
-      } else if (node.nodeType === 3) { // text
-        return node.nodeValue.trim();
-      }
-      
-      if (node.hasChildNodes()) {
-        for (let i = 0; i < node.childNodes.length; i++) {
-          const item = node.childNodes.item(i);
-          const nodeName = item.nodeName;
-          if (item.nodeType === 3) {
-            const val = item.nodeValue.trim();
-            if (val) return val;
-          } else if (item.nodeType === 1) {
-            if (obj[nodeName] === undefined) {
-              obj[nodeName] = xmlNodeToJson(item);
-            } else {
-              if (typeof(obj[nodeName].push) === "undefined") {
-                const old = obj[nodeName];
-                obj[nodeName] = [];
-                obj[nodeName].push(old);
-              }
-              obj[nodeName].push(xmlNodeToJson(item));
-            }
-          }
-        }
-      }
-      return obj;
     }
 
     function showPreview(text) {

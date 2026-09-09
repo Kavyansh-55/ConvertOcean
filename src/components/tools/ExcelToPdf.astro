@@ -96,7 +96,10 @@ const { slug, headline, subtitle } = Astro.props;
   </div>
 </div>
 
-<script is:inline>
+<script>
+  import { parseCsv } from '../../scripts/tabular.js';
+  import { prepareFonts } from '../../scripts/pdf-fonts.js';
+
   (function() {
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
@@ -198,18 +201,32 @@ const { slug, headline, subtitle } = Astro.props;
       if (file.size > 25 * 1024 * 1024) { showError('File is larger than the 25MB limit.'); return; }
       originalName = file.name;
       showProgress(20, 'Parsing spreadsheet…');
+
+      /* A CSV is text, and it has to be decoded as such.
+         Handing its raw bytes to the spreadsheet library let that library pick
+         the codepage, which turned every non-ASCII character into mojibake and
+         parsed "0044123456" as a number, dropping the leading zeros. For a PDF
+         we only need the fields as written, so the CSV parser gives us exactly
+         that — embedded commas, quotes and newlines included. */
+      const isCsv = /\.csv$/i.test(file.name);
       const reader = new FileReader();
+
       reader.onload = function(e) {
         try {
-          const data = new Uint8Array(e.target.result);
-          const wb = XLSX.read(data, { type: 'array', cellDates: true });
-          sheets = [];
-          wb.SheetNames.forEach(name => {
-            const sheet = wb.Sheets[name];
-            // raw:false yields display strings (formatted dates/numbers).
-            const rows = trimGrid(XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false, blankrows: false }));
-            if (rows.length) sheets.push({ name, rows });
-          });
+          if (isCsv) {
+            const rows = trimGrid(parseCsv(String(e.target.result)));
+            sheets = rows.length ? [{ name: 'Sheet1', rows }] : [];
+          } else {
+            const data = new Uint8Array(e.target.result);
+            const wb = XLSX.read(data, { type: 'array', cellDates: true });
+            sheets = [];
+            wb.SheetNames.forEach(name => {
+              const sheet = wb.Sheets[name];
+              // raw:false yields display strings (formatted dates/numbers).
+              const rows = trimGrid(XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false, blankrows: false }));
+              if (rows.length) sheets.push({ name, rows });
+            });
+          }
 
           if (!sheets.length) {
             showError('This workbook has no data to convert.');
@@ -228,7 +245,8 @@ const { slug, headline, subtitle } = Astro.props;
         }
         hideProgress();
       };
-      reader.readAsArrayBuffer(file);
+      if (isCsv) reader.readAsText(file, 'utf-8');
+      else reader.readAsArrayBuffer(file);
     }
 
     optHeader.addEventListener('change', () => { if (sheets.length) renderPreview(currentActive()); });
@@ -238,7 +256,7 @@ const { slug, headline, subtitle } = Astro.props;
       return idx < 0 ? 0 : idx;
     }
 
-    btnConvert.addEventListener('click', () => {
+    btnConvert.addEventListener('click', async () => {
       if (!sheets.length) return;
       showProgress(40, 'Building PDF tables…');
       try {
@@ -246,6 +264,34 @@ const { slug, headline, subtitle } = Astro.props;
         const doc = new jsPDF({ orientation: optLandscape.checked ? 'landscape' : 'portrait', unit: 'pt', format: 'a4' });
         const toRender = optAllSheets.checked ? sheets : [sheets[currentActive()]];
         const multi = toRender.length > 1;
+
+        /* Embed a Unicode font if the data needs one. jsPDF's standard fonts
+           are WinAnsi-only, so without this a spreadsheet containing Hindi or
+           an em dash produced wrong glyphs rather than an obvious failure. */
+        const allText = toRender
+          .map((s) => s.rows.map((r) => r.join(' ')).join(' ')).join(' ');
+        const fontState = await prepareFonts(doc, allText, (msg) => showProgress(45, msg));
+        const ready = new Set(fontState.ready);
+        const bodyFont = ready.has('latin') ? 'NotoSans' : 'helvetica';
+
+        /* autoTable draws each cell with a single font, so a cell is given the
+           font matching the script it is actually written in. A cell mixing
+           two scripts still gets one font — the warning below is what keeps
+           that honest. */
+        const fontForCell = (text) => {
+          const s = String(text == null ? '' : text);
+          if (ready.has('devanagari') && /[ऀ-ॿ]/.test(s)) return 'NotoSansDevanagari';
+          return bodyFont;
+        };
+
+        if (fontState.failed.length) {
+          showError('Could not load the ' + fontState.failed.join(' and ') +
+            ' font, so some characters may not appear correctly. Check your connection and try again.');
+        } else if (fontState.unsupported.length) {
+          showError('This file contains ' + fontState.unsupported.join(' and ') +
+            ' characters, which cannot be embedded in a PDF here. They will be blank in the output — ' +
+            'everything else converts normally.');
+        }
 
         toRender.forEach((sheet, si) => {
           if (si > 0) doc.addPage();
@@ -261,10 +307,19 @@ const { slug, headline, subtitle } = Astro.props;
             body: hasHeader ? rows.slice(1) : rows,
             startY: multi ? 38 : 30,
             margin: { top: 30, left: 30, right: 30, bottom: 30 },
-            styles: { fontSize: 8, cellPadding: 3, overflow: 'linebreak', lineWidth: 0.5, lineColor: [190, 190, 190], textColor: 30 },
-            headStyles: { fillColor: [234, 236, 240], textColor: 20, fontStyle: 'bold', lineWidth: 0.5, lineColor: [190, 190, 190] },
+            styles: { font: bodyFont, fontSize: 8, cellPadding: 3, overflow: 'linebreak', lineWidth: 0.5, lineColor: [190, 190, 190], textColor: 30 },
+            headStyles: { font: bodyFont, fillColor: [234, 236, 240], textColor: 20, fontStyle: 'bold', lineWidth: 0.5, lineColor: [190, 190, 190] },
             alternateRowStyles: { fillColor: [249, 250, 251] },
             tableWidth: 'auto',
+            didParseCell: (data) => {
+              // Pick the font per cell from the script it actually contains.
+              const text = Array.isArray(data.cell.raw) ? data.cell.raw.join(' ') : data.cell.raw;
+              data.cell.styles.font = fontForCell(text);
+              // The embedded Noto faces are registered as 'normal' only, so a
+              // bold header style would silently fall back to a face that has
+              // no Devanagari glyphs.
+              if (data.cell.styles.font !== 'helvetica') data.cell.styles.fontStyle = 'normal';
+            },
           });
         });
 

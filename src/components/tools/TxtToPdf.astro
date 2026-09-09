@@ -74,7 +74,9 @@ const { slug, headline, subtitle } = Astro.props;
   </div>
 </div>
 
-<script is:inline>
+<script>
+  import { prepareFonts, drawText, wrapText, analyseText } from '../../scripts/pdf-fonts.js';
+
   (function() {
     const dropZone      = document.getElementById('dropZone');
     const fileInput     = document.getElementById('fileInput');
@@ -177,7 +179,7 @@ const { slug, headline, subtitle } = Astro.props;
     }
 
     // ── PDF conversion ───────────────────────────────────────────────
-    btnDownload.addEventListener('click', () => {
+    btnDownload.addEventListener('click', async () => {
       hideError();
 
       // Check library loaded
@@ -211,6 +213,28 @@ const { slug, headline, subtitle } = Astro.props;
         doc.setFont('courier', 'normal');
         doc.setFontSize(FS);
 
+        /* Embed a Unicode font when the text needs one. jsPDF's standard
+           fonts are WinAnsi-only: without this, Devanagari came out as
+           unrelated glyphs and took the surrounding ASCII down with it. Pure
+           ASCII text downloads nothing and keeps using Courier. */
+        const fontState = await prepareFonts(doc, textContents, (msg) => showProgress(35, msg));
+        const drawOpts = {
+          standardFont: 'courier',
+          ready: fontState.ready,
+          // A .txt is monospace on purpose — indentation and aligned columns
+          // only survive if the Latin runs stay in Courier.
+          keepStandardForAscii: true,
+        };
+
+        if (fontState.failed.length) {
+          showError('Could not load the ' + fontState.failed.join(' and ') +
+            ' font, so those characters may not appear correctly. Check your connection and try again.');
+        } else if (fontState.unsupported.length) {
+          showError('This text contains ' + fontState.unsupported.join(' and ') +
+            ' characters, which cannot be embedded in a PDF here. They will be blank in the output — ' +
+            'the rest of the document converts normally.');
+        }
+
         // Usable text area
         const usableW = PW - ML - MR;             // pt for text wrapping
         // First text baseline position on each page
@@ -228,7 +252,11 @@ const { slug, headline, subtitle } = Astro.props;
           if (raw.length === 0) {
             allLines.push(''); // preserve blank lines
           } else {
-            const wrapped = doc.splitTextToSize(raw, usableW);
+            // Not doc.splitTextToSize: that measures every character in the
+            // current font, so a mixed-script line is mis-measured and wraps
+            // in the wrong place. wrapText measures each run in the font that
+            // will actually draw it.
+            const wrapped = wrapText(doc, raw, usableW, drawOpts);
             for (const wl of wrapped) allLines.push(wl);
           }
         }
@@ -248,7 +276,7 @@ const { slug, headline, subtitle } = Astro.props;
 
           for (const line of chunk) {
             // jsPDF.text skips empty strings — use a space so blank lines still advance y
-            doc.text(line || ' ', ML, y);
+            drawText(doc, line || ' ', ML, y, drawOpts);
             y += LH;
           }
 

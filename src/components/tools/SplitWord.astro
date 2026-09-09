@@ -208,7 +208,11 @@ const { slug, headline, subtitle } = Astro.props;
           parsedXmlDoc = parser.parseFromString(xmlText, "text/xml");
           const body = parsedXmlDoc.getElementsByTagName("w:body")[0];
           
-          originalSectPr = body.getElementsByTagName("w:sectPr")[0];
+          // Direct child only — see the note in MergeWord.astro. A nested
+          // w:sectPr from a section break would otherwise be mistaken for the
+          // document's final section properties and copied into every part.
+          originalSectPr = Array.from(body.childNodes)
+            .find((n) => n.nodeType === 1 && n.nodeName === "w:sectPr") || null;
           bodyChildren = Array.from(body.childNodes).filter(node => node.nodeType === 1);
 
           const paragraphsCount = bodyChildren.filter(n => n.nodeName === "w:p").length;
