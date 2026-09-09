@@ -153,14 +153,37 @@ export const mergeSplitRecipes = [
     async checks({ out }) {
       const slides = out.names.filter((n) => /^ppt\/slides\/slide\d+\.xml$/.test(n));
       const media = out.names.filter((n) => /^ppt\/media\//.test(n));
-      const notes = out.names.filter((n) => /notesSlide\d+\.xml$/.test(n));
+      // Any part under notesSlides/, not just the original "notesSlideN.xml"
+      // naming — a copied part is renamed to avoid colliding with the base
+      // deck's, and matching only the original shape missed it.
+      const notes = out.names.filter((n) => /^ppt\/notesSlides\/[^/]+\.xml$/.test(n));
+
+      const text = out.entries
+        .filter((e) => /^ppt\/slides\/slide\d+\.xml$/.test(e.name))
+        .map((e) => e.bytes.toString('utf8')).join(' ');
+
+      /* The second deck is deliberately not a copy of the first. Two identical
+         decks cannot reveal the interesting failure: a merger that appends
+         slide XML but never copies the parts those slides reference will leave
+         deck two's pictures and layouts silently resolving to deck one's. */
+      const distinctImages = new Set(
+        out.entries.filter((e) => /^ppt\/media\//.test(e.name))
+          .map((e) => e.bytes.length + ':' + e.bytes.toString('base64').slice(0, 32))
+      );
+
       return [
         ok('opens', 'Output is a valid pptx package',
            out.names.includes('ppt/presentation.xml'), `${out.names.length} parts`, 'blocker'),
         ok('slides', 'Two 3-slide decks make 6 slides', slides.length === 6,
            `${slides.length} slides`, 'blocker'),
-        ok('media', 'Pictures from both decks carried over', media.length >= 2,
+        ok('both-decks', 'Content from both decks is present',
+           /M01 Torture Deck/.test(text) && /B01 Second Deck/.test(text),
+           '', 'blocker'),
+        ok('media-count', 'A media part exists for each deck', media.length >= 2,
            `${media.length} media parts (expected 2)`, 'major'),
+        ok('media-distinct', 'The second deck keeps its own picture, not the first deck’s',
+           distinctImages.size >= 2,
+           `${distinctImages.size} distinct image(s) among ${media.length} media part(s)`, 'major'),
         ok('theme', 'Theme part preserved',
            out.names.some((n) => /ppt\/theme\/theme\d+\.xml/.test(n)), '', 'major'),
         ok('notes', 'Speaker notes carried over', notes.length >= 2,
@@ -226,6 +249,10 @@ export const mergeSplitRecipes = [
     title: 'Split text',
     fixture: 'torture.txt',
     ready: '#fileInfoCard',
+    /* The tool defaults to 1000 lines per part and the fixture has 66, so the
+       default correctly produces a single file — the earlier "only 1 part"
+       failure was the recipe asking for a split it had not requested. */
+    pre: [{ setValue: '#splitLines', value: '20' }],
     download: '#btnSplit',
     outName: 'split-txt.zip',
     kind: 'zip',

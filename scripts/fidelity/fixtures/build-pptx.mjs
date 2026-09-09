@@ -12,7 +12,7 @@
  */
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { markerPng } from '../lib/png.mjs';
+import { markerPng, makePng } from '../lib/png.mjs';
 import { writePackage } from '../lib/ooxml.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -277,3 +277,86 @@ const bytes = await writePackage({
 }, out);
 
 console.log('torture.pptx  ' + bytes + ' bytes  3 slides, custom theme, table, picture, notes');
+
+/* ------------------------------------------ a genuinely different deck ---
+
+   The merge tests need a second deck that is not a byte copy of the first.
+   With two identical files a merger that forgets to copy media and layouts
+   still looks correct, because the parts its slides reference happen to exist
+   in the base package already — the bug only appears when the second deck's
+   image and theme actually differ. */
+
+const altTheme = theme1
+  .replace('<a:srgbClr val="0F766E"/>', '<a:srgbClr val="B45309"/>')   // accent1 amber
+  .replace('<a:srgbClr val="BE185D"/>', '<a:srgbClr val="1D4ED8"/>')   // accent2 blue
+  .replace('name="TortureTheme"', 'name="TortureThemeB"');
+
+const altSlide1 = slide1
+  .replace('M01 Torture Deck', 'B01 Second Deck')
+  .replace('M02 Subtitle in an explicitly named font', 'B02 Subtitle of the second deck');
+const altSlide2 = slide2
+  .replace('M03 Content, picture and rotation', 'B03 Second deck content')
+  .replace('M04 First bullet at 20pt', 'B04 First bullet of deck two')
+  .replace('M05 Second bullet, bold dark red', 'B05 Second bullet of deck two')
+  .replace('M06 Third bullet, smaller at 14pt', 'B06 Third bullet of deck two')
+  .replace('M07 marker', 'B07 marker');
+const altSlide3 = slide3
+  .replace('M09 Table slide', 'B09 Second deck table')
+  .replace('M10 Product', 'B10 Product');
+const altNotes = notesSlide1.replace('M11 Speaker notes for slide one.', 'B11 Notes belonging to the second deck.');
+
+/* A visually distinct image: swapping the quadrant colours means a merger that
+   reuses the first deck's media produces a picture that is obviously wrong. */
+const altPng = makePng(240, 160, (x, y) => {
+  const left = x < 120, top = y < 80;
+  if (Math.abs(x - 120) < 6 || Math.abs(y - 80) < 6) return [0, 0, 0];
+  if (top && left) return [180, 83, 9];
+  if (top && !left) return [29, 78, 216];
+  if (!top && left) return [21, 128, 61];
+  return [126, 34, 206];
+});
+
+const outB = join(HERE, 'files', 'torture-b.pptx');
+const bytesB = await writePackage({
+  '[Content_Types].xml': contentTypes,
+  '_rels/.rels': rels([['rId1', 'officeDocument', 'ppt/presentation.xml']]),
+  'ppt/presentation.xml': presentationXml,
+  'ppt/_rels/presentation.xml.rels': rels([
+    ['rIdMaster1', 'slideMaster', 'slideMasters/slideMaster1.xml'],
+    ['rIdSlide1', 'slide', 'slides/slide1.xml'],
+    ['rIdSlide2', 'slide', 'slides/slide2.xml'],
+    ['rIdSlide3', 'slide', 'slides/slide3.xml'],
+    ['rIdTheme', 'theme', 'theme/theme1.xml'],
+  ]),
+  'ppt/slideMasters/slideMaster1.xml': slideMaster1,
+  'ppt/slideMasters/_rels/slideMaster1.xml.rels': rels([
+    ['rIdLayout1', 'slideLayout', '../slideLayouts/slideLayout1.xml'],
+    ['rIdTheme', 'theme', '../theme/theme1.xml'],
+  ]),
+  'ppt/slideLayouts/slideLayout1.xml': slideLayout1,
+  'ppt/slideLayouts/_rels/slideLayout1.xml.rels': rels([
+    ['rIdMaster1', 'slideMaster', '../slideMasters/slideMaster1.xml'],
+  ]),
+  'ppt/slides/slide1.xml': altSlide1,
+  'ppt/slides/_rels/slide1.xml.rels': rels([
+    ['rIdLayout', 'slideLayout', '../slideLayouts/slideLayout1.xml'],
+    ['rIdNotes', 'notesSlide', '../notesSlides/notesSlide1.xml'],
+  ]),
+  'ppt/slides/slide2.xml': altSlide2,
+  'ppt/slides/_rels/slide2.xml.rels': rels([
+    ['rIdLayout', 'slideLayout', '../slideLayouts/slideLayout1.xml'],
+    ['rIdImg', 'image', '../media/image1.png'],
+  ]),
+  'ppt/slides/slide3.xml': altSlide3,
+  'ppt/slides/_rels/slide3.xml.rels': rels([
+    ['rIdLayout', 'slideLayout', '../slideLayouts/slideLayout1.xml'],
+  ]),
+  'ppt/notesSlides/notesSlide1.xml': altNotes,
+  'ppt/notesSlides/_rels/notesSlide1.xml.rels': rels([
+    ['rIdSlide', 'slide', '../slides/slide1.xml'],
+  ]),
+  'ppt/theme/theme1.xml': altTheme,
+  'ppt/media/image1.png': altPng,
+}, outB);
+
+console.log('torture-b.pptx ' + bytesB + ' bytes  distinct theme, image and text');

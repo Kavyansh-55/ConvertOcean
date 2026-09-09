@@ -45,7 +45,10 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" width
       <stop offset="100%" stop-color="#be185d"/>
     </linearGradient>
   </defs>
-  <rect width="240" height="160" fill="url(#g)"/>
+  <!-- Inset, so a transparent margin remains. A full-bleed background makes
+       the file opaque and turns "does transparency survive" into a question
+       the fixture cannot ask. -->
+  <rect x="20" y="20" width="200" height="120" rx="10" fill="url(#g)"/>
   <circle cx="60" cy="60" r="34" fill="#fbbf24" stroke="#ffffff" stroke-width="4"/>
   <rect x="130" y="30" width="70" height="60" fill="#ffffff" opacity="0.85" transform="rotate(12 165 60)"/>
   <text x="120" y="135" font-family="Georgia, serif" font-size="20" fill="#ffffff" text-anchor="middle">M01 SVG</text>

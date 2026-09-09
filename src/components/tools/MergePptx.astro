@@ -293,6 +293,67 @@ const { slug, headline, subtitle } = Astro.props;
           if (id > maxSldId) maxSldId = id;
         });
 
+        /* Copied parts get a running index so two decks can each contribute a
+           media file called image1.png without one overwriting the other. */
+        let copiedPartIndex = 0;
+
+        /* [Content_Types].xml must declare every part in the package, or
+           PowerPoint refuses to open it. */
+        const ctFile = baseZip.file("[Content_Types].xml");
+        const ctDoc = parser.parseFromString(
+          ctFile ? await ctFile.async("string")
+            : '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>',
+          "application/xml");
+        const ctRoot = ctDoc.getElementsByTagName("Types")[0];
+
+        const MIME_BY_EXT = {
+          png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif",
+          bmp: "image/bmp", tif: "image/tiff", tiff: "image/tiff", svg: "image/svg+xml",
+          emf: "image/x-emf", wmf: "image/x-wmf", mp4: "video/mp4", m4a: "audio/mp4",
+          wav: "audio/wav", mp3: "audio/mpeg",
+        };
+
+        function addDefault(ext) {
+          const lower = String(ext).toLowerCase();
+          const existing = Array.from(ctRoot.getElementsByTagName("Default"))
+            .some(d => (d.getAttribute("Extension") || "").toLowerCase() === lower);
+          if (existing) return;
+          const mime = MIME_BY_EXT[lower];
+          if (!mime) return;
+          const node = ctDoc.createElement("Default");
+          node.setAttribute("Extension", lower);
+          node.setAttribute("ContentType", mime);
+          ctRoot.appendChild(node);
+        }
+
+        function addOverride(partName, contentType) {
+          const existing = Array.from(ctRoot.getElementsByTagName("Override"))
+            .some(o => o.getAttribute("PartName") === partName);
+          if (existing) return;
+          const node = ctDoc.createElement("Override");
+          node.setAttribute("PartName", partName);
+          node.setAttribute("ContentType", contentType);
+          ctRoot.appendChild(node);
+        }
+
+        /** Resolve a relationship Target against the part's own folder. */
+        function resolvePart(baseDir, target) {
+          const stack = baseDir.replace(/\/$/, "").split("/");
+          for (const segment of String(target).split("/")) {
+            if (segment === "..") stack.pop();
+            else if (segment && segment !== ".") stack.push(segment);
+          }
+          return stack.join("/");
+        }
+
+        /** Express an absolute part path relative to a folder. */
+        function relativeFrom(baseDir, path) {
+          const from = baseDir.replace(/\/$/, "").split("/");
+          const to = path.split("/");
+          while (from.length && to.length && from[0] === to[0]) { from.shift(); to.shift(); }
+          return from.map(() => "..").concat(to).join("/");
+        }
+
         let rIdCounter = 1;
         Array.from(relationshipsNode.getElementsByTagName("Relationship")).forEach(node => {
           const rId = node.getAttribute("Id");
@@ -353,6 +414,72 @@ const { slug, headline, subtitle } = Astro.props;
 
             const newSlideFileName = `slide${baseSlideIndex}.xml`;
             baseZip.file(`ppt/slides/${newSlideFileName}`, slideXmlContent);
+
+            /* A slide is not self-contained. Its .rels point at pictures,
+               speaker notes and a layout that live elsewhere in *its own*
+               package, and copying the slide XML alone left those pointing at
+               whatever happened to sit at the same path in the base deck — so
+               merging two different presentations silently gave the second
+               deck's slides the first deck's images. Copy every part a slide
+               references, under a fresh name, and repoint the relationship. */
+            if (slideRelsContent) {
+              const srcRels = parser.parseFromString(slideRelsContent, "application/xml");
+
+              for (const rel of Array.from(srcRels.getElementsByTagName("Relationship"))) {
+                if (rel.getAttribute("TargetMode") === "External") continue;
+                const target = rel.getAttribute("Target") || "";
+                const type = rel.getAttribute("Type") || "";
+                // Resolve "../media/image1.png" against "ppt/slides/".
+                const srcPath = resolvePart("ppt/slides/", target);
+                const srcFile = zip.file(srcPath);
+                if (!srcFile) continue;
+
+                const ext = (srcPath.split(".").pop() || "").toLowerCase();
+                copiedPartIndex++;
+
+                if (/\/notesSlide$/.test(type)) {
+                  const newName = `notesSlide_m${copiedPartIndex}.xml`;
+                  let notesXml = await srcFile.async("string");
+                  baseZip.file(`ppt/notesSlides/${newName}`, notesXml);
+                  // Its own rels point back at the slide, which has moved.
+                  baseZip.file(`ppt/notesSlides/_rels/${newName}.rels`,
+                    '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                    '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+                    '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide" ' +
+                    `Target="../slides/${newSlideFileName}"/></Relationships>`);
+                  rel.setAttribute("Target", `../notesSlides/${newName}`);
+                  addOverride(`/ppt/notesSlides/${newName}`,
+                    "application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml");
+
+                } else if (/\/slideLayout$/.test(type)) {
+                  const newName = `slideLayout_m${copiedPartIndex}.xml`;
+                  baseZip.file(`ppt/slideLayouts/${newName}`, await srcFile.async("string"));
+                  /* The layout keeps its geometry but is attached to the base
+                     deck's master. Carrying a second master and theme across
+                     would need the full master graph; the layout is what
+                     positions the placeholders, which is the visible part. */
+                  baseZip.file(`ppt/slideLayouts/_rels/${newName}.rels`,
+                    '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                    '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+                    '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster" ' +
+                    'Target="../slideMasters/slideMaster1.xml"/></Relationships>');
+                  rel.setAttribute("Target", `../slideLayouts/${newName}`);
+                  addOverride(`/ppt/slideLayouts/${newName}`,
+                    "application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml");
+
+                } else {
+                  // Media and anything else binary: copy under a fresh name.
+                  const folder = srcPath.split("/").slice(0, -1).join("/") || "ppt/media";
+                  const newName = `part_m${copiedPartIndex}.${ext || "bin"}`;
+                  baseZip.file(`${folder}/${newName}`, await srcFile.async("uint8array"));
+                  rel.setAttribute("Target", relativeFrom("ppt/slides/", `${folder}/${newName}`));
+                  if (ext) addDefault(ext);
+                }
+              }
+
+              slideRelsContent = serializer.serializeToString(srcRels);
+            }
+
             if (slideRelsContent) {
               baseZip.file(`ppt/slides/_rels/${newSlideFileName}.rels`, slideRelsContent);
             }
@@ -379,6 +506,7 @@ const { slug, headline, subtitle } = Astro.props;
 
         baseZip.file("ppt/presentation.xml", finalPresXmlText);
         baseZip.file("ppt/_rels/presentation.xml.rels", finalPresRelsText);
+        baseZip.file("[Content_Types].xml", serializer.serializeToString(ctDoc));
 
         const outBlob = await baseZip.generateAsync({ type: "blob" });
         let name = mergeOutputName.value || 'merged.pptx';

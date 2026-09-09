@@ -399,6 +399,34 @@ export function readImage(input) {
     return out;
   }
 
+  /* HEIC and AVIF are both ISOBMFF. Rather than walk the box tree down to
+     meta > iprp > ipco, scan for the `ispe` (image spatial extents) boxes and
+     take the largest — a file carries one per item, and the thumbnail's is
+     smaller than the primary image's. Without this the harness reported these
+     as 0x0 and compared every conversion against a hardcoded size instead of
+     the source's own. */
+  if (b.length > 16 && b.subarray(4, 8).toString('latin1') === 'ftyp') {
+    const brand = b.subarray(8, 12).toString('latin1');
+    out.format = /avif|avis/i.test(brand) ? 'avif'
+      : /heic|heix|hevc|mif1|msf1/i.test(brand) ? 'heic' : 'isobmff';
+
+    let best = 0;
+    for (let i = 0; i < b.length - 20; i++) {
+      if (b[i] === 0x69 && b[i + 1] === 0x73 && b[i + 2] === 0x70 && b[i + 3] === 0x65) {
+        const w = b.readUInt32BE(i + 8);   // after 4 bytes of version+flags
+        const h = b.readUInt32BE(i + 12);
+        if (w > 0 && h > 0 && w < 65536 && h < 65536 && w * h > best) {
+          best = w * h;
+          out.width = w;
+          out.height = h;
+        }
+      }
+    }
+    // AVIF and HEIC both support alpha; whether this file uses it needs a
+    // full decode, so it is left unasserted rather than guessed.
+    return out;
+  }
+
   // SVG is text, not a container.
   const head = b.subarray(0, 400).toString('utf8');
   if (/<svg[\s>]/i.test(head)) {
