@@ -33,8 +33,14 @@ const say = (ok, msg) => { if (!ok) bad++; console.log(`${ok ? 'OK  ' : 'FAIL'} 
 const wp = await get('/word-to-pdf/');
 say(!/decoration:\s*null\s*[,}]/.test(wp.body),
     'word-to-pdf: the pdfmake hang property is gone from the code');
-say(/const watchdog = setTimeout/.test(wp.body),
-    'word-to-pdf: the async watchdog is present');
+/* The watchdog used to sit in an inline script and is now inside the bundled
+   module, so it is asserted with the other bundle contents below rather than
+   in the page HTML. */
+
+const wd = await get('/word-to-pdf/');
+say(!/mammoth/.test(wd.body), 'word-to-pdf: the mammoth pipeline is gone');
+say(/WordTool.astro_astro_type_script/.test(wd.body), 'word-to-pdf: serves its bundled DOCX reader');
+say(/jszip/i.test(wd.body), 'word-to-pdf: loads JSZip to read the package');
 
 const mw = await get('/merge-word/');
 say(/childNodes\)[\s\S]{0,120}w:sectPr/.test(mw.body),
@@ -60,6 +66,8 @@ const bundles = [
   ['/txt-to-pdf/', /TxtToPdf[^"']+\.js/, /noto-fonts|NotoSans/, 'Noto font loader'],
   ['/csv-to-xlsx/', /SpreadsheetTool[^"']+\.js/, /1899|yyyy-mm-dd/, 'tabular core'],
   ['/pdf-to-excel/', /PdfToExcel[^"']+\.js/, /yyyy-mm-dd|#,##0/, 'numeric typing'],
+  ['/word-to-pdf/', /WordTool[^"']+\.js/, /NotoSerif|pgSz|sectPr/, 'DOCX reader'],
+  ['/word-to-pdf/', /WordTool[^"']+\.js/, /setTimeout/, 'async layout watchdog'],
 ];
 
 for (const [page, findJs, needle, label] of bundles) {
