@@ -37,6 +37,7 @@ const { slug, headline, subtitle } = Astro.props;
   }
 </style>
 
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script is:inline src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script is:inline src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script is:inline src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
@@ -97,7 +98,7 @@ const { slug, headline, subtitle } = Astro.props;
 </div>
 
 <script>
-  import { parseCsv } from '../../scripts/tabular.js';
+  import { parseCsv, readXlsxFills, readXlsxColWidths, decodeRef } from '../../scripts/tabular.js';
   import { prepareFonts } from '../../scripts/pdf-fonts.js';
 
   (function() {
@@ -159,6 +160,36 @@ const { slug, headline, subtitle } = Astro.props;
     }
     function hideError() { errorBanner.style.display = 'none'; }
 
+    /**
+     * autoTable columnStyles carrying the workbook's own column widths.
+     *
+     * Returns an empty object when the sheet declared none, so content-based
+     * sizing stays the default rather than every table being forced to a
+     * guess.
+     */
+    function columnStylesFor(sheet, rows, doc, landscape) {
+      const widths = sheet.colWidths;
+      if (!widths || !widths.length) return {};
+
+      const columns = Math.max(...rows.map(r => r.length));
+      const wanted = [];
+      let total = 0;
+      for (let c = 0; c < columns; c++) {
+        const w = widths[c];
+        if (!w) return {};              // a partial set would skew the rest
+        wanted.push(w);
+        total += w;
+      }
+
+      // 30pt margins either side, on whichever orientation was chosen.
+      const available = (landscape ? 841.89 : 595.28) - 60;
+      const scale = total > available ? available / total : 1;
+
+      const styles = {};
+      wanted.forEach((w, c) => { styles[c] = { cellWidth: w * scale }; });
+      return styles;
+    }
+
     // Trim fully-empty trailing rows/columns so a sheet's used range is tight.
     function trimGrid(rows) {
       let out = rows.map(r => r.map(c => (c == null ? '' : String(c))));
@@ -211,7 +242,7 @@ const { slug, headline, subtitle } = Astro.props;
       const isCsv = /\.csv$/i.test(file.name);
       const reader = new FileReader();
 
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         try {
           if (isCsv) {
             const rows = trimGrid(parseCsv(String(e.target.result)));
@@ -219,12 +250,48 @@ const { slug, headline, subtitle } = Astro.props;
           } else {
             const data = new Uint8Array(e.target.result);
             const wb = XLSX.read(data, { type: 'array', cellDates: true });
+
+            /* SheetJS's community build does not read styles at all, so a
+               workbook converted through it arrives with its fills gone — the
+               numbers are right and the page no longer looks like the
+               spreadsheet. The colours live in xl/styles.xml, which can simply
+               be read from the same bytes. A failure here must not stop the
+               conversion: an unstyled PDF beats no PDF. */
+            let fillsBySheet = new Map();
+            let widthsBySheet = new Map();
+            try {
+              const styleZip = await JSZip.loadAsync(data);
+              fillsBySheet = await readXlsxFills(styleZip);
+              widthsBySheet = await readXlsxColWidths(styleZip);
+            } catch { /* styles unreadable — carry on without them */ }
+
             sheets = [];
             wb.SheetNames.forEach(name => {
               const sheet = wb.Sheets[name];
               // raw:false yields display strings (formatted dates/numbers).
-              const rows = trimGrid(XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false, blankrows: false }));
-              if (rows.length) sheets.push({ name, rows });
+              const raw = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false, blankrows: false });
+              const rows = trimGrid(raw);
+              if (!rows.length) return;
+
+              /* Map the sheet's own cell references onto the trimmed grid.
+                 sheet_to_json starts at the used range's origin, which is not
+                 always A1, so the offset has to come from !ref rather than be
+                 assumed. */
+              const cellFills = fillsBySheet.get(name) || new Map();
+              const range = sheet['!ref'] ? XLSX.utils.decode_range(sheet['!ref']) : null;
+              const originRow = range ? range.s.r : 0;
+              const originCol = range ? range.s.c : 0;
+
+              const fills = rows.map(() => []);
+              for (const [ref, colour] of cellFills) {
+                const pos = decodeRef(ref);
+                if (!pos) continue;
+                const r = pos.row - originRow;
+                const c = pos.col - originCol;
+                if (r >= 0 && r < fills.length && c >= 0) fills[r][c] = colour;
+              }
+
+              sheets.push({ name, rows, fills, colWidths: widthsBySheet.get(name) || null });
             });
           }
 
@@ -284,6 +351,17 @@ const { slug, headline, subtitle } = Astro.props;
           return bodyFont;
         };
 
+        /* Perceived brightness, so text on a workbook's own fill stays
+           readable. Weighted for how the eye responds rather than a flat
+           average, which would call a saturated blue "light". */
+        const isDark = (hex) => {
+          const m = /^#?([0-9a-f]{6})$/i.exec(String(hex));
+          if (!m) return false;
+          const n = parseInt(m[1], 16);
+          const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+          return (0.299 * r + 0.587 * g + 0.114 * b) < 140;
+        };
+
         if (fontState.failed.length) {
           showError('Could not load the ' + fontState.failed.join(' and ') +
             ' font, so some characters may not appear correctly. Check your connection and try again.');
@@ -311,6 +389,13 @@ const { slug, headline, subtitle } = Astro.props;
             headStyles: { font: bodyFont, fillColor: [234, 236, 240], textColor: 20, fontStyle: 'bold', lineWidth: 0.5, lineColor: [190, 190, 190] },
             alternateRowStyles: { fillColor: [249, 250, 251] },
             tableWidth: 'auto',
+            /* Honour the workbook's own column widths. autoTable otherwise
+               sizes purely from content, which is a reasonable default but
+               throws away a deliberate choice — a wide label column next to
+               narrow figures is information. Widths are scaled together when
+               they exceed the page, so a wide sheet still fits rather than
+               being clipped. */
+            columnStyles: columnStylesFor(sheet, rows, doc, optLandscape.checked),
             didParseCell: (data) => {
               // Pick the font per cell from the script it actually contains.
               const text = Array.isArray(data.cell.raw) ? data.cell.raw.join(' ') : data.cell.raw;
@@ -319,6 +404,22 @@ const { slug, headline, subtitle } = Astro.props;
               // bold header style would silently fall back to a face that has
               // no Devanagari glyphs.
               if (data.cell.styles.font !== 'helvetica') data.cell.styles.fontStyle = 'normal';
+
+              /* Repaint the cell with the workbook's own fill. autoTable's
+                 default chrome is a grey header band and zebra striping, which
+                 looks tidy but is not what the user's spreadsheet looked
+                 like. `head` is row 0 of the sheet when the header option is
+                 on, so the source row index has to account for that. */
+              const sourceRow = data.section === 'head'
+                ? 0
+                : data.row.index + (hasHeader ? 1 : 0);
+              const colour = sheet.fills && sheet.fills[sourceRow]
+                && sheet.fills[sourceRow][data.column.index];
+              if (colour) {
+                data.cell.styles.fillColor = colour;
+                // A dark fill needs light text, or the value disappears into it.
+                data.cell.styles.textColor = isDark(colour) ? '#ffffff' : '#1a1a1a';
+              }
             },
           });
         });

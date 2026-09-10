@@ -37,24 +37,43 @@ function conversion(slug, fixture, target, opts = {}) {
     outName: `${slug}.${target === 'jpeg' ? 'jpg' : target}`,
     kind: 'image',
     optional: opts.optional,
-    async checks({ out }) {
+    async checks({ out, src }) {
+      /* Compare against the source's real dimensions, not a constant. The
+         fixtures are not all one size — the HEIC and AVIF samples are real
+         camera files at 1440x960 and 1204x800 — and an earlier version of this
+         check asserted 240x160 for every one of them, failing four tools that
+         were reproducing their input exactly. */
+      const aspect = (w, h) => (h ? w / h : 0);
+      const isSvg = src.format === 'svg';
+
+      let dimsOk, dimsLabel, dimsDetail;
+      if (isSvg) {
+        /* Rasterising vector art at its nominal 240x160 would be needlessly
+           small, so ImageTool deliberately upscales to a 1024 minimum side.
+           The contract is the aspect ratio and a usable resolution. */
+        dimsOk = Math.abs(aspect(out.width, out.height) - aspect(src.width, src.height)) < 0.02
+                 && Math.min(out.width, out.height) >= 1024;
+        dimsLabel = 'Vector upscaled to a usable size, aspect ratio kept';
+        dimsDetail = `${out.width}×${out.height} from a ${src.width}×${src.height} viewBox`;
+      } else if (opts.sourceHasExif) {
+        /* A source carrying Orientation=6 *should* come out rotated: the
+           browser bakes the orientation in when drawing to canvas, which is
+           the correct result — the image finally displays upright without
+           depending on a tag. */
+        dimsOk = out.width === src.height && out.height === src.width;
+        dimsLabel = `Dimensions reflect baked-in EXIF rotation (${src.height}×${src.width})`;
+        dimsDetail = `${out.width}×${out.height}`;
+      } else {
+        dimsOk = out.width === src.width && out.height === src.height;
+        dimsLabel = `Pixel dimensions unchanged (${src.width}×${src.height})`;
+        dimsDetail = `${out.width}×${out.height}`;
+      }
+
       const checks = [
         ok('format', `Output really is ${target.toUpperCase()} (by magic bytes)`,
            out.format === target,
            `detected ${out.format}, ${out.bytes} bytes`, 'blocker'),
-        /* A source carrying Orientation=6 *should* come out rotated: the
-           browser bakes the orientation in when it draws to canvas, which is
-           the correct result — the image finally displays upright without
-           depending on a tag. So for those the expected size is swapped.
-           An earlier version of this check failed the tools for doing the
-           right thing. */
-        ok('dims', opts.sourceHasExif
-             ? `Dimensions reflect baked-in EXIF rotation (${IMG_H}×${IMG_W})`
-             : `Pixel dimensions unchanged (${IMG_W}×${IMG_H})`,
-           opts.sourceHasExif
-             ? (out.width === IMG_H && out.height === IMG_W)
-             : (out.width === IMG_W && out.height === IMG_H),
-           `${out.width}×${out.height}`, 'major'),
+        ok('dims', dimsLabel, dimsOk, dimsDetail, 'major'),
         ok('nonempty', 'Output is not a blank or truncated file',
            out.bytes > 200, `${out.bytes} bytes`, 'blocker'),
       ];
@@ -170,8 +189,13 @@ export const imageRecipes = [
        anything it should not? */
     async checks({ out }) {
       return [
-        ok('format', 'Output is a valid image', out.format !== 'unknown',
-           `${out.format} ${out.width}×${out.height}, ${out.bytes} bytes`, 'blocker'),
+        /* Resizing is not a format conversion. Defaulting every input to JPG
+           returned a transparent PNG as an opaque JPEG the user never asked
+           for, so a PNG or WebP source now keeps its format. JPEG sources
+           still default to JPG, and the file-size mode still forces it. */
+        ok('format', 'A PNG source stays PNG rather than silently becoming a JPEG',
+           out.format === 'png',
+           `${out.format} ${out.width}×${out.height}, ${out.bytes} bytes`, 'major'),
         ok('dims', `Default resize keeps ${IMG_W}×${IMG_H}`,
            out.width === IMG_W && out.height === IMG_H,
            `${out.width}×${out.height}`, 'major'),

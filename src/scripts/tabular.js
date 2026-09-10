@@ -497,3 +497,235 @@ export function rowsToCsv(rows, { delimiter = ',', bom = true } = {}) {
   const body = rows.map((r) => r.map((c) => csvCell(c, delimiter)).join(delimiter)).join('\r\n');
   return (bom ? '﻿' : '') + body + (body ? '\r\n' : '');
 }
+
+/* ------------------------------------------------- xlsx cell formatting */
+
+/**
+ * Read per-cell fill colours out of an .xlsx package.
+ *
+ * SheetJS's community build does not parse styles at all, so a workbook
+ * converted through it arrives with its fills, fonts and borders gone — the
+ * data is right and the document no longer looks like itself. The colours live
+ * in `xl/styles.xml`, indexed by each cell's `s=` attribute, so they can be
+ * read directly from the zip alongside whatever SheetJS returns.
+ *
+ * Kept string-based rather than DOM-based so it runs in Node for tests as well
+ * as in the browser.
+ *
+ * @param {object} zip a loaded JSZip instance
+ * @returns {Promise<Map<string, Map<string,string>>>} sheet name -> "A1" -> "#rrggbb"
+ */
+export async function readXlsxFills(zip) {
+  const out = new Map();
+  const file = (p) => (zip.file(p) ? zip.file(p).async('string') : Promise.resolve(''));
+
+  const stylesXml = await file('xl/styles.xml');
+  if (!stylesXml) return out;
+
+  /* fills[] -> the solid foreground colour of each fill, or null. Indexed
+     positionally, which is how cellXfs refers to them. */
+  const fills = [];
+  const fillsBlock = (stylesXml.match(/<fills[\s\S]*?<\/fills>/) || [''])[0];
+  for (const m of fillsBlock.matchAll(/<fill>([\s\S]*?)<\/fill>/g)) {
+    const pattern = m[1];
+    if (!/patternType="solid"/.test(pattern)) { fills.push(null); continue; }
+    const rgb = (pattern.match(/<fgColor[^>]*rgb="([0-9A-Fa-f]{6,8})"/) || [])[1];
+    // An 8-digit value is ARGB; the alpha is leading and not a colour channel.
+    fills.push(rgb ? '#' + rgb.slice(-6).toLowerCase() : null);
+  }
+
+  /* cellXfs[] -> fill index, but only when applyFill says the fill is the
+     cell's own rather than inherited from a named style. */
+  /* Match only the opening tag, never its children.
+     An earlier `(?:\/>|>[\s\S]*?<\/xf>)` looked like it handled both the
+     self-closing and the container form, but the lazy `</xf>` branch succeeds
+     before the engine ever backtracks far enough to try `/>`, so one match
+     swallowed several elements and the whole table collapsed to three zeroes.
+     Only the attributes are needed here, so there is nothing to gain by
+     consuming the body. */
+  const xfFill = [];
+  const xfsBlock = (stylesXml.match(/<cellXfs[\s\S]*?<\/cellXfs>/) || [''])[0];
+  for (const m of xfsBlock.matchAll(/<xf\b([^>]*?)\/?>/g)) {
+    xfFill.push(Number((m[1].match(/fillId="(\d+)"/) || [])[1] || 0));
+  }
+
+  // Sheet names, in the order their rels resolve.
+  const workbookXml = await file('xl/workbook.xml');
+  const names = [...workbookXml.matchAll(/<sheet\b[^>]*name="([^"]+)"/g)].map((m) => m[1]);
+
+  const paths = Object.keys(zip.files)
+    .filter((p) => /^xl\/worksheets\/sheet\d+\.xml$/.test(p))
+    .sort((a, b) => (+a.match(/(\d+)/)[1]) - (+b.match(/(\d+)/)[1]));
+
+  for (let i = 0; i < paths.length; i++) {
+    const xml = await file(paths[i]);
+    const map = new Map();
+    // Opening tag only, for the same reason as the cellXfs scan above.
+    for (const m of xml.matchAll(/<c\b([^>]*?)\/?>/g)) {
+      const attrs = m[1];
+      const ref = (attrs.match(/r="([A-Z]+\d+)"/) || [])[1];
+      const s = (attrs.match(/\bs="(\d+)"/) || [])[1];
+      if (!ref || s === undefined) continue;
+      const colour = fills[xfFill[+s]] || null;
+      // Fill 0 is "none" and fill 1 is the gray125 default; neither is a colour.
+      if (colour) map.set(ref, colour);
+    }
+    out.set(names[i] || paths[i], map);
+  }
+
+  return out;
+}
+
+/** "A1" -> { row: 0, col: 0 }, zero-based. */
+export function decodeRef(ref) {
+  const m = /^([A-Z]+)(\d+)$/.exec(String(ref));
+  if (!m) return null;
+  let col = 0;
+  for (const ch of m[1]) col = col * 26 + (ch.charCodeAt(0) - 64);
+  return { row: +m[2] - 1, col: col - 1 };
+}
+
+/**
+ * Explicit column widths from an .xlsx, in points.
+ *
+ * Excel stores a width in "characters of the default font", which is not a
+ * unit anything else uses. The conventional conversion is
+ * `pixels = characters * 7 + 5` at 96dpi, then points at 3/4 of that. Exact
+ * fidelity is impossible without the workbook's font metrics; the useful part
+ * is the *relative* width, so a label column stays wider than a quantity one.
+ *
+ * @param {object} zip a loaded JSZip instance
+ * @returns {Promise<Map<string, number[]>>} sheet name -> width per column index
+ */
+export async function readXlsxColWidths(zip) {
+  const out = new Map();
+  const file = (p) => (zip.file(p) ? zip.file(p).async('string') : Promise.resolve(''));
+
+  const workbookXml = await file('xl/workbook.xml');
+  const names = [...workbookXml.matchAll(/<sheet\b[^>]*name="([^"]+)"/g)].map((m) => m[1]);
+
+  const paths = Object.keys(zip.files)
+    .filter((p) => /^xl\/worksheets\/sheet\d+\.xml$/.test(p))
+    .sort((a, b) => (+a.match(/(\d+)/)[1]) - (+b.match(/(\d+)/)[1]));
+
+  for (let i = 0; i < paths.length; i++) {
+    const xml = await file(paths[i]);
+    const widths = [];
+    for (const m of xml.matchAll(/<col\b([^>]*?)\/?>/g)) {
+      const attrs = m[1];
+      // customWidth marks a width the user actually set, as opposed to the
+      // default one Excel writes for every column in some exports.
+      if (!/customWidth="1"/.test(attrs)) continue;
+      const min = Number((attrs.match(/min="(\d+)"/) || [])[1] || 0);
+      const max = Number((attrs.match(/max="(\d+)"/) || [])[1] || min);
+      const chars = Number((attrs.match(/width="([\d.]+)"/) || [])[1] || 0);
+      if (!min || !chars) continue;
+      const pt = (chars * 7 + 5) * 0.75;
+      for (let c = min; c <= max; c++) widths[c - 1] = pt;
+    }
+    if (widths.length) out.set(names[i] || paths[i], widths);
+  }
+  return out;
+}
+
+/**
+ * Extract one worksheet into a standalone .xlsx, keeping everything else.
+ *
+ * Round-tripping a sheet through SheetJS's community build loses every fill,
+ * font, border, column width and frozen pane, because that build does not read
+ * styles at all. A user who *splits* a workbook expects the pieces to be the
+ * workbook, so this copies the original package and removes the other sheets
+ * instead of rebuilding one from parsed values. styles.xml, sharedStrings.xml
+ * and the theme travel untouched, so the part looks exactly like its source.
+ *
+ * @param {object} JSZipCtor the JSZip constructor
+ * @param {object} zip a loaded JSZip of the original workbook
+ * @param {string} sheetName the sheet to keep
+ * @returns {Promise<Uint8Array|null>} the new package, or null if not found
+ */
+export async function extractSheetPackage(JSZipCtor, zip, sheetName) {
+  const read = (p) => (zip.file(p) ? zip.file(p).async('string') : Promise.resolve(''));
+
+  const workbookXml = await read('xl/workbook.xml');
+  const relsXml = await read('xl/_rels/workbook.xml.rels');
+  if (!workbookXml || !relsXml) return null;
+
+  const sheetTags = [...workbookXml.matchAll(/<sheet\b[^>]*\/>/g)].map((m) => m[0]);
+  const keep = sheetTags.find((t) => {
+    const name = (t.match(/name="([^"]*)"/) || [])[1];
+    return name === sheetName;
+  });
+  if (!keep) return null;
+
+  const keepRid = (keep.match(/r:id="([^"]+)"/) || [])[1];
+  const relFor = (rid) => {
+    /* No \b here: inside a quoted string that is the backspace character, not
+       a word boundary, and the pattern silently matched nothing. The plural
+       <Relationships> wrapper cannot match anyway, because it carries no Id. */
+    const re = new RegExp('<Relationship[^>]*Id="' + rid + '"[^>]*>', 'i');
+    const tag = (relsXml.match(re) || [])[0] || '';
+    return (tag.match(/Target="([^"]+)"/) || [])[1] || '';
+  };
+
+  const keepTarget = relFor(keepRid).replace(/^\/?/, '').replace(/^xl\//, '');
+  const keepPath = 'xl/' + keepTarget;
+
+  /* Every worksheet part in the package, so the others can be dropped along
+     with the rels and content-type overrides that name them. */
+  const allSheetPaths = Object.keys(zip.files)
+    .filter((p) => /^xl\/worksheets\/sheet[^/]*\.xml$/.test(p));
+
+  const out = new JSZipCtor();
+
+  for (const path of Object.keys(zip.files)) {
+    const entry = zip.files[path];
+    if (entry.dir) continue;
+
+    // Drop the other worksheets and their rels.
+    if (allSheetPaths.includes(path) && path !== keepPath) continue;
+    if (/^xl\/worksheets\/_rels\//.test(path) &&
+        !path.includes(keepPath.split('/').pop())) continue;
+
+    /* calcChain records formula evaluation order across the whole workbook.
+       Left behind after removing sheets it refers to cells that no longer
+       exist, and Excel reports the file as needing repair. */
+    if (path === 'xl/calcChain.xml') continue;
+
+    if (path === 'xl/workbook.xml') {
+      let xml = workbookXml;
+      for (const tag of sheetTags) if (tag !== keep) xml = xml.replace(tag, '');
+      // definedNames can reference removed sheets; drop the block wholesale.
+      xml = xml.replace(/<definedNames>[\s\S]*?<\/definedNames>/g, '');
+      out.file(path, xml);
+      continue;
+    }
+
+    if (path === 'xl/_rels/workbook.xml.rels') {
+      let xml = relsXml;
+      for (const m of [...relsXml.matchAll(/<Relationship\b[^>]*\/>/g)]) {
+        const tag = m[0];
+        if (!/\/worksheet"/.test(tag)) continue;         // keep styles, theme, sharedStrings
+        if (tag.includes('Id="' + keepRid + '"')) continue;
+        xml = xml.replace(tag, '');
+      }
+      out.file(path, xml);
+      continue;
+    }
+
+    if (path === '[Content_Types].xml') {
+      let xml = await entry.async('string');
+      for (const sheetPath of allSheetPaths) {
+        if (sheetPath === keepPath) continue;
+        const re = new RegExp('<Override\b[^>]*PartName="/' + sheetPath + '"[^>]*/>', 'g');
+        xml = xml.replace(re, '');
+      }
+      xml = xml.replace(/<Override\b[^>]*PartName="\/xl\/calcChain\.xml"[^>]*\/>/g, '');
+      out.file(path, xml);
+      continue;
+    }
+
+    out.file(path, await entry.async('uint8array'));
+  }
+
+  return out.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
+}

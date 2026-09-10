@@ -111,7 +111,7 @@ const { slug, headline, subtitle } = Astro.props;
   <div id="sheetsSection">
     <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs); flex-wrap: wrap;">
       <div id="sheetsSectionLabel" style="font-size: 11px; font-weight: var(--fw-bold); text-transform: uppercase; font-family: var(--font-sans); color: var(--colors-mute);">Worksheets to extract</div>
-      <button type="button" id="sheetsToggleAll" onclick="toggleAllSheets()" style="background: none; border: none; padding: 0; font-size: 12px; font-weight: var(--fw-bold); color: var(--colors-link); cursor: pointer; min-height: 24px;">Clear all</button>
+      <button type="button" id="sheetsToggleAll" style="background: none; border: none; padding: 0; font-size: 12px; font-weight: var(--fw-bold); color: var(--colors-link); cursor: pointer; min-height: 24px;">Clear all</button>
     </div>
     <p style="font-size: 13px; color: var(--colors-body); margin: 0 0 var(--spacing-sm);">
       Each selected worksheet becomes its own file, delivered together in a ZIP. Click a card to include or exclude it.
@@ -149,13 +149,15 @@ const { slug, headline, subtitle } = Astro.props;
     </div>
     
     <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" id="processBtn" onclick="processSplit()">Extract Selected Sheets</button>
-      <button class="button button-danger" onclick="resetWorkspace()">Clear</button>
+      <button class="button button-primary" id="processBtn">Extract Selected Sheets</button>
+      <button class="button button-danger" id="btnClearSplit">Clear</button>
     </div>
   </div>
 </div>
 
-<script is:inline>
+<script>
+  import { extractSheetPackage } from '../../scripts/tabular.js';
+
   (function() {
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
@@ -287,7 +289,7 @@ const { slug, headline, subtitle } = Astro.props;
       if (toggle) toggle.textContent = selectedSheets.size === total ? 'Clear all' : 'Select all';
     }
 
-    window.toggleAllSheets = function () {
+    const toggleAllSheets = function () {
       if (!activeFile) return;
       const selectAll = selectedSheets.size !== activeFile.sheets.length;
       activeFile.sheets.forEach((name, i) => {
@@ -358,7 +360,9 @@ const { slug, headline, subtitle } = Astro.props;
       updateSheetCount();
     };
 
-    window.processSplit = async function() {
+    /* Bound below rather than through an inline onclick: this script is a
+       bundled module, so nothing it defines is reachable from HTML. */
+    const processSplit = async function() {
       // Clear any previous message first. A stale banner outlives the problem
       // it described and makes a run that actually worked look like it failed.
       hideError();
@@ -382,20 +386,35 @@ const { slug, headline, subtitle } = Astro.props;
         const zip = new JSZip();
         
         let counter = 0;
-        selectedSheets.forEach((sheetName) => {
+        for (const sheetName of selectedSheets) {
           const worksheet = activeFile.workbook.Sheets[sheetName];
-          const newWorkbook = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(newWorkbook, worksheet, sheetName);
-          
+
           if (format === 'xlsx') {
-            const outBytes = XLSX.write(newWorkbook, { bookType: 'xlsx', type: 'array' });
+            /* Copy the original package and remove the other sheets, rather
+               than rebuilding a workbook from parsed values. Rebuilding loses
+               every fill, font, border, column width and frozen pane, because
+               SheetJS's community build does not read styles at all — and a
+               user who splits a workbook expects the pieces to be the
+               workbook. Falls back to the rebuild if the surgery fails, so an
+               unusual package still produces a file. */
+            let outBytes = null;
+            try {
+              outBytes = await extractSheetPackage(
+                JSZip, await JSZip.loadAsync(activeFile.bytes), sheetName);
+            } catch { /* fall through to the rebuild below */ }
+
+            if (!outBytes) {
+              const newWorkbook = XLSX.utils.book_new();
+              XLSX.utils.book_append_sheet(newWorkbook, worksheet, sheetName);
+              outBytes = XLSX.write(newWorkbook, { bookType: 'xlsx', type: 'array' });
+            }
             zip.file(`${sheetName}.xlsx`, outBytes);
           } else {
             const csvString = XLSX.utils.sheet_to_csv(worksheet);
             zip.file(`${sheetName}.csv`, csvString);
           }
           counter++;
-        });
+        }
 
         showProgress(75, "Compiling zip package…");
         const zipContent = await zip.generateAsync({ type: "blob" });
@@ -538,7 +557,7 @@ const { slug, headline, subtitle } = Astro.props;
       hideProgress();
     }
 
-    window.resetWorkspace = function() {
+    const resetWorkspace = function() {
       activeFile = null;
       selectedSheets.clear();
       fileInput.value = '';
@@ -552,5 +571,11 @@ const { slug, headline, subtitle } = Astro.props;
       dropZone.style.display = 'flex';
       hideError();
     };
+
+    /* Bound here rather than through inline onclick attributes: this script is
+       now a bundled module, so nothing it defines is reachable from HTML. */
+    processBtn.addEventListener('click', processSplit);
+    document.getElementById('sheetsToggleAll').addEventListener('click', toggleAllSheets);
+    document.getElementById('btnClearSplit').addEventListener('click', resetWorkspace);
   })();
 </script>

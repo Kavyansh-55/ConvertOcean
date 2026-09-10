@@ -218,10 +218,20 @@ async function runRecipe(browser, recipe) {
     if (typeof step === 'string') {
       await page.waitForSelector(step, { visible: true, timeout: 30_000 });
       await page.click(step);
-    } else {
+    } else if (step.select) {
       // { select, value } — choose a non-default mode before exporting.
       await page.waitForSelector(step.select, { timeout: 30_000 });
       await page.select(step.select, step.value);
+    } else if (step.setValue) {
+      // { setValue, value } — type into a number/text field, firing the events
+      // the tool listens for.
+      await page.waitForSelector(step.setValue, { timeout: 30_000 });
+      await page.evaluate((sel, v) => {
+        const el = document.querySelector(sel);
+        el.value = v;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      }, step.setValue, step.value);
     }
   }
 

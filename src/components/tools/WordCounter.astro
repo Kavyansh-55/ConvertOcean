@@ -419,7 +419,12 @@ const { slug, headline, subtitle } = Astro.props;
       const charNoSpace = text.replace(/\s/g, '').length;
       const sentences = text.trim() === '' ? 0 : (text.match(/[.!?]+/g) || []).length || (text.trim().length > 0 ? 1 : 0);
       const paragraphs = text.trim() === '' ? 0 : text.split(/\n\s*\n/).filter(p => p.trim().length > 0).length || (text.trim().length > 0 ? 1 : 0);
-      const lines = text.trim() === '' ? 0 : text.split('\n').filter(l => l.trim().length > 0).length;
+      /* Every line, blanks included, so the number matches what an editor's
+         gutter and `wc -l` show. Counting only non-blank lines made this
+         duplicate the Paragraphs stat below and quietly disagree with the
+         line number someone was checking against. A single trailing newline
+         ends the last line rather than starting an empty one. */
+      const lines = text === '' ? 0 : text.replace(/\n$/, '').split('\n').length;
 
       elWords.textContent = wordCount.toLocaleString();
       elChars.textContent = charCount.toLocaleString();

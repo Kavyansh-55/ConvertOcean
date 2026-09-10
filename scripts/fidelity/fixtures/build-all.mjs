@@ -16,7 +16,10 @@ for (const f of ['build-docx.mjs', 'build-xlsx.mjs', 'build-pptx.mjs', 'build-pd
    is actually what gets tested. */
 import { copyFileSync, existsSync as exists } from 'node:fs';
 const FILES = join(HERE, 'files');
-for (const name of ['torture.pdf', 'torture.docx', 'torture.pptx', 'torture.txt', 'torture.xlsx']) {
+// torture-b.pptx is NOT a copy: build-pptx.mjs emits a deliberately
+// different deck, because two identical decks cannot reveal a merger that
+// forgets to copy media and layouts.
+for (const name of ['torture.pdf', 'torture.docx', 'torture.txt', 'torture.xlsx']) {
   const src = join(FILES, name);
   if (exists(src)) copyFileSync(src, join(FILES, name.replace('torture.', 'torture-b.')));
 }

@@ -145,7 +145,44 @@ export async function readPdf(buf) {
     /** Distinct text sizes, rounded — a converter that flattens everything to
      *  one body size produces a single entry here. */
     sizes_pt: [...new Set(items.map((i) => Math.round(i.size)))].filter(Boolean).sort((a, b) => a - b),
+    /** Pixel size of each embedded JPEG, for measuring export resolution. */
+    embeddedJpegs: findEmbeddedJpegs(buf),
   };
+}
+
+/**
+ * Pixel dimensions of every JPEG embedded in a PDF.
+ *
+ * A DCTDecode image is stored as the raw JPEG bytes, so its SOF header can be
+ * read straight out of the file. This is what makes export resolution
+ * measurable: a slide image of N pixels across a 297mm page is N/11.69 DPI, so
+ * "is the export print-safe" becomes an arithmetic question rather than a
+ * judgement. Going through pdf.js for it would need the optional `canvas`
+ * module, which is not installed.
+ */
+function findEmbeddedJpegs(buf) {
+  const b = Buffer.from(buf);
+  const found = [];
+  for (let i = 0; i < b.length - 3; i++) {
+    // SOI followed by a marker byte is the start of a JPEG stream.
+    if (b[i] !== 0xff || b[i + 1] !== 0xd8 || b[i + 2] !== 0xff) continue;
+    let p = i + 2;
+    while (p < b.length - 8) {
+      if (b[p] !== 0xff) break;
+      const marker = b.readUInt16BE(p);
+      if (marker === 0xffda) break;                       // start of scan
+      const segLen = b.readUInt16BE(p + 2);
+      if (segLen < 2) break;
+      if (marker >= 0xffc0 && marker <= 0xffcf &&
+          marker !== 0xffc4 && marker !== 0xffc8 && marker !== 0xffcc) {
+        found.push({ width: b.readUInt16BE(p + 7), height: b.readUInt16BE(p + 5) });
+        break;
+      }
+      p += 2 + segLen;
+    }
+    i = p;   // skip past the header we just walked
+  }
+  return found;
 }
 
 /* ------------------------------------------------------------------- DOCX */
@@ -396,6 +433,34 @@ export function readImage(input) {
     out.width = b.readUInt16LE(6);
     out.height = b.readUInt16LE(8);
     out.hasAlpha = true;
+    return out;
+  }
+
+  /* HEIC and AVIF are both ISOBMFF. Rather than walk the box tree down to
+     meta > iprp > ipco, scan for the `ispe` (image spatial extents) boxes and
+     take the largest — a file carries one per item, and the thumbnail's is
+     smaller than the primary image's. Without this the harness reported these
+     as 0x0 and compared every conversion against a hardcoded size instead of
+     the source's own. */
+  if (b.length > 16 && b.subarray(4, 8).toString('latin1') === 'ftyp') {
+    const brand = b.subarray(8, 12).toString('latin1');
+    out.format = /avif|avis/i.test(brand) ? 'avif'
+      : /heic|heix|hevc|mif1|msf1/i.test(brand) ? 'heic' : 'isobmff';
+
+    let best = 0;
+    for (let i = 0; i < b.length - 20; i++) {
+      if (b[i] === 0x69 && b[i + 1] === 0x73 && b[i + 2] === 0x70 && b[i + 3] === 0x65) {
+        const w = b.readUInt32BE(i + 8);   // after 4 bytes of version+flags
+        const h = b.readUInt32BE(i + 12);
+        if (w > 0 && h > 0 && w < 65536 && h < 65536 && w * h > best) {
+          best = w * h;
+          out.width = w;
+          out.height = h;
+        }
+      }
+    }
+    // AVIF and HEIC both support alpha; whether this file uses it needs a
+    // full decode, so it is left unasserted rather than guessed.
     return out;
   }
 

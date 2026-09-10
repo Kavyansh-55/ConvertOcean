@@ -287,6 +287,19 @@ const { slug, headline, subtitle } = Astro.props;
           srcImg = img; srcW = img.width; srcH = img.height;
           $('rzWidth').value = srcW;
           $('rzHeight').value = srcH;
+
+          /* Default the output format to the input's.
+             JPG is the right default for this tool's main job — shrinking a
+             photo to fit an upload form — but applying it to every input meant
+             a transparent PNG came back as an opaque JPEG the user never asked
+             for. A PNG or WebP source keeps its format so its alpha survives;
+             a JPEG source still gets JPG, and the file-size mode forces JPG
+             regardless because that is the only way to hit a byte target. */
+          const sourceFormat = /\.png$/i.test(file.name) ? 'png'
+            : /\.webp$/i.test(file.name) ? 'webp'
+              : /\.jpeg$/i.test(file.name) ? 'jpeg' : 'jpg';
+          $('rzFormat').value = sourceFormat;
+          $('rzQualityGroup').style.display = sourceFormat === 'png' ? 'none' : 'block';
           $('rzPreview').src = e.target.result;
           $('rzSummary').innerHTML = `<strong>Original:</strong> ${srcW}×${srcH} px · ${fmtKB(srcBytes)}<br/>Choose settings and click <strong>Resize Image</strong>.`;
           dropZone.style.display = 'none';
