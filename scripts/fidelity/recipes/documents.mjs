@@ -211,7 +211,11 @@ export const documentRecipes = [
     kind: 'pdf',
     async checks({ out }) {
       const t = out.text.replace(/\s+/g, ' ');
-      const gone = ['M01', 'M03', 'M04', 'M07', 'M09', 'M10'].filter((m) => !t.includes(m));
+      /* M07 names the picture shape, not any visible text, so it can never
+         appear in a text layer — asserting it would be a permanent red for
+         something the renderer does correctly. The picture is checked as an
+         embedded image instead. */
+      const gone = ['M01', 'M03', 'M04', 'M09', 'M10'].filter((m) => !t.includes(m));
       const first = out.sizes[0];
       return [
         ok('opens', 'Output is a readable PDF', out.pages > 0, `${out.pages} pages`, 'blocker'),
@@ -219,13 +223,31 @@ export const documentRecipes = [
         ok('selectable', 'Slide text is selectable / searchable in the PDF',
            out.items.length > 0,
            out.items.length ? `${out.items.length} text items` : 'no text layer — slides are flat images', 'major'),
+        ok('picture', 'Slide picture embedded', out.imageCount >= 3,
+           `${out.imageCount} painted images across ${out.pages} slides`, 'major'),
         ok('text', 'Slide text present (title, bullets, table)',
            gone.length === 0, gone.length ? `missing: ${gone.join(', ')}` : 'all present', 'major'),
         ok('aspect', 'Page keeps the 16:9 slide aspect ratio',
            first && Math.abs((first.width / first.height) - (16 / 9)) < 0.05,
            first ? `${first.width}×${first.height} = ${(first.width / first.height).toFixed(2)}` : 'n/a', 'major'),
-        ok('resolution', 'Export resolution ≥ 200 DPI (print-safe)',
-           false, 'measured separately from the raster scale — see notes', 'major'),
+        /* Arithmetic, not judgement: an image of N pixels across a page W
+           points wide is N / (W/72) DPI. The preview render is 1280px on a
+           297mm page, which is 109 DPI — soft at any zoom and poor in print. */
+        ok('resolution', 'Export resolution is print-safe (≥ 200 DPI)',
+           (() => {
+             const img = out.embeddedJpegs && out.embeddedJpegs[0];
+             const page = out.sizes[0];
+             if (!img || !page) return false;
+             return img.width / (page.width / 72) >= 200;
+           })(),
+           (() => {
+             const img = out.embeddedJpegs && out.embeddedJpegs[0];
+             const page = out.sizes[0];
+             if (!img || !page) return 'no embedded image found';
+             return `${img.width}px across ${(page.width / 72).toFixed(2)}in = ` +
+                    `${Math.round(img.width / (page.width / 72))} DPI`;
+           })(),
+           'major'),
         ok('notes', 'Speaker notes carried or explicitly offered',
            t.includes('M11'), t.includes('M11') ? '' : 'notes dropped silently', 'minor'),
       ];

@@ -96,7 +96,24 @@ let targetFormat = "PDF";
   const btnClear        = document.getElementById('btnClear');
 
   let originalName  = '';
-  let slideCanvases = [];   // final Canvas elements, one per slide
+  let slideCanvases = [];   // preview-resolution canvases, one per slide
+
+  /* Everything drawSlide needs, kept so the PDF export can re-render each
+     slide at print resolution instead of upscaling a 109 DPI preview. Stored
+     per slide rather than re-parsed, and rendered one at a time on export so
+     a long deck never holds more than one large canvas at once. */
+  let slideSources = [];
+  let deckContext = null;   // { zip, theme, master, dims }
+
+  /* Text painted onto the current canvas, in canvas pixels. Laid over the
+     image as invisible text in the PDF so the export is selectable and
+     searchable — a flat picture of a slide is not a document. */
+  let currentTextRuns = null;
+  function recordText(text, x, y, sizePx) {
+    if (currentTextRuns && text && String(text).trim()) {
+      currentTextRuns.push({ text: String(text), x, y, size: sizePx });
+    }
+  }
 
   /* ================================================================
      UI HELPERS
@@ -173,6 +190,8 @@ let targetFormat = "PDF";
       if (!slides.length) { showErr('No slides found in this file.'); hideProg(); return; }
 
       slideCanvases = [];
+      slideSources = [];
+      deckContext = { zip, theme, master, dims };
       slidesGrid.innerHTML = '';
 
       /* ── 5. Render each slide ── */
@@ -198,8 +217,29 @@ let targetFormat = "PDF";
         const bgData = resolveSlideBg(slideDoc, layoutData, master, theme);
 
         /* ── Draw slide to canvas ── */
+        currentTextRuns = [];
         const canvas = await drawSlide(slideDoc, relsDoc, zip, scale, CANVAS_W, CANVAS_H, bgData, theme, master, layoutData);
         slideCanvases.push(canvas);
+        // Keep what the export needs to re-render this slide at print size.
+        /* Speaker notes live in a separate part reached through the slide's
+           own rels. A raster export drops them silently; carrying them into the
+           PDF's text layer keeps them searchable and copyable. */
+        let notes = '';
+        try {
+          const notesRel = relsDoc && Array.from(relsDoc.getElementsByTagName('Relationship'))
+            .find(r => /notesSlide$/.test(r.getAttribute('Type') || ''));
+          if (notesRel) {
+            const notesPath = resolveDots('ppt/slides/' + notesRel.getAttribute('Target'));
+            const notesFile = zip.file(notesPath);
+            if (notesFile) {
+              const nDoc = new DOMParser().parseFromString(await notesFile.async('string'), 'text/xml');
+              notes = Array.from(nDoc.getElementsByTagName('a:t')).map(t => t.textContent).join(' ').trim();
+            }
+          }
+        } catch { /* no notes, or unreadable — not worth failing the render */ }
+
+        slideSources.push({ slideDoc, relsDoc, bgData, layoutData, textRuns: currentTextRuns, notes });
+        currentTextRuns = null;
 
         /* Thumbnail */
         const thumb = document.createElement('img');
@@ -774,6 +814,7 @@ let targetFormat = "PDF";
           ctx.font      = seg.font;
           ctx.fillStyle = seg.color;
           ctx.fillText(seg.text, x, y + lineH * 0.8);
+          recordText(seg.text, x, y + lineH * 0.8, seg.fszPx || lineH * 0.8);
           if (seg.underline) {
             ctx.strokeStyle = seg.color;
             ctx.lineWidth   = Math.max(0.5, seg.fszPx * 0.06);
@@ -959,6 +1000,7 @@ let targetFormat = "PDF";
           ctx.fillStyle = '#111111';
           ctx.font      = `${Math.round(fszPx)}px Calibri, Arial, sans-serif`;
           ctx.fillText(cellText, curX + 4, curY + rowH * 0.65, cw - 8);
+          recordText(cellText, curX + 4, curY + rowH * 0.65, fszPx);
         }
 
         curX += cw;
@@ -1272,16 +1314,80 @@ let targetFormat = "PDF";
       const pageW   = 297;  // A4 landscape mm
       const pageH   = Math.round(297 / aspect);
 
+      /* Re-render each slide for the export rather than reusing the preview.
+         The preview canvas is 1280px across a 297mm page, which is 109 DPI —
+         soft on screen at any zoom and visibly poor in print. 2600px puts it
+         over 220 DPI. Slides are rendered one at a time and released straight
+         after, so a long deck never holds more than one large canvas. */
+      const EXPORT_W = 2600;
+      const canRerender = deckContext && slideSources.length === slideCanvases.length;
+      const exportScale = canRerender ? EXPORT_W / deckContext.dims.cx : null;
+      const exportH = canRerender
+        ? Math.round(EXPORT_W * deckContext.dims.cy / deckContext.dims.cx)
+        : null;
+
       let doc = null;
       for (let i = 0; i < slideCanvases.length; i++) {
-        showProg(10 + Math.round((i / slideCanvases.length) * 85), `Adding slide ${i + 1}…`);
-        const url = slideCanvases[i].toDataURL('image/jpeg', 0.93);
+        showProg(10 + Math.round((i / slideCanvases.length) * 85), `Rendering slide ${i + 1} of ${slideCanvases.length}…`);
+
+        let canvas = slideCanvases[i];
+        let temporary = false;
+        if (canRerender) {
+          try {
+            const src = slideSources[i];
+            currentTextRuns = [];   // discard; the preview pass already captured them
+            canvas = await drawSlide(
+              src.slideDoc, src.relsDoc, deckContext.zip, exportScale,
+              EXPORT_W, exportH, src.bgData, deckContext.theme,
+              deckContext.master, src.layoutData);
+            currentTextRuns = null;
+            temporary = true;
+          } catch {
+            canvas = slideCanvases[i];   // fall back to the preview render
+          }
+        }
+
+        const url = canvas.toDataURL('image/jpeg', 0.92);
         if (i === 0) {
           doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [pageW, pageH] });
         } else {
           doc.addPage([pageW, pageH], 'landscape');
         }
         doc.addImage(url, 'JPEG', 0, 0, pageW, pageH, undefined, 'FAST');
+
+        /* Lay the slide's text over the image, invisibly. The picture is what
+           the reader sees; this is what makes the PDF selectable, searchable
+           and reachable by a screen reader, which a flat image never is. */
+        const runs = (slideSources[i] && slideSources[i].textRuns) || [];
+        if (runs.length) {
+          const previewW = slideCanvases[i].width || 1;
+          const mmPerPx = pageW / previewW;
+          doc.setTextColor(0, 0, 0);
+          for (const run of runs) {
+            const sizePt = Math.max(1, (run.size || 12) * mmPerPx * 2.8346);
+            doc.setFontSize(sizePt);
+            try {
+              doc.text(run.text, run.x * mmPerPx, run.y * mmPerPx, { renderingMode: 'invisible' });
+            } catch { /* a glyph jsPDF cannot encode — the image still shows it */ }
+          }
+        }
+
+        /* Speaker notes, carried into the same invisible layer below the
+           slide's own text so they are searchable and copyable rather than
+           dropped on the floor by the rasteriser. */
+        const notes = (slideSources[i] && slideSources[i].notes) || '';
+        if (notes) {
+          doc.setFontSize(6);
+          try {
+            doc.text('Notes: ' + notes, 4, pageH - 3, {
+              renderingMode: 'invisible',
+              maxWidth: pageW - 8,
+            });
+          } catch { /* unencodable glyphs — the slide image is unaffected */ }
+        }
+
+        // Release the export canvas before building the next one.
+        if (temporary) { canvas.width = 0; canvas.height = 0; }
       }
 
       doc.save(originalName.replace(/\.[^/.]+$/, '') + '.pdf');

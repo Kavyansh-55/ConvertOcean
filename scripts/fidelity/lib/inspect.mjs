@@ -145,7 +145,44 @@ export async function readPdf(buf) {
     /** Distinct text sizes, rounded — a converter that flattens everything to
      *  one body size produces a single entry here. */
     sizes_pt: [...new Set(items.map((i) => Math.round(i.size)))].filter(Boolean).sort((a, b) => a - b),
+    /** Pixel size of each embedded JPEG, for measuring export resolution. */
+    embeddedJpegs: findEmbeddedJpegs(buf),
   };
+}
+
+/**
+ * Pixel dimensions of every JPEG embedded in a PDF.
+ *
+ * A DCTDecode image is stored as the raw JPEG bytes, so its SOF header can be
+ * read straight out of the file. This is what makes export resolution
+ * measurable: a slide image of N pixels across a 297mm page is N/11.69 DPI, so
+ * "is the export print-safe" becomes an arithmetic question rather than a
+ * judgement. Going through pdf.js for it would need the optional `canvas`
+ * module, which is not installed.
+ */
+function findEmbeddedJpegs(buf) {
+  const b = Buffer.from(buf);
+  const found = [];
+  for (let i = 0; i < b.length - 3; i++) {
+    // SOI followed by a marker byte is the start of a JPEG stream.
+    if (b[i] !== 0xff || b[i + 1] !== 0xd8 || b[i + 2] !== 0xff) continue;
+    let p = i + 2;
+    while (p < b.length - 8) {
+      if (b[p] !== 0xff) break;
+      const marker = b.readUInt16BE(p);
+      if (marker === 0xffda) break;                       // start of scan
+      const segLen = b.readUInt16BE(p + 2);
+      if (segLen < 2) break;
+      if (marker >= 0xffc0 && marker <= 0xffcf &&
+          marker !== 0xffc4 && marker !== 0xffc8 && marker !== 0xffcc) {
+        found.push({ width: b.readUInt16BE(p + 7), height: b.readUInt16BE(p + 5) });
+        break;
+      }
+      p += 2 + segLen;
+    }
+    i = p;   // skip past the header we just walked
+  }
+  return found;
 }
 
 /* ------------------------------------------------------------------- DOCX */
