@@ -627,3 +627,105 @@ export async function readXlsxColWidths(zip) {
   }
   return out;
 }
+
+/**
+ * Extract one worksheet into a standalone .xlsx, keeping everything else.
+ *
+ * Round-tripping a sheet through SheetJS's community build loses every fill,
+ * font, border, column width and frozen pane, because that build does not read
+ * styles at all. A user who *splits* a workbook expects the pieces to be the
+ * workbook, so this copies the original package and removes the other sheets
+ * instead of rebuilding one from parsed values. styles.xml, sharedStrings.xml
+ * and the theme travel untouched, so the part looks exactly like its source.
+ *
+ * @param {object} JSZipCtor the JSZip constructor
+ * @param {object} zip a loaded JSZip of the original workbook
+ * @param {string} sheetName the sheet to keep
+ * @returns {Promise<Uint8Array|null>} the new package, or null if not found
+ */
+export async function extractSheetPackage(JSZipCtor, zip, sheetName) {
+  const read = (p) => (zip.file(p) ? zip.file(p).async('string') : Promise.resolve(''));
+
+  const workbookXml = await read('xl/workbook.xml');
+  const relsXml = await read('xl/_rels/workbook.xml.rels');
+  if (!workbookXml || !relsXml) return null;
+
+  const sheetTags = [...workbookXml.matchAll(/<sheet\b[^>]*\/>/g)].map((m) => m[0]);
+  const keep = sheetTags.find((t) => {
+    const name = (t.match(/name="([^"]*)"/) || [])[1];
+    return name === sheetName;
+  });
+  if (!keep) return null;
+
+  const keepRid = (keep.match(/r:id="([^"]+)"/) || [])[1];
+  const relFor = (rid) => {
+    /* No \b here: inside a quoted string that is the backspace character, not
+       a word boundary, and the pattern silently matched nothing. The plural
+       <Relationships> wrapper cannot match anyway, because it carries no Id. */
+    const re = new RegExp('<Relationship[^>]*Id="' + rid + '"[^>]*>', 'i');
+    const tag = (relsXml.match(re) || [])[0] || '';
+    return (tag.match(/Target="([^"]+)"/) || [])[1] || '';
+  };
+
+  const keepTarget = relFor(keepRid).replace(/^\/?/, '').replace(/^xl\//, '');
+  const keepPath = 'xl/' + keepTarget;
+
+  /* Every worksheet part in the package, so the others can be dropped along
+     with the rels and content-type overrides that name them. */
+  const allSheetPaths = Object.keys(zip.files)
+    .filter((p) => /^xl\/worksheets\/sheet[^/]*\.xml$/.test(p));
+
+  const out = new JSZipCtor();
+
+  for (const path of Object.keys(zip.files)) {
+    const entry = zip.files[path];
+    if (entry.dir) continue;
+
+    // Drop the other worksheets and their rels.
+    if (allSheetPaths.includes(path) && path !== keepPath) continue;
+    if (/^xl\/worksheets\/_rels\//.test(path) &&
+        !path.includes(keepPath.split('/').pop())) continue;
+
+    /* calcChain records formula evaluation order across the whole workbook.
+       Left behind after removing sheets it refers to cells that no longer
+       exist, and Excel reports the file as needing repair. */
+    if (path === 'xl/calcChain.xml') continue;
+
+    if (path === 'xl/workbook.xml') {
+      let xml = workbookXml;
+      for (const tag of sheetTags) if (tag !== keep) xml = xml.replace(tag, '');
+      // definedNames can reference removed sheets; drop the block wholesale.
+      xml = xml.replace(/<definedNames>[\s\S]*?<\/definedNames>/g, '');
+      out.file(path, xml);
+      continue;
+    }
+
+    if (path === 'xl/_rels/workbook.xml.rels') {
+      let xml = relsXml;
+      for (const m of [...relsXml.matchAll(/<Relationship\b[^>]*\/>/g)]) {
+        const tag = m[0];
+        if (!/\/worksheet"/.test(tag)) continue;         // keep styles, theme, sharedStrings
+        if (tag.includes('Id="' + keepRid + '"')) continue;
+        xml = xml.replace(tag, '');
+      }
+      out.file(path, xml);
+      continue;
+    }
+
+    if (path === '[Content_Types].xml') {
+      let xml = await entry.async('string');
+      for (const sheetPath of allSheetPaths) {
+        if (sheetPath === keepPath) continue;
+        const re = new RegExp('<Override\b[^>]*PartName="/' + sheetPath + '"[^>]*/>', 'g');
+        xml = xml.replace(re, '');
+      }
+      xml = xml.replace(/<Override\b[^>]*PartName="\/xl\/calcChain\.xml"[^>]*\/>/g, '');
+      out.file(path, xml);
+      continue;
+    }
+
+    out.file(path, await entry.async('uint8array'));
+  }
+
+  return out.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
+}
