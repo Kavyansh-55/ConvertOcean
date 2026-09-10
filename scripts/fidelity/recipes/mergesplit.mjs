@@ -114,7 +114,7 @@ export const mergeSplitRecipes = [
     download: '#btnSplit',
     outName: 'split-word.zip',
     kind: 'zip',
-    async checks({ out, readDocx }) {
+    async checks({ out, src, readDocx }) {
       const docs = out.entries.filter((e) => /\.docx$/i.test(e.name));
       const parsed = [];
       for (const d of docs) {
@@ -123,6 +123,35 @@ export const mergeSplitRecipes = [
       const good = parsed.filter(Boolean);
       const allText = good.map((p) => p.text).join(' ');
       const body = DOCX_MARKERS.slice(0, 18);
+
+      /* Splitting distributes a document; it does not copy every run into
+         every part. The old check asked one part to carry two fonts, which
+         this fixture makes impossible — Georgia is on element 2 and Courier
+         New on element 14, and a 10-paragraph chunk cannot hold both. A part
+         that legitimately received only unformatted trailing paragraphs then
+         read as a failure. What a reader actually expects is three things,
+         and all three are measurable: nothing the source had is lost across
+         the set, nothing is invented that the source never had, and each
+         piece keeps the formatting of the text it was given. */
+      const union = (key) => [...new Set(good.flatMap((p) => p[key]))];
+      const fonts = union('fonts');
+      const colors = union('colors');
+      const lost = [
+        ...src.fonts.filter((f) => !fonts.includes(f)),
+        ...src.colors.filter((c) => !colors.includes(c)),
+      ];
+      const invented = [
+        ...fonts.filter((f) => !src.fonts.includes(f)),
+        ...colors.filter((c) => !src.colors.includes(c)),
+      ];
+      /* M02 is the Georgia paragraph, M11 the Courier New one. Whichever
+         part each landed in must be the part that carries its font. */
+      const travels = [['M02', 'Georgia'], ['M11', 'Courier New']]
+        .map(([marker, font]) => {
+          const host = good.find((p) => p.text.includes(marker));
+          return { marker, font, ok: !!host && host.fonts.includes(font) };
+        });
+
       return [
         ok('zip', 'Produced .docx parts', docs.length > 0,
            `${out.names.length} entries: ${out.names.slice(0, 4).join(', ')}`, 'blocker'),
@@ -131,9 +160,24 @@ export const mergeSplitRecipes = [
         ok('nocontentloss', 'No paragraph lost across the parts',
            missing(allText, body).length === 0,
            `missing: ${missing(allText, body).join(', ') || 'none'}`, 'blocker'),
-        ok('formatting', 'Parts keep the original run formatting',
-           good.some((p) => p.fonts.length >= 2 && p.colors.length >= 1),
-           good.map((p) => `fonts:${p.fonts.length}/colors:${p.colors.length}`).join(' '), 'major'),
+        ok('formatting', 'Every font and colour in the source survives somewhere',
+           lost.length === 0,
+           lost.length ? `lost: ${lost.join(', ')}`
+                       : `${fonts.length} fonts, ${colors.length} colours, all accounted for`,
+           'major'),
+        ok('nofabrication', 'No part invents formatting the source never had',
+           invented.length === 0,
+           invented.length ? `invented: ${invented.join(', ')}` : 'none', 'major'),
+        ok('formattravels', 'Each marker keeps its own font in the part it lands in',
+           travels.every((t) => t.ok),
+           travels.map((t) => `${t.marker}→${t.font}:${t.ok ? 'kept' : 'LOST'}`).join(' '),
+           'major'),
+        ok('stylepartskept', 'Each part still carries styles.xml and numbering.xml',
+           good.every((p) => p.parts.includes('word/styles.xml'))
+           && good.every((p) => p.parts.includes('word/numbering.xml')),
+           good.map((p) => (p.parts.includes('word/styles.xml') ? 's' : '-')
+                         + (p.parts.includes('word/numbering.xml') ? 'n' : '-')).join(' '),
+           'major'),
         ok('tablekept', 'The table lands in a part intact, not flattened',
            good.some((p) => p.tables >= 1),
            `tables per part: ${good.map((p) => p.tables).join(',')}`, 'major'),
@@ -285,6 +329,15 @@ export const mergeSplitRecipes = [
     kind: 'xlsx',
     async checks({ out }) {
       const styled = out.sheets.reduce((n, s) => n + s.styledCells, 0);
+      /* The two inputs are deliberately different workbooks, not two copies:
+         the first is white-on-navy with dollar amounts in Calibri, the second
+         white-on-purple with euros in Arial, and those live at the SAME style
+         indices in their own files. Counting styled cells alone cannot tell a
+         correct merge from one that kept the indices and silently repainted
+         the second workbook in the first one's colours, so the colours
+         themselves are what gets asserted. */
+      const fills = new Set(out.sheets.flatMap((s) => s.fills));
+      const formats = out.numFmts.join(' ');
       return [
         ok('opens', 'Output is a valid workbook', out.sheets.length > 0,
            `${out.sheets.length} sheets: ${out.sheets.map((s) => s.name).join(', ')}`, 'blocker'),
@@ -292,9 +345,21 @@ export const mergeSplitRecipes = [
            `${out.sheets.length} sheets`, 'blocker'),
         ok('styling', 'Cell styling survives the merge', styled > 0,
            `${styled} styled cells (each source had 54)`, 'major'),
+        ok('bothpalettes', 'Each workbook keeps its own header colour',
+           fills.has('FF1F4E79') && fills.has('FF7E22CE'),
+           `fills: ${[...fills].join(', ') || 'none'}`, 'major'),
+        ok('bothformats', 'Both number-format sets survive the id collision',
+           /\$/.test(formats) && /€/.test(formats),
+           `formats: ${formats || 'none'}`, 'major'),
+        ok('fonts', 'Both workbooks keep their own typeface',
+           out.fonts.includes('Calibri') && out.fonts.includes('Arial'),
+           `fonts: ${out.fonts.join(', ') || 'none'}`, 'major'),
         ok('merges', 'Merged title cell survives',
            out.sheets.some((s) => s.merges > 0),
            `merges per sheet: ${out.sheets.map((s) => s.merges).join(',')}`, 'major'),
+        ok('widths', 'Column widths survive for both workbooks',
+           out.sheets.filter((s) => s.hasCols).length >= 2,
+           `${out.sheets.filter((s) => s.hasCols).length} sheets with explicit widths`, 'major'),
       ];
     },
   },

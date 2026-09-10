@@ -716,7 +716,14 @@ export async function extractSheetPackage(JSZipCtor, zip, sheetName) {
       let xml = await entry.async('string');
       for (const sheetPath of allSheetPaths) {
         if (sheetPath === keepPath) continue;
-        const re = new RegExp('<Override\b[^>]*PartName="/' + sheetPath + '"[^>]*/>', 'g');
+        /* No `\b` here either, and the path is escaped: in a quoted string
+           that escape is a backspace character, so this matched nothing and
+           the removed worksheets kept their content-type declarations. The
+           calcChain line just below is a regex *literal*, where the same
+           `\b` is the word boundary it looks like — which is exactly why
+           this one survived so long sitting next to it. */
+        const quoted = sheetPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const re = new RegExp('<Override[^>]*PartName="/' + quoted + '"[^>]*/>', 'g');
         xml = xml.replace(re, '');
       }
       xml = xml.replace(/<Override\b[^>]*PartName="\/xl\/calcChain\.xml"[^>]*\/>/g, '');
@@ -726,6 +733,560 @@ export async function extractSheetPackage(JSZipCtor, zip, sheetName) {
 
     out.file(path, await entry.async('uint8array'));
   }
+
+  return out.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
+}
+
+/* ------------------------------------------------ workbook merging */
+
+/**
+ * Pull out the full text of every `<tag>` element directly inside `xml`.
+ *
+ * Written as an index scan rather than a regex alternation on purpose. The
+ * obvious pattern — `<xf\b(?:\/>|>[\s\S]*?<\/xf>)` — looks right and is not:
+ * on a self-closing element the lazy `</xf>` branch can succeed first by
+ * running on to a later element's close tag, so one match swallows several
+ * entries and the style table reads short. That cost a debugging session
+ * once already; scanning for the end of each element is unambiguous.
+ */
+function splitElements(xml, tag) {
+  const out = [];
+  const opener = new RegExp('<' + tag + '(?=[\\s/>])', 'g');
+  let m;
+  while ((m = opener.exec(xml))) {
+    const start = m.index;
+    const gt = xml.indexOf('>', start);
+    if (gt < 0) break;
+    if (xml[gt - 1] === '/') {                       // <xf .../>
+      out.push(xml.slice(start, gt + 1));
+      opener.lastIndex = gt + 1;
+      continue;
+    }
+    // Paired element: walk to its matching close, allowing for nesting.
+    const scan = new RegExp('<' + tag + '(?=[\\s/>])|</' + tag + '>', 'g');
+    scan.lastIndex = gt + 1;
+    let depth = 1;
+    let end = xml.length;
+    let s;
+    while ((s = scan.exec(xml))) {
+      if (s[0][1] === '/') {
+        if (--depth === 0) { end = scan.lastIndex; break; }
+      } else {
+        const inner = xml.indexOf('>', s.index);
+        if (inner >= 0 && xml[inner - 1] !== '/') depth++;
+      }
+    }
+    out.push(xml.slice(start, end));
+    opener.lastIndex = end;
+  }
+  return out;
+}
+
+/** The inner text of `<name …> … </name>`, or '' when the section is absent. */
+function sectionOf(xml, name) {
+  const open = new RegExp('<' + name + '(?=[\\s/>])');
+  const m = open.exec(xml);
+  if (!m) return '';
+  const gt = xml.indexOf('>', m.index);
+  if (gt < 0 || xml[gt - 1] === '/') return '';
+  const close = xml.indexOf('</' + name + '>', gt);
+  return close < 0 ? '' : xml.slice(gt + 1, close);
+}
+
+/** Read one attribute off an element's opening tag. */
+function attrOf(tag, name) {
+  const m = new RegExp('\\b' + name + '="([^"]*)"').exec(tag);
+  return m ? m[1] : null;
+}
+
+/** Set (or add) an attribute on an element's opening tag. */
+function withAttr(tag, name, value) {
+  const re = new RegExp('(\\b' + name + '=")[^"]*(")');
+  if (re.test(tag)) return tag.replace(re, '$1' + value + '$2');
+  const gt = tag.indexOf('>');
+  const selfClosing = tag[gt - 1] === '/';
+  const cut = selfClosing ? gt - 1 : gt;
+  return tag.slice(0, cut) + ' ' + name + '="' + value + '"' + tag.slice(cut);
+}
+
+/**
+ * The pieces of an xl/styles.xml, as arrays of element text.
+ *
+ * Every index a cell carries (`s="4"`) is a position in *this* workbook's
+ * cellXfs, and each of those entries points in turn at positions in this
+ * workbook's fonts, fills, borders and number formats. None of that means
+ * anything in another file, which is what makes merging workbooks harder than
+ * merging slides.
+ */
+function readStyleTable(xml) {
+  return {
+    numFmts: splitElements(sectionOf(xml, 'numFmts'), 'numFmt'),
+    fonts: splitElements(sectionOf(xml, 'fonts'), 'font'),
+    fills: splitElements(sectionOf(xml, 'fills'), 'fill'),
+    borders: splitElements(sectionOf(xml, 'borders'), 'border'),
+    cellStyleXfs: splitElements(sectionOf(xml, 'cellStyleXfs'), 'xf'),
+    cellXfs: splitElements(sectionOf(xml, 'cellXfs'), 'xf'),
+  };
+}
+
+/** Serialise a merged style table back into a styles.xml part. */
+function writeStyleTable(t) {
+  const section = (name, items, extra) =>
+    items.length
+      ? '<' + name + ' count="' + items.length + '"' + (extra || '') + '>' + items.join('') + '</' + name + '>'
+      : '';
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+    section('numFmts', t.numFmts) +
+    section('fonts', t.fonts) +
+    section('fills', t.fills) +
+    section('borders', t.borders) +
+    section('cellStyleXfs', t.cellStyleXfs) +
+    section('cellXfs', t.cellXfs) +
+    '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>' +
+    '</styleSheet>';
+}
+
+/** Fold a donor workbook's style table into the merged one.
+ *  @returns {Map<number,number>} donor cellXfs index -> merged cellXfs index */
+function foldStyleTable(merged, donorXml) {
+  const d = readStyleTable(donorXml);
+
+  /* Number formats below 164 are the built-ins every reader knows (0 is
+     General, 14 is a short date). Anything from 164 up is defined by the file
+     itself, so two workbooks routinely disagree about what 164 means — here
+     one says dollars and the other euros. Re-id the donor's custom formats,
+     reusing an existing id when the format code is genuinely the same. */
+  const codeToId = new Map();
+  let maxId = 163;
+  for (const nf of merged.numFmts) {
+    const id = Number(attrOf(nf, 'numFmtId'));
+    codeToId.set(attrOf(nf, 'formatCode'), id);
+    if (id > maxId) maxId = id;
+  }
+  const numFmtMap = new Map();
+  for (const nf of d.numFmts) {
+    const id = Number(attrOf(nf, 'numFmtId'));
+    const code = attrOf(nf, 'formatCode');
+    if (codeToId.has(code)) { numFmtMap.set(id, codeToId.get(code)); continue; }
+    const fresh = ++maxId;
+    codeToId.set(code, fresh);
+    numFmtMap.set(id, fresh);
+    merged.numFmts.push(withAttr(nf, 'numFmtId', fresh));
+  }
+
+  /* Fonts, fills and borders are value types: an identical definition can be
+     shared rather than duplicated, which keeps the merged table close to the
+     size of the two originals instead of their sum. */
+  const fold = (into, from) => {
+    const map = new Map();
+    from.forEach((el, i) => {
+      let at = into.indexOf(el);
+      if (at < 0) { at = into.length; into.push(el); }
+      map.set(i, at);
+    });
+    return map;
+  };
+  const fontMap = fold(merged.fonts, d.fonts);
+  const fillMap = fold(merged.fills, d.fills);
+  const borderMap = fold(merged.borders, d.borders);
+
+  const remap = (xf) => {
+    let out = xf;
+    const move = (attr, map) => {
+      const raw = attrOf(out, attr);
+      if (raw !== null && map.has(Number(raw))) out = withAttr(out, attr, map.get(Number(raw)));
+    };
+    move('numFmtId', numFmtMap);
+    move('fontId', fontMap);
+    move('fillId', fillMap);
+    move('borderId', borderMap);
+    return out;
+  };
+
+  const styleXfMap = new Map();
+  d.cellStyleXfs.forEach((xf, i) => {
+    const r = remap(xf);
+    let at = merged.cellStyleXfs.indexOf(r);
+    if (at < 0) { at = merged.cellStyleXfs.length; merged.cellStyleXfs.push(r); }
+    styleXfMap.set(i, at);
+  });
+
+  const xfMap = new Map();
+  d.cellXfs.forEach((xf, i) => {
+    let r = remap(xf);
+    const xfId = attrOf(r, 'xfId');
+    if (xfId !== null && styleXfMap.has(Number(xfId))) r = withAttr(r, 'xfId', styleXfMap.get(Number(xfId)));
+    let at = merged.cellXfs.indexOf(r);
+    if (at < 0) { at = merged.cellXfs.length; merged.cellXfs.push(r); }
+    xfMap.set(i, at);
+  });
+
+  return xfMap;
+}
+
+/**
+ * Rewrite one worksheet's private indices into the merged workbook's.
+ *
+ * `s=` on a cell, a row or a column is a position in cellXfs, and a `t="s"`
+ * cell's value is a position in sharedStrings. Both are meaningless once the
+ * sheet moves into another package, and neither is validated by Excel — a
+ * stale index simply renders as some other cell's formatting, or as the wrong
+ * string, which is why this failure looks like "the merge worked" until
+ * somebody reads the numbers.
+ */
+function remapSheetIndices(xml, xfMap, stringMap) {
+  let out = xml.replace(/<(c|row|col)\b([^>]*)>/g, (whole, tag, attrs) => {
+    const key = tag === 'col' ? 'style' : 's';
+    const re = new RegExp('\\b' + key + '="(\\d+)"');
+    const m = re.exec(attrs);
+    if (!m) return whole;
+    const mapped = xfMap.get(Number(m[1]));
+    if (mapped === undefined) return whole;
+    return '<' + tag + attrs.replace(re, key + '="' + mapped + '"') + '>';
+  });
+
+  if (stringMap && stringMap.size) {
+    /* `[^>]*` cannot cross the end of the opening tag, so this can only ever
+       match a `<v>` that belongs to the cell it started on. A looser
+       `<c…>([\s\S]*?)</c>` would run past a self-closing `<c/>` and rewrite
+       the *following* cell's value. */
+    out = out.replace(/(<c\b[^>]*\bt="s"[^>]*>\s*<v[^>]*>)(\d+)(<\/v>)/g,
+      (whole, head, idx, tail) => {
+        const mapped = stringMap.get(Number(idx));
+        return mapped === undefined ? whole : head + mapped + tail;
+      });
+  }
+  return out;
+}
+
+/**
+ * A sheet tab name that satisfies Excel and is unique across the merge.
+ *
+ * Renaming is kept to the minimum a merged workbook forces, because a sheet's
+ * name is not decoration: a formula in another sheet says ='Q1 Data'!B4, and
+ * renaming the sheet it points at silently repoints or breaks it. Names are
+ * therefore left exactly as they were unless the merged workbook already
+ * holds that name, and only then is the source file's own name used to tell
+ * the two apart.
+ *
+ * @param {string[]} preferred names to try in order, best first
+ * @param {Set<string>} taken lower-cased names already used
+ */
+function uniqueSheetName(preferred, taken) {
+  const clean = (raw) => String(raw || '').replace(/[[\]?*/\\:]/g, '_').slice(0, 31);
+  for (const raw of preferred) {
+    const name = clean(raw);
+    if (name && !taken.has(name.toLowerCase())) { taken.add(name.toLowerCase()); return name; }
+  }
+  const stem = clean(preferred[0]) || 'Sheet';
+  for (let n = 2; ; n++) {
+    const suffix = '_' + n;
+    const candidate = stem.slice(0, 31 - suffix.length) + suffix;
+    if (!taken.has(candidate.toLowerCase())) { taken.add(candidate.toLowerCase()); return candidate; }
+  }
+}
+
+/** Fold a donor's shared strings into the merged table.
+ *  @returns {Map<number,number>} donor string index -> merged index */
+function foldSharedStrings(into, from) {
+  const map = new Map();
+  from.forEach((si, i) => {
+    let at = into.indexOf(si);
+    if (at < 0) { at = into.length; into.push(si); }
+    map.set(i, at);
+  });
+  return map;
+}
+
+/* A workbook with no styles.xml of its own still needs the two reserved
+   fills — index 0 "none" and index 1 "gray125" — because every other fill is
+   numbered relative to them. */
+const MINIMAL_STYLES =
+  '<styleSheet><fonts count="1"><font><sz val="11"/><name val="Calibri"/></font></fonts>' +
+  '<fills count="2"><fill><patternFill patternType="none"/></fill>' +
+  '<fill><patternFill patternType="gray125"/></fill></fills>' +
+  '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>' +
+  '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+  '<cellXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/></cellXfs>' +
+  '</styleSheet>';
+
+const WORKSHEET_TYPE =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml';
+const SHAREDSTRINGS_TYPE =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml';
+
+/** Resolve a relationship Target against the folder of the part holding it. */
+function resolvePart(baseDir, target) {
+  const stack = baseDir.replace(/\/$/, '').split('/').filter(Boolean);
+  for (const segment of String(target).replace(/^\//, '').split('/')) {
+    if (segment === '..') stack.pop();
+    else if (segment && segment !== '.') stack.push(segment);
+  }
+  return stack.join('/');
+}
+
+/** Express an absolute part path relative to a folder. */
+function relativeFrom(baseDir, path) {
+  const from = baseDir.replace(/\/$/, '').split('/').filter(Boolean);
+  const to = path.split('/');
+  while (from.length && to.length && from[0] === to[0]) { from.shift(); to.shift(); }
+  return from.map(() => '..').concat(to).join('/');
+}
+
+/** The Target of one relationship id.
+ *  No `\b` in this pattern: inside a quoted string that is a backspace
+ *  character, not a word boundary, and it silently matches nothing. */
+function relTarget(relsXml, rid) {
+  const re = new RegExp('<Relationship[^>]*Id="' + rid + '"[^>]*>', 'i');
+  const tag = (relsXml.match(re) || [])[0] || '';
+  return (tag.match(/Target="([^"]+)"/) || [])[1] || '';
+}
+
+/** A part path that nothing in the output is using yet. */
+function freshPath(used, path) {
+  if (!used.has(path)) return path;
+  const slash = path.lastIndexOf('/');
+  const dir = path.slice(0, slash + 1);
+  const file = path.slice(slash + 1);
+  const dot = file.lastIndexOf('.');
+  const stem = dot < 0 ? file : file.slice(0, dot);
+  const ext = dot < 0 ? '' : file.slice(dot);
+  for (let n = 2; ; n++) {
+    const candidate = dir + stem + '_m' + n + ext;
+    if (!used.has(candidate)) return candidate;
+  }
+}
+
+/**
+ * Copy a part and everything it points at into the output package.
+ *
+ * A worksheet is not self-contained: its .rels reach out to drawings,
+ * hyperlinks, comments and printer settings, and a drawing's own .rels reach
+ * on to the image files. Copying the sheet alone leaves those references
+ * dangling, and Excel does not ignore a dangling reference — it declares the
+ * workbook damaged. This is the same lesson merge-pptx learned about slides.
+ */
+async function copyRelatedParts(donorZip, donorCt, out, srcPath, newPath, used, types) {
+  const srcDir = srcPath.slice(0, srcPath.lastIndexOf('/'));
+  const srcFile = srcPath.slice(srcPath.lastIndexOf('/') + 1);
+  const relsPath = srcDir + '/_rels/' + srcFile + '.rels';
+  if (!donorZip.file(relsPath)) return;
+
+  let relsXml = await donorZip.file(relsPath).async('string');
+  const newDir = newPath.slice(0, newPath.lastIndexOf('/'));
+  const newFile = newPath.slice(newPath.lastIndexOf('/') + 1);
+
+  for (const tag of splitElements(relsXml, 'Relationship')) {
+    if (/TargetMode="External"/i.test(tag)) continue;   // a URL, not a part
+    const target = attrOf(tag, 'Target');
+    if (!target) continue;
+    const childSrc = resolvePart(srcDir, target);
+    const childEntry = donorZip.file(childSrc);
+    if (!childEntry) continue;
+
+    const childNew = freshPath(used, childSrc);
+    used.add(childNew);
+    out.file(childNew, await childEntry.async('uint8array'));
+    types.carryOver(childNew, childSrc, donorCt);
+    await copyRelatedParts(donorZip, donorCt, out, childSrc, childNew, used, types);
+
+    if (childNew !== childSrc) {
+      const rewritten = withAttr(tag, 'Target', relativeFrom(newDir, childNew));
+      relsXml = relsXml.replace(tag, rewritten);
+    }
+  }
+  const newRelsPath = newDir + '/_rels/' + newFile + '.rels';
+  out.file(newRelsPath, relsXml);
+  used.add(newRelsPath);
+}
+
+/**
+ * Track what [Content_Types].xml must declare.
+ *
+ * Every part in an OOXML package needs a content type, by extension or by
+ * name. Excel does not guess: an undeclared part means "the file is damaged",
+ * which is the failure people report as "the merge produced a broken file".
+ */
+function contentTypeIndex(baseXml) {
+  const overrides = new Map();
+  const defaults = new Map();
+  for (const tag of splitElements(baseXml, 'Override')) {
+    overrides.set(attrOf(tag, 'PartName'), attrOf(tag, 'ContentType'));
+  }
+  for (const tag of splitElements(baseXml, 'Default')) {
+    defaults.set(String(attrOf(tag, 'Extension') || '').toLowerCase(), attrOf(tag, 'ContentType'));
+  }
+  return {
+    setOverride(path, type) { overrides.set('/' + path, type); },
+    dropOverride(path) { overrides.delete('/' + path); },
+    /** Declare a copied part the way its own package declared it. */
+    carryOver(newPath, srcPath, donorXml) {
+      const ext = String(newPath.split('.').pop() || '').toLowerCase();
+      const donorOverride = splitElements(donorXml || '', 'Override')
+        .find((t) => String(attrOf(t, 'PartName') || '').toLowerCase() === ('/' + srcPath).toLowerCase());
+      if (donorOverride) { overrides.set('/' + newPath, attrOf(donorOverride, 'ContentType')); return; }
+      if (defaults.has(ext)) return;
+      const donorDefault = splitElements(donorXml || '', 'Default')
+        .find((t) => String(attrOf(t, 'Extension') || '').toLowerCase() === ext);
+      if (donorDefault) defaults.set(ext, attrOf(donorDefault, 'ContentType'));
+    },
+    render() {
+      const parts = [];
+      for (const [ext, type] of defaults) parts.push('<Default Extension="' + ext + '" ContentType="' + type + '"/>');
+      for (const [name, type] of overrides) parts.push('<Override PartName="' + name + '" ContentType="' + type + '"/>');
+      return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+        parts.join('') + '</Types>';
+    },
+  };
+}
+
+/** Escape a value going into an XML attribute. */
+function xmlAttr(value) {
+  return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/**
+ * Merge several .xlsx packages into one, keeping every workbook's formatting.
+ *
+ * The tool used to read each file with SheetJS and append the parsed
+ * worksheets to a new workbook. SheetJS's community build does not read
+ * xl/styles.xml at all, so what came back was values only: every fill, font,
+ * border, number format and column width in all of the inputs was gone, and
+ * the merged file looked nothing like either source. `split-excel` hit the
+ * same ceiling and answered it the same way — do not re-author the workbook,
+ * operate on the package.
+ *
+ * The hard part is that a cell's `s="4"` indexes its *own* workbook's style
+ * table. Appending a second workbook's sheets unchanged leaves every cell
+ * pointing at whatever sits at that position in the first workbook's table,
+ * so a euro column silently becomes dollars and a purple header turns navy.
+ * The file still opens, which is what makes that failure worse than a visibly
+ * broken one. So the donor's style table is folded into the base's — sharing
+ * identical fonts, fills and borders rather than duplicating them, and
+ * re-numbering custom formats whose ids collide — and every index in the
+ * incoming sheet XML is rewritten to match.
+ *
+ * Two limits are inherent to merging rather than bugs left for later: a
+ * cross-sheet formula naming a sheet that had to be renamed for uniqueness
+ * will point at the surviving sheet of that name, and defined names from the
+ * second and later workbooks are dropped.
+ *
+ * @param {object} JSZipCtor the JSZip constructor
+ * @param {{name:string, zip:object}[]} inputs loaded packages, first is the base
+ * @returns {Promise<Uint8Array|null>} the merged package, or null if unusable
+ */
+export async function mergeWorkbookPackages(JSZipCtor, inputs) {
+  if (!Array.isArray(inputs) || inputs.length === 0) return null;
+  const read = (zip, path) => (zip.file(path) ? zip.file(path).async('string') : Promise.resolve(''));
+
+  const base = inputs[0];
+  const baseWorkbook = await read(base.zip, 'xl/workbook.xml');
+  const baseRels = await read(base.zip, 'xl/_rels/workbook.xml.rels');
+  if (!baseWorkbook || !baseRels) return null;
+
+  /* calcChain records the order formulas were last evaluated in across the
+     whole workbook. Carried into a package with new sheets it refers to cells
+     that are no longer where it says, and Excel reports the file as needing
+     repair — the trap split-excel already hit. Excel rebuilds it on open. */
+  const REWRITTEN = new Set([
+    '[Content_Types].xml', 'xl/workbook.xml', 'xl/_rels/workbook.xml.rels',
+    'xl/styles.xml', 'xl/sharedStrings.xml', 'xl/calcChain.xml',
+  ]);
+
+  const out = new JSZipCtor();
+  const used = new Set();
+  for (const path of Object.keys(base.zip.files)) {
+    const entry = base.zip.files[path];
+    if (entry.dir) continue;
+    used.add(path);
+    if (REWRITTEN.has(path)) continue;
+    out.file(path, await entry.async('uint8array'));
+  }
+
+  const types = contentTypeIndex(await read(base.zip, '[Content_Types].xml'));
+  types.dropOverride('xl/calcChain.xml');
+
+  const merged = readStyleTable((await read(base.zip, 'xl/styles.xml')) || MINIMAL_STYLES);
+  const sharedItems = splitElements(await read(base.zip, 'xl/sharedStrings.xml'), 'si');
+  const hadSharedStrings = sharedItems.length > 0;
+
+  const baseSheetTags = splitElements(sectionOf(baseWorkbook, 'sheets'), 'sheet');
+  const taken = new Set(baseSheetTags.map((t) => String(attrOf(t, 'name') || '').toLowerCase()));
+  const num = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
+  let maxSheetId = Math.max(0, ...baseSheetTags.map((t) => num(attrOf(t, 'sheetId'))));
+  let maxRid = Math.max(0, ...splitElements(baseRels, 'Relationship')
+    .map((t) => num(String(attrOf(t, 'Id') || '').replace(/\D/g, ''))));
+  let sheetSeq = Math.max(0, ...Object.keys(base.zip.files)
+    .map((p) => num((/^xl\/worksheets\/sheet(\d+)\.xml$/.exec(p) || [])[1])));
+
+  const addedSheets = [];
+  const addedRels = [];
+
+  for (let i = 1; i < inputs.length; i++) {
+    const donor = inputs[i];
+    const donorWorkbook = await read(donor.zip, 'xl/workbook.xml');
+    const donorRels = await read(donor.zip, 'xl/_rels/workbook.xml.rels');
+    if (!donorWorkbook || !donorRels) continue;
+    const donorCt = await read(donor.zip, '[Content_Types].xml');
+    const label = String(donor.name || '').replace(/\.[^./\\]+$/, '');
+
+    const xfMap = foldStyleTable(merged, (await read(donor.zip, 'xl/styles.xml')) || MINIMAL_STYLES);
+    const stringMap = foldSharedStrings(
+      sharedItems, splitElements(await read(donor.zip, 'xl/sharedStrings.xml'), 'si'));
+
+    for (const tag of splitElements(sectionOf(donorWorkbook, 'sheets'), 'sheet')) {
+      const rid = attrOf(tag, 'r:id') || attrOf(tag, 'id');
+      const target = rid ? relTarget(donorRels, rid) : '';
+      const srcPath = target ? resolvePart('xl', target) : '';
+      if (!srcPath || !donor.zip.file(srcPath)) continue;
+
+      const sheetXml = await read(donor.zip, srcPath);
+      const newPath = freshPath(used, 'xl/worksheets/sheet' + (++sheetSeq) + '.xml');
+      used.add(newPath);
+      out.file(newPath, remapSheetIndices(sheetXml, xfMap, stringMap));
+      types.setOverride(newPath, WORKSHEET_TYPE);
+      await copyRelatedParts(donor.zip, donorCt, out, srcPath, newPath, used, types);
+
+      const original = attrOf(tag, 'name') || 'Sheet';
+      const name = uniqueSheetName([original, label ? label + '_' + original : ''], taken);
+      const newRid = 'rId' + (++maxRid);
+      addedRels.push('<Relationship Id="' + newRid + '" Type="http://schemas.openxmlformats.org'
+        + '/officeDocument/2006/relationships/worksheet" Target="' + relativeFrom('xl', newPath) + '"/>');
+      addedSheets.push('<sheet name="' + xmlAttr(name) + '" sheetId="' + (++maxSheetId)
+        + '" r:id="' + newRid + '"/>');
+    }
+  }
+
+  if (!addedSheets.length) return null;
+
+  const sheetsInner = sectionOf(baseWorkbook, 'sheets');
+  out.file('xl/workbook.xml', baseWorkbook.replace(sheetsInner, sheetsInner + addedSheets.join('')));
+  out.file('xl/styles.xml', writeStyleTable(merged));
+  types.setOverride('xl/styles.xml',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml');
+
+  let rels = baseRels.replace('</Relationships>', addedRels.join('') + '</Relationships>');
+  if (sharedItems.length) {
+    out.file('xl/sharedStrings.xml',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+      + '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="'
+      + sharedItems.length + '" uniqueCount="' + sharedItems.length + '">'
+      + sharedItems.join('') + '</sst>');
+    types.setOverride('xl/sharedStrings.xml', SHAREDSTRINGS_TYPE);
+    /* A base workbook with no strings of its own has no relationship to the
+       part either, and a part nothing declares is a damaged file. */
+    if (!hadSharedStrings) {
+      rels = rels.replace('</Relationships>',
+        '<Relationship Id="rId' + (++maxRid) + '" Type="http://schemas.openxmlformats.org'
+        + '/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>'
+        + '</Relationships>');
+    }
+  }
+  out.file('xl/_rels/workbook.xml.rels', rels);
+  out.file('[Content_Types].xml', types.render());
 
   return out.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
 }

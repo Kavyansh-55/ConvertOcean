@@ -270,13 +270,35 @@ export const imageRecipes = [
     kind: 'dom',
     async checks({ out }) {
       const t = String(out.report || '');
+      /* The report is now read row-per-line (see the DOM reader in run.mjs),
+         so a tag and its value can be asserted together instead of hoping
+         two loose numbers appear somewhere in one long concatenated string.
+         Every detail below reports what was actually found: an earlier
+         version passed '' for all of them, which made the one real failure
+         here impossible to diagnose without re-running by hand. */
+      const row = (name) => {
+        const lines = t.split('\n');
+        const i = lines.findIndex((l) => new RegExp('^' + name + '$', 'i').test(l.trim()));
+        return i >= 0 ? (lines[i + 1] || '').trim() : null;
+      };
+      const iso = row('ISO');
+      const orientation = row('Orientation');
+      const make = row('Camera Make');
+      const model = row('Camera Model');
+      const lat = row('Latitude');
+      const lon = row('Longitude');
       return [
-        ok('nonempty', 'Produced a metadata report', t.trim().length > 0, `${t.length} chars`, 'blocker'),
-        ok('orientation', 'Reports Orientation = 6', /orientation/i.test(t) && /\b6\b/.test(t), '', 'major'),
+        ok('nonempty', 'Produced a metadata report', t.trim().length > 0,
+           `${t.split('\n').length} rows, ${t.length} chars`, 'blocker'),
+        ok('orientation', 'Reports Orientation = 6',
+           !!orientation && /\b6\b/.test(orientation), `Orientation → ${orientation ?? 'no such row'}`, 'major'),
         ok('camera', 'Reports camera make and model',
-           /ConvertOcean/.test(t) && /Torture Cam/.test(t), '', 'major'),
-        ok('gps', 'Reports GPS coordinates', /51/.test(t) && /30/.test(t), '', 'major'),
-        ok('iso', 'Reports ISO 400', /\b400\b/.test(t), '', 'minor'),
+           /ConvertOcean/.test(make || '') && /Torture Cam/.test(model || ''),
+           `${make ?? 'no make'} / ${model ?? 'no model'}`, 'major'),
+        ok('gps', 'Reports GPS coordinates',
+           /51/.test(lat || '') && /30/.test(lat || '') && !!lon,
+           `lat ${lat ?? 'none'}, lon ${lon ?? 'none'}`, 'major'),
+        ok('iso', 'Reports ISO 400', iso === '400', `ISO → ${iso ?? 'no such row'}`, 'minor'),
       ];
     },
   },

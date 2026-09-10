@@ -60,7 +60,7 @@ const { slug, headline, subtitle } = Astro.props;
 </div>
 
 <script>
-  import { collectPageLines, collectPageGraphics, detectFigureRegions, buildDocxParts, pagesPlainText } from '../../scripts/pdf-to-docx.js';
+  import { collectPageLines, collectPageGraphics, detectFigureRegions, buildDocxParts, pagesPlainText, collectTextColours } from '../../scripts/pdf-to-docx.js';
 
   const dropZone = document.getElementById('dropZone');
   const fileInput = document.getElementById('fileInput');
@@ -209,7 +209,13 @@ const { slug, headline, subtitle } = Astro.props;
           }
         };
         const viewport = page.getViewport({ scale: 1 });
-        const lines = collectPageLines(textContent, fontNameOf);
+        /* Colour lives in the graphics state, not in the text content, so
+           it has to come off the same operator list the diagram detection
+           already walks. Without it every heading and every highlighted
+           word arrived in Word as plain black. */
+        let colourStream = null;
+        try { colourStream = collectTextColours(opList, OPS); } catch (e) { /* text still converts */ }
+        const lines = collectPageLines(textContent, fontNameOf, colourStream);
         let regions = [];
         try {
           const graphics = collectPageGraphics(opList, OPS);
