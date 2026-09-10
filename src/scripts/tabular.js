@@ -1290,3 +1290,131 @@ export async function mergeWorkbookPackages(JSZipCtor, inputs) {
 
   return out.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
 }
+
+/* ------------------------------------------------- why a workbook won't open */
+
+/**
+ * Find an ASCII string in a byte array.
+ *
+ * A ZIP stores each member's path uncompressed in its local file header, so
+ * the presence of `xl/workbook.xml` can be answered by scanning the raw
+ * bytes — no unzipping, and no async, which means this can run inside a
+ * `catch` without restructuring the caller.
+ */
+function bytesContain(bytes, ascii, limit) {
+  const end = Math.min(bytes.length, limit || bytes.length);
+  const first = ascii.charCodeAt(0);
+  outer:
+  for (let i = 0; i <= end - ascii.length; i++) {
+    if (bytes[i] !== first) continue;
+    for (let j = 1; j < ascii.length; j++) {
+      if (bytes[i + j] !== ascii.charCodeAt(j)) continue outer;
+    }
+    return true;
+  }
+  return false;
+}
+
+/** The same scan for UTF-16LE, which is how OLE2 stores its stream names. */
+function bytesContainUtf16(bytes, ascii, limit) {
+  const end = Math.min(bytes.length, limit || bytes.length);
+  outer:
+  for (let i = 0; i <= end - ascii.length * 2; i++) {
+    for (let j = 0; j < ascii.length; j++) {
+      if (bytes[i + j * 2] !== ascii.charCodeAt(j) || bytes[i + j * 2 + 1] !== 0) continue outer;
+    }
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Explain, in the user's terms, why a file could not be read as a spreadsheet.
+ *
+ * This exists because the honest answer to "why won't my .xlsx open" was a
+ * single generic sentence that fit every cause equally badly. A file named
+ * `.xlsx` is very often not one: exports rename HTML and CSV, Excel 97-2003
+ * workbooks get relabelled, and a password-protected workbook is an encrypted
+ * OLE2 container with no readable sheet in it at all. Those need different
+ * actions from the reader, so they need different messages.
+ *
+ * Call it **only after a parse has already failed** — several of the shapes it
+ * recognises (HTML tables, CSV under an .xlsx name) are read perfectly well by
+ * SheetJS, and refusing them up front would break files that work today.
+ *
+ * @param {Uint8Array} bytes the file's raw bytes
+ * @param {string} fileName used only to name the extension in the message
+ * @returns {string|null} a specific explanation, or null if nothing is recognised
+ */
+export function diagnoseSpreadsheet(bytes, fileName = '') {
+  if (!bytes || bytes.length === 0) {
+    return 'This file is empty (0 bytes). If it lives in OneDrive or another '
+         + 'sync folder, it may still be online-only — open it once so it '
+         + 'downloads, then try again.';
+  }
+  if (bytes.length < 64) {
+    /* Only binary. A 30-byte CSV is a perfectly ordinary file, and telling its
+       owner it was "truncated while downloading" would be a confident lie —
+       if something that small failed to parse, the parser's own complaint is
+       the more honest one. */
+    let printable = 0;
+    for (let i = 0; i < bytes.length; i++) {
+      const b = bytes[i];
+      if (b === 9 || b === 10 || b === 13 || (b >= 32 && b < 127)) printable++;
+    }
+    if (printable / bytes.length < 0.85) {
+      return 'This file is only ' + bytes.length + ' bytes and is not readable '
+           + 'text, so it cannot be a workbook. It was most likely truncated '
+           + 'while being copied or downloaded.';
+    }
+    return null;
+  }
+
+  const ext = (fileName.match(/\.([a-z0-9]+)$/i) || [, ''])[1].toLowerCase();
+
+  /* OLE2 — the Microsoft compound-file container. Both Excel 97-2003 and any
+     password-protected modern workbook look like this from the outside. */
+  const isOle2 = bytes[0] === 0xD0 && bytes[1] === 0xCF && bytes[2] === 0x11 && bytes[3] === 0xE0
+              && bytes[4] === 0xA1 && bytes[5] === 0xB1 && bytes[6] === 0x1A && bytes[7] === 0xE1;
+  if (isOle2) {
+    if (bytesContainUtf16(bytes, 'EncryptedPackage', 1 << 16)) {
+      return 'This workbook is password-protected, so its contents are '
+           + 'encrypted and cannot be read here. Open it in Excel, save a copy '
+           + 'without a password (File → Info → Protect Workbook → Encrypt '
+           + 'with Password, then clear it), and convert that copy.';
+    }
+    return 'This is an Excel 97-2003 workbook (.xls) in an older format'
+         + (ext === 'xlsx' ? ', despite the .xlsx name' : '')
+         + '. Open it in Excel or LibreOffice and use Save As → Excel Workbook '
+         + '(.xlsx), then convert that file.';
+  }
+
+  /* ZIP — every modern Office format is one, so the question is which. */
+  const isZip = bytes[0] === 0x50 && bytes[1] === 0x4B;
+  if (isZip) {
+    const head = 1 << 18;   // member names live near the front
+    if (bytesContain(bytes, 'xl/workbook.xml', head)) return null;   // really is a workbook
+    if (bytesContain(bytes, 'word/document.xml', head)) {
+      return 'This is a Word document (.docx), not a spreadsheet. Try the '
+           + 'Word to PDF tool instead.';
+    }
+    if (bytesContain(bytes, 'ppt/presentation.xml', head)) {
+      return 'This is a PowerPoint file (.pptx), not a spreadsheet. Try the '
+           + 'PowerPoint to PDF tool instead.';
+    }
+    if (bytesContain(bytes, 'opendocument.spreadsheet', head)) {
+      return 'This is an OpenDocument spreadsheet (.ods). Open it in Excel or '
+           + 'LibreOffice and save as .xlsx, then convert that file.';
+    }
+    return 'This file is a ZIP archive but does not contain a workbook inside '
+         + 'it. If it is a folder of spreadsheets, extract it first and convert '
+         + 'one file at a time.';
+  }
+
+  /* A PDF renamed to .xlsx is a surprisingly common mix-up. */
+  if (bytesContain(bytes, '%PDF-', 8)) {
+    return 'This is a PDF, not a spreadsheet. Try the PDF to Excel tool instead.';
+  }
+
+  return null;
+}

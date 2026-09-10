@@ -98,7 +98,7 @@ const { slug, headline, subtitle } = Astro.props;
 </div>
 
 <script>
-  import { parseCsv, readXlsxFills, readXlsxColWidths, decodeRef } from '../../scripts/tabular.js';
+  import { parseCsv, readXlsxFills, readXlsxColWidths, decodeRef, diagnoseSpreadsheet } from '../../scripts/tabular.js';
   import { prepareFonts } from '../../scripts/pdf-fonts.js';
 
   (function() {
@@ -308,7 +308,16 @@ const { slug, headline, subtitle } = Astro.props;
           actionControls.style.display = 'flex';
           dropZone.style.display = 'none';
         } catch (err) {
-          showError('Failed to parse the file. Please ensure it is a valid CSV/Excel workbook.');
+          /* "Failed to parse the file" fit every cause equally badly: a
+             password-protected workbook, a Word document under an .xlsx name
+             and a half-downloaded file all produced the same sentence, so a
+             reader had no way to know which of them they were holding — and
+             neither did we when they asked. Say which, when the bytes can
+             tell us. */
+          const raw = isCsv ? null : new Uint8Array(e.target.result);
+          const why = raw ? diagnoseSpreadsheet(raw, file.name) : null;
+          showError(why || 'Failed to parse the file. Please ensure it is a valid CSV/Excel workbook.');
+          console.error('[excel-to-pdf] parse failed:', err);
         }
         hideProgress();
       };
