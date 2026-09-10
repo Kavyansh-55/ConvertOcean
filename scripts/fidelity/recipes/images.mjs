@@ -189,8 +189,13 @@ export const imageRecipes = [
        anything it should not? */
     async checks({ out }) {
       return [
-        ok('format', 'Output is a valid image', out.format !== 'unknown',
-           `${out.format} ${out.width}×${out.height}, ${out.bytes} bytes`, 'blocker'),
+        /* Resizing is not a format conversion. Defaulting every input to JPG
+           returned a transparent PNG as an opaque JPEG the user never asked
+           for, so a PNG or WebP source now keeps its format. JPEG sources
+           still default to JPG, and the file-size mode still forces it. */
+        ok('format', 'A PNG source stays PNG rather than silently becoming a JPEG',
+           out.format === 'png',
+           `${out.format} ${out.width}×${out.height}, ${out.bytes} bytes`, 'major'),
         ok('dims', `Default resize keeps ${IMG_W}×${IMG_H}`,
            out.width === IMG_W && out.height === IMG_H,
            `${out.width}×${out.height}`, 'major'),
