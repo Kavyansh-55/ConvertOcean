@@ -81,6 +81,10 @@ const bundles = [
   ['/word-to-pdf/', /WordTool[^"']+\.js/, /setTimeout/, 'async layout watchdog'],
   ['/excel-to-pdf/', /ExcelToPdf[^"']+\.js/, /styles\.xml|fillId/, 'xlsx styles reader'],
   ['/split-excel/', /SplitExcel[^"']+\.js/, /calcChain|workbook\.xml\.rels/, 'package-surgery splitter'],
+  /* Batch 4. Without these two the file verified batch 3 and quietly said
+     nothing about what shipped after it. */
+  ['/merge-excel/', /MergeExcel[^"']+\.js/, /cellXfs/, 'style-table merger'],
+  ['/pdf-to-word/', /PdfToWord[^"']+\.js/, /setFillRGBColor/, 'text-colour tracking'],
 ];
 
 for (const [page, findJs, needle, label] of bundles) {
