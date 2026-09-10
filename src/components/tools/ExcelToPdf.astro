@@ -100,6 +100,7 @@ const { slug, headline, subtitle } = Astro.props;
 <script>
   import { parseCsv, readXlsxFills, readXlsxColWidths, decodeRef, diagnoseSpreadsheet } from '../../scripts/tabular.js';
   import { prepareFonts } from '../../scripts/pdf-fonts.js';
+  import { ensureLib, LibraryUnavailableError, libraryUnavailableMessage } from '../../scripts/ensure-lib.js';
 
   (function() {
     const dropZone = document.getElementById('dropZone');
@@ -249,6 +250,15 @@ const { slug, headline, subtitle } = Astro.props;
             sheets = rows.length ? [{ name: 'Sheet1', rows }] : [];
           } else {
             const data = new Uint8Array(e.target.result);
+
+            /* The spreadsheet engine comes from a CDN. When that request does
+               not land — a blocker, a filter, a bad minute at the CDN — the
+               page still renders and CSV still converts, because the CSV path
+               needs no library at all. Only .xlsx broke, and it broke with a
+               message blaming the reader's file. Fetch it again before
+               parsing, from a second CDN if the first will not answer. */
+            await ensureLib('XLSX');
+
             const wb = XLSX.read(data, { type: 'array', cellDates: true });
 
             /* SheetJS's community build does not read styles at all, so a
@@ -315,7 +325,9 @@ const { slug, headline, subtitle } = Astro.props;
              neither did we when they asked. Say which, when the bytes can
              tell us. */
           const raw = isCsv ? null : new Uint8Array(e.target.result);
-          const why = raw ? diagnoseSpreadsheet(raw, file.name) : null;
+          const why = err instanceof LibraryUnavailableError
+            ? libraryUnavailableMessage('spreadsheet engine')
+            : (raw ? diagnoseSpreadsheet(raw, file.name) : null);
           showError(why || 'Failed to parse the file. Please ensure it is a valid CSV/Excel workbook.');
           console.error('[excel-to-pdf] parse failed:', err);
         }
@@ -336,6 +348,9 @@ const { slug, headline, subtitle } = Astro.props;
       if (!sheets.length) return;
       showProgress(40, 'Building PDF tables…');
       try {
+        /* Same guard as the reading path: the PDF engine is a CDN script,
+           and a reader who got this far should not lose their work to it. */
+        await ensureLib('jspdf');
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ orientation: optLandscape.checked ? 'landscape' : 'portrait', unit: 'pt', format: 'a4' });
         const toRender = optAllSheets.checked ? sheets : [sheets[currentActive()]];
@@ -436,7 +451,10 @@ const { slug, headline, subtitle } = Astro.props;
         const blob = doc.output('blob');
         window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, '') + '.pdf', 'application/pdf');
       } catch (err) {
-        showError('PDF compilation failed.');
+        showError(err instanceof LibraryUnavailableError
+          ? libraryUnavailableMessage('PDF engine')
+          : 'PDF compilation failed.');
+        console.error('[excel-to-pdf] export failed:', err);
       }
       hideProgress();
     });
