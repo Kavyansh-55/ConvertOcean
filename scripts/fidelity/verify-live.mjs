@@ -46,6 +46,17 @@ const mw = await get('/merge-word/');
 say(/childNodes\)[\s\S]{0,120}w:sectPr/.test(mw.body),
     'merge-word: sectPr is looked up as a direct child');
 
+/* PptxTool and MergePptx keep inline scripts, so their code sits in the page
+   HTML rather than in an /_astro bundle — checked here, not below. */
+const pp = await get('/pptx-to-pdf/');
+say(/EXPORT_W\s*=\s*2600/.test(pp.body), 'pptx-to-pdf: exports at print resolution');
+say(/renderingMode: 'invisible'/.test(pp.body), 'pptx-to-pdf: writes an invisible text layer');
+say(/notesSlide/.test(pp.body), 'pptx-to-pdf: reads speaker notes');
+
+const mp = await get('/merge-pptx/');
+say(/addOverride|copiedPartIndex/.test(mp.body),
+    'merge-pptx: copies the parts its slides reference');
+
 /* ------------------------------------------------- bundled modules load */
 
 for (const [path, token] of [
@@ -68,6 +79,8 @@ const bundles = [
   ['/pdf-to-excel/', /PdfToExcel[^"']+\.js/, /yyyy-mm-dd|#,##0/, 'numeric typing'],
   ['/word-to-pdf/', /WordTool[^"']+\.js/, /NotoSerif|pgSz|sectPr/, 'DOCX reader'],
   ['/word-to-pdf/', /WordTool[^"']+\.js/, /setTimeout/, 'async layout watchdog'],
+  ['/excel-to-pdf/', /ExcelToPdf[^"']+\.js/, /styles\.xml|fillId/, 'xlsx styles reader'],
+  ['/split-excel/', /SplitExcel[^"']+\.js/, /calcChain|workbook\.xml\.rels/, 'package-surgery splitter'],
 ];
 
 for (const [page, findJs, needle, label] of bundles) {
