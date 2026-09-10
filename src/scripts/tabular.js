@@ -497,3 +497,133 @@ export function rowsToCsv(rows, { delimiter = ',', bom = true } = {}) {
   const body = rows.map((r) => r.map((c) => csvCell(c, delimiter)).join(delimiter)).join('\r\n');
   return (bom ? '﻿' : '') + body + (body ? '\r\n' : '');
 }
+
+/* ------------------------------------------------- xlsx cell formatting */
+
+/**
+ * Read per-cell fill colours out of an .xlsx package.
+ *
+ * SheetJS's community build does not parse styles at all, so a workbook
+ * converted through it arrives with its fills, fonts and borders gone — the
+ * data is right and the document no longer looks like itself. The colours live
+ * in `xl/styles.xml`, indexed by each cell's `s=` attribute, so they can be
+ * read directly from the zip alongside whatever SheetJS returns.
+ *
+ * Kept string-based rather than DOM-based so it runs in Node for tests as well
+ * as in the browser.
+ *
+ * @param {object} zip a loaded JSZip instance
+ * @returns {Promise<Map<string, Map<string,string>>>} sheet name -> "A1" -> "#rrggbb"
+ */
+export async function readXlsxFills(zip) {
+  const out = new Map();
+  const file = (p) => (zip.file(p) ? zip.file(p).async('string') : Promise.resolve(''));
+
+  const stylesXml = await file('xl/styles.xml');
+  if (!stylesXml) return out;
+
+  /* fills[] -> the solid foreground colour of each fill, or null. Indexed
+     positionally, which is how cellXfs refers to them. */
+  const fills = [];
+  const fillsBlock = (stylesXml.match(/<fills[\s\S]*?<\/fills>/) || [''])[0];
+  for (const m of fillsBlock.matchAll(/<fill>([\s\S]*?)<\/fill>/g)) {
+    const pattern = m[1];
+    if (!/patternType="solid"/.test(pattern)) { fills.push(null); continue; }
+    const rgb = (pattern.match(/<fgColor[^>]*rgb="([0-9A-Fa-f]{6,8})"/) || [])[1];
+    // An 8-digit value is ARGB; the alpha is leading and not a colour channel.
+    fills.push(rgb ? '#' + rgb.slice(-6).toLowerCase() : null);
+  }
+
+  /* cellXfs[] -> fill index, but only when applyFill says the fill is the
+     cell's own rather than inherited from a named style. */
+  /* Match only the opening tag, never its children.
+     An earlier `(?:\/>|>[\s\S]*?<\/xf>)` looked like it handled both the
+     self-closing and the container form, but the lazy `</xf>` branch succeeds
+     before the engine ever backtracks far enough to try `/>`, so one match
+     swallowed several elements and the whole table collapsed to three zeroes.
+     Only the attributes are needed here, so there is nothing to gain by
+     consuming the body. */
+  const xfFill = [];
+  const xfsBlock = (stylesXml.match(/<cellXfs[\s\S]*?<\/cellXfs>/) || [''])[0];
+  for (const m of xfsBlock.matchAll(/<xf\b([^>]*?)\/?>/g)) {
+    xfFill.push(Number((m[1].match(/fillId="(\d+)"/) || [])[1] || 0));
+  }
+
+  // Sheet names, in the order their rels resolve.
+  const workbookXml = await file('xl/workbook.xml');
+  const names = [...workbookXml.matchAll(/<sheet\b[^>]*name="([^"]+)"/g)].map((m) => m[1]);
+
+  const paths = Object.keys(zip.files)
+    .filter((p) => /^xl\/worksheets\/sheet\d+\.xml$/.test(p))
+    .sort((a, b) => (+a.match(/(\d+)/)[1]) - (+b.match(/(\d+)/)[1]));
+
+  for (let i = 0; i < paths.length; i++) {
+    const xml = await file(paths[i]);
+    const map = new Map();
+    // Opening tag only, for the same reason as the cellXfs scan above.
+    for (const m of xml.matchAll(/<c\b([^>]*?)\/?>/g)) {
+      const attrs = m[1];
+      const ref = (attrs.match(/r="([A-Z]+\d+)"/) || [])[1];
+      const s = (attrs.match(/\bs="(\d+)"/) || [])[1];
+      if (!ref || s === undefined) continue;
+      const colour = fills[xfFill[+s]] || null;
+      // Fill 0 is "none" and fill 1 is the gray125 default; neither is a colour.
+      if (colour) map.set(ref, colour);
+    }
+    out.set(names[i] || paths[i], map);
+  }
+
+  return out;
+}
+
+/** "A1" -> { row: 0, col: 0 }, zero-based. */
+export function decodeRef(ref) {
+  const m = /^([A-Z]+)(\d+)$/.exec(String(ref));
+  if (!m) return null;
+  let col = 0;
+  for (const ch of m[1]) col = col * 26 + (ch.charCodeAt(0) - 64);
+  return { row: +m[2] - 1, col: col - 1 };
+}
+
+/**
+ * Explicit column widths from an .xlsx, in points.
+ *
+ * Excel stores a width in "characters of the default font", which is not a
+ * unit anything else uses. The conventional conversion is
+ * `pixels = characters * 7 + 5` at 96dpi, then points at 3/4 of that. Exact
+ * fidelity is impossible without the workbook's font metrics; the useful part
+ * is the *relative* width, so a label column stays wider than a quantity one.
+ *
+ * @param {object} zip a loaded JSZip instance
+ * @returns {Promise<Map<string, number[]>>} sheet name -> width per column index
+ */
+export async function readXlsxColWidths(zip) {
+  const out = new Map();
+  const file = (p) => (zip.file(p) ? zip.file(p).async('string') : Promise.resolve(''));
+
+  const workbookXml = await file('xl/workbook.xml');
+  const names = [...workbookXml.matchAll(/<sheet\b[^>]*name="([^"]+)"/g)].map((m) => m[1]);
+
+  const paths = Object.keys(zip.files)
+    .filter((p) => /^xl\/worksheets\/sheet\d+\.xml$/.test(p))
+    .sort((a, b) => (+a.match(/(\d+)/)[1]) - (+b.match(/(\d+)/)[1]));
+
+  for (let i = 0; i < paths.length; i++) {
+    const xml = await file(paths[i]);
+    const widths = [];
+    for (const m of xml.matchAll(/<col\b([^>]*?)\/?>/g)) {
+      const attrs = m[1];
+      // customWidth marks a width the user actually set, as opposed to the
+      // default one Excel writes for every column in some exports.
+      if (!/customWidth="1"/.test(attrs)) continue;
+      const min = Number((attrs.match(/min="(\d+)"/) || [])[1] || 0);
+      const max = Number((attrs.match(/max="(\d+)"/) || [])[1] || min);
+      const chars = Number((attrs.match(/width="([\d.]+)"/) || [])[1] || 0);
+      if (!min || !chars) continue;
+      const pt = (chars * 7 + 5) * 0.75;
+      for (let c = min; c <= max; c++) widths[c - 1] = pt;
+    }
+    if (widths.length) out.set(names[i] || paths[i], widths);
+  }
+  return out;
+}

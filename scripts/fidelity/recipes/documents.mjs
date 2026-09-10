@@ -176,8 +176,24 @@ export const documentRecipes = [
              return Math.abs(r - 31) < 12 && Math.abs(g - 78) < 12 && Math.abs(b - 121) < 12;
            }),
            `fills in output: ${out.fills.join(' ') || 'none'}`, 'major'),
-        ok('colwidth', 'Explicit column widths respected (label column widest)',
-           false, 'autoTable sizes columns from content; the widths in the workbook are not read', 'minor'),
+        /* The workbook sets column A to 28 characters (~151pt) and B to 16.
+           Sized from content instead, "M02 Region" would leave column B
+           starting roughly 65pt along. Measuring the gap between the two
+           header cells tells the two apart without needing the PDF's own
+           table metadata. */
+        ok('colwidth', 'Explicit column widths respected (label column is widest)',
+           (() => {
+             const a = out.items.find((i) => i.str.includes('M02 Region'));
+             const b = out.items.find((i) => i.str.includes('Booked'));
+             return a && b && (b.x - a.x) > 110;
+           })(),
+           (() => {
+             const a = out.items.find((i) => i.str.includes('M02 Region'));
+             const b = out.items.find((i) => i.str.includes('Booked'));
+             return a && b ? `column A occupies ${Math.round(b.x - a.x)}pt (workbook asked for ~151pt)`
+               : 'header cells not found';
+           })(),
+           'minor'),
         ok('wide', 'Wide sheet does not clip columns (Col O reaches the page)',
            t.includes('Col O'), t.includes('Col O') ? '' : 'rightmost column missing', 'major'),
       ];
