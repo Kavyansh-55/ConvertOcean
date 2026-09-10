@@ -76,6 +76,7 @@ const { slug, headline, subtitle } = Astro.props;
 </style>
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <div class="page-header">
   <h1 class="page-title">{headline}</h1>
@@ -128,7 +129,9 @@ const { slug, headline, subtitle } = Astro.props;
   </div>
 </div>
 
-<script is:inline>
+<script>
+  import { mergeWorkbookPackages } from '../../scripts/tabular.js';
+
   (function() {
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
@@ -277,43 +280,66 @@ const { slug, headline, subtitle } = Astro.props;
       btnClear.disabled = false;
     }
 
-    window.mergeSpreadsheets = function() {
+    window.mergeSpreadsheets = async function() {
       if (mergeQueue.length < 2) {
         showError("Please add at least 2 spreadsheet files to merge.");
         return;
       }
       showProgress(30, "Merging worksheets client-side…");
       try {
-        const outWorkbook = XLSX.utils.book_new();
-        const sheetNamesSet = new Set();
+        let outBytes = null;
 
-        mergeQueue.forEach((file) => {
-          const workbook = XLSX.read(file.bytes, { type: 'array' });
-          workbook.SheetNames.forEach((sheetName) => {
-            const worksheet = workbook.Sheets[sheetName];
-            
-            // Generate a unique worksheet name to avoid spreadsheet duplicate conflicts
-            let finalSheetName = `${file.name.replace(/\.[^/.]+$/, "")}_${sheetName}`;
-            // Clean SheetJS sheetName restrictions (length <= 31, no invalid chars : \ / ? * [ ])
-            finalSheetName = finalSheetName.replace(/[\[\]\?\*\/\\\:]/g, '_').substring(0, 31);
-            
-            let counter = 1;
-            let tempName = finalSheetName;
-            while (sheetNamesSet.has(tempName.toLowerCase())) {
-              const suffix = `_${counter}`;
-              tempName = finalSheetName.substring(0, 31 - suffix.length) + suffix;
-              counter++;
+        /* Merge the packages themselves when every input is a real .xlsx.
+           Reading each workbook with SheetJS and appending the parsed sheets
+           to a new one loses every fill, font, border, number format and
+           column width, because its community build does not read
+           xl/styles.xml — the same ceiling split-excel hit, answered the same
+           way. A .csv carries no formatting to lose and a legacy .xls is not
+           an OOXML package at all, so those still take the rebuild path, as
+           does anything the surgery cannot make sense of. */
+        const allXlsx = mergeQueue.every((f) => /\.xlsx$/i.test(f.name));
+        if (allXlsx && typeof JSZip !== 'undefined') {
+          try {
+            const packages = [];
+            for (const file of mergeQueue) {
+              packages.push({ name: file.name, zip: await JSZip.loadAsync(file.bytes) });
             }
-            finalSheetName = tempName;
-            sheetNamesSet.add(finalSheetName.toLowerCase());
+            outBytes = await mergeWorkbookPackages(JSZip, packages);
+          } catch { outBytes = null; }
+        }
 
-            XLSX.utils.book_append_sheet(outWorkbook, worksheet, finalSheetName);
+        if (!outBytes) {
+          const outWorkbook = XLSX.utils.book_new();
+          const sheetNamesSet = new Set();
+
+          mergeQueue.forEach((file) => {
+            const workbook = XLSX.read(file.bytes, { type: 'array' });
+            workbook.SheetNames.forEach((sheetName) => {
+              const worksheet = workbook.Sheets[sheetName];
+            
+              // Generate a unique worksheet name to avoid spreadsheet duplicate conflicts
+              let finalSheetName = `${file.name.replace(/\.[^/.]+$/, "")}_${sheetName}`;
+              // Clean SheetJS sheetName restrictions (length <= 31, no invalid chars : \ / ? * [ ])
+              finalSheetName = finalSheetName.replace(/[\[\]\?\*\/\\\:]/g, '_').substring(0, 31);
+            
+              let counter = 1;
+              let tempName = finalSheetName;
+              while (sheetNamesSet.has(tempName.toLowerCase())) {
+                const suffix = `_${counter}`;
+                tempName = finalSheetName.substring(0, 31 - suffix.length) + suffix;
+                counter++;
+              }
+              finalSheetName = tempName;
+              sheetNamesSet.add(finalSheetName.toLowerCase());
+
+              XLSX.utils.book_append_sheet(outWorkbook, worksheet, finalSheetName);
+            });
           });
-        });
+
+          outBytes = XLSX.write(outWorkbook, { bookType: 'xlsx', type: 'array' });
+        }
 
         showProgress(70, "Compiling merged XLSX workbook…");
-        const outBytes = XLSX.write(outWorkbook, { bookType: 'xlsx', type: 'array' });
-        
         let outputName = mergeOutputName.value.trim() || 'merged_spreadsheet.xlsx';
         if (!outputName.toLowerCase().endsWith('.xlsx')) outputName += '.xlsx';
 

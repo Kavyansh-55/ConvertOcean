@@ -288,6 +288,24 @@ export async function readXlsx(buf) {
         .map((t) => t.replace(/<[^>]+>/g, '')).join(''));
   }
 
+  /* Resolve what a cell style index actually paints, so a merge can be asked
+     whether each source workbook kept its OWN colours. A count of styled
+     cells cannot answer that: cells carrying stale indices from another
+     workbook are still "styled", just wrong. */
+  const stylesXml = zip.file('xl/styles.xml') ? await zip.file('xl/styles.xml').async('string') : '';
+  const sectionOf = (name) => {
+    const open = new RegExp('<' + name + '(?=[\\s/>])');
+    const m = open.exec(stylesXml);
+    if (!m) return '';
+    const gt = stylesXml.indexOf('>', m.index);
+    const close = stylesXml.indexOf('</' + name + '>', gt);
+    return close < 0 ? '' : stylesXml.slice(gt + 1, close);
+  };
+  const fillColours = [...sectionOf('fills').matchAll(/<fill>([\s\S]*?)<\/fill>/g)]
+    .map((m) => (m[1].match(/<fgColor rgb="([0-9A-Fa-f]{6,8})"/) || [])[1] || null);
+  const xfFill = [...sectionOf('cellXfs').matchAll(/<xf\b([^>]*)>/g)]
+    .map((m) => Number((m[1].match(/fillId="(\d+)"/) || [])[1] ?? 0));
+
   const sheets = [];
   const sheetPaths = parts.filter((p) => /^xl\/worksheets\/sheet\d+\.xml$/.test(p))
     .sort((a, b) => (+a.match(/(\d+)/)[1]) - (+b.match(/(\d+)/)[1]));
@@ -321,11 +339,12 @@ export async function readXlsx(buf) {
       hasPanes: /<pane\b/.test(xml),
       // A cell is "styled" only if it points at a non-default cellXfs entry.
       styledCells: cells.filter((c) => c.style > 0).length,
+      // The distinct fill colours this sheet's cells actually render as.
+      fills: [...new Set(cells.map((c) => fillColours[xfFill[c.style]]).filter(Boolean))],
       numericCells: cells.filter((c) => c.type === 'n' && c.value !== null).length,
     });
   }
 
-  const stylesXml = zip.file('xl/styles.xml') ? await zip.file('xl/styles.xml').async('string') : '';
   return {
     parts,
     sheets,

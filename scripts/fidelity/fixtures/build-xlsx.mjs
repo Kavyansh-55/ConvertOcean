@@ -200,3 +200,101 @@ const bytes = await writePackage({
 }, out);
 
 console.log('torture.xlsx  ' + bytes + ' bytes  3 sheets, 8 cell styles, 4 number formats');
+/* ------------------------------------------------- the second workbook */
+
+/* torture-b.xlsx is NOT a copy of torture.xlsx, for the same reason
+   torture-b.pptx is not a copy of the first deck: merging two identical
+   workbooks cannot reveal the bug that matters here. Every cell carries an
+   `s=` index into its own workbook's cellXfs, and those tables are private to
+   the file. Append the second workbook's sheets without rewriting their
+   indices and each cell silently adopts whatever style happens to sit at that
+   position in the first workbook's table — the file still opens, and the
+   numbers are simply wrong.
+   So this workbook's style table is a different *shape*, not just different
+   values: 5 cell styles against the first one's 8, 3 fills against 4, 2 fonts
+   against 3, 1 border against 2, and number formats that reuse the same ids
+   164-166 for different format codes. Index 1 means white-on-navy in the
+   first workbook and white-on-purple here; index 2 is dollars there and euros
+   here. A merger that forgets to remap produces navy headers and dollar
+   amounts in the second workbook's sheets, which the harness can see. */
+
+const STB = { DEFAULT: 0, HEADER: 1, EURO: 2, PERCENT: 3, DATE: 4 };
+
+const rowsLedger = [
+  row(1, [s('A1', 'B01 Supplier', STB.HEADER), s('B1', 'Net', STB.HEADER),
+          s('C1', 'VAT', STB.HEADER), s('D1', 'Settled', STB.HEADER)]),
+  row(2, [s('A2', 'B02 Nordwind GmbH', STB.DEFAULT), n('B2', 8420.4, STB.EURO),
+          n('C2', 0.19, STB.PERCENT), n('D2', 45703, STB.DATE)]),
+  row(3, [s('A3', 'B03 Périgord SARL', STB.DEFAULT), n('B3', 15990.05, STB.EURO),
+          n('C3', 0.2, STB.PERCENT), n('D3', 45731, STB.DATE)]),
+  row(4, [s('A4', 'B04 Total', STB.HEADER), f('B4', 'SUM(B2:B3)', 24410.45, STB.EURO),
+          s('C4', '', STB.HEADER), s('D4', '', STB.HEADER)]),
+];
+
+const sheetLedger = DECL + `<worksheet ${NS_MAIN} ${NS_REL}>` +
+  '<cols><col min="1" max="1" width="24" customWidth="1"/>' +
+        '<col min="2" max="2" width="15" customWidth="1"/></cols>' +
+  `<sheetData>${rowsLedger.join('')}</sheetData>` +
+  '<mergeCells count="1"><mergeCell ref="C4:D4"/></mergeCells>' +
+  '</worksheet>';
+
+const wideHeaderB = [];
+const wideDataB = [];
+for (let c = 0; c < 15; c++) {
+  const col = String.fromCharCode(65 + c);
+  wideHeaderB.push(s(`${col}1`, `B05 Col ${col}`, STB.HEADER));
+  wideDataB.push(n(`${col}2`, (c + 1) * 250, STB.EURO));
+}
+const sheetWideB = DECL + `<worksheet ${NS_MAIN} ${NS_REL}><sheetData>` +
+  row(1, wideHeaderB) + row(2, wideDataB) + '</sheetData></worksheet>';
+
+const sheetNotesB = DECL + `<worksheet ${NS_MAIN} ${NS_REL}><sheetData>` +
+  row(1, [s('A1', 'B06 second workbook control sheet'), s('B1', 'no styling here')]) +
+  row(2, [s('A2', 'value'), n('B2', 7)]) +
+  '</sheetData></worksheet>';
+
+const stylesXmlB = DECL + `<styleSheet ${NS_MAIN}>` +
+  '<numFmts count="3">' +
+    '<numFmt numFmtId="164" formatCode="&quot;€&quot;#,##0.00"/>' +
+    '<numFmt numFmtId="165" formatCode="0.00%"/>' +
+    '<numFmt numFmtId="166" formatCode="yyyy\-mm\-dd"/>' +
+  '</numFmts>' +
+  '<fonts count="2">' +
+    '<font><sz val="10"/><name val="Arial"/></font>' +
+    '<font><b/><sz val="10"/><color rgb="FFFFFFFF"/><name val="Arial"/></font>' +
+  '</fonts>' +
+  '<fills count="3">' +
+    '<fill><patternFill patternType="none"/></fill>' +
+    '<fill><patternFill patternType="gray125"/></fill>' +
+    '<fill><patternFill patternType="solid"><fgColor rgb="FF7E22CE"/><bgColor indexed="64"/></patternFill></fill>' +
+  '</fills>' +
+  '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>' +
+  '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+  '<cellXfs count="5">' +
+    '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
+    '<xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment horizontal="center"/></xf>' +
+    '<xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>' +
+    '<xf numFmtId="165" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>' +
+    '<xf numFmtId="166" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>' +
+  '</cellXfs>' +
+  '</styleSheet>';
+
+const workbookXmlB = DECL + `<workbook ${NS_MAIN} ${NS_REL}><sheets>` +
+  '<sheet name="Ledger" sheetId="1" r:id="rId1"/>' +
+  '<sheet name="WideB" sheetId="2" r:id="rId2"/>' +
+  '<sheet name="Notes" sheetId="3" r:id="rId3"/>' +
+  '</sheets></workbook>';
+
+const outB = join(HERE, 'files', 'torture-b.xlsx');
+const bytesB = await writePackage({
+  '[Content_Types].xml': contentTypes,
+  '_rels/.rels': rootRels,
+  'xl/workbook.xml': workbookXmlB,
+  'xl/_rels/workbook.xml.rels': workbookRels,
+  'xl/styles.xml': stylesXmlB,
+  'xl/worksheets/sheet1.xml': sheetLedger,
+  'xl/worksheets/sheet2.xml': sheetWideB,
+  'xl/worksheets/sheet3.xml': sheetNotesB,
+}, outB);
+
+console.log('torture-b.xlsx ' + bytesB + ' bytes  distinct palette, 5 cell styles, euro formats');

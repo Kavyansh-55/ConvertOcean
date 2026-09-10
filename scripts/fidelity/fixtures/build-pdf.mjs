@@ -27,6 +27,13 @@ function pstr(s) {
   return s.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
 }
 
+/* Stated as exact 8-bit fractions so the colour that comes back out of a
+   converter is the colour named here. Writing 0.12 0.31 0.47 instead scales
+   to 1F4F78 — close to navy, but a value nobody chose, which makes every
+   assertion downstream look like a magic number. */
+const NAVY = [31 / 255, 78 / 255, 121 / 255];   // 1F4E79
+const RED = [219 / 255, 38 / 255, 38 / 255];    // DB2626
+
 /** Text-showing operator at an absolute position. */
 function text(x, y, font, size, str, rgb) {
   const colour = rgb ? `${rgb[0]} ${rgb[1]} ${rgb[2]} rg\n` : '0 0 0 rg\n';
@@ -73,13 +80,13 @@ const tableRows = [
 
 let p1 = '';
 // M01 coloured heading, 24pt Helvetica-Bold
-p1 += text(72, 720, 'F2', 24, 'M01 Torture PDF', [0.12, 0.31, 0.47]);
+p1 += text(72, 720, 'F2', 24, 'M01 Torture PDF', NAVY);
 // M02 body in Times at 12pt
 p1 += text(72, 690, 'F3', 12, 'M02 Body paragraph set in Times-Roman at 12 point.');
 // M03 monospace
 p1 += text(72, 668, 'F4', 11, 'M03 const x = monospace();');
 // M04 a run in red
-p1 += text(72, 646, 'F1', 12, 'M04 This sentence is red.', [0.86, 0.15, 0.15]);
+p1 += text(72, 646, 'F1', 12, 'M04 This sentence is red.', RED);
 
 // table header + rule
 p1 += text(COL_LABEL, TABLE_TOP, 'F2', 12, 'Item');
@@ -130,7 +137,7 @@ const rightLines = [
   '',
 ];
 
-let p2 = text(72, 720, 'F2', 18, 'M11 Two column layout', [0.12, 0.31, 0.47]);
+let p2 = text(72, 720, 'F2', 18, 'M11 Two column layout', NAVY);
 leftLines.forEach((t, i) => { if (t) p2 += text(LEFT_X, 680 - i * 18, 'F1', 11, t); });
 rightLines.forEach((t, i) => { if (t) p2 += text(RIGHT_X, 680 - i * 18, 'F1', 11, t); });
 p2 += text(72, 60, 'F1', 9, 'M13 Page 2 of 2 - ConvertOcean fidelity fixture', [0.4, 0.4, 0.4]);

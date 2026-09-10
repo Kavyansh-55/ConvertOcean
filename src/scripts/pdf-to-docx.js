@@ -63,6 +63,123 @@ export function cleanFontName(raw, family) {
 
 /* ------------------------------------------------- lines from pdf.js items */
 
+/* ------------------------------------------------------------- text colour */
+
+/** Two hex digits from a 0-1 component. */
+function hexByte(value) {
+  const n = Math.max(0, Math.min(255, Math.round(value * 255)));
+  return n.toString(16).padStart(2, '0').toUpperCase();
+}
+
+/** Turn whatever a colour operator carries into RRGGBB. */
+function colourFromArgs(op, args, OPS) {
+  if (op === OPS.setFillRGBColor) {
+    // pdf.js hands these back as 0-255 integers, not 0-1 components.
+    const [r, g, b] = args;
+    return hexByte(r / 255) + hexByte(g / 255) + hexByte(b / 255);
+  }
+  if (op === OPS.setFillGray) {
+    const v = hexByte(args[0]);
+    return v + v + v;
+  }
+  if (op === OPS.setFillCMYKColor) {
+    const [c, m, y, k] = args;
+    return hexByte((1 - c) * (1 - k)) + hexByte((1 - m) * (1 - k)) + hexByte((1 - y) * (1 - k));
+  }
+  // setFillColor / setFillColorN carry components in the current colour space,
+  // or a pattern object, which has no single colour to report.
+  const nums = (args || []).filter((a) => typeof a === 'number');
+  if (nums.length === 3) return hexByte(nums[0]) + hexByte(nums[1]) + hexByte(nums[2]);
+  if (nums.length === 1) { const v = hexByte(nums[0]); return v + v + v; }
+  if (nums.length === 4) {
+    const [c, m, y, k] = nums;
+    return hexByte((1 - c) * (1 - k)) + hexByte((1 - m) * (1 - k)) + hexByte((1 - y) * (1 - k));
+  }
+  return null;
+}
+
+/**
+ * The colour of every glyph the page paints, in painting order.
+ *
+ * `getTextContent` reports what the text says and where, but not what colour
+ * it is — that lives in the graphics state, which only the operator list
+ * exposes. So walk the operator list keeping track of the current fill colour
+ * (through q/Q, which save and restore it like any other graphics state) and
+ * record the colour of each glyph as it is shown.
+ *
+ * Whitespace is deliberately left out of the stream. It is the one thing the
+ * two views of the page disagree about: pdf.js synthesises spaces into text
+ * items from positioning gaps that no glyph corresponds to, so a stream that
+ * included them could never line up.
+ *
+ * @param {object} opList from page.getOperatorList()
+ * @param {object} OPS pdfjsLib.OPS
+ * @returns {{chars: string, colours: string[]}|null}
+ */
+export function collectTextColours(opList, OPS) {
+  if (!opList || !OPS || !opList.fnArray) return null;
+  const fn = opList.fnArray;
+  const args = opList.argsArray;
+  const stack = [];
+  let fill = '000000';
+  const chars = [];
+  const colours = [];
+
+  for (let i = 0; i < fn.length; i++) {
+    const op = fn[i];
+    if (op === OPS.save) {
+      stack.push(fill);
+    } else if (op === OPS.restore) {
+      fill = stack.length ? stack.pop() : fill;
+    } else if (op === OPS.setFillRGBColor || op === OPS.setFillGray
+            || op === OPS.setFillCMYKColor || op === OPS.setFillColor
+            || op === OPS.setFillColorN) {
+      fill = colourFromArgs(op, args[i], OPS) || fill;
+    } else if (op === OPS.showText || op === OPS.showSpacedText) {
+      const glyphs = args[i] && args[i][0];
+      if (!Array.isArray(glyphs)) continue;
+      for (const g of glyphs) {
+        // A bare number in the array is a kerning adjustment, not a glyph.
+        if (!g || typeof g !== 'object') continue;
+        const u = g.unicode;
+        if (typeof u !== 'string' || !u || /\s/.test(u)) continue;
+        chars.push(u);
+        colours.push(fill);
+      }
+    }
+  }
+  return chars.length ? { chars: chars.join(''), colours } : null;
+}
+
+/**
+ * Match text items back to the colour stream.
+ *
+ * A single showText operator can produce several text items — pdf.js splits
+ * one on a wide positioning gap — so the two sequences cannot be zipped by
+ * index, and counting them (22 operators against 33 items on the fixture's
+ * first page) proves it. What does hold is that both are in painting order,
+ * so the item text can be found in the glyph stream by walking a cursor
+ * forward. Whitespace is stripped from both sides before comparing.
+ *
+ * A miss returns null rather than a guess: colouring a run with whatever the
+ * previous run happened to use would be worse than leaving it default.
+ */
+export function colourMatcher(stream) {
+  if (!stream || !stream.chars) return () => null;
+  let cursor = 0;
+  return (text) => {
+    const key = String(text || '').replace(/\s+/g, '');
+    if (!key) return null;
+    let at = stream.chars.indexOf(key, cursor);
+    // Resync from the top if the cursor ran past it: an item out of painting
+    // order is unusual but should not poison every item after it.
+    if (at < 0) at = stream.chars.indexOf(key);
+    if (at < 0) return null;
+    cursor = at + key.length;
+    return stream.colours[at] || null;
+  };
+}
+
 /**
  * Turn textContent items into visual lines. Fragments sharing a baseline are
  * gathered into a line; inside a line small gaps become spaces and large gaps
@@ -73,7 +190,7 @@ export function cleanFontName(raw, family) {
  *   the real font name (via page.commonObjs); may return ''.
  * @returns {Array} lines with { y, minX, endX, maxSize, segments }
  */
-export function collectPageLines(textContent, fontNameOf) {
+export function collectPageLines(textContent, fontNameOf, colourStream) {
   const styles = textContent.styles || {};
   const items = textContent.items || [];
   const fontCache = new Map();
@@ -90,6 +207,8 @@ export function collectPageLines(textContent, fontNameOf) {
     fontCache.set(id, info);
     return info;
   }
+
+  const colourAt = colourMatcher(colourStream);
 
   const rawLines = [];
   let cur = null;
@@ -118,6 +237,7 @@ export function collectPageLines(textContent, fontNameOf) {
       x,
       endX: x + (it.width || 0),
       text: it.str,
+      colour: colourAt(it.str),
       size,
       bold: f.bold,
       italic: f.italic,
@@ -177,6 +297,7 @@ function finalizeLine(line) {
 function runOf(f, spaceBefore) {
   return {
     text: (spaceBefore ? ' ' : '') + f.text,
+    colour: f.colour || null,
     bold: f.bold,
     italic: f.italic,
     size: f.size,
@@ -191,6 +312,7 @@ function appendRun(runs, r) {
     last.bold === r.bold &&
     last.italic === r.italic &&
     last.font === r.font &&
+    last.colour === r.colour &&
     Math.abs(last.size - r.size) < 0.6
   ) {
     last.text += r.text;
@@ -391,6 +513,11 @@ function runXml(r, ctx) {
   }
   if (r.bold) props.push('<w:b/>');
   if (r.italic) props.push('<w:i/>');
+  /* Black is what a reader gets by default, so writing it on every run
+     would grow the document without changing how it looks. */
+  if (r.colour && r.colour !== '000000') {
+    props.push('<w:color w:val="' + esc(r.colour) + '"/>');
+  }
   const sz = Math.round(r.size * 2);
   if (sz && Math.abs(r.size - ctx.bodySize) > 0.5) {
     props.push(`<w:sz w:val="${sz}"/><w:szCs w:val="${sz}"/>`);

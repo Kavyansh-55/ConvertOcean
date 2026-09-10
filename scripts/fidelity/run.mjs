@@ -197,10 +197,39 @@ async function runRecipe(browser, recipe) {
   /* Some tools have nothing to download — the answer is on the page. */
   if (recipe.kind === 'dom') {
     const values = await page.evaluate((map) => {
+      /* Read like innerText, not like textContent.
+         textContent concatenates a table with no separators at all, so
+         `<td>ISO</td><td>400</td>` arrives as "ISO400" — a check for a
+         standalone "400" then fails against a page that displays it
+         perfectly, because there is no word boundary between "O" and "4".
+         innerText would separate them, but it returns "" for anything not
+         rendered, and this table is deliberately collapsed behind a "show
+         all tags" toggle. So walk the tree and break at block and cell
+         boundaries, ignoring visibility: what the markup says, spaced the
+         way a reader sees it. */
+      const BREAKS = new Set([
+        'TR', 'TD', 'TH', 'LI', 'P', 'DIV', 'BR', 'SECTION', 'ARTICLE',
+        'HEADER', 'FOOTER', 'TABLE', 'THEAD', 'TBODY', 'DT', 'DD', 'OPTION',
+        'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'PRE', 'BLOCKQUOTE',
+      ]);
+      const textOf = (root) => {
+        let s = '';
+        const walk = (n) => {
+          if (n.nodeType === 3) { s += n.nodeValue; return; }
+          if (n.nodeType !== 1) return;
+          const breaks = BREAKS.has(n.tagName);
+          if (breaks && s && !/\n$/.test(s)) s += '\n';
+          for (const c of n.childNodes) walk(c);
+          if (breaks && s && !/\n$/.test(s)) s += '\n';
+        };
+        walk(root);
+        return s.replace(/[ \t]+/g, ' ').replace(/ ?\n ?/g, '\n')
+                .replace(/\n{2,}/g, '\n').trim();
+      };
       const out = {};
       for (const [key, sel] of Object.entries(map)) {
         const el = document.querySelector(sel);
-        out[key] = el ? el.textContent.trim() : null;
+        out[key] = el ? textOf(el) : null;
       }
       return out;
     }, recipe.readFrom);
