@@ -494,11 +494,25 @@ const filterKey = (slug: string, categorySlug: string) => {
     }
 
     /* ── Results panel ─────────────────────────────────────────────── */
+    /* The panel used to inherit the field's own width via `left: 0; right: 0`.
+       The field is 147px across at 1280 and 195px at 1440 — narrower than a
+       result row needs, so every description was clipped mid-word ("Convert
+       XLS, X…") and longer names like "Invoice Generator" wrapped onto two
+       lines, making rows 85px tall. Meanwhile a thousand pixels of empty bar
+       sat to the left of it.
+
+       The phone rule below already broke the panel out of the field for
+       exactly this reason; the field is just as narrow on a desktop. So the
+       panel is anchored to the field's right edge and given a width that fits
+       a name and its description on one line, growing leftwards into the space
+       that was already there. */
     .search-results-panel {
       position: absolute;
       top: calc(100% + 6px);
-      left: 0;
+      left: auto;
       right: 0;
+      width: 400px;
+      max-width: calc(100vw - var(--spacing-md) * 2);
       display: none;
       flex-direction: column;
       max-height: 380px;
