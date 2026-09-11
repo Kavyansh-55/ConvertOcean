@@ -77,6 +77,10 @@ const { slug, headline, subtitle } = Astro.props;
     min-width: 0;
   }
   .cmp-preset:hover { border-color: var(--colors-ink); }
+  /* `.button` carries this site-wide; these are their own class and would
+     otherwise keep the double-tap zoom delay on touch. */
+  .cmp-preset { touch-action: manipulation; }
+  .cmp-preset:active { background-color: var(--colors-canvas-soft); }
   .cmp-preset[aria-pressed='true'] {
     border-color: var(--colors-link);
     background-color: var(--colors-canvas-soft);
@@ -199,6 +203,20 @@ const { slug, headline, subtitle } = Astro.props;
   .cmp-tag-shrunk { color: var(--colors-link); border-color: var(--colors-link); }
   .cmp-table-scroll { overflow-x: auto; }
 
+  /* Announced, not shown. The result arrives asynchronously after the file is
+     chosen, so without a live region a screen reader reader is told nothing at
+     all: the page simply goes quiet and then has a download button. Matches
+     the `.dz-sr` pattern in HeroDropzone.astro. */
+  .cmp-sr {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   @media (max-width: 600px) {
     .cmp-size-after { font-size: 27px; }
     .cmp-hero { padding: var(--spacing-md); }
@@ -246,6 +264,7 @@ const { slug, headline, subtitle } = Astro.props;
       </div>
       <div class="cmp-saving" id="cmpSaving"></div>
     </div>
+    <p class="cmp-sr" role="status" aria-live="polite" id="cmpLive"></p>
     <div class="cmp-hero-actions">
       <button class="button button-primary" id="cmpDownload" disabled>Download</button>
       <button class="button button-danger" id="cmpClear">Start over</button>
@@ -289,7 +308,9 @@ const { slug, headline, subtitle } = Astro.props;
       <div class="cmp-target-row">
         <div class="form-group" style="margin: 0;">
           <label class="form-label" for="cmpTargetKB">Target size (KB)</label>
-          <input type="number" id="cmpTargetKB" class="form-input" value="500" min="10" max="25000" step="10" />
+          <input type="number" id="cmpTargetKB" class="form-input" value="500"
+                 min="10" max="25000" step="10" inputmode="numeric"
+                 autocomplete="off" name="target-size-kb" />
         </div>
         <button class="button button-primary" id="cmpFit">Fit to this size</button>
       </div>
@@ -362,6 +383,12 @@ const { slug, headline, subtitle } = Astro.props;
     const details = $('cmpDetails');
     const imgRows = $('cmpImgRows');
     const untouched = $('cmpUntouched');
+    const live = $('cmpLive');
+
+    /* CSS honours this globally; a scroll animated from JS is outside CSS's
+       reach and has to ask for itself. */
+    const reducedMotion = () =>
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /* Current job. `original` is kept intact for the whole session: pdf.js
        transfers any buffer handed to its worker and leaves the original
@@ -384,7 +411,7 @@ const { slug, headline, subtitle } = Astro.props;
     function showError(msg) {
       errorMessage.textContent = msg;
       errorBanner.style.display = 'flex';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' });
     }
     function hideError() { errorBanner.style.display = 'none'; }
 
@@ -503,6 +530,12 @@ const { slug, headline, subtitle } = Astro.props;
       if (sizeSlot) sizeSlot.textContent = fmt(after);
 
       btnDownload.disabled = false;
+      /* Say the outcome out loud. `textContent` of the hero would read as a
+         run-on of two sizes, so this is phrased for listening. */
+      live.textContent = (r.noGain || saved <= 0)
+        ? 'Already as small as it goes. Your original is ready to download, unchanged.'
+        : 'Compressed from ' + fmt(before) + ' to ' + fmt(after) + ', ' + pct +
+          ' percent smaller. Ready to download.';
       renderDetails(r);
       hideProgress();
       renderCompare();
