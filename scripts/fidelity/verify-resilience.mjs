@@ -45,6 +45,11 @@ function browserPath() {
 const CASES = [
   ['/merge-pdf/',      'PDFLib',         'pdf-lib.min.js'],
   ['/split-pdf/',      'PDFLib',         'pdf-lib.min.js'],
+  /* The compressor needs both libraries at once — pdf-lib to rewrite the
+     streams and pdf.js for the before/after preview — so losing either one
+     has to be survivable independently. */
+  ['/compress-pdf/',   'PDFLib',         'pdf-lib.min.js'],
+  ['/compress-pdf/',   'pdfjsLib',       'pdf.min.js'],
   ['/word-to-pdf/',    'pdfMake',        'pdfmake.min.js'],
   ['/word-to-pdf/',    'pdfMakeFonts',   'vfs_fonts.js'],
   ['/pdf-to-txt/',     'pdfjsLib',       'pdf.min.js'],
@@ -59,7 +64,7 @@ const CASES = [
 ];
 
 /** Pages that must be completely undisturbed when everything loads normally. */
-const HEALTHY = ['/excel-to-pdf/', '/merge-pdf/', '/word-to-pdf/', '/pdf-to-txt/', '/merge-word/'];
+const HEALTHY = ['/excel-to-pdf/', '/merge-pdf/', '/word-to-pdf/', '/pdf-to-txt/', '/merge-word/', '/compress-pdf/'];
 
 let bad = 0;
 const say = (ok, msg) => { if (!ok) bad++; console.log(`${ok ? 'OK  ' : 'FAIL'}  ${msg}`); };

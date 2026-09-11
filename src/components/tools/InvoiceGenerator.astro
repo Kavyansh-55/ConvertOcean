@@ -100,7 +100,7 @@ const { slug, headline, subtitle } = Astro.props;
   :global(.item-edit-row) :global(td) {
     padding: var(--spacing-xs) 0;
   }
-  .item-delete-btn {
+  :global(.item-delete-btn) {
     background: none;
     border: none;
     color: var(--colors-error);
@@ -309,7 +309,7 @@ const { slug, headline, subtitle } = Astro.props;
       right: 0 !important;
       top: 0 !important;
     }
-    .item-delete-btn {
+    :global(.item-delete-btn) {
       padding: 4px !important;
       font-size: 22px !important;
     }

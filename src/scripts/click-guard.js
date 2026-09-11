@@ -57,6 +57,9 @@ export const ACTION_BUTTON_IDS = [
   'processBtn',
   'jf-download-btn',
   'rzDownload',
+  /* The compressor auto-runs on drop, so its download is the first button a
+     reader reaches — and a double-tap there saves the file twice. */
+  'cmpDownload',
 ];
 
 /** How long a second tap on the same button counts as the same tap. */

@@ -50,6 +50,7 @@ export async function readPdf(buf) {
   const items = [];
   const fonts = new Set();
   const links = [];
+  const fields = [];
   const fills = new Set();
   let imageCount = 0;
 
@@ -101,6 +102,12 @@ export async function readPdf(buf) {
         if (a.subtype === 'Link' && (a.url || a.unsafeUrl)) {
           links.push({ page: i, url: a.url || a.unsafeUrl });
         }
+        /* Form fields are invisible to a text check and to a rendered-pixel
+           check alike: a rewritten PDF can lose its AcroForm while looking
+           identical. Record them so that loss has somewhere to show up. */
+        if (a.subtype === 'Widget') {
+          fields.push({ page: i, name: a.fieldName || '', value: a.fieldValue == null ? '' : String(a.fieldValue) });
+        }
       }
     } catch { /* no annotation layer */ }
 
@@ -140,6 +147,7 @@ export async function readPdf(buf) {
     items,
     fonts: [...fonts].sort(),
     links,
+    fields,
     fills: [...fills],
     imageCount,
     /** Distinct text sizes, rounded — a converter that flattens everything to

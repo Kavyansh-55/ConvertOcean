@@ -90,7 +90,7 @@ const { slug, headline, subtitle } = Astro.props;
     overflow: auto;
     padding: var(--spacing-lg);
   }
-  .text-preview {
+  :global(.text-preview) {
     font-family: var(--font-sans);
     font-size: 13px;
     line-height: 1.6;
@@ -116,7 +116,7 @@ const { slug, headline, subtitle } = Astro.props;
     padding-bottom: var(--spacing-xs);
     border-bottom: 1px solid var(--colors-hairline);
   }
-  .sheet-tab {
+  :global(.sheet-tab) {
     background-color: var(--colors-canvas-soft-2);
     color: var(--colors-body);
     border: 1px solid var(--colors-hairline);
@@ -127,7 +127,7 @@ const { slug, headline, subtitle } = Astro.props;
     cursor: pointer;
     white-space: nowrap;
   }
-  .sheet-tab.active {
+  :global(.sheet-tab.active) {
     background-color: var(--colors-ink);
     color: var(--colors-canvas);
     border-color: var(--colors-ink);

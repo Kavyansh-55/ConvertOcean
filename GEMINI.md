@@ -42,9 +42,21 @@ what Tailwind's `@theme` would, without the dependency. **Do not add Tailwind**
 
 ### The scoped-CSS trap
 
-Astro's scoped styles silently no-op on `set:html` children and on `<html>`
-ancestors. This has produced five separate rounds of live bugs. Read every
-declaration before reviving a rule that looks dead — it may be dead on purpose.
+Astro's scoped styles silently no-op on `set:html` children, on `<html>`
+ancestors, and on **any element built at runtime** — `createElement` plus
+`className`, or a chunk of `innerHTML` — because the `data-astro-cid-*`
+attribute Astro scopes against only lands on elements written in the template.
+Six rounds of live bugs, the sixth being 44 rules across 12 components that had
+never applied to anything (`/split-pdf/`'s page thumbnails among them).
+
+Fix it with `:global(...)` around the affected selector, keeping the rest of the
+block scoped, or `<style is:global>` with a per-component class prefix when
+effectively all the UI is runtime-built. **`scripts/tests/scoped-css.test.mjs`
+now fails on any new instance**, so this is enforced rather than remembered.
+
+Read every declaration before reviving a rule that looks dead — it may be dead
+on purpose, and it may be hiding a second bug. Those `/split-pdf/` rules also
+carried a font dropped in the Satoshi migration.
 
 ## Non-negotiables
 

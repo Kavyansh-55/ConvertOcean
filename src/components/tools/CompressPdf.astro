@@ -1,0 +1,711 @@
+---
+import CategoryIcon from '../CategoryIcon.astro';
+const { slug, headline, subtitle } = Astro.props;
+---
+
+{/* `is:global` on purpose. Astro rewrites scoped selectors to
+    `.cmp-thing[data-astro-cid-xxxx]`, and that attribute only lands on
+    elements written in this template — every card, row and canvas below is
+    built in JS at runtime and would therefore match nothing. That exact
+    mistake is live on /split-pdf/ today, and the scoped-CSS trap recorded in
+    CLAUDE.md is the reason this block is global and every class here carries a
+    `cmp-` prefix instead of relying on scoping that cannot reach the markup. */}
+<style is:global>
+  /* ---------------------------------------------------------- result hero */
+  .cmp-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+    padding: var(--spacing-lg);
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 10px;
+  }
+  .cmp-hero-figures { min-width: 0; }
+  .cmp-sizes {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .cmp-size-before {
+    font-size: 20px;
+    color: var(--colors-mute);
+    text-decoration: line-through;
+  }
+  .cmp-size-arrow { color: var(--colors-mute); }
+  .cmp-size-after {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--colors-ink);
+  }
+  .cmp-saving {
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--colors-mute);
+  }
+  .cmp-saving strong { color: var(--colors-ink); }
+  .cmp-hero-actions { display: flex; gap: var(--spacing-sm); flex-wrap: wrap; }
+
+  /* --------------------------------------------------------- settings row */
+  .cmp-settings { margin-top: var(--spacing-lg); }
+  .cmp-settings-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--colors-mute);
+    margin-bottom: var(--spacing-sm);
+  }
+  .cmp-preset-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-sm);
+  }
+  .cmp-preset {
+    text-align: left;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--colors-canvas);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit;
+    color: var(--colors-ink);
+    min-width: 0;
+  }
+  .cmp-preset:hover { border-color: var(--colors-ink); }
+  /* `.button` carries this site-wide; these are their own class and would
+     otherwise keep the double-tap zoom delay on touch. */
+  .cmp-preset { touch-action: manipulation; }
+  .cmp-preset:active { background-color: var(--colors-canvas-soft); }
+  .cmp-preset[aria-pressed='true'] {
+    border-color: var(--colors-link);
+    background-color: var(--colors-canvas-soft);
+  }
+  .cmp-preset-name { font-weight: 600; font-size: 14px; }
+  .cmp-preset-note { font-size: 12px; color: var(--colors-mute); margin-top: 2px; }
+  .cmp-preset-size {
+    font-size: 12px;
+    color: var(--colors-link);
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+    min-height: 16px;
+  }
+
+  .cmp-target { margin-top: var(--spacing-md); }
+  .cmp-target-row {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+  }
+  .cmp-target-row .form-input { max-width: 140px; }
+  .cmp-target-note { font-size: 12px; color: var(--colors-mute); margin-top: var(--spacing-xs); }
+
+  /* ------------------------------------------------------- before / after */
+  .cmp-compare { margin-top: var(--spacing-lg); }
+  .cmp-compare-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-sm);
+  }
+  .cmp-stage {
+    position: relative;
+    margin: 0 auto;
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 6px;
+    overflow: hidden;
+    max-width: 100%;
+  }
+  .cmp-stage canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    /* Paper is white in both themes; a themed background behind a rendered
+       page would tint the very thing being judged. */
+    background-color: #ffffff;
+  }
+  .cmp-layer-after {
+    position: absolute;
+    inset: 0;
+    /* Clipped from the left by the wipe position. */
+    clip-path: inset(0 0 0 var(--cmp-wipe, 50%));
+  }
+  .cmp-wipe-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--cmp-wipe, 50%);
+    width: 2px;
+    background-color: var(--colors-link);
+    pointer-events: none;
+  }
+  .cmp-wipe-tags {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--colors-mute);
+    margin-top: var(--spacing-xs);
+  }
+  .cmp-wipe-range { width: 100%; margin-top: var(--spacing-xs); accent-color: var(--colors-link); }
+  .cmp-page-nav { display: flex; align-items: center; gap: var(--spacing-sm); }
+  .cmp-page-nav span { font-size: 13px; color: var(--colors-mute); font-variant-numeric: tabular-nums; }
+
+  /* --------------------------------------------------------- what changed */
+  .cmp-details { margin-top: var(--spacing-lg); }
+  .cmp-details > summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    padding: var(--spacing-sm) 0;
+  }
+  .cmp-untouched {
+    font-size: 13px;
+    color: var(--colors-mute);
+    padding: var(--spacing-sm) 0 var(--spacing-md);
+    border-bottom: 1px solid var(--colors-hairline);
+    margin-bottom: var(--spacing-sm);
+  }
+  .cmp-img-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .cmp-img-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--colors-mute);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 4px 8px 4px 0;
+    white-space: nowrap;
+  }
+  .cmp-img-table td {
+    padding: 6px 8px 6px 0;
+    border-top: 1px solid var(--colors-hairline);
+    vertical-align: top;
+    font-variant-numeric: tabular-nums;
+  }
+  .cmp-img-table td:last-child { color: var(--colors-mute); }
+  .cmp-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 999px;
+    border: 1px solid var(--colors-hairline);
+    white-space: nowrap;
+  }
+  .cmp-tag-shrunk { color: var(--colors-link); border-color: var(--colors-link); }
+  .cmp-table-scroll { overflow-x: auto; }
+
+  /* Announced, not shown. The result arrives asynchronously after the file is
+     chosen, so without a live region a screen reader reader is told nothing at
+     all: the page simply goes quiet and then has a download button. Matches
+     the `.dz-sr` pattern in HeroDropzone.astro. */
+  .cmp-sr {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 600px) {
+    .cmp-size-after { font-size: 27px; }
+    .cmp-hero { padding: var(--spacing-md); }
+    .cmp-hero-actions { width: 100%; }
+    .cmp-hero-actions .button { flex: 1 1 auto; }
+  }
+</style>
+
+<script is:inline src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<div id="errorBanner" class="error-banner">
+  <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
+  <span id="errorMessage"></span>
+</div>
+
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Reading the document…</div>
+</div>
+
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon"><CategoryIcon icon="🗜️" width="40" height="40" /></div>
+  <div class="upload-text-primary">Drag and drop a PDF here, or click to browse</div>
+  <div class="upload-text-secondary">A single PDF (Max 25MB)</div>
+  <button type="button" class="upload-cta">Choose file</button>
+  <input type="file" id="fileInput" class="file-input" accept=".pdf,application/pdf" />
+</div>
+
+<div id="cmpWorkspace" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
+
+  <div class="cmp-hero">
+    <div class="cmp-hero-figures">
+      <div class="cmp-sizes">
+        <span class="cmp-size-before" id="cmpBefore">—</span>
+        <span class="cmp-size-arrow" aria-hidden="true">→</span>
+        <span class="cmp-size-after" id="cmpAfter">—</span>
+      </div>
+      <div class="cmp-saving" id="cmpSaving"></div>
+    </div>
+    <p class="cmp-sr" role="status" aria-live="polite" id="cmpLive"></p>
+    <div class="cmp-hero-actions">
+      <button class="button button-primary" id="cmpDownload" disabled>Download</button>
+      <button class="button button-danger" id="cmpClear">Start over</button>
+    </div>
+  </div>
+
+  <div class="cmp-settings">
+    <div class="cmp-settings-label" id="cmpPresetLabel">How hard to compress</div>
+    <div class="cmp-preset-row" role="group" aria-labelledby="cmpPresetLabel" id="cmpPresetRow">
+      <button type="button" class="cmp-preset" data-preset="light" aria-pressed="false">
+        <div class="cmp-preset-name">Light</div>
+        <div class="cmp-preset-note">Safe for printing</div>
+        <div class="cmp-preset-size" data-size-for="light"></div>
+      </button>
+      <button type="button" class="cmp-preset" data-preset="balanced" aria-pressed="true">
+        <div class="cmp-preset-name">Recommended</div>
+        <div class="cmp-preset-note">Best for screen and email</div>
+        <div class="cmp-preset-size" data-size-for="balanced"></div>
+      </button>
+      <button type="button" class="cmp-preset" data-preset="strong" aria-pressed="false">
+        <div class="cmp-preset-name">Strong</div>
+        <div class="cmp-preset-note">Smallest, visibly softer</div>
+        <div class="cmp-preset-size" data-size-for="strong"></div>
+      </button>
+      <button type="button" class="cmp-preset" data-preset="target" aria-pressed="false">
+        <div class="cmp-preset-name">Fit a size</div>
+        <div class="cmp-preset-note">Meet an upload limit</div>
+        <div class="cmp-preset-size" data-size-for="target"></div>
+      </button>
+    </div>
+
+    <div class="cmp-target" id="cmpTargetPanel" style="display: none;">
+      <div class="preset-chips" style="margin-bottom: var(--spacing-sm);">
+        <button type="button" class="preset-chip" data-kb="100">100 KB</button>
+        <button type="button" class="preset-chip" data-kb="200">200 KB</button>
+        <button type="button" class="preset-chip" data-kb="500">500 KB</button>
+        <button type="button" class="preset-chip" data-kb="1024">1 MB</button>
+        <button type="button" class="preset-chip" data-kb="2048">2 MB</button>
+        <button type="button" class="preset-chip" data-kb="5120">5 MB</button>
+      </div>
+      <div class="cmp-target-row">
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label" for="cmpTargetKB">Target size (KB)</label>
+          <input type="number" id="cmpTargetKB" class="form-input" value="500"
+                 min="10" max="25000" step="10" inputmode="numeric"
+                 autocomplete="off" name="target-size-kb" />
+        </div>
+        <button class="button button-primary" id="cmpFit">Fit to this size</button>
+      </div>
+      <div class="cmp-target-note" id="cmpTargetNote">The tool finds the gentlest setting that still fits under your limit, and tells you if the size is not reachable.</div>
+    </div>
+  </div>
+
+  <div class="cmp-compare" id="cmpCompare" style="display: none;">
+    <div class="cmp-compare-head">
+      <div class="cmp-settings-label" style="margin: 0;">Check the result — drag to compare</div>
+      <div class="cmp-page-nav">
+        <button type="button" class="button button-secondary" id="cmpPrevPage" aria-label="Previous page">‹</button>
+        <span id="cmpPageLabel">Page 1 of 1</span>
+        <button type="button" class="button button-secondary" id="cmpNextPage" aria-label="Next page">›</button>
+      </div>
+    </div>
+    <div class="cmp-stage" id="cmpStage">
+      <canvas id="cmpCanvasBefore"></canvas>
+      <div class="cmp-layer-after"><canvas id="cmpCanvasAfter"></canvas></div>
+      <div class="cmp-wipe-line" aria-hidden="true"></div>
+    </div>
+    <input type="range" id="cmpWipe" class="cmp-wipe-range" min="0" max="100" value="50"
+           aria-label="Comparison position: left of the line shows the original, right shows the compressed file" />
+    <div class="cmp-wipe-tags"><span>Original</span><span>Compressed</span></div>
+  </div>
+
+  <details class="cmp-details" id="cmpDetails" style="display: none;">
+    <summary>What changed in your file</summary>
+    <div class="cmp-untouched" id="cmpUntouched"></div>
+    <div class="cmp-table-scroll">
+      <table class="cmp-img-table">
+        <thead>
+          <tr><th>Image</th><th>Drawn at</th><th>Action</th><th>Size</th><th>Why</th></tr>
+        </thead>
+        <tbody id="cmpImgRows"></tbody>
+      </table>
+    </div>
+  </details>
+</div>
+
+<script is:inline>
+  (function () {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+    const $ = (id) => document.getElementById(id);
+    const dropZone = $('dropZone');
+    const fileInput = $('fileInput');
+    const errorBanner = $('errorBanner');
+    const errorMessage = $('errorMessage');
+    const progressOverlay = $('progressOverlay');
+    const progressBarFill = $('progressBarFill');
+    const progressLabel = $('progressLabel');
+    const workspace = $('cmpWorkspace');
+    const elBefore = $('cmpBefore');
+    const elAfter = $('cmpAfter');
+    const elSaving = $('cmpSaving');
+    const btnDownload = $('cmpDownload');
+    const btnClear = $('cmpClear');
+    const presetRow = $('cmpPresetRow');
+    const targetPanel = $('cmpTargetPanel');
+    const targetKB = $('cmpTargetKB');
+    const targetNote = $('cmpTargetNote');
+    const btnFit = $('cmpFit');
+    const compare = $('cmpCompare');
+    const stage = $('cmpStage');
+    const canvasBefore = $('cmpCanvasBefore');
+    const canvasAfter = $('cmpCanvasAfter');
+    const wipe = $('cmpWipe');
+    const pageLabel = $('cmpPageLabel');
+    const details = $('cmpDetails');
+    const imgRows = $('cmpImgRows');
+    const untouched = $('cmpUntouched');
+    const live = $('cmpLive');
+
+    /* CSS honours this globally; a scroll animated from JS is outside CSS's
+       reach and has to ask for itself. */
+    const reducedMotion = () =>
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* Current job. `original` is kept intact for the whole session: pdf.js
+       transfers any buffer handed to its worker and leaves the original
+       detached, which silently broke /split-pdf/ once already, so every
+       consumer gets its own copy. */
+    let job = null;          // { name, original, pageCount, docBefore }
+    let current = null;      // { bytes, report, key }
+    const cache = new Map(); // preset key -> { bytes, report }
+    let pageNo = 1;
+    let renderToken = 0;
+
+    const fmt = (n) => (window.coFormatSize ? window.coFormatSize(n) : (n < 1024 ? n + ' bytes' : n < 1048576 ? (n / 1024).toFixed(0) + ' KB' : (n / 1048576).toFixed(1) + ' MB'));
+
+    function showProgress(pct, label) {
+      progressOverlay.style.display = 'flex';
+      progressBarFill.style.width = pct + '%';
+      progressLabel.textContent = label;
+    }
+    function hideProgress() { progressOverlay.style.display = 'none'; }
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' });
+    }
+    function hideError() { errorBanner.style.display = 'none'; }
+
+    /* ------------------------------------------------------- file intake */
+
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', (e) => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+
+    async function handleFile(file) {
+      const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 25);
+      if (tooLarge) { showError(tooLarge); return; }
+      if (!/\.pdf$/i.test(file.name)) {
+        showError('That is not a PDF. This tool compresses PDF files — for photos, the Image Resizer handles pixel sizes and KB limits.');
+        return;
+      }
+      hideError();
+      cache.clear();
+      pageNo = 1;
+      showProgress(5, 'Reading the document…');
+
+      try {
+        const original = new Uint8Array(await file.arrayBuffer());
+        const docBefore = await pdfjsLib.getDocument({ data: original.slice() }).promise;
+        job = { name: file.name, original, pageCount: docBefore.numPages, docBefore };
+        dropZone.style.display = 'none';
+        workspace.style.display = 'block';
+        await run('balanced');
+      } catch (err) {
+        hideProgress();
+        showError('That PDF could not be opened. If it is password-protected, remove the password first — nothing was sent anywhere.');
+      }
+    }
+
+    /* --------------------------------------------------------- compressing */
+
+    async function run(key) {
+      if (!job) return;
+      setActivePreset(key);
+      targetPanel.style.display = key === 'target' ? 'block' : 'none';
+      if (key === 'target' && !cache.has(cacheKey(key))) { hideProgress(); return; }
+
+      const ck = cacheKey(key);
+      if (cache.has(ck)) { current = Object.assign({ key }, cache.get(ck)); paint(); return; }
+
+      const presets = window.coPdfPresets;
+      const opts = key === 'target'
+        ? { targetBytes: Math.max(10, parseInt(targetKB.value, 10) || 500) * 1024 }
+        : { dpi: presets[key].dpi, quality: presets[key].quality };
+
+      btnDownload.disabled = true;
+      showProgress(3, 'Reading the document…');
+      try {
+        const out = await window.coCompressPdf(job.original.slice(), opts, window.PDFLib, {
+          progress: showProgress,
+          /* Hand the main thread back between images so the progress bar and
+             the whole tab stay alive on a fifty-image scan. */
+          yield: () => new Promise((r) => setTimeout(r, 0)),
+        });
+        cache.set(ck, out);
+        current = { key, bytes: out.bytes, report: out.report };
+        paint();
+      } catch (err) {
+        hideProgress();
+        showError('This PDF could not be compressed. It may use an encoding this tool does not handle, or be damaged. Nothing was sent anywhere and your file is unchanged.');
+      }
+    }
+
+    const cacheKey = (key) => key === 'target' ? 'target:' + (parseInt(targetKB.value, 10) || 500) : key;
+
+    function setActivePreset(key) {
+      for (const b of presetRow.querySelectorAll('.cmp-preset')) {
+        b.setAttribute('aria-pressed', String(b.dataset.preset === key));
+      }
+    }
+
+    /* ------------------------------------------------------------ painting */
+
+    function paint() {
+      const r = current.report;
+      const before = r.originalSize;
+      const after = current.bytes.length;
+      const saved = before - after;
+      const pct = before > 0 ? Math.round((saved / before) * 100) : 0;
+
+      elBefore.textContent = fmt(before);
+      elAfter.textContent = fmt(after);
+
+      /* The honest cases first. A tool that says "compressed!" when it found
+         nothing has spent the reader's trust on a file they will now email
+         anyway. */
+      if (r.noGain || saved <= 0) {
+        elAfter.textContent = fmt(before);
+        elBefore.style.display = 'none';
+        elSaving.innerHTML = '<strong>Already as small as it goes.</strong> Nothing here could be reduced without damaging the document, so your original is what downloads — unchanged.';
+      } else if (r.noImages) {
+        elBefore.style.display = '';
+        elSaving.innerHTML = '<strong>' + pct + '% smaller.</strong> This PDF has no images in it, so the saving came from tidying the file structure. Text-only PDFs are already efficient — there is no large win hiding in one.';
+      } else {
+        elBefore.style.display = '';
+        elSaving.innerHTML = '<strong>' + pct + '% smaller</strong> — ' + fmt(saved) + ' saved. Text, links and form fields are untouched.';
+      }
+
+      if (r.targetBytes) {
+        targetNote.textContent = r.targetMet
+          ? 'Fits under ' + fmt(r.targetBytes) + ' at the gentlest setting that got there (' + r.settings.dpi + ' DPI).'
+          : 'Could not reach ' + fmt(r.targetBytes) + '. ' + fmt(after) + ' is the smallest this document goes before the pages stop being readable — that is a limit of what is in the file, not of the tool.';
+      }
+
+      const sizeSlot = presetRow.querySelector('[data-size-for="' + current.key + '"]');
+      if (sizeSlot) sizeSlot.textContent = fmt(after);
+
+      /* Drop the overlay before the button becomes actionable, so the tool is
+         never showing "working…" above a control that is ready. */
+      hideProgress();
+      btnDownload.disabled = false;
+      /* Say the outcome out loud. `textContent` of the hero would read as a
+         run-on of two sizes, so this is phrased for listening. */
+      live.textContent = (r.noGain || saved <= 0)
+        ? 'Already as small as it goes. Your original is ready to download, unchanged.'
+        : 'Compressed from ' + fmt(before) + ' to ' + fmt(after) + ', ' + pct +
+          ' percent smaller. Ready to download.';
+      renderDetails(r);
+      renderCompare();
+    }
+
+    function renderDetails(r) {
+      details.style.display = 'block';
+      const shrunk = r.images.filter((i) => i.action === 'shrunk').length;
+      const kept = r.images.filter((i) => i.action === 'kept').length;
+      const skipped = r.images.filter((i) => i.action === 'skipped').length;
+
+      untouched.innerHTML =
+        'Text, fonts, vector graphics, links, form fields and bookmarks were not modified — only image data was. ' +
+        'Of <strong>' + r.images.length + '</strong> image' + (r.images.length === 1 ? '' : 's') + ' in this document, ' +
+        '<strong>' + shrunk + '</strong> ' + (shrunk === 1 ? 'was' : 'were') + ' re-encoded and ' +
+        '<strong>' + (kept + skipped) + '</strong> ' + (kept + skipped === 1 ? 'was' : 'were') + ' left exactly as ' +
+        (kept + skipped === 1 ? 'it was' : 'they were') + '.';
+
+      imgRows.innerHTML = '';
+      for (const im of r.images) {
+        const tr = document.createElement('tr');
+        const dpi = im.effectiveDpi === null ? '—'
+          : (im.effectiveDpi === Infinity ? 'not visible' : im.effectiveDpi + ' DPI');
+        const size = im.action === 'shrunk'
+          ? fmt(im.bytes) + ' → ' + fmt(im.newBytes)
+          : fmt(im.bytes);
+        const dims = im.action === 'shrunk'
+          ? im.width + '×' + im.height + ' → ' + im.newWidth + '×' + im.newHeight
+          : im.width + '×' + im.height;
+        const tag = im.action === 'shrunk'
+          ? '<span class="cmp-tag cmp-tag-shrunk">re-encoded</span>'
+          : '<span class="cmp-tag">left alone</span>';
+
+        tr.innerHTML =
+          '<td>' + dims + '</td>' +
+          '<td>' + dpi + '</td>' +
+          '<td>' + tag + '</td>' +
+          '<td>' + size + '</td>' +
+          '<td>' + (im.reason || '') + '</td>';
+        imgRows.appendChild(tr);
+      }
+    }
+
+    /* ------------------------------------------------ before / after render */
+
+    async function renderCompare() {
+      if (!job || !current) return;
+      const token = ++renderToken;
+      compare.style.display = 'block';
+      pageLabel.textContent = 'Page ' + pageNo + ' of ' + job.pageCount;
+
+      /* Both sides are rendered at the same viewport so the comparison is of
+         the image data and nothing else. Width is capped at what the stage can
+         actually show — rendering a 300 DPI page to compare thumbnails would
+         cost more memory than the compression did. */
+      const cssWidth = Math.min(stage.clientWidth || 640, 900);
+      stage.removeAttribute('data-ready');
+      try {
+        const pgBefore = await job.docBefore.getPage(pageNo);
+        const base = pgBefore.getViewport({ scale: 1 });
+        const scale = cssWidth / base.width;
+        const vp = pgBefore.getViewport({ scale: scale * (window.devicePixelRatio || 1) });
+
+        /* Size *both* canvases before drawing into either.
+           A canvas with no dimensions set is 300x150, and the compressed side
+           is necessarily drawn second — it has to be parsed first. Sizing it
+           only at draw time left the comparison visible for a few hundred
+           milliseconds with its right half at the wrong aspect ratio, which
+           read as a broken render and then jumped when it corrected itself. */
+        const w = Math.ceil(vp.width);
+        const h = Math.ceil(vp.height);
+        for (const c of [canvasBefore, canvasAfter]) {
+          c.width = w;
+          c.height = h;
+          const ctx = c.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, w, h);
+        }
+
+        const draw = async (page, canvas) => {
+          await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+        };
+
+        await draw(pgBefore, canvasBefore);
+        if (token !== renderToken) return;
+
+        const docAfter = await pdfjsLib.getDocument({ data: current.bytes.slice() }).promise;
+        const pgAfter = await docAfter.getPage(Math.min(pageNo, docAfter.numPages));
+        await draw(pgAfter, canvasAfter);
+        if (token !== renderToken) return;
+        setWipe(wipe.value);
+        /* Both halves are now real. The checks in verify-compress.mjs wait on
+           this rather than on the section becoming visible, which was true
+           before either page had been painted. */
+        stage.setAttribute('data-ready', '1');
+      } catch (err) {
+        /* A preview that will not render is not a reason to withhold a file
+           that compressed correctly. Hide the comparison and keep going. */
+        compare.style.display = 'none';
+      }
+    }
+
+    function setWipe(v) {
+      stage.style.setProperty('--cmp-wipe', v + '%');
+      const line = stage.querySelector('.cmp-wipe-line');
+      if (line) line.style.left = v + '%';
+    }
+
+    /* -------------------------------------------------------------- events */
+
+    presetRow.addEventListener('click', (e) => {
+      const btn = e.target.closest('.cmp-preset');
+      if (btn) run(btn.dataset.preset);
+    });
+
+    targetPanel.addEventListener('click', (e) => {
+      const chip = e.target.closest('.preset-chip');
+      if (!chip) return;
+      targetKB.value = chip.dataset.kb;
+      run('target');
+    });
+    btnFit.addEventListener('click', () => run('target'));
+
+    wipe.addEventListener('input', () => setWipe(wipe.value));
+
+    $('cmpPrevPage').addEventListener('click', () => {
+      if (pageNo > 1) { pageNo--; renderCompare(); }
+    });
+    $('cmpNextPage').addEventListener('click', () => {
+      if (job && pageNo < job.pageCount) { pageNo++; renderCompare(); }
+    });
+
+    btnDownload.addEventListener('click', () => {
+      if (!current) return;
+      const base = job.name.replace(/\.pdf$/i, '');
+      const blob = new Blob([current.bytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = base + '_compressed.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+
+    btnClear.addEventListener('click', () => {
+      job = null;
+      current = null;
+      cache.clear();
+      fileInput.value = '';
+      workspace.style.display = 'none';
+      dropZone.style.display = '';
+      compare.style.display = 'none';
+      details.style.display = 'none';
+      for (const s of presetRow.querySelectorAll('.cmp-preset-size')) s.textContent = '';
+      setActivePreset('balanced');
+      hideError();
+      hideProgress();
+    });
+
+    /* Re-render the comparison when the stage width changes, or the canvases
+       keep the width they had at the breakpoint they were drawn in. */
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      if (!current) return;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(renderCompare, 250);
+    });
+  })();
+</script>

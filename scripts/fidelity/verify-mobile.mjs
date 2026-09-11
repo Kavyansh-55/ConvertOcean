@@ -45,7 +45,7 @@ const WIDTHS = [320, 360, 390, 768];
 const PAGES = [
   '/', '/excel-to-pdf/', '/pdf-to-word/', '/merge-pdf/', '/word-to-pdf/',
   '/invoice-generator/', '/sales-tax-calculator/', '/json-formatter/',
-  '/split-pdf/', '/image-to-text/', '/file-converter/',
+  '/split-pdf/', '/compress-pdf/', '/image-to-text/', '/file-converter/',
 ];
 
 let bad = 0;

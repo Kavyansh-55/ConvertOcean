@@ -21,7 +21,7 @@ import { spawn } from 'node:child_process';
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { recipes, uncovered } from './recipes/index.mjs';
+import { recipes, uncovered, partiallyCovered } from './recipes/index.mjs';
 import * as inspect from './lib/inspect.mjs';
 // The site's own EXIF reader, so metadata assertions agree with the tool.
 import * as exifParse from '../../src/scripts/exif-parse.js';
@@ -342,6 +342,14 @@ async function readOutput(kind, bytes) {
   return inspect.readText(bytes);
 }
 
+/** The fixture's size on disk, for recipes that assert a size change. */
+function srcBytesOf(recipe) {
+  const fixture = recipe.fixture || (recipe.typeInto && recipe.typeInto.fixture);
+  if (!fixture) return null;
+  const name = Array.isArray(fixture) ? fixture[0] : fixture;
+  return readFileSync(join(FIXTURES, name)).length;
+}
+
 /** Read the fixture with the matching inspector, for source-vs-output checks. */
 async function readSource(fixture) {
   // A merge recipe lists several inputs; they are copies, so the first speaks
@@ -409,6 +417,10 @@ const SYM = { pass: '  PASS', fail: '  FAIL', err: '  ERR ' };
         page: run.alsoRead || {},
         out,
         src,
+        /* Byte counts, which no parsed view of the output carries. A
+           compression recipe's primary assertion is a size comparison. */
+        bytes: run.bytes,
+        srcBytes: srcBytesOf(recipe),
         // Recipes that unpack a zip need the inspectors for what is inside it.
         readXlsx: inspect.readXlsx,
         readDocx: inspect.readDocx,
@@ -482,8 +494,21 @@ const SYM = { pass: '  PASS', fail: '  FAIL', err: '  ERR ' };
   /* A sweep that reports only what it looked at reads as a clean bill of
      health it has not earned. Say what has no recipe at all. */
   if (!only.length) {
-    console.log(`\n  NOT COVERED BY ANY RECIPE (${uncovered.length} tools):`);
+    console.log(`\n  NOT COVERED BY ANY RECIPE (${uncovered.length} tool${uncovered.length === 1 ? '' : 's'}):`);
     for (const u of uncovered) console.log(`    ${u.slug.padEnd(26)} ${u.why}`);
+
+    /* A recipe that covers half a tool is not the same claim as a recipe
+       that covers it, and a green row does not distinguish them. Say which
+       rows are partial and where the rest of the coverage lives. */
+    if (partiallyCovered.length) {
+      console.log(`
+  PARTIALLY COVERED (${partiallyCovered.length} tool${partiallyCovered.length === 1 ? '' : 's'}) — the recipe passes, but not on everything:`);
+      for (const pc of partiallyCovered) {
+        console.log(`    ${pc.slug.padEnd(26)} covers ${pc.covers}`);
+        console.log(`    ${''.padEnd(26)} NOT here: ${pc.missing}`);
+        console.log(`    ${''.padEnd(26)} asserted by: ${pc.where}`);
+      }
+    }
   }
   console.log('');
 

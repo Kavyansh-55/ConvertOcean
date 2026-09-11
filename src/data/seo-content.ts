@@ -1488,3 +1488,34 @@ export const jpegToJpgContent = `
   <p>If the destination also enforces dimensions or a KB cap — exam portals and job forms usually do — the <a href="/image-resizer/">Image Resizer</a> handles pixel sizes and exact file-size targets in the same client-side way. Downloaded a modern .webp image that some software refuses? <a href="/webp-to-jpg/">WebP to JPG</a> produces the universally accepted format. All processing runs in your browser sandbox: no uploads, no accounts, works offline once loaded.</p>
 </div>
 `;
+
+/**
+ * /compress-pdf/ article copy.
+ *
+ * Written around the one thing most "compress PDF" pages will not tell you:
+ * whether the file is compressible at all. That is the question a reader
+ * actually arrives with, and answering it honestly is also what makes the page
+ * worth citing rather than worth skimming.
+ */
+export const compressPdfContent = `
+<div class="content-card">
+  <h2>Reduce PDF File Size Without Wrecking the Document.</h2>
+  <p>Most oversized PDFs are oversized for a single reason: the images inside them are stored at far more resolution than the page ever displays. A phone photo dropped into a Word document arrives around 4,000 pixels wide and then gets drawn in a three-inch box — roughly 1,300 DPI of detail doing a 150 DPI job. Nothing renders that detail, nothing prints it, and it can account for well over 90% of the file.</p>
+  <p>So compressing a PDF properly is not a matter of squeezing the whole file. It means finding the images that are bigger than their place on the page, redrawing those at a sensible resolution, and leaving everything else strictly alone. On scanned documents and photo-heavy reports that typically cuts 40–70%. Text, fonts, vector graphics, links, bookmarks and form fields are not modified at all, so the result is still a document rather than a picture of one.</p>
+
+  <h3>Why Some Tools Make Your Text Unselectable.</h3>
+  <p>The shortcut way to build a PDF compressor is to render every page to a bitmap and wrap the bitmaps in a new file. It produces impressive size figures and a broken document: the text stops being selectable and searchable, links stop working, form fields stop being fillable, and a crisp vector logo turns to mush. If you have ever compressed a PDF and then found you could no longer search it, that is what happened. This tool never does that, at any setting — and the <strong>What changed in your file</strong> panel lists every image individually with what was done to it and why, including the ones it deliberately left untouched.</p>
+
+  <h3>Compressing a PDF to 100 KB, 200 KB, or an Email Limit.</h3>
+  <p>Upload forms and mail servers impose hard caps — commonly 100 KB or 200 KB on government and exam portals, 25 MB for Gmail attachments and 20 MB for Outlook. Use <strong>Fit a size</strong>, enter the limit, and the tool searches for the gentlest setting that still comes in under it, then reports what it actually achieved. If a number is not physically reachable — a forty-page scan will not become 100 KB and remain readable — it says so and gives you the smallest size it could reach. That is more useful than a file that meets the number and cannot be read.</p>
+
+  <h3>When a PDF Will Not Get Smaller.</h3>
+  <p>A text-only PDF is already efficient: its size is in embedded fonts and structure, not images, and there is no large win hiding in one. The same is true of a file whose images are already at the right resolution, of vector-only diagrams and charts, and of bilevel fax-encoded scans, which are smaller than any JPEG of them would be. The tool will tell you this instead of shaving off 2% and calling it compression. If the file is simply long rather than heavy, <a href="/split-pdf/">Split PDF</a> is the right tool — compression cannot remove pages you still need.</p>
+
+  <h3>Everything Runs on Your Own Device.</h3>
+  <p>The PDF is parsed, re-encoded and rewritten inside your browser tab. It is never transmitted anywhere, there is no account, and the page keeps working with your network disconnected once it has loaded — which is why contracts, medical records, ID scans and signed agreements are safe to compress here. The trade-off of working this way is honest: the browser's own JPEG encoder is what re-encodes your images, so a desktop tool with a specialist encoder may occasionally squeeze out a little more. We think that is the right side of the trade, and you can read the <a href="/privacy-first/">reasoning behind it</a>.</p>
+
+  <h3>Related PDF Tools.</h3>
+  <p>Need the opposite operation? <a href="/merge-pdf/">Merge PDF</a> combines several documents into one, and <a href="/split-pdf/">Split PDF</a> extracts the pages you actually need. If you are assembling a PDF out of photos in the first place, <a href="/image-to-pdf/">Image to PDF</a> and the <a href="/guides/photos-to-pdf-scanning/">guide to scanning with a phone</a> cover doing it at a sane resolution so there is less to compress later. For a single photograph rather than a document, the <a href="/image-resizer/">Image Resizer</a> targets exact pixel dimensions or an exact KB limit, and the rest of the set lives in <a href="/pdf-tools/">PDF Tools</a>.</p>
+</div>
+`;

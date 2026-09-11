@@ -43,7 +43,7 @@ const { slug, headline, subtitle } = Astro.props;
     .split-range-bar { align-items: stretch; }
     .split-range-field .form-input { max-width: none; }
   }
-  .page-thumb-card {
+  :global(.page-thumb-card) {
     background-color: var(--colors-canvas-soft);
     border: 1px solid var(--colors-hairline);
     border-radius: 6px;
@@ -54,18 +54,18 @@ const { slug, headline, subtitle } = Astro.props;
     position: relative;
     cursor: pointer;
   }
-  .page-thumb-card.selected {
+  :global(.page-thumb-card.selected) {
     border-color: var(--colors-link);
     /* elevation removed — separation comes from colour, not shadow */
   }
-  .page-thumb-checkbox {
+  :global(.page-thumb-checkbox) {
     position: absolute;
     top: 4px;
     right: 4px;
     accent-color: var(--colors-ink);
     cursor: pointer;
   }
-  .page-thumb-canvas {
+  :global(.page-thumb-canvas) {
     width: 80px;
     height: auto;
     background: white;

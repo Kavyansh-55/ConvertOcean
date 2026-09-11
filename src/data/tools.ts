@@ -6,7 +6,7 @@ import {
   salesTaxCalculatorContent,
   breakEvenCalculatorContent
 } from './business-content';
-import { seoContentMap, imageResizerContent, jpgToJpegContent, jpegToJpgContent } from './seo-content';
+import { seoContentMap, imageResizerContent, jpgToJpegContent, jpegToJpgContent, compressPdfContent } from './seo-content';
 
 export interface ToolData {
   slug: string;
@@ -288,7 +288,7 @@ const rawTools: ToolData[] = [
       { question: 'Does it work offline?', answer: 'Yes. Once loaded, the merger runs 100% offline.' },
       { question: 'Is there a file count limit?', answer: 'No. The limits are determined strictly by your device memory allocations.' }
     ],
-    relatedTools: ['split-pdf', 'txt-to-pdf', 'pdf-to-txt', 'excel-to-pdf']
+    relatedTools: ['split-pdf', 'compress-pdf', 'txt-to-pdf', 'pdf-to-txt', 'excel-to-pdf']
   },
   {
     slug: 'split-pdf',
@@ -305,7 +305,30 @@ const rawTools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. The extraction engine processes pages directly in local memory.' }
     ],
-    relatedTools: ['merge-pdf', 'txt-to-pdf', 'pdf-to-txt', 'excel-to-pdf']
+    relatedTools: ['merge-pdf', 'compress-pdf', 'txt-to-pdf', 'pdf-to-txt', 'excel-to-pdf']
+  },
+  {
+    slug: 'compress-pdf',
+    name: 'Compress PDF',
+    title: 'Compress PDF Online - Reduce PDF File Size Free | ConvertOcean',
+    description: 'Compress PDF files and reduce PDF size in your browser. Shrink large scanned PDFs by 40-70% while text stays selectable. No uploads, 100% private and free.',
+    headline: 'Compress PDF.',
+    subtitle: 'Reduce PDF file size by re-encoding the images stored bigger than the page ever shows — text, links and form fields stay exactly as they were.',
+    quickAnswer: 'To compress a PDF, drop the file above and it is reduced immediately — typically by 40–70% for scanned or photo-heavy documents. The tool finds images stored at higher resolution than the page actually displays, redraws those at screen resolution, and leaves everything else alone, so text stays selectable and searchable, links keep working and form fields stay fillable. You can also set a target size in KB to meet an upload limit. Compression runs entirely in your browser — the PDF never leaves your device.',
+    icon: '🗜️',
+    category: 'PDF Tools',
+    categorySlug: 'pdf-tools',
+    faqs: [
+      { question: 'How much smaller will my PDF get?', answer: 'Scanned documents and photo-heavy PDFs usually drop 40–70%, because the images inside them are stored at far more resolution than the page displays. A text-only PDF may barely shrink at all — its size is in fonts and structure, not images, and there is no large saving hiding in one. The tool shows the real before and after figures rather than a promised percentage.' },
+      { question: 'Does compressing a PDF make the text blurry or unselectable?', answer: 'No. Only embedded raster images are re-encoded. Text, fonts, vector graphics, links, bookmarks and form fields are not modified at all, so the text stays selectable, searchable and crisp at any zoom. Tools that rasterise every page to a bitmap do destroy those things — this one never does, at any setting.' },
+      { question: 'Can I compress a PDF to 100 KB or 200 KB?', answer: 'Yes — switch to “Fit a size”, enter your limit, and the tool searches for the gentlest setting that still fits under it. If the number is not physically reachable (a forty-page scan will not become 100 KB and stay readable) it says so and reports the smallest size it could reach, rather than returning an unreadable file that meets the number.' },
+      { question: 'Do my files get uploaded to a server?', answer: 'No uploads are performed. The PDF is parsed, re-encoded and rewritten entirely inside your browser tab, and it is discarded when you close the page. That is also why the tool keeps working with your network disconnected once the page has loaded.' },
+      { question: 'Why is my PDF still large after compressing?', answer: 'Usually because the bytes are not in oversized images. Embedded fonts, vector artwork, images already at the right resolution and fax-encoded bilevel scans are all left alone on purpose — re-encoding them would cost quality without saving much. Open “What changed in your file” and the tool lists every image with what it did and why it made that choice.' },
+      { question: 'Is it better to compress a PDF or split it?', answer: 'Compress first if the file is large because of scans or photos. Split it if the file is large because it simply contains a lot of pages — compression cannot remove content you still need. For an email attachment limit, compressing a scanned document is usually enough on its own.' },
+      { question: 'Does compression lose quality permanently?', answer: 'Any image it re-encodes is changed permanently in the downloaded copy, which is why your original file is never modified — you keep it, and the compressed version downloads as a separate file. The before-and-after comparison lets you check a page at full size before you download anything.' }
+    ],
+    relatedTools: ['merge-pdf', 'split-pdf', 'image-resizer', 'pdf-to-word', 'image-to-pdf'],
+    content: compressPdfContent
   },
   {
     slug: 'invoice-generator',

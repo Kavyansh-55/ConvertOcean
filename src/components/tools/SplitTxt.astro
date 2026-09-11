@@ -12,7 +12,7 @@ const { slug, headline, subtitle } = Astro.props;
     max-height: 400px;
     overflow-y: auto;
   }
-  .part-item {
+  :global(.part-item) {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -21,16 +21,16 @@ const { slug, headline, subtitle } = Astro.props;
     border-radius: var(--rounded-md);
     padding: var(--spacing-sm) var(--spacing-md);
   }
-  .part-info {
+  :global(.part-info) {
     display: flex;
     flex-direction: column;
   }
-  .part-title {
+  :global(.part-title) {
     font-size: 14px;
     font-weight: var(--fw-bold);
     color: var(--colors-ink);
   }
-  .part-meta {
+  :global(.part-meta) {
     font-size: 12px;
     color: var(--colors-mute);
   }
