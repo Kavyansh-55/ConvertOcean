@@ -301,6 +301,10 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
     }
 
     async function handleFile(file) {
+      /* The drop zone promises 25MB; this is what keeps it. Published by
+         [tool].astro because this script is is:inline and cannot import. */
+      const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 25);
+      if (tooLarge) { showError(tooLarge); return; }
       hideError();
       originalName = file.name;
       showProgress(20, 'Reading file content…');

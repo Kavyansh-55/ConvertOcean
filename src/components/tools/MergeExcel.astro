@@ -195,6 +195,10 @@ const { slug, headline, subtitle } = Astro.props;
     }
 
     async function handleFiles(files) {
+      /* The drop zone promises 25MB; this is what keeps it. Published by
+         [tool].astro because this script is is:inline and cannot import. */
+      const tooLarge = window.coAnyFileTooLarge && window.coAnyFileTooLarge(files, 25);
+      if (tooLarge) { showError(tooLarge); return; }
       hideError();
       showProgress(10, "Reading spreadsheet files…");
       

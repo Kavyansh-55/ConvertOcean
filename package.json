@@ -13,7 +13,8 @@
     "fidelity:fixtures": "node scripts/fidelity/fixtures/build-all.mjs",
     "resilience": "node scripts/fidelity/verify-resilience.mjs",
     "og": "node scripts/og/build-og.mjs",
-    "mobile": "node scripts/fidelity/verify-mobile.mjs"
+    "mobile": "node scripts/fidelity/verify-mobile.mjs",
+    "limits": "node scripts/fidelity/verify-limits.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

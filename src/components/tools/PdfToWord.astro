@@ -178,8 +178,9 @@ const { slug, headline, subtitle } = Astro.props;
       showError('Invalid file format. Please choose a .pdf document.');
       return;
     }
-    if (file.size > 25 * 1024 * 1024) {
-      showError('File is larger than the 25MB limit.');
+    const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 25);
+    if (tooLarge) {
+      showError(tooLarge);
       return;
     }
     originalName = file.name;
