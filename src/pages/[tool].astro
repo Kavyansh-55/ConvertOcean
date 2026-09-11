@@ -39,6 +39,7 @@ import ImageResizer from '../components/tools/ImageResizer.astro';
 import HeicTool from '../components/tools/HeicTool.astro';
 import BankFileTool from '../components/tools/BankFileTool.astro';
 import ExifTool from '../components/tools/ExifTool.astro';
+import CompressPdf from '../components/tools/CompressPdf.astro';
 
 export function getStaticPaths() {
   return tools.map(t => ({ params: { tool: t.slug } }));
@@ -89,6 +90,7 @@ const toolsMap: Record<string, any> = {
   'image-to-text': ImageToText,
   'merge-pdf': MergePdf,
   'split-pdf': SplitPdf,
+  'compress-pdf': CompressPdf,
   'invoice-generator': InvoiceGenerator,
   'receipt-generator': ReceiptGenerator,
   'profit-margin-calculator': ProfitMarginCalculator,
@@ -611,7 +613,8 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     before a file has been chosen. */}
 <script>
   import { startLibraryRecovery } from '../scripts/lib-bootstrap.js';
-  import { fileTooLarge, anyFileTooLarge, nothingToConvert } from '../scripts/file-limits.js';
+  import { fileTooLarge, anyFileTooLarge, nothingToConvert, formatSize } from '../scripts/file-limits.js';
+  import { compressPdf, PRESETS } from '../scripts/pdf-compress.js';
   import { installClickGuard } from '../scripts/click-guard.js';
 
   startLibraryRecovery();
@@ -627,4 +630,11 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
   window.coFileTooLarge = fileTooLarge;
   window.coAnyFileTooLarge = anyFileTooLarge;
   window.coNothingToConvert = nothingToConvert;
+  window.coFormatSize = formatSize;
+
+  /* The PDF compressor's engine is a few hundred lines of decode/re-encode
+     rules with pure, testable parts, so it lives in a module with unit tests
+     rather than inside an `is:inline` script. Same publishing trick as above. */
+  window.coCompressPdf = compressPdf;
+  window.coPdfPresets = PRESETS;
 </script>

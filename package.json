@@ -20,7 +20,8 @@
     "calculators": "node scripts/fidelity/verify-calculators.mjs",
     "generators": "node scripts/fidelity/verify-generators.mjs",
     "themes": "node scripts/fidelity/verify-themes.mjs",
-    "webkit": "node scripts/fidelity/verify-webkit.mjs"
+    "webkit": "node scripts/fidelity/verify-webkit.mjs",
+    "compress": "node scripts/fidelity/verify-compress.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

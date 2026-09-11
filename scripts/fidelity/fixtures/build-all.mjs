@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 for (const f of ['build-docx.mjs', 'build-xlsx.mjs', 'build-pptx.mjs', 'build-pdf.mjs',
-                 'build-text.mjs', 'build-images.mjs']) {
+                 'build-compress-pdf.mjs', 'build-text.mjs', 'build-images.mjs']) {
   execFileSync(process.execPath, [join(HERE, f)], { stdio: 'inherit' });
 }
 
