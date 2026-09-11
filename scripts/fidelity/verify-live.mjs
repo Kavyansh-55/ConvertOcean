@@ -105,5 +105,54 @@ for (const [page, findJs, needle, label] of bundles) {
   say(needle.test(js), `${page} bundle contains the ${label}`);
 }
 
+/* ------------------------------------------------------- batch 5: compress */
+
+/* Without these, this file would verify batch 4 and say nothing at all about
+   what actually shipped this time. */
+const cp = await get('/compress-pdf/');
+say(cp.status === 200, `/compress-pdf/ is served (${cp.status})`);
+say((cp.body.match(/<h1/g) || []).length === 1, '/compress-pdf/ has exactly one h1');
+say(/rel="canonical"[^>]*convertocean\.com\/compress-pdf\//.test(cp.body),
+    '/compress-pdf/ self-canonicalises');
+say(/FAQPage/.test(cp.body), '/compress-pdf/ carries FAQPage schema');
+say(/pdf-lib/.test(cp.body) && /pdf\.min\.js/.test(cp.body),
+    '/compress-pdf/ loads both pdf-lib and pdf.js');
+say(/cmpDownload/.test(cp.body), '/compress-pdf/ renders the compressor workspace');
+
+/* The engine is an imported module, so it lives in its own chunk. Match on
+   runtime strings: identifiers are minified and comments are stripped. */
+{
+  const refs = [...cp.body.matchAll(/\/_astro\/([^"']+\.js)/g)].map((m) => m[1]);
+  let js = '';
+  for (const r of refs.slice(0, 12)) js += (await get('/_astro/' + r)).body;
+  for (const dep of js.matchAll(/from"\.\/([^"]+\.js)"/g)) js += (await get('/_astro/' + dep[1])).body;
+  say(/DCTDecode/.test(js), '/compress-pdf/ bundle contains the image-stream decoder');
+  say(/already at the target resolution/.test(js),
+      '/compress-pdf/ bundle contains the leave-it-alone rule');
+  say(/ImageMask/.test(js), '/compress-pdf/ bundle contains the stencil-mask skip');
+}
+
+/* --------------------------------------- the scoped-CSS fix actually shipped */
+
+/* The entire point of that fix is that these selectors are no longer scoped to
+   an attribute the runtime element never carries. Asserting the absence of the
+   attribute form is the only way to see it from outside the browser. */
+for (const [page, cls] of [
+  ['/split-pdf/', 'page-thumb-card'],
+  ['/exif-viewer/', 'xf-stat'],
+  ['/split-excel/', 'sheet-card'],
+  ['/ofx-to-csv/', 'bft-stat'],
+]) {
+  const html = (await get(page)).body;
+  let css = html;
+  for (const m of html.matchAll(/\/_astro\/([^"']+\.css)/g)) {
+    css += (await get('/_astro/' + m[1])).body;
+  }
+  const scopedForm = new RegExp('\.' + cls + '\[data-astro-cid');
+  const anyForm = new RegExp('\.' + cls + '[.,:{ ]');
+  say(anyForm.test(css) && !scopedForm.test(css),
+      `${page} serves .${cls} unscoped, so it reaches the runtime element`);
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
