@@ -8,7 +8,7 @@
  * that is not the library must count as a failure, because a captive portal
  * or an interception proxy answers 200 for everything.
  */
-import { ensureLib, LibraryUnavailableError, libraryUnavailableMessage, LIB_SOURCES }
+import { ensureLib, LibraryUnavailableError, libraryUnavailableMessage, LIB_SOURCES, libPresent, messageForError }
   from '../../src/scripts/ensure-lib.js';
 
 let passed = 0, failed = 0;
@@ -141,10 +141,75 @@ console.log('\nensure-lib\n');
 
 /* --- the pinned sources ------------------------------------------------ */
 check('every known library has a fallback on a different host',
-      Object.values(LIB_SOURCES).every((urls) => {
+      Object.values(LIB_SOURCES).every((spec) => {
         const host = (u) => u.split('/')[2];
-        return urls.length >= 2 && new Set(urls.map(host)).size >= 2;
+        return spec.urls.length >= 2 && new Set(spec.urls.map(host)).size >= 2;
       }));
+check('every known library has a label for the error message',
+      Object.values(LIB_SOURCES).every((spec) => typeof spec.label === 'string' && spec.label));
+check('the two attach-only scripts declare what they attach to',
+      ['jspdfAutoTable', 'pdfMakeFonts'].every((k) =>
+        LIB_SOURCES[k].ready && LIB_SOURCES[k].needs));
+
+
+/* --- attach-only scripts: the ready-check, not the global name ---------- */
+{
+  /* A plugin that hangs off jsPDF defines nothing of its own. Checking
+     window.jspdfAutoTable would be false forever; checking the prototype is
+     the only honest question. */
+  const { win, doc, attempted } = fakeEnv((url, w) => {
+    if (url.includes('jspdf.umd')) { w.jspdf = { jsPDF: { API: {} } }; return 'load'; }
+    if (url.includes('autotable')) { w.jspdf.jsPDF.API.autoTable = () => {}; return 'load'; }
+    return 'error';
+  });
+  const got = await ensureLib('jspdfAutoTable', undefined, { win, doc });
+  check('a plugin loads its host library first, then itself',
+        got === true && attempted.length === 2, 'attempts: ' + attempted.length);
+  check('…and the host really did land first',
+        attempted[0].includes('jspdf.umd') && attempted[1].includes('autotable'));
+}
+{
+  const { win, doc } = fakeEnv((url, w) => {
+    if (url.includes('pdfmake.min')) { w.pdfMake = {}; return 'load'; }
+    if (url.includes('vfs_fonts')) { w.pdfMake.vfs = { 'a.ttf': 'x' }; return 'load'; }
+    return 'error';
+  });
+  const got = await ensureLib('pdfMakeFonts', undefined, { win, doc });
+  check('the pdfmake font pack is judged by its vfs, not a global', got === true && !!win.pdfMake.vfs);
+}
+{
+  /* The font pack loading but leaving vfs empty is the silent-failure case:
+     pdfMake would render blank boxes and look like it worked. */
+  const { win, doc } = fakeEnv((url, w) => {
+    if (url.includes('pdfmake.min')) { w.pdfMake = {}; return 'load'; }
+    return 'load';   // vfs_fonts "loads" but sets nothing
+  });
+  let err = null;
+  try { await ensureLib('pdfMakeFonts', undefined, { win, doc, timeoutMs: 40 }); }
+  catch (e) { err = e; }
+  check('a font pack that loads but fills nothing counts as a failure',
+        err instanceof LibraryUnavailableError);
+}
+
+/* --- libPresent and messageForError ------------------------------------ */
+{
+  const win = {};
+  check('libPresent is false for a library that is not there', libPresent('XLSX', win) === false);
+  win.XLSX = {};
+  check('libPresent is true once it is', libPresent('XLSX', win) === true);
+  const w2 = { jspdf: { jsPDF: { API: {} } } };
+  check('libPresent uses the ready-check for attach-only scripts',
+        libPresent('jspdfAutoTable', w2) === false);
+  w2.jspdf.jsPDF.API.autoTable = () => {};
+  check('…and flips once the plugin has attached', libPresent('jspdfAutoTable', w2) === true);
+}
+{
+  const msg = messageForError(new LibraryUnavailableError('XLSX'), 'generic');
+  check('messageForError names the library label, not the global',
+        msg.includes('spreadsheet engine') && !msg.includes('XLSX'));
+  check('messageForError passes other errors through untouched',
+        messageForError(new TypeError('boom'), 'generic fallback') === 'generic fallback');
+}
 
 console.log(`\n  ${passed} passed, ${failed} failed\n`);
 process.exit(failed ? 1 : 0);

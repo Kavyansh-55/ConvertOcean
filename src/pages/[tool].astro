@@ -603,3 +603,13 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     )}
   </main>
 </Layout>
+
+{/* Every tool loads its engine from a CDN. When one of those requests does not
+    land — a blocker, a filter, a bad minute at the CDN — the page still renders
+    and the tool fails later with a message about the reader's file. This checks
+    what actually arrived and refetches anything missing from a second CDN,
+    before a file has been chosen. */}
+<script>
+  import { startLibraryRecovery } from '../scripts/lib-bootstrap.js';
+  startLibraryRecovery();
+</script>
