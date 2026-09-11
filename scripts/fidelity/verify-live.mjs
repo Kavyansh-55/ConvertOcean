@@ -148,9 +148,13 @@ for (const [page, cls] of [
   for (const m of html.matchAll(/\/_astro\/([^"']+\.css)/g)) {
     css += (await get('/_astro/' + m[1])).body;
   }
-  const scopedForm = new RegExp('\.' + cls + '\[data-astro-cid');
-  const anyForm = new RegExp('\.' + cls + '[.,:{ ]');
-  say(anyForm.test(css) && !scopedForm.test(css),
+  /* Plain string matching, not a generated regex: an escaping slip made the
+     first live run throw "Range out of order in character class", because
+     `[data-astro-cid` parsed as a character class. Nothing here needed a
+     regex in the first place. */
+  const scoped = css.includes('.' + cls + '[data-astro-cid');
+  const present = css.includes('.' + cls);
+  say(present && !scoped,
       `${page} serves .${cls} unscoped, so it reaches the runtime element`);
 }
 
