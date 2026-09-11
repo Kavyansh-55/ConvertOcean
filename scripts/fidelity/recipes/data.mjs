@@ -196,6 +196,44 @@ export const dataRecipes = [
     ];
   }),
 
+  /* ------------------------------------------------ legacy Excel 97-2003 */
+
+  /* These three were the longest-standing gap in the sweep, and the note
+     explaining it was right to refuse a shortcut: a renamed .xlsx exercises
+     the modern ZIP reader and proves nothing about the BIFF path. The fixture
+     is now a genuine OLE2/BIFF8 workbook, written by the browser's own SheetJS
+     (`scripts/fidelity/fixtures/build-xls.mjs`) and checked for the OLE2
+     signature before it is written. */
+  toText('xls-to-csv', 'torture.xls', 'XLS → CSV', (out) => {
+    const t = String(out);
+    return [
+      ok('markers', 'Sheet content survives the BIFF reader', t.includes('M01'), '', 'blocker'),
+      ok('rows', 'Every data row is present',
+         ['Widget', 'Gadget', 'Sprocket', 'Flange'].every((w) => t.includes(w)),
+         '', 'blocker'),
+      ok('unicode', 'Unicode text is not mangled — BIFF8 stores it differently from xlsx',
+         t.includes('Ünïcodé') && t.includes('—'), '', 'major'),
+      ok('zero', 'A zero quantity stays 0 rather than becoming blank',
+         /Sprocket[^\n]*(,|\t)\s*0\s*(,|\t)/.test(t) || /\b0\b/.test(t), '', 'major'),
+      ok('price', 'Decimal prices keep their fraction', /9\.99/.test(t), '', 'major'),
+    ];
+  }),
+
+  toText('xls-to-json', 'torture.xls', 'XLS → JSON', (out) => {
+    let parsed = null;
+    try { parsed = JSON.parse(String(out)); } catch { /* reported below */ }
+    const text = String(out);
+    return [
+      ok('valid', 'Output parses as JSON', parsed !== null, '', 'blocker'),
+      ok('markers', 'Sheet content present', text.includes('M01') || text.includes('Widget'),
+         '', 'blocker'),
+      ok('rows', 'All four data rows are represented',
+         Array.isArray(parsed) ? parsed.length >= 4 : false,
+         Array.isArray(parsed) ? `${parsed.length} records` : 'not an array', 'major'),
+      ok('unicode', 'Unicode survives', text.includes('Ünïcodé'), '', 'major'),
+    ];
+  }),
+
   /* --------------------------------------------------------- CSV → PDF */
   {
     slug: 'csv-to-pdf',

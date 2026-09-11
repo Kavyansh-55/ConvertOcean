@@ -214,6 +214,10 @@ if (slug === 'docx-to-txt') {
     }
 
     async function handleFile(file) {
+      /* The drop zone promises 15MB; this is what keeps it. Published by
+         [tool].astro because this script is is:inline and cannot import. */
+      const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 15);
+      if (tooLarge) { showError(tooLarge); return; }
       hideError();
       originalName = file.name;
 
@@ -235,6 +239,18 @@ if (slug === 'docx-to-txt') {
         pre.textContent = plainText.slice(0, 4000) + (plainText.length > 4000 ? '\n…' : '');
         previewBody.innerHTML = '';
         previewBody.appendChild(pre);
+
+        /* An empty .docx opens perfectly well and used to convert to a
+           1,088-byte PDF holding one blank page. The reader only found out
+           after opening it, and a blank page reads as the tool's opinion of
+           their document rather than as an empty input. */
+        if (!plainText.trim()) {
+          showError(window.coNothingToConvert
+            ? window.coNothingToConvert('document')
+            : 'This document has nothing in it to convert.');
+          hideProgress();
+          return;
+        }
 
         previewCard.style.display = 'block';
         fileNameDisplay.textContent = file.name;

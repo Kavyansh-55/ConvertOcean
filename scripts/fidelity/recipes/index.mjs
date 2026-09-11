@@ -22,17 +22,14 @@ export const recipes = [
  * honest about its own reach.
  */
 export const uncovered = [
-  { slug: 'xls-to-csv', why: 'needs a real legacy BIFF .xls fixture; a renamed .xlsx would fake it' },
-  { slug: 'xls-to-json', why: 'needs a real legacy BIFF .xls fixture' },
-  { slug: 'xls-to-pdf', why: 'needs a real legacy BIFF .xls fixture' },
-  { slug: 'ppt-to-pdf', why: 'the tool rejects legacy .ppt by design; pptx-to-pdf covers the code path' },
-  { slug: 'image-to-text', why: 'OCR is slow and non-deterministic; needs its own tolerance-based recipe' },
-  { slug: 'invoice-generator', why: 'form-driven generator, not a converter — needs a form-filling recipe' },
-  { slug: 'receipt-generator', why: 'form-driven generator, not a converter' },
-  { slug: 'percentage-calculator', why: 'calculator: arithmetic correctness, not file fidelity' },
-  { slug: 'profit-margin-calculator', why: 'calculator' },
-  { slug: 'break-even-calculator', why: 'calculator' },
-  { slug: 'sales-tax-calculator', why: 'calculator (already has scratch/test-us-sales-tax.cjs)' },
+  { slug: 'ppt-to-pdf', why: 'rejects legacy .ppt by design; that refusal is asserted by npm run generators' },
+  { slug: 'image-to-text', why: 'OCR is non-deterministic — covered with a word-recall tolerance by npm run generators' },
+  { slug: 'invoice-generator', why: 'form-driven, no input file — covered by npm run generators (totals and names)' },
+  { slug: 'receipt-generator', why: 'form-driven — covered by npm run generators' },
+  { slug: 'percentage-calculator', why: 'arithmetic, not file fidelity — covered by npm run calculators' },
+  { slug: 'profit-margin-calculator', why: 'arithmetic — covered by npm run calculators (margin vs markup asserted separately)' },
+  { slug: 'break-even-calculator', why: 'arithmetic — covered by npm run calculators' },
+  { slug: 'sales-tax-calculator', why: 'arithmetic — covered by npm run calculators (forward and reverse tax)' },
 ];
 
 export default recipes;

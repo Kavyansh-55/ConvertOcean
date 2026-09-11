@@ -241,6 +241,10 @@ const { slug, headline, subtitle } = Astro.props;
     }
 
     async function handleFile(file) {
+      /* The drop zone promises 25MB; this is what keeps it. Published by
+         [tool].astro because this script is is:inline and cannot import. */
+      const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 25);
+      if (tooLarge) { showError(tooLarge); return; }
       hideError();
       const ext = file.name.split('.').pop().toLowerCase();
       if (!['xlsx', 'xls', 'csv'].includes(ext)) {
@@ -253,6 +257,23 @@ const { slug, headline, subtitle } = Astro.props;
         const bytes = await readFileAsArrayBuffer(file);
         const workbook = XLSX.read(bytes, { type: 'array' });
         
+        /* An empty workbook still has a sheet — one named Sheet1 with no rows
+           in it — so counting sheets says "1" and tells you nothing. The
+           question is whether any sheet has a used range at all. Without this
+           the workspace opened, Split was pressed, and nothing happened: no
+           parts, no error, no explanation. */
+        const hasAnyData = workbook.SheetNames.some((name) => {
+          const sheet = workbook.Sheets[name];
+          return sheet && sheet['!ref'];
+        });
+        if (!hasAnyData) {
+          showError(window.coNothingToConvert
+            ? window.coNothingToConvert('workbook')
+            : 'This workbook has nothing in it to split.');
+          hideProgress();
+          return;
+        }
+
         activeFile = {
           name: file.name,
           bytes: bytes,

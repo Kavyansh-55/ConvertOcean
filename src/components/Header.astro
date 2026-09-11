@@ -172,6 +172,20 @@ const isMoreActive = ['developer-tools', 'document-tools', 'business-tools'].inc
     gap: 5px;
   }
 
+  /* `background: none` above also cancelled the active pill that every other
+     nav item gets, because this rule is scoped and lands after `.nav-link.active`
+     at equal specificity. The active *colour* still applied, so on the three
+     pages that mark More as current — Developer, Document and Business Tools —
+     the label rendered in `--colors-action-ink` with no pill behind it.
+
+     That is dark navy text, which happens to be exactly the dark-mode nav bar's
+     own background: the item vanished while remaining perfectly clickable.
+     Light mode hid the bug, since dark navy on a white bar reads fine. */
+  .nav-more-btn.active {
+    background-color: var(--colors-action);
+    color: var(--colors-action-ink);
+  }
+
   .nav-chevron {
     transition: transform 0.2s ease;
     opacity: 0.6;

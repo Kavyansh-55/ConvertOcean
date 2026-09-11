@@ -186,6 +186,10 @@ const { slug, headline, subtitle } = Astro.props;
     });
 
     function handleFile(file) {
+      /* The drop zone promises 15MB; this is what keeps it. Published by
+         [tool].astro because this script is is:inline and cannot import. */
+      const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 15);
+      if (tooLarge) { showError(tooLarge); return; }
       hideError();
       originalName = file.name;
       const extension = file.name.split('.').pop().toLowerCase();
@@ -217,6 +221,17 @@ const { slug, headline, subtitle } = Astro.props;
 
           const paragraphsCount = bodyChildren.filter(n => n.nodeName === "w:p").length;
           const tablesCount = bodyChildren.filter(n => n.nodeName === "w:tbl").length;
+
+          /* A document that opens fine but holds nothing. Without this the
+             workspace appeared, Split was pressed, and absolutely nothing
+             happened — no file, no message, no clue. */
+          if (paragraphsCount === 0 && tablesCount === 0) {
+            showError(window.coNothingToConvert
+              ? window.coNothingToConvert('document')
+              : 'This document has nothing in it to split.');
+            hideProgress();
+            return;
+          }
 
           docDetails.innerHTML = `
             <strong>File Details:</strong><br/>

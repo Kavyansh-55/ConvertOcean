@@ -230,7 +230,8 @@ const { slug, headline, subtitle } = Astro.props;
 
     function handleFile(file) {
       hideError();
-      if (file.size > 25 * 1024 * 1024) { showError('File is larger than the 25MB limit.'); return; }
+      const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 25);
+      if (tooLarge) { showError(tooLarge); return; }
       originalName = file.name;
       showProgress(20, 'Parsing spreadsheet…');
 

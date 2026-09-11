@@ -221,6 +221,10 @@ const { slug, headline, subtitle } = Astro.props;
     }
 
     function handleFiles(files) {
+      /* The drop zone promises 5MB; this is what keeps it. Published by
+         [tool].astro because this script is is:inline and cannot import. */
+      const tooLarge = window.coAnyFileTooLarge && window.coAnyFileTooLarge(files, 5);
+      if (tooLarge) { showError(tooLarge); return; }
       hideError();
       const textFiles = files.filter(f => 
         f.type.startsWith('text/') || 
@@ -238,6 +242,18 @@ const { slug, headline, subtitle } = Astro.props;
       textFiles.forEach(file => {
         const reader = new FileReader();
         reader.onload = function(event) {
+          /* An empty file in the queue looks identical to one with content and
+             contributes nothing but a separator to the merged result. Saying
+             so beats letting the reader wonder why the output is short. */
+          if (!String(event.target.result || '').trim()) {
+            showError(`Skipped "${file.name}": ` + (window.coNothingToConvert
+              ? window.coNothingToConvert('text file')
+              : 'it has nothing in it to merge.'));
+            readCount++;
+            if (readCount === textFiles.length) { hideProgress(); renderFilesList(); }
+            return;
+          }
+
           uploadedTexts.push({
             id: Date.now() + Math.random().toString(36).substr(2, 5),
             name: file.name,

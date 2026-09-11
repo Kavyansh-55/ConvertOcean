@@ -13,7 +13,13 @@
     "fidelity:fixtures": "node scripts/fidelity/fixtures/build-all.mjs",
     "resilience": "node scripts/fidelity/verify-resilience.mjs",
     "og": "node scripts/og/build-og.mjs",
-    "mobile": "node scripts/fidelity/verify-mobile.mjs"
+    "mobile": "node scripts/fidelity/verify-mobile.mjs",
+    "limits": "node scripts/fidelity/verify-limits.mjs",
+    "races": "node scripts/fidelity/verify-races.mjs",
+    "degenerate": "node scripts/fidelity/verify-degenerate.mjs",
+    "calculators": "node scripts/fidelity/verify-calculators.mjs",
+    "generators": "node scripts/fidelity/verify-generators.mjs",
+    "themes": "node scripts/fidelity/verify-themes.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

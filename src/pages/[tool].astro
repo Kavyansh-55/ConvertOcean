@@ -611,5 +611,20 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     before a file has been chosen. */}
 <script>
   import { startLibraryRecovery } from '../scripts/lib-bootstrap.js';
+  import { fileTooLarge, anyFileTooLarge, nothingToConvert } from '../scripts/file-limits.js';
+  import { installClickGuard } from '../scripts/click-guard.js';
+
   startLibraryRecovery();
+
+  /* One tap, one file: a double-tap used to run the whole conversion twice. */
+  installClickGuard();
+
+  /* Most tool components keep their logic in an `is:inline` script, which
+     Astro does not process and which therefore cannot import anything. Rather
+     than copy the size check — and its wording — into fifteen files and let
+     them drift, it is published once here and called as
+     `window.coFileTooLarge(file, 25)`. */
+  window.coFileTooLarge = fileTooLarge;
+  window.coAnyFileTooLarge = anyFileTooLarge;
+  window.coNothingToConvert = nothingToConvert;
 </script>

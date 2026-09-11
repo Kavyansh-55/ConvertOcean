@@ -228,11 +228,30 @@ function downloadBlob(blob, filename, mimeType) {
     a.download = filename;
     document.body.appendChild(a);
     a.click();
-    
-    setTimeout(() => {
-      document.body.removeChild(a);
+
+    /* The anchor can go straight away — the browser has the click.
+       The object URL cannot.
+
+       This used to revoke after 100ms, which is fine on a fast desktop and a
+       gamble everywhere else: the browser has to read the blob out of that URL
+       to write the file, and revoking mid-read cancels the save or truncates
+       it. On a phone — iOS Safari especially, where a download is handed to a
+       separate flow — 100ms is not reliably long enough, and a 40MB PDF takes
+       longer than a 40KB CSV, so the failure would be intermittent and worst
+       for exactly the large files people care most about.
+
+       A minute is far past any real save and still bounded, and pagehide
+       covers the reader who leaves first, so nothing leaks either way. */
+    document.body.removeChild(a);
+
+    let revoked = false;
+    const release = () => {
+      if (revoked) return;
+      revoked = true;
       window.URL.revokeObjectURL(url);
-    }, 100);
+    };
+    setTimeout(release, 60000);
+    window.addEventListener('pagehide', release, { once: true });
   }
 }
 

@@ -189,7 +189,7 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
     function hideError() {
       errorBanner.style.display = 'none';
     }
-
+
     /* Read a text file as UTF-8, explicitly.
 
        The previous code handed the raw bytes of a CSV to the spreadsheet
@@ -301,6 +301,10 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
     }
 
     async function handleFile(file) {
+      /* The drop zone promises 25MB; this is what keeps it. Published by
+         [tool].astro because this script is is:inline and cannot import. */
+      const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 25);
+      if (tooLarge) { showError(tooLarge); return; }
       hideError();
       originalName = file.name;
       showProgress(20, 'Reading file content…');
@@ -397,7 +401,32 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
       return doc;
     }
 
+    /**
+     * Reveal the result — unless there is no result.
+     *
+     * Every branch above ends here, which is why the emptiness check lives at
+     * this one point rather than in each of the five conversions. An empty
+     * input used to sail through and offer a download: `csv-to-json` on an
+     * empty .csv handed back two bytes, `[]`, and the reader discovered that
+     * only after opening it.
+     *
+     * "Empty" has to mean more than a zero-length string, because a converter
+     * that found nothing still emits its container — `[]` for JSON, a bare
+     * newline or BOM for CSV. Those are the shapes to catch.
+     */
     function showPreview(text) {
+      const body = String(text == null ? '' : text)
+        .replace(/^﻿/, '')
+        .trim();
+      const emptyContainer = body === '' || body === '[]' || body === '{}'
+        || /^\[\s*\]$/.test(body) || /^\{\s*\}$/.test(body);
+      if (emptyContainer) {
+        showError(window.coNothingToConvert
+          ? window.coNothingToConvert('file')
+          : 'This file has nothing in it to convert.');
+        return;
+      }
+
       textPreview.textContent = text.substring(0, 1200) + (text.length > 1200 ? '\n…[truncated preview]' : '');
       textPreview.style.display = 'block';
       fileNameDisplay.textContent = originalName;
