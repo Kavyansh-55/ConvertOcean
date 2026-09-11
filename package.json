@@ -11,7 +11,9 @@
     "deploy": "npm run build && wrangler deploy",
     "fidelity": "node scripts/fidelity/fixtures/build-all.mjs && node scripts/fidelity/run.mjs",
     "fidelity:fixtures": "node scripts/fidelity/fixtures/build-all.mjs",
-    "resilience": "node scripts/fidelity/verify-resilience.mjs"
+    "resilience": "node scripts/fidelity/verify-resilience.mjs",
+    "og": "node scripts/og/build-og.mjs",
+    "mobile": "node scripts/fidelity/verify-mobile.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
