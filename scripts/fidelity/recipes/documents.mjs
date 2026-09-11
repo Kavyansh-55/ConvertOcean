@@ -140,6 +140,33 @@ export const documentRecipes = [
 
   /* ----------------------------------------------------- excel-to-pdf */
   {
+    /* The third of the legacy trio. Same component as excel-to-pdf, but the
+       file arrives through SheetJS's BIFF reader rather than its ZIP reader,
+       which is the whole reason a renamed .xlsx would not have tested it. */
+    slug: 'xls-to-pdf',
+    title: 'XLS → PDF (legacy BIFF)',
+    fixture: 'torture.xls',
+    ready: '#actionControls',
+    download: '#btnConvert',
+    outName: 'xls-to-pdf.pdf',
+    kind: 'pdf',
+    async checks({ out }) {
+      const t = out.text.replace(/\s+/g, ' ');
+      return [
+        ok('opens', 'Output is a readable PDF', out.pages > 0, `${out.pages} pages`, 'blocker'),
+        ok('markers', 'Legacy workbook content reaches the PDF',
+           t.includes('M01') || t.includes('Widget'), '', 'blocker'),
+        ok('rows', 'Every data row is rendered',
+           ['Widget', 'Gadget', 'Sprocket', 'Flange'].every((w) => t.includes(w)),
+           '', 'major'),
+        ok('unicode', 'Unicode from a BIFF8 string record survives into the PDF',
+           t.includes('Ünïcodé'),
+           t.includes('Unicode') ? 'accents stripped' : '', 'major'),
+        ok('price', 'Decimal prices keep their fraction', /9\.99/.test(t), '', 'major'),
+      ];
+    },
+  },
+  {
     slug: 'excel-to-pdf',
     title: 'Excel → PDF',
     fixture: 'torture.xlsx',

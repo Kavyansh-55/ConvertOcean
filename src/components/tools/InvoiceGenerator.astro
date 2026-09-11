@@ -486,6 +486,11 @@ const { slug, headline, subtitle } = Astro.props;
           </div>
           <div>
             <div class="address-col-title">Billed Client (To)</div>
+            <!-- The "Client Entity Name" field was collected into invoiceData
+                 and used only to name the downloaded file: there was no element
+                 for it here, so the client's name never appeared on the invoice
+                 at all. The vendor side had one; this side did not. -->
+            <div class="address-details" id="pdfClientName" style="font-weight: 700;"></div>
             <div class="address-details" id="pdfClientAddr"></div>
             <div id="pdfClientTaxIdContainer" style="display: none; font-size: 11px; margin-top: 4px; color: #4d4d4d;">
               <strong>Tax ID:</strong> <span id="pdfClientTaxId"></span>
@@ -611,6 +616,7 @@ const { slug, headline, subtitle } = Astro.props;
     function updatePreviewPage() {
       document.getElementById('pdfVendorTitle').textContent = invoiceData.VendorName || "Billing Entity";
       document.getElementById('pdfVendorAddr').textContent = invoiceData.VendorAddress;
+      document.getElementById('pdfClientName').textContent = invoiceData.ClientName;
       document.getElementById('pdfClientAddr').textContent = invoiceData.ClientAddress;
       document.getElementById('pdfInvNo').textContent = invoiceData.InvNo || "INV-000";
       document.getElementById('pdfInvDate').textContent = formatDate(invoiceData.InvDate);

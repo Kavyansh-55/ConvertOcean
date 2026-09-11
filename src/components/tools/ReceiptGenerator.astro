@@ -472,6 +472,10 @@ const { slug, headline, subtitle } = Astro.props;
         <div class="receipt-pdf-addresses">
           <div>
             <div class="address-col-title">Received From</div>
+            <!-- Same gap as the invoice: "Customer Name" was collected into
+                 rcptData and used only to name the downloaded file, so the
+                 payer never appeared on the receipt itself. -->
+            <div class="address-details" id="rcptPdfClientName" style="font-weight: 700;"></div>
             <div class="address-details" id="rcptPdfClientAddr"></div>
             <div id="rcptClientTaxIdContainer" style="display: none; font-size: 11px; margin-top: 4px; color: #4d4d4d;">
               <strong>Tax ID:</strong> <span id="rcptClientTaxId"></span>
@@ -581,6 +585,7 @@ const { slug, headline, subtitle } = Astro.props;
     function updatePreview() {
       $('rcptPdfVendorTitle').textContent = rcptData.VendorName || "Business Name";
       $('rcptPdfVendorAddr').textContent = rcptData.VendorAddress;
+      $('rcptPdfClientName').textContent = rcptData.ClientName;
       $('rcptPdfClientAddr').textContent = rcptData.ClientAddress;
       $('rcptPdfNo').textContent = rcptData.No || "REC-000";
       $('rcptPdfDate').textContent = formatDate(rcptData.Date);

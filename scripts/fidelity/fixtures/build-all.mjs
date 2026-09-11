@@ -16,6 +16,18 @@ for (const f of ['build-docx.mjs', 'build-xlsx.mjs', 'build-pptx.mjs', 'build-pd
    is actually what gets tested. */
 import { copyFileSync, existsSync as exists } from 'node:fs';
 const FILES = join(HERE, 'files');
+
+/* The legacy .xls fixture needs a browser to write it — there is no SheetJS in
+   node_modules, so it is produced by the very library the tools use, and
+   checked for the OLE2 signature before it is written. It is slower than the
+   rest and does not change between runs, so it is only built when missing;
+   delete the file to force a fresh one. */
+if (!exists(join(FILES, 'torture.xls'))) {
+  execFileSync(process.execPath, [join(HERE, 'build-xls.mjs')], { stdio: 'inherit' });
+} else {
+  console.log('torture.xls   already present (delete it to rebuild)');
+}
+
 // torture-b.pptx and torture-b.xlsx are NOT copies: their builders emit a
 // deliberately different deck and workbook, because two identical files
 // cannot reveal a merger that forgets to copy media and layouts, or one that
