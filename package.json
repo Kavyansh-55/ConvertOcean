@@ -14,7 +14,8 @@
     "resilience": "node scripts/fidelity/verify-resilience.mjs",
     "og": "node scripts/og/build-og.mjs",
     "mobile": "node scripts/fidelity/verify-mobile.mjs",
-    "limits": "node scripts/fidelity/verify-limits.mjs"
+    "limits": "node scripts/fidelity/verify-limits.mjs",
+    "races": "node scripts/fidelity/verify-races.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

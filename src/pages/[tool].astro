@@ -612,8 +612,12 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
 <script>
   import { startLibraryRecovery } from '../scripts/lib-bootstrap.js';
   import { fileTooLarge, anyFileTooLarge } from '../scripts/file-limits.js';
+  import { installClickGuard } from '../scripts/click-guard.js';
 
   startLibraryRecovery();
+
+  /* One tap, one file: a double-tap used to run the whole conversion twice. */
+  installClickGuard();
 
   /* Most tool components keep their logic in an `is:inline` script, which
      Astro does not process and which therefore cannot import anything. Rather
