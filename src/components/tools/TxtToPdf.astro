@@ -289,7 +289,8 @@ const { slug, headline, subtitle } = Astro.props;
 
         showProgress(98, 'Saving…');
         const pdfName = originalName.replace(/\.[^/.]+$/, '') + '.pdf';
-        doc.save(pdfName);
+        /* Shared helper rather than jsPDF save() — see ImageToPdf. */
+        window.downloadBlob(doc.output('blob'), pdfName, 'application/pdf');
         showProgress(100, 'Done!');
         setTimeout(hideProgress, 900);
       } catch (err) {

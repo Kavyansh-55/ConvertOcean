@@ -19,14 +19,19 @@
     "degenerate": "node scripts/fidelity/verify-degenerate.mjs",
     "calculators": "node scripts/fidelity/verify-calculators.mjs",
     "generators": "node scripts/fidelity/verify-generators.mjs",
-    "themes": "node scripts/fidelity/verify-themes.mjs"
+    "themes": "node scripts/fidelity/verify-themes.mjs",
+    "webkit": "node scripts/fidelity/verify-webkit.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^6.4.8"
   },
   "devDependencies": {
+    "jszip": "^3.10.2",
+    "pdfjs-dist": "^3.4.120",
+    "playwright": "^1.63.0",
     "puppeteer-core": "^25.3.0",
+    "sax": "^1.6.1",
     "wrangler": "^4.100.0"
   }
 }

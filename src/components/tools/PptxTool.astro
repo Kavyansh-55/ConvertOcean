@@ -1394,7 +1394,9 @@ let targetFormat = "PDF";
         if (temporary) { canvas.width = 0; canvas.height = 0; }
       }
 
-      doc.save(originalName.replace(/\.[^/.]+$/, '') + '.pdf');
+      /* Shared helper rather than jsPDF save() — see ImageToPdf. */
+      window.downloadBlob(doc.output('blob'),
+        originalName.replace(/\.[^/.]+$/, '') + '.pdf', 'application/pdf');
       showProg(100, 'Done!');
       setTimeout(hideProg, 900);
     } catch (err) {

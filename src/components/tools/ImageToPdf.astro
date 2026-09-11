@@ -295,7 +295,12 @@ const { slug, headline, subtitle } = Astro.props;
           ? selectedFiles[0].file.name.replace(/\.[^/.]+$/, '') + '.pdf' 
           : 'images-to-pdf.pdf';
           
-        doc.save(pdfName);
+        /* Through the shared helper, not jsPDF's own save(): that is where
+           the file_converted event is recorded and where the object URL is
+           held open long enough for a slow device to finish writing. Four
+           tools bypassed it and were silently missing from the conversion
+           counts. */
+        window.downloadBlob(doc.output('blob'), pdfName, 'application/pdf');
         showProgress(100, 'Done!');
         setTimeout(hideProgress, 900);
       } catch (err) {

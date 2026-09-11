@@ -385,7 +385,8 @@ const { slug, headline, subtitle } = Astro.props;
           }
 
           showProgress(95, "Compiling PDF download…");
-          doc.save('merged-images.pdf');
+          /* Shared helper rather than jsPDF save() — see ImageToPdf. */
+          window.downloadBlob(doc.output('blob'), 'merged-images.pdf', 'application/pdf');
           hideProgress();
         } catch (err) {
           showError("PDF compilation failed: " + err.message);
