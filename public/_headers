@@ -24,7 +24,7 @@
 # a week means a change still reaches people quickly.
 /logo.png
   Cache-Control: public, max-age=604800
-/og-image.png
+/og-cover-v2.png
   Cache-Control: public, max-age=604800
 /favicon.ico
   Cache-Control: public, max-age=604800

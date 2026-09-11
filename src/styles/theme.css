@@ -2832,3 +2832,126 @@ footer {
   align-items: center;
   min-height: 24px;
 }
+
+/* ============================================================ mobile floors
+   Added 2026-09-11 after the first real mobile audit of the site.
+   Everything here applies only below the 768px breakpoint, so the desktop
+   design is untouched by design — a floor for touch, not a restyle.
+
+   `!important` appears deliberately and only where an Astro *scoped* rule
+   would otherwise win: a component's `.preset-btn` compiles to
+   `.preset-btn[data-astro-cid-…]`, which outranks any plain class selector
+   written here. These are accessibility minimums rather than preferences, so
+   losing the cascade to a component would defeat the point. */
+@media (max-width: 768px) {
+
+  /* --- iOS zoom trap ---------------------------------------------------
+     Mobile Safari zooms the whole page when a focused field's text is under
+     16px, and it does not zoom back out afterwards. The reader is left on a
+     magnified page that now scrolls sideways, usually mid-form. Ten fields
+     across the invoice generator, the sales-tax calculator and the JSON
+     formatter were between 13px and 14px. This is invisible on every desktop
+     browser, which is why it survived until the site was tested on a phone. */
+  input:not([type="file"]):not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* --- touch targets ---------------------------------------------------
+     44px is the Apple HIG and WCAG 2.5.5 figure. The audit found controls at
+     24×24 (the invoice line-item delete), 29px, 30px and 36px — all of them
+     comfortably tappable with a mouse and a coin-toss with a thumb.
+     `touch-action: manipulation` drops the 300ms double-tap-zoom wait. */
+  button,
+  [role="button"],
+  select,
+  input[type="file"],
+  a.button,
+  .tool-filter-pill,
+  .preset-btn,
+  .jf-btn {
+    min-height: 44px !important;
+    touch-action: manipulation;
+  }
+
+  /* A link styled as a button is a button to the thumb that has to hit it.
+     `a.button` carries the guide cards' "Read Guide" actions, seventeen of
+     them on the homepage at 40px — close enough to look fine in a screenshot
+     and still under the floor. */
+  a.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Icon-only controls need the width too, or they stay a 24px dot that
+     happens to be 44px tall. */
+  .item-delete-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    touch-action: manipulation;
+  }
+
+  /* --- text that was too small to read ---------------------------------
+     Deliberately excluded: the invoice and receipt *document previews*
+     (`.address-col-title`, their table headers, `.pdf-terms`). Those are a
+     mock of a printed page and their sizes carry into the exported PDF —
+     enlarging them for the screen would change the document. */
+  .form-label {
+    font-size: 13px;
+  }
+
+  .explore-card-desc {
+    font-size: 13px;
+  }
+
+
+}
+
+/* --------------------------------------------- invoice / receipt line items
+   `.item-delete-btn` is written into the table by JavaScript, and **Astro
+   scoped styles never reach a JS-injected element**. The rule in
+   InvoiceGenerator.astro asks for a borderless red ×; what shipped was the
+   generic button chrome — a grey fill with a 2px black border — because the
+   scoped rule had nothing to attach to. Verified on production before this
+   was touched: `rgb(240,240,240)` with a black border at 24×24.
+
+   This is the sixth round of the same trap. It lives here, unscoped, because
+   that is the only place that can style an element the component did not
+   render itself. See CLAUDE.md. */
+.item-delete-btn {
+  background: none;
+  border: none;
+  color: var(--colors-error);
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  transition: background-color 0.15s ease;
+}
+
+.item-delete-btn:hover {
+  background-color: var(--colors-error-wash, rgba(220, 38, 38, 0.1));
+}
+
+.item-delete-btn:focus-visible {
+  outline: 2px solid var(--colors-error);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  /* The touch floor, with the circle grown to match so it reads as a button
+     rather than a 32px mark inside an invisible 44px box. */
+  .item-delete-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
+  }
+}
