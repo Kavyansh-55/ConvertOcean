@@ -327,7 +327,7 @@ const rawTools: ToolData[] = [
       { question: 'Is it better to compress a PDF or split it?', answer: 'Compress first if the file is large because of scans or photos. Split it if the file is large because it simply contains a lot of pages — compression cannot remove content you still need. For an email attachment limit, compressing a scanned document is usually enough on its own.' },
       { question: 'Does compression lose quality permanently?', answer: 'Any image it re-encodes is changed permanently in the downloaded copy, which is why your original file is never modified — you keep it, and the compressed version downloads as a separate file. The before-and-after comparison lets you check a page at full size before you download anything.' }
     ],
-    relatedTools: ['merge-pdf', 'split-pdf', 'image-resizer', 'pdf-to-word', 'image-to-pdf'],
+    relatedTools: ['merge-pdf', 'split-pdf', 'image-resizer', 'pdf-to-word', 'image-to-pdf'],
     content: compressPdfContent
   },
   {
