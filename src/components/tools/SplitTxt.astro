@@ -217,7 +217,16 @@ const { slug, headline, subtitle } = Astro.props;
       reader.onload = function(event) {
         rawTextContent = event.target.result;
         hideProgress();
-        
+
+        /* An empty file used to load happily, enable Split, and then produce
+           nothing at all when pressed — no parts, no message. */
+        if (!String(rawTextContent).trim()) {
+          showError(window.coNothingToConvert
+            ? window.coNothingToConvert('text file')
+            : 'This text file has nothing in it to split.');
+          return;
+        }
+
         dropZone.style.display = 'none';
         loadedFileName.textContent = file.name;
         loadedFileSize.textContent = `${(file.size / 1024).toFixed(1)} KB`;

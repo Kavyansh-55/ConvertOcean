@@ -15,7 +15,8 @@
     "og": "node scripts/og/build-og.mjs",
     "mobile": "node scripts/fidelity/verify-mobile.mjs",
     "limits": "node scripts/fidelity/verify-limits.mjs",
-    "races": "node scripts/fidelity/verify-races.mjs"
+    "races": "node scripts/fidelity/verify-races.mjs",
+    "degenerate": "node scripts/fidelity/verify-degenerate.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

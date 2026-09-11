@@ -213,6 +213,18 @@ const { slug, headline, subtitle } = Astro.props;
         try {
           const bytes = await readFileAsArrayBuffer(file);
           const workbook = XLSX.read(bytes, { type: 'array' });
+
+          /* An empty workbook still reports a sheet, so the count says 1 and
+             means nothing. Queueing it would contribute no rows to the merge
+             while looking, in the list, exactly like a file that did. */
+          const hasAnyData = workbook.SheetNames.some((n) => workbook.Sheets[n] && workbook.Sheets[n]['!ref']);
+          if (!hasAnyData) {
+            showError(`Skipped "${file.name}": ` + (window.coNothingToConvert
+              ? window.coNothingToConvert('workbook')
+              : 'it has nothing in it to merge.'));
+            continue;
+          }
+
           mergeQueue.push({
             id: Date.now() + Math.random().toString(36).substr(2, 9),
             name: file.name,

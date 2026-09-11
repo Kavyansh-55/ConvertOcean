@@ -65,3 +65,33 @@ export function anyFileTooLarge(files, limitMb) {
   }
   return null;
 }
+
+/* ------------------------------------------------- input with nothing in it */
+
+/**
+ * What to say when a file opens fine but holds nothing to convert.
+ *
+ * Thirteen tool paths accepted an empty file and cheerfully offered to convert
+ * it. `word-to-pdf` handed back a 1,088-byte PDF containing a blank page;
+ * `csv-to-json` produced two bytes, `[]`; `split-excel` and `split-txt` did
+ * nothing at all and said nothing about it — the reader pressed the button and
+ * the page simply sat there.
+ *
+ * None of those is a crash, which is why none of them ever showed up as one.
+ * They are worse than a crash in one respect: the reader does not find out
+ * until they open the file, and a blank page looks like the tool's opinion of
+ * their document rather than a bug.
+ *
+ * The file is not broken and should not be called broken — it is empty, which
+ * is usually a surprise to its owner, so the message says which and suggests
+ * the likely cause.
+ *
+ * @param {string} what the thing that turned out to be empty, e.g. "spreadsheet"
+ * @returns {string}
+ */
+export function nothingToConvert(what = 'file') {
+  return 'This ' + what + ' opened correctly but has nothing in it to convert. '
+       + 'If you expected content, check you picked the right file — an empty '
+       + 'one is often a partly-finished download or a template saved before '
+       + 'anything was added.';
+}

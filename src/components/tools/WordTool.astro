@@ -240,6 +240,18 @@ if (slug === 'docx-to-txt') {
         previewBody.innerHTML = '';
         previewBody.appendChild(pre);
 
+        /* An empty .docx opens perfectly well and used to convert to a
+           1,088-byte PDF holding one blank page. The reader only found out
+           after opening it, and a blank page reads as the tool's opinion of
+           their document rather than as an empty input. */
+        if (!plainText.trim()) {
+          showError(window.coNothingToConvert
+            ? window.coNothingToConvert('document')
+            : 'This document has nothing in it to convert.');
+          hideProgress();
+          return;
+        }
+
         previewCard.style.display = 'block';
         fileNameDisplay.textContent = file.name;
         actionControls.style.display = 'flex';

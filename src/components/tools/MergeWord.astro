@@ -197,6 +197,35 @@ const { slug, headline, subtitle } = Astro.props;
         reader.onload = async function(e) {
           try {
             const bytes = new Uint8Array(e.target.result);
+
+            /* A document with an empty body contributes nothing to the merge
+               but still sits in the list looking like a contributor. The
+               package is read here only far enough to answer that question;
+               the merge itself re-reads it later. */
+            let hasContent = true;
+            try {
+              const probe = await JSZip.loadAsync(bytes);
+              const docXml = probe.file('word/document.xml');
+              if (docXml) {
+                const xml = await docXml.async('string');
+                hasContent = /<w:t[ >]/.test(xml) || /<w:drawing[ >]/.test(xml)
+                          || /<w:tbl[ >]/.test(xml);
+              }
+            } catch { /* unreadable here is the merge's problem, not this check's */ }
+
+            if (!hasContent) {
+              showError(`Skipped "${f.name}": ` + (window.coNothingToConvert
+                ? window.coNothingToConvert('document')
+                : 'it has nothing in it to merge.'));
+              processed++;
+              if (processed === files.length) {
+                fileInput.value = '';
+                renderList();
+                hideProgress();
+              }
+              return;
+            }
+
             mergeFiles.push({
               name: f.name,
               bytes: bytes

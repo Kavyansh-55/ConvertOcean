@@ -611,7 +611,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     before a file has been chosen. */}
 <script>
   import { startLibraryRecovery } from '../scripts/lib-bootstrap.js';
-  import { fileTooLarge, anyFileTooLarge } from '../scripts/file-limits.js';
+  import { fileTooLarge, anyFileTooLarge, nothingToConvert } from '../scripts/file-limits.js';
   import { installClickGuard } from '../scripts/click-guard.js';
 
   startLibraryRecovery();
@@ -626,4 +626,5 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
      `window.coFileTooLarge(file, 25)`. */
   window.coFileTooLarge = fileTooLarge;
   window.coAnyFileTooLarge = anyFileTooLarge;
+  window.coNothingToConvert = nothingToConvert;
 </script>
