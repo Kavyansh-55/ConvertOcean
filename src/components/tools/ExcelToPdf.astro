@@ -21,7 +21,7 @@ const { slug, headline, subtitle } = Astro.props;
     border-bottom: 1px solid var(--colors-hairline);
     background-color: var(--colors-canvas-soft);
   }
-  .sheet-tab {
+  :global(.sheet-tab) {
     font-size: 12px;
     padding: 4px 10px;
     border-radius: 6px;
@@ -30,7 +30,7 @@ const { slug, headline, subtitle } = Astro.props;
     color: var(--colors-body);
     cursor: pointer;
   }
-  .sheet-tab.active {
+  :global(.sheet-tab.active) {
     background-color: var(--colors-ink);
     color: var(--colors-canvas);
     border-color: var(--colors-ink);

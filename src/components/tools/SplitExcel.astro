@@ -13,7 +13,7 @@ const { slug, headline, subtitle } = Astro.props;
     margin-top: var(--spacing-md);
     padding-right: var(--spacing-xs);
   }
-  .sheet-card {
+  :global(.sheet-card) {
     background-color: var(--colors-canvas-soft);
     border: 1px solid var(--colors-hairline);
     border-radius: 6px;
@@ -25,21 +25,21 @@ const { slug, headline, subtitle } = Astro.props;
     transition: background-color 0.2s, border-color 0.2s, color 0.2s;
     user-select: none;
   }
-  .sheet-card.selected {
+  :global(.sheet-card.selected) {
     border-color: var(--colors-link);
     background-color: color-mix(in srgb, var(--colors-accent) 3%, transparent);
     /* elevation removed — separation comes from colour, not shadow */
   }
-  .sheet-checkbox {
+  :global(.sheet-checkbox) {
     accent-color: var(--colors-ink);
     cursor: pointer;
   }
-  .sheet-info {
+  :global(.sheet-info) {
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
-  .sheet-name {
+  :global(.sheet-name) {
     font-weight: var(--fw-bold);
     font-size: 13.5px;
     color: var(--colors-ink);
@@ -47,7 +47,7 @@ const { slug, headline, subtitle } = Astro.props;
     text-overflow: ellipsis;
     overflow: hidden;
   }
-  .sheet-meta {
+  :global(.sheet-meta) {
     font-size: 11px;
     color: var(--colors-mute);
   }

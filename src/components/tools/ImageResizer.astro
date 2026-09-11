@@ -118,7 +118,7 @@ const { slug, headline, subtitle } = Astro.props;
     line-height: 1.8;
   }
   .result-summary strong { color: var(--colors-ink); }
-  .result-highlight { color: var(--colors-link); font-weight: var(--fw-bold); }
+  :global(.result-highlight) { color: var(--colors-link); font-weight: var(--fw-bold); }
 </style>
 
 <div class="page-header">

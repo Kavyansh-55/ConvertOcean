@@ -85,10 +85,10 @@ const { slug, headline, subtitle } = Astro.props;
     text-transform: uppercase;
     padding-bottom: 6px;
   }
-  .item-edit-row td {
+  :global(.item-edit-row td) {
     padding: var(--spacing-xs) 0;
   }
-  .item-delete-btn {
+  :global(.item-delete-btn) {
     background: none;
     border: none;
     color: var(--colors-error);
@@ -261,7 +261,7 @@ const { slug, headline, subtitle } = Astro.props;
     .item-edit-table thead {
       display: none !important;
     }
-    .item-edit-row {
+    :global(.item-edit-row) {
       position: relative !important;
       padding: var(--spacing-sm) 0 !important;
       border-bottom: 1px solid var(--colors-hairline) !important;
@@ -269,10 +269,10 @@ const { slug, headline, subtitle } = Astro.props;
       flex-direction: column !important;
       gap: var(--spacing-xs) !important;
     }
-    .item-edit-row td {
+    :global(.item-edit-row td) {
       padding: 0 !important;
     }
-    .item-edit-row td:nth-child(1)::before {
+    :global(.item-edit-row td:nth-child(1)::before) {
       content: "Description";
       font-size: 11px;
       font-weight: var(--fw-bold);
@@ -281,7 +281,7 @@ const { slug, headline, subtitle } = Astro.props;
       display: block;
       margin-bottom: 4px;
     }
-    .item-edit-row td:nth-child(2)::before {
+    :global(.item-edit-row td:nth-child(2)::before) {
       content: "Quantity";
       font-size: 11px;
       font-weight: var(--fw-bold);
@@ -290,7 +290,7 @@ const { slug, headline, subtitle } = Astro.props;
       display: block;
       margin-bottom: 4px;
     }
-    .item-edit-row td:nth-child(3)::before {
+    :global(.item-edit-row td:nth-child(3)::before) {
       content: "Rate";
       font-size: 11px;
       font-weight: var(--fw-bold);
@@ -299,12 +299,12 @@ const { slug, headline, subtitle } = Astro.props;
       display: block;
       margin-bottom: 4px;
     }
-    .item-edit-row td:nth-child(4) {
+    :global(.item-edit-row td:nth-child(4)) {
       position: absolute !important;
       right: 0 !important;
       top: 24px !important;
     }
-    .item-delete-btn {
+    :global(.item-delete-btn) {
       padding: 4px !important;
       font-size: 22px !important;
     }

@@ -31,22 +31,32 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
     .bft-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
   @media (min-width: 900px) {
-    .bft-summary { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    /* Seven tracks, not six: there are six stats but the statement period
+       claims two columns, so six tracks pushed the last card onto a row of
+       its own. */
+    .bft-summary { grid-template-columns: repeat(7, minmax(0, 1fr)); }
   }
-  .bft-stat {
+  :global(.bft-stat) {
     background-color: var(--colors-canvas-soft-2);
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-md);
     padding: var(--spacing-sm) var(--spacing-md);
   }
-  .bft-stat-label {
+  :global(.bft-stat-label) {
     font-size: 11px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--colors-mute);
     margin-bottom: 2px;
   }
-  .bft-stat-value {
+  /* Spans two columns and drops a step in size: it is a range to read, not a
+     figure to compare against the others. */
+  :global(.bft-stat--wide) { grid-column: span 2; }
+  :global(.bft-stat--wide) :global(.bft-stat-value) {
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  :global(.bft-stat-value) {
     font-size: 18px;
     font-weight: var(--fw-bold);
     color: var(--colors-ink);
@@ -417,7 +427,11 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
       summaryEl.replaceChildren();
       for (const [label, value] of stats) {
         const box = document.createElement('div');
-        box.className = 'bft-stat';
+        /* A date range is several times longer than a figure, and in a
+           six-column grid it wraps onto three lines and drags every other
+           card's height with it. Let a long value claim two columns instead
+           of special-casing "statement period" by name. */
+        box.className = value.length > 14 ? 'bft-stat bft-stat--wide' : 'bft-stat';
         const l = document.createElement('div');
         l.className = 'bft-stat-label';
         l.textContent = label;

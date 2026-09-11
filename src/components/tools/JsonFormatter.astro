@@ -154,11 +154,11 @@ const { slug, headline, subtitle } = Astro.props;
     font-weight: var(--fw-bold);
     font-family: var(--font-sans);
   }
-  .jf-status-valid {
+  :global(.jf-status-valid) {
     background-color: #d3fae8;
     color: #006400;
   }
-  .jf-status-invalid {
+  :global(.jf-status-invalid) {
     background-color: var(--colors-error-soft);
     color: var(--colors-error-deep);
   }

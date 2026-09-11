@@ -325,7 +325,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .dz-result { animation: none; }
-    .dz-drop, .dz-btn, .dz-drop-icon { transition: none; }
+    .dz-drop, :global(.dz-btn), .dz-drop-icon { transition: none; }
     .dz.is-dragging .dz-drop { transform: none; }
   }
 </style>
