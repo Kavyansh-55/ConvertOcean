@@ -91,7 +91,7 @@ try {
         await new Promise((r) => setTimeout(r, 700));
 
         const found = await page.evaluate((vw) => {
-          const out = { overflow: null, zoomers: [], smallTaps: [], tinyText: [] };
+          const out = { overflow: null, zoomers: [], smallTaps: [], tinyText: [], flush: [] };
 
           if (document.documentElement.scrollWidth > vw + 1) {
             out.overflow = document.documentElement.scrollWidth;
@@ -158,6 +158,30 @@ try {
                            && parseFloat(cs.letterSpacing) > 0;
             const floor = isEyebrow ? 11 : 12;
             if (size < floor) out.tinyText.push(name(el) + '@' + size + 'px');
+
+            /* Text hard against the edge of the screen.
+               The footer shipped like this for months: `.footer-content` was
+               the one 1200px container on the site with no horizontal
+               padding, so above 1200px the auto margins hid it and on a phone
+               every link and the logo sat at x=0, looking clipped. Nothing
+               overflowed, the text was big enough and the targets were large
+               enough, so every other check here passed it — a reader spotted
+               it by eye. A full-bleed *background* is fine; text is not. */
+            if (r.left < 8 || r.right > vw - 8) {
+              /* Unless it lives in a horizontal scroller, where reaching the
+                 edge is the point — the homepage comparison table is wider
+                 than a phone on purpose and sits in `.table-wrapper` with
+                 `overflow-x: auto`, which is the correct way to handle a wide
+                 table. Checked before allowing it: the document itself never
+                 scrolls sideways on any page, so this cannot excuse real
+                 overflow. */
+              let inScroller = false;
+              for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) {
+                const ox = getComputedStyle(a).overflowX;
+                if (ox === 'auto' || ox === 'scroll') { inScroller = true; break; }
+              }
+              if (!inScroller) out.flush.push(name(el) + ' at x=' + Math.round(r.left));
+            }
           }
           return out;
         }, width);
@@ -166,6 +190,7 @@ try {
         if (found.zoomers.length) problems.push(`${width}: ${found.zoomers.length} iOS-zoom field(s) — ${found.zoomers[0]}`);
         if (found.smallTaps.length) problems.push(`${width}: ${found.smallTaps.length} small control(s) — ${found.smallTaps[0]}`);
         if (found.tinyText.length) problems.push(`${width}: ${found.tinyText.length} sub-12px text — ${found.tinyText[0]}`);
+        if (found.flush.length) problems.push(`${width}: ${found.flush.length} text flush to the edge — ${found.flush[0]}`);
       } catch (e) {
         problems.push(`${width}: ${String(e).slice(0, 60)}`);
       }

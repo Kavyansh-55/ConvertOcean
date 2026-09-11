@@ -1878,6 +1878,10 @@ footer {
 .footer-content {
   max-width: 1200px;
   margin: 0 auto;
+  /* Every other 1200px container on the site carries this; the footer was
+     the one that did not. Above 1200px the auto margins hid it, but on a
+     phone the text and the logo sat flush against the screen edge. */
+  padding-inline: var(--spacing-lg);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2xl);
@@ -2303,7 +2307,12 @@ footer {
 /* --- Nav bar padding tight on phone --- */
 @media (max-width: 480px) {
   .nav-bar {
-    padding: 0 var(--spacing-md);
+    /* Sides only. This used to be `padding: 0 var(--spacing-md)`, which also
+       wiped the vertical padding set in the 760px block above — so the logo
+       sat 1px below the pill's top edge, and a 42px square that close to a
+       32px rounded corner pokes out of it. The mark visibly broke the pill's
+       silhouette on every phone. */
+    padding-inline: var(--spacing-md);
   }
 
   .brand-text {
