@@ -1,6 +1,6 @@
 # ConvertOcean — agent instructions
 
-Client-side file-converter site. Astro + Cloudflare Workers, 65 tools, MIT and
+Client-side file-converter site. Astro + Cloudflare Workers, 66 tools, MIT and
 public. Identical copies of this file are `AGENTS.md`, `CLAUDE.md` and
 `GEMINI.md` — edit all three together.
 
