@@ -61,6 +61,19 @@ const CASES = [
   ['/merge-word/',     'JSZip',          'jszip.min.js'],
   ['/image-to-text/',  'Tesseract',      'tesseract.min.js'],
   ['/invoice-generator/', 'html2pdf',    'html2pdf.bundle.min.js'],
+  /* Two libraries are fetched on first use rather than declared as a script
+     tag, because both are over a megabyte and most visitors never convert
+     anything. Nothing loads them at page load, so the row has to ask for one
+     — `trigger` runs in the page and starts exactly the request the tool
+     would start.
+
+     What this proves and what it does not: it proves the fallback host is
+     reached when the primary is blocked, which is the thing that was missing.
+     It does not prove the tool calls the loader correctly — a component that
+     went back to hand-rolling its own injection would still pass here. That
+     half is asserted statically in client-lib-security.test.mjs. */
+  ['/heic-to-jpg/',    'heic2any',       'heic2any.min.js',  'heic2any'],
+  ['/ofx-to-csv/',     'XLSX',           'xlsx.full.min.js', 'XLSX'],
 ];
 
 /** Pages that must be completely undisturbed when everything loads normally. */
@@ -96,7 +109,7 @@ try {
   console.log(`\nresilience: ${ORIGIN}\n`);
   console.log('  library missing -> does the page repair itself?\n');
 
-  for (const [path, globalName, blockFile] of CASES) {
+  for (const [path, globalName, blockFile, lazyKey] of CASES) {
     const page = await browser.newPage();
     await page.setCacheEnabled(false);
     await page.setRequestInterception(true);
@@ -117,6 +130,22 @@ try {
 
     try {
       await page.goto(ORIGIN + path, { waitUntil: 'networkidle2', timeout: 45000 });
+
+      /* A lazily-fetched library has not been asked for yet, so waiting for
+         its global would just time out. Ask the way the tool asks. */
+      if (lazyKey) {
+        const started = await page.evaluate(async (key) => {
+          if (typeof window.__ensureLib !== 'function') return 'no-loader';
+          try { await window.__ensureLib(key); } catch { /* checked below */ }
+          return 'asked';
+        }, lazyKey);
+        if (started === 'no-loader') {
+          say(false, `${path} does not publish __ensureLib, so ${globalName} can never be recovered`);
+          await page.close();
+          continue;
+        }
+      }
+
       await page.waitForFunction(
         (g) => {
           if (g === 'jspdfAutoTable') {

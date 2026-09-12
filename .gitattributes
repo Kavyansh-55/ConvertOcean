@@ -1,0 +1,12 @@
+# Vendored third-party libraries are bytes, not text.
+#
+# `public/vendor/xlsx.full.min.js` is a copy of a specific published SheetJS
+# release, and it is the fallback readers get when cdn.sheetjs.com cannot be
+# reached. Git on Windows would otherwise rewrite its LF endings to CRLF on
+# the next checkout — the blob in the repository stays correct, but the file
+# on disk changes, and that is the file `astro build` copies into `dist/` and
+# ships. The served library would then differ from the release it claims to
+# be, which is the one thing a pinned vendored copy exists to prevent.
+#
+# `-text` means: never convert, in either direction.
+public/vendor/** -text

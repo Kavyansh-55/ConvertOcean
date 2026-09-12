@@ -254,6 +254,7 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
 
 <script>
   import { parseOfx, buildRows, toCsv, summarize, excelSerial } from '../../scripts/ofx-parse.js';
+  import { ensureLib } from '../../scripts/ensure-lib.js';
 
   (function() {
     const dropZone = document.getElementById('dropZone');
@@ -535,20 +536,29 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
     });
 
     /**
-     * SheetJS is ~900KB and only the Excel path needs it, so it is fetched on
+     * SheetJS is ~950KB and only the Excel path needs it, so it is fetched on
      * the first Excel download rather than on page load. Choosing CSV never
      * downloads it at all.
+     *
+     * Routed through `ensureLib` so it gets the self-hosted fallback. This
+     * used to inject one hardcoded URL, which mattered less when that URL was
+     * a busy npm mirror and matters a lot now: the patched SheetJS build is
+     * published on exactly one host, so a bad minute there used to mean the
+     * Excel download simply failed. Being lazy is also why `lib-bootstrap`
+     * never covered it — there is no script tag on the page to repair.
      */
     function loadXlsx() {
       if (window.XLSX) return Promise.resolve();
       if (xlsxPromise) return xlsxPromise;
-      xlsxPromise = new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
-        s.onload = () => resolve();
-        s.onerror = () => { xlsxPromise = null; reject(new Error('xlsx-load')); };
-        document.head.appendChild(s);
-      });
+      xlsxPromise = ensureLib('XLSX').then(
+        () => {},
+        (err) => {
+          /* Cleared so a retry after reconnecting starts fresh rather than
+             being handed this rejection forever. */
+          xlsxPromise = null;
+          throw new Error('xlsx-load', { cause: err });
+        },
+      );
       return xlsxPromise;
     }
 

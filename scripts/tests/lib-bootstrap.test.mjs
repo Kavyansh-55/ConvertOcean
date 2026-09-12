@@ -41,6 +41,24 @@ function fakeEnv(srcs, behaviour) {
 
 console.log('\nlib-bootstrap\n');
 
+/**
+ * A CDN behaviour where the first source fails and the next one works.
+ *
+ * Named rather than hardcoding a host. These fixtures used to say
+ * `url.includes('cdnjs')`, which quietly stopped describing anything the day
+ * XLSX's fallback moved to our own origin — the repair still worked and the
+ * test failed, which is the wrong way round. What they mean is "the fallback
+ * gets tried", and that is what this says.
+ */
+function secondSourceWorks(define) {
+  let tries = 0;
+  return (url, w) => {
+    if (++tries === 1) return 'error';
+    define(w);
+    return 'load';
+  };
+}
+
 /* --- recognising what the page declares -------------------------------- */
 {
   const { doc } = fakeEnv([
@@ -55,7 +73,7 @@ console.log('\nlib-bootstrap\n');
 {
   /* Matching on the filename rather than the whole URL is what keeps this
      working when a component is pointed at the other CDN. */
-  const { doc } = fakeEnv(['https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js']);
+  const { doc } = fakeEnv(['/vendor/xlsx.full.min.js']);
   check('a library served from the fallback host is still recognised',
         declaredLibraries(doc).includes('XLSX'));
 }
@@ -79,7 +97,7 @@ console.log('\nlib-bootstrap\n');
 {
   const { win, doc, attempted } = fakeEnv(
     ['https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'],
-    (url, w) => { if (url.includes('cdnjs')) { w.XLSX = { ok: 1 }; return 'load'; } return 'error'; });
+    secondSourceWorks((w) => { w.XLSX = { ok: 1 }; }));
   const failedKeys = await recoverPageLibraries({ win, doc });
   check('a missing library is refetched from the other host',
         failedKeys.length === 0 && !!win.XLSX && attempted.length >= 1, attempted.join(' '));
@@ -165,7 +183,7 @@ function fakeEnvWithControls(srcs, behaviour, controls) {
   const controls = [mark(), mark(), { disabled: true }];
   const { win, doc, appended } = fakeEnvWithControls(
     ['https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'],
-    (url, w) => { if (url.includes('cdnjs')) { w.XLSX = {}; return 'load'; } return 'error'; },
+    secondSourceWorks((w) => { w.XLSX = {}; }),
     controls);
 
   const p = startLibraryRecovery({ win, doc });

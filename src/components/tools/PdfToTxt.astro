@@ -145,7 +145,7 @@ const { slug, headline, subtitle } = Astro.props;
         const reader = new FileReader();
         reader.onload = async function(e) {
           try {
-            const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(e.target.result) });
+            const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(e.target.result), isEvalSupported: false });
             const pdf = await loadingTask.promise;
             let fullText = "";
             // Counted separately: fullText always carries the page markers, so

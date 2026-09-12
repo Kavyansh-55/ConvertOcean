@@ -158,5 +158,62 @@ for (const [page, cls] of [
       `${page} serves .${cls} unscoped, so it reaches the runtime element`);
 }
 
+/* ------------------------------------- the client-library security batch */
+
+/* None of this is visible in a passing suite run: the suites prove the repo
+   is right, and these prove the deploy is. The vendored fallback in
+   particular is a file that only ever loads when a CDN is down, so nothing a
+   reader does would reveal that it 404s. */
+
+/* pdf.js CVE-2024-4367 — every getDocument() must disable eval. Matched on
+   the runtime property, which survives minification because it is a string
+   key in an options object; the surrounding identifiers do not. */
+for (const [page, where] of [
+  ['/pdf-to-txt/', 'inline'],
+  ['/split-pdf/', 'inline'],
+  ['/compress-pdf/', 'inline'],
+  ['/pdf-to-word/', 'bundle'],
+  ['/pdf-to-excel/', 'bundle'],
+]) {
+  const html = (await get(page)).body;
+  let js = html;
+  if (where === 'bundle') {
+    for (const m of html.matchAll(/\/_astro\/([^"']+\.js)/g)) {
+      js += (await get('/_astro/' + m[1])).body;
+    }
+  }
+  const calls = (js.match(/getDocument\(/g) || []).length;
+  const guarded = /isEvalSupported\s*:\s*!1|isEvalSupported\s*:\s*false/.test(js);
+  say(calls > 0 && guarded,
+      `${page} disables pdf.js eval (${calls} getDocument call(s) in the ${where})`);
+}
+
+/* The patched SheetJS build, and no npm-hosted one anywhere. npm's xlsx is
+   frozen at a vulnerable 0.18.5, and jsdelivr/cdnjs still answer 200 for it,
+   so the wrong URL fails silently rather than loudly. */
+for (const page of ['/excel-to-pdf/', '/merge-excel/', '/split-excel/', '/ofx-to-csv/']) {
+  const html = (await get(page)).body;
+  let all = html;
+  for (const m of html.matchAll(/\/_astro\/([^"']+\.js)/g)) {
+    all += (await get('/_astro/' + m[1])).body;
+  }
+  say(!all.includes('xlsx@0.18.5') && !all.includes('/xlsx/0.18.5/'),
+      `${page} references no npm-hosted xlsx 0.18.5`);
+}
+
+{
+  const r = await fetch(ORIGIN + '/vendor/xlsx.full.min.js' + bust(),
+                        { signal: AbortSignal.timeout(25000) });
+  const body = await r.arrayBuffer();
+  say(r.status === 200 && body.byteLength === 951904,
+      `the self-hosted xlsx fallback serves 200 at 951,904 bytes `
+      + `(got ${r.status}, ${body.byteLength})`);
+  /* A byte count alone would pass on an HTML error page of a freak length,
+     and a CRLF-mangled copy would still parse and still define XLSX. */
+  const head = new TextDecoder().decode(body.slice(0, 200));
+  say(head.includes('SheetJS') && new TextDecoder().decode(body).includes('0.20.3'),
+      'the served fallback is the SheetJS 0.20.3 build');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);

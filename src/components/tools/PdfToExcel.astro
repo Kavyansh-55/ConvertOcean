@@ -19,7 +19,7 @@ const { slug, headline, subtitle } = Astro.props;
 </style>
 
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-<script is:inline src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script is:inline src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
 <div class="page-header">
   <h1 class="page-title">{headline}</h1>
@@ -151,7 +151,7 @@ const { slug, headline, subtitle } = Astro.props;
     showProgress(10, 'Reading PDF data structure…');
     try {
       const data = new Uint8Array(await file.arrayBuffer());
-      const pdf = await window.pdfjsLib.getDocument({ data }).promise;
+      const pdf = await window.pdfjsLib.getDocument({ data, isEvalSupported: false }).promise;
       parsedRows = [];
 
       for (let i = 1; i <= pdf.numPages; i++) {

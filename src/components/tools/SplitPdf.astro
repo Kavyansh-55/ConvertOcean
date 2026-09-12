@@ -214,7 +214,7 @@ const { slug, headline, subtitle } = Astro.props;
           // extract pages". Render the thumbnails from a throwaway copy and
           // keep these bytes intact for pdf-lib.
           const previewBytes = bytes.slice();
-          const loadingTask = pdfjsLib.getDocument({ data: previewBytes });
+          const loadingTask = pdfjsLib.getDocument({ data: previewBytes, isEvalSupported: false });
           const pdf = await loadingTask.promise;
 
           splitFile = { name: file.name, bytes: bytes, count: pdf.numPages };
