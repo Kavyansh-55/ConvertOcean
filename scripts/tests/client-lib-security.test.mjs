@@ -108,8 +108,19 @@ test('no npm-hosted xlsx: it is frozen at a vulnerable 0.18.5', () => {
 test('the self-hosted xlsx fallback exists and is the patched build', () => {
   const vendored = 'public/vendor/xlsx.full.min.js';
   assert.ok(existsSync(vendored), `${vendored} is the XLSX fallback and is missing`);
-  /* Guards the plausible accident of committing a stub or an LFS pointer. */
-  assert.ok(statSync(vendored).size > 500_000, `${vendored} is too small to be the real library`);
+
+  /* The exact byte count of the published release, which is a stronger check
+     than "looks about the right size" for the specific accident that nearly
+     shipped here: git on Windows rewriting LF to CRLF on checkout. That adds
+     a byte per line and leaves a file that still parses, still defines XLSX,
+     and is no longer the release it claims to be. A size assertion catches
+     it; nothing about reading the file would. `.gitattributes` marks the
+     directory `-text` to stop the conversion — this fails if that is ever
+     removed. */
+  const EXPECTED_BYTES = 951_904;
+  assert.equal(statSync(vendored).size, EXPECTED_BYTES,
+    `${vendored} is not byte-identical to the pinned release — if this followed a `
+    + `checkout on Windows, check that .gitattributes still marks public/vendor/ as -text`);
 
   const pinned = LIB_SOURCES.XLSX.urls[0];
   const version = pinned.match(/xlsx-(\d+\.\d+\.\d+)/)?.[1];
