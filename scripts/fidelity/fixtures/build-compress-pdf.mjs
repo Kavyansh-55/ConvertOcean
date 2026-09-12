@@ -39,6 +39,7 @@ import { fileURLToPath } from 'node:url';
 import { deflateSync } from 'node:zlib';
 import puppeteer from 'puppeteer-core';
 import * as TESTING_PATHS from '../../testing-paths.mjs';
+import { rgbBuffer, scanLikeShade, flatGraphicShade } from '../lib/test-images.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = TESTING_PATHS.FIXTURES;
@@ -89,55 +90,12 @@ function rect(x, y, w, h, rgb) {
  * tool will actually meet.
  */
 function scanLikeRgb(w, h) {
-  const px = Buffer.alloc(w * h * 3);
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      // Paper, with a slow vignette so there is real low-frequency content.
-      const vignette = 6 * Math.sin((x / w) * Math.PI) * Math.sin((y / h) * Math.PI);
-      let v = 246 - vignette;
-
-      // Text-like bands: 24 rows of short dark dashes.
-      const band = Math.floor(y / (h / 40));
-      const inBandRow = (y % (h / 40)) < (h / 40) * 0.45;
-      if (band > 3 && band < 36 && inBandRow) {
-        const wordPhase = Math.floor(x / (w / 90)) % 7;
-        if (wordPhase < 5 && x > w * 0.08 && x < w * 0.92) v = 40;
-      }
-
-      // A grey figure box, the kind of thing that survives badly when over-compressed.
-      if (x > w * 0.55 && x < w * 0.9 && y > h * 0.55 && y < h * 0.82) {
-        v = 150 + 40 * Math.sin((x / w) * 60) * Math.cos((y / h) * 60);
-      }
-
-      // Scanner noise: small, deterministic, enough to stop the encoder cheating.
-      const n = ((x * 7919 + y * 104729) % 11) - 5;
-      v = Math.max(0, Math.min(255, v + n));
-
-      const i = (y * w + x) * 3;
-      px[i] = v;
-      px[i + 1] = v;
-      px[i + 2] = Math.min(255, v + 3); // faint blue cast, like a real scan
-    }
-  }
-  return px;
+  return rgbBuffer(w, h, scanLikeShade(w, h));
 }
 
 /** Four solid quadrants with a white cross — instantly readable when wrong. */
 function quadrantRgb(w, h) {
-  const px = Buffer.alloc(w * h * 3);
-  const cols = [[220, 38, 38], [22, 163, 74], [37, 99, 235], [234, 179, 8]];
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const q = (x < w / 2 ? 0 : 1) + (y < h / 2 ? 0 : 2);
-      let [r, g, b] = cols[q];
-      const nearVert = Math.abs(x - w / 2) < w * 0.02;
-      const nearHorz = Math.abs(y - h / 2) < h * 0.02;
-      if (nearVert || nearHorz) { r = 255; g = 255; b = 255; }
-      const i = (y * w + x) * 3;
-      px[i] = r; px[i + 1] = g; px[i + 2] = b;
-    }
-  }
-  return px;
+  return rgbBuffer(w, h, flatGraphicShade(w, h));
 }
 
 /** A centred filled disc as an 8-bit alpha channel: opaque inside, clear out. */
