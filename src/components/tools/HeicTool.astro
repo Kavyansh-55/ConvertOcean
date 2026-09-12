@@ -132,18 +132,30 @@ const targetFormat = slug === 'heic-to-png' ? 'PNG' : 'JPG';
       errorBanner.style.display = 'none';
     }
 
-    // The libheif decoder is ~1MB, so it is fetched on the FIRST file only —
+    // The libheif decoder is ~1.3MB, so it is fetched on the FIRST file only —
     // never on page load — and cached for the rest of the session.
+    //
+    // Routed through the shared loader so it gets the same fallback host every
+    // other library has. It used to inject one hardcoded URL and give up if
+    // that host was unreachable: because the fetch is lazy there is no script
+    // tag on the page for `lib-bootstrap` to notice and repair, so this tool
+    // sat outside the CDN-resilience work without anything looking wrong.
     function loadDecoder() {
       if (window.heic2any) return Promise.resolve();
       if (decoderPromise) return decoderPromise;
-      decoderPromise = new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';
-        s.onload = () => resolve();
-        s.onerror = () => { decoderPromise = null; reject(new Error('decoder-load')); };
-        document.head.appendChild(s);
-      });
+      const ensure = window.__ensureLib;
+      decoderPromise = (ensure
+        ? ensure('heic2any')
+        : Promise.reject(new Error('loader-unavailable'))
+      ).then(
+        () => {},
+        (err) => {
+          /* Cleared so a reader who reconnects and retries gets a fresh
+             attempt rather than this rejection forever. */
+          decoderPromise = null;
+          throw new Error('decoder-load', { cause: err });
+        },
+      );
       return decoderPromise;
     }
 

@@ -188,7 +188,7 @@ const { slug, headline, subtitle } = Astro.props;
     showProgress(5, 'Loading PDF data structure…');
     try {
       const data = new Uint8Array(await file.arrayBuffer());
-      pdfDoc = await window.pdfjsLib.getDocument({ data }).promise;
+      pdfDoc = await window.pdfjsLib.getDocument({ data, isEvalSupported: false }).promise;
       const OPS = window.pdfjsLib.OPS;
       const pages = [];
 

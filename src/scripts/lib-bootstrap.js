@@ -137,6 +137,15 @@ export function startLibraryRecovery(opts = {}) {
   const win = opts.win || (typeof window !== 'undefined' ? window : null);
   const doc = opts.doc || (typeof document !== 'undefined' ? document : null);
   if (!win || !doc) return Promise.resolve([]);
+
+  /* Published for the same reason as `__libsReady`: a component's script is a
+     separate bundle, and an `is:inline` one cannot import at all. A tool that
+     fetches its library on first use rather than declaring a script tag — the
+     HEIC decoder is the only one — has no other way to reach the fallback
+     list, and hand-rolling a second loader there is how it ended up with no
+     fallback in the first place. */
+  win.__ensureLib = ensureLib;
+
   if (win.__libsReady) return win.__libsReady;
 
   const missing = declaredLibraries(doc).filter((key) => !libPresent(key, win));

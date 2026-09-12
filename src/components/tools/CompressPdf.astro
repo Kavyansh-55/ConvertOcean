@@ -440,7 +440,7 @@ const { slug, headline, subtitle } = Astro.props;
 
       try {
         const original = new Uint8Array(await file.arrayBuffer());
-        const docBefore = await pdfjsLib.getDocument({ data: original.slice() }).promise;
+        const docBefore = await pdfjsLib.getDocument({ data: original.slice(), isEvalSupported: false }).promise;
         job = { name: file.name, original, pageCount: docBefore.numPages, docBefore };
         dropZone.style.display = 'none';
         workspace.style.display = 'block';
@@ -624,7 +624,7 @@ const { slug, headline, subtitle } = Astro.props;
         await draw(pgBefore, canvasBefore);
         if (token !== renderToken) return;
 
-        const docAfter = await pdfjsLib.getDocument({ data: current.bytes.slice() }).promise;
+        const docAfter = await pdfjsLib.getDocument({ data: current.bytes.slice(), isEvalSupported: false }).promise;
         const pgAfter = await docAfter.getPage(Math.min(pageNo, docAfter.numPages));
         await draw(pgAfter, canvasAfter);
         if (token !== renderToken) return;

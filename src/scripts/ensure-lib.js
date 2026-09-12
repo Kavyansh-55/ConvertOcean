@@ -29,6 +29,10 @@
  * URL below was checked to return 200 and, apart from `vfs_fonts.js` (a
  * 5-byte trailing-comment difference), to be byte-identical to its primary.
  *
+ * `XLSX` is the one exception, and its entry explains why: no second provider
+ * serves a build without a known CVE, so its fallback is a copy we host. A
+ * fallback that is reachable but unsafe is not a fallback.
+ *
  * Versions are pinned and must match the `is:inline` tag in the component. If
  * one is bumped, bump it here too, or a page can end up running two builds.
  *
@@ -39,9 +43,29 @@
 export const LIB_SOURCES = {
   XLSX: {
     label: 'spreadsheet engine',
+    /* The one entry whose fallback is our own origin rather than a second
+       provider, because a second provider serving a *safe* build does not
+       exist.
+
+       npm's `xlsx` is frozen forever at 0.18.5, which carries CVE-2023-30533
+       (prototype pollution from a crafted workbook) and CVE-2024-22363
+       (ReDoS). SheetJS moved off npm, so every npm mirror — jsdelivr, cdnjs,
+       unpkg — can only ever serve the vulnerable build. Patched releases live
+       on cdn.sheetjs.com and nowhere else.
+
+       That makes the usual "another provider" fallback a downgrade: a bad
+       minute at SheetJS would silently drop a reader onto a vulnerable
+       parser, which is worse than the outage it was meant to cover. So the
+       fallback is a copy we serve ourselves. It is still a genuinely
+       independent host — if our origin is unreachable the reader never got
+       the page — and it cannot drift to a vulnerable version behind our back.
+
+       `public/vendor/xlsx.full.min.js` must stay byte-identical to the pinned
+       CDN release above; `scripts/tests/client-lib-security.test.mjs` checks
+       the pair and fails if either moves without the other. */
     urls: [
-      'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
-      'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+      'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js',
+      '/vendor/xlsx.full.min.js',
     ],
   },
   JSZip: {
@@ -72,6 +96,24 @@ export const LIB_SOURCES = {
   },
   pdfjsLib: {
     label: 'PDF reader',
+    /* Pinned to the last 3.x on purpose, with CVE-2024-4367 closed at the call
+       site instead of by upgrading.
+
+       That CVE (CVSS 8.8) lets a crafted PDF run arbitrary JavaScript in this
+       origin, which on a site whose whole promise is that files never leave
+       the machine is the worst-shaped bug available: script in our origin can
+       read the document the reader just opened and post it anywhere. Mozilla
+       fixed it in 4.2.67 — but pdfjs-dist 4.x ships **ESM only**, with no UMD
+       build at all, so every `<script is:inline>` tag and the `window.pdfjsLib`
+       global this whole module is built around stop working on it. That is a
+       loader rewrite across six components, not a version bump.
+
+       The advisory's own documented workaround is `isEvalSupported: false`,
+       and it closes the hole completely: the vulnerability *is* the eval path.
+       So every `getDocument()` call passes it, and
+       `scripts/tests/client-lib-security.test.mjs` fails the build if a new
+       call site forgets. Moving to 4.x/5.x is still worth doing for the fixes
+       we are not getting; it is tracked as its own piece of work. */
     urls: [
       'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js',
       'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.min.js',
@@ -103,6 +145,19 @@ export const LIB_SOURCES = {
     urls: [
       'https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/pdfmake.min.js',
       'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/pdfmake.min.js',
+    ],
+  },
+  heic2any: {
+    label: 'HEIC decoder',
+    /* Fetched on the first file rather than on page load — it is a ~1.3 MB
+       libheif build, and most visitors to /heic-to-jpg/ are deciding whether
+       to use the tool, not using it. That laziness is why it was missed when
+       every other library got a fallback: `lib-bootstrap` repairs the script
+       tags it can see in the document, and at page load there is no tag here
+       to see. The loader in HeicTool asks for it by name instead. */
+    urls: [
+      'https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js',
     ],
   },
   pdfMakeFonts: {
