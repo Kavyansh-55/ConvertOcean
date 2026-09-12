@@ -79,11 +79,11 @@ export function drawnSize(ctm) {
  * (an image scaled to nothing, left behind by a template). Infinity is the
  * honest answer — it is infinitely over-resolution — and it makes the rule
  * below treat it as maximally shrinkable, which is correct.
+ *
+ * Re-exported from `image-compress.js`, which every compressor shares, rather
+ * than defined twice.
  */
-export function effectiveDpi(pixels, drawnPt) {
-  if (!(drawnPt > 0)) return Infinity;
-  return pixels / (drawnPt / 72);
-}
+export { effectiveDpi } from './image-compress.js';
 
 /* -------------------------------------------------------------- tokenizer */
 
@@ -180,73 +180,30 @@ export function toRgba(components, comps, width, height) {
 
 /* ----------------------------------------------------------------- presets */
 
-/**
- * The three settings offered, and one hidden truth about them: the DPI is the
- * setting that matters and the quality is the one that gets fiddled with. A
- * 300 DPI scan at JPEG 0.9 is far bigger *and* no more readable on screen than
- * the same scan at 150 DPI and 0.75, because the detail being preserved was
- * never visible. So each preset moves both together rather than exposing two
- * sliders that most people would set to a contradiction.
- */
-export const PRESETS = {
-  light: { label: 'Light', dpi: 220, quality: 0.85, note: 'Safe for printing' },
-  balanced: { label: 'Recommended', dpi: 150, quality: 0.72, note: 'Best size for screen and email' },
-  strong: { label: 'Strong', dpi: 110, quality: 0.55, note: 'Smallest file, visible softening' },
-};
+/* The presets and the dial live in `image-compress.js` with the rest of the
+   policy, because a PPTX full of oversized photos wants exactly the same
+   answer as a PDF full of them. Re-exported here so callers that already
+   import from this module keep working. */
+export { PRESETS } from './image-compress.js';
 
-/**
- * Map a single 0..1 dial onto a (dpi, quality) pair for target-size mode.
- *
- * Resolution is spent before quality: dropping DPI removes detail nobody can
- * see on screen, while dropping JPEG quality adds artefacts that are visible at
- * any size. So the curve walks 300→72 DPI while quality only falls 0.92→0.40.
- */
-export function dialToSettings(t) {
-  const k = Math.max(0, Math.min(1, t));
-  return {
-    dpi: Math.round(300 - k * (300 - 72)),
-    quality: Math.round((0.92 - k * (0.92 - 0.40)) * 100) / 100,
-  };
-}
+/* Same story as PRESETS: the dial is policy, not PDF plumbing. */
+export { dialToSettings } from './image-compress.js';
 
 /* ----------------------------------------------------- the engine proper */
 
-/**
- * Minimum saving worth accepting, by what accepting it actually costs.
- *
- * These are not three arbitrary tolerances; they price the loss. Downsampling
- * an over-resolution JPEG throws away detail nobody could see, so 5% is enough
- * to be worth doing. Re-encoding a JPEG that is already the right size buys
- * nothing back and adds a second generation of artefacts, so it has to earn
- * 15%. And turning a *lossless* image lossy destroys information permanently —
- * a flat diagram cannot be recovered from its JPEG — so it has to earn 30%,
- * which a photograph easily does and a flat graphic never will.
- */
-const MIN_GAIN_RESAMPLE = 0.95;          // 5%  — removing invisible resolution
-const MIN_GAIN_QUALITY_ONLY = 0.85;      // 15% — no resolution to reclaim
-const MIN_GAIN_LOSSLESS_TO_LOSSY = 0.70; // 30% — permanent, so charge properly
+/* The thresholds, the graphic-vs-photograph line, the DPI floor and the
+   minimum edge are all in `image-compress.js`. They are the part that took
+   three attempts to get right, so they are shared with every other compressor
+   rather than copied into each one.
 
-/**
- * Bytes per pixel below which a lossless image is treated as a graphic rather
- * than a photograph.
- *
- * "Lossless" is not one category, and an earlier version of this file made
- * that mistake: it charged a flat 30% for going lossy, which correctly
- * protected flat diagrams and then wrongly refused to touch *photographic*
- * scans that happened to be stored as PNG — the single most common thing in a
- * bloated PDF after an oversized JPEG.
- *
- * What separates them is how well Deflate already did. A flat diagram packs to
- * ~0.006 bytes per pixel, which no lossy encoder will beat; a scanned page
- * needs ~0.08, and JPEG at screen quality lands well under that. So the
- * question is not "was it lossless" but "is there anything left to win", and
- * this is the line where the answer changes.
- */
-const GRAPHIC_BYTES_PER_PIXEL = 0.02;
-
-/** Never go below this, whatever the dial says. Below it, text in a scan dies. */
-const DPI_FLOOR = 72;
-const MIN_EDGE_PX = 16;
+   `dialToSettings` is imported as well as re-exported above: `export { x }
+   from '…'` forwards a name to this module's *consumers* without binding it
+   for this module's own code, so target-size mode threw "dialToSettings is
+   not defined" at the moment a reader typed a size. `npm run compress` caught
+   it; nothing about reading the diff would have. */
+import {
+  planResample, judgeCandidate, encodeJpeg, dialToSettings,
+} from './image-compress.js';
 
 /**
  * Compress `bytes` and return `{ bytes, report }`.
@@ -633,93 +590,51 @@ async function decodeToBitmap(obj, info, lib, decodePDFRawStream) {
  * Produce the re-encoded candidate for one image, and decide whether to keep
  * it. Returns a record either way, so the report can show the decision.
  */
+/**
+ * Decide what to do with one image, and do it.
+ *
+ * The judgement — is this over-resolution, is there anything left to win, is
+ * the candidate actually smaller — is `image-compress.js`, shared with every
+ * other compressor. What stays here is the PDF-shaped part: the byte count
+ * comes off a stream object, "lossy" means the filter is DCTDecode, and the
+ * result is addressed by object ref so it can be swapped back in place.
+ */
 async function reencode(entry, bitmap, settings, lib) {
   const { obj, info } = entry;
   const { width, height, filter, placed } = info;
-  const originalBytes = obj.contents.length;
 
-  /* Effective DPI uses the larger of the two axes: an image squashed on one
-     axis is still over-resolution on the other, and downsampling to the
-     smaller one would visibly soften it. */
-  const dpiX = placed ? effectiveDpi(width, placed.w) : null;
-  const dpiY = placed ? effectiveDpi(height, placed.h) : null;
-  const effDpi = (dpiX === null) ? null : Math.max(dpiX, dpiY);
+  const plan = planResample({
+    width,
+    height,
+    originalBytes: obj.contents.length,
+    lossy: filter === 'DCTDecode',
+    drawnPt: placed ? { w: placed.w, h: placed.h } : null,
+  }, settings);
 
-  const base = {
-    width, height, filter, bytes: originalBytes,
-    drawnPt: placed ? { w: Math.round(placed.w), h: Math.round(placed.h) } : null,
-    effectiveDpi: effDpi === null ? null : (effDpi === Infinity ? Infinity : Math.round(effDpi)),
-  };
+  /* `filter` is carried into the summary because the reader-facing panel names
+     the original encoding, and the shared planner has no notion of one. */
+  const base = { ...plan.base, filter };
 
-  if (effDpi === null) {
-    /* Never drawn anywhere we could find — an unused resource, or a page whose
-       content stream would not decode. Leaving it alone is the safe failure. */
-    return { ref: entry.ref, keep: false, summary: { ...base, action: 'kept', reason: 'not drawn on any page we could measure' } };
+  if (plan.skip) {
+    return { ref: entry.ref, keep: false, summary: { ...base, action: 'kept', reason: plan.reason } };
   }
 
-  const targetDpi = Math.max(DPI_FLOOR, settings.dpi);
-  let scale = effDpi > targetDpi ? targetDpi / effDpi : 1;
-
-  /* Rule 2 and rule 3 together: at or below the target resolution, a lossless
-     source is left completely alone, and a JPEG source gets one quality-only
-     attempt that has to earn a bigger saving to be accepted. */
-  const qualityOnly = scale === 1;
-  if (qualityOnly && filter !== 'DCTDecode') {
-    return { ref: entry.ref, keep: false, summary: { ...base, action: 'kept', reason: 'already at the target resolution, and lossless' } };
-  }
-
-  let outW = Math.max(MIN_EDGE_PX, Math.round(width * scale));
-  let outH = Math.max(MIN_EDGE_PX, Math.round(height * scale));
-  if (outW >= width && outH >= height) { outW = width; outH = height; }
-
-  const canvas = new OffscreenCanvas(outW, outH);
-  const cctx = canvas.getContext('2d');
-  /* White ground: JPEG has no alpha, and a transparent source drawn onto a
-     transparent canvas encodes as black. The alpha itself is not lost — it
-     lives in the separate /SMask stream, which is processed as its own image. */
-  cctx.fillStyle = '#ffffff';
-  cctx.fillRect(0, 0, outW, outH);
-  cctx.imageSmoothingEnabled = true;
-  cctx.imageSmoothingQuality = 'high';
-  cctx.drawImage(bitmap, 0, 0, outW, outH);
-
-  const blob = await canvas.convertToBlob({ type: 'image/jpeg', quality: settings.quality });
-  const candidate = new Uint8Array(await blob.arrayBuffer());
-
-  /* A lossless source only has to clear the high bar if it looks like a
-     graphic. If Deflate needed real bytes per pixel, the content is
-     photographic and downsampling it is exactly the job. */
-  const bytesPerPixel = originalBytes / Math.max(1, width * height);
-  const looksGraphic = filter !== 'DCTDecode' && bytesPerPixel < GRAPHIC_BYTES_PER_PIXEL;
-  const threshold = qualityOnly
-    ? MIN_GAIN_QUALITY_ONLY
-    : (looksGraphic ? MIN_GAIN_LOSSLESS_TO_LOSSY : MIN_GAIN_RESAMPLE);
-  if (candidate.length >= originalBytes * threshold) {
-    /* Rule 1. Measured, not assumed — this is the branch a flat-colour graphic
-       and an already-tight JPEG both land in. */
-    return {
-      ref: entry.ref,
-      keep: false,
-      summary: {
-        ...base, action: 'kept',
-        reason: candidate.length >= originalBytes
-          ? 'already smaller than any re-encoding of it'
-          : (looksGraphic
-            ? 'a lossless graphic that compresses better than any JPEG of it'
-            : 'the saving was too small to be worth re-encoding'),
-      },
-    };
+  const candidate = await encodeJpeg(bitmap, plan.outW, plan.outH, plan.quality);
+  const verdict = judgeCandidate(plan, candidate.length);
+  if (!verdict.accept) {
+    return { ref: entry.ref, keep: false, summary: { ...base, action: 'kept', reason: verdict.reason } };
   }
 
   return {
     ref: entry.ref,
     keep: true,
     bytes: candidate,
-    outW,
-    outH,
+    outW: plan.outW,
+    outH: plan.outH,
     obj,
     summary: {
-      ...base, action: 'shrunk', newWidth: outW, newHeight: outH, newBytes: candidate.length,
+      ...base, action: 'shrunk',
+      newWidth: plan.outW, newHeight: plan.outH, newBytes: candidate.length,
     },
   };
 }
