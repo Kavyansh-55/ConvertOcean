@@ -203,3 +203,84 @@ console.log('  photo-mid    1200x900  at 4.0in  = 300 DPI   must shrink');
 console.log('  graphic      1200x900  at 4.0in  = 300 DPI   must NOT grow (' + kb(graphic.length) + ')');
 console.log('  right-sized  240x160   at 2.5in  =  96 DPI   must be byte-identical');
 console.log('  transparent  400x400   alpha               must be byte-identical');
+
+/* ------------------------------------------------------------------ DOCX */
+
+/* The same five images in the other container, because "the engine is
+   format-neutral" is a claim that should be tested rather than asserted. Word
+   measures with <wp:extent> inside <w:drawing> where PowerPoint uses <a:ext>
+   inside <p:pic>, and writes relationship targets as "media/x.png" rather than
+   "../media/x.png" — two small differences either of which would silently
+   leave every image unmeasured, and therefore untouched. */
+
+const W_NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
+  + 'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" '
+  + 'xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" '
+  + 'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" '
+  + 'xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
+
+function wPara(text) {
+  return '<w:p><w:r><w:t xml:space="preserve">' + xmlEscape(text) + '</w:t></w:r></w:p>';
+}
+
+function wImage(id, embedId, wIn, hIn, name) {
+  return '<w:p><w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0">'
+    + '<wp:extent cx="' + inches(wIn) + '" cy="' + inches(hIn) + '"/>'
+    + '<wp:docPr id="' + id + '" name="' + xmlEscape(name) + '"/>'
+    + '<a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">'
+    + '<pic:pic><pic:nvPicPr><pic:cNvPr id="' + id + '" name="' + xmlEscape(name) + '"/>'
+    + '<pic:cNvPicPr/></pic:nvPicPr>'
+    + '<pic:blipFill><a:blip r:embed="' + embedId + '"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>'
+    + '<pic:spPr><a:xfrm><a:off x="0" y="0"/>'
+    + '<a:ext cx="' + inches(wIn) + '" cy="' + inches(hIn) + '"/></a:xfrm>'
+    + '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>'
+    + '</pic:pic></a:graphicData></a:graphic>'
+    + '</wp:inline></w:drawing></w:r></w:p>';
+}
+
+const docxParts = {
+  '[Content_Types].xml': '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+    + '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+    + '<Default Extension="xml" ContentType="application/xml"/>'
+    + '<Default Extension="png" ContentType="image/png"/>'
+    + '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
+    + '</Types>',
+
+  '_rels/.rels': relsFor('<Relationship Id="rId1" '
+    + 'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" '
+    + 'Target="word/document.xml"/>'),
+
+  'word/document.xml': '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<w:document ' + W_NS + '><w:body>'
+    + wPara('D01 Oversized photo, 400 DPI in a 4 inch box')
+    + wImage(10, 'rIdBig', 4.0, 3.0, 'D02 photo-big')
+    + wPara('D03 Three images, three correct answers')
+    + wImage(11, 'rIdMid', 4.0, 3.0, 'D04 photo-mid')
+    + wImage(12, 'rIdGraphic', 4.0, 3.0, 'D05 flat-graphic')
+    + wImage(13, 'rIdRight', 2.5, 1.67, 'D06 right-sized')
+    + wPara('D07 Transparency: this logo must not gain a white box')
+    + wImage(14, 'rIdAlpha', 2.0, 2.0, 'D08 transparent-disc')
+    + wPara('D09 Text after the images, so a rebuilt document that drops the body fails loudly')
+    + '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/></w:sectPr>'
+    + '</w:body></w:document>',
+
+  'word/_rels/document.xml.rels': relsFor(
+    imgRel('rIdBig', 'media/photo-big.png')
+    + imgRel('rIdMid', 'media/photo-mid.png')
+    + imgRel('rIdGraphic', 'media/graphic.png')
+    + imgRel('rIdRight', 'media/right-sized.png')
+    + imgRel('rIdAlpha', 'media/transparent.png'),
+  ),
+
+  'word/media/photo-big.png': photoBig,
+  'word/media/photo-mid.png': photoMid,
+  'word/media/graphic.png': graphic,
+  'word/media/right-sized.png': rightSized,
+  'word/media/transparent.png': transparent,
+};
+
+const docxOut = TESTING_PATHS.fixture('torture-compress.docx');
+await writePackage(docxParts, docxOut);
+console.log('torture-compress.docx  ' + kb(statSync(docxOut).size));
+console.log('  same five images, measured through <wp:extent> instead of <a:ext>');

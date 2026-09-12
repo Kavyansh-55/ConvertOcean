@@ -53,6 +53,14 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
   .cof-preset-name { font-weight: 600; display: block; }
   .cof-preset-note { font-size: 13px; color: var(--colors-mute); }
 
+  .cof-target { margin-top: var(--spacing-lg); }
+  .cof-target-label { display: block; font-weight: 600; margin-bottom: var(--spacing-sm); }
+  .cof-target-row { display: flex; gap: var(--spacing-sm); flex-wrap: wrap; align-items: center; }
+  .cof-target-input { width: 120px; }
+  .cof-target-unit { width: 88px; }
+  .cof-target-note { margin-top: 6px; font-size: 13px; color: var(--colors-mute); }
+  .cof-target-missed { color: var(--colors-body); }
+
   .cof-changed { margin-top: var(--spacing-lg); }
   .cof-changed summary { cursor: pointer; font-weight: 600; }
   .cof-table-scroll { overflow-x: auto; margin-top: var(--spacing-sm); }
@@ -143,6 +151,25 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
   <div class="cof-settings">
     <div class="cof-settings-label" id="cofPresetLabel">How hard to compress</div>
     <div class="cof-preset-row" role="group" aria-labelledby="cofPresetLabel" id="cofPresetRow"></div>
+
+    {/* People overwhelmingly arrive with a number in mind — "under 10 MB for
+        email", "under 2 MB for the portal" — rather than a quality
+        preference. A preset cannot answer that question. */}
+    <div class="cof-target">
+      <label class="cof-target-label" for="cofTargetMB">Or fit a size</label>
+      <div class="cof-target-row">
+        <input type="number" id="cofTargetMB" class="form-input cof-target-input"
+               min="0.1" step="0.1" value="10" aria-describedby="cofTargetNote" />
+        <select id="cofTargetUnit" class="form-input cof-target-unit" aria-label="Units">
+          <option value="MB" selected>MB</option>
+          <option value="KB">KB</option>
+        </select>
+        <button class="button button-primary" id="cofFit">Fit to this size</button>
+      </div>
+      <div class="cof-target-note" id="cofTargetNote">
+        Finds the gentlest setting that still comes in under your limit, and tells you plainly if the size is not reachable.
+      </div>
+    </div>
   </div>
 
   <details class="cof-changed" id="cofChanged">
@@ -228,7 +255,18 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
       const saved = report.originalBytes - report.newBytes;
       const pct = report.originalBytes ? Math.round((saved / report.originalBytes) * 100) : 0;
       let msg;
-      if (saved > 0) {
+      if (report.targetBytes && !report.targetMet) {
+        /* Saying nothing, or quietly handing back a file over the limit, is
+           the failure mode that matters here: the reader asked for a number
+           and would only discover the miss when the upload was rejected. */
+        msg = 'Could not reach ' + fmt(report.targetBytes) + '. The smallest this file '
+            + 'can get without wrecking it is ' + fmt(report.newBytes) + '. '
+            + 'The remaining size is not in oversized images — see below for what was already '
+            + 'as small as it could be.';
+      } else if (report.targetBytes && report.targetMet) {
+        msg = fmt(report.newBytes) + ' — under your ' + fmt(report.targetBytes) + ' limit, '
+            + 'at the gentlest setting that fits.';
+      } else if (saved > 0) {
         msg = fmt(saved) + ' smaller — ' + pct + '% off, from '
           + report.imagesShrunk + ' of ' + report.imagesFound + ' image'
           + (report.imagesFound === 1 ? '' : 's') + '.';
@@ -262,7 +300,7 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
       changed.style.display = report.images.length ? 'block' : 'none';
     }
 
-    async function run() {
+    async function run(targetBytes) {
       if (!job || busy) return;
       busy = true;
       downloadBtn.disabled = true;
@@ -271,7 +309,9 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
         const presets = (window.coPdfPresets) || {};
         const s = presets[preset] || { dpi: 150, quality: 0.72 };
         const out = await window.coCompressOoxml(
-          job.bytes.slice(), { dpi: s.dpi, quality: s.quality }, window.JSZip,
+          job.bytes.slice(),
+          { dpi: s.dpi, quality: s.quality, targetBytes: targetBytes || null },
+          window.JSZip,
           {
             progress: progress,
             yield: () => new Promise((r) => setTimeout(r, 0)),
@@ -311,6 +351,16 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
       buildPresets();
       await run();
     }
+
+    document.getElementById('cofFit').addEventListener('click', function () {
+      const n = parseFloat(document.getElementById('cofTargetMB').value);
+      if (!isFinite(n) || n <= 0) {
+        showError('Enter a size greater than zero.');
+        return;
+      }
+      const unit = document.getElementById('cofTargetUnit').value;
+      run(Math.round(n * (unit === 'MB' ? 1024 * 1024 : 1024)));
+    });
 
     fileInput.addEventListener('change', function (e) { accept_(e.target.files[0]); });
     dropZone.addEventListener('dragover', function (e) { e.preventDefault(); dropZone.classList.add('dragover'); });

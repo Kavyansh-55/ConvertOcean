@@ -313,6 +313,95 @@ try {
   say(wordOk.h1 === 1, `/compress-word/ has exactly one h1 (${wordOk.h1})`);
   say(wordErrors.length === 0, wordErrors.length ? `word page errors: ${wordErrors[0]}` : 'no page errors on /compress-word/');
 
+  /* --- the DOCX path, driven for real ------------------------------------ */
+
+  /* "The engine is format-neutral" is a claim, and Word differs in two ways
+     either of which would silently leave every image unmeasured: it measures
+     with <wp:extent> inside <w:drawing> rather than <a:ext> inside <p:pic>,
+     and writes relationship targets as "media/x.png" rather than
+     "../media/x.png". An unmeasured image is skipped, so the failure would be
+     a compressor that runs, succeeds, and changes nothing. */
+  const docxPath = TESTING_PATHS.fixture('torture-compress.docx');
+  await wordPage.$('#fileInput').then((el) => el.uploadFile(docxPath));
+  await wordPage.waitForFunction(() => {
+    const b = document.getElementById('cofDownload');
+    return b && !b.disabled;
+  }, { timeout: 60000 });
+
+  const docxRows = await wordPage.evaluate(() =>
+    [...document.querySelectorAll('#cofImgRows tr')].map((tr) => ({
+      name: tr.children[0].textContent.trim(),
+      result: tr.children[3].textContent.trim(),
+      why: tr.children[4].textContent.trim(),
+    })));
+  const drow = (n) => docxRows.find((r) => r.name.startsWith(n)) || {};
+
+  say(docxRows.length === 5, `the DOCX lists all five images (${docxRows.length})`);
+  say(drow('photo-big').result && drow('photo-big').result !== 'kept',
+      `DOCX: the 400 DPI photo was shrunk (${drow('photo-big').result}) — so <wp:extent> is being read`);
+  say(drow('graphic').result === 'kept', 'DOCX: the flat graphic was kept');
+  say(drow('right-sized').result === 'kept', 'DOCX: the 96 DPI image was kept');
+  say(/transparen/i.test(drow('transparent').why || ''),
+      'DOCX: the transparent PNG was kept for the right reason');
+
+  const docxOutB64 = await wordPage.evaluate(async () => {
+    const f = document.getElementById('fileInput').files[0];
+    const b = new Uint8Array(await f.arrayBuffer());
+    const out = await window.coCompressOoxml(b, { dpi: 150, quality: 0.72 }, window.JSZip, {});
+    let s = '';
+    for (let i = 0; i < out.bytes.length; i += 0x8000) {
+      s += String.fromCharCode.apply(null, out.bytes.subarray(i, i + 0x8000));
+    }
+    return { b64: btoa(s), report: out.report };
+  });
+  const docxOut = Buffer.from(docxOutB64.b64, 'base64');
+  const docxIn = readFileSync(docxPath);
+  say(docxOut.length < docxIn.length,
+      `the DOCX got smaller: ${(docxIn.length / 1024).toFixed(1)} KB -> ${(docxOut.length / 1024).toFixed(1)} KB `
+      + `(${Math.round((1 - docxOut.length / docxIn.length) * 100)}% off)`);
+
+  const dOutZip = await JSZip.loadAsync(docxOut);
+  const body = await dOutZip.file('word/document.xml').async('string');
+  say(body.includes('D01') && body.includes('D09'),
+      'the DOCX body survives with its first and last markers');
+  for (const n of ['right-sized.png', 'transparent.png']) {
+    const a = await (await JSZip.loadAsync(docxIn)).file('word/media/' + n).async('uint8array');
+    const f = dOutZip.file('word/media/' + n);
+    const b = f ? await f.async('uint8array') : null;
+    say(b && Buffer.compare(Buffer.from(a), Buffer.from(b)) === 0,
+        `DOCX: ${n} came back byte-identical`);
+  }
+
+  /* --- target-size mode, the thing 145 real queries ask for -------------- */
+
+  /* Bytes are passed in rather than read from the file input: the
+     structurally-rich-deck check above clicks "Start over", which clears it. */
+  const targets = await page.evaluate(async (b64) => {
+    const bin = atob(b64);
+    const src = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) src[i] = bin.charCodeAt(i);
+    const reachable = await window.coCompressOoxml(
+      src.slice(), { targetBytes: 120 * 1024 }, window.JSZip, {});
+    const impossible = await window.coCompressOoxml(
+      src.slice(), { targetBytes: 8 * 1024 }, window.JSZip, {});
+    return {
+      reachable: { size: reachable.bytes.length, met: reachable.report.targetMet },
+      impossible: { size: impossible.bytes.length, met: impossible.report.targetMet },
+    };
+  }, readFileSync(FIXTURE).toString('base64'));
+
+  say(targets.reachable.met === true && targets.reachable.size <= 120 * 1024,
+      `a reachable target is met (${(targets.reachable.size / 1024).toFixed(1)} KB under 120 KB)`);
+  say(targets.impossible.met === false,
+      'an unreachable target reports met:false rather than pretending');
+  say(targets.impossible.size > 8 * 1024,
+      `and returns the smallest it could reach (${(targets.impossible.size / 1024).toFixed(1)} KB) `
+      + 'rather than an unreadable file that meets the number');
+  /* The gentlest setting that fits, not the smallest possible: a result far
+     under the limit gave away quality it did not need to. */
+  say(targets.reachable.size > targets.impossible.size,
+      'the reachable target used a gentler setting than the impossible one');
+
   /* --- responsive: the workspace only exists after a file is chosen ------- */
   for (const w of [320, 360, 390, 768, 1024]) {
     await page.setViewport({ width: w, height: 900 });

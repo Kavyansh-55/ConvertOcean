@@ -253,6 +253,19 @@ for (const [path, accept, kind] of [
       `${path} bundle carries the transparency guard — the one the fixture proved was needed`);
   say(bundles.includes('[Content_Types].xml'),
       `${path} bundle declares content types for renamed parts`);
+
+  /* Target-size mode exists because 145 of the 1,155 queries harvested for
+     these tools name a specific size — "compress ppt below 10mb", "compress
+     docx to 1mb". The page copy now promises it, so the control and the
+     engine behind it both have to actually be served. */
+  say(html.includes('id="cofFit"'), `${path} serves the fit-to-a-size control`);
+  say(html.includes('Or fit a size'), `${path} offers the target-size mode in words`);
+  /* Deliberately a phrase the PDF engine does not also use: the first version
+     of this check looked for 'Fitting to your target', which ships in the same
+     bundle from pdf-compress.js, so it passed before the office target mode
+     existed at all. */
+  say(bundles.includes('Fitting your document to that size'),
+      `${path} bundle contains the target-size search`);
 }
 
 /* The link surface, which is hand-maintained and was already wrong once:

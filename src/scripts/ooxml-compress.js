@@ -33,7 +33,7 @@
  * Everything runs on the reader's machine. Nothing is uploaded.
  */
 import {
-  planResample, judgeCandidate, encodeJpeg, EMU_PER_POINT,
+  planResample, judgeCandidate, encodeJpeg, dialToSettings, EMU_PER_POINT,
 } from './image-compress.js';
 
 /** Parts that are images we might touch. Anything else is copied verbatim. */
@@ -161,24 +161,49 @@ function hasTransparency(ctx, w, h) {
  * testable and the CDN-recovery bootstrap remains the one place that decides
  * whether the library really arrived.
  */
+/**
+ * How many megapixels of decoded bitmap to keep in memory at once.
+ *
+ * Target-size mode encodes the same images several times, and decoding them
+ * again on every pass would make it unusably slow. Holding all of them is
+ * worse: a 25 MB deck can be fifty 8-megapixel photos, which is about 1.7 GB
+ * of RGBA and does not fail gracefully — it freezes the tab and the browser
+ * kills it. That is the exact failure a byte limit alone does not prevent, and
+ * it was found the hard way in the PDF compressor. So the cache is capped and
+ * spills to re-decoding: slower past the cap, but it finishes.
+ */
+const DECODE_CAP_MEGAPIXELS = 48;
+
+/**
+ * Compress an OOXML file. Returns `{ bytes, report }`.
+ *
+ * `options.targetBytes` switches on target-size mode, which searches for the
+ * gentlest setting that still comes in under the limit.
+ *
+ * `JSZipLib` is passed in rather than reached for, so this module stays
+ * testable and the CDN-recovery bootstrap remains the one place that decides
+ * whether the library really arrived.
+ */
 export async function compressOoxml(bytes, options, JSZipLib, hooks) {
-  const opts = Object.assign({ dpi: 150, quality: 0.72 }, options || {});
+  const opts = Object.assign({ dpi: 150, quality: 0.72, targetBytes: null }, options || {});
   const on = Object.assign({ progress: () => {}, yield: () => Promise.resolve() }, hooks || {});
 
   const zip = await JSZipLib.loadAsync(bytes);
-  on.progress(10, 'Reading the document…');
+  on.progress(8, 'Reading the document…');
 
   const placements = await measurePlacements(zip);
-  on.progress(25, 'Measuring how each image is displayed…');
+  on.progress(18, 'Measuring how each image is displayed…');
+
+  /* ---- pass one: look at every image exactly once --------------------- */
 
   const imageParts = Object.keys(zip.files).filter((p) => IMAGE_RE.test(p) && !zip.files[p].dir);
-  const images = [];
-  const renames = new Map();
+  const entries = [];
+  let cachedMegapixels = 0;
 
-  for (let i = 0; i < imageParts.length; i++) {
-    const path = imageParts[i];
-    on.progress(25 + Math.round((i / Math.max(1, imageParts.length)) * 55),
-      `Checking image ${i + 1} of ${imageParts.length}…`);
+  for (let k = 0; k < imageParts.length; k++) {
+    const path = imageParts[k];
+    on.progress(18 + Math.round((k / Math.max(1, imageParts.length)) * 30),
+      `Checking image ${k + 1} of ${imageParts.length}…`);
     await on.yield();
 
     const raw = new Uint8Array(await zip.file(path).async('uint8array'));
@@ -187,33 +212,20 @@ export async function compressOoxml(bytes, options, JSZipLib, hooks) {
     const name = path.split('/').pop();
 
     if (!dims) {
-      images.push({ name, bytes: raw.length, action: 'kept', reason: 'the image header could not be read' });
+      entries.push({ path, name, raw, skip: 'the image header could not be read' });
       continue;
     }
 
-    const drawn = placements.get(path) || null;
-    const plan = planResample({
-      width: dims.width,
-      height: dims.height,
-      originalBytes: raw.length,
-      lossy: !isPng,
-      drawnPt: drawn,
-    }, opts);
+    const base = { path, name, raw, dims, isPng, drawn: placements.get(path) || null };
 
-    const base = {
-      name, width: dims.width, height: dims.height, bytes: raw.length,
-      displayedPt: plan.base.drawnPt,
-      effectiveDpi: plan.base.effectiveDpi,
-    };
-
-    if (plan.skip) { images.push({ ...base, action: 'kept', reason: plan.reason }); continue; }
-
-    /* Decode once: the alpha check and the re-encode share it. */
-    let bitmap;
+    /* Transparency is decided once, here, and never revisited: it does not
+       depend on the settings, and it is the one check that must happen before
+       the shared policy is consulted at all. */
+    let bitmap = null;
     try {
       bitmap = await createImageBitmap(new Blob([raw], { type: isPng ? 'image/png' : 'image/jpeg' }));
     } catch {
-      images.push({ ...base, action: 'kept', reason: 'this image could not be decoded, so it was left as it was' });
+      entries.push({ ...base, skip: 'this image could not be decoded, so it was left as it was' });
       continue;
     }
 
@@ -223,34 +235,154 @@ export async function compressOoxml(bytes, options, JSZipLib, hooks) {
       pctx.drawImage(bitmap, 0, 0);
       if (hasTransparency(pctx, bitmap.width, bitmap.height)) {
         bitmap.close?.();
-        images.push({
-          ...base, action: 'kept',
-          reason: 'it has transparent areas, and JPEG cannot keep those',
-        });
+        entries.push({ ...base, skip: 'it has transparent areas, and JPEG cannot keep those' });
         continue;
       }
     }
 
-    const candidate = await encodeJpeg(bitmap, plan.outW, plan.outH, plan.quality);
-    bitmap.close?.();
-
-    const verdict = judgeCandidate(plan, candidate.length);
-    if (!verdict.accept) { images.push({ ...base, action: 'kept', reason: verdict.reason }); continue; }
-
-    /* A .png part holding JPEG bytes is a malformed package, so the part is
-       renamed and every relationship pointing at it is rewritten below. */
-    const newPath = path.replace(/\.(png|jpe?g)$/i, '.jpeg');
-    zip.remove(path);
-    zip.file(newPath, candidate);
-    if (newPath !== path) renames.set(path, newPath);
-
-    images.push({
-      ...base, action: 'shrunk',
-      newWidth: plan.outW, newHeight: plan.outH, newBytes: candidate.length,
-    });
+    const mp = (dims.width * dims.height) / 1e6;
+    if (cachedMegapixels + mp <= DECODE_CAP_MEGAPIXELS) {
+      cachedMegapixels += mp;
+      entries.push({ ...base, bitmap });
+    } else {
+      /* Over the cap: keep the entry but not the pixels, and decode again on
+         demand. Slower, and it finishes. */
+      bitmap.close?.();
+      entries.push({ ...base, bitmap: null });
+    }
   }
 
+  /* ---- pass two: encode them at a given setting ------------------------ */
+
+  async function bitmapFor(e) {
+    if (e.bitmap) return { bitmap: e.bitmap, temporary: false };
+    const b = await createImageBitmap(
+      new Blob([e.raw], { type: e.isPng ? 'image/png' : 'image/jpeg' }));
+    return { bitmap: b, temporary: true };
+  }
+
+  async function encodeAt(settings, label, from, span) {
+    const out = [];
+    for (let k = 0; k < entries.length; k++) {
+      const e = entries[k];
+      if (span) {
+        on.progress(from + Math.round((k / Math.max(1, entries.length)) * span), label);
+        await on.yield();
+      }
+
+      const common = {
+        name: e.name,
+        width: e.dims ? e.dims.width : undefined,
+        height: e.dims ? e.dims.height : undefined,
+        bytes: e.raw.length,
+      };
+
+      if (e.skip) { out.push({ e, summary: { ...common, action: 'kept', reason: e.skip } }); continue; }
+
+      const plan = planResample({
+        width: e.dims.width,
+        height: e.dims.height,
+        originalBytes: e.raw.length,
+        lossy: !e.isPng,
+        drawnPt: e.drawn,
+      }, settings);
+
+      const withDisplay = {
+        ...common,
+        displayedPt: plan.base.drawnPt,
+        effectiveDpi: plan.base.effectiveDpi,
+      };
+
+      if (plan.skip) {
+        out.push({ e, summary: { ...withDisplay, action: 'kept', reason: plan.reason } });
+        continue;
+      }
+
+      const { bitmap, temporary } = await bitmapFor(e);
+      const candidate = await encodeJpeg(bitmap, plan.outW, plan.outH, plan.quality);
+      if (temporary) bitmap.close?.();
+
+      const verdict = judgeCandidate(plan, candidate.length);
+      if (!verdict.accept) {
+        out.push({ e, summary: { ...withDisplay, action: 'kept', reason: verdict.reason } });
+        continue;
+      }
+
+      out.push({
+        e,
+        bytes: candidate,
+        summary: {
+          ...withDisplay, action: 'shrunk',
+          newWidth: plan.outW, newHeight: plan.outH, newBytes: candidate.length,
+        },
+      });
+    }
+    return out;
+  }
+
+  /* The size a result would be, without rezipping to find out. Images are
+     already compressed, so the archive stores them essentially as-is and the
+     difference in image bytes is the difference in file size to within a
+     rounding error. Good enough to steer a search; the number reported to the
+     reader is always measured from the real file. */
+  const estimate = (results) => bytes.length
+    - results.reduce((n, r) => n + (r.bytes ? r.e.raw.length - r.bytes.length : 0), 0);
+
+  /* ---- choose a setting ------------------------------------------------ */
+
+  let results;
+  let targetMet = null;
+
+  if (opts.targetBytes) {
+    let lo = 0, hi = 1, best = null;
+    const MAX_PASSES = 6;
+    for (let p = 0; p < MAX_PASSES; p++) {
+      const t = (lo + hi) / 2;
+      const settings = dialToSettings(t);
+      on.progress(50 + Math.round((p / MAX_PASSES) * 30),
+        `Fitting your document to that size — attempt ${p + 1}…`);
+      const attempt = await encodeAt(settings, `Fitting your document to that size — attempt ${p + 1}…`, 0, 0);
+      const size = estimate(attempt);
+
+      /* "Closest to the target" is the wrong thing to keep. A result over the
+         limit has failed the request outright, and among results that fit, the
+         largest gave away the least quality. So prefer any fit over any miss,
+         then the biggest fit; only if nothing fits does the smallest attempt
+         become the best on offer. */
+      const fits = size <= opts.targetBytes;
+      const bestFits = best ? best.size <= opts.targetBytes : false;
+      const better = !best
+        || (fits && !bestFits)
+        || (fits && bestFits && size > best.size)
+        || (!fits && !bestFits && size < best.size);
+      if (better) best = { results: attempt, size, settings };
+
+      if (fits) hi = t; else lo = t;
+    }
+    results = best.results;
+    targetMet = best.size <= opts.targetBytes;
+  } else {
+    results = await encodeAt({ dpi: opts.dpi, quality: opts.quality },
+      'Compressing images…', 50, 30);
+  }
+
+  for (const e of entries) e.bitmap?.close?.();
+
+  /* ---- write the file -------------------------------------------------- */
+
   on.progress(85, 'Putting the document back together…');
+  const renames = new Map();
+  const images = [];
+
+  for (const r of results) {
+    images.push(r.summary);
+    if (!r.bytes) continue;
+    const newPath = r.e.path.replace(/\.(png|jpe?g)$/i, '.jpeg');
+    zip.remove(r.e.path);
+    zip.file(newPath, r.bytes);
+    if (newPath !== r.e.path) renames.set(r.e.path, newPath);
+  }
+
   if (renames.size) await applyRenames(zip, renames);
   await ensureJpegContentType(zip);
 
@@ -260,8 +392,8 @@ export async function compressOoxml(bytes, options, JSZipLib, hooks) {
     compressionOptions: { level: 9 },
   });
 
-  const shrunk = images.filter((i) => i.action === 'shrunk');
-  const saved = shrunk.reduce((n, i) => n + (i.bytes - i.newBytes), 0);
+  const shrunk = images.filter((im) => im.action === 'shrunk');
+  const saved = shrunk.reduce((n, im) => n + (im.bytes - im.newBytes), 0);
   on.progress(100, 'Done');
 
   return {
@@ -272,6 +404,11 @@ export async function compressOoxml(bytes, options, JSZipLib, hooks) {
       imagesFound: images.length,
       imagesShrunk: shrunk.length,
       bytesSavedOnImages: saved,
+      /* Measured from the real file, not from the estimate the search used —
+         reporting "met" off an approximation would be a lie the reader could
+         check. */
+      targetBytes: opts.targetBytes || null,
+      targetMet: opts.targetBytes ? out.length <= opts.targetBytes : null,
       images,
     },
   };
