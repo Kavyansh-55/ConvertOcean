@@ -215,5 +215,51 @@ for (const page of ['/excel-to-pdf/', '/merge-excel/', '/split-excel/', '/ofx-to
       'the served fallback is the SheetJS 0.20.3 build');
 }
 
+/* ------------------------------------------- the office compressors */
+
+for (const [path, accept, kind] of [
+  ['/compress-powerpoint/', '.pptx', 'PowerPoint'],
+  ['/compress-word/', '.docx', 'Word'],
+]) {
+  const r = await get(path);
+  say(r.status === 200, `${path} is served (${r.status})`);
+  const html = r.body;
+  /* Gated on the 200: the 404 page also has exactly one h1, so an ungated
+     check reports OK for a page that is not there — a passing line that means
+     the opposite of what it says. */
+  say(r.status === 200 && (html.match(/<h1/g) || []).length === 1,
+      `${path} has exactly one h1`);
+  say(html.includes(`rel="canonical" href="https://convertocean.com${path}"`),
+      `${path} self-canonicalises`);
+  say(html.includes('FAQPage'), `${path} carries FAQPage schema`);
+  say(html.includes(`accept="${accept}"`), `${path} accepts ${accept}`);
+  say(html.includes('jszip.min.js'), `${path} loads the archive reader`);
+
+  /* The engine is bundled, not inline, so it is asserted through the bundle
+     the page actually pulls — matching on runtime strings, since identifiers
+     are minified away. */
+  let bundles = '';
+  for (const m of html.matchAll(/\/_astro\/([^"']+\.js)/g)) {
+    bundles += (await get('/_astro/' + m[1])).body;
+  }
+  say(bundles.includes('media/'), `${path} bundle contains the OOXML media matcher`);
+  say(/transparent areas/.test(bundles),
+      `${path} bundle carries the transparency guard — the one the fixture proved was needed`);
+  say(bundles.includes('[Content_Types].xml'),
+      `${path} bundle declares content types for renamed parts`);
+}
+
+/* The link surface, which is hand-maintained and was already wrong once:
+   /compress-pdf/ shipped without ever being added to the footer. */
+{
+  const home = (await get('/')).body;
+  for (const slug of ['compress-pdf', 'compress-powerpoint', 'compress-word']) {
+    say(home.includes(`/${slug}/`), `the footer links to /${slug}/ from the homepage`);
+  }
+  const xml = (await get('/sitemap.xml')).body;
+  say(xml.includes('/compress-powerpoint/') && xml.includes('/compress-word/'),
+      'both compressors are in the XML sitemap');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
