@@ -242,7 +242,13 @@ for (const [path, accept, kind] of [
   for (const m of html.matchAll(/\/_astro\/([^"']+\.js)/g)) {
     bundles += (await get('/_astro/' + m[1])).body;
   }
-  say(bundles.includes('media/'), `${path} bundle contains the OOXML media matcher`);
+  /* A string literal, not a fragment of a regex. The first version of this
+     check looked for `media/` and failed against a correct deploy, because
+     the matcher is a regex and ships as `media\/[^/]+\.(png|jpe?g` with the
+     slash escaped. This file's own header says to match runtime strings for
+     exactly this reason, and the check ignored it. */
+  say(bundles.includes('the image header could not be read'),
+      `${path} bundle contains the OOXML image engine`);
   say(/transparent areas/.test(bundles),
       `${path} bundle carries the transparency guard — the one the fixture proved was needed`);
   say(bundles.includes('[Content_Types].xml'),
