@@ -25,10 +25,10 @@ import { recipes, uncovered, partiallyCovered } from './recipes/index.mjs';
 import * as inspect from './lib/inspect.mjs';
 // The site's own EXIF reader, so metadata assertions agree with the tool.
 import * as exifParse from '../../src/scripts/exif-parse.js';
+import * as TESTING_PATHS from '../testing-paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const FIXTURES = join(HERE, 'fixtures', 'files');
-const OUT = join(HERE, 'out');
+const { FIXTURES, OUT } = TESTING_PATHS;
 const ORIGIN = process.env.CO_ORIGIN || 'http://localhost:4321';
 
 const EDGE_CANDIDATES = [
@@ -514,8 +514,8 @@ const SYM = { pass: '  PASS', fail: '  FAIL', err: '  ERR ' };
 
   mkdirSync(OUT, { recursive: true });
   writeFileSync(join(OUT, 'report.json'), JSON.stringify({ when: new Date().toISOString(), report }, null, 2));
-  console.log(`  report: scripts/fidelity/out/report.json`);
-  console.log(`  files:  scripts/fidelity/out/\n`);
+  console.log(`  report: testing/out/report.json`);
+  console.log(`  files:  testing/out/\n`);
 
   process.exit(blockers > 0 ? 1 : 0);
 })().catch((e) => {

@@ -21,10 +21,11 @@ import { webkit } from 'playwright';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { spawn } from 'node:child_process';
+import * as TESTING_PATHS from '../testing-paths.mjs';
 
 const ORIGIN = process.env.CO_ORIGIN || 'http://localhost:4321';
 const LOCAL = ORIGIN.includes('localhost');
-const FIX = join(process.cwd(), 'scripts', 'fidelity', 'fixtures', 'files');
+const FIX = TESTING_PATHS.FIXTURES;
 
 let bad = 0;
 const say = (ok, msg) => { if (!ok) bad++; console.log(`${ok ? 'OK  ' : 'FAIL'}  ${msg}`); };

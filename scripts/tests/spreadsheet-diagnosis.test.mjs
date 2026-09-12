@@ -10,8 +10,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { diagnoseSpreadsheet } from '../../src/scripts/tabular.js';
+import * as TESTING_PATHS from '../testing-paths.mjs';
 
-const FIX = join(process.cwd(), 'scripts', 'fidelity', 'fixtures', 'files');
+const FIX = TESTING_PATHS.FIXTURES;
 const bytes = (p) => new Uint8Array(readFileSync(p));
 const fixture = (n) => bytes(join(FIX, n));
 

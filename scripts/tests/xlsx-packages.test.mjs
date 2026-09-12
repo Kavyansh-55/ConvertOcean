@@ -11,9 +11,10 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { mergeWorkbookPackages, extractSheetPackage } from '../../src/scripts/tabular.js';
+import * as TESTING_PATHS from '../testing-paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const FIXTURES = join(HERE, '..', 'fidelity', 'fixtures', 'files');
+const FIXTURES = TESTING_PATHS.FIXTURES;
 
 let passed = 0;
 let failed = 0;

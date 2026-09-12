@@ -15,9 +15,10 @@
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as TESTING_PATHS from '../../testing-paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const OUT = join(HERE, 'files');
+const OUT = TESTING_PATHS.FIXTURES;
 mkdirSync(OUT, { recursive: true });
 
 const write = (name, content) => {

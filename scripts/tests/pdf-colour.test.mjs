@@ -19,8 +19,9 @@ import { collectTextColours, colourMatcher, collectPageLines } from '../../src/s
 
 const require = createRequire(import.meta.url);
 const pdfjs = require('pdfjs-dist');
+import * as TESTING_PATHS from '../testing-paths.mjs';
 const HERE = dirname(fileURLToPath(import.meta.url));
-const FIXTURE = join(HERE, '..', 'fidelity', 'fixtures', 'files', 'torture.pdf');
+const FIXTURE = TESTING_PATHS.fixture('torture.pdf');
 
 let passed = 0;
 let failed = 0;

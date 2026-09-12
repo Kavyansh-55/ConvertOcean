@@ -38,9 +38,10 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { deflateSync } from 'node:zlib';
 import puppeteer from 'puppeteer-core';
+import * as TESTING_PATHS from '../../testing-paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const OUT = join(HERE, 'files');
+const OUT = TESTING_PATHS.FIXTURES;
 
 const EDGE_CANDIDATES = [
   'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',

@@ -21,9 +21,10 @@ import puppeteer from 'puppeteer-core';
 import { existsSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as TESTING_PATHS from '../../testing-paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const OUT = join(HERE, 'files', 'torture.xls');
+const OUT = TESTING_PATHS.fixture('torture.xls');
 
 const EDGE_CANDIDATES = [
   'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',

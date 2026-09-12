@@ -2,6 +2,7 @@
 // paragraph, second paragraph, a 3-column table with a bold header row, and
 // a second page. Standard Type1 fonts so pdf.js has metrics built in.
 import fs from 'node:fs';
+import * as TESTING_PATHS from '../../testing-paths.mjs';
 
 const page1 = `BT
 /F2 18 Tf
@@ -121,6 +122,7 @@ const objects = [
   stream(page2),
 ];
 
-const out = new URL('test.pdf', import.meta.url);
+TESTING_PATHS.ensureTestingDirs();
+const out = TESTING_PATHS.output('pdf-to-docx-test.pdf');
 fs.writeFileSync(out, pdf(objects));
 console.log('wrote test.pdf', fs.statSync(out).size, 'bytes');

@@ -17,6 +17,7 @@
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as TESTING_PATHS from '../../testing-paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -192,7 +193,7 @@ for (let i = 1; i <= objects.length; i++) {
 }
 pdf += `trailer\n<< /Size ${objects.length + 1} /Root ${catalog} 0 R >>\nstartxref\n${xrefAt}\n%%EOF\n`;
 
-const outDir = join(HERE, 'files');
+const outDir = TESTING_PATHS.FIXTURES;
 mkdirSync(outDir, { recursive: true });
 const buf = Buffer.from(pdf, 'latin1');
 writeFileSync(join(outDir, 'torture.pdf'), buf);

@@ -30,9 +30,10 @@ import { existsSync, readFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as TESTING_PATHS from '../testing-paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const FIXTURES = join(HERE, 'fixtures', 'files');
+const { FIXTURES } = TESTING_PATHS;
 const ORIGIN = process.env.CO_ORIGIN || 'http://localhost:4321';
 const LOCAL = ORIGIN.includes('localhost');
 

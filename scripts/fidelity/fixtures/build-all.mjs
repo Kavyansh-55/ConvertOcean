@@ -15,7 +15,8 @@ for (const f of ['build-docx.mjs', 'build-xlsx.mjs', 'build-pptx.mjs', 'build-pd
    distinctly-named second copy of each mergeable fixture so "merge two files"
    is actually what gets tested. */
 import { copyFileSync, existsSync as exists } from 'node:fs';
-const FILES = join(HERE, 'files');
+import * as TESTING_PATHS from '../../testing-paths.mjs';
+const FILES = TESTING_PATHS.FIXTURES;
 
 /* The legacy .xls fixture needs a browser to write it — there is no SheetJS in
    node_modules, so it is produced by the very library the tools use, and

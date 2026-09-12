@@ -14,6 +14,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { markerPng, makePng } from '../lib/png.mjs';
 import { writePackage } from '../lib/ooxml.mjs';
+import * as TESTING_PATHS from '../../testing-paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DECL = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
@@ -233,7 +234,7 @@ const contentTypes = DECL +
 
 /* ----------------------------------------------------------------- emit */
 
-const out = join(HERE, 'files', 'torture.pptx');
+const out = TESTING_PATHS.fixture('torture.pptx');
 const bytes = await writePackage({
   '[Content_Types].xml': contentTypes,
   '_rels/.rels': rels([['rId1', 'officeDocument', 'ppt/presentation.xml']]),
@@ -316,7 +317,7 @@ const altPng = makePng(240, 160, (x, y) => {
   return [126, 34, 206];
 });
 
-const outB = join(HERE, 'files', 'torture-b.pptx');
+const outB = TESTING_PATHS.fixture('torture-b.pptx');
 const bytesB = await writePackage({
   '[Content_Types].xml': contentTypes,
   '_rels/.rels': rels([['rId1', 'officeDocument', 'ppt/presentation.xml']]),

@@ -27,7 +27,9 @@ already-running server alone. Exit code is 1 when any **blocker** check fails.
 | Path | Purpose |
 |---|---|
 | `fixtures/build-*.mjs` | Build the torture files, as hand-written OOXML / PDF |
-| `fixtures/files/` | Generated fixtures (gitignored) |
+| `../testing-paths.mjs` | The one place that knows where artifacts go |
+| `testing/fixtures/` | Generated fixtures (gitignored, repo root) |
+| `testing/out/` | Converted output + `report.json` (gitignored, repo root) |
 | `lib/ooxml.mjs` | Zip packaging + strict XML validation of every part |
 | `lib/png.mjs` | Dependency-free PNG encoder for the marker image |
 | `lib/inspect.mjs` | Readers for produced PDF / DOCX / XLSX / ZIP output |

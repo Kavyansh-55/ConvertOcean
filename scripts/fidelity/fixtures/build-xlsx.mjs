@@ -16,6 +16,7 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { writePackage, xmlEscape } from '../lib/ooxml.mjs';
+import * as TESTING_PATHS from '../../testing-paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const NS_MAIN = 'xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"';
@@ -187,7 +188,7 @@ const contentTypes = DECL +
 
 /* ----------------------------------------------------------------- emit */
 
-const out = join(HERE, 'files', 'torture.xlsx');
+const out = TESTING_PATHS.fixture('torture.xlsx');
 const bytes = await writePackage({
   '[Content_Types].xml': contentTypes,
   '_rels/.rels': rootRels,
@@ -285,7 +286,7 @@ const workbookXmlB = DECL + `<workbook ${NS_MAIN} ${NS_REL}><sheets>` +
   '<sheet name="Notes" sheetId="3" r:id="rId3"/>' +
   '</sheets></workbook>';
 
-const outB = join(HERE, 'files', 'torture-b.xlsx');
+const outB = TESTING_PATHS.fixture('torture-b.xlsx');
 const bytesB = await writePackage({
   '[Content_Types].xml': contentTypes,
   '_rels/.rels': rootRels,

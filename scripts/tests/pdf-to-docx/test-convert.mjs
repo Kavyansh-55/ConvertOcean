@@ -4,6 +4,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import JSZip from 'jszip';
 import { createRequire } from 'node:module';
+import * as TESTING_PATHS from '../../testing-paths.mjs';
 const require = createRequire(import.meta.url);
 // Text extraction only — stub the rendering-related global pdf.js probes for.
 if (!globalThis.DOMMatrix) globalThis.DOMMatrix = class DOMMatrix { constructor() { this.a = 1; this.b = 0; this.c = 0; this.d = 1; this.e = 0; this.f = 0; } };
@@ -15,8 +16,7 @@ await import(new URL('build-test-pdf.mjs', import.meta.url).href); // writes tes
 const core = await import(new URL('../../../src/scripts/pdf-to-docx.js', import.meta.url).href);
 const { collectPageLines, buildDocxParts, pagesPlainText } = core;
 
-const here = (f) => new URL(f, import.meta.url);
-const data = new Uint8Array(fs.readFileSync(here('test.pdf')));
+const data = new Uint8Array(fs.readFileSync(TESTING_PATHS.output('pdf-to-docx-test.pdf')));
 const standardFontDataUrl =
   pathToFileURL(path.resolve('node_modules/pdfjs-dist/standard_fonts/')).href + '/';
 
@@ -78,7 +78,7 @@ for (const [name, pass] of Object.entries(checks)) {
 const zip = new JSZip();
 for (const [p, c] of Object.entries(parts)) zip.file(p, c);
 const buf = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
-fs.writeFileSync(here('out.docx'), buf);
+fs.writeFileSync(TESTING_PATHS.output('pdf-to-docx.docx'), buf);
 console.log('wrote out.docx', buf.length, 'bytes');
 
 console.log('--- document.xml (first 2600 chars) ---');

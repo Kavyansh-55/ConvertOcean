@@ -29,14 +29,11 @@ scratch/
 # Superseded design doc, replaced by DESIGN.md
 vercel-design-analysis.md.bak
 
-# pdf-to-docx test artifacts
-scripts/tests/pdf-to-docx/test.pdf
-scripts/tests/pdf-to-docx/out.docx
-
-# Fidelity harness: fixtures and converted output are generated, not authored.
-# The builders and recipes are checked in; what they produce is not.
-scripts/fidelity/fixtures/files/
-scripts/fidelity/out/
+# Everything the test suites generate, in one place — see scripts/testing-paths.mjs.
+# The builders, recipes and tests are checked in; what they produce is not,
+# because it is all reproducible with `npm run fidelity:fixtures` and a repo
+# that ships a megabyte of generated .xlsx is a repo nobody can review.
+testing/
 
 # Unrelated nested git repos that live in this folder (never part of the site)
 test-repo/

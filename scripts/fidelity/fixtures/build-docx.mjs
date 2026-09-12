@@ -15,6 +15,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { markerPng } from '../lib/png.mjs';
 import { writePackage } from '../lib/ooxml.mjs';
+import * as TESTING_PATHS from '../../testing-paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -262,7 +263,7 @@ const footerXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
 
 /* ----------------------------------------------------------------- emit */
 
-const out = join(HERE, 'files', 'torture.docx');
+const out = TESTING_PATHS.fixture('torture.docx');
 const bytes = await writePackage({
   '[Content_Types].xml': contentTypes,
   '_rels/.rels': rootRels,
