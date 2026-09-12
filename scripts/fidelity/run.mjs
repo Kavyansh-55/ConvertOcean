@@ -494,6 +494,38 @@ const SYM = { pass: '  PASS', fail: '  FAIL', err: '  ERR ' };
   /* A sweep that reports only what it looked at reads as a clean bill of
      health it has not earned. Say what has no recipe at all. */
   if (!only.length) {
+    /* …and the list saying so is hand-written, so it can fall behind the site
+       without anything looking wrong: a new tool with no recipe is simply
+       absent from both the results and the "not covered" list, and the report
+       reads as complete while quietly knowing less than it did. That happened
+       the moment /compress-powerpoint/ and /compress-word/ were added. So
+       every tool must now be accounted for somewhere, and an unaccounted one
+       fails the run rather than disappearing from it. */
+    /* Read as text rather than imported. `tools.ts` uses extensionless
+       specifiers that Node cannot resolve, so `await import()` throws — and
+       the first version of this guard caught that and carried on, which made
+       it a check that could never fail. It was only caught by running the
+       import on its own and watching it fail. */
+    const toolsSrc = readFileSync(join(TESTING_PATHS.ROOT, 'src', 'data', 'tools.ts'), 'utf8');
+    const slugs = [...toolsSrc.matchAll(/^\s*slug:\s*'([^']+)'/gm)].map((m) => m[1]);
+    if (slugs.length < 40) {
+      totalFail++;
+      console.log(`\n  COVERAGE GUARD BROKEN — read only ${slugs.length} slugs out of tools.ts,`
+        + ' so it is not really checking anything');
+    } else {
+      const known = new Set([
+        ...recipes.map((r) => r.slug),
+        ...uncovered.map((u) => u.slug),
+        ...partiallyCovered.map((p) => p.slug),
+      ]);
+      const orphans = slugs.filter((s) => !known.has(s));
+      if (orphans.length) {
+        totalFail += orphans.length;
+        console.log(`\n  UNACCOUNTED FOR (${orphans.length}) — add a recipe, or say why there is none`
+          + ` in recipes/index.mjs:\n    ${orphans.join('\n    ')}`);
+      }
+    }
+
     console.log(`\n  NOT COVERED BY ANY RECIPE (${uncovered.length} tool${uncovered.length === 1 ? '' : 's'}):`);
     for (const u of uncovered) console.log(`    ${u.slug.padEnd(26)} ${u.why}`);
 

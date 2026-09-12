@@ -32,6 +32,8 @@ export const uncovered = [
   { slug: 'profit-margin-calculator', why: 'arithmetic — covered by npm run calculators (margin vs markup asserted separately)' },
   { slug: 'break-even-calculator', why: 'arithmetic — covered by npm run calculators' },
   { slug: 'sales-tax-calculator', why: 'arithmetic — covered by npm run calculators (forward and reverse tax)' },
+  { slug: 'compress-powerpoint', why: 'compression is not a conversion — covered end to end by npm run compress:office, which unzips the result and checks each part' },
+  { slug: 'compress-word', why: 'shares the engine and the suite above; npm run compress:office asserts the page loads and accepts .docx' },
 ];
 
 /**

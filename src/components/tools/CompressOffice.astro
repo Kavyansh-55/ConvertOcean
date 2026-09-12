@@ -1,0 +1,353 @@
+---
+const { slug, headline, subtitle } = Astro.props;
+const isWord = slug === 'compress-word';
+const accept = isWord ? '.docx' : '.pptx';
+const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
+---
+
+{/* `is:global` with a `cof-` prefix, on purpose. Astro rewrites a scoped
+    selector to `.thing[data-astro-cid-xxxx]` and only stamps that attribute
+    onto elements written in this template — every row of the results table
+    below is built in JS at runtime and would match nothing. That is the trap
+    recorded in CLAUDE.md, six live instances deep, and `scripts/tests/
+    scoped-css.test.mjs` now fails on new ones. */}
+<style is:global>
+  .cof-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+    padding: var(--spacing-lg);
+    background-color: var(--colors-canvas-soft);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 10px;
+  }
+  .cof-sizes {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .cof-size-before { font-size: 20px; color: var(--colors-mute); text-decoration: line-through; }
+  .cof-size-arrow { color: var(--colors-mute); }
+  .cof-size-after { font-size: 32px; font-weight: 700; color: var(--colors-heading); }
+  .cof-saving { margin-top: 4px; color: var(--colors-body); }
+  .cof-hero-actions { display: flex; gap: var(--spacing-sm); flex-wrap: wrap; }
+
+  .cof-settings { margin-top: var(--spacing-lg); }
+  .cof-settings-label { font-weight: 600; margin-bottom: var(--spacing-sm); }
+  .cof-preset-row { display: flex; gap: var(--spacing-sm); flex-wrap: wrap; }
+  .cof-preset {
+    flex: 1 1 180px;
+    text-align: left;
+    padding: var(--spacing-md);
+    border: 1px solid var(--colors-hairline);
+    border-radius: 10px;
+    background-color: var(--colors-canvas);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .cof-preset[aria-pressed="true"] { border-color: var(--colors-link); box-shadow: inset 0 0 0 1px var(--colors-link); }
+  .cof-preset-name { font-weight: 600; display: block; }
+  .cof-preset-note { font-size: 13px; color: var(--colors-mute); }
+
+  .cof-changed { margin-top: var(--spacing-lg); }
+  .cof-changed summary { cursor: pointer; font-weight: 600; }
+  .cof-table-scroll { overflow-x: auto; margin-top: var(--spacing-sm); }
+  .cof-img-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .cof-img-table th, .cof-img-table td {
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--colors-hairline);
+    vertical-align: top;
+    font-variant-numeric: tabular-nums;
+  }
+  .cof-img-table td:last-child { color: var(--colors-mute); }
+  .cof-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 999px;
+    border: 1px solid var(--colors-hairline);
+    white-space: nowrap;
+  }
+  .cof-tag-shrunk { color: var(--colors-link); border-color: var(--colors-link); }
+
+  /* Announced, not shown. The whole outcome arrives asynchronously after the
+     file is chosen, so without this a screen reader is told nothing at all —
+     the page goes quiet and then has a download button. */
+  .cof-sr {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 600px) {
+    .cof-size-after { font-size: 27px; }
+    .cof-hero { padding: var(--spacing-md); }
+    .cof-hero-actions { width: 100%; }
+    .cof-hero-actions .button { flex: 1 1 auto; }
+  }
+</style>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<div id="errorBanner" class="error-banner">
+  <strong>Could not compress this file.</strong>
+  <span id="errorMessage"></span>
+</div>
+
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar">
+    <div id="progressBarFill" class="progress-bar-fill"></div>
+  </div>
+  <div id="progressLabel" class="progress-label">Reading the document…</div>
+</div>
+
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon">🗜️</div>
+  <p class="upload-text">Drop your {kindLabel} here, or click to choose one</p>
+  <p class="upload-hint">{accept} · up to 25MB · never leaves your device</p>
+  <input type="file" id="fileInput" class="file-input" accept={accept} />
+</div>
+
+<div id="cofWorkspace" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
+  <div class="cof-hero">
+    <div class="cof-hero-figures">
+      <div class="cof-sizes">
+        <span class="cof-size-before" id="cofBefore">—</span>
+        <span class="cof-size-arrow">→</span>
+        <span class="cof-size-after" id="cofAfter">—</span>
+      </div>
+      <div class="cof-saving" id="cofSaving"></div>
+    </div>
+    <p class="cof-sr" role="status" aria-live="polite" id="cofLive"></p>
+    <div class="cof-hero-actions">
+      <button class="button button-primary" id="cofDownload" disabled>Download</button>
+      <button class="button button-danger" id="cofClear">Start over</button>
+    </div>
+  </div>
+
+  <div class="cof-settings">
+    <div class="cof-settings-label" id="cofPresetLabel">How hard to compress</div>
+    <div class="cof-preset-row" role="group" aria-labelledby="cofPresetLabel" id="cofPresetRow"></div>
+  </div>
+
+  <details class="cof-changed" id="cofChanged">
+    <summary>What changed in your file</summary>
+    <div class="cof-table-scroll">
+      <table class="cof-img-table">
+        <thead>
+          <tr><th>Image</th><th>Stored</th><th>Shown at</th><th>Result</th><th>Why</th></tr>
+        </thead>
+        <tbody id="cofImgRows"></tbody>
+      </table>
+    </div>
+  </details>
+</div>
+
+<script is:inline define:vars={{ slug, accept, kindLabel }}>
+  (function () {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const overlay = document.getElementById('progressOverlay');
+    const barFill = document.getElementById('progressBarFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const workspace = document.getElementById('cofWorkspace');
+    const beforeEl = document.getElementById('cofBefore');
+    const afterEl = document.getElementById('cofAfter');
+    const savingEl = document.getElementById('cofSaving');
+    const liveEl = document.getElementById('cofLive');
+    const downloadBtn = document.getElementById('cofDownload');
+    const clearBtn = document.getElementById('cofClear');
+    const presetRow = document.getElementById('cofPresetRow');
+    const changed = document.getElementById('cofChanged');
+    const imgRows = document.getElementById('cofImgRows');
+
+    let job = null;        // { name, bytes }
+    let current = null;    // { bytes, report }
+    let preset = 'balanced';
+    let busy = false;
+
+    const fmt = (b) => (window.coFormatSize ? window.coFormatSize(b) : (b / 1024).toFixed(1) + ' KB');
+
+    function showError(msg) {
+      errorMessage.textContent = ' ' + msg;
+      errorBanner.style.display = 'block';
+    }
+    function hideError() { errorBanner.style.display = 'none'; }
+    function progress(pct, label) {
+      overlay.style.display = 'block';
+      barFill.style.width = Math.max(0, Math.min(100, pct)) + '%';
+      if (label) progressLabel.textContent = label;
+    }
+    function hideProgress() { overlay.style.display = 'none'; }
+
+    function buildPresets() {
+      const presets = (window.coPdfPresets) || {};
+      presetRow.innerHTML = '';
+      for (const key of ['light', 'balanced', 'strong']) {
+        const p = presets[key];
+        if (!p) continue;
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'cof-preset';
+        b.setAttribute('aria-pressed', String(key === preset));
+        b.innerHTML = '<span class="cof-preset-name"></span><span class="cof-preset-note"></span>';
+        b.querySelector('.cof-preset-name').textContent = p.label;
+        b.querySelector('.cof-preset-note').textContent = p.note;
+        b.addEventListener('click', function () {
+          if (busy) return;
+          preset = key;
+          for (const el of presetRow.children) el.setAttribute('aria-pressed', 'false');
+          b.setAttribute('aria-pressed', 'true');
+          if (job) run();
+        });
+        presetRow.appendChild(b);
+      }
+    }
+
+    function renderReport(report) {
+      beforeEl.textContent = fmt(report.originalBytes);
+      afterEl.textContent = fmt(report.newBytes);
+
+      const saved = report.originalBytes - report.newBytes;
+      const pct = report.originalBytes ? Math.round((saved / report.originalBytes) * 100) : 0;
+      let msg;
+      if (saved > 0) {
+        msg = fmt(saved) + ' smaller — ' + pct + '% off, from '
+          + report.imagesShrunk + ' of ' + report.imagesFound + ' image'
+          + (report.imagesFound === 1 ? '' : 's') + '.';
+      } else {
+        /* Saying "compressed" when nothing was saved is the thing that makes a
+           tool untrustworthy. The panel below says which image and why. */
+        msg = 'This file is already about as small as it gets — nothing here '
+            + 'could be reduced without making it worse.';
+      }
+      savingEl.textContent = msg;
+      liveEl.textContent = msg;
+
+      imgRows.innerHTML = '';
+      for (const img of report.images) {
+        const tr = document.createElement('tr');
+        const shown = img.displayedPt
+          ? Math.round(img.displayedPt.w) + '×' + Math.round(img.displayedPt.h) + 'pt'
+            + (img.effectiveDpi && isFinite(img.effectiveDpi) ? ' · ' + img.effectiveDpi + ' DPI' : '')
+          : '—';
+        const result = img.action === 'shrunk'
+          ? '<span class="cof-tag cof-tag-shrunk">' + img.newWidth + '×' + img.newHeight
+            + ' · ' + fmt(img.newBytes) + '</span>'
+          : '<span class="cof-tag">kept</span>';
+        tr.innerHTML = '<td></td><td></td><td></td><td>' + result + '</td><td></td>';
+        tr.children[0].textContent = img.name;
+        tr.children[1].textContent = img.width + '×' + img.height + ' · ' + fmt(img.bytes);
+        tr.children[2].textContent = shown;
+        tr.children[4].textContent = img.action === 'shrunk' ? '' : (img.reason || '');
+        imgRows.appendChild(tr);
+      }
+      changed.style.display = report.images.length ? 'block' : 'none';
+    }
+
+    async function run() {
+      if (!job || busy) return;
+      busy = true;
+      downloadBtn.disabled = true;
+      hideError();
+      try {
+        const presets = (window.coPdfPresets) || {};
+        const s = presets[preset] || { dpi: 150, quality: 0.72 };
+        const out = await window.coCompressOoxml(
+          job.bytes.slice(), { dpi: s.dpi, quality: s.quality }, window.JSZip,
+          {
+            progress: progress,
+            yield: () => new Promise((r) => setTimeout(r, 0)),
+          },
+        );
+        current = out;
+        renderReport(out.report);
+        downloadBtn.disabled = false;
+      } catch (err) {
+        showError(window.coMessageForError
+          ? window.coMessageForError(err, 'This file could not be read as a ' + kindLabel + '.')
+          : 'This file could not be read as a ' + kindLabel + '. If it opens correctly in Office, please report it.');
+        console.error(err);
+      } finally {
+        hideProgress();
+        busy = false;
+      }
+    }
+
+    async function accept_(file) {
+      if (!file) return;
+      if (window.coFileTooLarge && window.coFileTooLarge(file, 25)) {
+        showError(window.coFileTooLarge(file, 25));
+        return;
+      }
+      const ext = '.' + (file.name.split('.').pop() || '').toLowerCase();
+      if (ext !== accept) {
+        showError('This tool takes ' + accept + ' files. Rename or re-save your file as '
+          + accept + ' in Office and try again.');
+        return;
+      }
+      hideError();
+      progress(5, 'Reading the document…');
+      job = { name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) };
+      workspace.style.display = 'block';
+      dropZone.style.display = 'none';
+      buildPresets();
+      await run();
+    }
+
+    fileInput.addEventListener('change', function (e) { accept_(e.target.files[0]); });
+    dropZone.addEventListener('dragover', function (e) { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', function () { dropZone.classList.remove('dragover'); });
+    dropZone.addEventListener('drop', function (e) {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      accept_(e.dataTransfer.files[0]);
+    });
+
+    downloadBtn.addEventListener('click', function () {
+      if (!current || downloadBtn.disabled) return;
+      /* Guarded against the double-tap that used to download twice. */
+      downloadBtn.disabled = true;
+      const blob = new Blob([current.bytes], {
+        type: slug === 'compress-word'
+          ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+          : 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = job.name.replace(/\.(pptx|docx)$/i, '') + '-compressed' + accept;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () {
+        URL.revokeObjectURL(a.href);
+        a.remove();
+        downloadBtn.disabled = false;
+      }, 1200);
+    });
+
+    clearBtn.addEventListener('click', function () {
+      job = null; current = null;
+      workspace.style.display = 'none';
+      dropZone.style.display = '';
+      fileInput.value = '';
+      hideError();
+    });
+  })();
+</script>

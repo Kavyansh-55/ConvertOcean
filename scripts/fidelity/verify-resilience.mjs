@@ -59,6 +59,11 @@ const CASES = [
   ['/excel-to-pdf/',   'XLSX',           'xlsx.full.min.js'],
   ['/merge-excel/',    'XLSX',           'xlsx.full.min.js'],
   ['/merge-word/',     'JSZip',          'jszip.min.js'],
+  /* The office compressors have exactly one library and it is this one, so a
+     JSZip that never arrives is the whole tool failing rather than half of
+     it. */
+  ['/compress-powerpoint/', 'JSZip',     'jszip.min.js'],
+  ['/compress-word/',  'JSZip',          'jszip.min.js'],
   ['/image-to-text/',  'Tesseract',      'tesseract.min.js'],
   ['/invoice-generator/', 'html2pdf',    'html2pdf.bundle.min.js'],
   /* Two libraries are fetched on first use rather than declared as a script

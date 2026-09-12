@@ -21,7 +21,8 @@
     "generators": "node scripts/fidelity/verify-generators.mjs",
     "themes": "node scripts/fidelity/verify-themes.mjs",
     "webkit": "node scripts/fidelity/verify-webkit.mjs",
-    "compress": "node scripts/fidelity/verify-compress.mjs"
+    "compress": "node scripts/fidelity/verify-compress.mjs",
+    "compress:office": "node scripts/fidelity/verify-compress-office.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

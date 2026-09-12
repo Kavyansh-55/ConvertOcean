@@ -6,7 +6,7 @@ import {
   salesTaxCalculatorContent,
   breakEvenCalculatorContent
 } from './business-content';
-import { seoContentMap, imageResizerContent, jpgToJpegContent, jpegToJpgContent, compressPdfContent } from './seo-content';
+import { seoContentMap, imageResizerContent, jpgToJpegContent, jpegToJpgContent, compressPdfContent, compressPowerpointContent, compressWordContent } from './seo-content';
 
 export interface ToolData {
   slug: string;
@@ -329,6 +329,51 @@ const rawTools: ToolData[] = [
     ],
     relatedTools: ['merge-pdf', 'split-pdf', 'image-resizer', 'pdf-to-word', 'image-to-pdf'],
     content: compressPdfContent
+  },
+  {
+    slug: 'compress-powerpoint',
+    name: 'Compress PowerPoint',
+    title: 'Compress PowerPoint Online - Reduce PPTX File Size | ConvertOcean',
+    description: 'Compress PowerPoint files in your browser. Shrink photo-heavy decks 40-80% with slides, text and animations untouched. Nothing is uploaded.',
+    headline: 'Compress PowerPoint.',
+    subtitle: 'Reduce PPTX file size by re-encoding only the pictures stored bigger than the slide ever shows them — text, layouts, notes and animations stay exactly as they were.',
+    quickAnswer: 'To compress a PowerPoint file, drop your .pptx above and it is reduced immediately — typically by 40-80% for photo-heavy decks, because pasted pictures are stored at full camera resolution and displayed in a box a few inches wide. The tool measures how large each image is actually shown on its slide, redraws only the oversized ones, and leaves slides, text, layouts, speaker notes, charts and animations untouched. Images that are already the right size, flat graphics that would grow as JPEGs, and anything with transparency are left alone and listed with the reason. Compression runs entirely in your browser - the presentation never leaves your device.',
+    icon: '🗜️',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'How much smaller will my PowerPoint get?', answer: 'Decks with photos in them usually drop 40-80%, because each pasted picture is stored at the resolution it came from — a phone camera produces images around 4,000 pixels wide — and displayed a few inches across. A deck that is mostly text, charts and shapes may barely shrink at all, because its size is not in pictures. The tool shows the real before and after figures rather than a promised percentage.' },
+      { question: 'Will compressing blur my slides or break the animations?', answer: 'No. Only the embedded pictures are re-encoded. Slides, text, fonts, layouts, slide masters, speaker notes, tables, charts, transitions and animations are copied through completely untouched, so the file is still a fully editable presentation. Images already displayed at their natural resolution come back byte-for-byte identical.' },
+      { question: 'What happens to logos with transparent backgrounds?', answer: 'They are left exactly as they were. JPEG has no transparent areas, so re-encoding a transparent PNG would put an opaque white box around your logo. The tool checks the actual pixels of every image and skips any that has even one non-opaque pixel, then tells you that is why it skipped it.' },
+      { question: 'Why is my presentation still large after compressing?', answer: 'Almost always because the bytes are not in pictures. Embedded video and audio are the usual cause — a single 30-second clip can outweigh every image in the deck. Embedded fonts, leftover slide masters from a template and retained revision history also add weight. Open "What changed in your file" and if few or no images were changed, that is the tool telling you the size is somewhere else.' },
+      { question: 'Do my files get uploaded to a server?', answer: 'No uploads are performed. The .pptx is unzipped, examined, re-encoded and rezipped entirely inside your browser tab, and discarded when you close the page. That is also why it keeps working with your network disconnected once the page has loaded — which matters, because decks routinely contain unreleased financials and client names.' },
+      { question: 'Does it handle the same picture used on several slides?', answer: 'Yes, and this is a case worth getting right. PowerPoint stores one copy of an image even when you use it on ten slides. If it is a small logo on nine and a full-bleed background on the tenth, sizing it for the logo would visibly wreck the background. Every placement is measured and the image is sized for its largest appearance.' },
+      { question: 'Is this the same as PowerPoint\'s own Compress Pictures?', answer: 'It does the same job and reports what it did. PowerPoint\'s Compress Pictures applies a chosen resolution to every image, which is effective but silent — you cannot see which images it changed or what it cost. This tool decides per image, never makes one bigger, never flattens transparency, and lists every decision with a reason. It also needs no copy of Office installed.' }
+    ],
+    relatedTools: ['compress-pdf', 'merge-pptx', 'split-pptx', 'pptx-to-pdf', 'compress-word'],
+    content: compressPowerpointContent
+  },
+  {
+    slug: 'compress-word',
+    name: 'Compress Word',
+    title: 'Compress Word Document Online - Reduce DOCX Size | ConvertOcean',
+    description: 'Compress Word documents in your browser. Shrink screenshot-heavy DOCX files while text, styles and tracked changes stay editable. Nothing is uploaded.',
+    headline: 'Compress Word.',
+    subtitle: 'Reduce DOCX file size by re-encoding only the pictures stored bigger than the page ever shows them — text, styles, tables and tracked changes stay exactly as they were.',
+    quickAnswer: 'To compress a Word document, drop your .docx above and it is reduced immediately. A .docx is a ZIP archive, and when one is unexpectedly large it is nearly always the pasted pictures: a screenshot from a high-resolution monitor can be 3,840 pixels wide and several megabytes, shown six inches across on the page. The tool measures the displayed size of each image, redraws only the oversized ones, and leaves text, styles, headings, tables, footnotes, comments and tracked changes untouched, so the result is still fully editable. Everything runs in your browser - the document never leaves your device.',
+    icon: '🗜️',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'How much smaller will my Word document get?', answer: 'It depends entirely on whether the size is in pictures. A document heavy with screenshots or photos often drops a long way, because those are stored at full capture resolution and displayed much smaller. A text-only report will barely change, because there is no large saving hiding in one. The tool reports the real figures rather than promising a percentage.' },
+      { question: 'Will my document still be editable afterwards?', answer: 'Yes, completely. Only the embedded pictures are re-encoded. Text, styles, headings, numbering, tables, footnotes, headers and footers, comments, tracked changes and embedded fonts are copied through untouched, so the file opens in Word exactly as it did before — just smaller.' },
+      { question: 'Will my screenshots become blurry or full of artefacts?', answer: 'Screenshots of interfaces, documents and spreadsheets are mostly flat colour, and the tool recognises that. Where a JPEG would not actually be smaller, it keeps the original rather than introducing artefacts into text you need to read. Where an image is genuinely oversized it reduces the resolution, which removes detail nobody could see at the size it is displayed.' },
+      { question: 'What happens to transparent images?', answer: 'They are left exactly as they were, because JPEG cannot store transparency and re-encoding one would put a white box around it. The tool inspects the actual pixels rather than trusting the file type, and reports that as the reason it skipped the image.' },
+      { question: 'Why is my document still large after compressing?', answer: 'Because the bytes are not in pictures. Embedded objects such as a whole spreadsheet pasted in, retained revision history from long editing sessions, and large embedded font subsets all add weight that image compression cannot reach. Inside Word itself, accepting all tracked changes and saving a fresh copy often removes more than any compressor can.' },
+      { question: 'Do my files get uploaded to a server?', answer: 'No uploads are performed. The .docx is unzipped, examined and rebuilt entirely inside your browser tab and discarded when you close the page. Contracts, reports and medical letters never leave your device, and the tool keeps working with your network disconnected once the page has loaded.' }
+    ],
+    relatedTools: ['compress-pdf', 'compress-powerpoint', 'merge-word', 'split-word', 'word-to-pdf'],
+    content: compressWordContent
   },
   {
     slug: 'invoice-generator',

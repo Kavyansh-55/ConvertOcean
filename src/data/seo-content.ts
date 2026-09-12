@@ -1519,3 +1519,57 @@ export const compressPdfContent = `
   <p>Need the opposite operation? <a href="/merge-pdf/">Merge PDF</a> combines several documents into one, and <a href="/split-pdf/">Split PDF</a> extracts the pages you actually need. If you are assembling a PDF out of photos in the first place, <a href="/image-to-pdf/">Image to PDF</a> and the <a href="/guides/photos-to-pdf-scanning/">guide to scanning with a phone</a> cover doing it at a sane resolution so there is less to compress later. For a single photograph rather than a document, the <a href="/image-resizer/">Image Resizer</a> targets exact pixel dimensions or an exact KB limit, and the rest of the set lives in <a href="/pdf-tools/">PDF Tools</a>.</p>
 </div>
 `;
+
+export const compressPowerpointContent = `
+<div class="content-card">
+  <h2>Why PowerPoint Files Get So Large.</h2>
+  <p>A deck that started as a few slides of text can reach 80 MB after a handful of photos are pasted in, and the reason is almost always the same one. When you paste or insert a picture, PowerPoint stores the <em>original file</em> — a modern phone camera produces images around 4,000 pixels wide — and then displays it in a box a few inches across. That is roughly 400 to 1,000 DPI of detail doing a 150 DPI job. Nothing on screen renders it, no projector shows it, and it routinely accounts for more than 90% of the file.</p>
+  <p>So compressing a presentation properly is not a matter of squeezing the whole file. A .pptx is a ZIP archive containing your slides as XML plus a media folder, and the media folder is the problem. This tool opens the archive, measures how large each picture is <em>actually displayed</em> on its slide, redraws only the ones stored bigger than that, and leaves every other part exactly as it was. Slides, text, layouts, masters, speaker notes, tables, charts, animations, transitions and embedded fonts are copied through untouched.</p>
+
+  <h3>What It Refuses to Do.</h3>
+  <p>The crude way to shrink a presentation is to re-encode every image at a fixed quality. That posts better numbers and quietly damages the deck, so this tool applies four rules instead, and tells you when each one fired:</p>
+  <ul>
+    <li><strong>It never makes an image bigger.</strong> A flat diagram, chart or screenshot of mostly solid colour often compresses to a few kilobytes already, and turning it into a JPEG would <em>grow</em> it. Every candidate is measured against what was there and discarded if it lost.</li>
+    <li><strong>It never touches a picture that is already the right size.</strong> An image displayed at its natural resolution comes back byte-for-byte identical. Re-encoding it could only cost quality.</li>
+    <li><strong>It never flattens transparency.</strong> JPEG has no transparent areas, so a logo with a transparent background would come back sitting in an opaque white box. Any image with even one non-opaque pixel is left alone — checked by examining the pixels, not by trusting the file extension.</li>
+    <li><strong>It tells you what it skipped, and why.</strong> Open <strong>What changed in your file</strong> and every image is listed with its stored size, the size it is shown at, and what was decided. A tool that silently ignores half a file and announces that it compressed it has misrepresented its own work.</li>
+  </ul>
+
+  <h3>The Same Picture on Several Slides.</h3>
+  <p>PowerPoint stores one copy of a picture even when you use it on ten slides, which is good for file size and a trap for a compressor. If the image is a small logo in the corner of nine slides and a full-bleed background on the tenth, sizing it for the logo would visibly wreck the background. This tool measures every placement of every image and sizes each one for its <em>largest</em> appearance, so the biggest use stays sharp.</p>
+
+  <h3>Compressing for Email and Upload Limits.</h3>
+  <p>Most attachment limits are the reason people compress a deck at all: Gmail caps attachments at 25 MB, Outlook at 20 MB, and many corporate mail servers at 10 MB. A photo-heavy presentation usually drops well under those on the Recommended setting. If it does not, the honest answer is often to split the deck rather than compress harder — past a point you are trading legibility on a projector for megabytes, and a blurry slide in a boardroom costs more than a second email.</p>
+
+  <h3>What This Will Not Fix.</h3>
+  <p>If your file is large for a reason other than pictures, this tool will say so rather than pretend. Embedded video and audio are by far the most common — a single 30-second clip can outweigh every image in the deck, and re-encoding video in a browser is not something we will claim to do well. Embedded fonts, many slide masters left over from a template, and retained revision history also add weight. In those cases the panel will show few or no images changed, which is the tool telling you the bytes are somewhere else.</p>
+
+  <h3>Nothing Is Uploaded.</h3>
+  <p>The presentation is unzipped, examined, re-encoded and rezipped entirely inside your browser tab. It is never transmitted anywhere, and it is discarded the moment you close the page — which is also why the tool keeps working if you disconnect your network after the page has loaded. Decks routinely contain unreleased financials, client names and internal strategy, and the safest way to handle that is not to have it leave the machine at all.</p>
+</div>
+`;
+
+export const compressWordContent = `
+<div class="content-card">
+  <h2>Why Word Documents Get So Large.</h2>
+  <p>A .docx is a ZIP archive of XML plus a media folder, and when a document is unexpectedly large it is nearly always that media folder. Pasting a photo or a screenshot into Word stores the original image — often 4,000 pixels wide from a phone, or a full-resolution screen capture — and then displays it at whatever size you dragged it to on the page. The stored detail is never rendered, never printed, and can be well over 90% of the file.</p>
+  <p>This tool opens the archive, measures how large each picture is <em>actually displayed</em> in the document, redraws only the ones stored bigger than that, and copies everything else through untouched. Text, styles, headings, tables, footnotes, headers and footers, tracked changes, comments and embedded fonts are not modified at all — the result is still an editable Word document, not a picture of one.</p>
+
+  <h3>Four Rules, and What They Protect.</h3>
+  <ul>
+    <li><strong>It never makes an image bigger.</strong> Screenshots of documents, spreadsheets and user interfaces are mostly flat colour and already compress extremely well. Converting one to a JPEG would grow it, so every candidate is measured and discarded if it lost.</li>
+    <li><strong>It never touches a picture already at the right size.</strong> Those come back byte-for-byte identical.</li>
+    <li><strong>It never flattens transparency.</strong> A logo on a transparent background would come back in an opaque white box, so any image with a non-opaque pixel is left exactly as it was.</li>
+    <li><strong>It tells you what it skipped, and why</strong> — every image listed with its stored size, its displayed size, and the decision made about it.</li>
+  </ul>
+
+  <h3>Screenshots Are the Usual Culprit.</h3>
+  <p>Technical documents, manuals and reports are heavy with screen captures, and a modern display produces very large ones — a full-screen grab on a high-resolution monitor can be 3,840 pixels wide and several megabytes, pasted into a document that shows it six inches across. That is the single most common cause of a bloated .docx, and it is exactly the case this tool is built for. Because a screenshot of an interface is mostly flat colour, the tool will often keep it losslessly and simply reduce its resolution, rather than introducing JPEG artefacts into text you need to be able to read.</p>
+
+  <h3>What This Will Not Fix.</h3>
+  <p>If the bytes are not in pictures, the panel will show few or no images changed — which is the tool being honest rather than failing. Embedded objects such as a whole spreadsheet pasted in as an object, retained revision history from long editing sessions, and very large embedded font subsets all add weight that image compression cannot reach. In Word itself, accepting all tracked changes and saving a fresh copy often removes more than any compressor can.</p>
+
+  <h3>Nothing Is Uploaded.</h3>
+  <p>The document is unzipped, examined and rebuilt entirely inside your browser tab, and discarded when you close the page. Contracts, reports, medical letters and anything else you would rather not hand to a stranger's server never leave your device — which is also why this keeps working with your network disconnected once the page has loaded.</p>
+</div>
+`;

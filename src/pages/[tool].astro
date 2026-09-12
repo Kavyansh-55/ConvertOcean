@@ -40,6 +40,7 @@ import HeicTool from '../components/tools/HeicTool.astro';
 import BankFileTool from '../components/tools/BankFileTool.astro';
 import ExifTool from '../components/tools/ExifTool.astro';
 import CompressPdf from '../components/tools/CompressPdf.astro';
+import CompressOffice from '../components/tools/CompressOffice.astro';
 
 export function getStaticPaths() {
   return tools.map(t => ({ params: { tool: t.slug } }));
@@ -91,6 +92,8 @@ const toolsMap: Record<string, any> = {
   'merge-pdf': MergePdf,
   'split-pdf': SplitPdf,
   'compress-pdf': CompressPdf,
+  'compress-powerpoint': CompressOffice,
+  'compress-word': CompressOffice,
   'invoice-generator': InvoiceGenerator,
   'receipt-generator': ReceiptGenerator,
   'profit-margin-calculator': ProfitMarginCalculator,
@@ -615,6 +618,8 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
   import { startLibraryRecovery } from '../scripts/lib-bootstrap.js';
   import { fileTooLarge, anyFileTooLarge, nothingToConvert, formatSize } from '../scripts/file-limits.js';
   import { compressPdf, PRESETS } from '../scripts/pdf-compress.js';
+  import { compressOoxml } from '../scripts/ooxml-compress.js';
+  import { messageForError } from '../scripts/ensure-lib.js';
   import { installClickGuard } from '../scripts/click-guard.js';
 
   startLibraryRecovery();
@@ -637,4 +642,10 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
      rather than inside an `is:inline` script. Same publishing trick as above. */
   window.coCompressPdf = compressPdf;
   window.coPdfPresets = PRESETS;
+
+  /* The office compressor asks the same question in a different container, so
+     it shares that engine's policy and its presets rather than inventing a
+     second set of thresholds for readers to be confused by. */
+  window.coCompressOoxml = compressOoxml;
+  window.coMessageForError = messageForError;
 </script>
