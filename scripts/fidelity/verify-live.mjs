@@ -322,6 +322,58 @@ for (const [path, accept, kind] of [
   say(exif.includes('rotation flag <span'), '/exif-remover/ keeps the space before its hint');
 }
 
+/* ------------------------------------------- the mobile-reveal CSS fixes */
+
+/* Every one of these was found only after `npm run mobile` started opening a
+   tool's workspace with a real file instead of measuring an empty drop zone.
+   They live in CSS rather than in page text, so the stylesheet is what has to
+   be fetched — and its filename is content-hashed, so it is discovered from
+   the page rather than hard-coded. */
+async function stylesheetsFor(path) {
+  const { body } = await get(path);
+  const hrefs = [...body.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)]
+    .map((m) => m[1])
+    .filter((h) => h.startsWith('/'));
+  const sheets = await Promise.all(hrefs.map((h) => get(h)));
+  return { html: body, css: sheets.map((s) => s.body).join('\n') };
+}
+
+{
+  const { css } = await stylesheetsFor('/merge-pdf/');
+
+  say(/\.icon-btn\{[^}]*min-width:44px/.test(css),
+      'the remove-file button is a 44px tap target, not an 11px one');
+  say(/\.icon-btn\{[^}]*touch-action:manipulation/.test(css),
+      'and it does not wait for a double-tap');
+  say(css.includes('.button-group{flex-wrap:wrap}'),
+      'button groups wrap instead of pushing the page sideways');
+  say(/\.preview-table th\{[^}]*font-size:12px/.test(css),
+      'preview table headers are at the 12px floor');
+  say(/\.preview-table th\{[^}]*letter-spacing:normal/.test(css),
+      'and no longer carry the page\'s negative tracking into uppercase');
+
+  /* The accessible name on the control itself. "✕" alone is announced as
+     "times", or as nothing at all. */
+  for (const slug of ['merge-pdf', 'merge-word', 'merge-excel', 'merge-powerpoint']) {
+    const { body } = await get('/' + slug + '/');
+    say(body.includes('aria-label="Remove '),
+        `/${slug}/ names its remove-file button for a screen reader`);
+  }
+}
+
+{
+  /* /image-to-text/ scrolled the whole page sideways at 320 and 360. The fix
+     is a grid track that is allowed to shrink. */
+  const { css } = await stylesheetsFor('/image-to-text/');
+  /* Scoped to this component's own rule. The first version of this check
+     looked for `minmax(0,1fr)` anywhere in the stylesheet and passed against
+     the deploy that still had the bug — six other components were already
+     using it. Eleventh time this cycle a check was green for the wrong
+     reason, and the second time it was this exact mistake. */
+  say(/\.workspace-grid\[[^\]]+\]\{[^}]*grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/.test(css),
+      '/image-to-text/ grid tracks can shrink below their content');
+}
+
 /* The link surface, which is hand-maintained and was already wrong once:
    /compress-pdf/ shipped without ever being added to the footer. */
 {
