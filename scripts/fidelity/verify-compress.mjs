@@ -329,6 +329,177 @@ try {
     }
   }
 
+/* ======================================================================
+   The controls, not the engine.
+
+   Everything above calls `window.__run(...)` directly. That is the right way
+   to interrogate compression policy, and it is also how a completely dead
+   button survived: `Fit to this size` shared a code path with *selecting* the
+   Fit a size preset, which is supposed to open the panel and wait, so the
+   early return written for the second silently swallowed the first. The
+   engine was perfect and the button never reached it — on any press.
+
+   A reader reported it. Nothing here could have, because nothing here had
+   ever pressed anything. So these drive the real controls and assert on what
+   the page shows afterwards.
+   ====================================================================== */
+{
+  const page = await browser.newPage();
+  try {
+    await page.goto(`${ORIGIN}/compress-pdf/`, { waitUntil: 'networkidle2', timeout: 60_000 });
+    await page.waitForFunction('typeof window.coCompressPdf === "function" && window.PDFLib',
+      { timeout: 30_000 });
+
+    /* Count every call that actually reaches the engine. */
+    await page.evaluate(() => {
+      window.__engineCalls = [];
+      const orig = window.coCompressPdf;
+      window.coCompressPdf = function (bytes, opts) {
+        window.__engineCalls.push(opts && opts.targetBytes ? { target: opts.targetBytes } : { preset: true });
+        return orig.apply(this, arguments);
+      };
+    });
+
+    await (await page.$('#fileInput')).uploadFile(join(FIXTURES, 'torture-compress.pdf'));
+    await page.waitForSelector('#cmpDownload:not([disabled])', { timeout: 60_000 });
+
+    const afterUpload = await page.evaluate(() => window.__engineCalls.length);
+    say(afterUpload === 1, `one compression runs when a file is chosen (${afterUpload})`);
+
+    /* Selecting the preset must NOT compress — it only opens the panel. */
+    await page.evaluate(() => {
+      [...document.querySelectorAll('#cmpPresetRow button')]
+        .find((b) => /fit a size/i.test(b.textContent)).click();
+    });
+    await new Promise((r) => setTimeout(r, 400));
+    const afterSelect = await page.evaluate(() => window.__engineCalls.length);
+    say(afterSelect === afterUpload,
+      `selecting "Fit a size" opens the panel without compressing (${afterSelect} calls)`);
+    say(await page.evaluate(() => {
+      const el = document.getElementById('cmpTargetPanel') || document.getElementById('cmpTargetKB');
+      return !!el && el.getBoundingClientRect().height > 0;
+    }), 'and the size field is actually visible');
+
+    /* Pressing the button must compress. This is the regression. */
+    await page.evaluate(() => {
+      const el = document.getElementById('cmpTargetKB');
+      el.value = '120';
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await page.click('#cmpFit');
+    await page.waitForFunction(() => window.__engineCalls.length > 1, { timeout: 60_000 })
+      .catch(() => {});
+    await page.waitForSelector('#cmpDownload:not([disabled])', { timeout: 60_000 });
+    await new Promise((r) => setTimeout(r, 400));
+
+    const calls = await page.evaluate(() => window.__engineCalls);
+    const targeted = calls.filter((c) => c.target);
+    say(targeted.length === 1,
+      `pressing "Fit to this size" reaches the engine (${targeted.length} targeted run(s))`);
+    say(targeted.length === 1 && targeted[0].target === 120 * 1024,
+      `and passes the size that was typed (${targeted[0] ? targeted[0].target : 'none'} bytes)`);
+
+    const note = await page.evaluate(() =>
+      (document.getElementById('cmpTargetNote') || {}).textContent || '');
+    say(/fits under|could not reach/i.test(note),
+      `and the page reports the outcome against that number: "${note.slice(0, 70)}"`);
+
+    /* A second press with a different number must not be served from the
+       first one's cache. */
+    await page.evaluate(() => {
+      const el = document.getElementById('cmpTargetKB');
+      el.value = '300';
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await page.click('#cmpFit');
+    await page.waitForFunction(() => window.__engineCalls.filter((c) => c.target).length > 1,
+      { timeout: 60_000 }).catch(() => {});
+    await new Promise((r) => setTimeout(r, 400));
+    const twice = await page.evaluate(() => window.__engineCalls.filter((c) => c.target).length);
+    say(twice === 2, `a different size runs again rather than reusing the last answer (${twice})`);
+
+    /* The presets have to differ on a file that has something to trade. */
+    const sizes = [];
+    for (const key of ['light', 'balanced', 'strong']) {
+      /* Wait for *this* preset's run, not merely for an enabled button: the
+         download stays enabled from the previous answer for a moment after
+         the click, so reading straight away reports the last preset's size.
+         The first version of this check did exactly that and printed a figure
+         that belonged to no setting at all. */
+      const before = await page.evaluate(() => window.__engineCalls.length);
+      await page.evaluate((k) => {
+        const b = [...document.querySelectorAll('#cmpPresetRow button')]
+          .find((x) => x.dataset.preset === k);
+        if (b) b.click();
+      }, key);
+      await page.waitForFunction((n) => window.__engineCalls.length > n,
+        { timeout: 60_000 }, before).catch(() => {});
+      await page.waitForSelector('#cmpDownload:not([disabled])', { timeout: 60_000 });
+      await page.waitForSelector('#cmpStage[data-ready="1"]', { timeout: 60_000 }).catch(() => {});
+      sizes.push(await page.evaluate(() =>
+        (document.getElementById('cmpAfter') || {}).textContent));
+    }
+    say(new Set(sizes).size === 3,
+      `the three presets give three different sizes on an image-heavy PDF (${sizes.join(' / ')})`);
+
+    /* The comparison hides itself when its render throws, so "the panel is not
+       there" and "the panel had nothing to show" look identical from outside.
+       Assert the render did not fail rather than inferring it from the DOM. */
+    const renderErr = await page.evaluate(() => window.__cmpRenderError || null);
+    say(renderErr === null, renderErr
+      ? `the before/after render threw: ${renderErr.slice(0, 90)}`
+      : 'the before/after comparison rendered without throwing');
+    say(await page.evaluate(() => {
+      const s = document.getElementById('cmpStage');
+      const c = document.getElementById('cmpCanvasBefore');
+      return s.hasAttribute('data-ready') && c.width > 0;
+    }), 'and both pages are actually painted');
+
+    await page.close();
+  } catch (err) {
+    bad++;
+    console.log(`FAIL  driving the controls threw: ${String(err).slice(0, 120)}`);
+    await page.close().catch(() => {});
+  }
+}
+
+/* A text document with a logo — the file from the bug report. Every preset
+   returns the same bytes because nothing is worth re-encoding, which is
+   correct; the failure was that the page gave no reason, so three identical
+   numbers read as a broken tool. */
+{
+  const page = await browser.newPage();
+  try {
+    await page.goto(`${ORIGIN}/compress-pdf/`, { waitUntil: 'networkidle2', timeout: 60_000 });
+    await page.waitForFunction('typeof window.coCompressPdf === "function" && window.PDFLib',
+      { timeout: 30_000 });
+    await (await page.$('#fileInput')).uploadFile(join(FIXTURES, 'text-with-logo.pdf'));
+    await page.waitForSelector('#cmpDownload:not([disabled])', { timeout: 60_000 });
+    await new Promise((r) => setTimeout(r, 400));
+
+    const state = await page.evaluate(() => ({
+      saving: (document.getElementById('cmpSaving') || {}).textContent || '',
+      slots: [...document.querySelectorAll('#cmpPresetRow [data-size-for]')]
+        .filter((s) => s.dataset.sizeFor !== 'target')
+        .map((s) => s.textContent.trim()),
+      compareOpen: (document.getElementById('cmpCompare') || {}).open,
+    }));
+
+    say(/make no difference/i.test(state.saving),
+      'it says why the settings cannot change this file, instead of leaving three equal numbers unexplained');
+    say(state.slots.every((v) => v && v === state.slots[0]),
+      `and fills in all three up front rather than making the reader click each one (${state.slots.join(' / ')})`);
+    say(state.compareOpen === false,
+      'the before/after comparison stays closed when nothing was re-encoded');
+
+    await page.close();
+  } catch (err) {
+    bad++;
+    console.log(`FAIL  the text-with-logo case threw: ${String(err).slice(0, 120)}`);
+    await page.close().catch(() => {});
+  }
+}
+
 } finally {
   await browser.close();
   if (server) server.kill();
