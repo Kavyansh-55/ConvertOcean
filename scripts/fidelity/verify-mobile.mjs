@@ -22,10 +22,21 @@
  *  - **The invoice and receipt document previews.** Their 10px type is a mock
  *    of a printed page and those sizes carry into the exported PDF. Enlarging
  *    them for the screen would change the document.
+ *
+ * One blind spot, now partly closed. Most tools show a drop zone and nothing
+ * else until a file arrives, so loading the page measures the *empty* state and
+ * never the controls the reader actually works with. `/split-pdf/` passed four
+ * widths for months while its whole workspace sat behind `display: none`.
+ * `REVEAL` names the pages worth opening first and the fixture that opens them;
+ * every other tool in the family has the same gap and the same remedy.
  */
 import puppeteer from 'puppeteer-core';
 import { existsSync } from 'node:fs';
 import { spawn } from 'node:child_process';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'testing', 'fixtures');
 
 const ORIGIN = process.env.CO_ORIGIN || 'http://localhost:4321';
 const LOCAL = ORIGIN.includes('localhost');
@@ -42,6 +53,12 @@ function browserPath() {
 }
 
 const WIDTHS = [320, 360, 390, 768];
+
+/* Pages whose real UI only exists once a file has been added, and the fixture
+   that brings it out. Adding one costs four page loads and a file each. */
+const REVEAL = {
+  '/split-pdf/': { file: 'torture.pdf', wait: '#splitWorkspace' },
+};
 const PAGES = [
   '/', '/excel-to-pdf/', '/pdf-to-word/', '/merge-pdf/', '/word-to-pdf/',
   '/invoice-generator/', '/sales-tax-calculator/', '/json-formatter/',
@@ -89,6 +106,21 @@ try {
       try {
         await page.goto(ORIGIN + path, { waitUntil: 'networkidle2', timeout: 45000 });
         await new Promise((r) => setTimeout(r, 700));
+
+        const reveal = REVEAL[path];
+        if (reveal) {
+          const fixture = join(FIXTURES, reveal.file);
+          if (!existsSync(fixture)) {
+            throw new Error(`fixture missing: ${reveal.file} (run npm run fidelity:fixtures)`);
+          }
+          const input = await page.$('input[type=file]');
+          if (!input) throw new Error('no file input to reveal the workspace with');
+          await input.uploadFile(fixture);
+          await page.waitForSelector(reveal.wait, { visible: true, timeout: 45000 });
+          /* Thumbnails render asynchronously and change the layout as they
+             land; measuring before they settle measures a page nobody sees. */
+          await new Promise((r) => setTimeout(r, 1500));
+        }
 
         const found = await page.evaluate((vw) => {
           const out = { overflow: null, zoomers: [], smallTaps: [], tinyText: [], flush: [] };
@@ -197,7 +229,9 @@ try {
       await page.close();
     }
 
-    say(problems.length === 0, `${path.padEnd(24)} ${problems.length ? problems[0] : 'clean at 320/360/390/768'}`);
+    const state = REVEAL[path] ? ' (with a file loaded)' : '';
+    say(problems.length === 0,
+        `${path.padEnd(24)} ${problems.length ? problems[0] : 'clean at 320/360/390/768' + state}`);
     for (const p of problems.slice(1)) console.log(`        ${p}`);
   }
 } finally {

@@ -491,15 +491,27 @@ export const seoContentMap: Record<string, SEOData> = {
     ]
   },
   'split-pdf': {
-    title: 'Split PDF Online - Extract Pages Client-Side | ConvertOcean',
-    description: 'Split PDF files and extract selected ranges offline in your browser. Isolate chapters and select specific sheets easily.',
+    title: 'Split PDF Online - Into Separate Files, Parts or Pages | ConvertOcean',
+    description: 'Split a PDF into separate files, into a number of equal parts, or into parts under a size you set. Runs in your browser — nothing is sent to a server.',
     content: `
 <div class="content-card">
   <h2>Extracting Specific Pages and Slicing PDF Files.</h2>
   <p>Large PDF files containing dozens of pages can be difficult to share. Splitting PDFs lets you isolate specific pages, extract target sections, and compile them as independent documents.</p>
 
+  <h3>Four Ways to Split, and When Each One Is the Right One.</h3>
+  <p>"Split" means four different jobs, and the tool asks which one you want before it starts:</p>
+  <ul>
+    <li><strong>One PDF of the pages you pick</strong> — the signature page, the one chapter, the appendix. Click the page thumbnails or type ranges.</li>
+    <li><strong>A separate PDF for every page you pick</strong>, returned as a ZIP. This is what people mean by splitting a PDF "into pages" or "into separate files": 40 pages become 40 files, named by page number and zero-padded so they sort correctly.</li>
+    <li><strong>The whole document in a number of equal parts</strong> — into 2, into 4, into as many as 100. Pages that do not divide evenly go to the earlier parts, so 10 pages in 3 parts gives 4, 3 and 3 rather than a stray part at the end.</li>
+    <li><strong>Parts that each stay under a size in MB</strong> — for an email attachment cap or a portal that rejects anything over a limit.</li>
+  </ul>
+
   <h3>Selecting Pages and Ranges.</h3>
-  <p>The split panel accepts individual page numbers (<code>1, 3, 7</code>), ranges (<code>5-10</code>), or a combination (<code>1, 5-10, 14</code>). Each selection compiles into its own standalone PDF. Extraction copies the original page objects — text, vector graphics, and images — into the new file without re-rendering or re-compressing anything, so a split page is pixel-identical to the original. That also makes splitting fast: pulling three pages out of a 300-page manual takes about a second, because nothing is being redrawn.</p>
+  <p>The split panel accepts individual page numbers (<code>1, 3, 7</code>), ranges (<code>5-10</code>), or a combination (<code>1, 5-10, 14</code>), and the page thumbnails and the range box stay in sync with each other. Extraction copies the original page objects — text, vector graphics, and images — into the new file without re-rendering or re-compressing anything, so a split page is pixel-identical to the original. That also makes splitting fast: pulling three pages out of a 300-page manual takes about a second, because nothing is being redrawn.</p>
+
+  <h3>Splitting to a File Size, Honestly.</h3>
+  <p>When you set a size limit, each part is filled with as many consecutive pages as will fit and is then <em>measured as a real file</em> before it is written — not estimated from the pages that went into it. If the measured part is over your limit, pages are handed back to the next part until it genuinely fits. There is one case the tool cannot solve and says so instead of hiding: a single page that is already larger than your limit — a full-page scan, usually — cannot be made smaller by splitting. That page becomes a part of its own, the tool names it, and <a href="/compress-pdf/">Compress PDF</a> is the thing that will actually bring it down.</p>
 
   <h3>When Splitting Beats Sending the Whole File.</h3>
   <ul>
@@ -514,7 +526,11 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "How do I specify which pages to extract?", answer: "You can enter individual pages (e.g. '1, 3') or a range (e.g. '5-10') in the split panel to extract them." },
+      { question: "How do I specify which pages to extract?", answer: "You can enter individual pages (e.g. '1, 3') or a range (e.g. '5-10') in the split panel to extract them, or click the page thumbnails — the two stay in sync." },
+      { question: "Can I split a PDF into separate files, one per page?", answer: "Yes. Choose 'A separate PDF for every page I pick', select the pages, and the tool returns a ZIP holding one PDF per page. Each file is named by its page number, zero-padded so the files sort correctly in any file manager." },
+      { question: "Can I split a PDF into 2 equal parts?", answer: "Yes. Choose the equal-parts option and enter how many parts you want, from 2 up to 100. The document is divided into that many runs of consecutive pages and returned as a ZIP. When the page count does not divide evenly, the earlier parts each take one extra page — 10 pages in 3 parts gives 4, 3 and 3." },
+      { question: "Can I split a PDF by file size?", answer: "Yes. Enter a size in MB and each part is filled with as many consecutive pages as fit under it. Every part is measured as a real file before it is written, so the limit you set is the limit you get. A single page that is already over your limit cannot be shrunk by splitting — it becomes a part of its own, and the tool names that page rather than quietly handing you an oversized file." },
+      { question: "How large a PDF can I split?", answer: "Up to 25MB. The file is held in your browser's memory rather than on a server, so the ceiling is what a browser tab can comfortably work with. A large scanned document is slower to split than a text one, because each page carries its images with it." },
       { question: "Can I split a password-protected PDF file?", answer: "No. The file must be unlocked or decrypted before the client-side engine can parse its pages." },
       { question: "Does splitting pages reduce document quality?", answer: "No, the PDF extraction process copies page structures without re-encoding, preserving text and image quality." }
     ]

@@ -41,6 +41,11 @@ const CONVERSIONS = [
   ['/png-to-jpg/',   'torture.png',  '#btnDownload', 'canvas'],
   ['/split-word/',   'torture.docx', '#btnSplit',    'JSZip package surgery'],
   ['/txt-to-pdf/',   'torture.txt',  '#btnDownload', 'jsPDF + Noto'],
+  /* pdf-lib had no WebKit coverage at all until the split modes were built:
+     merge-pdf and split-pdf are the only tools that use it, and neither was
+     listed. This drives the mode that exercises the most of it — copyPages
+     per page, then a zip of the results. */
+  ['/split-pdf/',    'torture.pdf',  '#btnExtract',  'pdf-lib + JSZip'],
 ];
 
 async function ensureServer() {
@@ -90,6 +95,15 @@ try {
 
       if (path === '/split-word/') {
         await page.selectOption('#splitMode', 'paragraphs').catch(() => {});
+        await page.waitForTimeout(400);
+      }
+
+      if (path === '/split-pdf/') {
+        /* Extract acts on a selection that starts empty, and the mode that is
+           worth testing here is the one that writes many files rather than
+           one. */
+        await page.click('#btnSelectAllPages', { timeout: 15000 }).catch(() => {});
+        await page.click('input[name="splitMode"][value="each"]', { timeout: 15000 }).catch(() => {});
         await page.waitForTimeout(400);
       }
 

@@ -11,6 +11,58 @@ const { slug, headline, subtitle } = Astro.props;
     max-height: 350px;
     overflow-y: auto;
   }
+  /* The mode selector. Written in the template, so scoped CSS reaches it —
+     unlike the thumbnails below, which are built at runtime and need
+     :global(). */
+  .split-modes {
+    border: 1px solid var(--colors-hairline);
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+  .split-modes legend {
+    padding: 0 var(--spacing-xs);
+  }
+  .split-mode {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-sm);
+    font-size: 13.5px;
+    line-height: 1.5;
+    cursor: pointer;
+    /* The label wraps its radio, so the whole row is one hit target with no
+       dead zone between the two — and the row is tall enough to be a thumb
+       target rather than just the 13px control. */
+    min-height: 44px;
+    padding-block: 6px;
+    touch-action: manipulation;
+  }
+  .split-mode input[type="radio"] {
+    flex: none;
+    margin: 0;
+    accent-color: var(--colors-ink);
+  }
+  .split-mode strong { font-weight: 600; }
+  .split-mode-num {
+    width: 5.5em;
+    display: inline-block;
+    padding: 2px 6px;
+  }
+  .split-mode-note {
+    font-size: 12px;
+    color: var(--colors-mute);
+    margin: var(--spacing-xs) 0 0;
+    min-height: 1.2em;
+  }
+  /* A whole-document mode ignores the page picker, so the picker says so
+     rather than sitting there looking live. */
+  .split-range-bar.inactive,
+  .pages-grid.inactive { opacity: 0.55; }
+
   .split-range-bar {
     display: flex;
     align-items: flex-end;
@@ -29,8 +81,11 @@ const { slug, headline, subtitle } = Astro.props;
     min-width: 0;
   }
   .split-range-field .form-input { max-width: 320px; }
+  /* 12px is the floor the mobile suite holds body text to, and this is body
+     text. It sat at 11.5px unnoticed because the panel it lives in is hidden
+     until a file is added, so nothing had ever measured it. */
   .split-range-hint {
-    font-size: 11.5px;
+    font-size: 12px;
     color: var(--colors-mute);
   }
   .split-range-hint.invalid { color: var(--colors-danger, #b91c1c); }
@@ -75,6 +130,7 @@ const { slug, headline, subtitle } = Astro.props;
 
 <script is:inline src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <div class="page-header">
   <h1 class="page-title">{headline}</h1>
@@ -105,6 +161,24 @@ const { slug, headline, subtitle } = Astro.props;
 </div>
 
 <div id="splitWorkspace" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
+  <fieldset class="split-modes">
+    <legend class="input-label">What should come out</legend>
+    <label class="split-mode"><input type="radio" name="splitMode" value="one" checked />
+      <span><strong>One PDF</strong> containing the pages I pick</span></label>
+    <label class="split-mode"><input type="radio" name="splitMode" value="each" />
+      <span><strong>A separate PDF for every page</strong> I pick, in a ZIP</span></label>
+    <label class="split-mode"><input type="radio" name="splitMode" value="parts" />
+      <span><strong>The whole PDF in</strong>{' '}
+        <input type="number" id="partCount" class="form-input split-mode-num" value="2" min="2" max="100"
+               aria-label="Number of equal parts" inputmode="numeric" autocomplete="off" />{' '}
+        <strong>equal parts</strong>, in a ZIP</span></label>
+    <label class="split-mode"><input type="radio" name="splitMode" value="size" />
+      <span><strong>The whole PDF in parts under</strong>{' '}
+        <input type="number" id="partSize" class="form-input split-mode-num" value="2" min="0.1" step="0.1"
+               aria-label="Maximum size of each part, in MB" inputmode="decimal" autocomplete="off" />{' '}
+        <strong>MB each</strong>, in a ZIP</span></label>
+    <p class="split-mode-note" id="splitModeNote"></p>
+  </fieldset>
   <div class="split-range-bar">
     <div class="split-range-field">
       <label class="input-label" for="pageRanges">Pages to extract</label>
@@ -118,7 +192,8 @@ const { slug, headline, subtitle } = Astro.props;
   </div>
   <div id="pagesGrid" class="pages-grid" style="margin-bottom: var(--spacing-md);"></div>
   <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
-    <input type="text" id="splitOutputName" class="form-input" style="max-width: 300px;" value="extracted_pages.pdf" />
+    <input type="text" id="splitOutputName" class="form-input" style="max-width: 300px;" value="extracted_pages.pdf"
+           aria-label="Name for the file you get back" autocomplete="off" />
     <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
       <button class="button button-primary" id="btnExtract">Extract Selected Pages</button>
       <button class="button button-danger" id="btnClear">Clear</button>
@@ -141,6 +216,10 @@ const { slug, headline, subtitle } = Astro.props;
     const pagesGrid = document.getElementById('pagesGrid');
     const splitOutputName = document.getElementById('splitOutputName');
     const btnExtract = document.getElementById('btnExtract');
+    const partCount = document.getElementById('partCount');
+    const partSize = document.getElementById('partSize');
+    const splitModeNote = document.getElementById('splitModeNote');
+    const modeRadios = Array.from(document.querySelectorAll('input[name="splitMode"]'));
     const btnClear = document.getElementById('btnClear');
     const pageRanges = document.getElementById('pageRanges');
     const pageRangeHint = document.getElementById('pageRangeHint');
@@ -389,9 +468,126 @@ const { slug, headline, subtitle } = Astro.props;
       pageRanges.value = '';
     });
 
+    function currentMode() {
+      const on = modeRadios.find((r) => r.checked);
+      return on ? on.value : 'one';
+    }
+
+    /* A whole-document mode does not use the page picker. Saying so beats
+       leaving a live-looking selection that has no effect on the output. */
+    function syncMode() {
+      const mode = currentMode();
+      const whole = mode === 'parts' || mode === 'size';
+      const bar = document.querySelector('.split-range-bar');
+      /* Dimmed but still focusable and clickable is the worst of both: it
+         looks disabled and behaves live. `inert` takes the picker out of the
+         tab order and stops it responding, which is what the dimming claims
+         is happening. */
+      if (bar) {
+        bar.classList.toggle('inactive', whole);
+        bar.toggleAttribute('inert', whole);
+      }
+      pagesGrid.classList.toggle('inactive', whole);
+      pagesGrid.toggleAttribute('inert', whole);
+      btnExtract.textContent = mode === 'one' ? 'Extract Selected Pages'
+        : mode === 'each' ? 'Extract Pages as Separate Files'
+        : 'Split into Parts';
+      splitModeNote.textContent = whole
+        ? 'Every page is included — the selection above is not used in this mode.'
+        : '';
+    }
+    modeRadios.forEach((r) => r.addEventListener('change', syncMode));
+    syncMode();
+
+    /** The output name with its extension removed, for building part names. */
+    function baseName() {
+      const raw = (splitOutputName.value || 'split.pdf').trim();
+      return raw.replace(/\.(pdf|zip)$/i, '') || 'split';
+    }
+
+    /** A PDF holding exactly these 1-based page numbers, as bytes. */
+    async function buildPart(doc, pageNumbers) {
+      const sub = await PDFLib.PDFDocument.create();
+      const copied = await sub.copyPages(doc, pageNumbers.map((n) => n - 1));
+      copied.forEach((pg) => sub.addPage(pg));
+      return sub.save();
+    }
+
+    /* Contiguous chunks, as evenly as they divide. 10 pages into 3 gives
+       4/3/3 rather than 3/3/3 and a leftover part nobody asked for. */
+    function equalParts(total, count) {
+      const groups = [];
+      const base = Math.floor(total / count);
+      let extra = total % count;
+      let page = 1;
+      for (let i = 0; i < count; i++) {
+        const take = base + (extra > 0 ? 1 : 0);
+        if (extra > 0) extra--;
+        if (take === 0) break;
+        const pages = [];
+        for (let k = 0; k < take; k++) pages.push(page++);
+        groups.push(pages);
+      }
+      return groups;
+    }
+
+    /**
+     * Parts that each fit under a byte budget.
+     *
+     * Per-page sizes are estimated first, because assembling and saving the
+     * whole candidate part once per added page is unusably slow on a long
+     * document. But an estimate is not what the reader was promised, so every
+     * assembled part is then measured, and pages are handed back to the next
+     * part until it really fits. The size that decides the split is always the
+     * measured one.
+     *
+     * A single page larger than the budget cannot be made to fit by splitting.
+     * It becomes a part of its own and is reported, rather than looping.
+     */
+    async function sizedParts(doc, total, budget, onProgress) {
+      const est = [];
+      for (let n = 1; n <= total; n++) {
+        est.push((await buildPart(doc, [n])).byteLength);
+        if (onProgress) onProgress(n / total);
+      }
+
+      const groups = [];
+      const oversize = [];
+      let n = 1;
+      while (n <= total) {
+        const pages = [];
+        let running = 0;
+        while (n <= total && (pages.length === 0 || running + est[n - 1] <= budget)) {
+          pages.push(n);
+          running += est[n - 1];
+          n++;
+        }
+        let bytes = await buildPart(doc, pages);
+        while (bytes.byteLength > budget && pages.length > 1) {
+          n = pages.pop();
+          bytes = await buildPart(doc, pages);
+        }
+        if (bytes.byteLength > budget) oversize.push(pages[0]);
+        groups.push({ pages: pages, bytes: bytes });
+      }
+      return { groups: groups, oversize: oversize };
+    }
+
+    async function zipAndDownload(entries, zipName) {
+      if (typeof JSZip === 'undefined') {
+        throw new Error('The archive engine did not load. Check your connection and reload the page.');
+      }
+      const zip = new JSZip();
+      for (const entry of entries) zip.file(entry[0], entry[1]);
+      const blob = await zip.generateAsync({ type: 'blob' });
+      window.downloadBlob(blob, zipName);
+    }
+
     btnExtract.addEventListener('click', async () => {
       hideError();
-      if(selectedPages.size === 0) {
+      const mode = currentMode();
+      const needsSelection = mode === 'one' || mode === 'each';
+      if (needsSelection && selectedPages.size === 0) {
         showError("Please select at least 1 page.");
         return;
       }
@@ -403,16 +599,63 @@ const { slug, headline, subtitle } = Astro.props;
         // pdf-lib needs its own copy: it also keeps a reference, and a second
         // extraction from the same bytes would otherwise read a spent buffer.
         const doc = await PDFLib.PDFDocument.load(splitFile.bytes.slice());
-        const sub = await PDFLib.PDFDocument.create();
-        const indices = Array.from(selectedPages).sort((a,b)=>a-b).map(x => x - 1);
-        
-        const copied = await sub.copyPages(doc, indices);
-        copied.forEach(p => sub.addPage(p));
-        
-        const outBytes = await sub.save();
-        let name = splitOutputName.value || 'extracted.pdf';
-        if(!name.endsWith('.pdf')) name += '.pdf';
-        window.downloadBlob(new Blob([outBytes], { type: "application/pdf" }), name);
+        const total = doc.getPageCount();
+        const picked = Array.from(selectedPages).sort((a, b) => a - b);
+        const base = baseName();
+
+        if (mode === 'one') {
+          const outBytes = await buildPart(doc, picked);
+          let name = splitOutputName.value || 'extracted.pdf';
+          if (!name.endsWith('.pdf')) name += '.pdf';
+          window.downloadBlob(new Blob([outBytes], { type: "application/pdf" }), name);
+
+        } else if (mode === 'each') {
+          const entries = [];
+          const pad = String(total).length;
+          for (let i = 0; i < picked.length; i++) {
+            const n = picked[i];
+            entries.push([base + '_page_' + String(n).padStart(pad, '0') + '.pdf', await buildPart(doc, [n])]);
+            showProgress(20 + Math.round(70 * (i + 1) / picked.length), 'Writing page ' + n + '…');
+          }
+          showProgress(95, 'Packing ' + entries.length + ' files…');
+          await zipAndDownload(entries, base + '_pages.zip');
+
+        } else if (mode === 'parts') {
+          const want = Math.max(2, Math.min(100, parseInt(partCount.value, 10) || 2));
+          if (want > total) {
+            throw new Error('This PDF has ' + total + ' page' + (total === 1 ? '' : 's') +
+              ', so it cannot be split into ' + want + ' parts.');
+          }
+          const groups = equalParts(total, want);
+          const entries = [];
+          const pad = String(groups.length).length;
+          for (let i = 0; i < groups.length; i++) {
+            entries.push([base + '_part_' + String(i + 1).padStart(pad, '0') + '.pdf', await buildPart(doc, groups[i])]);
+            showProgress(20 + Math.round(70 * (i + 1) / groups.length), 'Writing part ' + (i + 1) + ' of ' + groups.length + '…');
+          }
+          showProgress(95, 'Packing ' + entries.length + ' files…');
+          await zipAndDownload(entries, base + '_parts.zip');
+
+        } else {
+          const mb = parseFloat(partSize.value);
+          if (!(mb > 0)) throw new Error('Enter a size in MB, for example 2.');
+          const budget = Math.round(mb * 1024 * 1024);
+          const sized = await sizedParts(doc, total, budget,
+            (frac) => showProgress(20 + Math.round(50 * frac), 'Measuring pages…'));
+          const entries = [];
+          const pad = String(sized.groups.length).length;
+          sized.groups.forEach((g, i) => {
+            entries.push([base + '_part_' + String(i + 1).padStart(pad, '0') + '.pdf', g.bytes]);
+          });
+          showProgress(95, 'Packing ' + entries.length + ' files…');
+          await zipAndDownload(entries, base + '_parts.zip');
+          if (sized.oversize.length) {
+            showError('Split into ' + sized.groups.length + ' parts, but page' +
+              (sized.oversize.length === 1 ? ' ' : 's ') + sized.oversize.join(', ') +
+              ' is larger than ' + mb + ' MB on its own, so that part is over the limit. ' +
+              'Compressing the PDF first will bring it down.');
+          }
+        }
       } catch(err) {
         // Say what actually went wrong. The bare message hid a detached
         // buffer for as long as this bug existed.
@@ -431,6 +674,7 @@ const { slug, headline, subtitle } = Astro.props;
       updateSelectionHint();
       splitWorkspace.style.display = 'none';
       dropZone.style.display = 'flex';
+      syncMode();
       fileInput.value = '';
       hideProgress();
     }
