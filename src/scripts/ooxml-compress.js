@@ -40,14 +40,21 @@ import {
 const IMAGE_RE = /^(ppt|word|xl)\/media\/[^/]+\.(png|jpe?g)$/i;
 
 /** Where the drawing XML lives, per format. */
-const DRAWING_RE = /^(ppt\/slides\/slide\d+\.xml|ppt\/slideLayouts\/[^/]+\.xml|ppt\/slideMasters\/[^/]+\.xml|ppt\/notesSlides\/[^/]+\.xml|word\/document\.xml|word\/header\d*\.xml|word\/footer\d*\.xml)$/i;
+const DRAWING_RE = /^(ppt\/slides\/slide\d+\.xml|ppt\/slideLayouts\/[^/]+\.xml|ppt\/slideMasters\/[^/]+\.xml|ppt\/notesSlides\/[^/]+\.xml|word\/document\.xml|word\/header\d*\.xml|word\/footer\d*\.xml|xl\/drawings\/drawing\d+\.xml)$/i;
 
 /** `<a:ext cx cy>` in PPTX, `<wp:extent cx cy>` in DOCX. Both are EMUs. */
 const EXT_RE = /<(?:a|wp):ext(?:ent)?\s+cx="(\d+)"\s+cy="(\d+)"/;
 const EMBED_RE = /r:(?:embed|link)="([^"]+)"/;
 
-/** The drawing element that pairs a picture with its size, in either format. */
-const PIC_RE = /<(p:pic|pic:pic|w:drawing)\b[\s\S]*?<\/\1>/g;
+/** The drawing element that pairs a picture with its size, in any of the three.
+
+    A spreadsheet keeps its pictures in `xl/drawings/drawingN.xml` wrapped in
+    `<xdr:pic>`, and the size inside is an ordinary `<a:ext>` in the shape
+    properties — so EXT_RE above reads it without a fourth case. An anchor
+    that carries no extent at all is simply not measured, and an unmeasured
+    image is left alone, which is the safe failure this function is built
+    around. */
+const PIC_RE = /<(p:pic|pic:pic|xdr:pic|w:drawing)\b[\s\S]*?<\/\1>/g;
 
 /** Resolve a relationship target against the part that declared it. */
 export function resolveTarget(ownerPath, target) {

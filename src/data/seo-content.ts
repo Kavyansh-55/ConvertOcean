@@ -1506,6 +1506,42 @@ export const jpegToJpgContent = `
 `;
 
 /**
+ * /compress-excel/ article copy.
+ *
+ * The other three compressor pages all explain the same mechanism in a
+ * different container: images stored bigger than they are shown. This one has
+ * to explain a different cause entirely, and it has to disclose a trade the
+ * others do not make — so the honesty is the differentiator rather than a
+ * disclaimer bolted on the end.
+ */
+export const compressExcelContent = `
+<div class="content-card">
+  <h2>Why a Spreadsheet With 200 Rows Can Be 15 Megabytes.</h2>
+  <p>Nearly every guide to reducing Excel file size starts with images. For spreadsheets that is usually the wrong answer, because most bloated workbooks contain no pictures at all. The real cause is formatting applied to cells that hold nothing.</p>
+  <p>It happens the same way every time. You click the header of column A and drag across to Z to apply a border, a fill or a number format. Excel does not record "columns A to Z are bordered" — it records a cell for every position in that selection, down the entire sheet, and it keeps them. Each one is a few dozen bytes of XML that describes emptiness. Do it on a handful of columns and the file grows by megabytes while the data stays the same size. The same habit is why the scroll bar goes thin, why Ctrl+End jumps thousands of rows past anything you typed, and why the file takes so long to open.</p>
+
+  <h3>What This Tool Removes, and What It Never Touches.</h3>
+  <p>Four things, and the result panel reports each one on your actual file rather than promising a percentage:</p>
+  <ul>
+    <li><strong>Rows past the end of your data</strong> that carry formatting and nothing else. The boundary is the last row holding a value, a formula or text.</li>
+    <li><strong>Empty formatted cells to the right of your data</strong>, row by row — the column half of the same habit.</li>
+    <li><strong>The stored used range</strong>, corrected to match what is left, so Ctrl+End lands on your data again.</li>
+    <li><strong>calcChain.xml</strong>, a cache of the order formulas were last evaluated in. Excel rebuilds it silently on open. It is not data and losing it changes nothing.</li>
+  </ul>
+  <p>Untouched: every value, every formula and its cached result, charts, pivot tables, conditional formatting, data validation, named ranges, sheet names, print areas, and all formatting inside the used range. A blank row sitting between two tables is kept as well — that is layout you chose, not bloat, and a tool that "tidies" it is editing your document rather than compressing it.</p>
+
+  <h3>The One Honest Caveat.</h3>
+  <p>Every other compressor on this site is lossless: the document you get back is the same document, stored better. <strong>This one is not, and it is worth being plain about that.</strong> Formatting on empty cells is still formatting, and there is a real case where it matters — a blank template whose bordered grid is waiting for next quarter's numbers. Remove it and typing into those cells no longer inherits the fill. If that describes your file, turn the trim off with the switch above; the tool will still compress pictures and drop the calculation cache, both of which are completely safe. If your file is a report, an export or a model that people read rather than fill in, the trim is what you came for.</p>
+
+  <h3>Things That Make a Workbook Large That This Cannot Fix.</h3>
+  <p>Worth knowing, because no tool can reach them from the outside. Pivot caches keep a full private copy of the source data so a pivot can be refreshed without it — on a large table that can double the file, and the fix is to untick "Save source data with file" in PivotTable Options. Very long shared-string tables from tens of thousands of unique text cells are simply your data. Old workbooks converted from .xls often carry thousands of unused cell styles. And an .xlsb or a workbook full of embedded objects is a different shape of file entirely. If a workbook stays large after trimming, one of those is usually why.</p>
+
+  <h3>Getting Under an Email or Portal Limit.</h3>
+  <p>Use <em>Or fit a size</em> and enter the number you actually need — 10 MB for most mail servers, 5 MB for many portals. For the overwhelming majority of oversized workbooks the used-range trim alone clears it, because that is where the bytes are. Where a target genuinely is not reachable the tool says so and reports the smallest it achieved rather than handing back something that meets the number by damaging the file. If you need the numbers rather than the spreadsheet, <a href="/excel-to-pdf/">Excel to PDF</a> is usually far smaller again, and <a href="/split-excel/">Split Excel</a> will break a workbook into one file per sheet.</p>
+</div>
+`;
+
+/**
  * /compress-pdf/ article copy.
  *
  * Written around the one thing most "compress PDF" pages will not tell you:

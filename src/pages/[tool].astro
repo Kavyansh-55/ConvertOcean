@@ -94,6 +94,7 @@ const toolsMap: Record<string, any> = {
   'compress-pdf': CompressPdf,
   'compress-powerpoint': CompressOffice,
   'compress-word': CompressOffice,
+  'compress-excel': CompressOffice,
   'invoice-generator': InvoiceGenerator,
   'receipt-generator': ReceiptGenerator,
   'profit-margin-calculator': ProfitMarginCalculator,
@@ -619,6 +620,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
   import { fileTooLarge, anyFileTooLarge, nothingToConvert, formatSize } from '../scripts/file-limits.js';
   import { compressPdf, PRESETS } from '../scripts/pdf-compress.js';
   import { compressOoxml } from '../scripts/ooxml-compress.js';
+  import { compressXlsx } from '../scripts/xlsx-compress.js';
   import { messageForError } from '../scripts/ensure-lib.js';
   import { installClickGuard } from '../scripts/click-guard.js';
 
@@ -647,5 +649,11 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
      it shares that engine's policy and its presets rather than inventing a
      second set of thresholds for readers to be confused by. */
   window.coCompressOoxml = compressOoxml;
+
+  /* Excel is the odd one out. The other three compressors all look for images
+     stored larger than they are displayed; a spreadsheet's bytes are almost
+     never images, so this engine leads with the used range instead and calls
+     the shared one afterwards for the workbooks that do have pictures. */
+  window.coCompressXlsx = compressXlsx;
   window.coMessageForError = messageForError;
 </script>

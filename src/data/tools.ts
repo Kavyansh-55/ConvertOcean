@@ -6,7 +6,7 @@ import {
   salesTaxCalculatorContent,
   breakEvenCalculatorContent
 } from './business-content';
-import { seoContentMap, imageResizerContent, jpgToJpegContent, jpegToJpgContent, compressPdfContent, compressPowerpointContent, compressWordContent } from './seo-content';
+import { seoContentMap, imageResizerContent, jpgToJpegContent, jpegToJpgContent, compressPdfContent, compressPowerpointContent, compressWordContent, compressExcelContent } from './seo-content';
 
 export interface ToolData {
   slug: string;
@@ -355,6 +355,29 @@ const rawTools: ToolData[] = [
     ],
     relatedTools: ['compress-pdf', 'merge-pptx', 'split-pptx', 'pptx-to-pdf', 'compress-word'],
     content: compressPowerpointContent
+  },
+  {
+    slug: 'compress-excel',
+    name: 'Compress Excel',
+    title: 'Compress Excel File Online - Reduce XLSX Size | ConvertOcean',
+    description: 'Reduce Excel file size in your browser. Removes the empty formatted rows and columns that make a small spreadsheet huge, and shrinks oversized pictures. Nothing is uploaded.',
+    headline: 'Compress Excel.',
+    subtitle: 'Most oversized spreadsheets are not full of data \u2014 they are full of empty cells carrying a border. This removes those, and any picture stored bigger than it is shown.',
+    quickAnswer: 'To compress an Excel file, drop your .xlsx above and it is reduced immediately. Spreadsheet bloat is usually not pictures: it is rows and columns past the end of your data that carry a fill or a border and nothing else, which is what happens when you select whole columns and format them. Excel stores every one of those empty cells, so a workbook with 200 rows of data can be 15 MB. This removes them, corrects the used range so Ctrl+End lands on your data again, drops the formula calculation cache that Excel rebuilds anyway, and re-encodes any embedded image stored larger than it is displayed. Your values, formulas, charts and formatting inside the used range are untouched. To reach a specific size, use "Or fit a size" and enter your limit. Everything runs in your browser \u2014 the workbook never leaves your device.',
+    icon: '\ud83d\udddc\ufe0f',
+    category: 'Excel Converter',
+    categorySlug: 'excel-converter',
+    faqs: [
+      { question: 'Why is my Excel file so large when it only has a few hundred rows?', answer: 'Almost always because formatting was applied to whole columns or whole rows rather than to the cells holding data. Selecting column A to Z and adding a border tells Excel to store a cell for every one of those positions, all the way down, and it keeps them forever. A workbook with 200 rows of real data can easily reach 15 MB this way. The same thing makes the scroll bar tiny and sends Ctrl+End thousands of rows past anything you typed.' },
+      { question: 'Is compressing an Excel file lossless?', answer: 'Not completely, and this is the one tool here where that is true, so it is worth stating plainly. Your values, formulas, charts, named ranges, pivot tables and all formatting inside the used range are preserved exactly. What is removed is formatting on cells beyond your data that contain nothing. If your file is a blank template whose bordered grid is waiting to be filled in, that formatting is the point \u2014 turn the trim off with the switch above and the tool will only compress pictures and drop the calculation cache, both of which are completely safe.' },
+      { question: 'What exactly gets removed?', answer: 'Four things, and the tool reports each one on your file rather than promising a percentage. Rows past the last row containing a value, a formula or text. Empty formatted cells to the right of the last column containing anything, row by row. The stored used range, which is corrected to match what is left. And calcChain.xml, a cache of the order formulas were last evaluated in, which Excel rebuilds silently the next time it opens the file. Blank rows sitting between two tables are kept, because that is layout you chose.' },
+      { question: 'Will my formulas and pivot tables still work?', answer: 'Yes. Formulas are copied through character for character, including their cached results, and nothing inside the used range is altered. Pivot tables, charts, conditional formatting, data validation and defined names are all left exactly as they were. The only file removed is the calculation-order cache, which is not data \u2014 Excel regenerates it on open, and you will not notice.' },
+      { question: 'How do I reduce an Excel file to under 5MB or 10MB for email?', answer: 'Use "Or fit a size", enter your limit, and the tool finds the gentlest setting that still comes in underneath it. For most oversized workbooks the used-range trim alone is enough, because that is where the bytes are \u2014 and where a target genuinely is not reachable the tool says so and reports the smallest it achieved, rather than handing back something that meets the number by damaging the file.' },
+      { question: 'Does it work on .xls files?', answer: 'No. This tool reads .xlsx, the ZIP-based format Excel has used since 2007. The older .xls is a completely different binary format with none of the same structure. Open it in Excel and save it as .xlsx first \u2014 that alone usually makes the file substantially smaller.' },
+      { question: 'Do my spreadsheets get uploaded to a server?', answer: 'No. The workbook is read, rewritten and handed back entirely inside your browser tab, which is why it still works with your network disconnected once the page has loaded. Financial models, payroll and client data never leave your device, and there is nothing on our side to leak or retain.' }
+    ],
+    relatedTools: ['compress-pdf', 'compress-word', 'compress-powerpoint', 'excel-to-pdf', 'split-excel'],
+    content: compressExcelContent
   },
   {
     slug: 'compress-word',
