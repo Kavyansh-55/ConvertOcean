@@ -439,6 +439,147 @@ try {
   say(targets.reachable.size > targets.impossible.size,
       'the reachable target used a gentler setting than the impossible one');
 
+  /* ======================================================================
+     /compress-excel/ — the one that is not lossless.
+
+     Every other compressor here can be judged on "did it get smaller without
+     breaking anything". This one removes formatting on purpose, so the
+     interesting questions are all about where it draws the line: what counts
+     as empty, what counts as content, and whether the reader is told.
+     ====================================================================== */
+  const xlPage = await browser.newPage();
+  const xlErrors = [];
+  xlPage.on('pageerror', (e) => xlErrors.push(String(e)));
+  await xlPage.goto(ORIGIN + '/compress-excel/', { waitUntil: 'networkidle2', timeout: 45000 });
+
+  const xlOk = await xlPage.evaluate(() => ({
+    engine: typeof window.coCompressXlsx === 'function',
+    accept: (document.getElementById('fileInput') || {}).accept,
+    h1: document.querySelectorAll('h1').length,
+    trim: !!document.getElementById('cofTrim'),
+    trimOn: !!(document.getElementById('cofTrim') || {}).checked,
+    disclosure: (document.querySelector('.cof-trim-note') || {}).textContent || '',
+  }));
+  say(xlOk.engine, '/compress-excel/ publishes the workbook engine');
+  say(xlOk.accept === '.xlsx', `/compress-excel/ accepts .xlsx (got ${xlOk.accept})`);
+  say(xlOk.h1 === 1, `/compress-excel/ has exactly one h1 (${xlOk.h1})`);
+  say(xlOk.trim && xlOk.trimOn, 'the trim switch is present and on by default');
+  say(/no longer inherit|turn this off/i.test(xlOk.disclosure),
+      'and it says what the trade is, on the page, before anything is removed');
+  say(xlErrors.length === 0, xlErrors.length ? `excel page errors: ${xlErrors[0]}` : 'no page errors on /compress-excel/');
+
+  const xlsxPath = TESTING_PATHS.fixture('torture-compress.xlsx');
+  const xlsxIn = readFileSync(xlsxPath);
+  await xlPage.$('#fileInput').then((el) => el.uploadFile(xlsxPath));
+  await xlPage.waitForFunction(() => {
+    const b = document.getElementById('cofDownload');
+    return b && !b.disabled;
+  }, { timeout: 90000 });
+
+  const xlsxOut = await xlPage.evaluate(async () => {
+    const f = document.getElementById('fileInput').files[0];
+    const b = new Uint8Array(await f.arrayBuffer());
+    const out = await window.coCompressXlsx(b, { dpi: 150, quality: 0.72 }, window.JSZip, {});
+    let s = '';
+    for (let i = 0; i < out.bytes.length; i += 0x8000) {
+      s += String.fromCharCode.apply(null, out.bytes.subarray(i, i + 0x8000));
+    }
+    return { b64: btoa(s), report: out.report };
+  });
+  const xlOutBytes = Buffer.from(xlsxOut.b64, 'base64');
+  const st = xlsxOut.report.structure;
+
+  say(xlOutBytes.length < xlsxIn.length / 2,
+      `the workbook got much smaller: ${(xlsxIn.length / 1024).toFixed(1)} KB -> `
+      + `${(xlOutBytes.length / 1024).toFixed(1)} KB `
+      + `(${Math.round((1 - xlOutBytes.length / xlsxIn.length) * 100)}% off)`);
+
+  say(st.rowsDropped > 19000,
+      `the empty formatted rows are what went (${st.rowsDropped.toLocaleString()} rows)`);
+  say(st.cellsDropped > 5000,
+      `and the empty formatted columns too (${st.cellsDropped.toLocaleString()} cells)`);
+  say(st.calcChainDropped, 'the calculation cache was dropped');
+
+  const xlOutZip = await JSZip.loadAsync(xlOutBytes);
+  assertWellFormed(await xlOutZip.file('xl/worksheets/sheet1.xml').async('string'), 'sheet1.xml');
+  assertWellFormed(await xlOutZip.file('xl/worksheets/sheet3.xml').async('string'), 'sheet3.xml');
+
+  const s1 = await xlOutZip.file('xl/worksheets/sheet1.xml').async('string');
+  const s2 = await xlOutZip.file('xl/worksheets/sheet2.xml').async('string');
+  const s3 = await xlOutZip.file('xl/worksheets/sheet3.xml').async('string');
+
+  const xlMissing = [];
+  for (let i = 1; i <= 12; i++) {
+    const m = 'M' + String(i).padStart(2, '0');
+    if (!s1.includes(m)) xlMissing.push(m);
+  }
+  say(xlMissing.length === 0, `every marker survived (missing: ${xlMissing.join(', ') || 'none'})`);
+  say((s1.match(/<row /g) || []).length === 200,
+      `exactly the 200 data rows remain (${(s1.match(/<row /g) || []).length})`);
+  say(/<dimension ref="A1:H200"\/>/.test(s1),
+      'the used range now describes the data, so Ctrl+End lands on it');
+
+  say((s2.match(/<f>/g) || []).length === 1000,
+      `all 1,000 formulas are intact (${(s2.match(/<f>/g) || []).length})`);
+  say(!xlOutZip.file('xl/calcChain.xml'), 'calcChain.xml is gone from the package');
+  const xlCt = await xlOutZip.file('[Content_Types].xml').async('string');
+  say(!xlCt.includes('calcChain'),
+      'and its content-type override went with it, so the package still declares itself correctly');
+
+  /* The trap sheet. A compressor that "tidies" this is editing the document. */
+  say(s3.includes('M13-TOP') && s3.includes('M14-BOTTOM'), 'the layout sheet keeps its content');
+  say((s3.match(/<row /g) || []).length === 5,
+      `its interior blank rows are kept and only the trailing one goes `
+      + `(${(s3.match(/<row /g) || []).length} of 6 rows)`);
+  say(s3.includes('xml:space="preserve"'),
+      'a cell holding a single space is content, not an empty cell');
+
+  /* Images, measured through <xdr:pic>, which no other fixture exercises. */
+  const xlRows = await xlPage.evaluate(() =>
+    [...document.querySelectorAll('#cofImgRows tr')].map((tr) => ({
+      name: tr.children[0].textContent.trim(),
+      result: tr.children[3].textContent.trim(),
+    })));
+  const xrow = (n) => xlRows.find((r) => r.name.startsWith(n)) || {};
+  say(xlRows.length === 2, `both embedded images were found (${xlRows.length})`);
+  say(xrow('photo-big').result && xrow('photo-big').result !== 'kept',
+      `the oversized photo was shrunk (${xrow('photo-big').result}) — so <xdr:pic> is being read`);
+  say(xrow('right-sized').result === 'kept', 'the correctly-sized image was kept');
+
+  const xlSrcZip = await JSZip.loadAsync(xlsxIn);
+  const a = await xlSrcZip.file('xl/media/right-sized.png').async('uint8array');
+  const b = await xlOutZip.file('xl/media/right-sized.png').async('uint8array');
+  say(a.length === b.length && a.every((v, i) => v === b[i]),
+      'and it came back byte-identical, not re-encoded at the same size');
+
+  /* The switch has to actually do something, or it is decoration. */
+  const untrimmed = await xlPage.evaluate(async () => {
+    const f = document.getElementById('fileInput').files[0];
+    const b = new Uint8Array(await f.arrayBuffer());
+    const out = await window.coCompressXlsx(
+      b, { dpi: 150, quality: 0.72, trimUsedRange: false }, window.JSZip, {});
+    return { size: out.bytes.length, rows: out.report.structure.rowsDropped };
+  });
+  say(untrimmed.rows === 0, 'with the trim off, no row is removed');
+  say(untrimmed.size > xlOutBytes.length,
+      `and the file is correspondingly larger (${(untrimmed.size / 1024).toFixed(1)} KB `
+      + `vs ${(xlOutBytes.length / 1024).toFixed(1)} KB trimmed)`);
+
+  /* The xlHeadline has to describe what actually happened. Claiming "from 1 of 2
+     images" on a file whose bytes came out of empty cells would be a lie the
+     reader could check. */
+  const xlHeadline = await xlPage.evaluate(() =>
+    (document.getElementById('cofSaving') || {}).textContent || '');
+  say(/empty formatted row/i.test(xlHeadline),
+      `the saving is attributed to the rows, not to the images: "${xlHeadline.slice(0, 90)}"`);
+
+  const structureLine = await xlPage.evaluate(() =>
+    (document.getElementById('cofStructure') || {}).textContent || '');
+  say(/Ctrl\+End/i.test(structureLine) && /calculation cache/i.test(structureLine),
+      'and the detail panel says what was removed and what Excel rebuilds');
+
+  await xlPage.close();
+
   /* --- responsive: the workspace only exists after a file is chosen ------- */
   for (const w of [320, 360, 390, 768, 1024]) {
     await page.setViewport({ width: w, height: 900 });

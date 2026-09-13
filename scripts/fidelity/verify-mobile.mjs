@@ -80,6 +80,7 @@ const REVEAL = {
      not for tap targets, type floors or text flush to the edge, which is what
      this file measures. */
   '/compress-pdf/': { file: 'torture-compress.pdf', wait: '#cmpWorkspace' },
+  '/compress-excel/': { file: 'torture-compress.xlsx', wait: '#cofWorkspace' },
 };
 const PAGES = [
   '/', '/excel-to-pdf/', '/pdf-to-word/', '/merge-pdf/', '/word-to-pdf/',
@@ -88,6 +89,7 @@ const PAGES = [
   /* Added with REVEAL, for workspace shapes the list above does not have:
      a resize form, a metadata table, a sheet picker, a second file list. */
   '/image-resizer/', '/exif-remover/', '/split-excel/', '/merge-word/',
+  '/compress-excel/',
 ];
 
 let bad = 0;

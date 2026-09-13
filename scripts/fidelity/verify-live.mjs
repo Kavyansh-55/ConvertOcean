@@ -388,6 +388,56 @@ async function stylesheetsFor(path) {
       '/image-to-text/ grid tracks can shrink below their content');
 }
 
+/* ------------------------------------------------------- /compress-excel/ */
+
+/* The fourth compressor, and the only one whose saving does not come from
+   images. Each string below was checked to be one the previous deploy did not
+   serve — the trap this file has now hit three times. */
+{
+  const { status, body: html } = await get('/compress-excel/');
+  say(status === 200, `/compress-excel/ is served (${status})`);
+  say(html.includes('accept=".xlsx"'), '/compress-excel/ takes .xlsx');
+  say(html.includes('id="cofTrim"'), '/compress-excel/ serves the trim switch');
+
+  /* The disclosure is the reason this tool can be shipped at all: it is the
+     one compressor here that does not hand the file back byte-for-byte. If
+     this sentence ever stops being served, the page is making a promise the
+     engine does not keep. */
+  say(html.includes('no longer inherit the fill'),
+      '/compress-excel/ states the trade on the page, not in a footnote');
+  say(html.includes('turn this off'), 'and tells the reader how to decline it');
+
+  /* Copy written from the real question form: "why is my excel file so large"
+     is 73 of the 483 queries harvested for this page. */
+  say(html.includes('Why a Spreadsheet With 200 Rows Can Be 15 Megabytes'),
+      '/compress-excel/ answers the question people actually type');
+  say(html.includes('Is compressing an Excel file lossless'),
+      '/compress-excel/ answers the lossless question in its FAQ');
+  say(html.includes('pivot cache') || html.includes('Pivot caches'),
+      '/compress-excel/ names what it cannot fix as well as what it can');
+
+  /* The engine, not just the page. `coCompressXlsx` is published from the
+     tool layout's module, and a string only this engine puts in the bundle
+     proves the used-range logic shipped rather than a page wired to the old
+     image-only engine. */
+  const bundles = (await Promise.all(
+    [...html.matchAll(/src="(\/_astro\/[^"]+\.js)"/g)].map((m) => get(m[1]))
+  )).map((r) => r.body).join('\n');
+  say(/coCompressXlsx/.test(bundles), '/compress-excel/ publishes the workbook engine');
+  say(bundles.includes('past the end of your data'),
+      'and the bundle carries the used-range report, so the trim really shipped');
+  say(bundles.includes('calcChain.xml'),
+      'and the calculation-cache removal with it');
+
+  /* The link surface, hand-maintained and wrong once before. */
+  const home = (await get('/')).body;
+  say(home.includes('/compress-excel/'), 'the footer links to /compress-excel/ from the homepage');
+  const xml = (await get('/sitemap.xml')).body;
+  say(xml.includes('/compress-excel/'), '/compress-excel/ is in the XML sitemap');
+  const cat = (await get('/excel-converter/')).body;
+  say(cat.includes('/compress-excel/'), 'and its category page lists it');
+}
+
 /* The link surface, which is hand-maintained and was already wrong once:
    /compress-pdf/ shipped without ever being added to the footer. */
 {

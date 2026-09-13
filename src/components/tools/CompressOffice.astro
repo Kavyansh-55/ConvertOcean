@@ -1,8 +1,9 @@
 ---
 const { slug, headline, subtitle } = Astro.props;
 const isWord = slug === 'compress-word';
-const accept = isWord ? '.docx' : '.pptx';
-const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
+const isExcel = slug === 'compress-excel';
+const accept = isExcel ? '.xlsx' : isWord ? '.docx' : '.pptx';
+const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'PowerPoint file';
 ---
 
 {/* `is:global` with a `cof-` prefix, on purpose. Astro rewrites a scoped
@@ -53,6 +54,51 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
   .cof-preset-name { font-weight: 600; display: block; }
   .cof-preset-note { font-size: 13px; color: var(--colors-mute); }
 
+  .cof-trim {
+    border: 1px solid var(--colors-hairline);
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    background: var(--colors-canvas-soft);
+  }
+
+  .cof-trim-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .cof-trim-row input[type="checkbox"] {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin: 3px 0 0;
+    accent-color: var(--colors-ink);
+  }
+
+  .cof-trim-row strong {
+    display: block;
+    font-size: 13.5px;
+    margin-bottom: 2px;
+  }
+
+  .cof-trim-note {
+    display: block;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--colors-mute);
+  }
+
+  .cof-structure {
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--colors-body);
+    margin: var(--spacing-sm) 0 0;
+  }
+
   .cof-target { margin-top: var(--spacing-lg); }
   .cof-target-label { display: block; font-weight: 600; margin-bottom: var(--spacing-sm); }
   .cof-target-row { display: flex; gap: var(--spacing-sm); flex-wrap: wrap; align-items: center; }
@@ -75,7 +121,10 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
   .cof-img-table td:last-child { color: var(--colors-mute); }
   .cof-tag {
     display: inline-block;
-    font-size: 11px;
+    /* 12px, not 11: this is the result of the operation the reader came for,
+       and it sat under the mobile floor unnoticed because the results table
+       only exists once a file has been compressed. */
+    font-size: 12px;
     font-weight: 600;
     padding: 1px 7px;
     border-radius: 999px;
@@ -149,6 +198,29 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
   </div>
 
   <div class="cof-settings">
+    {/* Excel only. Every other compressor here gives the file back
+        byte-for-byte; this one does not, and burying that in an FAQ would be
+        the dishonest way to ship it. The switch is on by default because with
+        it off the tool does almost nothing for the file people actually bring
+        — but it says exactly what it removes, before it removes it. */}
+    {isExcel && (
+      <div class="cof-trim">
+        <label class="cof-trim-row">
+          <input type="checkbox" id="cofTrim" checked />
+          <span>
+            <strong>Trim the empty formatted cells</strong>
+            <span class="cof-trim-note">
+              This is where almost all of a spreadsheet's size goes: rows and columns
+              past your data that carry a border or a fill and nothing else, usually
+              from selecting whole columns and formatting them. Your values, formulas,
+              charts and formatting inside the used range are untouched — but a cell
+              beyond the data will no longer inherit the fill it had, so if your file
+              is a template waiting to be filled in, turn this off.
+            </span>
+          </span>
+        </label>
+      </div>
+    )}
     <div class="cof-settings-label" id="cofPresetLabel">How hard to compress</div>
     <div class="cof-preset-row" role="group" aria-labelledby="cofPresetLabel" id="cofPresetRow"></div>
 
@@ -174,6 +246,10 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
 
   <details class="cof-changed" id="cofChanged">
     <summary>What changed in your file</summary>
+    {/* The workbook engine saves most of its bytes outside the image table, so
+        the table alone would leave a reader looking at "kept, kept" under a
+        headline claiming 75% off. */}
+    <p class="cof-structure" id="cofStructure"></p>
     <div class="cof-table-scroll">
       <table class="cof-img-table">
         <thead>
@@ -185,9 +261,11 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
   </details>
 </div>
 
-<script is:inline define:vars={{ slug, accept, kindLabel }}>
+<script is:inline define:vars={{ slug, accept, kindLabel, isExcel }}>
   (function () {
     const dropZone = document.getElementById('dropZone');
+    const trimToggle = document.getElementById('cofTrim');
+    const structureEl = document.getElementById('cofStructure');
     const fileInput = document.getElementById('fileInput');
     const errorBanner = document.getElementById('errorBanner');
     const errorMessage = document.getElementById('errorMessage');
@@ -267,9 +345,28 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
         msg = fmt(report.newBytes) + ' — under your ' + fmt(report.targetBytes) + ' limit, '
             + 'at the gentlest setting that fits.';
       } else if (saved > 0) {
-        msg = fmt(saved) + ' smaller — ' + pct + '% off, from '
-          + report.imagesShrunk + ' of ' + report.imagesFound + ' image'
-          + (report.imagesFound === 1 ? '' : 's') + '.';
+        /* "From 2 of 5 images" is the whole story in a deck and a misleading
+           fraction of it in a workbook, where the bytes usually come out of
+           empty cells instead. Each engine gets the sentence that is true. */
+        const st = report.structure;
+        if (st && (st.rowsDropped || st.cellsDropped || st.calcChainDropped)) {
+          const bits = [];
+          if (st.rowsDropped) bits.push(st.rowsDropped.toLocaleString() + ' empty formatted row'
+            + (st.rowsDropped === 1 ? '' : 's'));
+          if (st.cellsDropped) bits.push(st.cellsDropped.toLocaleString() + ' empty cell'
+            + (st.cellsDropped === 1 ? '' : 's'));
+          if (report.imagesShrunk) bits.push(report.imagesShrunk + ' image'
+            + (report.imagesShrunk === 1 ? '' : 's'));
+          /* "a and b and c" reads like a bug. One list, one "and". */
+          const list = bits.length > 1
+            ? bits.slice(0, -1).join(', ') + ' and ' + bits[bits.length - 1]
+            : bits[0];
+          msg = fmt(saved) + ' smaller — ' + pct + '% off, from ' + list + '.';
+        } else {
+          msg = fmt(saved) + ' smaller — ' + pct + '% off, from '
+            + report.imagesShrunk + ' of ' + report.imagesFound + ' image'
+            + (report.imagesFound === 1 ? '' : 's') + '.';
+        }
       } else {
         /* Saying "compressed" when nothing was saved is the thing that makes a
            tool untrustworthy. The panel below says which image and why. */
@@ -297,7 +394,42 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
         tr.children[4].textContent = img.action === 'shrunk' ? '' : (img.reason || '');
         imgRows.appendChild(tr);
       }
-      changed.style.display = report.images.length ? 'block' : 'none';
+      if (structureEl) {
+        const st = report.structure;
+        if (st) {
+          const lines = [];
+          if (st.rowsDropped) {
+            lines.push('Removed ' + st.rowsDropped.toLocaleString() + ' row'
+              + (st.rowsDropped === 1 ? '' : 's') + ' past the end of your data that carried '
+              + 'formatting and nothing else.');
+          }
+          if (st.cellsDropped) {
+            lines.push('Removed ' + st.cellsDropped.toLocaleString() + ' empty formatted cell'
+              + (st.cellsDropped === 1 ? '' : 's') + ' to the right of your data.');
+          }
+          if (st.dimensionsFixed) {
+            lines.push('Corrected the used range on ' + st.dimensionsFixed + ' sheet'
+              + (st.dimensionsFixed === 1 ? '' : 's') + ', so Ctrl+End lands on your data '
+              + 'instead of a million rows away.');
+          }
+          if (st.calcChainDropped) {
+            lines.push('Removed the formula calculation cache, which Excel rebuilds when it '
+              + 'opens the file.');
+          }
+          if (!lines.length) {
+            lines.push('No empty formatted rows or cells to remove — the size of this workbook '
+              + 'is in its data, not in its formatting.');
+          }
+          structureEl.textContent = lines.join(' ');
+          structureEl.style.display = 'block';
+        } else {
+          structureEl.style.display = 'none';
+        }
+      }
+
+      /* The panel is worth opening whenever either half has something to say. */
+      const hasStructure = !!(report.structure && structureEl);
+      changed.style.display = (report.images.length || hasStructure) ? 'block' : 'none';
     }
 
     async function run(targetBytes) {
@@ -308,9 +440,19 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
       try {
         const presets = (window.coPdfPresets) || {};
         const s = presets[preset] || { dpi: 150, quality: 0.72 };
-        const out = await window.coCompressOoxml(
+        const engine = isExcel ? window.coCompressXlsx : window.coCompressOoxml;
+        const out = await engine(
           job.bytes.slice(),
-          { dpi: s.dpi, quality: s.quality, targetBytes: targetBytes || null },
+          {
+            dpi: s.dpi,
+            quality: s.quality,
+            targetBytes: targetBytes || null,
+            /* Only the workbook engine reads this. The used-range trim is what
+               actually shrinks a spreadsheet, and it is the one thing on this
+               site that does not hand the file back byte-for-byte, so the
+               reader owns the switch rather than discovering it afterwards. */
+            trimUsedRange: trimToggle ? trimToggle.checked : true,
+          },
           window.JSZip,
           {
             progress: progress,
@@ -362,6 +504,14 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
       run(Math.round(n * (unit === 'MB' ? 1024 * 1024 : 1024)));
     });
 
+    /* Flipping the trim changes the answer, so it recompresses rather than
+       leaving the reader looking at a number from the other setting. */
+    if (trimToggle) {
+      trimToggle.addEventListener('change', function () {
+        if (job && !busy) run();
+      });
+    }
+
     fileInput.addEventListener('change', function (e) { accept_(e.target.files[0]); });
     dropZone.addEventListener('dragover', function (e) { e.preventDefault(); dropZone.classList.add('dragover'); });
     dropZone.addEventListener('dragleave', function () { dropZone.classList.remove('dragover'); });
@@ -382,7 +532,7 @@ const kindLabel = isWord ? 'Word document' : 'PowerPoint file';
       });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = job.name.replace(/\.(pptx|docx)$/i, '') + '-compressed' + accept;
+      a.download = job.name.replace(/\.(pptx|docx|xlsx)$/i, '') + '-compressed' + accept;
       document.body.appendChild(a);
       a.click();
       setTimeout(function () {
