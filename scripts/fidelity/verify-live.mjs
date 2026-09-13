@@ -443,6 +443,40 @@ async function stylesheetsFor(path) {
   say(cat.includes('/compress-excel/'), 'and its category page lists it');
 }
 
+/* ------------------------------- /compress-pdf/ controls, reported by a reader */
+
+/* All three of these were live for as long as the tool has existed. The tool's
+   own script is `is:inline`, so it ships in the page rather than in a chunk —
+   asserted against the HTML, which is the mistake made in the other direction
+   one batch ago. */
+{
+  const { body: html } = await get('/compress-pdf/');
+
+  /* The dead button. Selecting the "Fit a size" preset and pressing "Fit to
+     this size" both called run('target'), and the early return meant for the
+     first swallowed the second, so the button never reached the engine on any
+     press. The explicit second argument is the fix. */
+  say(html.includes("run('target', true)"),
+      '/compress-pdf/ "Fit to this size" actually asks for a compression');
+
+  /* Three identical preset sizes with no reason given. */
+  say(html.includes('make no difference to this file'),
+      '/compress-pdf/ explains when the settings cannot change a file');
+
+  /* The comparison, which was 1,347px of a 6,255px page and open by default. */
+  say(html.includes('compare the pages before and after'),
+      '/compress-pdf/ collapses the before/after comparison behind a summary');
+  say(/<details[^>]*class="cmp-compare"/.test(html),
+      'and it really is a <details>, not a panel that is always open');
+
+  /* Two callers can now start a render, and pdf.js refuses two draws on one
+     canvas, so they are serialised — and the catch that hides the panel
+     records the error instead of swallowing it. */
+  say(html.includes('renderChain'), '/compress-pdf/ serialises its preview renders');
+  say(html.includes('__cmpRenderError'),
+      'and a preview that fails to render says so instead of vanishing quietly');
+}
+
 /* The link surface, which is hand-maintained and was already wrong once:
    /compress-pdf/ shipped without ever being added to the footer. */
 {
