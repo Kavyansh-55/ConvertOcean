@@ -226,7 +226,7 @@ const { slug, headline, subtitle } = Astro.props;
           <div class="file-item-name">${file.name}</div>
           <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
             <span class="file-item-meta">${file.pages} pgs</span>
-            <button class="icon-btn danger" style="background: none; border: none; cursor: pointer; color: var(--colors-mute); font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='var(--colors-error)'" onmouseout="this.style.color='var(--colors-mute)'" onclick="window.removeMergeFile(${index})">✕</button>
+            <button class="icon-btn danger" aria-label="Remove ${file.name}" onclick="window.removeMergeFile(${index})">✕</button>
           </div>
         `;
         fileItemsList.appendChild(div);
