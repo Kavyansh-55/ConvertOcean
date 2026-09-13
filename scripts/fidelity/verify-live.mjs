@@ -424,9 +424,14 @@ async function stylesheetsFor(path) {
     [...html.matchAll(/src="(\/_astro\/[^"]+\.js)"/g)].map((m) => get(m[1]))
   )).map((r) => r.body).join('\n');
   say(/coCompressXlsx/.test(bundles), '/compress-excel/ publishes the workbook engine');
-  say(bundles.includes('past the end of your data'),
-      'and the bundle carries the used-range report, so the trim really shipped');
-  say(bundles.includes('calcChain.xml'),
+  /* These two live in the component's `is:inline` script, which Astro writes
+     into the page rather than into a chunk — so they are asserted against the
+     HTML. Looking for them in the bundles failed against a correct deploy,
+     which is the same mistake this file's header warns about, made in the
+     opposite direction: follow the import, but only when there is one. */
+  say(html.includes('past the end of your data'),
+      'and the page carries the used-range report, so the trim really shipped');
+  say(html.includes('calculation cache'),
       'and the calculation-cache removal with it');
 
   /* The link surface, hand-maintained and wrong once before. */
