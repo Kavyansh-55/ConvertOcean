@@ -6,17 +6,23 @@ const { slug, headline, subtitle } = Astro.props;
 <style>
   .workspace-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* minmax(0, 1fr), not 1fr: a grid item's default `min-width: auto` refuses
+       to shrink below its content's intrinsic width, and the output textarea's
+       is wider than a 320px phone. The whole page scrolled sideways — and the
+       single-column media query below did not save it, because one column that
+       cannot shrink overflows just as well as two. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: var(--spacing-lg);
     margin-top: var(--spacing-lg);
   }
   @media (max-width: 768px) {
     .workspace-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
   .txt-output {
     width: 100%;
+    max-width: 100%;
     min-height: 250px;
     padding: var(--spacing-md);
     border-radius: 6px;

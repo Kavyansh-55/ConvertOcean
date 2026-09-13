@@ -23,12 +23,21 @@
  *    of a printed page and those sizes carry into the exported PDF. Enlarging
  *    them for the screen would change the document.
  *
- * One blind spot, now partly closed. Most tools show a drop zone and nothing
- * else until a file arrives, so loading the page measures the *empty* state and
- * never the controls the reader actually works with. `/split-pdf/` passed four
- * widths for months while its whole workspace sat behind `display: none`.
- * `REVEAL` names the pages worth opening first and the fixture that opens them;
- * every other tool in the family has the same gap and the same remedy.
+ * One blind spot, closed. Most tools show a drop zone and nothing else until a
+ * file arrives, so loading the page measures the *empty* state and never the
+ * controls the reader actually works with. `/split-pdf/` passed four widths for
+ * months while its whole workspace sat behind `display: none`, hiding an
+ * 11.5px hint the whole time.
+ *
+ * `REVEAL` fixes that: every page here whose real UI needs a file now gets one
+ * before being measured. The five pages not in it genuinely have no hidden
+ * state — `/` and `/file-converter/` are landing pages, and the two
+ * calculators and `/json-formatter/` render their whole UI immediately.
+ *
+ * The cost is four page loads and four file reads per entry, which is why this
+ * covers the tool *shapes* rather than all 66 tools: a drop-zone-plus-panel
+ * tool, a multi-file list, a thumbnail grid, a workspace with its own controls.
+ * Adding a tool is one line and the fixture it eats.
  */
 import puppeteer from 'puppeteer-core';
 import { existsSync } from 'node:fs';
@@ -57,12 +66,28 @@ const WIDTHS = [320, 360, 390, 768];
 /* Pages whose real UI only exists once a file has been added, and the fixture
    that brings it out. Adding one costs four page loads and a file each. */
 const REVEAL = {
-  '/split-pdf/': { file: 'torture.pdf', wait: '#splitWorkspace' },
+  '/split-pdf/':    { file: 'torture.pdf',          wait: '#splitWorkspace' },
+  '/excel-to-pdf/': { file: 'torture.xlsx',         wait: '#actionControls' },
+  '/pdf-to-word/':  { file: 'torture.pdf',          wait: '#actionControls' },
+  '/word-to-pdf/':  { file: 'torture.docx',         wait: '#actionControls' },
+  '/merge-pdf/':    { file: 'torture.pdf',          wait: '#fileItemsList' },
+  '/merge-word/':   { file: 'torture.docx',         wait: '#fileItemsList' },
+  '/image-to-text/':{ file: 'torture.png',          wait: '#workspaceGrid' },
+  '/image-resizer/':{ file: 'torture.png',          wait: '#rzWorkspace' },
+  '/exif-remover/': { file: 'torture.jpg',          wait: '#resultPanel' },
+  '/split-excel/':  { file: 'torture.xlsx',         wait: '#workspacePanel' },
+  /* `npm run compress` sweeps this one for horizontal overflow already, but
+     not for tap targets, type floors or text flush to the edge, which is what
+     this file measures. */
+  '/compress-pdf/': { file: 'torture-compress.pdf', wait: '#cmpWorkspace' },
 };
 const PAGES = [
   '/', '/excel-to-pdf/', '/pdf-to-word/', '/merge-pdf/', '/word-to-pdf/',
   '/invoice-generator/', '/sales-tax-calculator/', '/json-formatter/',
   '/split-pdf/', '/compress-pdf/', '/image-to-text/', '/file-converter/',
+  /* Added with REVEAL, for workspace shapes the list above does not have:
+     a resize form, a metadata table, a sheet picker, a second file list. */
+  '/image-resizer/', '/exif-remover/', '/split-excel/', '/merge-word/',
 ];
 
 let bad = 0;

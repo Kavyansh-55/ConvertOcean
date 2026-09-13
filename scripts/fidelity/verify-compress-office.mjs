@@ -360,6 +360,43 @@ try {
       `the DOCX got smaller: ${(docxIn.length / 1024).toFixed(1)} KB -> ${(docxOut.length / 1024).toFixed(1)} KB `
       + `(${Math.round((1 - docxOut.length / docxIn.length) * 100)}% off)`);
 
+  /* ------------------------------------------------------------------
+     A file with nothing to shrink.
+
+     Every assertion above runs on a document built to have recoverable
+     bytes, so all of them measure the same half of the job: does it find
+     them. This measures the other half — what it does when there are none.
+     A 60-page report with no pictures is all repetitive XML, and the only
+     step that still touches it is the re-zip on the way out.
+
+     That step is not automatically safe. Re-deflating repetitive XML at
+     level 9 produced a file **46% larger** than level 6 on a sheet of 40,000
+     near-identical rows. It does not reach this engine, because JSZip copies
+     the compressed stream of every entry it was not asked to change — but
+     "does not reach it today" is a thing to assert, not to assume.
+     ------------------------------------------------------------------ */
+  const textHeavyPath = TESTING_PATHS.fixture('torture-textheavy.docx');
+  const textHeavyIn = readFileSync(textHeavyPath);
+  await wordPage.evaluate(() => { document.getElementById('fileInput').value = ''; });
+  await (await wordPage.$('#fileInput')).uploadFile(textHeavyPath);
+  await new Promise((r) => setTimeout(r, 1200));
+
+  const plain = await wordPage.evaluate(async () => {
+    const f = document.getElementById('fileInput').files[0];
+    const b = new Uint8Array(await f.arrayBuffer());
+    const out = await window.coCompressOoxml(b, { dpi: 150, quality: 0.72 }, window.JSZip, {});
+    return { size: out.bytes.length, report: out.report };
+  });
+
+  say(plain.size <= textHeavyIn.length,
+      `a document with no images never comes back bigger: `
+      + `${(textHeavyIn.length / 1024).toFixed(1)} KB -> ${(plain.size / 1024).toFixed(1)} KB`);
+  say(plain.report.imagesFound === 0,
+      `nothing was found to shrink, which is the case under test `
+      + `(${plain.report.imagesFound} images)`);
+  say(plain.report.bytesSavedOnImages === 0,
+      'and it does not claim a saving it did not make');
+
   const dOutZip = await JSZip.loadAsync(docxOut);
   const body = await dOutZip.file('word/document.xml').async('string');
   say(body.includes('D01') && body.includes('D09'),

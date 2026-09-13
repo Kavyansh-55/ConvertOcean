@@ -389,8 +389,42 @@ export async function compressOoxml(bytes, options, JSZipLib, hooks) {
   const out = await zip.generateAsync({
     type: 'uint8array',
     compression: 'DEFLATE',
+    /* Level 9 applies only to the parts replaced above. JSZip copies the
+       already-compressed stream of every entry it was not asked to change, so
+       the document XML is never re-deflated here — verified by regenerating a
+       loaded package with nothing touched and getting back a byte-identical
+       file. That matters, because re-deflating repetitive XML at level 9 is
+       not automatically a win: on a sheet of 40,000 near-identical rows it
+       produced a file 46% LARGER than level 6. Anything that rebuilds a
+       package entry by entry has to measure rather than assume. */
     compressionOptions: { level: 9 },
   });
+
+  /* The same guard `pdf-compress.js` carries, for the same reason: a
+     compressor that hands back something larger than it was given has failed
+     at its one job. No input is currently known to reach this — every image
+     decision already refuses to grow a part, and untouched parts are copied
+     rather than recompressed — so this is insurance against a future change
+     to either of those, not a fix for an observed failure. */
+  if (out.length >= bytes.length) {
+    return {
+      bytes,
+      report: {
+        originalBytes: bytes.length,
+        newBytes: bytes.length,
+        imagesFound: images.length,
+        imagesShrunk: 0,
+        bytesSavedOnImages: 0,
+        /* Same shape as the normal return. A report missing `targetMet`
+           would read as `undefined` in the panel that says whether the size
+           you asked for was reached, which is worse than saying "no". */
+        targetBytes: opts.targetBytes || null,
+        targetMet: opts.targetBytes ? bytes.length <= opts.targetBytes : null,
+        images,
+        noGain: true,
+      },
+    };
+  }
 
   const shrunk = images.filter((im) => im.action === 'shrunk');
   const saved = shrunk.reduce((n, im) => n + (im.bytes - im.newBytes), 0);

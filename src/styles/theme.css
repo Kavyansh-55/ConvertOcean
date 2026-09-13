@@ -1588,6 +1588,44 @@ select:focus-visible,
 }
 
 /* Tables inside preview panels */
+/* `.button-group` is used by 26 components and, like `.icon-btn`, had no rule
+   anywhere — each component set `display: flex` inline, or nothing at all, and
+   none of them set a wrap. On /image-to-text/ that put three buttons in a row
+   239px of space could not hold and scrolled the whole page sideways at 320
+   and 360.
+
+   Only `flex-wrap` is set here, deliberately. It is inert on the components
+   that are not flex, so this fixes the overflow everywhere without changing a
+   single layout that works today. */
+.button-group { flex-wrap: wrap; }
+
+/* The remove-a-file button in the merge tools. It was a bare class name with
+   no rule anywhere: MergePdf carried the intended look in inline styles and
+   rendered 11px wide — unhittable — while MergeWord, MergeExcel and MergePptx
+   got the browser's default button chrome instead. Global rather than scoped
+   because all four are written into the file list at runtime. */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--colors-mute);
+  border-radius: 6px;
+  transition: color 0.2s, background-color 0.2s;
+  touch-action: manipulation;
+}
+
+.icon-btn:hover { background-color: var(--colors-canvas-soft-2); }
+.icon-btn.danger:hover { color: var(--colors-error, #b91c1c); }
+.icon-btn:focus-visible { outline: 2px solid var(--colors-link); outline-offset: 2px; }
+
 .preview-table {
   width: 100%;
   border-collapse: collapse;
@@ -1601,7 +1639,12 @@ select:focus-visible,
   font-family: var(--font-sans);
   font-weight: 500;
   text-transform: uppercase;
-  font-size: 11px;
+  /* 12px is the floor the mobile suite holds body text to, and a table header
+     is read like body text. It sat at 11px with the page's inherited -0.16px
+     tracking, which squeezes uppercase exactly where it needs room. Nothing
+     had measured it because every preview table lives behind a drop zone. */
+  font-size: 12px;
+  letter-spacing: normal;
   padding: 10px 14px;
   border-bottom: 2px solid var(--colors-hairline-strong);
 }

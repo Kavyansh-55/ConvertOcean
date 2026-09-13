@@ -286,7 +286,7 @@ const { slug, headline, subtitle } = Astro.props;
           <div class="file-item-actions">
             <button class="icon-btn" onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
             <button class="icon-btn" onclick="moveItem(${index}, 1)" ${index === mergeQueue.length - 1 ? 'disabled' : ''}>▼</button>
-            <button class="icon-btn danger" onclick="removeItem('${file.id}')">✕</button>
+            <button class="icon-btn danger" aria-label="Remove ${file.name}" onclick="removeItem('${file.id}')">✕</button>
           </div>
         `;
         fileItemsList.appendChild(item);
