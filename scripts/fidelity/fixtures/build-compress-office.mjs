@@ -284,3 +284,49 @@ const docxOut = TESTING_PATHS.fixture('torture-compress.docx');
 await writePackage(docxParts, docxOut);
 console.log('torture-compress.docx  ' + kb(statSync(docxOut).size));
 console.log('  same five images, measured through <wp:extent> instead of <a:ext>');
+
+/* ------------------------------------------------------------------------
+   A long document with no images at all.
+
+   Every fixture above asks whether the compressor finds the bytes. This one
+   asks what it does when there are none to find: a 60-page report is all
+   repetitive XML, the engine has nothing to shrink, and the only thing left
+   that touches the file is the re-zip on the way out.
+
+   That step is not free. Re-deflating highly repetitive XML at level 9 can
+   produce a **larger** file than the level the original was written at —
+   measured at +46% on a sheet of 40,000 near-identical rows. A compressor
+   that hands back something bigger than it was given has failed at its one
+   job, so this fixture exists to make that visible.
+   ------------------------------------------------------------------------ */
+
+const longBody = [];
+for (let i = 1; i <= 4000; i++) {
+  longBody.push(wPara('T' + String(i).padStart(4, '0')
+    + ' Quarterly operating review, consolidated figures and commentary, '
+    + 'section ' + ((i % 12) + 1) + ', paragraph ' + i + '.'));
+}
+
+const textOnlyParts = {
+  '[Content_Types].xml': '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+    + '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+    + '<Default Extension="xml" ContentType="application/xml"/>'
+    + '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
+    + '</Types>',
+
+  '_rels/.rels': relsFor('<Relationship Id="rId1" '
+    + 'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" '
+    + 'Target="word/document.xml"/>'),
+
+  'word/document.xml': '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<w:document ' + W_NS + '><w:body>'
+    + longBody.join('')
+    + '</w:body></w:document>',
+};
+
+const textOnlyOut = TESTING_PATHS.fixture('torture-textheavy.docx');
+await writePackage(textOnlyParts, textOnlyOut);
+console.log('torture-textheavy.docx ' + kb(statSync(textOnlyOut).size));
+console.log('  4,000 paragraphs, zero images — nothing to shrink, so the only');
+console.log('  thing the compressor can do to it is make it bigger');
