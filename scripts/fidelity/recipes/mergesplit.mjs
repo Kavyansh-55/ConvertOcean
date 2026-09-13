@@ -13,6 +13,9 @@
  */
 import { ok, DOCX_MARKERS, PDF_MARKERS, missing } from './_shared.mjs';
 
+/* `torture-compress.pdf` plants M02-M13; M01 sits on an image, not in text. */
+const HEAVY_MARKERS = Array.from({ length: 12 }, (_, i) => 'M' + String(i + 2).padStart(2, '0'));
+
 export const mergeSplitRecipes = [
   /* ------------------------------------------------------------ PDF */
   {
@@ -46,9 +49,10 @@ export const mergeSplitRecipes = [
     pre: ['#btnSelectAllPages'],   // Extract acts on the selection, which starts empty
     download: '#btnExtract',
     outName: 'split-pdf.pdf',
-    /* Selecting every page and extracting produces one PDF containing that
-       selection, not a zip of one-page files. That is a reasonable design —
-       so the test is that the extraction is faithful, not that it is a zip. */
+    /* The default mode: one PDF containing the selection. The other three
+       modes each get their own recipe below, because the thing that can break
+       is different in each — the promise here is fidelity, and there it is
+       that the pieces add back up to the document. */
     kind: 'pdf',
     async checks({ out }) {
       return [
@@ -64,6 +68,128 @@ export const mergeSplitRecipes = [
            out.sizes.map((s) => `${s.width}×${s.height}`).join(' '), 'major'),
         ok('fonts', 'Embedded fonts carried into the extract',
            out.fonts.length >= 3, `fonts: ${out.fonts.join(', ')}`, 'major'),
+      ];
+    },
+  },
+
+  /* The three modes added for the queries that ask for them: "split pdf into
+     pages" / "separate files", "split pdf into 2 parts", "split pdf by size".
+     Each one produces a zip, so the shared question is the one a single PDF
+     never has to answer: do the pieces still add up to the document? */
+  {
+    slug: 'split-pdf',
+    title: 'Split PDF — a separate file per page',
+    fixture: 'torture.pdf',
+    ready: '#splitWorkspace',
+    pre: ['#btnSelectAllPages', 'input[name="splitMode"][value="each"]'],
+    download: '#btnExtract',
+    outName: 'split-pdf-each.zip',
+    kind: 'zip',
+    async checks({ out, readPdf }) {
+      const parts = out.entries.filter((e) => /\.pdf$/i.test(e.name));
+      const read = [];
+      for (const part of parts) read.push(await readPdf(part.bytes));
+      const totalPages = read.reduce((n, r) => n + r.pages, 0);
+      const allText = read.map((r) => r.text).join(' ');
+      const gone = missing(allText, PDF_MARKERS);
+      return [
+        ok('opens', 'Produced a zip of PDFs', parts.length > 0,
+           `${out.names.length} entries: ${out.names.join(', ')}`, 'blocker'),
+        ok('count', 'One file per selected page (2)', parts.length === 2,
+           `${parts.length} files`, 'blocker'),
+        ok('single', 'Each file holds exactly one page',
+           read.every((r) => r.pages === 1), read.map((r) => r.pages).join(', '), 'blocker'),
+        ok('nocontentloss', 'Every page of the source is somewhere in the zip',
+           totalPages === 2 && gone.length === 0,
+           `${totalPages} pages, missing markers: ${gone.join(', ') || 'none'}`, 'blocker'),
+        ok('named', 'Files are named by page number, zero-padded to sort',
+           parts.every((e) => /_page_\d+\.pdf$/.test(e.name)), parts.map((e) => e.name).join(', '), 'minor'),
+        ok('geometry', 'Page size survives the split',
+           read.every((r) => r.sizes.every((z) => Math.abs(z.width - 612) < 4 && Math.abs(z.height - 792) < 4)),
+           read.flatMap((r) => r.sizes.map((z) => `${z.width}×${z.height}`)).join(' '), 'major'),
+      ];
+    },
+  },
+  {
+    slug: 'split-pdf',
+    title: 'Split PDF — into N equal parts',
+    fixture: 'torture.pdf',
+    ready: '#splitWorkspace',
+    /* No page selection at all: this mode must work on the whole document
+       without one, which is exactly what a reader who typed "split pdf into 2
+       parts" expects. A recipe that clicked Select all first would not be
+       testing that. */
+    pre: ['input[name="splitMode"][value="parts"]', { setValue: '#partCount', value: '2' }],
+    download: '#btnExtract',
+    outName: 'split-pdf-parts.zip',
+    kind: 'zip',
+    async checks({ out, readPdf }) {
+      const parts = out.entries.filter((e) => /\.pdf$/i.test(e.name));
+      const read = [];
+      for (const part of parts) read.push(await readPdf(part.bytes));
+      const totalPages = read.reduce((n, r) => n + r.pages, 0);
+      const gone = missing(read.map((r) => r.text).join(' '), PDF_MARKERS);
+      return [
+        ok('count', 'Two parts requested, two produced', parts.length === 2,
+           `${parts.length} parts: ${out.names.join(', ')}`, 'blocker'),
+        ok('nopageselection', 'Works with nothing selected in the page picker',
+           totalPages === 2, `${totalPages} pages across the parts`, 'blocker'),
+        ok('nocontentloss', 'The parts add back up to the whole document',
+           gone.length === 0, `missing markers: ${gone.join(', ') || 'none'}`, 'blocker'),
+        ok('even', 'A 2-page document splits 1 and 1',
+           read.every((r) => r.pages === 1), read.map((r) => r.pages).join(' + '), 'major'),
+      ];
+    },
+  },
+  {
+    slug: 'split-pdf',
+    title: 'Split PDF — parts under a size',
+    /* Not the 4 KB text fixture the other split recipes use. The first version
+       of this recipe ran on it with a 0.05 MB budget, which is fourteen times
+       the whole document — so it produced one part, asserted that no part was
+       over the limit, and passed without ever splitting anything. The tenth
+       time this cycle that a check was green for the wrong reason.
+
+       `torture-compress.pdf` is 646 KB across four pages of unequal weight,
+       which is what makes a byte budget mean something. */
+    fixture: 'torture-compress.pdf',
+    ready: '#splitWorkspace',
+    pre: ['input[name="splitMode"][value="size"]', { setValue: '#partSize', value: '0.3' }],
+    download: '#btnExtract',
+    outName: 'split-pdf-size.zip',
+    kind: 'zip',
+    /* Page 2 of this fixture is 545 KB on its own, so a 0.3 MB budget cannot
+       be met for it by any amount of splitting. What the tool must not do is
+       hand that part over as though it had succeeded. */
+    alsoRead: { notice: '#errorMessage' },
+    async checks({ out, readPdf, srcBytes, page }) {
+      const parts = out.entries.filter((e) => /\.pdf$/i.test(e.name));
+      const read = [];
+      for (const part of parts) read.push(await readPdf(part.bytes));
+      const budget = Math.round(0.3 * 1024 * 1024);
+      const totalPages = read.reduce((n, r) => n + r.pages, 0);
+      const gone = HEAVY_MARKERS.filter((m) => !read.map((r) => r.text).join(' ').replace(/\s+/g, ' ').includes(m));
+      /* The honest invariant: a part may exceed the budget only when it holds
+         a single page, because splitting cannot make one page smaller. */
+      const overAndSplittable = parts.filter((e, i) => e.bytes.length > budget && read[i].pages > 1);
+      const sizes = parts.map((e) => (e.bytes.length / 1024).toFixed(0) + 'KB').join(', ');
+      return [
+        ok('opens', 'Produced a zip of PDFs', parts.length > 0,
+           `${parts.length} parts, sizes ${sizes}`, 'blocker'),
+        ok('didsplit', 'A 646 KB file with a 0.3 MB budget really is split',
+           parts.length >= 2, `${parts.length} part(s) from ${(srcBytes / 1024).toFixed(0)}KB`, 'blocker'),
+        ok('nocontentloss', 'No page is lost to the size search',
+           totalPages === 4 && gone.length === 0,
+           `${totalPages} pages, missing markers: ${gone.join(', ') || 'none'}`, 'blocker'),
+        ok('budget', 'No multi-page part is over the limit',
+           overAndSplittable.length === 0,
+           overAndSplittable.length ? `over: ${overAndSplittable.map((e) => e.name).join(', ')}` : 'none over', 'blocker'),
+        ok('order', 'Parts are in document order, zero-padded to sort',
+           parts.every((e, i) => e.name.includes('_part_' + String(i + 1))),
+           parts.map((e) => e.name).join(', '), 'minor'),
+        ok('saysso', 'The page that cannot fit is named, not quietly shipped',
+           /larger than 0\.3 MB on its own/.test(page.notice || ''),
+           page.notice ? `said: "${page.notice}"` : 'said nothing', 'blocker'),
       ];
     },
   },

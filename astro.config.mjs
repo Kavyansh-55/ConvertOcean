@@ -3,29 +3,21 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://convertocean.com',
-  /* Astro 7 changed this default from `true` to `'jsx'`, which strips
-     whitespace around inline elements by JSX rules instead of HTML rules.
-     Pinned to the old behaviour deliberately: this was a security upgrade,
-     and a security upgrade should change what we serve as little as it can.
+  /* Astro 7's default. It strips whitespace around inline elements by JSX
+     rules rather than HTML rules, which is worth about 290 bytes a page —
+     ~32 KB across the site.
 
-     Left on the new default, all 111 pages lost whitespace — including the
-     space between adjacent inline elements, which is the kind that a reader
-     can see as two words run together. Checking whether any of those spaces
-     actually mattered means rendering every page in a browser and comparing,
-     and that is a different piece of work from upgrading a framework.
+     Held at `true` through the Astro 7 upgrade on purpose: that was a
+     security batch, and a security batch should change what we serve as
+     little as it can. The open question was whether any of the removed
+     spaces were ones a reader could see — the space between two adjacent
+     inline elements is the kind that shows up as two words run together.
 
-     With this pinned, what remains between the two builds is: every
-     `data-astro-cid-*` value (Astro 7 hashes them differently — verified
-     that HTML and CSS agree, with **zero** orphaned scope ids in either
-     build), one extra space after the skip link, and CSS declarations
-     reordered by the minifier. Declaration sets are identical on 110 of 111
-     pages; the one exception drops `ease` from a transition, which is the
-     default timing function and so means the same thing.
-
-     Worth revisiting on its own later — `'jsx'` is a genuine size win, about
-     290 bytes a page and ~32 KB across the site. It needs its own testing
-     pass, not a free ride on this one. */
-  compressHTML: true,
+     Answered by measurement, not by reading the diff: both builds were
+     rendered in a real browser and compared on `innerText`, which is the
+     text as laid out, so whitespace that only exists between block elements
+     cannot produce a false alarm. See the roadmap entry for the result. */
+  compressHTML: 'jsx',
   integrations: [sitemap({
       changefreq: 'weekly',
       priority: 0.7,

@@ -268,6 +268,60 @@ for (const [path, accept, kind] of [
       `${path} bundle contains the target-size search`);
 }
 
+/* ------------------------------------------------------ split-pdf modes */
+
+/* "split pdf into pages" / "separate files", "split pdf into 2 parts" and
+   "split pdf by size" are the dominant capability modifiers on the term, and
+   the tool could do none of them: it only ever produced one PDF of the pages
+   you picked. Each string below is checked to be one the previous deploy did
+   not already serve — the failure mode this file has hit twice. */
+{
+  const { body: html } = await get('/split-pdf/');
+  say(html.includes('name="splitMode"'), '/split-pdf/ serves the output-mode selector');
+  say(html.includes('A separate PDF for every page'), '/split-pdf/ offers a file per page, in words');
+  say(html.includes('equal parts'), '/split-pdf/ offers the equal-parts mode, in words');
+  say(html.includes('id="partSize"'), '/split-pdf/ serves the size-limit field');
+  say(html.includes('aria-label="Maximum size of each part, in MB"'),
+      '/split-pdf/ names the size field for a screen reader');
+
+  /* The engine, not just the controls. A page can render four radio buttons
+     and still be wired to the old single-output code path. `jszip` only ever
+     loads on this page because a mode now returns more than one file, and the
+     oversize sentence exists nowhere else on the site. */
+  say(/jszip/i.test(html), '/split-pdf/ loads JSZip, which only the multi-file modes need');
+  say(html.includes('is larger than '), '/split-pdf/ carries the honest oversize message');
+
+  /* Copy and schema, which are the AEO surface. */
+  say(html.includes('Into Separate Files, Parts or Pages'), '/split-pdf/ serves the rewritten title');
+  say(html.includes('Can I split a PDF into 2 equal parts'), '/split-pdf/ answers the equal-parts question');
+  say(html.includes('Can I split a PDF by file size'), '/split-pdf/ answers the by-size question');
+}
+
+/* -------------------------------------------- compressHTML: 'jsx' spaces */
+
+/* The whitespace flip removed the space around inline elements. Four places
+   depended on a line break for a space between two words, and shipped with the
+   words run together. These assert the repaired text, so they fail on a build
+   that regresses it — including on the build that was live before this one. */
+{
+  const { body: privacy } = await get('/privacy/');
+  say(privacy.includes('public at <a'), '/privacy/ keeps the space before the repo link');
+  say(privacy.includes("Google's own <a"), '/privacy/ keeps the space before the opt-out link');
+  say(privacy.includes('described in <a'), '/privacy/ keeps the space before the Google policy link');
+
+  /* This one passes against the previous deploy too, and that is the point
+     rather than an oversight: `compressHTML: true` collapsed the newline to a
+     single space, and the repair puts the same single space back. It cannot
+     prove the new build shipped — the twelve above do that — but it is the
+     check that fails if the space is ever lost again. Labelled so nobody reads
+     a green line here as evidence of this deploy. */
+  const { body: vs } = await get('/vs/sejda/');
+  say(/HOME<\/a> <span/.test(vs), '/vs/ breadcrumbs keep the space around the separator (an invariant, not new)');
+
+  const { body: exif } = await get('/exif-remover/');
+  say(exif.includes('rotation flag <span'), '/exif-remover/ keeps the space before its hint');
+}
+
 /* The link surface, which is hand-maintained and was already wrong once:
    /compress-pdf/ shipped without ever being added to the footer. */
 {
