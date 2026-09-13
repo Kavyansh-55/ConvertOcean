@@ -353,11 +353,25 @@ async function stylesheetsFor(path) {
       'and no longer carry the page\'s negative tracking into uppercase');
 
   /* The accessible name on the control itself. "✕" alone is announced as
-     "times", or as nothing at all. */
-  for (const slug of ['merge-pdf', 'merge-word', 'merge-excel', 'merge-powerpoint']) {
-    const { body } = await get('/' + slug + '/');
-    say(body.includes('aria-label="Remove '),
-        `/${slug}/ names its remove-file button for a screen reader`);
+     "times", or as nothing at all.
+
+     Two traps, both hit writing this. The PowerPoint merger is /merge-pptx/,
+     not /merge-powerpoint/ — a check pointed at a URL that 404s fails and
+     looks exactly like a missing feature. And three of these four write the
+     button from an inline script while MergeExcel's is bundled into its own
+     chunk, which is the trap this file's header warns about: follow the
+     import. */
+  for (const slug of ['merge-pdf', 'merge-word', 'merge-excel', 'merge-pptx']) {
+    const { status, body } = await get('/' + slug + '/');
+    let found = status === 200 && body.includes('aria-label="Remove ');
+    if (!found && status === 200) {
+      for (const src of [...body.matchAll(/src="(\/_astro\/Merge[^"]+\.js)"/g)].map((m) => m[1])) {
+        const chunk = await get(src);
+        if (chunk.body.includes('aria-label="Remove ')) { found = true; break; }
+      }
+    }
+    say(found, `/${slug}/ names its remove-file button for a screen reader`
+        + (status === 200 ? '' : ` (page returned ${status})`));
   }
 }
 
