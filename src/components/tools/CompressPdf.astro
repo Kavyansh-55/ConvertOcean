@@ -107,6 +107,18 @@ const { slug, headline, subtitle } = Astro.props;
 
   /* ------------------------------------------------------- before / after */
   .cmp-compare { margin-top: var(--spacing-lg); }
+  /* Matches the "What changed in your file" summary below it, so the two
+     collapsed sections read as a pair rather than as two different ideas. */
+  .cmp-compare > summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    padding: var(--spacing-sm) 0;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    touch-action: manipulation;
+  }
   .cmp-compare-head {
     display: flex;
     align-items: baseline;
@@ -318,9 +330,16 @@ const { slug, headline, subtitle } = Astro.props;
     </div>
   </div>
 
-  <div class="cmp-compare" id="cmpCompare" style="display: none;">
+  {/* A <details>, not a permanently open panel. It is the trust surface for a
+      lossy tool — proof the pages still look right — so it is not going
+      anywhere, but it was ~1,350px of a 6,250px page, open by default, above
+      the fold, and rendering two full page canvases for a document where
+      nothing had been re-encoded. It now opens itself only when an image was
+      actually changed, which is the only time there is anything to see. */}
+  <details class="cmp-compare" id="cmpCompare" style="display: none;">
+    <summary class="cmp-compare-summary">Check the result — compare the pages before and after</summary>
     <div class="cmp-compare-head">
-      <div class="cmp-settings-label" style="margin: 0;">Check the result — drag to compare</div>
+      <div class="cmp-settings-label" style="margin: 0;">Drag the slider to compare</div>
       <div class="cmp-page-nav">
         <button type="button" class="button button-secondary" id="cmpPrevPage" aria-label="Previous page">‹</button>
         <span id="cmpPageLabel">Page 1 of 1</span>
@@ -335,7 +354,7 @@ const { slug, headline, subtitle } = Astro.props;
     <input type="range" id="cmpWipe" class="cmp-wipe-range" min="0" max="100" value="50"
            aria-label="Comparison position: left of the line shows the original, right shows the compressed file" />
     <div class="cmp-wipe-tags"><span>Original</span><span>Compressed</span></div>
-  </div>
+  </details>
 
   <details class="cmp-details" id="cmpDetails" style="display: none;">
     <summary>What changed in your file</summary>
@@ -453,11 +472,25 @@ const { slug, headline, subtitle } = Astro.props;
 
     /* --------------------------------------------------------- compressing */
 
-    async function run(key) {
+    /**
+     * @param key   'light' | 'balanced' | 'strong' | 'target'
+     * @param go    true when the reader actually asked for a size to be met
+     *
+     * `go` exists because two different gestures used to call this with
+     * 'target' and needed opposite behaviour: *selecting* the Fit a size
+     * preset should reveal the panel and wait, while *pressing* Fit to this
+     * size should compress. Both went down the same path, so the early return
+     * written for the first silently swallowed the second — the button never
+     * reached the engine at all, on any press. Verified by counting calls into
+     * `coCompressPdf` from the page: one on upload, and never again.
+     */
+    async function run(key, go) {
       if (!job) return;
       setActivePreset(key);
       targetPanel.style.display = key === 'target' ? 'block' : 'none';
-      if (key === 'target' && !cache.has(cacheKey(key))) { hideProgress(); return; }
+      /* Selecting the preset only opens the panel. Pressing the button, or
+         coming back to a size already computed, goes through. */
+      if (key === 'target' && !go && !cache.has(cacheKey(key))) { hideProgress(); return; }
 
       const ck = cacheKey(key);
       if (cache.has(ck)) { current = Object.assign({ key }, cache.get(ck)); paint(); return; }
@@ -495,6 +528,12 @@ const { slug, headline, subtitle } = Astro.props;
 
     /* ------------------------------------------------------------ painting */
 
+    /** Images were found, and not one of them was worth re-encoding. */
+    function nothingShrunk(r) {
+      const imgs = r.images || [];
+      return imgs.length > 0 && !imgs.some((im) => im.action === 'shrunk');
+    }
+
     function paint() {
       const r = current.report;
       const before = r.originalSize;
@@ -515,6 +554,19 @@ const { slug, headline, subtitle } = Astro.props;
       } else if (r.noImages) {
         elBefore.style.display = '';
         elSaving.innerHTML = '<strong>' + pct + '% smaller.</strong> This PDF has no images in it, so the saving came from tidying the file structure. Text-only PDFs are already efficient — there is no large win hiding in one.';
+      } else if (nothingShrunk(r)) {
+        /* The case the bug report landed on: a text document with a logo. The
+           logo is an image, so the "no images" line above does not fire, but
+           it is already smaller than the space it is drawn in — so every
+           preset returns the same bytes and the page used to offer no reason
+           at all. Three identical numbers with no explanation reads as a
+           broken tool, which is exactly how it was reported. */
+        elBefore.style.display = '';
+        elSaving.innerHTML = '<strong>' + pct + '% smaller.</strong> '
+          + 'No image in this PDF is stored larger than it is displayed, so the '
+          + '<em>how hard to compress</em> settings make no difference to this file — '
+          + 'all three produce the same result. The saving came from tidying the file '
+          + 'structure instead. Nearly all of this document is text and fonts.';
       } else {
         elBefore.style.display = '';
         elSaving.innerHTML = '<strong>' + pct + '% smaller</strong> — ' + fmt(saved) + ' saved. Text, links and form fields are untouched.';
@@ -529,6 +581,14 @@ const { slug, headline, subtitle } = Astro.props;
       const sizeSlot = presetRow.querySelector('[data-size-for="' + current.key + '"]');
       if (sizeSlot) sizeSlot.textContent = fmt(after);
 
+      /* When the settings cannot change the answer, fill in all three rather
+         than letting the reader click each one to discover they are equal. */
+      if (nothingShrunk(r) || r.noImages) {
+        for (const slot of presetRow.querySelectorAll('[data-size-for]')) {
+          if (slot.dataset.sizeFor !== 'target') slot.textContent = fmt(after);
+        }
+      }
+
       /* Drop the overlay before the button becomes actionable, so the tool is
          never showing "working…" above a control that is ready. */
       hideProgress();
@@ -540,7 +600,19 @@ const { slug, headline, subtitle } = Astro.props;
         : 'Compressed from ' + fmt(before) + ' to ' + fmt(after) + ', ' + pct +
           ' percent smaller. Ready to download.';
       renderDetails(r);
-      renderCompare();
+
+      /* Open it only when an image really changed — that is the only case
+         where the two sides differ. Rendering into a closed <details> would
+         measure a zero-width stage, so the render waits for the toggle. */
+      const worthComparing = !r.noImages && !nothingShrunk(r) && !r.noGain && saved > 0;
+      compare.style.display = 'block';
+      const wasOpen = compare.open;
+      compare.open = worthComparing;
+      /* Changing `open` queues a toggle event, and the handler below renders.
+         Only render here when it was already open, so exactly one render is
+         started either way. */
+      if (worthComparing && wasOpen) renderCompare();
+      else if (!worthComparing) stage.removeAttribute('data-ready');
     }
 
     function renderDetails(r) {
@@ -583,10 +655,26 @@ const { slug, headline, subtitle } = Astro.props;
 
     /* ------------------------------------------------ before / after render */
 
-    async function renderCompare() {
+    /* Renders are serialised through this. Two callers can ask at nearly the
+       same moment — paint(), and the `toggle` that fires when it opens the
+       panel — and pdf.js throws "Cannot use the same canvas during multiple
+       render() operations" if their draws overlap. The token check alone does
+       not prevent it: it is read after the first draw has already started.
+
+       The second caller arrived with the collapsible panel, so this race was
+       introduced and caught in the same change rather than shipped — but it
+       was invisible while it lasted, because the catch below hid the panel and
+       said nothing, which is why that catch now records the error. */
+    let renderChain = Promise.resolve();
+
+    function renderCompare() {
+      renderChain = renderChain.then(renderCompareNow, renderCompareNow);
+      return renderChain;
+    }
+
+    async function renderCompareNow() {
       if (!job || !current) return;
       const token = ++renderToken;
-      compare.style.display = 'block';
       pageLabel.textContent = 'Page ' + pageNo + ' of ' + job.pageCount;
 
       /* Both sides are rendered at the same viewport so the comparison is of
@@ -635,7 +723,13 @@ const { slug, headline, subtitle } = Astro.props;
         stage.setAttribute('data-ready', '1');
       } catch (err) {
         /* A preview that will not render is not a reason to withhold a file
-           that compressed correctly. Hide the comparison and keep going. */
+           that compressed correctly: hide the comparison and keep going.
+
+           But record it. Swallowing this silently is how a render that threw
+           on every single file looked like a design decision rather than a
+           fault — the panel simply never appeared, and nothing anywhere said
+           why. `npm run compress` now asserts this stays null. */
+        window.__cmpRenderError = String(err);
         compare.style.display = 'none';
       }
     }
@@ -659,7 +753,13 @@ const { slug, headline, subtitle } = Astro.props;
       targetKB.value = chip.dataset.kb;
       run('target');
     });
-    btnFit.addEventListener('click', () => run('target'));
+    btnFit.addEventListener('click', () => run('target', true));
+
+    /* A reader can always open it themselves, so the pages are rendered on
+       demand rather than never. */
+    compare.addEventListener('toggle', () => {
+      if (compare.open) renderCompare();
+    });
 
     wipe.addEventListener('input', () => setWipe(wipe.value));
 
