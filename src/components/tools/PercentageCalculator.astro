@@ -100,7 +100,9 @@ const { slug, headline, subtitle } = Astro.props;
     font-family: var(--font-sans);
   }
   .pct-formula-text {
-    font-size: 11px;
+    /* The worked sum — "= (200 x 15) / 100 = 30" — is the answer being
+       explained, not a caption, so it gets the body floor. */
+    font-size: 12px;
     color: var(--colors-mute);
     font-family: var(--font-sans);
     line-height: 1.6;

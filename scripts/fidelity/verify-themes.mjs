@@ -20,6 +20,7 @@
  *   CO_ORIGIN=https://convertocean.com node scripts/fidelity/verify-themes.mjs
  */
 import puppeteer from 'puppeteer-core';
+import { browserProfile } from '../testing-paths.mjs';
 import { existsSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 
@@ -74,6 +75,8 @@ const server = await ensureServer();
 const browser = await puppeteer.launch({
   executablePath: browserPath(), headless: 'new',
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
+  /* Ours, so puppeteer never deletes it — see browserProfile(). */
+  userDataDir: browserProfile('themes'),
 });
 
 try {

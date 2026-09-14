@@ -22,6 +22,7 @@ import { existsSync, mkdirSync, writeFileSync, rmSync, readdirSync, readFileSync
 import { join } from 'node:path';
 import { spawn } from 'node:child_process';
 import * as TESTING_PATHS from '../testing-paths.mjs';
+import { browserProfile } from '../testing-paths.mjs';
 
 const ORIGIN = process.env.CO_ORIGIN || 'http://localhost:4321';
 const LOCAL = ORIGIN.includes('localhost');
@@ -77,6 +78,8 @@ const server = await ensureServer();
 const browser = await puppeteer.launch({
   executablePath: browserPath(), headless: 'new',
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
+  /* Ours, so puppeteer never deletes it — see browserProfile(). */
+  userDataDir: browserProfile('generators'),
 });
 
 try {

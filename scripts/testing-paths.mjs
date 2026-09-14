@@ -43,6 +43,28 @@ export const FIXTURES = join(TESTING, 'fixtures');
 /** Generated outputs: converted files, report.json, screenshots. */
 export const OUT = join(TESTING, 'out');
 
+/**
+ * A browser profile directory the suites own, one per suite.
+ *
+ * Puppeteer otherwise creates a fresh profile under the system temp directory
+ * and deletes it on close. On this machine that delete loses a race with
+ * whatever else scans `%TEMP%` and throws `EBUSY: resource busy or locked`
+ * from an async cleanup with no suite frame in the stack — which kills the
+ * process wherever it happens to be. `npm run mobile` against production died
+ * that way three times, at a different page each time, while the same build
+ * passed locally.
+ *
+ * A directory we create ourselves is not cleaned up by puppeteer at all, so
+ * the race has nothing to lose. One per suite, because a profile can only be
+ * held by one browser at a time and two suites running at once would then
+ * fail to launch rather than fail to clean up.
+ */
+export const browserProfile = (name) => {
+  const dir = join(TESTING, 'browser-profiles', name);
+  mkdirSync(dir, { recursive: true });
+  return dir;
+};
+
 /** A fixture by name. */
 export const fixture = (name) => join(FIXTURES, name);
 

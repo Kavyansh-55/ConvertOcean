@@ -42,7 +42,9 @@ const { slug, headline, subtitle } = Astro.props;
     max-width: 300px;
   }
   .merge-excel-container .file-item-meta {
-    font-size: 11px;
+    /* 12px, matching MergePdf: this line names the worksheets that are about
+       to be merged. */
+    font-size: 12px;
     color: var(--colors-mute);
   }
   .merge-excel-container .file-item-actions {

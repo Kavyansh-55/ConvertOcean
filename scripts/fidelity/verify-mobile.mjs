@@ -34,16 +34,23 @@
  * state — `/` and `/file-converter/` are landing pages, and the two
  * calculators and `/json-formatter/` render their whole UI immediately.
  *
- * The cost is four page loads and four file reads per entry, which is why this
- * covers the tool *shapes* rather than all 66 tools: a drop-zone-plus-panel
- * tool, a multi-file list, a thumbnail grid, a workspace with its own controls.
- * Adding a tool is one line and the fixture it eats.
+ * The list is chosen by **component, not by tool**. 69 tools are built from 37
+ * components, so driving all 69 would measure the same handful of layouts over
+ * and over for twenty minutes. One representative per component covers every
+ * distinct piece of UI on the site at a fraction of that — and when a
+ * component is fixed, every tool sharing it is fixed too, which is exactly how
+ * the .icon-btn and .button-group findings played out.
+ *
+ * `npm run mobile -- --audit` prints which components are covered and which
+ * are not, so the honest answer to "what does this miss" does not depend on
+ * anyone keeping a list in their head.
  */
 import puppeteer from 'puppeteer-core';
 import { existsSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { browserProfile } from '../testing-paths.mjs';
 
 const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'testing', 'fixtures');
 
@@ -81,16 +88,124 @@ const REVEAL = {
      this file measures. */
   '/compress-pdf/': { file: 'torture-compress.pdf', wait: '#cmpWorkspace' },
   '/compress-excel/': { file: 'torture-compress.xlsx', wait: '#cofWorkspace' },
+
+  /* The components added above. Each waits on the element that only exists
+     once a file has been read, so the measurement is of the real workspace
+     rather than of a drop zone. */
+  '/csv-to-json/':   { file: 'torture.csv',    wait: '#actionControls' },
+  '/png-to-jpg/':    { file: 'torture.png',    wait: '#actionControls' },
+  '/txt-to-pdf/':    { file: 'torture.txt',    wait: '#txtPreview' },
+  '/pdf-to-txt/':    { file: 'torture.pdf',    wait: '#actionControls' },
+  '/pdf-to-excel/':  { file: 'torture.pdf',    wait: '#actionControls' },
+  '/pptx-to-pdf/':   { file: 'torture.pptx',   wait: '#actionControls' },
+  '/merge-excel/':   { file: 'torture.xlsx',   wait: '#fileItemsList' },
+  '/merge-images/':  { file: 'torture.png',    wait: '#imagesList' },
+  '/split-image/':   { file: 'torture.png',    wait: '#previewCard' },
+  '/merge-txt/':     { file: 'torture.txt',    wait: '#filesList' },
+  '/split-txt/':     { file: 'torture.txt',    wait: '#fileInfoCard' },
+  '/split-word/':    { file: 'torture.docx',   wait: '#splitWorkspace' },
+  '/merge-pptx/':    { file: 'torture.pptx',   wait: '#fileItemsList' },
+  '/split-pptx/':    { file: 'torture.pptx',   wait: '#splitWorkspace' },
+  '/image-to-pdf/':  { file: 'torture.png',    wait: '#imageList' },
+  '/heic-to-jpg/':   { file: 'sample.heic',    wait: '#actionControls' },
+  '/ofx-to-csv/':    { file: 'torture.ofx',    wait: '#resultPanel' },
+  '/exif-viewer/':   { file: 'torture.jpg',    wait: '#resultPanel' },
 };
 const PAGES = [
-  '/', '/excel-to-pdf/', '/pdf-to-word/', '/merge-pdf/', '/word-to-pdf/',
-  '/invoice-generator/', '/sales-tax-calculator/', '/json-formatter/',
-  '/split-pdf/', '/compress-pdf/', '/image-to-text/', '/file-converter/',
-  /* Added with REVEAL, for workspace shapes the list above does not have:
-     a resize form, a metadata table, a sheet picker, a second file list. */
-  '/image-resizer/', '/exif-remover/', '/split-excel/', '/merge-word/',
-  '/compress-excel/',
+  /* Pages with no tool component of their own. */
+  '/', '/file-converter/',
+
+  /* One per component. The comment is the component, because that is the unit
+     this list is really covering. */
+  '/excel-to-pdf/',              // ExcelToPdf
+  '/pdf-to-word/',               // PdfToWord
+  '/word-to-pdf/',               // WordTool
+  '/merge-pdf/',                 // MergePdf
+  '/split-pdf/',                 // SplitPdf
+  '/compress-pdf/',              // CompressPdf
+  '/compress-excel/',            // CompressOffice
+  '/image-to-text/',             // ImageToText
+  '/image-resizer/',             // ImageResizer
+  '/exif-remover/',              // ExifTool (remover half)
+  '/split-excel/',               // SplitExcel
+  '/merge-word/',                // MergeWord
+  '/json-formatter/',            // JsonFormatter
+  '/invoice-generator/',         // InvoiceGenerator
+  '/sales-tax-calculator/',      // SalesTaxCalculator
+
+  /* The twenty-three components nothing had ever measured. */
+  '/csv-to-json/',               // SpreadsheetTool   — 11 tools
+  '/png-to-jpg/',                // ImageTool         — 13 tools
+  '/txt-to-pdf/',                // TxtToPdf
+  '/pdf-to-txt/',                // PdfToTxt
+  '/pdf-to-excel/',              // PdfToExcel
+  '/pptx-to-pdf/',               // PptxTool
+  '/merge-excel/',               // MergeExcel
+  '/merge-images/',              // MergeImages
+  '/split-image/',               // SplitImage
+  '/merge-txt/',                 // MergeTxt
+  '/split-txt/',                 // SplitTxt
+  '/split-word/',                // SplitWord
+  '/merge-pptx/',                // MergePptx
+  '/split-pptx/',                // SplitPptx
+  '/image-to-pdf/',              // ImageToPdf
+  '/heic-to-jpg/',               // HeicTool
+  '/ofx-to-csv/',                // BankFileTool      — 3 tools
+  '/exif-viewer/',               // ExifTool (viewer half)
+  '/word-counter/',              // WordCounter
+  '/receipt-generator/',         // ReceiptGenerator
+  '/percentage-calculator/',     // PercentageCalculator
+  '/profit-margin-calculator/',  // ProfitMarginCalculator
+  '/break-even-calculator/',     // BreakEvenCalculator
 ];
+
+/**
+ * `--audit` — which components does this sweep actually reach?
+ *
+ * The list above is chosen by component, and a list chosen by hand goes stale
+ * the moment somebody adds a tool. This derives the answer from the source:
+ * it reads the component map in `[tool].astro`, groups the tools by the
+ * component that renders them, and reports which groups have a representative
+ * in PAGES. It is the "say what you did not look at" rule made executable
+ * rather than remembered.
+ */
+if (process.argv.includes('--audit')) {
+  const { readFileSync } = await import('node:fs');
+  const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+  const pageSrc = readFileSync(join(root, 'src', 'pages', '[tool].astro'), 'utf8');
+
+  const byComponent = new Map();
+  for (const m of pageSrc.matchAll(/'([a-z0-9-]+)':\s*([A-Za-z][A-Za-z0-9]*),/g)) {
+    if (!byComponent.has(m[2])) byComponent.set(m[2], []);
+    byComponent.get(m[2]).push(m[1]);
+  }
+
+  const covered = [];
+  const missing = [];
+  for (const [component, slugs] of byComponent) {
+    const hit = slugs.find((slug) => PAGES.includes('/' + slug + '/'));
+    (hit ? covered : missing).push({ component, slugs, hit });
+  }
+
+  const toolCount = [...byComponent.values()].reduce((n, s) => n + s.length, 0);
+  const reached = covered.reduce((n, c) => n + c.slugs.length, 0);
+
+  console.log(`\nmobile coverage by component\n`);
+  console.log(`  ${byComponent.size} components render ${toolCount} tools.`);
+  console.log(`  covered: ${covered.length} components (${reached} tools reached through them)`);
+  console.log(`  missing: ${missing.length}\n`);
+  for (const c of covered.sort((a, b) => b.slugs.length - a.slugs.length)) {
+    console.log(`  OK    ${c.component.padEnd(24)} via /${c.hit}/`
+      + (c.slugs.length > 1 ? `  (+${c.slugs.length - 1} more tools)` : ''));
+  }
+  for (const c of missing) {
+    console.log(`  GAP   ${c.component.padEnd(24)} ${c.slugs.length} tool(s), e.g. /${c.slugs[0]}/`);
+  }
+  console.log(missing.length
+    ? `\n${missing.length} component(s) are not measured at any width.\n`
+    : '\nEvery component that renders a tool has a page in this sweep.\n');
+  process.exit(0);
+}
 
 let bad = 0;
 const say = (ok, msg) => { if (!ok) bad++; console.log(`${ok ? 'OK  ' : 'FAIL'}  ${msg}`); };
@@ -115,6 +230,8 @@ const server = await ensureServer();
 const browser = await puppeteer.launch({
   executablePath: browserPath(), headless: 'new',
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
+  /* Ours, so puppeteer never tries to delete it — see browserProfile(). */
+  userDataDir: browserProfile('mobile'),
 });
 
 try {

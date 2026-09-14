@@ -26,6 +26,7 @@ import * as inspect from './lib/inspect.mjs';
 // The site's own EXIF reader, so metadata assertions agree with the tool.
 import * as exifParse from '../../src/scripts/exif-parse.js';
 import * as TESTING_PATHS from '../testing-paths.mjs';
+import { browserProfile } from '../testing-paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const { FIXTURES, OUT } = TESTING_PATHS;
@@ -384,7 +385,9 @@ const SYM = { pass: '  PASS', fail: '  FAIL', err: '  ERR ' };
     executablePath: browserPath(),
     headless: HEADFUL ? false : 'new',
     args: ['--no-sandbox', '--disable-dev-shm-usage'],
-  });
+  /* Ours, so puppeteer never deletes it — see browserProfile(). */
+  userDataDir: browserProfile('fidelity'),
+});
 
   const selected = only.length ? recipes.filter((r) => only.includes(r.slug)) : recipes;
   const report = [];
