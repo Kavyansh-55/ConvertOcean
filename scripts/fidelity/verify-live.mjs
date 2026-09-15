@@ -477,6 +477,52 @@ async function stylesheetsFor(path) {
       'and a preview that fails to render says so instead of vanishing quietly');
 }
 
+/* ---------------------------- the mobile sweep's component-wide findings */
+
+/* Eight defects found the day `npm run mobile` went from 17 hand-picked pages
+   to one page per component. Two of them scrolled a whole page sideways on a
+   phone, which is the worst class of layout bug and had been live the entire
+   time. */
+{
+  const { css } = await stylesheetsFor('/merge-images/');
+
+  /* The global two-column workspace, shared by eight components. A `1fr`
+     track will not shrink below its content, so a file list with a long name
+     pushed the page past the viewport at 320px. */
+  say(/\.workspace-layout\{[^}]*grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/.test(css),
+      'the shared workspace grid can shrink below its content');
+
+  /* And the copy of the same property inside the 640px media query, which
+     carries !important and was silently overriding the fix at exactly the
+     widths it was written for. This is the one that actually mattered. */
+  say(css.includes('grid-template-columns:minmax(0,1fr)!important'),
+      'including the !important copy in the phone media query, which overrode it');
+
+  /* Type floors on things only visible once a file has been added. */
+  say(/\.file-item-meta\[[^\]]*\]\{[^}]*font-size:12px/.test(css)
+      || /\.file-item-meta[^{]*\{[^}]*font-size:12px/.test(css),
+      'the merge file list meta line is at the 12px floor');
+}
+
+{
+  const { css } = await stylesheetsFor('/break-even-calculator/');
+  say(!/\.be-bar-(?:cm|var)\[[^\]]*\]\{[^}]*font-size:11px/.test(css),
+      'the break-even chart labels are no longer under the floor');
+}
+
+{
+  const { css } = await stylesheetsFor('/percentage-calculator/');
+  say(!/\.pct-formula-text\[[^\]]*\]\{[^}]*font-size:11px/.test(css),
+      'the percentage calculator\'s worked formula is no longer under the floor');
+}
+
+{
+  /* Built into the file list at runtime, so it ships in the page. */
+  const { body } = await get('/image-to-pdf/');
+  say(body.includes('min-width: 44px'), '/image-to-pdf/ remove button is a real tap target');
+  say(body.includes('aria-label="Remove '), 'and it has a name a screen reader can read');
+}
+
 /* The link surface, which is hand-maintained and was already wrong once:
    /compress-pdf/ shipped without ever being added to the footer. */
 {
