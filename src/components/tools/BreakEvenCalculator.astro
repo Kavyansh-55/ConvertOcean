@@ -101,7 +101,10 @@ const { slug, headline, subtitle } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    /* 12px. It sits inside a 32px bar with room to spare, and a label a
+       reader is meant to read off a chart is held to the same floor as body
+       text — more so here, because it is set on a saturated fill. */
+    font-size: 12px;
     font-weight: var(--fw-bold);
     /* Dark, and static: this fill does not change with the theme, so the label
        must not either. White measured 3.27:1 on the red end and 1.54:1 on the
@@ -116,7 +119,7 @@ const { slug, headline, subtitle } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: var(--fw-bold);
     color: #fff;
     transition: width 0.4s cubic-bezier(0.16,1,0.3,1);

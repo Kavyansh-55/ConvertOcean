@@ -1517,15 +1517,25 @@ select:focus-visible,
 }
 
 /* Workspace Layout split panel */
+/* minmax(0, 1fr), not 1fr. A grid item defaults to `min-width: auto`, which
+   refuses to shrink the track below the intrinsic width of its contents — so
+   a file list with a long name, or a thumbnail row, pushes the whole page
+   sideways on a phone. The single-column rule below does not rescue it
+   either: one column that cannot shrink overflows exactly as well as two.
+
+   /merge-images/ and /merge-txt/ were both scrolling sideways at 320px
+   because of this, and it is shared by eight components, so the same fault
+   was latent in all of them. Found the day the mobile sweep started covering
+   one page per component rather than a hand-picked handful. */
 .workspace-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--spacing-lg);
 }
 
 @media (max-width: 900px) {
   .workspace-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -2342,7 +2352,12 @@ footer {
 /* --- Workspace layout (split panels in tools) --- */
 @media (max-width: 640px) {
   .workspace-layout {
-    grid-template-columns: 1fr !important;
+    /* minmax(0, 1fr), for the reason given at the main rule. This one carries
+       `!important`, so it was overriding that fix at exactly the widths where
+       it mattered: the two-column rule was corrected, the page still scrolled
+       sideways at 320, and the CSS looked right in the file. A third
+       declaration of the same property, in a media query, with !important. */
+    grid-template-columns: minmax(0, 1fr) !important;
     gap: var(--spacing-md);
   }
 }

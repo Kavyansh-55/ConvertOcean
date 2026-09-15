@@ -39,7 +39,10 @@ const { slug, headline, subtitle } = Astro.props;
   }
   .merge-pdf-container .file-item-meta {
     font-family: var(--font-sans);
-    font-size: 11px;
+    /* 12px: it reports the page count, which is the thing a reader checks
+       before merging. Under the floor and never measured, because the file
+       list only exists after a file is added. */
+    font-size: 12px;
     color: var(--colors-mute);
   }
 </style>

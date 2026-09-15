@@ -216,7 +216,7 @@ const { slug, headline, subtitle } = Astro.props;
               <div class="image-size" style="font-size: 12px; color: var(--colors-mute);">${sizeKb} KB</div>
             </div>
           </div>
-          <button class="btn-remove" onclick="window.removeImagePdf('${item.id}')" title="Remove" style="background: none; border: none; color: var(--colors-danger); cursor: pointer; font-size: 18px; padding: 4px; flex-shrink: 0;">✕</button>
+          <button class="btn-remove" onclick="window.removeImagePdf('${item.id}')" title="Remove" aria-label="Remove ${item.name || 'image'}" style="background: none; border: none; color: var(--colors-danger); cursor: pointer; font-size: 18px; padding: 4px; flex-shrink: 0; min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; touch-action: manipulation;">✕</button>
         `;
         imageList.appendChild(div);
       });

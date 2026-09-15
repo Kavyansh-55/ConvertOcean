@@ -31,6 +31,7 @@ import { spawn } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as TESTING_PATHS from '../testing-paths.mjs';
+import { browserProfile } from '../testing-paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const { FIXTURES } = TESTING_PATHS;
@@ -68,6 +69,8 @@ async function ensureServer() {
 const server = await ensureServer();
 const browser = await puppeteer.launch({
   executablePath: browserPath(), headless: 'new', args: ['--no-sandbox'],
+  /* Ours, so puppeteer never deletes it — see browserProfile(). */
+  userDataDir: browserProfile('compress'),
 });
 
 try {

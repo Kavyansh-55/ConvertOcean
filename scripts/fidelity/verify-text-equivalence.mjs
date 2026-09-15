@@ -25,6 +25,7 @@
  * somewhere before flipping it.
  */
 import puppeteer from 'puppeteer-core';
+import { browserProfile } from '../testing-paths.mjs';
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -140,6 +141,8 @@ const [base, cand] = await Promise.all([serve(BASE_DIR), serve(CAND_DIR)]);
 const browser = await puppeteer.launch({
   executablePath: browserPath(), headless: 'new',
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
+  /* Ours, so puppeteer never deletes it — see browserProfile(). */
+  userDataDir: browserProfile('text-equivalence'),
 });
 
 let bad = 0, checked = 0;

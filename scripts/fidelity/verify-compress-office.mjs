@@ -21,6 +21,7 @@ import JSZip from 'jszip';
 import { existsSync, readFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import * as TESTING_PATHS from '../testing-paths.mjs';
+import { browserProfile } from '../testing-paths.mjs';
 import { assertWellFormed } from './lib/ooxml.mjs';
 
 const ORIGIN = process.env.CO_ORIGIN || 'http://localhost:4321';
@@ -58,6 +59,8 @@ const server = await ensureServer();
 const browser = await puppeteer.launch({
   executablePath: browserPath(), headless: 'new',
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
+  /* Ours, so puppeteer never deletes it — see browserProfile(). */
+  userDataDir: browserProfile('compress-office'),
 });
 
 try {
