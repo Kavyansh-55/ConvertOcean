@@ -19,6 +19,32 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ROOT = process.cwd();
+
+/**
+ * How many tools there are, read from the tool data rather than typed here.
+ *
+ * This card said "65 free tools" while the site said 69, because the number
+ * was hard-coded in the markup below. It had been wrong since the 66th tool
+ * shipped, and this image is not a minor surface: it is the card every link
+ * to the site renders as on WhatsApp, Slack and X, and the social preview on
+ * the GitHub repo. A number typed into a template goes stale the next time
+ * the thing it counts changes — so it is counted.
+ *
+ * The count is sanity-checked rather than trusted: if the regex ever stops
+ * matching the shape of tools.ts, this fails loudly instead of baking a
+ * confident wrong number into an image nobody re-reads.
+ */
+function toolCount() {
+  const src = readFileSync(join(ROOT, 'src', 'data', 'tools.ts'), 'utf8');
+  const n = (src.match(/^\s{4}slug: '[^']+',$/gm) || []).length;
+  if (n < 40 || n > 300) {
+    throw new Error(`counted ${n} tools in src/data/tools.ts, which cannot be right — `
+      + 'the file shape changed and this needs updating rather than guessing.');
+  }
+  return n;
+}
+
+const TOOLS = toolCount();
 const EDGE_CANDIDATES = [
   'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
   'C:/Program Files/Microsoft/Edge/Application/msedge.exe',
@@ -91,7 +117,7 @@ const html = `<!doctype html>
   <div>
     <div class="pill"><span class="dot"></span><span class="lime">0 bytes uploaded.</span> Works with your Wi-Fi off.</div>
     <h1>Convert files.<br>Upload nothing.</h1>
-    <div class="sub">65 free tools for PDFs, images, spreadsheets and documents &mdash; every one of them runs inside your browser tab.</div>
+    <div class="sub">${TOOLS} free tools for PDFs, images, spreadsheets and documents &mdash; every one of them runs inside your browser tab.</div>
   </div>
 
   <div class="foot">
