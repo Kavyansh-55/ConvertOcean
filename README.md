@@ -2,7 +2,7 @@
 
 # ConvertOcean
 
-**60+ free file tools that run entirely in your browser — your files never leave your device.**
+**69 free file tools that run entirely in your browser — your files never leave your device.**
 
 [**Try it live →**](https://convertocean.com) · [Guides](https://convertocean.com/guides/) · [How privacy works](https://convertocean.com/privacy-first/)
 
