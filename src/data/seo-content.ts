@@ -1124,6 +1124,10 @@ export const seoContentMap: Record<string, SEOData> = {
       { question: "Will Excel spreadsheet formulas be reconstructed?", answer: "No. The converter parses the static numeric values on the page. Formulate calculations must be entered in Excel manually." },
       { question: "How does the engine identify table borders?", answer: "The layout engine evaluates horizontal and vertical gridlines or spaces between words to align them into columns." },
       { question: "Is my document secure?", answer: "Yes. All extraction algorithms execute locally inside browser memory, keeping your documents confidential." }
+    ,
+      { question: "how to copy a table from pdf to excel", answer: "Select the PDF above and the converter reads the position of every text fragment on the page, merges the fragments back into real lines, and aligns them into columns — so a table arrives as rows and cells rather than as one pasted blob you have to clean up by hand. Copy-pasting from a PDF reader loses the column structure because a PDF stores placed glyphs, not a grid. Each page is separated by a blank row in the output." },
+      { question: "convert bank statement pdf to excel", answer: "Drop the statement in and the transaction rows come out as spreadsheet columns. This is the case where running the conversion in your own browser matters most: the statement is never transmitted anywhere, which is not true of the hosted bank-statement converters that require an account. If your bank sends OFX, QFX or QBO files instead, those convert more accurately still — see /ofx-to-csv/, /qfx-to-csv/ and /qbo-to-csv/." },
+      { question: "how to export pdf to excel", answer: "Select the PDF above and download the .xlsx. Numbers are written as real numeric cells rather than text, so SUM and AVERAGE work on the result instead of returning zero. One limit worth knowing up front: a scanned PDF is a picture of a page with no selectable text, so there is nothing to extract — the tool says so rather than handing back an empty sheet, and points you at /image-to-text/ to read it with OCR first." }
     ]
   },
   'merge-excel': {
