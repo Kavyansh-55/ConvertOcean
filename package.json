@@ -22,7 +22,8 @@
     "themes": "node scripts/fidelity/verify-themes.mjs",
     "webkit": "node scripts/fidelity/verify-webkit.mjs",
     "compress": "node scripts/fidelity/verify-compress.mjs",
-    "compress:office": "node scripts/fidelity/verify-compress-office.mjs"
+    "compress:office": "node scripts/fidelity/verify-compress-office.mjs",
+    "keywords": "node scripts/research/keyword-dupes.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
