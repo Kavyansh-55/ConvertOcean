@@ -983,8 +983,8 @@ export const seoContentMap: Record<string, SEOData> = {
     ]
   },
   'pdf-to-word': {
-    title: 'Convert PDF to Word Online - Editable DOCX Extract | ConvertOcean',
-    description: 'Convert PDF documents to editable Microsoft Word files (.docx) offline in your browser. Reconstruct paragraphs and table borders.',
+    title: 'Convert PDF to Word Free - Editable DOCX | ConvertOcean',
+    description: 'Convert PDF to Word free and offline in your browser. Rebuilds paragraphs, headings and table borders into an editable Microsoft Word (.docx) file.',
     content: `
 <div class="content-card">
   <h2>Converting PDF Files into Editable Word Documents.</h2>
