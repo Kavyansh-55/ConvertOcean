@@ -87,7 +87,10 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Why are some columns cut off on the right of the PDF?", answer: "PDF pages have fixed dimensions. If your Excel sheet exceeds page width, columns will overflow. Change your layout to landscape orientation or adjust column widths before exporting." },
+      { question: "Why are some columns cut off on the right of the PDF?", answer: "They should not be. The converter reads the workbook's own column widths and, when their total is wider than the page, scales every column down together so the whole sheet fits instead of being clipped. Long cell text wraps onto extra lines rather than running off the edge, and landscape orientation is on by default. If a very wide sheet comes out too small to read comfortably, that is the trade the scaling makes — split the sheet into fewer columns before converting." },
+      { question: "how to convert excel to pdf without losing formatting", answer: "Select your .xlsx, .xls or .csv above and download the PDF. Column widths from the workbook are honoured rather than guessed, each sheet becomes a real bordered table with a shaded header row that repeats on every page, and the text stays selectable and searchable instead of being flattened into an image. What cannot carry over is anything that needs a calculation engine: macros, pivot-table interactivity and conditional-formatting rules, because a PDF is a static page." },
+      { question: "how to convert excel to pdf in one page", answer: "Leave landscape orientation ticked and the converter scales the columns to fit the page width, so the sheet is never clipped sideways. Width is what it fits; a long sheet still continues onto further pages, with the header row repeated at the top of each. To get closer to a single page, hide helper columns and delete empty trailing rows before converting." },
+      { question: "how to save excel as pdf", answer: "In Excel itself, use File then Save As (or Export) and choose PDF. If Excel is not installed, or the figures are confidential, drop the workbook into the converter above instead — it builds the PDF in your browser, so the file never leaves your device. All sheets in the workbook are included by default, and only the calculated value of each cell is printed, never the formula behind it." },
       { question: "Are formulas visible inside the exported PDF document?", answer: "No. The converter evaluates the calculated values of each cell and prints the raw figures. Your backend formulas remain private." },
       { question: "Can I convert multiple worksheets to a single PDF?", answer: "Yes, our client-side parser reads all visible sheets in the workbook and appends them sequentially into the output PDF document." }
     ]
@@ -980,11 +983,13 @@ export const seoContentMap: Record<string, SEOData> = {
       { question: "Does the converter preserve embedded images?", answer: "Yes. Images, margins, list formats, and headers are parsed and compiled into the output PDF document." },
       { question: "Can I convert legacy .doc files?", answer: "This tool is optimized for modern OpenXML DOCX files. For legacy .doc files, save them as .docx in Word before converting." },
       { question: "How does the local converter handle missing fonts?", answer: "It maps standard document styles to standard fallback system fonts like Arial or Helvetica to preserve alignment." }
+    ,
+      { question: "how to save word doc as pdf", answer: "Two ways. In Word itself, use File then Save As (or Export) and pick PDF from the file-type list. If Word is not installed, or the document is confidential, drop the .docx into the converter above instead — it produces the PDF in your browser, so the file never leaves your device. Either route keeps headings, images, tables and page breaks; ours also embeds the fonts it draws with so the layout holds on any machine." }
     ]
   },
   'pdf-to-word': {
-    title: 'Convert PDF to Word Online - Editable DOCX Extract | ConvertOcean',
-    description: 'Convert PDF documents to editable Microsoft Word files (.docx) offline in your browser. Reconstruct paragraphs and table borders.',
+    title: 'Convert PDF to Word Free - Editable DOCX | ConvertOcean',
+    description: 'Convert PDF to Word free and offline in your browser. Rebuilds paragraphs, headings and table borders into an editable Microsoft Word (.docx) file.',
     content: `
 <div class="content-card">
   <h2>Converting PDF Files into Editable Word Documents.</h2>
@@ -1009,7 +1014,9 @@ export const seoContentMap: Record<string, SEOData> = {
     faqs: [
       { question: "Will my PDF tables be editable in the Word document?", answer: "Yes. Our layout mapper groups tabular bounding boxes to compile proper tables instead of plain text spans." },
       { question: "Why do some characters display as garbled text in Word?", answer: "This occurs if the PDF uses custom font encodings that do not map to standard unicode tables. Standard PDFs translate cleanly." },
-      { question: "Is my legal or financial data safe?", answer: "Absolutely. The parsing and document compilation occur client-side in browser memory with no network uploads." }
+      { question: "Is my legal or financial data safe?", answer: "Absolutely. The parsing and document compilation occur client-side in browser memory with no network uploads." },
+      { question: "how to convert pdf to word", answer: "Select your PDF in the converter above and download the .docx it produces. Headings, bold and italic runs, font sizes, indentation and detected tables are rebuilt as native Word formatting, and diagrams and logos are embedded as images at their original position. The conversion runs entirely in your browser, so the document never leaves your device." },
+      { question: "how to turn pdf into word", answer: "Drop the PDF into the tool above and it returns an editable Word (.docx) file. Digitally created, text-based PDFs turn into Word most accurately. A scanned PDF is a picture of text rather than text itself, so run it through our image to text tool at /image-to-text/ first, then convert the result." }
     ]
   },
   'docx-to-txt': {
@@ -1088,6 +1095,10 @@ export const seoContentMap: Record<string, SEOData> = {
       { question: "How does the tool handle legacy .ppt files?", answer: "It tells you the truth rather than producing a broken file: .ppt is an OLE compound binary that browsers cannot open, so selecting one shows a message asking you to re-save it as .pptx first. Open it in PowerPoint or the free LibreOffice Impress, use File → Save As and choose .pptx, then select that file here. Conversion still runs entirely on your device." },
       { question: "Will embedded videos play in the PDF?", answer: "No, PDF files represent static print pages. Video controls and audio clips are discarded." },
       { question: "Can I run this converter without an internet connection?", answer: "Yes, all conversion libraries load into the browser cache, enabling offline slide compilation." }
+    ,
+      { question: "how to save ppt as pdf", answer: "In PowerPoint, use File then Save As (or Export) and choose PDF. If PowerPoint is not installed, or the deck is confidential, select the .pptx above instead and the PDF is built in your browser, so the file never leaves your device. Each slide becomes one page, and the slide's text is laid invisibly over the rendered image, so the PDF stays selectable, searchable and readable by a screen reader rather than being a stack of flat pictures." },
+      { question: "how to convert ppt to pdf", answer: "Select your .pptx above and download the PDF — one page per slide, in the deck's own proportions. Note this converter needs the modern .pptx format; a legacy .ppt has to be opened in PowerPoint or LibreOffice and re-saved as .pptx first. Speaker notes are carried across into the PDF's invisible text layer, so they stay searchable and copyable without printing over the slide. Embedded video cannot play inside a PDF, so a video slide exports as its poster frame." },
+      { question: "how to print ppt to pdf without white border", answer: "The white bands appear when a 16:9 deck is printed onto a fixed A4 page — the slide keeps its shape and the leftover paper shows as margin. This converter sizes each PDF page to the deck's own aspect ratio and draws the slide across the whole of it, corner to corner, so there is no border to remove. If you have already got a bordered PDF from PowerPoint, re-export from the .pptx here rather than trying to crop the result." }
     ]
   },
   'pdf-to-excel': {
@@ -1117,6 +1128,10 @@ export const seoContentMap: Record<string, SEOData> = {
       { question: "Will Excel spreadsheet formulas be reconstructed?", answer: "No. The converter parses the static numeric values on the page. Formulate calculations must be entered in Excel manually." },
       { question: "How does the engine identify table borders?", answer: "The layout engine evaluates horizontal and vertical gridlines or spaces between words to align them into columns." },
       { question: "Is my document secure?", answer: "Yes. All extraction algorithms execute locally inside browser memory, keeping your documents confidential." }
+    ,
+      { question: "how to copy a table from pdf to excel", answer: "Select the PDF above and the converter reads the position of every text fragment on the page, merges the fragments back into real lines, and aligns them into columns — so a table arrives as rows and cells rather than as one pasted blob you have to clean up by hand. Copy-pasting from a PDF reader loses the column structure because a PDF stores placed glyphs, not a grid. Each page is separated by a blank row in the output." },
+      { question: "convert bank statement pdf to excel", answer: "Drop the statement in and the transaction rows come out as spreadsheet columns. This is the case where running the conversion in your own browser matters most: the statement is never transmitted anywhere, which is not true of the hosted bank-statement converters that require an account. If your bank sends OFX, QFX or QBO files instead, those convert more accurately still — see /ofx-to-csv/, /qfx-to-csv/ and /qbo-to-csv/." },
+      { question: "how to export pdf to excel", answer: "Select the PDF above and download the .xlsx. Numbers are written as real numeric cells rather than text, so SUM and AVERAGE work on the result instead of returning zero. One limit worth knowing up front: a scanned PDF is a picture of a page with no selectable text, so there is nothing to extract — the tool says so rather than handing back an empty sheet, and points you at /image-to-text/ to read it with OCR first." }
     ]
   },
   'merge-excel': {

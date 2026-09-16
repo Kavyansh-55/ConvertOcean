@@ -535,5 +535,55 @@ async function stylesheetsFor(path) {
       'both compressors are in the XML sitemap');
 }
 
+/* ------------------------------------------- the keyword batch (Sep 2026)
+
+   Reader-supplied questions, added verbatim because altering the wording is
+   what breaks exact match. Asserted here because they live in page copy, not
+   in a bundle, so nothing else in this file would notice them going missing.
+
+   The excel-to-pdf pair matters most: the OLD answer told readers columns
+   would overflow and they should fix it themselves, contradicting a fidelity
+   check that has passed all along. If that sentence returns, the deploy fails. */
+{
+  const verbatim = [
+    ['/pdf-to-word/',    'how to convert pdf to word'],
+    ['/pdf-to-word/',    'how to turn pdf into word'],
+    ['/word-to-pdf/',    'how to save word doc as pdf'],
+    ['/excel-to-pdf/',   'how to convert excel to pdf without losing formatting'],
+    ['/excel-to-pdf/',   'how to convert excel to pdf in one page'],
+    ['/excel-to-pdf/',   'how to save excel as pdf'],
+    ['/pdf-to-excel/',   'how to copy a table from pdf to excel'],
+    ['/pdf-to-excel/',   'convert bank statement pdf to excel'],
+    ['/pdf-to-excel/',   'how to export pdf to excel'],
+    ['/ppt-to-pdf/',     'how to save ppt as pdf'],
+    ['/ppt-to-pdf/',     'how to convert ppt to pdf'],
+    ['/ppt-to-pdf/',     'how to print ppt to pdf without white border'],
+    ['/image-resizer/',  'image compressor for discord'],
+    ['/image-resizer/',  'how to use an online image resizer'],
+  ];
+  for (const [page, q] of verbatim) {
+    const body = (await get(page)).body;
+    say(body.includes(q), page + ' carries "' + q + '" verbatim');
+  }
+
+  const x = (await get('/excel-to-pdf/')).body;
+  say(!x.includes('columns will overflow'),
+      'excel-to-pdf: the answer claiming columns overflow is gone');
+  say(x.includes('scales every column down together'),
+      'excel-to-pdf: and says what the converter actually does instead');
+
+  const pt = (await get('/ppt-to-pdf/')).body;
+  say(!pt.includes('Speaker notes are not included'),
+      'ppt-to-pdf: the false speaker-notes claim is gone');
+
+  const pw = (await get('/pdf-to-word/')).body;
+  say(/<title>[^<]*Convert PDF to Word Free/.test(pw),
+      'pdf-to-word: the free keyword reaches the title');
+
+  const ir = (await get('/image-resizer/')).body;
+  say(/name="description"[^>]*image compressor/i.test(ir),
+      'image-resizer: the description names it an image compressor');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);

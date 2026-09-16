@@ -1255,7 +1255,7 @@ const rawTools: ToolData[] = [
     slug: 'image-resizer',
     name: 'Image Resizer',
     title: 'Image Resizer - Exact Pixels or KB Size | ConvertOcean',
-    description: 'Resize images to exact pixel dimensions or compress photos to a target size in KB (20 KB, 50 KB) for exam forms and upload limits. 100% private, in-browser.',
+    description: 'Free image resizer and image compressor in one: set exact pixel dimensions, or compress a photo to a target size in KB for forms and upload limits. 100% private, in-browser.',
     headline: 'Image Resizer.',
     subtitle: 'Resize images to exact pixel dimensions or compress them to a target file size in KB — built for exam forms, job portals, and upload limits.',
     quickAnswer: 'To resize an image for a form upload, either set exact pixel dimensions (for example 200×230 for a photo or 140×60 for a signature) or set a target file size like 20 KB — the resizer re-encodes the image locally in your browser and shows the final size before you download. Nothing is uploaded.',
@@ -1271,6 +1271,9 @@ const rawTools: ToolData[] = [
       { question: 'Why is my result much smaller than the target I entered?', answer: 'The target is an upper limit, not a size to reach. If your image already fits under the limit at maximum quality — common for small or smooth photos — the tool gives you that best-quality version and tells you so. A 22 KB result for a 79 KB limit means full quality with room to spare; upload forms only check that you are under the cap.' },
       { question: 'Is my photo uploaded to a server?', answer: 'No. The image is read, resized, and re-encoded entirely inside your browser using the HTML5 canvas. Personal photos, ID pictures, and signatures never leave your device — and the tool keeps working offline once the page has loaded.' },
       { question: 'What happens to transparent backgrounds when resizing to JPG?', answer: 'JPG has no transparency, so transparent regions are flattened onto a white background automatically — which is what application forms expect. To keep transparency, choose PNG or WebP as the output format instead.' }
+    ,
+      { question: 'image compressor for discord', answer: "Switch to Compress to File Size and enter a target in KB — Discord's free upload ceiling is 10 MB, so anything up to about 10,000 KB goes through. The image is re-encoded in your browser until it lands under the number you set, and the final size is shown before you download, so you are not guessing. Screenshots pasted straight from a phone are usually the ones that need this." },
+      { question: 'how to use an online image resizer', answer: 'Choose the image, then pick one of the two modes. Resize by Dimensions sets an exact width and height in pixels, with Lock ratio on by default so the photo is not stretched. Compress to File Size works the other way round: you name a target in KB and the tool finds the quality that fits it. One image at a time, and it never leaves your browser.' }
     ],
     relatedTools: ['jpg-to-jpeg', 'png-to-jpg', 'image-to-pdf', 'merge-images'],
     content: imageResizerContent
