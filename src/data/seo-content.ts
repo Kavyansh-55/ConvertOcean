@@ -1009,7 +1009,9 @@ export const seoContentMap: Record<string, SEOData> = {
     faqs: [
       { question: "Will my PDF tables be editable in the Word document?", answer: "Yes. Our layout mapper groups tabular bounding boxes to compile proper tables instead of plain text spans." },
       { question: "Why do some characters display as garbled text in Word?", answer: "This occurs if the PDF uses custom font encodings that do not map to standard unicode tables. Standard PDFs translate cleanly." },
-      { question: "Is my legal or financial data safe?", answer: "Absolutely. The parsing and document compilation occur client-side in browser memory with no network uploads." }
+      { question: "Is my legal or financial data safe?", answer: "Absolutely. The parsing and document compilation occur client-side in browser memory with no network uploads." },
+      { question: "how to convert pdf to word", answer: "Select your PDF in the converter above and download the .docx it produces. Headings, bold and italic runs, font sizes, indentation and detected tables are rebuilt as native Word formatting, and diagrams and logos are embedded as images at their original position. The conversion runs entirely in your browser, so the document never leaves your device." },
+      { question: "how to turn pdf into word", answer: "Drop the PDF into the tool above and it returns an editable Word (.docx) file. Digitally created, text-based PDFs turn into Word most accurately. A scanned PDF is a picture of text rather than text itself, so run it through our image to text tool at /image-to-text/ first, then convert the result." }
     ]
   },
   'docx-to-txt': {
