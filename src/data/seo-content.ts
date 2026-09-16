@@ -980,6 +980,8 @@ export const seoContentMap: Record<string, SEOData> = {
       { question: "Does the converter preserve embedded images?", answer: "Yes. Images, margins, list formats, and headers are parsed and compiled into the output PDF document." },
       { question: "Can I convert legacy .doc files?", answer: "This tool is optimized for modern OpenXML DOCX files. For legacy .doc files, save them as .docx in Word before converting." },
       { question: "How does the local converter handle missing fonts?", answer: "It maps standard document styles to standard fallback system fonts like Arial or Helvetica to preserve alignment." }
+    ,
+      { question: "how to save word doc as pdf", answer: "Two ways. In Word itself, use File then Save As (or Export) and pick PDF from the file-type list. If Word is not installed, or the document is confidential, drop the .docx into the converter above instead — it produces the PDF in your browser, so the file never leaves your device. Either route keeps headings, images, tables and page breaks; ours also embeds the fonts it draws with so the layout holds on any machine." }
     ]
   },
   'pdf-to-word': {
