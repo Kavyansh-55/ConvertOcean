@@ -328,7 +328,7 @@ export const guides: GuideData[] = [
       <p>Avoid column formatting issues by following these pre-conversion formatting practices in your spreadsheet application:</p>
       <ul>
         <li><strong>Use Landscape Orientation:</strong> Because tables read horizontally, setting your page orientation to Landscape provides more space for columns.</li>
-        <li><strong>Set Print Areas:</strong> Explicitly define the print area in Excel before uploading. This instructs the converter which cell ranges to parse and ignore.</li>
+        <li><strong>Delete what you do not want converted:</strong> a print area set in Excel does <em>not</em> carry over — the converter reads each sheet's used range, so anything holding a value is included. Delete the helper rows and columns first, or pull the sheet you want out with <a href="/split-excel/">Split Excel</a>.</li>
         <li><strong>Auto-Fit Column Widths:</strong> Double-click column borders to auto-fit text. This prevents truncated data or overflow boundaries.</li>
       </ul>
 
