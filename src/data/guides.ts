@@ -273,14 +273,14 @@ export const guides: GuideData[] = [
   },
   {
     slug: 'excel-to-pdf',
-    title: 'How to Convert Excel to PDF Without Page Cut-Offs - ConvertOcean',
-    description: 'Convert Excel spreadsheets (.xlsx, .xls, .csv) to print-ready PDF files without columns breaking or table layouts getting cut off. Keep formulas private.',
-    h1: 'How to Convert Excel to PDF.',
+    title: 'Convert Excel to PDF Without Losing Formatting | ConvertOcean',
+    description: 'Convert Excel to PDF without losing formatting: keep column widths, headers and number formats, stop columns being cut off, and fit a wide sheet on the page.',
+    h1: 'How to Convert Excel to PDF Without Losing Formatting.',
     readTime: '7 min read',
     publishDate: 'July 10, 2026',
     relatedTools: ['excel-to-pdf', 'xls-to-pdf', 'csv-to-pdf', 'split-excel', 'merge-excel'],
     relatedGuides: ['merge-multiple-pdf-files', 'pdf-to-word-without-losing-formatting', 'csv-to-json'],
-    intro: 'Formatting dynamic spreadsheet data for a static PDF can result in columns getting cut off or table contents spilling across empty pages. Learn how to compile professional, print-ready PDFs from Excel worksheets.',
+    intro: 'A spreadsheet is an endless grid; a PDF is a fixed page. That mismatch is why columns get cut off, headers stop repeating and number formats come out wrong. Here is how to convert Excel to PDF without losing formatting — and what to change in the sheet first when a workbook is too wide for any page.',
     contentHtml: `
       <h2>The Layout Gap: Sheets vs. Fixed Page Sizes</h2>
       <p>Excel sheets are infinite grids designed to grow both horizontally and vertically. PDF files, however, utilize a fixed, print-ready document format (typically standard A4 or Letter sizes). When you convert a spreadsheet to a PDF, the conversion engine must slice the grid into pages. If a table has more columns than the page width allows, the extra columns are pushed to additional pages, creating a disjointed layout.</p>
@@ -328,7 +328,7 @@ export const guides: GuideData[] = [
       <p>Avoid column formatting issues by following these pre-conversion formatting practices in your spreadsheet application:</p>
       <ul>
         <li><strong>Use Landscape Orientation:</strong> Because tables read horizontally, setting your page orientation to Landscape provides more space for columns.</li>
-        <li><strong>Set Print Areas:</strong> Explicitly define the print area in Excel before uploading. This instructs the converter which cell ranges to parse and ignore.</li>
+        <li><strong>Delete what you do not want converted:</strong> a print area set in Excel does <em>not</em> carry over — the converter reads each sheet's used range, so anything holding a value is included. Delete the helper rows and columns first, or pull the sheet you want out with <a href="/split-excel/">Split Excel</a>.</li>
         <li><strong>Auto-Fit Column Widths:</strong> Double-click column borders to auto-fit text. This prevents truncated data or overflow boundaries.</li>
       </ul>
 
@@ -348,7 +348,7 @@ export const guides: GuideData[] = [
         <li><strong>Text too small to read</strong> → you used "Fit Sheet on One Page" on a long table; switch to fitting columns only, and let rows flow to more pages.</li>
         <li><strong>Numbers show as #####</strong> → the column is too narrow in the source sheet; auto-fit the column width before converting.</li>
         <li><strong>Headers missing after page 1</strong> → set Print Titles → "Rows to repeat at top."</li>
-        <li><strong>Empty pages at the end</strong> → stray formatting in far-away cells; select the unused columns/rows, delete them, and set an explicit print area.</li>
+        <li><strong>Empty pages at the end</strong> → stray formatting in far-away cells; the converter already drops trailing rows and columns that hold no value, so this is rarer here than in Excel's own export. If it still happens, select the unused columns and rows and delete them. Setting a print area will not help, because it is not read.</li>
       </ul>
 
       <h2>Why Keep Spreadsheet Data Private?</h2>
@@ -371,7 +371,7 @@ export const guides: GuideData[] = [
       },
       {
         question: 'How do I convert only one worksheet from a multi-sheet workbook?',
-        answer: 'Either set a print area on the sheet you want before converting, or split the workbook into individual sheet files first using a split tool and convert just the sheet you need. This also keeps the output PDF smaller.'
+        answer: 'Split the workbook into individual sheet files first with Split Excel, then convert just the sheet you need — that also keeps the output PDF smaller. Setting a print area does not work: the converter reads the used range of each sheet and includes every sheet in the workbook by default.'
       },
       {
         question: 'Why is the text in my converted PDF too small to read?',
