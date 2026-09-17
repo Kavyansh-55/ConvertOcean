@@ -585,5 +585,37 @@ async function stylesheetsFor(path) {
       'image-resizer: the description names it an image compressor');
 }
 
+/* ---------------------------- the print-area myth (Sep 2026)
+
+   Five places told readers that setting a print area, or hiding a column,
+   changes what the converter exports. ExcelToPdf.astro:283 reads the used
+   range via sheet_to_json and never looks at either — the only "hidden" in
+   that component is an aria-hidden on an SVG. All five contradicted a
+   fidelity check that has passed throughout ("Wide sheet does not clip
+   columns"). If any of them come back, this deploy fails. */
+{
+  const g = (await get('/guides/excel-to-pdf/')).body;
+  say(/<title>Convert Excel to PDF Without Losing Formatting/.test(g),
+      'the excel guide targets "without losing formatting" in its title');
+  say(g.includes('How to Convert Excel to PDF Without Losing Formatting'),
+      'and carries the phrase as its h1');
+  say(!/set an explicit print area/i.test(g) && !/Either set a print area/i.test(g),
+      'the guide no longer tells readers to set a print area');
+  say(/print area will not help|does not carry over|does not work: the converter/i.test(g),
+      'and says plainly that a print area is not read');
+  say(!/before uploading/i.test(g), 'the guide does not say "before uploading"');
+
+  const t = (await get('/excel-to-pdf/')).body;
+  say(!/hide helper columns/i.test(t), 'excel-to-pdf no longer says to hide helper columns');
+  say(!/reduce column widths/i.test(t), 'and no longer says to reduce column widths');
+  say(/hiding a column does not drop it/i.test(t),
+      'and explains that a hidden column still comes through');
+  say(t.includes('converting Excel to PDF without losing formatting'),
+      'excel-to-pdf links the guide with the phrase the guide targets');
+
+  const c = (await get('/excel-converter/')).body;
+  say(!/before uploading/i.test(c), 'excel-converter does not say "before uploading"');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
