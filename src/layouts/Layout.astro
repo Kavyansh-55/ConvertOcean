@@ -2,6 +2,11 @@
 import '../styles/theme.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { normalizePath } from '../i18n/config';
+import { alternatesForPath } from '../i18n/content';
+
+/** Kept in one place so canonical, hreflang and schema can never disagree. */
+const SITE = 'https://convertocean.com';
 
 const {
   title, description, lang = 'en', toolName, category, categorySlug,
@@ -16,36 +21,32 @@ const {
   band = 'bone',
 } = Astro.props;
 
-// Determine paths for canonicals and alternates
-const canonicalPath = Astro.url.pathname;
-// The (?=\/|$) boundary is essential: without it a locale code matches the START
-// of an ordinary path, so /guides/ lost its "/gu" (Gujarati) and canonicalised to
-// convertocean.comides/. Same for /file-converter/ (fil), /developer-tools/ (de)
-// and /terms/ (te). Only strip a locale that is a whole path segment.
-const cleanPath = canonicalPath.replace(/^\/(hi|es|fr|de|pt|it|nl|ru|tr|pl|uk|ar|fa|ur|bn|pa|ta|te|mr|gu|zh|ja|ko|th|vi|id|ms|fil)(?=\/|$)/, '');
-const normalizedCleanPath = cleanPath.endsWith('/') ? cleanPath : `${cleanPath}/`;
+// Canonical URL.
+//
+// Self-referencing, taken straight from the path being served. The previous
+// version stripped a locale prefix and re-added it, which cannot survive
+// translated slugs: /pt/comprimir-pdf/ has no English segment to strip, and
+// reconstructing it would produce /pt/compress-pdf/, a URL that does not exist.
+// Every page is served at exactly one URL, so the URL it is served at IS its
+// canonical. `normalizePath` only enforces the single trailing slash.
+//
+// The old 28-locale strip regex went with it. That regex is where the Gujarati
+// bug lived — `gu` matched the start of /guides/ and canonicalised the whole
+// guides section to `convertocean.comides/`, live, for a month. Its segment
+// boundary now lives in i18n/config.ts, applied to locales we actually serve.
+const canonicalPath = normalizePath(Astro.url.pathname);
+const canonicalURL = `${SITE}${canonicalPath}`;
 
-// Generate canonical URL (localised for multi-language pages to ensure proper indexing)
-const path = normalizedCleanPath.replace(/\/+$/, '/');
-const canonicalURL = lang === 'en' 
-  ? `https://convertocean.com${path}` 
-  : `https://convertocean.com/${lang}${path}`;
-
-// List of all supported locales
-const locales = [
-  { code: 'en', name: 'English' }
-];
-
-const alternates = locales.map(locale => {
-  let href = '';
-  const path = normalizedCleanPath.replace(/\/+$/, '/');
-  if (locale.code === 'en') {
-    href = `https://convertocean.com${path}`;
-  } else {
-    href = `https://convertocean.com/${locale.code}${path}`;
-  }
-  return { lang: locale.code, href };
-});
+// hreflang alternates, derived from the content graph rather than the locale
+// list. A page advertises only the translations that genuinely exist.
+//
+// This distinction is the whole ballgame. The previous code emitted one
+// alternate per configured locale on every page, so switching Portuguese on
+// would have had all ~110 English pages pointing at /pt/ URLs that 404. Google
+// discards an hreflang cluster whose links do not resolve and reciprocate, so
+// that single loop would have silently voided every page of translation work
+// without any visible error in the build.
+const alternates = alternatesForPath(canonicalPath, SITE);
 
 // JSON-LD Schema Models
 const orgSchema = {

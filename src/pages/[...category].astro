@@ -1,15 +1,37 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
+import { getTools, activePtCategories, type PtCategory } from '../i18n/content';
+import type { Locale } from '../i18n/config';
 import CategoryIcon from '../components/CategoryIcon.astro';
 
+/**
+ * Same rest-parameter pattern as [...tool].astro: `pdf-tools` and
+ * `pt/ferramentas-pdf` are both valid values of `category`.
+ *
+ * Portuguese categories come from `activePtCategories`, which is only the ones
+ * that actually contain a localised tool. Emitting all six would build empty
+ * category pages AND have the English pages advertise hreflang links to them —
+ * dangling links that invalidate the cluster. The i18n test caught exactly that
+ * on the first run, which is the reason the filter exists.
+ */
 export function getStaticPaths() {
   const categories = ['pdf-tools', 'image-tools', 'document-tools', 'excel-converter', 'ocr-tools', 'business-tools', 'developer-tools'];
-  return categories.map(category => ({ params: { category } }));
+  const english = categories.map(category => ({
+    params: { category },
+    props: { lang: 'en' as Locale, enCategory: category, ptCategory: null as PtCategory | null }
+  }));
+  const portuguese = activePtCategories.map(c => ({
+    params: { category: `pt/${c.slug}` },
+    props: { lang: 'pt' as Locale, enCategory: c.en, ptCategory: c }
+  }));
+  return [...english, ...portuguese];
 }
 
-const { category } = Astro.params;
-const { lang = 'en' } = Astro.props;
+const { lang = 'en' as Locale, enCategory, ptCategory } = Astro.props;
+// The rest of this file keys off the English category slug, which is the
+// category's identity — only the URL and the copy are translated.
+const category = enCategory;
 
 // Localize links helper
 const relLink = (target: string) => {
@@ -74,22 +96,41 @@ const categoriesMap: Record<string, { name: string; description: string; icon: s
   }
 };
 
-const catInfo = categoriesMap[category] || {
+const enCatInfo = categoriesMap[category] || {
   name: 'File Tools',
   description: 'Privacy-first browser-based file tools.',
   icon: '⚡',
   seoTitle: 'Private Offline Browser Utilities | ConvertOcean',
   seoDescription: 'Secure browser-based file converter utilities. Process everything locally and offline. No server uploads.'
 };
-let filteredTools = tools.filter(t => t.categorySlug === category);
+
+// The icon is the only field a translation inherits — it is a glyph, not copy.
+const catInfo = ptCategory
+  ? {
+      name: ptCategory.name,
+      description: ptCategory.subtitle,
+      icon: enCatInfo.icon,
+      seoTitle: ptCategory.title,
+      seoDescription: ptCategory.description
+    }
+  : enCatInfo;
+
+// Locale-scoped, so a Portuguese category lists only Portuguese tool pages.
+const localeTools = getTools(lang);
+let filteredTools = localeTools.filter(t => t.categorySlug === category);
 if (category === 'pdf-tools') {
-  filteredTools = tools.filter(t => 
-    t.categorySlug === 'pdf-tools' ||
-    t.slug.toLowerCase().includes('pdf') || 
-    t.name.toLowerCase().includes('pdf') ||
-    t.slug.toLowerCase().includes('merge') ||
-    t.slug.toLowerCase().includes('split')
-  );
+  // Matched on the English slug so membership is identical in every locale.
+  // Against `slug` this would silently drop tools under /pt/: `juntar-word`
+  // contains neither "merge" nor "pdf", so Merge Word would vanish from the
+  // Portuguese PDF category while staying in the English one.
+  filteredTools = localeTools.filter(t => {
+    const id = (t.enSlug ?? t.slug).toLowerCase();
+    return t.categorySlug === 'pdf-tools' ||
+      id.includes('pdf') ||
+      t.name.toLowerCase().includes('pdf') ||
+      id.includes('merge') ||
+      id.includes('split');
+  });
 }
 
 const title = catInfo.seoTitle;
@@ -192,7 +233,12 @@ const categoryFaqsMap: Record<string, { q: string; a: string }[]> = {
   ]
 };
 
-const faqList = categoryFaqsMap[category] || [];
+// English-only. These blocks are written in English and carry hard-coded
+// English links (/merge-pdf/, /guides/…), so rendering them under /pt/ would
+// put English prose on a Portuguese page and leak every internal link out of
+// the locale. Portuguese category prose and FAQs are written in the
+// keyword-led wave, from researched queries — not translated from these.
+const faqList = lang === 'en' ? (categoryFaqsMap[category] || []) : [];
 
 // Unique per-category intro prose (rendered between the tool grid and FAQs)
 const categoryIntroMap: Record<string, string> = {
@@ -221,7 +267,7 @@ const categoryIntroMap: Record<string, string> = {
     <p>Developer data is full of things that should never touch a third-party server — API keys in config files, customer records in exports, tokens in webhook payloads. These utilities convert between CSV, JSON, and XML, validate and pretty-print with the <a href="/json-formatter/">JSON Formatter</a>, and analyze text with the <a href="/word-counter/">Word Counter</a>, all using your browser's native parsers. That local-first design also means they work offline and at native speed — a large CSV parses as fast as your machine allows, not as fast as an upload queue. For the mechanics of moving spreadsheet data into application code, see the <a href="/guides/csv-to-json/">CSV to JSON developer guide</a>.</p>
   `
 };
-const categoryIntro = categoryIntroMap[category];
+const categoryIntro = lang === 'en' ? categoryIntroMap[category] : undefined;
 ---
 
 <Layout band="lime" title={title} description={description} lang={lang} category={catInfo.name} categorySlug={category} faqList={faqList}>

@@ -909,6 +909,83 @@ select:focus-visible,
   border-radius: var(--rounded-pill);
 }
 
+/* Text for assistive technology only. Clipped rather than `display: none` or
+   `visibility: hidden`, both of which remove it from the accessibility tree —
+   which would defeat the point. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Language switcher.
+   Lives in theme.css rather than a scoped block in Header.astro so it is
+   immune to the scoped-CSS trap, and so the tokens resolve through the same
+   per-band overrides as the rest of the nav.
+
+   The visible label is the two-letter code, with the full language name in an
+   .sr-only span rather than an aria-label. An aria-label would REPLACE the
+   accessible name with "Português", leaving it without the visible "PT" —
+   WCAG 2.5.3 (Label in Name) requires the accessible name to contain the
+   visible text, and voice-control users say what they see. Appending instead
+   gives "PT Português", which satisfies both. */
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--rounded-pill);
+  background-color: var(--colors-canvas-soft-2);
+}
+
+.lang-switch-link {
+  /* 44px is the WCAG 2.5.8 minimum touch target, matched to .theme-toggle-btn
+     beside it. The chip reads smaller than its hit area because the fill is
+     inset by the parent's 2px padding, not because the target is shrunk. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: var(--rounded-pill);
+  font-size: 12px;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: var(--colors-body);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.lang-switch-link:hover {
+  color: var(--colors-ink);
+  background-color: var(--colors-canvas);
+}
+
+.lang-switch-link--active {
+  background-color: var(--colors-canvas);
+  color: var(--colors-ink);
+}
+
+.lang-switch-link:focus-visible {
+  outline: 2px solid var(--colors-link-deep);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lang-switch-link {
+    transition: none;
+  }
+}
+
 /* Theme Toggle Button */
 .theme-toggle-btn {
   background: none;

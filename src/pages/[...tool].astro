@@ -2,6 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
 import { guides } from '../data/guides';
+import { ptTools } from '../data/pt';
+import { getTool, getTools, getGuides } from '../i18n/content';
+import { guidesBase, type Locale } from '../i18n/config';
 import CategoryIcon from '../components/CategoryIcon.astro';
 
 import ExcelToPdf from '../components/tools/ExcelToPdf.astro';
@@ -42,14 +45,38 @@ import ExifTool from '../components/tools/ExifTool.astro';
 import CompressPdf from '../components/tools/CompressPdf.astro';
 import CompressOffice from '../components/tools/CompressOffice.astro';
 
+/**
+ * One route file serves every locale, via a rest parameter: `excel-to-pdf` and
+ * `pt/comprimir-pdf` are both valid values of `tool`. The alternative — a
+ * parallel `src/pages/pt/[tool].astro` — would mean either duplicating 650
+ * lines or extracting them into a shared component, and moving a <style> block
+ * between files silently re-scopes it. This project has lost six rounds to
+ * Astro's scoped CSS; not reopening that door for a routing change.
+ *
+ * Three slugs are in play and conflating them breaks things quietly:
+ *   - the URL slug (`comprimir-pdf`) — what the reader and Google see
+ *   - the English slug (`compress-pdf`) — the tool's identity
+ *   - the params value (`pt/comprimir-pdf`) — the built path
+ * `enSlug` is carried explicitly because the converter components are selected
+ * by English slug AND switch behaviour on it: ImageTool reads its slug to know
+ * whether it is doing png-to-jpg or jpg-to-png. Handing it a Portuguese slug
+ * would not 404 — it would silently run the wrong conversion.
+ */
 export function getStaticPaths() {
-  return tools.map(t => ({ params: { tool: t.slug } }));
+  const english = tools.map(t => ({
+    params: { tool: t.slug },
+    props: { lang: 'en' as Locale, slug: t.slug, enSlug: t.slug }
+  }));
+  const portuguese = ptTools.map(t => ({
+    params: { tool: `pt/${t.slug}` },
+    props: { lang: 'pt' as Locale, slug: t.slug, enSlug: t.en }
+  }));
+  return [...english, ...portuguese];
 }
 
-const { tool } = Astro.params;
-const { lang = 'en' } = Astro.props;
+const { lang = 'en' as Locale, slug, enSlug } = Astro.props;
 
-const toolData = tools.find(t => t.slug === tool);
+const toolData = getTool(slug, lang);
 if (!toolData) {
   return Astro.redirect('/');
 }
@@ -134,13 +161,18 @@ const toolsMap: Record<string, any> = {
   'exif-remover': ExifTool
 };
 
-const ToolComponent = toolsMap[toolData.slug];
+// Keyed on the English slug, never the URL slug: the map's keys are tool
+// identities, and a Portuguese URL slug would miss every one of them.
+const ToolComponent = toolsMap[enSlug];
 
 // Fetch related tools data
-const relatedToolsData = tools.filter(t => toolData.relatedTools.includes(t.slug));
+// Locale-scoped: a Portuguese page must only ever link to Portuguese pages.
+// `mergeTool` has already filtered relatedTools down to tools that exist in
+// this locale, so an untranslated neighbour drops out rather than dead-ending.
+const relatedToolsData = getTools(lang).filter(t => toolData.relatedTools.includes(t.slug));
 
 // Fetch related guides data
-const relatedGuides = guides.filter(g => g.relatedTools.includes(toolData.slug));
+const relatedGuides = getGuides(lang).filter(g => g.relatedTools.includes(toolData.slug));
 
 const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }));
 ---
@@ -473,7 +505,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
   */}
   <main id="main-content" tabindex="-1" class="tool-main">
     <!-- Active Tool Interface -->
-    <ToolComponent slug={toolData.slug} headline={toolData.headline} subtitle={toolData.subtitle} />
+    <ToolComponent slug={enSlug} headline={toolData.headline} subtitle={toolData.subtitle} />
 
     <!-- Quick Answer (AEO extractable definition block) -->
     {toolData.quickAnswer && (
@@ -569,7 +601,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
         <h2 style="font-size: var(--fs-heading); font-weight: var(--fw-extrabold); letter-spacing: var(--ls-heading); color: var(--colors-ink);">Related Guides & Resources.</h2>
         <div class="related-guides-grid" data-reveal-stagger>
           {relatedGuides.map(g => (
-            <a href={relLink(`/guides/${g.slug}/`)} class="tool-related-guide-card">
+            <a href={relLink(`/${guidesBase(lang)}/${g.slug}/`)} class="tool-related-guide-card">
               <span class="tool-related-guide-tag">Guide</span>
               <h3 class="tool-related-guide-name">{g.title.split(' | ')[0].split(' - ')[0]}</h3>
               <p class="tool-related-guide-desc">{g.description}</p>

@@ -10,6 +10,16 @@ import { seoContentMap, imageResizerContent, jpgToJpegContent, jpegToJpgContent,
 
 export interface ToolData {
   slug: string;
+  /**
+   * The English slug, carried on localised copies of a tool.
+   *
+   * A tool's identity is its English slug; only the URL is translated. Anything
+   * that reasons about *which tool this is* — component selection, the
+   * pdf-tools membership heuristic below — must use this rather than `slug`,
+   * which becomes `juntar-pdf` under /pt/. Undefined on English tools, where
+   * `slug` already is the English slug.
+   */
+  enSlug?: string;
   name: string;
   title: string;
   description: string;

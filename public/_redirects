@@ -1,11 +1,16 @@
 
 
 # Redirect removed languages to root English equivalents
+#
+# /pt/* is deliberately ABSENT: Portuguese is a live locale again, served from
+# src/data/pt/. Restoring that rule would 301 every Portuguese page to its
+# English equivalent, so none of them could ever be indexed — the failure would
+# look like "Google is ignoring our translations" rather than a redirect.
+# Any locale added to LOCALES in src/i18n/config.ts must lose its rule here.
 /hi/* /:splat 301
 /es/* /:splat 301
 /fr/* /:splat 301
 /de/* /:splat 301
-/pt/* /:splat 301
 /it/* /:splat 301
 /nl/* /:splat 301
 /ru/* /:splat 301
