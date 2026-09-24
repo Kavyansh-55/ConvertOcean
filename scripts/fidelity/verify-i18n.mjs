@@ -60,6 +60,10 @@ const PAIRS = [
   { pt: 'json-para-csv', en: 'json-to-csv' },
   { pt: 'xml-para-json', en: 'xml-to-json' },
   { pt: 'json-para-xlsx', en: 'json-to-xlsx' },
+  { pt: 'jpg-para-png', en: 'jpg-to-png' },
+  { pt: 'png-para-jpg', en: 'png-to-jpg' },
+  { pt: 'webp-para-png', en: 'webp-to-png' },
+  { pt: 'png-para-webp', en: 'png-to-webp' },
 ];
 
 let bad = 0;

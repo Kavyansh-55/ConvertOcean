@@ -83,7 +83,42 @@ export const excluded: { term: string; why: string }[] = [
   { term: 'love pdf para excel', why: 'competitor brand navigation' },
   { term: 'i love pdf ppt para pdf', why: 'competitor brand navigation' },
   { term: 'ilovepdf ppt para pdf', why: 'competitor brand navigation' },
-  { term: 'ilovepdf powerpoint para pdf', why: 'competitor brand navigation' }
+  { term: 'ilovepdf powerpoint para pdf', why: 'competitor brand navigation' },
+  // batch 4
+  { term: 'ilovepdf jpg para png', why: 'competitor brand navigation' },
+  { term: 'png para jpg ilovepdf', why: 'competitor brand navigation' }
+];
+
+/**
+ * Right words, wrong job: this asks for background removal, not a conversion.
+ *
+ * `jpg para png sem fundo` — "sem fundo" means "without background" — rests on
+ * a widespread belief that PNG *is* transparency, so converting to PNG must
+ * strip the background. It does not. A JPG has no alpha channel and therefore
+ * no transparency to carry over; converting it produces a PNG whose background
+ * is just as opaque as before. Removing it requires actually detecting the
+ * subject, which is a different tool that this site does not have.
+ *
+ * At >100 volume this is the second-largest missing-tool signal in the whole
+ * programme, after PDF → PowerPoint. It is NOT targeted — a page that ranks for
+ * it and then cannot deliver earns a bounce. The misconception behind it IS
+ * worth correcting, so /pt/jpg-para-png/ answers it in its own words rather
+ * than quoting the query as a heading.
+ */
+export const intentMismatch: { term: string; kd: string; volume: string; wants: string }[] = [
+  { term: 'jpg para png sem fundo', kd: 'n/a', volume: '>100', wants: 'background removal, not format conversion' }
+];
+
+/**
+ * Not Portuguese. `que es mejor para imprimir png o jpg` is Spanish — the
+ * Portuguese would be "qual é melhor". Ahrefs leaked it into a pt keyword set,
+ * which is worth knowing because it will happen again.
+ *
+ * Kept rather than deleted: Spanish is the next locale, and this is a free
+ * preview of how that question is phrased there.
+ */
+export const wrongLanguage: { term: string; language: string }[] = [
+  { term: 'que es mejor para imprimir png o jpg', language: 'es' }
 ];
 
 /**
@@ -398,6 +433,104 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'json para xlsx', kd: 'n/a', volume: '<100' },
       { term: 'converter json para xlsx', kd: 'n/a', volume: '<100' }
     ],
+    questions: []
+  },
+
+  /* ---------------------------------------------------------------------
+     Batch 4 — image formats, 2026-09-24. The strongest set so far.
+
+     `jpg para png`, `webp para png` and `converter webp para png` are all Easy
+     at >10,000 — the highest-volume winnable terms in the whole programme, and
+     consumer rather than office queries, which fits a heavily mobile Brazilian
+     audience.
+
+     The comparison questions (`qual a diferença de png para jpg`, `qual é
+     melhor para imprimir jpg ou png`) are answered on the tool pages because
+     someone converting genuinely asks them there — but their natural home is a
+     guide, and the English site already has /guides/png-vs-jpg/. Translating
+     that guide would serve them better than a FAQ entry can.
+     --------------------------------------------------------------------- */
+  {
+    slug: 'jpg-para-png',
+    en: 'jpg-to-png',
+    primary: 'jpg para png',
+    phrase: [
+      { term: 'jpg para png', kd: 'Easy', volume: '>10,000' },
+      { term: 'converter jpg para png', kd: 'Easy', volume: '>1000' },
+      { term: 'converter de jpg para png', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de jpg para png', kd: 'Easy', volume: '>100' },
+      { term: 'converter imagem jpg para png', kd: 'Easy', volume: '>100' },
+      { term: 'de jpg para png', kd: 'Easy', volume: '>100' },
+      { term: 'transformar jpg para png', kd: 'Easy', volume: '>100' },
+      { term: 'conversor jpg para png', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter jpg para png', kd: 'n/a', volume: '<100' },
+      { term: 'qual a diferença de jpg para png', kd: 'Easy', volume: '<100' },
+      { term: 'como mudar a extensão de um arquivo jpg para png', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'png-para-jpg',
+    en: 'png-to-jpg',
+    primary: 'png para jpg',
+    phrase: [
+      { term: 'png para jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'converter png para jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'converter de png para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter imagem png para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de png para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'de png para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'mudar png para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'transformar png para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'conversor png para jpg', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter png para jpg', kd: 'n/a', volume: '<100' },
+      { term: 'qual a diferença de png para jpg', kd: 'Easy', volume: '<100' },
+      { term: 'como mudar de png para jpg', kd: 'n/a', volume: '<100' },
+      { term: 'onde converter png para jpg com eficiência', kd: 'n/a', volume: '<100' },
+      { term: 'qual é melhor para imprimir jpg ou png', kd: 'n/a', volume: '<100' },
+      { term: 'para postar no instagram é melhor png ou jpg', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'webp-para-png',
+    en: 'webp-to-png',
+    primary: 'webp para png',
+    phrase: [
+      { term: 'webp para png', kd: 'Easy', volume: '>10,000' },
+      { term: 'converter webp para png', kd: 'Easy', volume: '>10,000' },
+      { term: 'converter imagem webp para png', kd: 'Easy', volume: '>1000' },
+      { term: 'converter arquivo webp para png', kd: 'Easy', volume: '>100' },
+      { term: 'arquivo webp para png', kd: 'Easy', volume: '>100' },
+      { term: 'converter de webp para png', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de webp para png', kd: 'Easy', volume: '>100' },
+      { term: 'de webp para png', kd: 'Easy', volume: '>100' },
+      { term: 'imagem webp para png', kd: 'Easy', volume: '>100' },
+      { term: 'conversor webp para png', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter imagem webp para png', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'png-para-webp',
+    en: 'png-to-webp',
+    primary: 'png para webp',
+    phrase: [
+      { term: 'converter png para webp', kd: 'Easy', volume: '>1000' },
+      { term: 'png para webp', kd: 'Easy', volume: '>1000' },
+      { term: 'converter de png para webp', kd: 'Easy', volume: '>100' },
+      { term: 'converter imagem png para webp', kd: 'Easy', volume: '>100' },
+      { term: 'conversor png para webp', kd: 'Easy', volume: '<100' },
+      { term: 'conversor de png para webp', kd: 'Easy', volume: '<100' },
+      { term: 'de png para webp', kd: 'n/a', volume: '<100' },
+      { term: 'converter png para webp sem perder qualidade', kd: 'n/a', volume: '<100' },
+      { term: 'transformar png para webp', kd: 'n/a', volume: '<100' }
+    ],
+    /* Its only returned question — `como converter imagem webp para png` — is
+       the opposite conversion and belongs to webp-para-png, where it is used. */
     questions: []
   }
 ];

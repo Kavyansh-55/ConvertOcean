@@ -880,11 +880,228 @@ const ptToolsBatch3: PtTool[] = [
   }
 ];
 
+/**
+ * ---------------------------------------------------------------------------
+ * Keyword-led batch 4 — image formats, 2026-09-24. The strongest set so far.
+ * ---------------------------------------------------------------------------
+ *
+ * `jpg para png`, `webp para png` and `converter webp para png` are Easy at
+ * >10,000. Consumer queries rather than office ones, which suits a heavily
+ * mobile Brazilian audience.
+ *
+ * One thing handled carefully: `jpg para png sem fundo` (>100) is NOT targeted,
+ * because converting to PNG does not remove a background — a JPG has no alpha
+ * channel, so the result is an opaque PNG. Ranking for it would guarantee a
+ * bounce. The misconception is common enough to be worth correcting, so
+ * jpg-para-png answers it in its own words instead of quoting the query. See
+ * `intentMismatch` in ./keywords.ts.
+ */
+const ptToolsBatch4: PtTool[] = [
+  {
+    en: 'jpg-to-png',
+    slug: 'jpg-para-png',
+    name: 'JPG para PNG',
+    title: 'Converter JPG para PNG Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter imagens JPG em PNG sem perdas direto no navegador, ideal para edição, capturas de tela e imagens com texto nítido.',
+    headline: 'JPG para PNG.',
+    subtitle: 'Converta JPG em PNG sem perdas, para editar sem degradar a imagem a cada salvamento — sem que o arquivo saia do seu dispositivo.',
+    quickAnswer: 'Para converter JPG para PNG, selecione a imagem na ferramenta acima e baixe um PNG sem perdas. O PNG evita a degradação que o JPG acumula a cada novo salvamento, então é a escolha certa para editar, para capturas de tela e para imagens com texto ou linhas nítidas. Espere um arquivo maior, porque o PNG guarda cada pixel exatamente. A conversão roda inteiramente no seu navegador.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como converter jpg para png',
+        answer: 'Arraste a imagem .jpg ou .jpeg para a ferramenta no topo da página e baixe o arquivo .png. Não há cadastro, marca d’água nem limite diário, e a imagem não sai do seu dispositivo.'
+      },
+      {
+        question: 'qual a diferença de jpg para png',
+        answer: 'O JPG usa compressão com perdas: ele descarta informação para ficar pequeno, e perde um pouco mais a cada vez que o arquivo é salvo novamente. O PNG é sem perdas — guarda cada pixel exatamente como está — e suporta transparência, que o JPG não tem. Na prática: JPG para fotografias e para reduzir tamanho, PNG para capturas de tela, logotipos, textos e qualquer imagem que ainda será editada.'
+      },
+      {
+        question: 'como mudar a extensão de um arquivo jpg para png',
+        answer: 'Renomear o arquivo de .jpg para .png não funciona: a extensão é só o nome, e o conteúdo continua codificado como JPG. Muitos programas recusam o arquivo ou mostram erro. É preciso recodificar a imagem de verdade, que é o que esta ferramenta faz.'
+      },
+      {
+        question: 'Converter para PNG deixa o fundo transparente?',
+        answer: 'Não. Essa é a confusão mais comum sobre o formato. O PNG *aceita* transparência, mas um JPG não tem canal de transparência — não existe fundo transparente no arquivo original para ser preservado. O resultado é um PNG com o mesmo fundo opaco de antes. Remover o fundo exige identificar o objeto na imagem, o que é outro tipo de ferramenta.'
+      },
+      {
+        question: 'O arquivo PNG fica maior que o JPG?',
+        answer: 'Quase sempre sim, e às vezes várias vezes maior. É o preço de ser sem perdas: o PNG guarda cada pixel em vez de aproximar. Para fotografias a diferença é grande; para capturas de tela e gráficos com poucas cores é bem menor, e o PNG pode até ficar menor que o JPG.'
+      },
+      {
+        question: 'A imagem é copiada para algum servidor?',
+        answer: 'Não. A decodificação e a recodificação acontecem no seu navegador, no seu dispositivo. Fotos e capturas de tela não são copiadas para nenhum servidor — o que importa porque imagens carregam metadados como localização e modelo do aparelho.'
+      }
+    ],
+    content: `
+      <h2>Por que converter JPG para PNG</h2>
+      <p>A razão principal é a degradação acumulada. O JPG é um formato com perdas: cada vez que você abre, edita e salva de novo, um pouco de informação some — e o efeito se acumula, ficando visível como manchas ao redor de textos e bordas. Usar um <strong>conversor de jpg para png</strong> antes de começar a editar congela a imagem no estado atual e evita que ela continue piorando.</p>
+      <p><strong>Converter imagem jpg para png</strong> também é o caminho certo quando o arquivo tem texto, linhas finas ou áreas de cor chapada: são exatamente os padrões que a compressão do JPG trata pior.</p>
+
+      <h2>Renomear a extensão não converte nada</h2>
+      <p>Trocar o final do nome do arquivo de .jpg para .png não transforma o formato. A extensão é apenas um rótulo; o conteúdo continua codificado como JPG, e programas mais exigentes recusam o arquivo ou acusam erro. <strong>Transformar jpg para png</strong> exige recodificar a imagem de verdade.</p>
+
+      <h2>PNG não significa fundo transparente</h2>
+      <p>Vale dizer com clareza, porque é a expectativa mais frustrada: o PNG *aceita* transparência, mas isso não significa que converter para PNG remova o fundo. Um JPG não possui canal de transparência — não há o que preservar. O resultado tem o mesmo fundo de antes, apenas em outro formato. Apagar o fundo é um trabalho de identificação do objeto na imagem, não de conversão.</p>
+
+      <h2>Tudo acontece no seu dispositivo</h2>
+      <p>A imagem é decodificada e recodificada dentro do navegador e não é copiada para nenhum servidor. Além da privacidade, isso significa que a ferramenta continua funcionando sem internet depois que a página carrega uma vez.</p>
+    `
+  },
+  {
+    en: 'png-to-jpg',
+    slug: 'png-para-jpg',
+    name: 'PNG para JPG',
+    title: 'Converter PNG para JPG Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter imagens PNG em JPG menores direto no navegador, com a transparência achatada sobre fundo branco.',
+    headline: 'PNG para JPG.',
+    subtitle: 'Reduza o tamanho de uma imagem convertendo PNG em JPG — sem que o arquivo saia do seu dispositivo.',
+    quickAnswer: 'Para converter PNG para JPG, selecione a imagem na ferramenta acima e baixe o JPG. As áreas transparentes são achatadas sobre um fundo branco, porque o JPG não tem transparência, e a imagem é comprimida para reduzir o tamanho do arquivo. Escolha JPG para fotografias e para caber em limites de tamanho; mantenha PNG para logotipos e gráficos que precisam de transparência. Nada sai do seu dispositivo.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como converter png para jpg',
+        answer: 'Arraste a imagem .png para a ferramenta no topo da página e baixe o .jpg. O arquivo costuma ficar bem menor, o que resolve a maior parte dos casos de formulário ou sistema que recusa uma imagem por tamanho.'
+      },
+      {
+        question: 'qual a diferença de png para jpg',
+        answer: 'O PNG é sem perdas e suporta transparência: guarda cada pixel exatamente, e por isso gera arquivos maiores. O JPG usa compressão com perdas e não tem transparência, ficando muito menor em fotografias. Para uma foto, o JPG é quase sempre a escolha certa; para um logotipo com fundo transparente ou uma captura de tela com texto, o PNG é melhor.'
+      },
+      {
+        question: 'como mudar de png para jpg',
+        answer: 'Renomear o arquivo não resolve — a extensão é só o nome, e o conteúdo continua sendo um PNG. É necessário recodificar a imagem, que é o que a ferramenta faz. Também não é preciso instalar programa nenhum nem criar conta.'
+      },
+      {
+        question: 'onde converter png para jpg com eficiência',
+        answer: 'O critério prático é onde a imagem é processada. Aqui a conversão acontece dentro do seu navegador, então não há fila, nem limite diário, nem espera por rede — a velocidade é a do seu próprio aparelho, e a imagem não é copiada para nenhum servidor. Depois que a página carrega, funciona até sem internet.'
+      },
+      {
+        question: 'qual é melhor para imprimir jpg ou png',
+        answer: 'Para fotografias destinadas à impressão, o JPG em alta qualidade é suficiente e é o que a maioria das gráficas aceita sem objeção. Para material com texto, linhas finas, logotipos ou cores chapadas — um cartaz, um convite, um certificado — o PNG imprime mais limpo, porque não introduz os artefatos que a compressão do JPG cria ao redor das bordas. O que importa mais que o formato é a resolução: para impressão, trabalhe em 300 dpi.'
+      },
+      {
+        question: 'para postar no instagram é melhor png ou jpg',
+        answer: 'Para fotografias, JPG. O Instagram recomprime tudo o que recebe, então enviar um PNG grande não melhora o resultado final — apenas gasta mais dados no envio. A exceção é conteúdo com texto nítido ou gráficos de cor chapada, como um card ou um infográfico, onde o PNG chega mais limpo e sobrevive melhor à recompressão.'
+      },
+      {
+        question: 'O que acontece com o fundo transparente?',
+        answer: 'Ele é achatado sobre branco, porque o JPG não tem como representar transparência. Se a imagem é um logotipo que será usado sobre um fundo colorido, converter para JPG vai deixar um retângulo branco em volta — nesse caso mantenha o PNG, ou converta para WebP, que preserva a transparência e ainda reduz o tamanho.'
+      }
+    ],
+    content: `
+      <h2>Quando faz sentido passar de PNG para JPG</h2>
+      <p>O motivo mais comum para procurar um <strong>conversor de png para jpg</strong> é tamanho. Capturas de tela e imagens exportadas de programas de design saem em PNG por padrão, e um PNG de fotografia pode ser várias vezes maior que o JPG equivalente. Formulários, sistemas e anexos de e-mail impõem limites, e <strong>converter imagem png para jpg</strong> resolve isso sem que a diferença visual seja perceptível em uma foto.</p>
+
+      <h2>O que você perde: a transparência</h2>
+      <p>É a única perda que importa, e ela é definitiva. O JPG não tem canal de transparência, então qualquer área transparente é achatada sobre branco. Para uma fotografia isso não muda nada — não há transparência para perder. Para um logotipo pensado para ficar sobre um fundo colorido, o resultado é um retângulo branco visível em volta. Nesses casos, mantenha o PNG ou considere o WebP, que combina transparência com arquivos pequenos.</p>
+
+      <h2>Renomear não converte</h2>
+      <p>Trocar o final do nome do arquivo de .png para .jpg não altera o conteúdo — a imagem continua codificada como PNG e muitos sistemas recusam o arquivo. <strong>Mudar png para jpg</strong> exige recodificação real.</p>
+
+      <h2>Processamento local</h2>
+      <p>A conversão acontece no seu navegador, sem fila e sem limite diário, e a imagem não é copiada para nenhum servidor. Isso importa especialmente em imagens: fotos carregam metadados como localização e modelo do aparelho, e capturas de tela carregam o que estava na sua tela.</p>
+    `
+  },
+  {
+    en: 'webp-to-png',
+    slug: 'webp-para-png',
+    name: 'WebP para PNG',
+    title: 'Converter WebP para PNG Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter imagens WebP em PNG padrão direto no navegador, com a transparência preservada, para abrir em qualquer programa.',
+    headline: 'WebP para PNG.',
+    subtitle: 'Transforme imagens WebP em PNG padrão, que abrem em qualquer programa — sem que o arquivo saia do seu dispositivo.',
+    quickAnswer: 'Para converter WebP para PNG, selecione a imagem na ferramenta acima e baixe um PNG padrão e sem perdas, que abre em qualquer lugar — inclusive em programas antigos e editores que não reconhecem WebP. A transparência é preservada. Espere um arquivo maior, porque o PNG guarda cada pixel sem a compressão do WebP. Tudo é processado localmente no seu navegador.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como converter imagem webp para png',
+        answer: 'Arraste o arquivo .webp para a ferramenta no topo da página e baixe o .png. O resultado é um PNG padrão, sem perdas, que abre no Word, no PowerPoint, em editores antigos e em qualquer sistema que recuse WebP.'
+      },
+      {
+        question: 'Por que tantos programas não abrem WebP?',
+        answer: 'O WebP é um formato relativamente recente, criado para a web. Navegadores modernos o exibem sem problema, mas muitos programas de escritório, editores de imagem antigos e sistemas internos de empresas ainda não o reconhecem — motivo pelo qual imagens salvas de sites frequentemente precisam ser convertidas antes de serem usadas.'
+      },
+      {
+        question: 'A transparência é preservada?',
+        answer: 'Sim. Tanto o WebP quanto o PNG suportam transparência, então áreas transparentes atravessam a conversão intactas. É uma das vantagens de converter para PNG em vez de JPG, que achataria tudo sobre branco.'
+      },
+      {
+        question: 'A qualidade da imagem piora?',
+        answer: 'Não há perda adicional: o PNG é sem perdas e guarda exatamente os pixels que o WebP produziu. Se o WebP de origem já era comprimido com perdas, essa compressão original permanece visível — a conversão não recupera detalhes que já não estavam ali, mas também não degrada nada.'
+      },
+      {
+        question: 'Por que o arquivo PNG fica maior?',
+        answer: 'Porque o WebP comprime melhor. O PNG armazena cada pixel sem aproximações, e por isso costuma ficar consideravelmente maior que o WebP equivalente. É o custo de um formato que abre em qualquer lugar.'
+      },
+      {
+        question: 'A imagem é copiada para algum servidor?',
+        answer: 'Não. A conversão acontece no seu navegador, no seu dispositivo, e a imagem não é copiada para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>O formato que o seu programa não abre</h2>
+      <p>A busca por um <strong>conversor de webp para png</strong> quase sempre começa do mesmo jeito: você salvou uma imagem de um site, tentou inserir no Word ou em um editor, e o arquivo foi recusado. O WebP é um formato criado para a web e exibido por qualquer navegador moderno, mas muitos programas de escritório e sistemas internos ainda não o reconhecem.</p>
+      <p><strong>Converter arquivo webp para png</strong> devolve um formato universal, que qualquer software abre.</p>
+
+      <h2>Nada se perde na conversão</h2>
+      <p>O PNG é sem perdas, então a imagem chega exatamente como estava — inclusive a transparência, que ambos os formatos suportam. Se o WebP de origem já era comprimido com perdas, aquela compressão continua visível: a conversão não inventa detalhes que já não existiam, mas também não acrescenta nenhuma degradação nova.</p>
+
+      <h2>O arquivo vai ficar maior</h2>
+      <p>É a contrapartida. O WebP existe justamente porque comprime melhor; o PNG guarda cada pixel. Ao passar <strong>de webp para png</strong>, espere um arquivo consideravelmente maior — em troca de abrir em qualquer lugar. Se o destino for a web novamente, o caminho inverso costuma fazer mais sentido.</p>
+    `
+  },
+  {
+    en: 'png-to-webp',
+    slug: 'png-para-webp',
+    name: 'PNG para WebP',
+    title: 'Converter PNG para WebP Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter imagens PNG em WebP direto no navegador: 25–35% menores com qualidade equivalente e transparência preservada.',
+    headline: 'PNG para WebP.',
+    subtitle: 'Reduza o peso das imagens do seu site mantendo a transparência — processado no seu próprio dispositivo.',
+    quickAnswer: 'Para converter PNG para WebP, selecione a imagem na ferramenta acima e baixe um WebP normalmente 25–35% menor com qualidade equivalente, com a transparência preservada. O WebP é suportado por todos os navegadores modernos e acelera o carregamento das páginas, o que faz dele a melhor escolha para imagens na web. A conversão roda inteiramente no seu dispositivo.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'Quanto menor fica o arquivo?',
+        answer: 'Normalmente entre 25% e 35% menor com qualidade equivalente, embora o ganho varie com o conteúdo da imagem. Fotografias e gráficos complexos costumam render mais; imagens muito simples, com poucas cores, já eram bem comprimidas em PNG e ganham menos.'
+      },
+      {
+        question: 'A transparência é mantida?',
+        answer: 'Sim. O WebP suporta canal alfa, então logotipos e imagens com fundo transparente atravessam a conversão intactos — diferentemente do JPG, que achataria tudo sobre branco. É por isso que o WebP costuma substituir o PNG na web sem exigir mudança de layout.'
+      },
+      {
+        question: 'Todos os navegadores exibem WebP?',
+        answer: 'Sim, todos os navegadores modernos — Chrome, Firefox, Safari, Edge e seus equivalentes em celular. A ressalva não é o navegador, e sim programas de escritório e editores antigos, que ainda podem recusar o formato. Para imagens destinadas à web isso não é um problema; para um arquivo que será aberto no Word, prefira PNG.'
+      },
+      {
+        question: 'A conversão perde qualidade?',
+        answer: 'A redução de tamanho vem de uma compressão mais eficiente, e em uso normal a diferença não é perceptível a olho nu. Ainda assim, é uma recompressão: se a imagem for ser editada repetidamente depois, guarde o PNG original como cópia de trabalho e use o WebP apenas para publicar.'
+      },
+      {
+        question: 'A imagem é copiada para algum servidor?',
+        answer: 'Não. A conversão acontece no seu navegador, no seu dispositivo, e a imagem não é copiada para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>Imagens mais leves sem mudar o visual do site</h2>
+      <p>Um <strong>conversor png para webp</strong> costuma entrar em cena quando alguém descobre que as imagens são o que está deixando a página lenta. Em um site comum, imagens representam a maior parte do peso de cada página — e o PNG, por ser sem perdas, é o formato mais pesado de todos.</p>
+      <p><strong>Converter imagem png para webp</strong> costuma reduzir de 25% a 35% do tamanho com qualidade equivalente, o que se traduz diretamente em carregamento mais rápido, especialmente em conexões móveis.</p>
+
+      <h2>Transparência preservada</h2>
+      <p>É o que diferencia o WebP do JPG nesse papel. Logotipos, ícones e imagens recortadas mantêm o fundo transparente depois da conversão, então nada no layout precisa mudar. Foi essa combinação — arquivos pequenos com canal alfa — que fez o WebP substituir o PNG na web.</p>
+
+      <h2>Onde o WebP ainda não serve</h2>
+      <p>Todos os navegadores modernos exibem WebP, mas programas de escritório e editores antigos nem sempre. Se a imagem vai ser inserida em um documento do Word ou enviada a alguém que a abrirá em um editor antigo, o PNG continua sendo a escolha segura. E guarde o PNG original se a imagem ainda for editada: o WebP é excelente para publicar, não para ser reprocessado muitas vezes.</p>
+    `
+  }
+];
+
 export const ptTools: PtTool[] = [
   ...ptToolsSeed,
   ...ptToolsBatch1,
   ...ptToolsBatch2,
-  ...ptToolsBatch3
+  ...ptToolsBatch3,
+  ...ptToolsBatch4
 ];
 
 /**

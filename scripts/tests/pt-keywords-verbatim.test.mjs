@@ -82,15 +82,49 @@ test('a page is not built for keywords that were only parked', () => {
   }
 });
 
-test('no competitor brand query is targeted', () => {
+/**
+ * Four separate reasons a researched keyword must never become a page target.
+ * They are listed together because the failure is identical in each case: the
+ * page ranks, the visitor's actual need is not met, they leave, and Google
+ * learns the page does not answer the query. That is worse than not ranking.
+ *
+ *   excluded       competitor brand navigation — they already chose iLovePDF
+ *   noToolYet      PDF → PowerPoint; the converter does not exist
+ *   codeIntent     "...python", "...java" — wants a snippet, not a web tool
+ *   intentMismatch "jpg para png sem fundo" — wants background removal
+ */
+const DO_NOT_TARGET = [
+  'export const excluded',
+  'export const noToolYet',
+  'export const codeIntent',
+  'export const intentMismatch',
+  'export const wrongLanguage'
+];
+
+test('no keyword from a do-not-target list is used as a page target', () => {
   const hits = [];
-  for (const term of termsIn('export const excluded')) {
-    if (CONTENT.includes(`question: '${term}'`)) hits.push(term);
+  for (const section of DO_NOT_TARGET) {
+    for (const term of termsIn(section)) {
+      if (CONTENT.includes(`question: '${term}'`)) {
+        hits.push(`${term}  (from ${section.replace('export const ', '')})`);
+      }
+    }
   }
   assert.deepStrictEqual(
     hits, [],
-    `brand-navigational queries used as page targets:\n${hits.join('\n')}`
+    `keywords that must not be targeted are being used as FAQ questions:\n${hits.join('\n')}`
   );
+});
+
+test('every do-not-target list is non-empty and actually checked', () => {
+  // A silent typo in a section name would make the test above pass vacuously,
+  // which is the quiet way a guard like this stops guarding anything.
+  for (const section of DO_NOT_TARGET) {
+    assert.ok(
+      termsIn(section).length > 0,
+      `${section} matched no terms — renamed or mistyped, so it is not being checked`
+    );
+  }
 });
 
 test('the keyword record and the built pages agree on slugs', () => {
