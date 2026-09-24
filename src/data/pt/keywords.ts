@@ -125,7 +125,12 @@ export const excluded: { term: string; why: string }[] = [
   { term: 'diminuir pdf adobe', why: 'competitor brand navigation (Adobe)' },
   // batch 9
   { term: 'calculadora de porcentagem online - 4devs', why: 'competitor brand navigation (4devs)' },
-  { term: 'calculadora de porcentagem google', why: 'brand navigation (Google calculator)' }
+  { term: 'calculadora de porcentagem google', why: 'brand navigation (Google calculator)' },
+  // batch 11
+  { term: 'pinetools split image online', why: 'competitor brand navigation (PineTools)' },
+  { term: 'split image online pinetools', why: 'competitor brand navigation (PineTools)' },
+  { term: 'imagy.app – split image online', why: 'competitor brand navigation (Imagy)' },
+  { term: 'como dividir uma imagem em 4 partes no canva', why: 'brand navigation (Canva) — a how-to for their editor' }
 ];
 
 /**
@@ -235,6 +240,12 @@ export const wrongTool: { term: string; kd: string; volume: string; actually: st
   { term: 'como diminuir no excel formula', kd: 'Easy', volume: '<100', actually: 'Excel subtraction formula' },
   { term: 'como somar e diminuir no excel', kd: 'Easy', volume: '<100', actually: 'Excel sum/subtract formulas' },
   { term: 'compactar excel em zip', kd: 'n/a', volume: '<100', actually: 'ZIP archiving, not reducing the .xlsx itself' },
+  /* batch 11. "Com IA" means generative merging — blending faces, inventing a
+     composite. Our tool stitches two pictures side by side. Same verb, a
+     completely different product. */
+  { term: 'juntar fotos com ia', kd: 'n/a', volume: '>100', actually: 'AI image generation, not stitching' },
+  { term: 'unir imagens com ia', kd: 'n/a', volume: '<100', actually: 'AI image generation, not stitching' },
+  { term: 'combinar fotos ia', kd: 'n/a', volume: '<100', actually: 'AI image generation, not stitching' },
   /* batch 9. "Porcentagem/percentual de gordura" is BODY FAT — a body-composition
      calculator taking skinfold measurements, nothing to do with arithmetic on a
      percentage. `calculadora de percentual de gordura` is Easy at >100 and would
@@ -325,7 +336,17 @@ export const wrongLanguage: { term: string; language: string }[] = [
      Portuguese market, while the copy is written in pt-BR. Low volume, so no
      action now — but if Portugal ever matters, this is the vocabulary split
      that would justify a separate pt-PT. */
-  { term: 'ficheiro avif para png', language: 'pt-PT' }
+  { term: 'ficheiro avif para png', language: 'pt-PT' },
+  /* batch 11 — the EXIF sets leak in both directions. Portuguese for data is
+     "dados"; "datos" is Spanish. And Brazilians searching a niche technical
+     term often type it in English, which is why `view exif online` and `split
+     image online` show up in a pt export at all. Neither belongs on a pt page:
+     the English site already serves them. */
+  { term: 'ver datos exif online', language: 'es' },
+  { term: 'view exif online', language: 'en' },
+  { term: 'exif online viewer', language: 'en' },
+  { term: 'split image online', language: 'en' },
+  { term: 'split image online free', language: 'en' }
 ];
 
 /**
@@ -461,7 +482,8 @@ export const codeIntent: { term: string; kd: string; volume: string; lang: strin
   { term: 'converter xml para json c#', kd: 'n/a', volume: '<100', lang: 'C#' },
   { term: 'converter xml para json java', kd: 'n/a', volume: '<100', lang: 'Java' },
   { term: 'xml para json jquery', kd: 'n/a', volume: '<100', lang: 'jQuery' },
-  { term: 'converter xls para csv java', kd: 'n/a', volume: '<100', lang: 'Java' }
+  { term: 'converter xls para csv java', kd: 'n/a', volume: '<100', lang: 'Java' },
+  { term: 'dividir arquivo csv php', kd: 'n/a', volume: '<100', lang: 'PHP' }
 ];
 
 export const noToolYet: { term: string; kd: string; volume: string; needs: string }[] = [
@@ -477,7 +499,21 @@ export const noToolYet: { term: string; kd: string; volume: string; needs: strin
      volume, so this is a note rather than a case for building it. */
   { term: 'csv para ofx', kd: 'Easy', volume: '<100', needs: 'csv-to-ofx' },
   { term: 'converter csv para ofx', kd: 'n/a', volume: '<100', needs: 'csv-to-ofx' },
-  { term: 'como converter csv para ofx', kd: 'n/a', volume: '<100', needs: 'csv-to-ofx' }
+  { term: 'como converter csv para ofx', kd: 'n/a', volume: '<100', needs: 'csv-to-ofx' },
+  /* batch 11. CROPPING IS THE BIGGEST MISSING TOOL FOUND SO FAR: `cortar
+     imagem online` is EASY at >1000, and the site has no crop tool at all —
+     split-image cuts into tiles and image-resizer scales, neither of which
+     crops. Unlike PDF->PowerPoint or background removal, this one is a small
+     canvas operation, so the gap between demand and effort is unusually wide. */
+  { term: 'cortar imagem online', kd: 'Easy', volume: '>1000', needs: 'image-crop' },
+  { term: 'cortar imagem online grátis', kd: 'Easy', volume: '>100', needs: 'image-crop' },
+  { term: 'cortar imagem online png', kd: 'Easy', volume: '<100', needs: 'image-crop' },
+  { term: 'cortar imagem online redonda', kd: 'Easy', volume: '<100', needs: 'image-crop (circular)' },
+  /* Vectorisation — raster back to vector. A different class of problem from
+     every other converter here, and not one we do. */
+  { term: 'onde converter png para svg', kd: 'n/a', volume: '<100', needs: 'png-to-svg (vectorisation)' },
+  /* Background removal again, third sighting. See intentMismatch. */
+  { term: 'como separar foto do fundo', kd: 'n/a', volume: '<100', needs: 'background removal' }
 ];
 
 /* Terms the export rated inconsistently across two views of the same data. */
@@ -1482,6 +1518,163 @@ export const pageKeywords: PageKeywords[] = [
     slug: 'qbo-para-csv', en: 'qbo-to-csv', primary: 'qbo para csv',
     phrase: [],
     questions: []
+  },
+
+  /* ---------------------------------------------------------------------
+     Batch 11 — SVG, merge/split of images and spreadsheets, EXIF. 2026-09-24.
+
+     Two real finds. `svg para png` and `converter svg para png` are both Easy
+     at >1000. And the image split/merge cluster is bigger than its English
+     equivalent suggests, because Brazilians attach two specific jobs to it:
+     printing a poster across A4 sheets (`dividir imagem em folhas a4 para
+     imprimir`, Easy >1000) and cutting an Instagram carousel (`dividir imagem
+     carrossel`, Easy >100). The tool's own description already names social
+     carousels, so that one is an exact capability match.
+
+     EXIF confirms Kavya's own read: there is no market. Everything <100, most
+     with no KD at all, and the set is contaminated with Spanish and English.
+     Built for completeness only.
+
+     CANNIBALISATION WATCH: `juntar fotos em pdf` and `unir imagens em pdf`
+     (both Medium, >1000) are IMAGE-TO-PDF intent, and /pt/jpg-para-pdf/
+     already exists for that. merge-images can also output PDF, so the two
+     pages could easily compete. juntar-fotos therefore targets the STITCHED
+     IMAGE job — `juntar duas fotos em uma só` — which jpg-para-pdf cannot do,
+     and links across for the PDF case.
+     --------------------------------------------------------------------- */
+  {
+    slug: 'svg-para-png', en: 'svg-to-png', primary: 'svg para png',
+    phrase: [
+      { term: 'svg para png', kd: 'Easy', volume: '>1000' },
+      { term: 'converter svg para png', kd: 'Easy', volume: '>1000' },
+      { term: 'converter de svg para png', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de svg para png', kd: 'Easy', volume: '<100' },
+      { term: 'arquivo svg para png', kd: 'Easy', volume: '<100' },
+      { term: 'converter imagem svg para png', kd: 'Easy', volume: '<100' },
+      { term: 'converter arquivo svg para png', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter svg para png', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'svg-para-jpg', en: 'svg-to-jpg', primary: 'svg para jpg',
+    phrase: [
+      { term: 'svg para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter svg para jpg', kd: 'Easy', volume: '<100' },
+      { term: 'converter imagem svg para jpg', kd: 'n/a', volume: '<100' },
+      { term: 'converter svg para jpg online', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter svg para jpg', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'svg-para-webp', en: 'svg-to-webp', primary: 'svg para webp',
+    phrase: [
+      { term: 'svg para webp', kd: 'Easy', volume: '<100' },
+      { term: 'converter svg para webp', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'dividir-imagem', en: 'split-image', primary: 'dividir imagem',
+    phrase: [
+      { term: 'dividir imagem', kd: 'Easy', volume: '>1000' },
+      { term: 'site para dividir imagem em várias folhas a4', kd: 'Easy', volume: '>1000' },
+      { term: 'dividir imagem para imprimir', kd: 'Easy', volume: '>1000' },
+      { term: 'dividir imagem em folhas a4', kd: 'Easy', volume: '>1000' },
+      { term: 'dividir imagem em 4 partes', kd: 'Easy', volume: '>1000' },
+      { term: 'dividir imagem em partes', kd: 'Easy', volume: '>100' },
+      { term: 'dividir imagem em folhas a4 para imprimir', kd: 'Easy', volume: '>100' },
+      { term: 'dividir imagem online', kd: 'Easy', volume: '>100' },
+      { term: 'dividir imagem carrossel', kd: 'Easy', volume: '>100' },
+      { term: 'dividir imagem em 4 folhas a4', kd: 'Easy', volume: '>100' },
+      { term: 'separar foto em partes', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como dividir uma imagem em 4 partes', kd: 'Easy', volume: '>100' },
+      { term: 'como dividir uma imagem em 4 partes para imprimir', kd: 'Easy', volume: '>100' },
+      { term: 'como dividir imagem em 4 partes', kd: 'Easy', volume: '>100' },
+      { term: 'como dividir imagem para imprimir', kd: 'Easy', volume: '<100' },
+      { term: 'como dividir uma imagem em várias folhas a4', kd: 'Easy', volume: '<100' },
+      { term: 'como dividir uma imagem em 6 partes para imprimir', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'juntar-fotos', en: 'merge-images', primary: 'juntar fotos',
+    phrase: [
+      { term: 'juntar fotos', kd: 'Easy', volume: '>1000' },
+      { term: 'juntar fotos em uma só', kd: 'Easy', volume: '>100' },
+      { term: 'juntar fotos online', kd: 'Easy', volume: '>100' },
+      { term: 'juntar fotos jpg', kd: 'Easy', volume: '>100' },
+      { term: 'juntar fotos online grátis', kd: 'Easy', volume: '>100' },
+      { term: 'aplicativo para juntar fotos', kd: 'Easy', volume: '>100' },
+      { term: 'unir imagens', kd: 'Easy', volume: '>100' },
+      { term: 'unir imagens jpg', kd: 'Easy', volume: '>100' },
+      { term: 'combinar fotos', kd: 'Easy', volume: '>100' },
+      { term: 'mesclar imagens online', kd: 'Easy', volume: '<100' },
+      { term: 'colar imagens juntas', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como juntar duas fotos em uma só', kd: 'Easy', volume: '>1000' },
+      { term: 'como juntar duas fotos', kd: 'Easy', volume: '>100' },
+      { term: 'como juntar 2 fotos em 1', kd: 'Easy', volume: '>100' },
+      { term: 'como juntar varias fotos em uma só', kd: 'Easy', volume: '>100' },
+      { term: 'como juntar fotos em uma só', kd: 'Easy', volume: '>100' },
+      { term: 'como unir duas imagens', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'unir-arquivos-excel', en: 'merge-excel', primary: 'unir arquivos excel',
+    phrase: [
+      { term: 'unir arquivos excel', kd: 'Easy', volume: '<100' },
+      { term: 'mesclar planilhas excel', kd: 'Easy', volume: '<100' },
+      { term: 'unir arquivos csv', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como unir varios arquivos excel em um só', kd: 'Easy', volume: '<100' },
+      { term: 'como mesclar planilhas no excel', kd: 'Easy', volume: '<100' },
+      { term: 'como mesclar duas planilhas no excel', kd: 'Easy', volume: '<100' },
+      { term: 'como unir arquivos csv', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'dividir-arquivo-excel', en: 'split-excel', primary: 'dividir arquivo excel',
+    phrase: [
+      { term: 'dividir arquivo excel', kd: 'n/a', volume: '<100' },
+      { term: 'dividir arquivo excel varios', kd: 'n/a', volume: '<100' },
+      { term: 'separar planilha excel', kd: 'n/a', volume: '<100' },
+      { term: 'dividir arquivo csv', kd: 'n/a', volume: '<100' },
+      { term: 'dividir arquivo csv em partes', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como separar planilha excel', kd: 'n/a', volume: '<100' },
+      { term: 'como dividir arquivo csv', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    /* No market, confirmed by Kavya and by the data. Completion pages. */
+    slug: 'ver-exif', en: 'exif-viewer', primary: 'ver dados da foto',
+    phrase: [
+      { term: 'exif online', kd: 'Hard', volume: '<100' },
+      { term: 'ver exif online', kd: 'n/a', volume: '<100' },
+      { term: 'ver dados da foto', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como ver dados da foto', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'remover-exif', en: 'exif-remover', primary: 'remover exif',
+    phrase: [
+      { term: 'remover exif', kd: 'n/a', volume: '<100' },
+      { term: 'remover exif online', kd: 'n/a', volume: '<100' },
+      { term: 'remover exif fotos', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como remover exif', kd: 'n/a', volume: '<100' }
+    ]
   }
 ];
 

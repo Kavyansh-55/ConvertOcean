@@ -91,6 +91,15 @@ const PAIRS = [
   { pt: 'xlsx-para-json', en: 'xlsx-to-json' },
   { pt: 'xls-para-json', en: 'xls-to-json' },
   { pt: 'qbo-para-csv', en: 'qbo-to-csv' },
+  { pt: 'svg-para-png', en: 'svg-to-png' },
+  { pt: 'svg-para-jpg', en: 'svg-to-jpg' },
+  { pt: 'svg-para-webp', en: 'svg-to-webp' },
+  { pt: 'dividir-imagem', en: 'split-image' },
+  { pt: 'juntar-fotos', en: 'merge-images' },
+  { pt: 'unir-arquivos-excel', en: 'merge-excel' },
+  { pt: 'dividir-arquivo-excel', en: 'split-excel' },
+  { pt: 'ver-exif', en: 'exif-viewer' },
+  { pt: 'remover-exif', en: 'exif-remover' },
 ];
 
 let bad = 0;

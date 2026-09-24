@@ -2559,6 +2559,438 @@ const ptToolsBatch10: PtTool[] = [
   }
 ];
 
+/**
+ * ---------------------------------------------------------------------------
+ * Keyword-led batch 11 — SVG, image merge/split, spreadsheet merge/split, EXIF.
+ * ---------------------------------------------------------------------------
+ *
+ * `svg para png` and `converter svg para png` are both Easy at >1000. The image
+ * split cluster is the surprise: Brazilians attach two specific jobs to it that
+ * the English keywords never showed — printing a poster across A4 sheets, and
+ * cutting an Instagram carousel. The tool's own description already names
+ * social carousels, so that is an exact match; the A4 case is handled honestly
+ * on the page, because the tool cuts equal tiles and does not know about paper
+ * sizes, margins or overlap.
+ *
+ * /pt/juntar-fotos/ deliberately targets the STITCHED IMAGE job rather than the
+ * PDF one. merge-images can output PDF, but so can /pt/jpg-para-pdf/, and
+ * `juntar fotos em pdf` is >1000 — pointing both pages at it would have them
+ * competing. This page owns "duas fotos em uma só", which the other cannot do,
+ * and links across for the PDF route.
+ */
+const ptToolsBatch11: PtTool[] = [
+  {
+    en: 'svg-to-png',
+    slug: 'svg-para-png',
+    name: 'SVG para PNG',
+    title: 'Converter SVG para PNG Online Grátis — Com Transparência | ConvertOcean',
+    description: 'Converta SVG em PNG com transparência preservada direto no navegador, com as bordas nítidas em vez de serrilhadas.',
+    headline: 'SVG para PNG.',
+    subtitle: 'Transforme um vetor SVG em PNG com transparência e bordas nítidas — sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter SVG para PNG, selecione o arquivo .svg na ferramenta acima e baixe um PNG rasterizado com a transparência preservada. Como o SVG não tem dimensão fixa em pixels, a ferramenta escolhe um tamanho de tela adequado e amplia gráficos pequenos, para que bordas e textos saiam nítidos em vez de serrilhados. O PNG é a escolha certa quando a transparência importa.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como converter svg para png',
+        answer: 'Arraste o arquivo .svg para a ferramenta no topo da página e baixe o PNG. A transparência do vetor é mantida, então logotipos continuam funcionando sobre qualquer fundo. Não é preciso cadastro nem instalar nada.'
+      },
+      {
+        question: 'Que tamanho tem o PNG gerado?',
+        answer: 'Um SVG é vetorial e não tem tamanho fixo em pixels — ele pode ser desenhado em qualquer dimensão. A ferramenta escolhe uma tela adequada e amplia gráficos pequenos, justamente para que o resultado não saia minúsculo ou com bordas serrilhadas. É a diferença entre um ícone utilizável e um borrão de 24 pixels.'
+      },
+      {
+        question: 'Por que converter um vetor em imagem?',
+        answer: 'Porque o SVG, apesar de melhor tecnicamente, não é aceito em todo lugar: muitos formulários de envio, editores e plataformas o recusam por ser um formato baseado em código. O PNG é aceito universalmente. A contrapartida é que o resultado deixa de ser redimensionável sem perda.'
+      },
+      {
+        question: 'PNG, JPG ou WebP?',
+        answer: 'PNG quando houver transparência ou texto nítido — o caso mais comum com logotipos. <a href="/pt/svg-para-jpg/">JPG</a> quando o destino recusa PNG e não há transparência a preservar. <a href="/pt/svg-para-webp/">WebP</a> para uso na web, porque mantém a transparência com arquivo bem menor.'
+      },
+      {
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. A rasterização acontece no seu navegador, no seu dispositivo, e o arquivo não é copiado para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>De vetor para imagem</h2>
+      <p>Um SVG é código que descreve formas, não uma grade de pixels — por isso ele escala infinitamente sem perder qualidade. Um <strong>conversor de svg para png</strong> desenha esse código uma vez, em uma resolução fixa, e entrega uma imagem comum.</p>
+      <p>Você faz isso quando o destino não aceita SVG, o que é frequente: formulários de envio, editores de imagem e várias plataformas recusam o formato por ele ser, tecnicamente, um arquivo de texto com marcação.</p>
+
+      <h2>O tamanho importa mais do que parece</h2>
+      <p>Como o SVG não traz dimensão em pixels, a rasterização precisa escolher uma. Ferramentas que escolhem mal entregam um ícone de 24 pixels borrado. Aqui gráficos pequenos são ampliados para uma tela adequada, de modo que <strong>converter imagem svg para png</strong> produza bordas e texto nítidos.</p>
+
+      <h2>A transparência sobrevive</h2>
+      <p>Logotipos em SVG quase sempre têm fundo transparente, e o PNG preserva isso — motivo pelo qual ele é a escolha padrão aqui. Se o destino não aceitar PNG e não houver transparência em jogo, o <a href="/pt/svg-para-jpg/">JPG</a> resolve com arquivo menor.</p>
+    `
+  },
+  {
+    en: 'svg-to-jpg',
+    slug: 'svg-para-jpg',
+    name: 'SVG para JPG',
+    title: 'Converter SVG para JPG Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta arquivos SVG em JPG direto no navegador, com bordas nítidas e fundo branco no lugar da transparência.',
+    headline: 'SVG para JPG.',
+    subtitle: 'Transforme um vetor SVG em JPG aceito em qualquer lugar — sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter SVG para JPG, selecione o arquivo .svg na ferramenta acima e baixe um JPG rasterizado. Como o SVG é vetorial e não tem tamanho fixo em pixels, a ferramenta escolhe uma tela adequada e amplia gráficos pequenos para que as bordas saiam nítidas. O JPG não tem transparência, então qualquer fundo transparente é achatado sobre branco.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como converter svg para jpg',
+        answer: 'Arraste o .svg para a ferramenta e baixe o .jpg. O resultado abre em qualquer programa e passa em formulários que recusam tanto SVG quanto PNG.'
+      },
+      {
+        question: 'O que acontece com o fundo transparente?',
+        answer: 'É achatado sobre branco, porque o JPG não tem canal de transparência. Para um logotipo que será usado sobre fundo colorido, isso deixa um retângulo branco visível — nesse caso use <a href="/pt/svg-para-png/">SVG para PNG</a>, que preserva a transparência.'
+      },
+      {
+        question: 'Quando o JPG é a escolha certa?',
+        answer: 'Quando o SVG tem áreas de imagem fotográfica ou gradientes complexos, e o destino aceita apenas JPG. Para gráficos com cor chapada, linhas finas e texto — o conteúdo típico de um SVG — o PNG sai visivelmente mais limpo, porque o JPG cria artefatos ao redor das bordas.'
+      },
+      {
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. Tudo acontece no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>Quando o destino só aceita JPG</h2>
+      <p>É a única razão real para escolher este caminho em vez do PNG. O conteúdo típico de um SVG — linhas finas, texto, cor chapada — é exatamente o que a compressão do JPG trata pior, criando pequenos artefatos nas bordas. Ainda assim, há formulários e sistemas que aceitam apenas JPG, e aí o <strong>conversor svg para jpg</strong> resolve.</p>
+
+      <h2>A transparência não sobrevive</h2>
+      <p>O JPG não tem canal alfa: o fundo transparente vira branco. Para um logotipo que vai sobre outra cor, isso é visível e definitivo — <a href="/pt/svg-para-png/">SVG para PNG</a> é o caminho nesse caso.</p>
+
+      <h2>Bordas nítidas</h2>
+      <p>Como o SVG não tem tamanho em pixels, gráficos pequenos são ampliados antes de serem desenhados, para que o resultado não saia serrilhado.</p>
+    `
+  },
+  {
+    en: 'svg-to-webp',
+    slug: 'svg-para-webp',
+    name: 'SVG para WebP',
+    title: 'Converter SVG para WebP Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta SVG em WebP direto no navegador: bem menor que o PNG equivalente, com a transparência preservada.',
+    headline: 'SVG para WebP.',
+    subtitle: 'Rasterize um vetor em WebP — transparência preservada e arquivo bem menor que o PNG.',
+    quickAnswer: 'Para converter SVG para WebP, selecione o arquivo .svg na ferramenta acima e baixe um WebP rasterizado, normalmente bem menor que o PNG equivalente com qualidade parecida e com a transparência preservada. O vetor é desenhado em uma tela de tamanho adequado, e gráficos pequenos são ampliados para que as bordas fiquem nítidas. O WebP é a escolha certa para imagens na web.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'Por que WebP em vez de PNG?',
+        answer: 'Porque entrega o mesmo — inclusive a transparência — em um arquivo bem menor, o que acelera o carregamento das páginas. Para uso na web é quase sempre a escolha melhor. Fora do navegador, porém, muitos programas ainda recusam WebP: para um documento do Word, prefira <a href="/pt/svg-para-png/">PNG</a>.'
+      },
+      {
+        question: 'A transparência é mantida?',
+        answer: 'Sim. O WebP suporta canal alfa, então logotipos e ícones continuam funcionando sobre qualquer fundo.'
+      },
+      {
+        question: 'Se o SVG já é leve, por que rasterizar?',
+        answer: 'Um SVG costuma ser menor ainda e escala sem perda — quando o destino o aceita, mantê-lo é melhor. A conversão faz sentido quando a plataforma recusa SVG por segurança (é um formato que pode conter script) ou quando a imagem precisa ser tratada como bitmap pelo sistema de destino.'
+      },
+      {
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. A rasterização acontece no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>O melhor dos dois, para a web</h2>
+      <p>O WebP combina o que o PNG e o JPG oferecem separadamente: transparência e arquivos pequenos. Ao usar um <strong>conversor svg para webp</strong>, você troca um vetor por um bitmap leve que qualquer navegador moderno exibe.</p>
+
+      <h2>Quando não converter</h2>
+      <p>Se a plataforma aceita SVG, mantê-lo é melhor: ele é menor ainda e escala sem perda. A conversão faz sentido quando o SVG é recusado — por política de segurança, já que um SVG pode conter script, ou porque o sistema de destino trabalha apenas com bitmaps.</p>
+
+      <h2>Fora do navegador, prefira PNG</h2>
+      <p>Programas de escritório e editores antigos ainda recusam WebP. Para um arquivo destinado a um documento em vez de a uma página, <a href="/pt/svg-para-png/">SVG para PNG</a> é a escolha segura.</p>
+    `
+  },
+  {
+    en: 'split-image',
+    slug: 'dividir-imagem',
+    name: 'Dividir Imagem',
+    title: 'Dividir Imagem em Partes Online Grátis — Carrossel e A4 | ConvertOcean',
+    description: 'Divida uma imagem em partes iguais, grade, tiras ou colunas direto no navegador — para carrossel do Instagram ou para imprimir em várias folhas.',
+    headline: 'Dividir Imagem.',
+    subtitle: 'Corte uma imagem em grade, tiras ou colunas — cada parte baixa em resolução total, sem que a foto saia do seu dispositivo.',
+    quickAnswer: 'Para dividir uma imagem, selecione um PNG, JPG ou WebP na ferramenta acima e escolha o corte: uma grade de linhas e colunas, fatias horizontais iguais ou fatias verticais iguais. Cada pedaço é baixado como uma imagem separada, em resolução total — o que atende carrosséis de redes sociais, folhas de sprites e digitalizações grandes. O corte acontece no seu dispositivo.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como dividir uma imagem em 4 partes',
+        answer: 'Escolha a grade de 2 linhas por 2 colunas e baixe. Cada uma das quatro partes sai como um arquivo separado, em resolução total — sem redução de qualidade em relação ao original.'
+      },
+      {
+        question: 'como dividir imagem em 4 partes',
+        answer: 'Além da grade, há a opção de fatias horizontais ou verticais: quatro tiras deitadas ou quatro colunas em pé, conforme o formato da imagem. Para uma imagem panorâmica, as colunas costumam fazer mais sentido que a grade.'
+      },
+      {
+        question: 'como dividir uma imagem em 4 partes para imprimir',
+        answer: 'Escolha a grade correspondente ao número de folhas — 2×2 para quatro folhas — e imprima cada parte em uma página, ajustando para preencher a folha na caixa de impressão. Vale saber o limite: a ferramenta corta em partes iguais e não conhece tamanhos de papel, então ela não acrescenta margem de sobreposição nem compensa a área não imprimível da impressora. Para um cartaz, deixe uma pequena borda de segurança na imagem original antes de cortar.'
+      },
+      {
+        question: 'como dividir imagem para imprimir',
+        answer: 'O procedimento é o mesmo, e a decisão importante é a resolução de origem. Uma imagem ampliada para várias folhas fica com a resolução dividida entre elas: uma foto de 2.000 pixels de largura espalhada por quatro folhas A4 imprime com cerca de metade da nitidez que teria em uma folha só. Comece com a maior resolução que tiver.'
+      },
+      {
+        question: 'como dividir uma imagem em várias folhas a4',
+        answer: 'Defina a grade pelo número de folhas desejado — 2×2 para quatro, 3×3 para nove — e imprima cada arquivo em uma folha. A proporção da A4 não é idêntica à da maioria das fotos, então haverá alguma sobra: escolher "ajustar à página" na impressão resolve, ao custo de uma margem branca desigual.'
+      },
+      {
+        question: 'como dividir uma imagem em 6 partes para imprimir',
+        answer: 'Use uma grade de 2×3 ou 3×2, conforme a imagem seja mais alta ou mais larga. Escolher a orientação errada é o erro mais comum: uma imagem deitada cortada em 3 linhas por 2 colunas distorce a proporção de cada folha.'
+      },
+      {
+        question: 'Serve para carrossel do Instagram?',
+        answer: 'Sim, é um dos usos principais. Para um carrossel, use fatias verticais: uma imagem larga dividida em colunas iguais gera os quadros na ordem, prontos para publicar em sequência. Cada parte sai em resolução total, então não há perda ao subir.'
+      },
+      {
+        question: 'A imagem é copiada para algum servidor?',
+        answer: 'Não. O corte acontece no seu navegador, no seu dispositivo, e nem a imagem original nem as partes são copiadas para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>Três formas de cortar</h2>
+      <p>Grade de linhas e colunas, fatias horizontais ou fatias verticais. Cada pedaço é baixado como arquivo próprio, em resolução total — nada é reduzido no processo.</p>
+
+      <h2>Carrossel: use fatias verticais</h2>
+      <p><strong>Dividir imagem carrossel</strong> é o caso mais direto: uma imagem larga cortada em colunas iguais vira a sequência de quadros, na ordem. Como as partes saem em resolução total, não há perda ao publicar.</p>
+
+      <h2>Imprimir em várias folhas A4: o que a ferramenta faz e o que não faz</h2>
+      <p>Para <strong>dividir imagem em folhas a4 para imprimir</strong>, escolha a grade correspondente ao número de folhas e imprima cada arquivo em uma página. Dito com clareza: a ferramenta corta em partes iguais e <em>não</em> conhece tamanhos de papel — ela não acrescenta margem de sobreposição para colagem nem compensa a área que a impressora não alcança. Deixe uma borda de segurança na imagem antes de cortar, e conte com um pequeno ajuste ao montar.</p>
+      <p>O outro ponto é resolução. Uma imagem espalhada por quatro folhas imprime com metade da nitidez por folha: comece com o maior arquivo que tiver.</p>
+
+      <h2>Nada sai do seu dispositivo</h2>
+      <p>O corte é feito pelo navegador. Nem a imagem original nem as partes são copiadas para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'merge-images',
+    slug: 'juntar-fotos',
+    name: 'Juntar Fotos',
+    title: 'Juntar Fotos em Uma Só Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Junte duas ou mais fotos em uma única imagem, na vertical ou na horizontal, direto no navegador. As fotos não saem do seu dispositivo.',
+    headline: 'Juntar Fotos.',
+    subtitle: 'Combine várias fotos em uma imagem só — na vertical ou na horizontal, sem que elas saiam do seu dispositivo.',
+    quickAnswer: 'Para juntar fotos, adicione as imagens na ferramenta acima e escolha a saída: uma única imagem costurada na vertical ou na horizontal, ou um PDF com uma imagem por página. São aceitos PNG, JPG, WebP e SVG, e imagens de larguras diferentes são alinhadas em vez de esticadas. Tudo é montado no seu navegador e as fotos não saem do seu dispositivo.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como juntar duas fotos em uma só',
+        answer: 'Adicione as duas imagens e escolha a junção vertical, para empilhar uma sobre a outra, ou horizontal, para colocá-las lado a lado. O resultado é uma única imagem. Se as fotos tiverem larguras diferentes, elas são alinhadas em vez de esticadas — nada fica deformado.'
+      },
+      {
+        question: 'como juntar duas fotos',
+        answer: 'A escolha entre vertical e horizontal depende do formato: fotos em pé costumam ficar melhor lado a lado, fotos deitadas empilhadas. Vale testar as duas — a montagem é instantânea e não há limite de tentativas.'
+      },
+      {
+        question: 'como juntar 2 fotos em 1',
+        answer: 'Adicione as duas, escolha a direção e baixe. A ordem em que aparecem na tela é a ordem na imagem final; arraste para reordenar antes de gerar.'
+      },
+      {
+        question: 'como juntar varias fotos em uma só',
+        answer: 'O procedimento é idêntico com qualquer quantidade. Para muitas fotos, considere a direção com cuidado: dez imagens empilhadas na vertical geram uma tira muito longa e estreita, difícil de visualizar. Nesses casos, um <a href="/pt/jpg-para-pdf/">PDF com uma foto por página</a> costuma ser mais prático.'
+      },
+      {
+        question: 'como juntar fotos em uma só',
+        answer: 'A saída padrão é uma imagem costurada. Se o que você precisa é um único arquivo para anexar, e não uma imagem composta, o caminho é <a href="/pt/jpg-para-pdf/">JPG para PDF</a>, que gera um PDF com uma foto por página e é o formato que a maioria dos sistemas espera.'
+      },
+      {
+        question: 'como unir duas imagens',
+        answer: 'São aceitos PNG, JPG, WebP e SVG, inclusive misturados na mesma montagem. A imagem final sai no formato adequado ao conteúdo, preservando transparência quando as origens a tinham.'
+      },
+      {
+        question: 'As fotos são copiadas para algum servidor?',
+        answer: 'Não. A montagem acontece no seu navegador, no seu dispositivo. Fotos carregam metadados como localização e modelo do aparelho, e nada é copiado para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>Uma imagem, não um álbum</h2>
+      <p>Esta página resolve o caso de <strong>juntar fotos em uma só</strong>: duas ou mais imagens costuradas em um único arquivo, lado a lado ou empilhadas. É o que se quer para um antes e depois, uma comparação ou uma montagem simples.</p>
+      <p>Se o objetivo é outro — reunir várias fotos em um único anexo para enviar — o caminho é <a href="/pt/jpg-para-pdf/">JPG para PDF</a>, que coloca uma foto por página. São jobs diferentes e vale escolher o certo.</p>
+
+      <h2>Larguras diferentes não deformam</h2>
+      <p>Ao <strong>unir imagens</strong> de tamanhos distintos, elas são alinhadas em vez de esticadas até coincidirem. É a diferença entre uma montagem e duas fotos distorcidas.</p>
+
+      <h2>Vertical ou horizontal</h2>
+      <p>Fotos em pé costumam funcionar lado a lado; fotos deitadas, empilhadas. Com muitas imagens, a junção vira uma tira longa e o PDF passa a ser mais prático.</p>
+
+      <h2>Sem aplicativo, sem servidor</h2>
+      <p>Quem procura <strong>aplicativo para juntar fotos</strong> normalmente não precisa instalar nada: isto funciona no navegador do celular igual ao do computador, e as fotos não são copiadas para lugar nenhum.</p>
+    `
+  },
+  {
+    en: 'merge-excel',
+    slug: 'unir-arquivos-excel',
+    name: 'Unir Arquivos Excel',
+    title: 'Unir Arquivos Excel e CSV Online Grátis | ConvertOcean',
+    description: 'Combine várias planilhas Excel ou CSV em uma única pasta de trabalho direto no navegador, com cada aba identificada pela origem.',
+    headline: 'Unir Arquivos Excel.',
+    subtitle: 'Reúna várias planilhas em uma só pasta de trabalho, com cada aba identificada pelo arquivo de origem.',
+    quickAnswer: 'Para unir arquivos Excel, adicione dois ou mais arquivos .xlsx, .xls ou .csv na ferramenta acima e baixe uma única pasta de trabalho com todas as abas de origem. Cada aba é renomeada para arquivo_aba — cortada no limite de 31 caracteres do Excel e numerada se ainda houver colisão —, então sempre dá para saber de onde cada uma veio. Tudo acontece no seu navegador.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'como unir varios arquivos excel em um só',
+        answer: 'Adicione todos os arquivos de uma vez e baixe a pasta de trabalho combinada. Cada aba de cada arquivo entra como uma aba própria, nomeada com a origem — o que evita o problema clássico de terminar com cinco abas chamadas "Planilha1".'
+      },
+      {
+        question: 'como mesclar planilhas no excel',
+        answer: 'Dentro do Excel, o caminho é copiar e colar aba por aba, ou usar o Power Query para consolidar dados. Funciona, mas é trabalhoso com muitos arquivos e o Power Query exige configuração. Esta ferramenta resolve o caso simples — reunir tudo em uma pasta só — em um passo, sem instalar nem configurar nada.'
+      },
+      {
+        question: 'como mesclar duas planilhas no excel',
+        answer: 'Com dois arquivos, adicione os dois e baixe. Vale a distinção: aqui as abas são reunidas lado a lado na mesma pasta, não fundidas linha a linha em uma tabela única. Se o objetivo é empilhar os dados de duas planilhas em uma só tabela, isso é consolidação e precisa do Power Query ou de uma cópia manual.'
+      },
+      {
+        question: 'como unir arquivos csv',
+        answer: 'Arquivos .csv também são aceitos e entram como abas da pasta resultante. Como cada CSV é uma tabela única, cada um vira uma aba com o nome do arquivo.'
+      },
+      {
+        question: 'Os arquivos são copiados para algum servidor?',
+        answer: 'Não. A leitura e a montagem acontecem no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>Abas reunidas, origem preservada</h2>
+      <p>O problema de juntar planilhas manualmente não é o esforço — é perder o rastro. Cinco arquivos copiados para um só deixam cinco abas chamadas "Planilha1", "Planilha1 (2)" e assim por diante. Aqui cada aba é renomeada para <em>arquivo_aba</em>, cortada no limite de 31 caracteres do Excel e numerada se ainda houver colisão.</p>
+
+      <h2>Reunir não é consolidar</h2>
+      <p>Vale a distinção, porque as buscas misturam as duas. <strong>Unir arquivos excel</strong> aqui significa colocar todas as abas na mesma pasta de trabalho. Empilhar os dados de várias planilhas em uma única tabela é consolidação — outro trabalho, que no Excel se faz com Power Query.</p>
+
+      <h2>CSV também entra</h2>
+      <p>Arquivos .csv são aceitos junto com .xlsx e .xls, cada um virando uma aba nomeada pela origem. Tudo processado dentro do navegador, sem cópia para servidor nenhum.</p>
+    `
+  },
+  {
+    en: 'split-excel',
+    slug: 'dividir-arquivo-excel',
+    name: 'Dividir Arquivo Excel',
+    title: 'Dividir Arquivo Excel e CSV Online Grátis | ConvertOcean',
+    description: 'Separe cada aba de uma planilha em arquivos próprios ou divida uma tabela grande por número de linhas, direto no navegador.',
+    headline: 'Dividir Arquivo Excel.',
+    subtitle: 'Separe cada aba em um arquivo próprio ou parta uma tabela grande em blocos por número de linhas.',
+    quickAnswer: 'Para dividir uma planilha, selecione o arquivo .xlsx ou .xls na ferramenta acima e escolha como separá-lo: extrair cada aba em um arquivo próprio, ou partir uma única aba por número de linhas em blocos de tamanho fixo. A saída pode ser .xlsx ou .csv, e todas as abas já vêm selecionadas, de modo que uma divisão simples é um clique.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'como separar planilha excel',
+        answer: 'Selecione o arquivo e escolha extrair cada aba em um arquivo próprio. Todas vêm marcadas por padrão, então basta desmarcar as que não interessam. Cada arquivo gerado leva o nome da aba de origem.'
+      },
+      {
+        question: 'como dividir arquivo csv',
+        answer: 'Um CSV é uma tabela única, então a divisão é por número de linhas: defina o tamanho do bloco e a ferramenta gera vários arquivos com o cabeçalho repetido em cada um. É o caminho para importações que impõem limite de linhas, ou para partir uma exportação grande demais para abrir.'
+      },
+      {
+        question: 'O cabeçalho se repete em cada parte?',
+        answer: 'Sim, ao partir por linhas o cabeçalho é copiado no topo de cada bloco. Sem isso, o segundo arquivo em diante chegaria sem nomes de coluna e o sistema de destino recusaria a importação.'
+      },
+      {
+        question: 'Posso escolher entre .xlsx e .csv na saída?',
+        answer: 'Sim. O .xlsx mantém tipos e formatação; o .csv é o que a maioria dos sistemas de importação espera. A escolha depende de para onde os arquivos vão.'
+      },
+      {
+        question: 'A planilha é copiada para algum servidor?',
+        answer: 'Não. A leitura e a divisão acontecem no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>Duas formas de dividir</h2>
+      <p>Por aba, quando uma pasta de trabalho reúne coisas que deveriam ser arquivos separados. Ou por número de linhas, quando uma tabela única é grande demais para o destino aceitar.</p>
+
+      <h2>Partir por linhas, com cabeçalho</h2>
+      <p>Ao <strong>dividir arquivo csv em partes</strong>, o cabeçalho é repetido no topo de cada bloco. É o detalhe que decide se a importação funciona: sem ele, todos os arquivos depois do primeiro chegam sem nomes de coluna.</p>
+
+      <h2>Processamento local</h2>
+      <p>Planilhas grandes costumam ser exportações de sistema com dados reais de clientes ou de folha. A divisão acontece dentro do navegador e nada é copiado para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'exif-viewer',
+    slug: 'ver-exif',
+    name: 'Ver Dados EXIF',
+    title: 'Ver Dados EXIF da Foto Online — O Que Sua Imagem Revela | ConvertOcean',
+    description: 'Veja todos os metadados de uma foto — localização, aparelho, data e configurações — lidos no seu próprio dispositivo.',
+    headline: 'Ver Dados EXIF.',
+    subtitle: 'Descubra exatamente o que sua foto registra sobre você — localização, aparelho e horário —, lido na sua própria máquina.',
+    quickAnswer: 'Para ver os dados EXIF, selecione uma foto JPG, PNG ou WebP na ferramenta acima e ela lista todas as etiquetas de metadados que o arquivo contém: marca e modelo da câmera, data em que foi tirada, lente, configurações de exposição e eventuais coordenadas de GPS. As etiquetas que identificam uma pessoa, um aparelho ou um lugar são destacadas. A foto é lida no seu dispositivo.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como ver dados da foto',
+        answer: 'Arraste a foto para a ferramenta no topo da página e a lista de metadados aparece na tela. Marca e modelo do aparelho, data e hora, configurações de exposição e, quando existirem, as coordenadas de onde a foto foi tirada.'
+      },
+      {
+        question: 'Toda foto tem localização?',
+        answer: 'Não. Depende de o GPS estar ativo para a câmera no momento da foto. Muitas redes sociais também removem os metadados ao publicar — mas uma foto enviada por mensagem, e-mail ou como arquivo original geralmente chega com tudo preservado.'
+      },
+      {
+        question: 'Como remover esses dados?',
+        answer: 'Use o <a href="/pt/remover-exif/">removedor de EXIF</a>, que apaga localização, número de série e horário sem tocar em um único pixel da imagem. Ver primeiro e remover depois é a ordem sensata: dá para saber exatamente o que havia ali.'
+      },
+      {
+        question: 'A foto é copiada para algum servidor?',
+        answer: 'Não, e aqui isso importa mais do que em qualquer outra ferramenta do site. Um visualizador de EXIF que enviasse a foto para um servidor entregaria justamente os dados que você está tentando inspecionar. A leitura acontece inteiramente no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>O que uma foto guarda além da imagem</h2>
+      <p>Cada fotografia carrega um bloco de metadados: o modelo do aparelho, o número de série em alguns casos, a data e a hora exatas, as configurações de exposição e, se o GPS estava ativo, as coordenadas do lugar. <strong>Ver dados da foto</strong> é abrir esse bloco e ler o que está lá.</p>
+
+      <h2>Onde isso costuma surpreender</h2>
+      <p>Uma foto enviada como arquivo original — por e-mail, por mensagem, em um anúncio de venda — normalmente leva tudo junto. Redes sociais em geral limpam os metadados ao publicar, o que cria a falsa impressão de que eles nunca estiveram lá.</p>
+
+      <h2>Ler antes de limpar</h2>
+      <p>A ordem sensata é inspecionar primeiro e depois usar o <a href="/pt/remover-exif/">removedor de EXIF</a>, para saber exatamente o que foi retirado.</p>
+
+      <h2>A leitura acontece no seu aparelho</h2>
+      <p>É a parte que não pode ser diferente: uma ferramenta que enviasse a foto para um servidor para mostrar os seus metadados entregaria exatamente aquilo que você quer verificar. Aqui nada é copiado para lugar nenhum.</p>
+    `
+  },
+  {
+    en: 'exif-remover',
+    slug: 'remover-exif',
+    name: 'Remover EXIF',
+    title: 'Remover Dados EXIF da Foto Online — Sem Perder Qualidade | ConvertOcean',
+    description: 'Remova localização, dados da câmera e horário de uma foto sem alterar um único pixel da imagem, direto no navegador.',
+    headline: 'Remover EXIF.',
+    subtitle: 'Apague localização e dados do aparelho sem tocar em um único pixel da imagem.',
+    quickAnswer: 'Para remover os dados EXIF, selecione uma foto JPG, PNG ou WebP na ferramenta acima e baixe a cópia limpa. Coordenadas de GPS, marca, modelo e número de série do aparelho, horários, XMP e comentários são apagados, enquanto os dados comprimidos da imagem são copiados byte a byte — então não há nenhuma perda de qualidade, diferente do que acontece ao reencodar a foto.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como remover exif',
+        answer: 'Arraste a foto para a ferramenta e baixe a versão limpa. GPS, identificação do aparelho, horários e comentários saem; a imagem em si fica intacta.'
+      },
+      {
+        question: 'A qualidade da foto piora?',
+        answer: 'Não, e essa é a diferença em relação aos métodos improvisados. Os dados comprimidos da imagem são copiados byte a byte, sem reencodar — apenas o bloco de metadados é descartado. Tirar print da foto ou salvá-la de novo em outro programa também remove o EXIF, mas recomprime a imagem e degrada a qualidade.'
+      },
+      {
+        question: 'O que exatamente é apagado?',
+        answer: 'Coordenadas de GPS, marca, modelo e número de série do aparelho, data e hora, configurações de lente e exposição, blocos XMP e comentários embutidos. Se quiser conferir antes, o <a href="/pt/ver-exif/">visualizador de EXIF</a> lista tudo o que a foto contém.'
+      },
+      {
+        question: 'Quando vale a pena remover?',
+        answer: 'Antes de publicar um anúncio de venda com foto tirada em casa, ao enviar imagens para desconhecidos, ao compartilhar fotos de crianças, e em qualquer situação em que o arquivo original — e não uma versão já processada por uma rede social — chegue a outra pessoa.'
+      },
+      {
+        question: 'A foto é copiada para algum servidor?',
+        answer: 'Não. A limpeza acontece no seu navegador, no seu dispositivo. Enviar uma foto a um servidor para remover os dados de localização dela entregaria a localização no caminho.'
+      }
+    ],
+    content: `
+      <h2>Sem recomprimir a imagem</h2>
+      <p>É o que separa esta ferramenta dos métodos improvisados. Tirar uma captura de tela da foto, ou reabri-la e salvar de novo em outro programa, também elimina o EXIF — mas recomprime a imagem e perde qualidade no processo. Aqui os dados comprimidos são copiados byte a byte e apenas o bloco de metadados é descartado.</p>
+
+      <h2>O que sai</h2>
+      <p>Coordenadas de GPS, marca, modelo e número de série do aparelho, data e hora, configurações de lente e exposição, blocos XMP e comentários. Se quiser ver o que havia antes, o <a href="/pt/ver-exif/">visualizador</a> lista tudo.</p>
+
+      <h2>Quando isso importa</h2>
+      <p>Anúncios de venda com foto tirada dentro de casa, imagens enviadas a desconhecidos, fotos de crianças. Redes sociais costumam limpar os metadados ao publicar — mas o arquivo original enviado por mensagem ou e-mail chega inteiro.</p>
+
+      <h2>A limpeza acontece no seu aparelho</h2>
+      <p>Enviar uma foto para um servidor a fim de remover a localização dela entregaria a localização no caminho. Aqui nada é copiado para lugar nenhum.</p>
+    `
+  }
+];
+
 export const ptTools: PtTool[] = [
   ...ptToolsSeed,
   ...ptToolsBatch1,
@@ -2570,7 +3002,8 @@ export const ptTools: PtTool[] = [
   ...ptToolsBatch7,
   ...ptToolsBatch8,
   ...ptToolsBatch9,
-  ...ptToolsBatch10
+  ...ptToolsBatch10,
+  ...ptToolsBatch11
 ];
 
 /**
