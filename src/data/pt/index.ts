@@ -133,26 +133,67 @@ const ptToolsSeed: PtTool[] = [
     category: 'Ferramentas PDF',
     faqs: [
       {
+        question: 'como juntar varios pdf em um só',
+        answer: 'Arraste todos os arquivos de uma vez para a ferramenta no topo da página e depois reordene-os arrastando cada miniatura. A ordem em que aparecem na tela é a ordem das páginas no arquivo final. Quando a sequência estiver certa, baixe o PDF único. Não há cadastro, marca d’água nem limite de quantos arquivos você pode reunir.'
+      },
+      {
+        question: 'como juntar dois pdf',
+        answer: 'O procedimento é o mesmo de qualquer quantidade: arraste os dois arquivos juntos e confirme qual vem primeiro antes de baixar. Se estiverem na ordem errada, basta arrastar uma das miniaturas para trocar de posição — é mais rápido do que refazer a união depois.'
+      },
+      {
+        question: 'como juntar arquivos pdf',
+        answer: 'A ferramenta aceita arquivos PDF. Não há limite fixo de quantidade nem de páginas: o que limita é a memória do seu próprio dispositivo, já que o processamento é local. Em um computador comum, dezenas de documentos são reunidos sem problema; arquivos muito grandes somados podem deixar o navegador lento antes de terminar.'
+      },
+      {
+        question: 'como juntar fotos em pdf',
+        answer: 'Fotos não são PDFs, então há um passo antes: converta as imagens usando <a href="/pt/jpg-para-pdf/">JPG para PDF</a>, o que gera um PDF com uma foto por página, e depois junte esse arquivo aos demais aqui. Se todas as fotos forem do mesmo conjunto, a conversão já pode reuni-las em um único PDF de uma vez.'
+      },
+      {
+        question: 'como juntar pdf em um só',
+        answer: 'O resultado é um arquivo único, com as páginas na ordem definida na tela e a numeração corrida do começo ao fim. O conteúdo de cada documento original é preservado — texto continua selecionável, e não há recompressão. O que não sobrevive são marcadores e campos de formulário dos arquivos de origem.'
+      },
+      {
+        question: 'como unir pdf',
+        answer: 'Juntar, unir e mesclar são a mesma operação, apenas nomes diferentes para ela — esta página faz as três. Você adiciona os arquivos, define a ordem e baixa um PDF único, sem instalar programa e sem que os documentos saiam do seu dispositivo.'
+      },
+      {
+        question: 'como unir varios pdf em um só',
+        answer: 'Adicione todos de uma vez em vez de um a um: a ferramenta aceita múltiplos arquivos na mesma seleção e os organiza em uma lista que você pode reordenar. Para documentos de concurso, monte a sequência exatamente como o edital pede antes de baixar, porque conferir depois custa refazer.'
+      },
+      {
+        question: 'como mesclar pdf',
+        answer: 'Arraste os arquivos, ordene e baixe. Vale lembrar que mesclar não reduz tamanho: o PDF final tem aproximadamente a soma dos originais. Se houver limite de tamanho no destino, passe o resultado pelo <a href="/pt/comprimir-pdf/">comprimir PDF</a> depois de mesclar — comprimir um arquivo só rende mais do que comprimir vários separados.'
+      },
+      {
+        question: 'o que é mesclar pdf',
+        answer: 'Mesclar um PDF é combinar vários documentos em um único arquivo, mantendo todas as páginas na ordem escolhida. Não altera o conteúdo das páginas, não reduz o tamanho e não recomprime nada — apenas coloca tudo dentro de um arquivo só. É o que se pede quando um sistema aceita apenas um anexo.'
+      },
+      {
         question: 'Como juntar RG, CPF e diploma em um único PDF?',
-        answer: 'Arraste todos os arquivos de uma vez para a ferramenta e depois reordene-os arrastando cada miniatura. A ordem em que aparecem na tela é a ordem das páginas no arquivo final. Se o edital pedir uma sequência específica, monte-a antes de baixar. Caso os documentos estejam em JPG, converta-os para PDF primeiro e depois junte tudo.'
-      },
-      {
-        question: 'Existe limite de quantos arquivos posso unir?',
-        answer: 'Não há limite fixo de quantidade. O que limita é a memória do seu próprio dispositivo, já que o processamento é local — em um computador comum, dezenas de documentos são unidos sem problema. Arquivos muito grandes juntos podem deixar o navegador lento antes de terminar.'
-      },
-      {
-        question: 'A ordem das páginas é mantida?',
-        answer: 'Sim. As páginas entram exatamente na ordem em que os arquivos aparecem na tela, e dentro de cada arquivo a ordem original é preservada. Confira a sequência antes de baixar, porque depois de unido o arquivo precisa ser refeito para mudar a ordem.'
+        answer: 'Adicione todos os documentos de uma vez e arraste as miniaturas até que a ordem corresponda à exigida pelo edital. Se os documentos estiverem em JPG, converta-os antes com <a href="/pt/jpg-para-pdf/">JPG para PDF</a>. Depois de unido, confira se o arquivo está dentro do limite de tamanho — quase sempre 2 MB — e comprima se necessário.'
       },
       {
         question: 'O conteúdo dos documentos fica visível para vocês?',
-        answer: 'Não. A união acontece no seu navegador e os arquivos não são copiados para nenhum servidor. Documentos com dados pessoais — CPF, RG, comprovante de residência — permanecem no seu dispositivo do começo ao fim.'
-      },
-      {
-        question: 'O arquivo final fica muito pesado?',
-        answer: 'O PDF unido tem aproximadamente a soma dos originais. Se o edital impõe um limite de tamanho, passe o resultado pelo comprimir PDF depois de juntar — essa é a ordem que costuma funcionar melhor, porque comprimir um arquivo só rende mais do que comprimir vários separados.'
+        answer: 'Não. A união acontece no seu navegador e os arquivos não são copiados para nenhum servidor. Documentos com dados pessoais — CPF, RG, comprovante de residência, contracheque — permanecem no seu dispositivo do começo ao fim.'
       }
-    ]
+    ],
+    content: `
+      <h2>Juntar, unir ou mesclar: a mesma coisa</h2>
+      <p>As três palavras descrevem a mesma operação, e esta página faz todas: reunir vários documentos em um arquivo único. Se você procurou por <strong>unir pdf</strong>, <strong>mesclar pdf</strong> ou <strong>juntar pdf em um só</strong>, chegou ao lugar certo — a diferença está apenas no termo que cada pessoa usa.</p>
+      <p>Não há cadastro, marca d’água nem limite diário, e a ferramenta é gratuita: quem busca <strong>juntar pdf gratis</strong> ou <strong>mesclar pdf gratuito</strong> não encontra aqui uma versão paga escondendo recursos.</p>
+
+      <h2>A ordem é definida antes, não depois</h2>
+      <p>As páginas entram exatamente na sequência em que os arquivos aparecem na tela, e dentro de cada arquivo a ordem original é mantida. Confira antes de baixar: depois de unido, mudar a ordem significa refazer a operação. Para documentos de concurso, monte a sequência que o edital exige.</p>
+
+      <h2>Fotos precisam de um passo a mais</h2>
+      <p>Uma busca frequente é <strong>juntar pdf e jpg</strong>, e a resposta é que imagens não são PDFs. Converta-as primeiro em <a href="/pt/jpg-para-pdf/">JPG para PDF</a> — uma foto por página — e junte o resultado aos outros documentos aqui.</p>
+
+      <h2>Unir não comprime</h2>
+      <p>O arquivo final tem aproximadamente a soma dos originais. Se o destino impõe limite de tamanho, o caminho é unir primeiro e depois passar pelo <a href="/pt/comprimir-pdf/">comprimir PDF</a>: comprimir um arquivo único rende mais do que comprimir vários separadamente.</p>
+
+      <h2>Os documentos não saem do seu dispositivo</h2>
+      <p>A união é feita pelo próprio navegador. Contratos, extratos e documentos pessoais não são copiados para nenhum servidor — e o código do site é aberto, então a afirmação pode ser verificada em vez de aceita.</p>
+    `
   },
   {
     en: 'image-to-pdf',
@@ -1096,12 +1137,132 @@ const ptToolsBatch4: PtTool[] = [
   }
 ];
 
+/**
+ * ---------------------------------------------------------------------------
+ * Keyword-led batch 5 — OCR and txt→pdf, 2026-09-24.
+ * ---------------------------------------------------------------------------
+ *
+ * The merge cluster from this batch is NOT here: `juntar pdf`, `unir pdf` and
+ * `mesclar pdf` are three words for one tool, so they strengthened the existing
+ * /pt/juntar-pdf/ above rather than becoming three competing pages. Same
+ * reasoning applies here — `imagem para texto`, `extrair texto de imagem` and
+ * `converter imagem em texto` are one tool and get one page.
+ *
+ * `traduzir imagem para texto` (>100) is deliberately not a heading: "traduzir"
+ * can mean translate between languages, which OCR does not do. See
+ * `ambiguousIntent` in ./keywords.ts.
+ */
+const ptToolsBatch5: PtTool[] = [
+  {
+    en: 'image-to-text',
+    slug: 'imagem-para-texto',
+    name: 'Imagem para Texto',
+    title: 'Converter Imagem em Texto Online Grátis — OCR 100% Privado | ConvertOcean',
+    description: 'Extrair texto de imagem com OCR direto no navegador: fotos, capturas de tela e documentos digitalizados viram texto editável. A imagem não sai do seu dispositivo.',
+    headline: 'Imagem para Texto.',
+    subtitle: 'Extraia o texto de fotos, capturas de tela e documentos digitalizados — o reconhecimento acontece no seu próprio aparelho.',
+    quickAnswer: 'Para converter imagem em texto, selecione um JPG, PNG ou WebP na ferramenta acima: o mecanismo de OCR reconhece o texto impresso e devolve texto editável e copiável, dentro do seu navegador. Imagens nítidas e em boa resolução, com texto impresso, dão a melhor precisão; texto manuscrito é bem menos confiável. Nenhuma imagem sai do seu dispositivo.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como converter imagem em texto',
+        answer: 'Arraste a imagem para a ferramenta no topo da página e aguarde o reconhecimento. O texto aparece em uma caixa, pronto para copiar ou baixar. Funciona com JPG, PNG e WebP, e não exige cadastro nem instalação.'
+      },
+      {
+        question: 'como extrair texto de uma imagem',
+        answer: 'A precisão depende quase inteiramente da imagem de origem. Texto impresso, nítido, alinhado e com bom contraste é reconhecido com alta fidelidade. O que atrapalha: foto tremida, iluminação irregular, sombra sobre a página, texto muito pequeno ou fotografado em ângulo. Se o resultado vier ruim, refotografe a página de frente, com boa luz, antes de tentar de novo.'
+      },
+      {
+        question: 'como converter imagem em texto editável',
+        answer: 'O resultado já é texto editável, não uma imagem: dá para copiar, corrigir, colar em qualquer editor e pesquisar dentro dele. O que não é recuperado é a formatação visual — negrito, fontes, colunas e tabelas não atravessam o reconhecimento. O OCR devolve as palavras, não o design da página.'
+      },
+      {
+        question: 'como converter texto de imagem para word',
+        answer: 'Extraia o texto aqui, copie o resultado e cole em um documento do Word. Como a formatação original não é preservada, o mais prático é colar como texto sem formatação e aplicar os estilos depois. Se o material de origem for um PDF digitalizado inteiro, extraia página por página.'
+      },
+      {
+        question: 'como transcrever uma imagem para texto',
+        answer: 'A transcrição funciona bem com texto impresso — livros, documentos, placas, capturas de tela, notas fiscais. Texto manuscrito é significativamente menos confiável: letra cursiva, em especial, costuma sair com muitos erros. Para manuscritos, conte com uma revisão manual do resultado.'
+      },
+      {
+        question: 'aplicativo que converte imagem para texto',
+        answer: 'Não é preciso instalar aplicativo nenhum. A ferramenta funciona no navegador do celular exatamente como no computador, inclusive com fotos tiradas na hora, e a imagem continua sem sair do aparelho. Depois que a página carrega uma vez, ela também funciona sem internet.'
+      },
+      {
+        question: 'programa que converte imagem para texto',
+        answer: 'Também não é preciso instalar programa no computador. Todo o reconhecimento roda dentro do navegador, o que significa nenhuma instalação, nenhuma licença e nenhum envio do arquivo para um servidor — a velocidade é a do seu próprio processador.'
+      },
+      {
+        question: 'A imagem é copiada para algum servidor?',
+        answer: 'Não. O reconhecimento acontece na memória do seu navegador, no seu dispositivo. Isso importa particularmente aqui: as imagens que as pessoas passam por OCR costumam ser documentos, notas fiscais, contratos e recibos — e elas ainda carregam metadados como localização e modelo do aparelho.'
+      }
+    ],
+    content: `
+      <h2>O que o OCR faz — e o que ele não faz</h2>
+      <p>Um <strong>conversor de imagem para texto</strong> usa reconhecimento óptico de caracteres: o programa examina os pixels, identifica as formas das letras e devolve os caracteres correspondentes. É o que permite <strong>extrair texto de imagem</strong> sem redigitar nada.</p>
+      <p>O que ele devolve são as palavras. A <strong>transcrição de imagem para texto</strong> não recupera negrito, fontes, colunas ou tabelas — essa informação visual não é reconstruída, e o resultado é texto corrido pronto para editar.</p>
+
+      <h2>A qualidade da foto decide o resultado</h2>
+      <p>É o fator que mais pesa, muito acima de qualquer configuração. Texto impresso, nítido, de frente e com bom contraste é reconhecido com alta precisão. Foto tremida, sombra atravessando a página, texto pequeno ou fotografado em ângulo derrubam a taxa de acerto rapidamente. Se o resultado vier ruim, quase sempre vale mais refotografar do que corrigir o texto.</p>
+      <p>Texto manuscrito é o limite conhecido: letra de forma sai razoável, cursiva costuma sair com muitos erros. Conte com revisão.</p>
+
+      <h2>Sem aplicativo, sem instalação, sem servidor</h2>
+      <p>Um <strong>leitor de imagem para texto</strong> que funciona no navegador dispensa instalar aplicativo no celular ou programa no computador. E, principalmente, dispensa mandar a imagem para algum lugar: o reconhecimento acontece no seu aparelho. Notas fiscais, contratos e documentos digitalizados não são copiados para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'txt-to-pdf',
+    slug: 'txt-para-pdf',
+    name: 'TXT para PDF',
+    title: 'Converter TXT para PDF Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter arquivos de texto (.txt) em PDF paginado direto no navegador, com texto selecionável e layout monoespaçado.',
+    headline: 'TXT para PDF.',
+    subtitle: 'Transforme anotações, logs e código em um PDF paginado e compartilhável — sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter TXT para PDF, selecione o arquivo .txt na ferramenta acima e baixe um PDF limpo e paginado, com texto selecionável em layout monoespaçado. Linhas longas quebram automaticamente e o conteúdo flui entre as páginas, então anotações, logs e código viram um documento fácil de compartilhar. O arquivo é gerado no seu navegador e não sai do seu computador.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'como converter txt para pdf',
+        answer: 'Arraste o arquivo .txt para a ferramenta no topo da página e baixe o PDF. A paginação é automática e o texto continua selecionável no resultado, então dá para copiar trechos e pesquisar dentro do documento.'
+      },
+      {
+        question: 'Por que o texto sai em fonte monoespaçada?',
+        answer: 'Porque arquivos .txt costumam depender do alinhamento por espaços: logs, saídas de terminal, tabelas improvisadas e código só ficam legíveis se cada caractere ocupar a mesma largura. Uma fonte proporcional desalinharia tudo. Para texto corrido comum, a diferença é apenas estética.'
+      },
+      {
+        question: 'O que acontece com linhas muito longas?',
+        answer: 'Elas quebram automaticamente para caber na largura da página, em vez de serem cortadas na margem. Nenhum conteúdo é perdido — uma linha de log de 300 caracteres aparece inteira, distribuída em várias linhas visuais.'
+      },
+      {
+        question: 'Acentos e caracteres especiais aparecem corretamente?',
+        answer: 'Sim, para arquivos em UTF-8, que é o padrão atual. Arquivos antigos salvos em outra codificação podem exibir caracteres trocados — nesse caso, reabra o .txt em um editor, salve como UTF-8 e converta de novo.'
+      },
+      {
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. O PDF é montado dentro do seu navegador, no seu dispositivo, e o arquivo não é copiado para nenhum servidor. Logs de sistema e anotações internas não saem da sua máquina.'
+      }
+    ],
+    content: `
+      <h2>Quando um arquivo de texto precisa virar documento</h2>
+      <p>Procurar um <strong>conversor de txt para pdf</strong> costuma significar que o conteúdo precisa ser enviado, anexado ou impresso, e o .txt não serve para isso: ele não tem páginas, não tem margens e abre diferente em cada programa. <strong>Converter arquivo txt para pdf</strong> dá ao texto uma forma fixa, que chega igual a quem receber.</p>
+
+      <h2>Layout monoespaçado, de propósito</h2>
+      <p>Arquivos de texto frequentemente dependem do alinhamento por espaços — logs, saídas de terminal, código, tabelas montadas com espaçamento manual. Uma fonte proporcional destruiria esse alinhamento. Por isso o PDF usa uma fonte monoespaçada, em que cada caractere ocupa a mesma largura e as colunas continuam alinhadas.</p>
+
+      <h2>Nada é cortado</h2>
+      <p>Linhas longas quebram para caber na largura da página em vez de desaparecerem na margem, e o conteúdo flui automaticamente entre as páginas. O texto do PDF permanece selecionável e pesquisável, então o documento continua sendo útil como fonte, não apenas como imagem do arquivo original.</p>
+      <p>Tudo isso acontece dentro do navegador: <strong>passar de txt para pdf</strong> não envolve copiar o arquivo para servidor nenhum.</p>
+    `
+  }
+];
+
 export const ptTools: PtTool[] = [
   ...ptToolsSeed,
   ...ptToolsBatch1,
   ...ptToolsBatch2,
   ...ptToolsBatch3,
-  ...ptToolsBatch4
+  ...ptToolsBatch4,
+  ...ptToolsBatch5
 ];
 
 /**

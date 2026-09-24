@@ -98,7 +98,11 @@ const DO_NOT_TARGET = [
   'export const noToolYet',
   'export const codeIntent',
   'export const intentMismatch',
-  'export const wrongLanguage'
+  'export const wrongLanguage',
+  // batch 5 added three more reasons
+  'export const notAQuery',         // a scraped <title>, nobody searches it
+  'export const ambiguousIntent',   // "traduzir" may mean translate, which OCR does not do
+  'export const coveredInBodyCopy'  // real, but a near-duplicate of a heading already used
 ];
 
 test('no keyword from a do-not-target list is used as a page target', () => {

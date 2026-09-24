@@ -64,6 +64,8 @@ const PAIRS = [
   { pt: 'png-para-jpg', en: 'png-to-jpg' },
   { pt: 'webp-para-png', en: 'webp-to-png' },
   { pt: 'png-para-webp', en: 'png-to-webp' },
+  { pt: 'imagem-para-texto', en: 'image-to-text' },
+  { pt: 'txt-para-pdf', en: 'txt-to-pdf' },
 ];
 
 let bad = 0;

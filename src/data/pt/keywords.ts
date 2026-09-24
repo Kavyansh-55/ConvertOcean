@@ -86,7 +86,24 @@ export const excluded: { term: string; why: string }[] = [
   { term: 'ilovepdf powerpoint para pdf', why: 'competitor brand navigation' },
   // batch 4
   { term: 'ilovepdf jpg para png', why: 'competitor brand navigation' },
-  { term: 'png para jpg ilovepdf', why: 'competitor brand navigation' }
+  { term: 'png para jpg ilovepdf', why: 'competitor brand navigation' },
+  /* batch 5. The merge cluster is where brand searching is heaviest in the
+     whole programme — several of these carry >10,000 volume, which measures
+     how completely iLovePDF owns the word "juntar" in Brazil. Still not ours
+     to take: the searcher has already chosen where they are going. */
+  { term: 'unir pdf ilove', why: 'competitor brand navigation' },
+  { term: 'unir pdf love', why: 'competitor brand navigation' },
+  { term: 'unir pdf ilovepdf', why: 'competitor brand navigation' },
+  { term: 'unir pdf i love pdf', why: 'competitor brand navigation' },
+  { term: 'i love pdf unir pdf', why: 'competitor brand navigation' },
+  { term: 'juntar pdf i love pdf', why: 'competitor brand navigation' },
+  { term: 'juntar pdf ilove', why: 'competitor brand navigation' },
+  { term: 'juntar pdf ilovepdf', why: 'competitor brand navigation' },
+  { term: 'juntar pdf love', why: 'competitor brand navigation' },
+  { term: 'ilovepdf juntar pdf', why: 'competitor brand navigation' },
+  { term: 'i love pdf juntar pdf', why: 'competitor brand navigation' },
+  { term: 'ilove juntar pdf', why: 'competitor brand navigation' },
+  { term: 'mesclar pdf adobe', why: 'competitor brand navigation (Adobe)' }
 ];
 
 /**
@@ -119,6 +136,68 @@ export const intentMismatch: { term: string; kd: string; volume: string; wants: 
  */
 export const wrongLanguage: { term: string; language: string }[] = [
   { term: 'que es mejor para imprimir png o jpg', language: 'es' }
+];
+
+/**
+ * Not a query — a scraped page title that leaked into the keyword export.
+ *
+ * `unir pdf – unir pdfs online, grátis` carries an en-dash and a trailing
+ * comma clause: that is a <title> tag, almost certainly a competitor's, not
+ * something a person typed into a search box. Recorded so it is not mistaken
+ * for a long-tail opportunity.
+ */
+export const notAQuery: { term: string; why: string }[] = [
+  { term: 'unir pdf – unir pdfs online, grátis', why: 'scraped <title> tag, not a search query' }
+];
+
+/**
+ * Ambiguous intent — recorded, used only in body copy, never as a heading.
+ *
+ * `traduzir imagem para texto` (>100). In Brazilian usage "traduzir" often
+ * means simply "convert", which would be OCR and exactly what the tool does.
+ * But its literal meaning is translate between languages, which the tool does
+ * NOT do. Roughly half this traffic would arrive wanting something we cannot
+ * give, so it is not worth a heading or an FAQ that promises it.
+ */
+export const ambiguousIntent: { term: string; kd: string; volume: string; why: string }[] = [
+  { term: 'traduzir imagem para texto', kd: 'Easy', volume: '>100', why: '"traduzir" may mean translate between languages; OCR does not translate' }
+];
+
+/**
+ * Researched, recorded, and deliberately NOT used as FAQ headings.
+ *
+ * Batch 5 returned far more question variants than a page can carry without
+ * becoming a list of restatements. `como juntar dois pdf`, `como juntar 2 pdf
+ * em 1`, `como juntar dois arquivos pdf` and `como juntar dois pdf em um só`
+ * are one question asked four ways; four headings with four near-identical
+ * answers is the near-duplicate pattern this site already audits against, and
+ * it reads to a human as keyword stuffing.
+ *
+ * They are covered by the body copy of their page instead, which is where
+ * phrase variants belong. Nothing is lost: the page targets the cluster, it
+ * just does not repeat itself in ten headings to do so. Kavya can overrule
+ * this — the terms are all here, unaltered.
+ */
+export const coveredInBodyCopy: { term: string; page: string }[] = [
+  { term: 'como juntar pdf', page: 'juntar-pdf' },
+  { term: 'como juntar 2 pdf em 1', page: 'juntar-pdf' },
+  { term: 'como juntar dois pdf em um só', page: 'juntar-pdf' },
+  { term: 'como juntar dois arquivos pdf', page: 'juntar-pdf' },
+  { term: 'como juntar arquivos pdf em um só', page: 'juntar-pdf' },
+  { term: 'como unir dois pdf', page: 'juntar-pdf' },
+  { term: 'como unir dois arquivos pdf', page: 'juntar-pdf' },
+  { term: 'como unir arquivos pdf', page: 'juntar-pdf' },
+  { term: 'como unir pdf em um só', page: 'juntar-pdf' },
+  { term: 'como unir varios arquivos pdf em um só', page: 'juntar-pdf' },
+  { term: 'como unir documentos em pdf', page: 'juntar-pdf' },
+  { term: 'como mesclar dois arquivos pdf', page: 'juntar-pdf' },
+  { term: 'como mesclar arquivos pdf', page: 'juntar-pdf' },
+  { term: 'o que significa mesclar pdf', page: 'juntar-pdf' },
+  { term: 'como extrair texto de imagem', page: 'imagem-para-texto' },
+  { term: 'como extrair o texto de uma imagem', page: 'imagem-para-texto' },
+  { term: 'como extrair um texto de uma imagem', page: 'imagem-para-texto' },
+  { term: 'como converter uma imagem em texto', page: 'imagem-para-texto' },
+  { term: 'programa que passa imagem para texto', page: 'imagem-para-texto' }
 ];
 
 /**
@@ -532,6 +611,112 @@ export const pageKeywords: PageKeywords[] = [
     /* Its only returned question — `como converter imagem webp para png` — is
        the opposite conversion and belongs to webp-para-png, where it is used. */
     questions: []
+  },
+
+  /* ---------------------------------------------------------------------
+     Batch 5 — txt→pdf, OCR and merge, 2026-09-24.
+
+     THREE EXPORTS, ONE TOOL — twice. `juntar pdf`, `unir pdf` and `mesclar
+     pdf` are three Portuguese words for merging, and all three are the same
+     tool. So are `imagem para texto`, `extrair texto de imagem` and `converter
+     imagem em texto`. Building a page per export would split one page's
+     authority across three near-identical URLs that then compete with each
+     other — textbook cannibalisation. Each cluster gets ONE page, slugged on
+     the highest-volume term, covering the synonyms in its copy.
+
+     The head terms here are the hardest in the programme: `juntar pdf` is Hard
+     at >1M, `unir pdf` Hard at >100K, `mesclar pdf` Hard at >10,000. Those are
+     not winnable and are not the target. The questions are: `como juntar
+     varios pdf em um só` is EASY at >1000, which is the single best
+     question-keyword anyone has sent. That is the site's own rule holding
+     again — the winnable ones are always the how-to questions.
+     --------------------------------------------------------------------- */
+  {
+    slug: 'juntar-pdf',
+    en: 'merge-pdf',
+    primary: 'juntar pdf',
+    phrase: [
+      { term: 'juntar pdf', kd: 'Hard', volume: '>1M' },
+      { term: 'juntar pdf online', kd: 'Hard', volume: '>10,000' },
+      { term: 'juntar pdf gratis', kd: 'Medium', volume: '>10,000' },
+      { term: 'juntar pdf grátis', kd: 'Medium', volume: '>1000' },
+      { term: 'juntar pdf gratuito', kd: 'n/a', volume: '>1000' },
+      { term: 'juntar pdf em um só', kd: 'n/a', volume: '>1000' },
+      { term: 'juntar pdf e jpg', kd: 'n/a', volume: '>1000' },
+      { term: 'unir pdf', kd: 'Hard', volume: '>100K' },
+      { term: 'unir pdf online', kd: 'Hard', volume: '>1000' },
+      { term: 'unir pdf gratis', kd: 'Medium', volume: '>1000' },
+      { term: 'unir pdf em um só', kd: 'Hard', volume: '>100' },
+      { term: 'unir pdf gratuito', kd: 'Medium', volume: '>100' },
+      { term: 'unir pdf online gratuito', kd: 'Hard', volume: '>100' },
+      { term: 'mesclar pdf', kd: 'Hard', volume: '>10,000' },
+      { term: 'mesclar pdf gratis', kd: 'Easy', volume: '>1000' },
+      { term: 'mesclar pdf online', kd: 'Hard', volume: '>100' },
+      { term: 'mesclar pdf gratuito', kd: 'Easy', volume: '<100' },
+      { term: 'ferramenta de mesclar pdf', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como juntar varios pdf em um só', kd: 'Easy', volume: '>1000' },
+      { term: 'como juntar arquivos pdf', kd: 'Medium', volume: '>1000' },
+      { term: 'como juntar dois pdf', kd: 'Easy', volume: '>100' },
+      { term: 'como juntar pdf em um só', kd: 'Easy', volume: '>100' },
+      { term: 'como juntar fotos em pdf', kd: 'Medium', volume: '>100' },
+      { term: 'como unir pdf', kd: 'Medium', volume: '>100' },
+      { term: 'como unir varios pdf em um só', kd: 'n/a', volume: '>100' },
+      { term: 'como mesclar pdf', kd: 'Medium', volume: '>100' },
+      { term: 'o que é mesclar pdf', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'imagem-para-texto',
+    en: 'image-to-text',
+    primary: 'converter imagem em texto',
+    phrase: [
+      { term: 'converter imagem em texto', kd: 'Easy', volume: '>10,000' },
+      { term: 'imagem para texto', kd: 'Easy', volume: '>1000' },
+      { term: 'extrair texto de imagem', kd: 'Easy', volume: '>1000' },
+      { term: 'converter imagem para texto', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de imagem para texto', kd: 'Easy', volume: '>100' },
+      { term: 'transcrever imagem para texto', kd: 'Easy', volume: '>100' },
+      { term: 'leitor de imagem para texto', kd: 'Easy', volume: '>100' },
+      { term: 'imagem para texto online', kd: 'Easy', volume: '>100' },
+      { term: 'transcrição de imagem para texto', kd: 'Easy', volume: '>100' },
+      { term: 'de imagem para texto', kd: 'Easy', volume: '>100' },
+      { term: 'converter imagem em texto editável', kd: 'Easy', volume: '>100' },
+      { term: 'converter imagem em texto word', kd: 'Easy', volume: '>100' },
+      { term: 'extrair texto de imagem online grátis', kd: 'Easy', volume: '>100' },
+      { term: 'extrair texto de imagem online', kd: 'Easy', volume: '>100' },
+      { term: 'extrair texto de imagem pdf', kd: 'Easy', volume: '<100' },
+      { term: 'ia para extrair texto de imagem', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter imagem em texto', kd: 'Easy', volume: '>100' },
+      { term: 'como extrair texto de uma imagem', kd: 'Easy', volume: '>100' },
+      { term: 'como converter imagem em texto editável', kd: 'n/a', volume: '<100' },
+      { term: 'como converter texto de imagem para word', kd: 'n/a', volume: '<100' },
+      { term: 'como transcrever uma imagem para texto', kd: 'Easy', volume: '<100' },
+      { term: 'aplicativo que converte imagem para texto', kd: 'n/a', volume: '<100' },
+      { term: 'programa que converte imagem para texto', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'txt-para-pdf',
+    en: 'txt-to-pdf',
+    primary: 'txt para pdf',
+    phrase: [
+      { term: 'txt para pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'converter txt para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de txt para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'converter arquivo txt para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'conversor txt para pdf', kd: 'n/a', volume: '>100' },
+      { term: 'arquivo txt para pdf', kd: 'Easy', volume: '>100' },
+      { term: '.txt para pdf', kd: 'n/a', volume: '<100' },
+      { term: 'converter de txt para pdf', kd: 'Easy', volume: '<100' },
+      { term: 'de txt para pdf', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter txt para pdf', kd: 'n/a', volume: '<100' }
+    ]
   }
 ];
 
