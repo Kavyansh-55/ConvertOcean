@@ -130,7 +130,21 @@ export const excluded: { term: string; why: string }[] = [
   { term: 'pinetools split image online', why: 'competitor brand navigation (PineTools)' },
   { term: 'split image online pinetools', why: 'competitor brand navigation (PineTools)' },
   { term: 'imagy.app – split image online', why: 'competitor brand navigation (Imagy)' },
-  { term: 'como dividir uma imagem em 4 partes no canva', why: 'brand navigation (Canva) — a how-to for their editor' }
+  { term: 'como dividir uma imagem em 4 partes no canva', why: 'brand navigation (Canva) — a how-to for their editor' },
+  /* batch 12. `como redimensionar uma imagem no canva` is EASY at >1000 and is
+     the most painful exclusion in the programme — but it is a tutorial for
+     Canva's editor. Someone following those steps is already inside Canva. */
+  { term: 'como redimensionar uma imagem no canva', why: 'Canva tutorial — the reader is already in their editor' },
+  { term: 'como redimensionar imagem no canva', why: 'Canva tutorial' },
+  { term: 'como ajustar tamanho da imagem no canva', why: 'Canva tutorial' },
+  { term: 'redimensionar imagem photoshop', why: 'Photoshop how-to' },
+  { term: 'como redimensionar uma imagem no photoshop', why: 'Photoshop how-to' },
+  { term: 'como redimensionar imagem no photoshop', why: 'Photoshop how-to' },
+  { term: 'como redimensionar uma imagem no paint', why: 'MS Paint how-to' },
+  { term: 'i love pdf juntar imagens em pdf', why: 'competitor brand navigation' },
+  { term: 'i love pdf imagem para pdf', why: 'competitor brand navigation' },
+  { term: 'ilovepdf imagem para pdf', why: 'competitor brand navigation' },
+  { term: 'jpeg para jpg ilovepdf', why: 'competitor brand navigation' }
 ];
 
 /**
@@ -246,6 +260,22 @@ export const wrongTool: { term: string; kd: string; volume: string; actually: st
   { term: 'juntar fotos com ia', kd: 'n/a', volume: '>100', actually: 'AI image generation, not stitching' },
   { term: 'unir imagens com ia', kd: 'n/a', volume: '<100', actually: 'AI image generation, not stitching' },
   { term: 'combinar fotos ia', kd: 'n/a', volume: '<100', actually: 'AI image generation, not stitching' },
+  /* batch 12. The strangest contamination in the whole programme: adjusting
+     the picture size ON A TELEVISION. Same words, a settings menu on a Samsung
+     remote, nothing to do with an image file. */
+  { term: 'como ajustar o tamanho da imagem da smart tv samsung', kd: 'n/a', volume: '<100', actually: 'TV display settings' },
+  { term: 'como ajustar o tamanho da imagem do pc na tv', kd: 'n/a', volume: '<100', actually: 'TV display settings' },
+  /* Desktop-program and command-line intent: these want an .exe or a DOS/
+     PowerShell command, not a web page. */
+  { term: 'comando para unir arquivos txt', kd: 'n/a', volume: '<100', actually: 'a shell command, not a web tool' },
+  { term: 'dividir arquivo txt dos', kd: 'n/a', volume: '<100', actually: 'a DOS command' },
+  { term: 'programa para dividir arquivo txt', kd: 'n/a', volume: '<100', actually: 'a desktop program to install' },
+  /* Reading/typing speed, and JSON Schema validation — neither is what our
+     word counter or JSON formatter does. */
+  { term: 'contador de palavras por minuto', kd: 'n/a', volume: '<100', actually: 'reading/typing speed test' },
+  { term: 'validador de json schema', kd: 'n/a', volume: '<100', actually: 'JSON Schema validation, not syntax checking' },
+  { term: 'redimensionar imagem ia', kd: 'Medium', volume: '>100', actually: 'AI upscaling, not resizing' },
+  { term: 'qual melhor ia para criar pdf com imagens', kd: 'n/a', volume: '<100', actually: 'AI tooling' },
   /* batch 9. "Porcentagem/percentual de gordura" is BODY FAT — a body-composition
      calculator taking skinfold measurements, nothing to do with arithmetic on a
      percentage. `calculadora de percentual de gordura` is Easy at >100 and would
@@ -483,7 +513,10 @@ export const codeIntent: { term: string; kd: string; volume: string; lang: strin
   { term: 'converter xml para json java', kd: 'n/a', volume: '<100', lang: 'Java' },
   { term: 'xml para json jquery', kd: 'n/a', volume: '<100', lang: 'jQuery' },
   { term: 'converter xls para csv java', kd: 'n/a', volume: '<100', lang: 'Java' },
-  { term: 'dividir arquivo csv php', kd: 'n/a', volume: '<100', lang: 'PHP' }
+  { term: 'dividir arquivo csv php', kd: 'n/a', volume: '<100', lang: 'PHP' },
+  { term: 'unir arquivos txt vba', kd: 'n/a', volume: '<100', lang: 'VBA' },
+  { term: 'unir arquivos txt c#', kd: 'n/a', volume: '<100', lang: 'C#' },
+  { term: 'ajustar tamanho da imagem css', kd: 'Easy', volume: '<100', lang: 'CSS' }
 ];
 
 export const noToolYet: { term: string; kd: string; volume: string; needs: string }[] = [
@@ -513,7 +546,15 @@ export const noToolYet: { term: string; kd: string; volume: string; needs: strin
      every other converter here, and not one we do. */
   { term: 'onde converter png para svg', kd: 'n/a', volume: '<100', needs: 'png-to-svg (vectorisation)' },
   /* Background removal again, third sighting. See intentMismatch. */
-  { term: 'como separar foto do fundo', kd: 'n/a', volume: '<100', needs: 'background removal' }
+  { term: 'como separar foto do fundo', kd: 'n/a', volume: '<100', needs: 'background removal' },
+  /* batch 12. PDF -> image. The site goes image -> PDF but not back, and the
+     reverse turns up repeatedly inside the image-to-pdf exports. `como
+     converter pdf em imagem` is Easy at >100 — modest, but it is the fourth
+     distinct missing tool this research has surfaced. */
+  { term: 'como converter pdf em imagem', kd: 'Easy', volume: '>100', needs: 'pdf-to-image' },
+  { term: 'como converter um pdf em imagem', kd: 'n/a', volume: '<100', needs: 'pdf-to-image' },
+  { term: 'como converter pdf para imagem', kd: 'Easy', volume: '<100', needs: 'pdf-to-image' },
+  { term: 'como converter imagem em pdf para jpg', kd: 'n/a', volume: '<100', needs: 'pdf-to-image' }
 ];
 
 /* Terms the export rated inconsistently across two views of the same data. */
@@ -1675,6 +1716,196 @@ export const pageKeywords: PageKeywords[] = [
     questions: [
       { term: 'como remover exif', kd: 'n/a', volume: '<100' }
     ]
+  },
+
+  /* ---------------------------------------------------------------------
+     Batch 12 — the last twelve tools, 2026-09-24. The locale is now complete.
+
+     Two big finds, and one correction to earlier work.
+
+     `redimensionar imagem` is EASY at >10,000 — the single best
+     volume-to-difficulty ratio in the entire programme, and it was the last
+     tool to be researched.
+
+     `contador de palavras` is Medium at >10,000, with its whole question set
+     asking WHERE the counter lives inside Microsoft Word rather than for a web
+     tool. Those are answered honestly rather than targeted.
+
+     THE CORRECTION: /pt/jpg-para-pdf/ was slugged in the seed batch, before
+     any keyword research existed. This batch shows why that was wrong —
+     `imagem para pdf`, `converter imagem em pdf` and `juntar imagens em pdf`
+     are each Medium at >10,000, while `jpg para pdf` never appears in the data
+     at all. The page is re-slugged to /pt/imagem-para-pdf/ and retargeted. It
+     is also the right home for `juntar imagens em pdf`, the cannibalisation
+     risk flagged in batch 11.
+     --------------------------------------------------------------------- */
+  {
+    slug: 'redimensionar-imagem', en: 'image-resizer', primary: 'redimensionar imagem',
+    phrase: [
+      { term: 'redimensionar imagem', kd: 'Easy', volume: '>10,000' },
+      { term: 'redimensionar imagem online', kd: 'Easy', volume: '>1000' },
+      { term: 'redimensionar imagem sem perder qualidade', kd: 'Easy', volume: '>1000' },
+      { term: 'redimensionar imagem em cm', kd: 'Easy', volume: '>100' },
+      { term: 'redimensionar imagem para instagram', kd: 'Easy', volume: '>100' },
+      { term: 'redimensionar imagem gratis', kd: 'Easy', volume: '>100' },
+      { term: 'redimensionar imagem gratuito', kd: 'Easy', volume: '>100' },
+      { term: 'redimensionar imagem pixels', kd: 'Easy', volume: '>100' },
+      { term: 'ajustar tamanho da imagem', kd: 'Easy', volume: '>100' },
+      { term: 'ajustar tamanho da imagem online', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como redimensionar uma imagem', kd: 'Easy', volume: '>1000' },
+      { term: 'como redimensionar imagem', kd: 'Easy', volume: '<100' },
+      { term: 'como ajustar o tamanho da imagem para imprimir', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'imagem-para-pdf', en: 'image-to-pdf', primary: 'imagem para pdf',
+    phrase: [
+      { term: 'imagem para pdf', kd: 'Medium', volume: '>10,000' },
+      { term: 'converter imagem em pdf', kd: 'Medium', volume: '>10,000' },
+      { term: 'juntar imagens em pdf', kd: 'Medium', volume: '>10,000' },
+      { term: 'converter imagem para pdf', kd: 'Medium', volume: '>1000' },
+      { term: 'conversor de imagem para pdf', kd: 'Medium', volume: '>1000' },
+      { term: 'de imagem para pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'passar imagem para pdf', kd: 'Medium', volume: '>1000' },
+      { term: 'imagens para pdf', kd: 'Medium', volume: '>1000' },
+      { term: 'mudar imagem para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'imagem para pdf online', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de imagens para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'converter imagem em pdf gratis', kd: 'Easy', volume: '>100' },
+      { term: 'converter imagem em pdf online', kd: 'Easy', volume: '>100' }
+    ],
+    questions: [
+      { term: 'como converter imagem em pdf', kd: 'Medium', volume: '>1000' },
+      { term: 'como converter imagem para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'como passar uma imagem para pdf', kd: 'Medium', volume: '>100' },
+      { term: 'como converter uma imagem em pdf', kd: 'Easy', volume: '>100' },
+      { term: 'como juntar imagens em pdf', kd: 'Easy', volume: '>100' },
+      { term: 'como converter imagem em pdf no celular', kd: 'Easy', volume: '<100' },
+      { term: 'como juntar duas imagens em um pdf', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'contador-de-palavras', en: 'word-counter', primary: 'contador de palavras',
+    phrase: [
+      { term: 'contador de palavras', kd: 'Medium', volume: '>10,000' },
+      { term: 'contador de palavras online', kd: 'Hard', volume: '>1000' },
+      { term: 'contador de palavras word', kd: 'Easy', volume: '>100' },
+      { term: 'contador de palavras e caracteres', kd: 'Medium', volume: '<100' },
+      { term: 'contador de palavras no texto', kd: 'Easy', volume: '<100' },
+      { term: 'contador de palavras pdf', kd: 'Easy', volume: '<100' },
+      { term: 'contador de palavras repetidas', kd: 'Easy', volume: '<100' },
+      { term: 'contador de palavras de texto', kd: 'Medium', volume: '<100' },
+      { term: 'contador de palavras online gratis', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'onde fica o contador de palavras no word', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'formatar-json', en: 'json-formatter', primary: 'formatar json online',
+    phrase: [
+      { term: 'formatar json online', kd: 'Hard', volume: '>100' },
+      { term: 'validador de json', kd: 'Hard', volume: '>100' },
+      { term: 'validador de json online', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'jpeg-para-jpg', en: 'jpeg-to-jpg', primary: 'jpeg para jpg',
+    phrase: [
+      { term: 'jpeg para jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'converter jpeg para jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'conversor de jpeg para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter de jpeg para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'conversor jpeg para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter imagem jpeg para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'transformar jpeg para jpg', kd: 'Easy', volume: '<100' },
+      { term: 'converter foto jpeg para jpg', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter jpeg para jpg', kd: 'Easy', volume: '<100' },
+      { term: 'qual a diferença de jpeg para jpg', kd: 'n/a', volume: '<100' },
+      { term: 'como mudar de jpeg para jpg', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'jpg-para-jpeg', en: 'jpg-to-jpeg', primary: 'jpg para jpeg',
+    phrase: [
+      { term: 'jpg para jpeg', kd: 'Easy', volume: '>1000' },
+      { term: 'converter jpg para jpeg', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de jpg para jpeg', kd: 'Easy', volume: '<100' },
+      { term: 'conversor jpg para jpeg', kd: 'Easy', volume: '<100' },
+      { term: 'converter imagem jpg para jpeg', kd: 'Easy', volume: '<100' },
+      { term: 'diferença de jpg para jpeg', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'qual a diferença de jpg para jpeg', kd: 'Easy', volume: '<100' },
+      { term: 'como converter jpg para jpeg', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'juntar-documentos-word', en: 'merge-word', primary: 'juntar documentos word',
+    phrase: [
+      { term: 'juntar documentos word', kd: 'Easy', volume: '>100' },
+      { term: 'unir arquivos word', kd: 'Easy', volume: '<100' },
+      { term: 'juntar documentos word em um só', kd: 'Easy', volume: '<100' },
+      { term: 'juntar documentos word online', kd: 'Easy', volume: '<100' },
+      { term: 'unir arquivos word sem perder formatação', kd: 'n/a', volume: '<100' },
+      { term: 'unir arquivos word em um só', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como juntar documentos no word', kd: 'Easy', volume: '<100' },
+      { term: 'como juntar dois documentos word', kd: 'Easy', volume: '<100' },
+      { term: 'como juntar varios documentos word em um só', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'dividir-arquivo-word', en: 'split-word', primary: 'dividir arquivo word',
+    phrase: [
+      { term: 'dividir arquivo word', kd: 'Easy', volume: '<100' },
+      { term: 'dividir arquivo word em partes', kd: 'n/a', volume: '<100' },
+      { term: 'dividir arquivo word em seções', kd: 'n/a', volume: '<100' },
+      { term: 'dividir arquivo word em paginas', kd: 'n/a', volume: '<100' },
+      { term: 'separar documentos word', kd: 'n/a', volume: '<100' },
+      { term: 'separar documentos word por pagina', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como separar documentos word', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'unir-arquivos-txt', en: 'merge-txt', primary: 'unir arquivos txt',
+    phrase: [
+      { term: 'unir arquivos txt', kd: 'n/a', volume: '<100' },
+      { term: 'unir arquivos txt em um só', kd: 'n/a', volume: '<100' },
+      { term: 'unir texto online', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'dividir-arquivo-txt', en: 'split-txt', primary: 'dividir arquivo txt',
+    phrase: [
+      { term: 'dividir arquivo txt', kd: 'n/a', volume: '<100' },
+      { term: 'dividir arquivo txt windows', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como dividir arquivo txt', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    /* No keywords found. Built from the tools' own behaviour. */
+    slug: 'juntar-powerpoint', en: 'merge-pptx', primary: 'juntar powerpoint',
+    phrase: [], questions: []
+  },
+  {
+    slug: 'dividir-powerpoint', en: 'split-pptx', primary: 'dividir powerpoint',
+    phrase: [], questions: []
+  },
+  {
+    slug: 'qfx-para-csv', en: 'qfx-to-csv', primary: 'qfx para csv',
+    phrase: [], questions: []
   }
 ];
 

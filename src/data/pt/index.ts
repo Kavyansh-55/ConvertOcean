@@ -199,7 +199,7 @@ const ptToolsSeed: PtTool[] = [
       },
       {
         question: 'como juntar fotos em pdf',
-        answer: 'Fotos não são PDFs, então há um passo antes: converta as imagens usando <a href="/pt/jpg-para-pdf/">JPG para PDF</a>, o que gera um PDF com uma foto por página, e depois junte esse arquivo aos demais aqui. Se todas as fotos forem do mesmo conjunto, a conversão já pode reuni-las em um único PDF de uma vez.'
+        answer: 'Fotos não são PDFs, então há um passo antes: converta as imagens usando <a href="/pt/imagem-para-pdf/">JPG para PDF</a>, o que gera um PDF com uma foto por página, e depois junte esse arquivo aos demais aqui. Se todas as fotos forem do mesmo conjunto, a conversão já pode reuni-las em um único PDF de uma vez.'
       },
       {
         question: 'como juntar pdf em um só',
@@ -223,7 +223,7 @@ const ptToolsSeed: PtTool[] = [
       },
       {
         question: 'Como juntar RG, CPF e diploma em um único PDF?',
-        answer: 'Adicione todos os documentos de uma vez e arraste as miniaturas até que a ordem corresponda à exigida pelo edital. Se os documentos estiverem em JPG, converta-os antes com <a href="/pt/jpg-para-pdf/">JPG para PDF</a>. Depois de unido, confira se o arquivo está dentro do limite de tamanho — quase sempre 2 MB — e comprima se necessário.'
+        answer: 'Adicione todos os documentos de uma vez e arraste as miniaturas até que a ordem corresponda à exigida pelo edital. Se os documentos estiverem em JPG, converta-os antes com <a href="/pt/imagem-para-pdf/">JPG para PDF</a>. Depois de unido, confira se o arquivo está dentro do limite de tamanho — quase sempre 2 MB — e comprima se necessário.'
       },
       {
         question: 'O conteúdo dos documentos fica visível para vocês?',
@@ -239,7 +239,7 @@ const ptToolsSeed: PtTool[] = [
       <p>As páginas entram exatamente na sequência em que os arquivos aparecem na tela, e dentro de cada arquivo a ordem original é mantida. Confira antes de baixar: depois de unido, mudar a ordem significa refazer a operação. Para documentos de concurso, monte a sequência que o edital exige.</p>
 
       <h2>Fotos precisam de um passo a mais</h2>
-      <p>Uma busca frequente é <strong>juntar pdf e jpg</strong>, e a resposta é que imagens não são PDFs. Converta-as primeiro em <a href="/pt/jpg-para-pdf/">JPG para PDF</a> — uma foto por página — e junte o resultado aos outros documentos aqui.</p>
+      <p>Uma busca frequente é <strong>juntar pdf e jpg</strong>, e a resposta é que imagens não são PDFs. Converta-as primeiro em <a href="/pt/imagem-para-pdf/">JPG para PDF</a> — uma foto por página — e junte o resultado aos outros documentos aqui.</p>
 
       <h2>Unir não comprime</h2>
       <p>O arquivo final tem aproximadamente a soma dos originais. Se o destino impõe limite de tamanho, o caminho é unir primeiro e depois passar pelo <a href="/pt/comprimir-pdf/">comprimir PDF</a>: comprimir um arquivo único rende mais do que comprimir vários separadamente.</p>
@@ -250,8 +250,12 @@ const ptToolsSeed: PtTool[] = [
   },
   {
     en: 'image-to-pdf',
-    slug: 'jpg-para-pdf',
-    name: 'JPG para PDF',
+    /* Re-slugged in batch 12. `jpg-para-pdf` was chosen in this seed batch,
+       before any keyword research existed, and the research later showed the
+       term does not appear in the Brazilian data at all — while `imagem para
+       pdf` and `converter imagem em pdf` are each Medium at >10,000. */
+    slug: 'imagem-para-pdf',
+    name: 'Imagem para PDF',
     title: 'Converter JPG para PDF Online Grátis | ConvertOcean',
     description: 'Transforme fotos e documentos digitalizados em JPG ou PNG em um arquivo PDF direto no navegador, sem que as imagens saiam do seu dispositivo.',
     headline: 'JPG para PDF.',
@@ -2573,7 +2577,7 @@ const ptToolsBatch10: PtTool[] = [
  * sizes, margins or overlap.
  *
  * /pt/juntar-fotos/ deliberately targets the STITCHED IMAGE job rather than the
- * PDF one. merge-images can output PDF, but so can /pt/jpg-para-pdf/, and
+ * PDF one. merge-images can output PDF, but so can /pt/imagem-para-pdf/, and
  * `juntar fotos em pdf` is >1000 — pointing both pages at it would have them
  * competing. This page owns "duas fotos em uma só", which the other cannot do,
  * and links across for the PDF route.
@@ -2785,11 +2789,11 @@ const ptToolsBatch11: PtTool[] = [
       },
       {
         question: 'como juntar varias fotos em uma só',
-        answer: 'O procedimento é idêntico com qualquer quantidade. Para muitas fotos, considere a direção com cuidado: dez imagens empilhadas na vertical geram uma tira muito longa e estreita, difícil de visualizar. Nesses casos, um <a href="/pt/jpg-para-pdf/">PDF com uma foto por página</a> costuma ser mais prático.'
+        answer: 'O procedimento é idêntico com qualquer quantidade. Para muitas fotos, considere a direção com cuidado: dez imagens empilhadas na vertical geram uma tira muito longa e estreita, difícil de visualizar. Nesses casos, um <a href="/pt/imagem-para-pdf/">PDF com uma foto por página</a> costuma ser mais prático.'
       },
       {
         question: 'como juntar fotos em uma só',
-        answer: 'A saída padrão é uma imagem costurada. Se o que você precisa é um único arquivo para anexar, e não uma imagem composta, o caminho é <a href="/pt/jpg-para-pdf/">JPG para PDF</a>, que gera um PDF com uma foto por página e é o formato que a maioria dos sistemas espera.'
+        answer: 'A saída padrão é uma imagem costurada. Se o que você precisa é um único arquivo para anexar, e não uma imagem composta, o caminho é <a href="/pt/imagem-para-pdf/">JPG para PDF</a>, que gera um PDF com uma foto por página e é o formato que a maioria dos sistemas espera.'
       },
       {
         question: 'como unir duas imagens',
@@ -2803,7 +2807,7 @@ const ptToolsBatch11: PtTool[] = [
     content: `
       <h2>Uma imagem, não um álbum</h2>
       <p>Esta página resolve o caso de <strong>juntar fotos em uma só</strong>: duas ou mais imagens costuradas em um único arquivo, lado a lado ou empilhadas. É o que se quer para um antes e depois, uma comparação ou uma montagem simples.</p>
-      <p>Se o objetivo é outro — reunir várias fotos em um único anexo para enviar — o caminho é <a href="/pt/jpg-para-pdf/">JPG para PDF</a>, que coloca uma foto por página. São jobs diferentes e vale escolher o certo.</p>
+      <p>Se o objetivo é outro — reunir várias fotos em um único anexo para enviar — o caminho é <a href="/pt/imagem-para-pdf/">JPG para PDF</a>, que coloca uma foto por página. São jobs diferentes e vale escolher o certo.</p>
 
       <h2>Larguras diferentes não deformam</h2>
       <p>Ao <strong>unir imagens</strong> de tamanhos distintos, elas são alinhadas em vez de esticadas até coincidirem. É a diferença entre uma montagem e duas fotos distorcidas.</p>
@@ -2991,6 +2995,534 @@ const ptToolsBatch11: PtTool[] = [
   }
 ];
 
+/**
+ * ---------------------------------------------------------------------------
+ * Keyword-led batch 12 — the last twelve tools. The locale is complete.
+ * ---------------------------------------------------------------------------
+ *
+ * `redimensionar imagem` is Easy at >10,000 — the best volume-to-difficulty
+ * ratio found anywhere in the programme, and it was the last tool researched.
+ * `contador de palavras` is Medium at >10,000, and its entire question set asks
+ * where the counter lives inside Microsoft Word rather than for a web tool, so
+ * the page answers that honestly instead of pretending it was a search for us.
+ *
+ * merge-pptx, split-pptx and qfx-to-csv returned no keywords at all and are
+ * built from the tools' own behaviour.
+ */
+const ptToolsBatch12: PtTool[] = [
+  {
+    en: 'image-resizer',
+    slug: 'redimensionar-imagem',
+    name: 'Redimensionar Imagem',
+    title: 'Redimensionar Imagem Online Grátis — Sem Perder Qualidade | ConvertOcean',
+    description: 'Redimensione uma imagem por pixels, centímetros ou tamanho de arquivo em KB, direto no navegador. A foto não sai do seu dispositivo.',
+    headline: 'Redimensionar Imagem.',
+    subtitle: 'Defina as medidas exatas em pixels, ou um tamanho-alvo em KB — e veja o resultado antes de baixar.',
+    quickAnswer: 'Para redimensionar uma imagem, defina as dimensões exatas em pixels — por exemplo 200×230 para uma foto ou 140×60 para uma assinatura — ou informe um tamanho-alvo de arquivo, como 20 KB. A ferramenta reencoda a imagem no seu próprio navegador e mostra o tamanho final antes do download, então dá para conferir se ficou dentro do limite exigido. A foto não sai do seu dispositivo.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como redimensionar uma imagem',
+        answer: 'Arraste a imagem para a ferramenta e informe a largura e a altura desejadas em pixels. A proporção é mantida por padrão, para que nada fique esticado. Se o que você precisa é caber em um limite de tamanho de arquivo, use a outra aba e informe o alvo em KB — a ferramenta procura a qualidade que chega mais perto sem ultrapassar.'
+      },
+      {
+        question: 'como redimensionar imagem',
+        answer: 'Há dois caminhos, e eles resolvem problemas diferentes. Por dimensões, quando o destino exige medidas exatas — uma foto 3×4, um banner, uma assinatura digitalizada. Por tamanho de arquivo, quando o formulário recusa qualquer coisa acima de um número de KB. Confundir os dois é a causa mais comum de tentar várias vezes sem sucesso.'
+      },
+      {
+        question: 'como ajustar o tamanho da imagem para imprimir',
+        answer: 'Para impressão o que conta não é só o pixel, é a densidade. A regra prática é 300 dpi: uma foto 10×15 cm impressa bem precisa de cerca de 1.181×1.772 pixels. Reduzir uma imagem para as medidas em centímetros não basta se a resolução original já era baixa — ampliar depois não recupera detalhe que nunca existiu.'
+      },
+      {
+        question: 'Como manter a qualidade ao redimensionar?',
+        answer: 'Reduzir uma imagem preserva bem a qualidade; ampliar não. Ao diminuir, os pixels são combinados e o resultado costuma ficar nítido. Ao aumentar, o programa precisa inventar pixels que não existem, e o resultado fica borrado — por isso comece sempre do maior arquivo disponível em vez de ampliar um pequeno.'
+      },
+      {
+        question: 'Como deixar a imagem abaixo de 20 KB?',
+        answer: 'Use o modo de tamanho-alvo e informe 20 KB. A ferramenta faz uma busca pela qualidade que chega mais perto do limite sem ultrapassar, e mostra o tamanho final antes de você baixar. É o modo certo para formulários de concurso e inscrições, que costumam exigir foto e assinatura dentro de faixas específicas.'
+      },
+      {
+        question: 'A imagem é copiada para algum servidor?',
+        answer: 'Não. O redimensionamento acontece no seu navegador, no seu dispositivo, e a imagem não é copiada para nenhum servidor. Depois que a página carrega uma vez, funciona até sem internet.'
+      }
+    ],
+    content: `
+      <h2>Por medidas ou por tamanho de arquivo</h2>
+      <p>São dois problemas diferentes e confundi-los é o motivo mais comum de tentar várias vezes sem acertar. <strong>Redimensionar imagem em cm</strong> ou em pixels resolve quando o destino exige medidas exatas. Informar um alvo em KB resolve quando o formulário recusa arquivos acima de um certo peso, independentemente das dimensões.</p>
+      <p>A ferramenta faz os dois, e mostra o resultado antes do download em ambos os casos.</p>
+
+      <h2>Reduzir preserva, ampliar não</h2>
+      <p>Quem procura <strong>redimensionar imagem sem perder qualidade</strong> geralmente quer diminuir — e aí a notícia é boa: reduzir combina pixels e costuma manter a imagem nítida. Ampliar é o contrário: o programa precisa inventar informação que não existe no arquivo, e o resultado fica borrado. Comece sempre do maior original que tiver.</p>
+
+      <h2>Para impressão, pense em dpi</h2>
+      <p>Medidas em centímetros só significam alguma coisa junto com a densidade. A 300 dpi, uma foto de 10×15 cm precisa de aproximadamente 1.181×1.772 pixels. Definir o tamanho em centímetros numa imagem de baixa resolução não a torna imprimível.</p>
+
+      <h2>Redes sociais e formulários</h2>
+      <p><strong>Redimensionar imagem para instagram</strong> pede proporções específicas — 1080×1080 para o quadrado, 1080×1350 para o retrato. Formulários de concurso costumam exigir foto e assinatura dentro de faixas de KB. Os dois casos são atendidos pelos dois modos da ferramenta, e nada disso sai do seu aparelho.</p>
+    `
+  },
+  {
+    en: 'word-counter',
+    slug: 'contador-de-palavras',
+    name: 'Contador de Palavras',
+    title: 'Contador de Palavras Online Grátis — Caracteres e Tempo | ConvertOcean',
+    description: 'Conte palavras, caracteres com e sem espaços, tempo de leitura e densidade de palavras enquanto digita. Nada sai do seu navegador.',
+    headline: 'Contador de Palavras.',
+    subtitle: 'Palavras, caracteres, tempo de leitura e densidade — atualizados enquanto você escreve.',
+    quickAnswer: 'Para contar palavras, cole ou digite o texto na ferramenta acima e veja, ao vivo, a contagem de palavras, o número de caracteres com e sem espaços, o tempo estimado de leitura, o tempo de fala e a densidade de cada palavra. É útil para trabalhos acadêmicos, meta descriptions e publicações com limite de caracteres. O texto não sai do seu navegador.',
+    category: 'Ferramentas para Desenvolvedores',
+    faqs: [
+      {
+        question: 'onde fica o contador de palavras no word',
+        answer: 'No Microsoft Word, a contagem aparece na barra de status, no canto inferior esquerdo da janela — se não estiver visível, clique com o botão direito na barra e marque "Contagem de Palavras". Para o detalhamento completo, com caracteres e parágrafos, vá na aba Revisão e clique em Contar Palavras. Aqui na página você obtém o mesmo e mais: caracteres sem espaços, tempo de leitura e densidade, sem abrir o Word.'
+      },
+      {
+        question: 'Conta caracteres com e sem espaços?',
+        answer: 'Sim, os dois números aparecem separadamente — e a distinção importa. Limites de redação de vestibular e concurso costumam contar com espaços; campos de sistema e meta descriptions frequentemente não. Usar o número errado é o que faz um texto ser recusado por poucos caracteres.'
+      },
+      {
+        question: 'O texto que eu colo fica salvo?',
+        answer: 'Não. A contagem acontece no seu navegador enquanto você digita, e nada é copiado para nenhum servidor nem armazenado. Isso importa mais do que parece para uma ferramenta de texto: redações, trabalhos não publicados e minutas de contrato passam por aqui.'
+      },
+      {
+        question: 'Como é calculado o tempo de leitura?',
+        answer: 'Por uma velocidade média de leitura aplicada à contagem de palavras. É uma estimativa útil para planejar um artigo ou uma apresentação, não uma medida exata — a velocidade real varia muito com a densidade do texto e com o leitor.'
+      },
+      {
+        question: 'Serve para limite de caracteres de rede social?',
+        answer: 'Sim, e o contador de caracteres é o número a observar nesse caso. Vale lembrar que algumas plataformas contam links e emojis de forma própria, então deixe uma pequena folga em relação ao limite oficial.'
+      }
+    ],
+    content: `
+      <h2>Mais do que o número de palavras</h2>
+      <p>Um <strong>contador de palavras</strong> útil precisa separar caracteres com e sem espaços, porque os limites do mundo real usam os dois critérios. Redações de vestibular e concurso normalmente contam com espaços; campos de sistema e meta descriptions, não. É essa diferença que faz um texto aparentemente dentro do limite ser recusado.</p>
+
+      <h2>Densidade de palavras</h2>
+      <p>A contagem por palavra mostra quais termos se repetem e com que frequência. Para quem escreve para a web isso substitui a leitura em voz alta na hora de notar uma repetição involuntária — e é o que se procura em <strong>contador de palavras repetidas</strong>.</p>
+
+      <h2>O contador do Word</h2>
+      <p>No Word, o número fica na barra de status, no canto inferior esquerdo, e o detalhamento completo está na aba Revisão, em Contar Palavras. Se a barra não mostrar, clique nela com o botão direito e marque a opção. Aqui a contagem é ao vivo e traz caracteres sem espaços, tempo de leitura e densidade, sem precisar abrir o documento.</p>
+
+      <h2>O texto não sai do navegador</h2>
+      <p>Redações, trabalhos não publicados e minutas passam por um contador de palavras. Aqui nada é copiado para nenhum servidor nem armazenado.</p>
+    `
+  },
+  {
+    en: 'json-formatter',
+    slug: 'formatar-json',
+    name: 'Formatar JSON',
+    title: 'Formatar e Validar JSON Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Formate, valide e minifique JSON direto no navegador, com o número da linha exata de qualquer erro de sintaxe.',
+    headline: 'Formatar JSON.',
+    subtitle: 'Formate, valide e minifique JSON — com o erro apontado na linha exata, sem que os dados saiam do navegador.',
+    quickAnswer: 'Para formatar JSON, cole o conteúdo bruto ou minificado na ferramenta acima: ele é indentado e colorido na hora, ou sinalizado com o número exato da linha em que há erro de sintaxe. Há também a opção de minificar, comprimindo tudo de volta para uma única linha. Nada é copiado para nenhum servidor, o que importa quando o JSON contém chaves de API ou dados de clientes.',
+    category: 'Ferramentas para Desenvolvedores',
+    faqs: [
+      {
+        question: 'Como descobrir o erro no meu JSON?',
+        answer: 'Cole o conteúdo e o erro de sintaxe é apontado com o número da linha. As causas mais comuns são vírgula sobrando antes de um fecha-chaves, aspas simples no lugar de duplas, e chaves sem aspas — três coisas que JavaScript aceita e JSON não.'
+      },
+      {
+        question: 'Valida contra um JSON Schema?',
+        answer: 'Não. A validação aqui é de sintaxe: se o documento é JSON bem formado. Verificar se ele obedece a um schema — campos obrigatórios, tipos esperados, formatos — é outra coisa e exige uma ferramenta de JSON Schema.'
+      },
+      {
+        question: 'Para que serve minificar?',
+        answer: 'Para produção: remover espaços e quebras de linha reduz o tamanho transmitido. O JSON minificado é ilegível para humanos e idêntico para máquinas — formate para trabalhar, minifique para enviar.'
+      },
+      {
+        question: 'É seguro colar JSON com dados sensíveis?',
+        answer: 'Aqui sim, e é o motivo de a ferramenta funcionar como funciona. A formatação acontece dentro do navegador e nada é copiado para nenhum servidor. Respostas de API frequentemente carregam tokens, chaves e dados pessoais — colá-las em um formatador hospedado é entregar exatamente isso.'
+      }
+    ],
+    content: `
+      <h2>Formatar e validar são a mesma ação</h2>
+      <p>Ao colar um JSON para indentar, ou ele é formatado ou o erro aparece — não há meio termo. Por isso um <strong>validador de json</strong> e um formatador são, na prática, a mesma ferramenta: o resultado bonito é a prova de que o documento está correto.</p>
+
+      <h2>Os três erros de sempre</h2>
+      <p>Vírgula sobrando antes de fechar um objeto ou array, aspas simples no lugar de duplas, e chaves sem aspas. Os três são válidos em JavaScript e inválidos em JSON, o que explica por que aparecem tanto em arquivos escritos à mão.</p>
+
+      <h2>Sintaxe, não schema</h2>
+      <p>A validação aqui responde "isto é JSON bem formado?". Responder "isto obedece ao contrato esperado?" é validação de schema, um problema diferente que precisa de outra ferramenta.</p>
+
+      <h2>Chaves de API não deveriam ser coladas em servidores</h2>
+      <p>É o argumento central desta página. Respostas de API carregam tokens e dados pessoais com frequência; colá-las em um formatador hospedado envia tudo isso junto. Aqui a formatação acontece no navegador e nada sai do seu dispositivo.</p>
+    `
+  },
+  {
+    en: 'jpeg-to-jpg',
+    slug: 'jpeg-para-jpg',
+    name: 'JPEG para JPG',
+    title: 'Converter JPEG para JPG Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta arquivos .jpeg em .jpg direto no navegador, para formulários e programas que só aceitam a extensão de três letras.',
+    headline: 'JPEG para JPG.',
+    subtitle: 'Mesma imagem, extensão que os formulários aceitam — reencodada no seu próprio navegador.',
+    quickAnswer: 'JPEG e JPG são exatamente o mesmo formato — .jpg é apenas a grafia antiga de três letras herdada do DOS. Para converter JPEG para JPG, selecione o arquivo .jpeg na ferramenta acima e baixe o .jpg reencodado, pronto para formulários de envio e programas antigos que só aceitam a extensão de três letras. Tudo acontece no seu navegador.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como converter jpeg para jpg',
+        answer: 'Arraste o arquivo .jpeg para a ferramenta e baixe o .jpg. É uma reencodagem real, não uma renomeação — o que importa porque vários sistemas verificam o conteúdo do arquivo e não apenas o nome.'
+      },
+      {
+        question: 'qual a diferença de jpeg para jpg',
+        answer: 'Nenhuma no conteúdo: é o mesmo formato, a mesma compressão, a mesma qualidade. A diferença é histórica — o MS-DOS e o Windows antigo limitavam extensões a três caracteres, então .jpeg virou .jpg nos PCs enquanto Mac e Unix mantiveram a grafia completa. As duas sobreviveram.'
+      },
+      {
+        question: 'como mudar de jpeg para jpg',
+        answer: 'Renomear o arquivo funciona em muitos casos, já que o conteúdo é idêntico — mas não em todos. Alguns formulários e sistemas verificam a assinatura interna ou recusam arquivos cuja origem não bate, e aí a renomeação falha. A reencodagem resolve de forma definitiva.'
+      },
+      {
+        question: 'A qualidade muda?',
+        answer: 'Há uma reencodagem, feita em qualidade alta — a diferença não é perceptível a olho nu em fotografias. Como efeito colateral, os metadados EXIF são removidos, incluindo localização e modelo da câmera, o que costuma ser bom antes de um envio público.'
+      },
+      {
+        question: 'A imagem é copiada para algum servidor?',
+        answer: 'Não. A conversão acontece no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>Dois nomes, um formato</h2>
+      <p>JPEG e JPG são o mesmo formato de imagem. A duplicidade vem do MS-DOS, que limitava extensões a três caracteres: <em>.jpeg</em> virou <em>.jpg</em> nos PCs, enquanto Mac e Unix mantiveram a grafia completa. O limite acabou há décadas; as duas grafias ficaram.</p>
+
+      <h2>Por que a conversão ainda é necessária</h2>
+      <p>Porque sistemas verificam a extensão. Um formulário programado para aceitar apenas <em>.jpg</em> recusa um <em>.jpeg</em> idêntico, e programas antigos fazem o mesmo. <strong>Converter jpeg para jpg</strong> resolve o que é, no fundo, um problema de nome — mas um problema real.</p>
+
+      <h2>Renomear às vezes basta, às vezes não</h2>
+      <p>Como o conteúdo é o mesmo, trocar a extensão manualmente costuma funcionar. Costuma. Sistemas que verificam a assinatura interna do arquivo, ou que recusam arquivos com histórico inconsistente, continuam recusando. A reencodagem elimina a dúvida — e, de quebra, remove os metadados EXIF, o que é desejável antes de um envio público.</p>
+    `
+  },
+  {
+    en: 'jpg-to-jpeg',
+    slug: 'jpg-para-jpeg',
+    name: 'JPG para JPEG',
+    title: 'Converter JPG para JPEG Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta arquivos .jpg em .jpeg direto no navegador, para formulários que exigem estritamente a extensão de quatro letras.',
+    headline: 'JPG para JPEG.',
+    subtitle: 'Mesma imagem, a extensão de quatro letras que alguns formulários exigem.',
+    quickAnswer: 'JPG e JPEG são o mesmo formato de imagem — apenas a extensão difere. Para converter JPG para JPEG, selecione o arquivo .jpg na ferramenta acima e baixe o .jpeg reencodado. Isso atende formulários de envio que aceitam estritamente a extensão .jpeg, e a reencodagem também remove os metadados EXIF da foto. Tudo acontece no seu navegador.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'qual a diferença de jpg para jpeg',
+        answer: 'Nenhuma diferença de conteúdo, compressão ou qualidade — é o mesmo formato com dois nomes. A grafia curta nasceu do limite de três caracteres do MS-DOS. Quando um sistema aceita um e recusa o outro, é uma regra de validação de nome, não uma diferença técnica entre os arquivos.'
+      },
+      {
+        question: 'como converter jpg para jpeg',
+        answer: 'Arraste o .jpg para a ferramenta e baixe o .jpeg. A reencodagem é real, o que importa para os sistemas que conferem mais do que o nome do arquivo.'
+      },
+      {
+        question: 'Por que um formulário exigiria .jpeg?',
+        answer: 'Porque alguém escreveu a lista de extensões aceitas e incluiu apenas essa grafia. É arbitrário, e é justamente por isso que existe a conversão nos dois sentidos — o oposto está em <a href="/pt/jpeg-para-jpg/">JPEG para JPG</a>.'
+      },
+      {
+        question: 'A conversão remove os dados da foto?',
+        answer: 'Sim, como efeito da reencodagem os metadados EXIF são descartados, incluindo coordenadas de GPS e modelo do aparelho. Se o objetivo é especificamente limpar esses dados sem reencodar, o <a href="/pt/remover-exif/">removedor de EXIF</a> faz isso sem perda alguma de qualidade.'
+      },
+      {
+        question: 'A imagem é copiada para algum servidor?',
+        answer: 'Não. A conversão acontece no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>Um problema de nome, não de formato</h2>
+      <p>JPG e JPEG são idênticos por dentro. Quando um formulário aceita um e recusa o outro, está aplicando uma lista de extensões escrita por alguém — não detectando qualquer diferença real na imagem.</p>
+
+      <h2>A conversão existe nos dois sentidos</h2>
+      <p>Porque as listas arbitrárias vão nas duas direções. Esta página resolve quem precisa de <em>.jpeg</em>; <a href="/pt/jpeg-para-jpg/">JPEG para JPG</a> resolve o contrário.</p>
+
+      <h2>O efeito colateral útil</h2>
+      <p>A reencodagem descarta os metadados EXIF — localização, modelo do aparelho, data. Para uma foto que vai a um envio público isso costuma ser desejável. Se a limpeza for o objetivo principal e você não quiser reencodar, o <a href="/pt/remover-exif/">removedor de EXIF</a> faz o trabalho sem tocar nos pixels.</p>
+    `
+  },
+  {
+    en: 'merge-word',
+    slug: 'juntar-documentos-word',
+    name: 'Juntar Documentos Word',
+    title: 'Juntar Documentos Word Online Grátis — Unir DOCX | ConvertOcean',
+    description: 'Una vários documentos .docx em um só direto no navegador, com as imagens de todos os arquivos preservadas.',
+    headline: 'Juntar Documentos Word.',
+    subtitle: 'Una vários .docx em um único documento — com as imagens de cada arquivo preservadas.',
+    quickAnswer: 'Para juntar documentos Word, adicione dois ou mais arquivos .docx na ferramenta acima e baixe um documento único combinado. As imagens embutidas em cada arquivo de origem são transportadas e religadas corretamente, que é justamente onde a maioria dos unificadores em navegador falha. Um limite declarado: estilos e formatação podem variar quando os documentos usam definições diferentes.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'como juntar documentos no word',
+        answer: 'Dentro do Word, o caminho é a aba Inserir, seta ao lado de Objeto, e Texto de Arquivo — que insere o conteúdo de outro documento no ponto do cursor. Funciona, mas é um arquivo por vez e é fácil perder a posição. Aqui você adiciona todos de uma vez e baixa o resultado combinado.'
+      },
+      {
+        question: 'como juntar dois documentos word',
+        answer: 'Adicione os dois arquivos e confirme a ordem antes de baixar; o documento final segue a sequência mostrada na tela. O conteúdo de cada um entra completo, incluindo as imagens.'
+      },
+      {
+        question: 'como juntar varios documentos word em um só',
+        answer: 'O procedimento é o mesmo com qualquer quantidade. Vale reordenar antes de gerar, porque mudar a ordem depois significa refazer a união. Para relatórios montados por várias pessoas, conferir a sequência costuma ser mais importante que a união em si.'
+      },
+      {
+        question: 'A formatação é preservada?',
+        answer: 'O conteúdo e as imagens sim. Estilos podem variar quando os documentos de origem definem o mesmo nome de estilo de maneiras diferentes — dois arquivos com um "Título 1" configurado de formas distintas vão brigar por essa definição no documento final. Vale uma passada de revisão nos títulos depois de unir.'
+      },
+      {
+        question: 'Os documentos são copiados para algum servidor?',
+        answer: 'Não. A união acontece no seu navegador, no seu dispositivo, e os arquivos não são copiados para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>As imagens são a parte difícil</h2>
+      <p>Unir texto é simples; unir documentos com imagens não é. Dentro de um .docx cada imagem é um arquivo separado, referenciado por um identificador, e dois documentos costumam usar os mesmos identificadores para imagens diferentes. Unificadores que ignoram isso produzem um arquivo com fotos trocadas ou ausentes. Aqui as referências são reescritas para que cada imagem continue apontando para a certa.</p>
+
+      <h2>O limite honesto: estilos</h2>
+      <p>Ao <strong>unir arquivos word sem perder formatação</strong>, o conteúdo atravessa intacto, mas os estilos podem divergir. Se dois documentos definem "Título 1" de formas diferentes, um dos dois prevalece no resultado. Uma revisão rápida dos títulos depois da união resolve.</p>
+
+      <h2>Dentro do Word, dá mais trabalho</h2>
+      <p>O caminho nativo é Inserir, Objeto, Texto de Arquivo — um arquivo por vez, no ponto do cursor. Para dois documentos é aceitável; para oito, não.</p>
+    `
+  },
+  {
+    en: 'split-word',
+    slug: 'dividir-arquivo-word',
+    name: 'Dividir Arquivo Word',
+    title: 'Dividir Arquivo Word Online Grátis — Separar DOCX | ConvertOcean',
+    description: 'Divida um documento .docx em vários arquivos, quebrando a cada Título 1 ou a cada número de parágrafos.',
+    headline: 'Dividir Arquivo Word.',
+    subtitle: 'Quebre um .docx a cada Título 1 ou a cada número de parágrafos — sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para dividir um documento Word, selecione o arquivo .docx na ferramenta acima e escolha onde quebrar: a cada Título 1, ou a cada número definido de parágrafos. A divisão por título é a mais útil para capítulos, seções e relatórios, porque segue a estrutura que o próprio documento já declara. Tudo acontece no seu navegador.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'como separar documentos word',
+        answer: 'Selecione o .docx e escolha o critério de quebra. Por Título 1, cada seção vira um arquivo próprio, nomeado pelo título — ideal para transformar um relatório longo em capítulos separados. Por número de parágrafos, quando o documento não tem estrutura de títulos.'
+      },
+      {
+        question: 'Por que dividir por Título 1 funciona melhor?',
+        answer: 'Porque usa a estrutura que o autor já criou, em vez de adivinhar. Um documento bem formatado marca cada seção com um Título 1, e a divisão segue exatamente esses pontos. Se o documento foi formatado à mão, com texto em negrito no lugar de estilos de título, esse critério não encontra as quebras — e aí a divisão por parágrafos é a alternativa.'
+      },
+      {
+        question: 'E se o documento não tiver títulos?',
+        answer: 'Use a divisão por número de parágrafos. É menos elegante, mas funciona em qualquer documento e resolve o caso prático de partir um arquivo grande demais para enviar ou revisar.'
+      },
+      {
+        question: 'As imagens e a formatação vão junto?',
+        answer: 'Cada parte mantém o conteúdo e a formatação da seção correspondente, inclusive imagens. Confira o primeiro arquivo gerado antes de distribuir os demais.'
+      },
+      {
+        question: 'O documento é copiado para algum servidor?',
+        answer: 'Não. A divisão acontece no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>Dividir pela estrutura, não pelo palpite</h2>
+      <p>A divisão por Título 1 aproveita a marcação que o próprio documento carrega: cada seção declarada vira um arquivo, nomeado pelo título. É o que torna prático transformar um relatório de cem páginas em capítulos, ou separar um manual por assunto.</p>
+
+      <h2>Quando os títulos não existem</h2>
+      <p>Documentos formatados à mão — negrito e tamanho maior em vez de estilos de título — não têm marcação para seguir. Aí a divisão por número de parágrafos é a saída: menos elegante, mas funciona em qualquer arquivo.</p>
+
+      <h2>Processamento local</h2>
+      <p>Relatórios, contratos e trabalhos acadêmicos são o que normalmente se divide. Nada é copiado para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'merge-txt',
+    slug: 'unir-arquivos-txt',
+    name: 'Unir Arquivos TXT',
+    title: 'Unir Arquivos TXT Online Grátis — Juntar Textos | ConvertOcean',
+    description: 'Una vários arquivos de texto em um só direto no navegador, escolhendo o separador entre eles.',
+    headline: 'Unir Arquivos TXT.',
+    subtitle: 'Junte vários arquivos de texto em um só, escolhendo o que vai entre eles.',
+    quickAnswer: 'Para unir arquivos de texto, adicione seus arquivos .txt, .md, .csv ou .log na ferramenta acima e baixe um documento combinado. Você escolhe o que vai entre eles — uma quebra de linha, uma linha em branco, nenhum separador ou um texto próprio — e pode inserir o nome de cada arquivo de origem antes do seu conteúdo. Tudo acontece no seu navegador.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'Que tipos de arquivo posso unir?',
+        answer: 'Arquivos .txt, .md, .csv e .log. Como todos são texto puro, podem ser combinados entre si — vários logs em um arquivo único para análise, ou várias anotações em um documento só.'
+      },
+      {
+        question: 'Posso escolher o que separa os arquivos?',
+        answer: 'Sim, e essa é a parte que decide se o resultado é utilizável. Uma quebra de linha simples, uma linha em branco, nenhum separador, ou um texto próprio — um traço, uma marca, o que fizer sentido para o que você vai fazer com o arquivo depois.'
+      },
+      {
+        question: 'Dá para saber de onde veio cada trecho?',
+        answer: 'Sim, há a opção de inserir o nome de cada arquivo de origem antes do respectivo conteúdo. Para juntar logs de vários dias ou anotações de várias fontes, é o que evita perder o rastro.'
+      },
+      {
+        question: 'Serve para juntar CSVs?',
+        answer: 'Funciona, com uma ressalva: o cabeçalho de cada arquivo entra como uma linha de dados no meio do resultado. Se os CSVs compartilham a mesma estrutura e você quer uma tabela única, <a href="/pt/unir-arquivos-excel/">unir arquivos Excel e CSV</a> trata isso melhor.'
+      },
+      {
+        question: 'Os arquivos são copiados para algum servidor?',
+        answer: 'Não. A união acontece no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>O separador é a decisão importante</h2>
+      <p>Unir arquivos de texto é trivial; o que determina se o resultado serve é o que fica entre eles. Logs concatenados sem separação viram uma parede ilegível. Anotações coladas sem linha em branco se confundem. A ferramenta deixa isso explícito, incluindo a opção de um texto próprio.</p>
+
+      <h2>Manter o rastro da origem</h2>
+      <p>Ao <strong>unir arquivos txt em um só</strong> vindos de fontes diferentes, marcar o nome de cada arquivo antes do seu conteúdo evita o problema clássico: um arquivo grande em que não se sabe mais onde um começa e o outro termina.</p>
+
+      <h2>CSV tem um caso melhor</h2>
+      <p>Arquivos .csv são aceitos, mas os cabeçalhos viram linhas de dados no meio do resultado. Para tabelas, <a href="/pt/unir-arquivos-excel/">unir arquivos Excel e CSV</a> é o caminho.</p>
+    `
+  },
+  {
+    en: 'split-txt',
+    slug: 'dividir-arquivo-txt',
+    name: 'Dividir Arquivo TXT',
+    title: 'Dividir Arquivo TXT Online Grátis — Separar Texto | ConvertOcean',
+    description: 'Divida um arquivo de texto por número de linhas, por tamanho em KB ou a cada delimitador, direto no navegador.',
+    headline: 'Dividir Arquivo TXT.',
+    subtitle: 'Parta um arquivo de texto por linhas, por tamanho ou a cada delimitador que você definir.',
+    quickAnswer: 'Para dividir um arquivo de texto, selecione seu .txt, .md, .csv ou .log na ferramenta acima e escolha como parti-lo: a cada N linhas, a cada N kilobytes, ou em cada ocorrência de um delimitador que você definir. Cada parte é baixada como arquivo próprio. É a forma prática de quebrar um arquivo grande demais para abrir ou para enviar.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'como dividir arquivo txt',
+        answer: 'Selecione o arquivo e escolha o critério: por número de linhas, por tamanho em KB, ou a cada ocorrência de um delimitador. Cada parte sai como um arquivo separado, e o critério certo depende do que você vai fazer com os pedaços.'
+      },
+      {
+        question: 'Qual critério escolher?',
+        answer: 'Por linhas, quando o destino impõe um limite de registros — importações costumam ser assim. Por tamanho, quando o limite é de megabytes, como em anexos de e-mail. Por delimitador, quando o arquivo tem uma marca natural de separação, como uma data ou um cabeçalho repetido em cada bloco.'
+      },
+      {
+        question: 'Serve para arquivos de log grandes?',
+        answer: 'Sim, é um dos usos principais. Um log de várias centenas de megabytes trava a maioria dos editores; partido em blocos, cada parte abre normalmente. Como o processamento é local, o limite prático é a memória do seu aparelho.'
+      },
+      {
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. A divisão acontece no seu navegador, no seu dispositivo — o que importa com logs de sistema, que frequentemente contêm dados internos.'
+      }
+    ],
+    content: `
+      <h2>Três critérios, três problemas diferentes</h2>
+      <p>Por número de linhas, quando o sistema de destino aceita um máximo de registros por importação. Por tamanho em kilobytes, quando o limite é de anexo. Por delimitador, quando o próprio arquivo já tem uma marca natural de separação.</p>
+
+      <h2>Arquivos grandes demais para abrir</h2>
+      <p>É o caso mais comum. Um log de centenas de megabytes derruba a maioria dos editores de texto; dividido em partes, cada uma abre sem esforço. Como tudo roda no navegador, o limite é a memória do seu próprio aparelho, não uma regra nossa.</p>
+
+      <h2>Logs não deveriam circular</h2>
+      <p>Arquivos de log carregam caminhos internos, nomes de usuário e às vezes dados de clientes. A divisão acontece no seu dispositivo e nada é copiado para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'merge-pptx',
+    slug: 'juntar-powerpoint',
+    name: 'Juntar PowerPoint',
+    title: 'Juntar Apresentações PowerPoint Online Grátis | ConvertOcean',
+    description: 'Una várias apresentações .pptx em um único arquivo direto no navegador, com os slides na ordem e seus layouts preservados.',
+    headline: 'Juntar PowerPoint.',
+    subtitle: 'Combine várias apresentações .pptx em uma só, com os layouts de cada uma preservados.',
+    quickAnswer: 'Para juntar apresentações PowerPoint, adicione dois ou mais arquivos .pptx na ferramenta acima e baixe uma apresentação única combinada, com os slides de cada origem copiados na ordem, junto com seus layouts. Arquivos .ppt antigos não são aceitos — abra-os no PowerPoint ou no LibreOffice e salve como .pptx primeiro. Tudo acontece no seu navegador.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'Os layouts e temas são preservados?',
+        answer: 'Os slides são copiados junto com os layouts de origem, então cada um mantém sua estrutura. Quando as apresentações usam temas diferentes, o resultado fica visivelmente misto — o que é fiel ao conteúdo, mas pode exigir uma padronização depois se o objetivo for um deck uniforme.'
+      },
+      {
+        question: 'Posso definir a ordem dos slides?',
+        answer: 'Os slides entram na ordem dos arquivos adicionados, e dentro de cada arquivo na ordem original. Organize a sequência dos arquivos antes de gerar; reordenar slides individualmente é trabalho para o PowerPoint depois.'
+      },
+      {
+        question: 'Arquivos .ppt antigos funcionam?',
+        answer: 'Não. O formato binário .ppt não pode ser lido dentro de um navegador. Abra no PowerPoint ou no LibreOffice, salve como .pptx e junte em seguida.'
+      },
+      {
+        question: 'As apresentações são copiadas para algum servidor?',
+        answer: 'Não. A união acontece no seu navegador, no seu dispositivo. Propostas comerciais e material interno não saem da sua máquina.'
+      }
+    ],
+    content: `
+      <h2>Slides com os layouts de origem</h2>
+      <p>Cada slide é copiado junto com o layout que o define, de modo que a estrutura de cada apresentação sobrevive à união. Isso preserva o conteúdo fielmente — e significa que apresentações com temas diferentes produzem um deck visivelmente misto.</p>
+
+      <h2>A ordem é a dos arquivos</h2>
+      <p>Organize a sequência antes de gerar. Reordenar slides individualmente depois é trabalho para o PowerPoint.</p>
+
+      <h2>.ppt precisa de um passo antes</h2>
+      <p>O formato binário antigo não é legível no navegador: salve como .pptx primeiro. É o mesmo passo descrito em <a href="/pt/ppt-para-pdf/">PPT para PDF</a>.</p>
+    `
+  },
+  {
+    en: 'split-pptx',
+    slug: 'dividir-powerpoint',
+    name: 'Dividir PowerPoint',
+    title: 'Dividir Apresentação PowerPoint Online Grátis | ConvertOcean',
+    description: 'Separe cada slide em um arquivo próprio ou extraia intervalos como 1-5, 8, 11-13, direto no navegador.',
+    headline: 'Dividir PowerPoint.',
+    subtitle: 'Separe cada slide em um arquivo, ou extraia apenas os intervalos que você precisa.',
+    quickAnswer: 'Para dividir uma apresentação, adicione o arquivo .pptx na ferramenta acima e escolha entre separar cada slide em uma apresentação própria ou extrair intervalos personalizados, como 1-5, 8, 11-13. Cada slide extraído mantém seu layout e a mídia incorporada na qualidade original, porque o conteúdo é copiado em vez de reprocessado.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'Como extrair só alguns slides?',
+        answer: 'Informe os intervalos no formato 1-5, 8, 11-13 — números soltos e faixas podem ser misturados. O resultado é uma apresentação contendo apenas esses slides, na ordem indicada.'
+      },
+      {
+        question: 'A qualidade das imagens e vídeos cai?',
+        answer: 'Não. A mídia incorporada é copiada em vez de reprocessada, então imagens e vídeos mantêm exatamente a qualidade original. É a diferença em relação a métodos que reconstroem os slides.'
+      },
+      {
+        question: 'Cada slide pode virar um arquivo?',
+        answer: 'Sim, essa é a outra opção: cada slide vira uma apresentação própria. Útil para distribuir partes de um deck a pessoas diferentes, ou para isolar um slide que será reaproveitado em outro material.'
+      },
+      {
+        question: 'A apresentação é copiada para algum servidor?',
+        answer: 'Não. A divisão acontece no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>Por slide ou por intervalo</h2>
+      <p>Separar cada slide em um arquivo próprio serve para distribuir partes de um deck. Extrair intervalos — 1-5, 8, 11-13 — serve para montar uma versão reduzida a partir de uma apresentação longa, que é o caso mais frequente.</p>
+
+      <h2>A mídia não é reprocessada</h2>
+      <p>Imagens e vídeos incorporados são copiados como estão, mantendo a qualidade original. Ferramentas que reconstroem os slides costumam recomprimir esse conteúdo e degradá-lo sem avisar.</p>
+
+      <h2>Processamento local</h2>
+      <p>Nada é copiado para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'qfx-to-csv',
+    slug: 'qfx-para-csv',
+    name: 'QFX para CSV',
+    title: 'Converter QFX para CSV Online Grátis — Extrato Quicken | ConvertOcean',
+    description: 'Converta arquivos .qfx do Quicken em planilha CSV ou Excel direto no navegador. O extrato não sai do seu computador.',
+    headline: 'QFX para CSV.',
+    subtitle: 'Transforme um extrato .qfx do Quicken em planilha que qualquer programa lê.',
+    quickAnswer: 'Para converter QFX para CSV, selecione o arquivo .qfx na ferramenta acima e baixe as transações como planilha. O QFX é a variante licenciada do OFX usada pelo Quicken, então um arquivo que só o Quicken importa vira um CSV ou uma pasta do Excel que qualquer programa lê. O extrato é processado no seu navegador e não sai do seu computador.',
+    category: 'Ferramentas Empresariais',
+    faqs: [
+      {
+        question: 'Qual a diferença entre QFX e OFX?',
+        answer: 'O QFX é a versão licenciada do OFX usada pelo Quicken: mesma estrutura, com identificadores adicionais que o programa exige. Por isso um .qfx costuma ser aceito apenas pelo Quicken, enquanto um <a href="/pt/ofx-para-csv/">.ofx</a> é lido por mais programas.'
+      },
+      {
+        question: 'Posso baixar em Excel?',
+        answer: 'Sim, além do CSV há a opção de gerar uma pasta .xlsx — que evita o problema de o Excel abrir um CSV com tudo em uma coluna só.'
+      },
+      {
+        question: 'Quais dados saem na planilha?',
+        answer: 'As transações do extrato, com data, tipo, descrição, valor e identificador. É o suficiente para conciliação manual ou para importar em outro sistema financeiro.'
+      },
+      {
+        question: 'O extrato é copiado para algum servidor?',
+        answer: 'Não. A leitura acontece no seu navegador, no seu dispositivo. Um extrato lista cada movimentação de uma conta — não é um arquivo para enviar a um serviço qualquer.'
+      }
+    ],
+    content: `
+      <h2>Um formato preso a um programa</h2>
+      <p>O QFX é o OFX com identificadores licenciados pelo Quicken. Na prática, isso significa que o arquivo que o seu banco fornece só serve dentro daquele programa — e se você não o usa, ou migrou para outro sistema, o extrato fica inacessível.</p>
+      <p>Converter para CSV devolve os dados a um formato que qualquer planilha ou sistema contábil lê.</p>
+
+      <h2>CSV ou Excel</h2>
+      <p>O .xlsx evita o problema clássico de o Excel abrir um CSV com tudo empilhado em uma coluna, porque leva a estrutura das colunas dentro do arquivo.</p>
+
+      <h2>Extratos não deveriam circular</h2>
+      <p>A leitura acontece dentro do navegador, no seu dispositivo, e nada é copiado para nenhum servidor.</p>
+    `
+  }
+];
+
 export const ptTools: PtTool[] = [
   ...ptToolsSeed,
   ...ptToolsBatch1,
@@ -3003,7 +3535,8 @@ export const ptTools: PtTool[] = [
   ...ptToolsBatch8,
   ...ptToolsBatch9,
   ...ptToolsBatch10,
-  ...ptToolsBatch11
+  ...ptToolsBatch11,
+  ...ptToolsBatch12
 ];
 
 /**

@@ -45,7 +45,7 @@ const browserPath = () => {
 const PAIRS = [
   { pt: 'comprimir-pdf', en: 'compress-pdf' },
   { pt: 'juntar-pdf', en: 'merge-pdf' },
-  { pt: 'jpg-para-pdf', en: 'image-to-pdf' },
+  { pt: 'imagem-para-pdf', en: 'image-to-pdf' },
   { pt: 'pdf-para-word', en: 'pdf-to-word' },
   { pt: 'word-para-pdf', en: 'word-to-pdf' },
   { pt: 'excel-para-pdf', en: 'excel-to-pdf' },
@@ -100,6 +100,18 @@ const PAIRS = [
   { pt: 'dividir-arquivo-excel', en: 'split-excel' },
   { pt: 'ver-exif', en: 'exif-viewer' },
   { pt: 'remover-exif', en: 'exif-remover' },
+  { pt: 'redimensionar-imagem', en: 'image-resizer' },
+  { pt: 'contador-de-palavras', en: 'word-counter' },
+  { pt: 'formatar-json', en: 'json-formatter' },
+  { pt: 'jpeg-para-jpg', en: 'jpeg-to-jpg' },
+  { pt: 'jpg-para-jpeg', en: 'jpg-to-jpeg' },
+  { pt: 'juntar-documentos-word', en: 'merge-word' },
+  { pt: 'dividir-arquivo-word', en: 'split-word' },
+  { pt: 'unir-arquivos-txt', en: 'merge-txt' },
+  { pt: 'dividir-arquivo-txt', en: 'split-txt' },
+  { pt: 'juntar-powerpoint', en: 'merge-pptx' },
+  { pt: 'dividir-powerpoint', en: 'split-pptx' },
+  { pt: 'qfx-para-csv', en: 'qfx-to-csv' },
 ];
 
 let bad = 0;
@@ -157,9 +169,9 @@ for (const { pt, en } of PAIRS) {
    the Portuguese route reaches a working engine and produces a real PDF,
    rather than a correct-looking page whose converter never fires. */
 {
-  await page.goto(`${ORIGIN}/pt/jpg-para-pdf/`, { waitUntil: 'networkidle2', timeout: 60000 });
+  await page.goto(`${ORIGIN}/pt/imagem-para-pdf/`, { waitUntil: 'networkidle2', timeout: 60000 });
   const input = await page.$('#fileInput');
-  say(Boolean(input), '/pt/jpg-para-pdf/ exposes its file input');
+  say(Boolean(input), '/pt/imagem-para-pdf/ exposes its file input');
 
   if (input) {
     await input.uploadFile('testing/fixtures/torture.jpg');
@@ -173,7 +185,7 @@ for (const { pt, en } of PAIRS) {
       return { present: Boolean(btn), enabled: btn ? !btn.disabled : false };
     });
     say(ready.enabled,
-        '/pt/jpg-para-pdf/ converts a real JPG and enables its download',
+        '/pt/imagem-para-pdf/ converts a real JPG and enables its download',
         ready.present ? `enabled=${ready.enabled}` : 'no download button');
   }
 }
