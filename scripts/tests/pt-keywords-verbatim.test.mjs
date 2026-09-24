@@ -1,0 +1,104 @@
+/**
+ * Researched keywords must reach the page unaltered.
+ *
+ * Kavya supplied these from Ahrefs with an explicit instruction: "dont make any
+ * change in keywords, questions im giving you because they need to be exact
+ * same to rank." That is correct, and it is also exactly the kind of rule that
+ * decays silently. A later pass tidies "como converter pdf para word" into
+ * "Como converter PDF para Word?" because it reads better as a heading, the
+ * exact-match target is gone, and nothing anywhere reports it — the page still
+ * builds, still renders, still looks right, and simply stops matching the query
+ * it was built for.
+ *
+ * So the record in src/data/pt/keywords.ts is the source of truth, and this
+ * asserts the page still quotes it character for character.
+ *
+ * It also asserts the opposite direction: competitor brand queries recorded in
+ * `excluded` must NOT appear. Those are navigational searches for iLovePDF —
+ * unwinnable, and the English side already rejected the same class of term.
+ *
+ * Both files are read as text rather than imported, because the repo's tests
+ * run on plain node with no TypeScript loader.
+ *
+ * Run: node --test scripts/tests/pt-keywords-verbatim.test.mjs
+ */
+import { test } from 'node:test';
+import assert from 'node:assert';
+import { readFileSync } from 'node:fs';
+
+const KEYWORDS = readFileSync('src/data/pt/keywords.ts', 'utf8');
+const CONTENT = readFileSync('src/data/pt/index.ts', 'utf8');
+
+/** Pull `{ term: '...', ... }` entries out of a named array block. */
+function termsIn(section) {
+  const start = KEYWORDS.indexOf(section);
+  assert.ok(start > -1, `section ${section} missing from keywords.ts`);
+  // Stop at the next top-level `export const`, so sections do not bleed.
+  const rest = KEYWORDS.slice(start + section.length);
+  const end = rest.indexOf('\nexport const');
+  const block = end === -1 ? rest : rest.slice(0, end);
+  return [...block.matchAll(/term: '([^']+)'/g)].map(m => m[1]);
+}
+
+/** Every question recorded against a page that has actually been built. */
+function questionsForBuiltPages() {
+  const out = [];
+  // pageKeywords entries carry a `slug`; a page is built if index.ts uses it.
+  const blocks = KEYWORDS.split(/\n  \{\n/).slice(1);
+  for (const block of blocks) {
+    const slug = (block.match(/slug: '([^']+)'/) || [])[1];
+    if (!slug) continue;
+    const built = CONTENT.includes(`slug: '${slug}'`);
+    const qStart = block.indexOf('questions:');
+    if (qStart === -1) continue;
+    const questions = [...block.slice(qStart).matchAll(/term: '([^']+)'/g)].map(m => m[1]);
+    out.push({ slug, built, questions });
+  }
+  return out;
+}
+
+test('every researched question reaches its page character for character', () => {
+  const missing = [];
+  for (const { slug, built, questions } of questionsForBuiltPages()) {
+    if (!built) continue;
+    for (const q of questions) {
+      if (!CONTENT.includes(`question: '${q}'`)) missing.push(`${slug}: ${q}`);
+    }
+  }
+  assert.deepStrictEqual(
+    missing, [],
+    `researched questions not quoted verbatim on their page:\n${missing.join('\n')}`
+  );
+});
+
+test('a page is not built for keywords that were only parked', () => {
+  // pdf-para-excel is recorded but intentionally unbuilt: its questions arrived
+  // inside the Excel-to-PDF export and belong to the opposite conversion. This
+  // asserts the parking is deliberate rather than an oversight that silently
+  // dropped nine researched queries.
+  const parked = questionsForBuiltPages().filter(p => !p.built);
+  for (const p of parked) {
+    assert.ok(p.questions.length > 0, `${p.slug} is parked with no questions — delete it instead`);
+  }
+});
+
+test('no competitor brand query is targeted', () => {
+  const hits = [];
+  for (const term of termsIn('export const excluded')) {
+    if (CONTENT.includes(`question: '${term}'`)) hits.push(term);
+  }
+  assert.deepStrictEqual(
+    hits, [],
+    `brand-navigational queries used as page targets:\n${hits.join('\n')}`
+  );
+});
+
+test('the keyword record and the built pages agree on slugs', () => {
+  const recorded = [...KEYWORDS.matchAll(/slug: '([^']+)'/g)].map(m => m[1]);
+  const orphans = recorded.filter(s => {
+    const usedAsPage = CONTENT.includes(`slug: '${s}'`);
+    const parked = KEYWORDS.includes(`slug: '${s}'`) && !usedAsPage;
+    return !usedAsPage && !parked;
+  });
+  assert.deepStrictEqual(orphans, [], orphans.join('\n'));
+});

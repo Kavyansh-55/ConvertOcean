@@ -83,7 +83,11 @@ export const ptCategories: PtCategory[] = [
   }
 ];
 
-export const ptTools: PtTool[] = [
+/**
+ * The first three pages, written before the keyword research arrived. They
+ * target the concurso-público document workflow rather than a head term.
+ */
+const ptToolsSeed: PtTool[] = [
   {
     en: 'compress-pdf',
     slug: 'comprimir-pdf',
@@ -184,6 +188,171 @@ export const ptTools: PtTool[] = [
     ]
   }
 ];
+
+/**
+ * ---------------------------------------------------------------------------
+ * Keyword-led batch 1 — supplied by Kavya 2026-09-24. See ./keywords.ts.
+ * ---------------------------------------------------------------------------
+ *
+ * Every `question` string below is quoted EXACTLY as it was researched:
+ * lowercase, no added punctuation, no tidied wording. That is not sloppiness,
+ * it is the point — altering the phrasing is what breaks exact match, and the
+ * English pages carry their reader-supplied questions the same way.
+ *
+ * The synonym queries (`converter` / `passar` / `mudar` / `transformar`) are
+ * separate searches with separate volume, so all of them are answered — but
+ * each ANSWER covers different ground (scanned files, tables, images, cost,
+ * privacy). Eight restatements of one answer would be near-duplicate content
+ * on a page that already has to survive a duplicate audit.
+ */
+export const ptToolsBatch1: PtTool[] = [
+  {
+    en: 'pdf-to-word',
+    slug: 'pdf-para-word',
+    name: 'PDF para Word',
+    title: 'Converter PDF para Word Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter PDF para Word (.docx) editável direto no navegador, sem cadastro e sem marca d’água. O arquivo não sai do seu computador.',
+    headline: 'PDF para Word.',
+    subtitle: 'Transforme um PDF em um documento Word editável — títulos, tabelas e imagens reconstruídos, sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter PDF para Word, selecione o arquivo na ferramenta acima e baixe o documento .docx editável. Títulos, negrito, itálico, tamanhos de fonte, recuos e tabelas detectadas são reconstruídos como formatação nativa do Word, e figuras e logotipos entram como imagens. Tudo acontece dentro do seu navegador: o arquivo não sai do seu computador e não é copiado para nenhum servidor.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'como converter pdf para word',
+        answer: 'Arraste o PDF para a ferramenta no topo desta página, espere a conversão terminar e baixe o arquivo .docx. Não há cadastro, fila de espera nem limite diário. O documento abre normalmente no Word, no LibreOffice e no Google Docs, já editável.'
+      },
+      {
+        question: 'como passar pdf para word',
+        answer: 'Antes de converter, faça um teste de dez segundos: abra o PDF e tente selecionar uma frase com o cursor. Se o texto for destacado, o PDF é digital e o conversor consegue reconstruir o conteúdo. Se o cursor apenas desenhar um retângulo, a página é uma imagem digitalizada — nesse caso use primeiro a ferramenta de imagem para texto (OCR) e depois cole o resultado no Word.'
+      },
+      {
+        question: 'como converter de pdf para word',
+        answer: 'O que é reconstruído como formatação real do Word: títulos, negrito, itálico, tamanhos de fonte, recuos de parágrafo e tabelas detectadas. O que muda: o PDF guarda coordenadas fixas e o Word usa texto que flui, então margens e quebras de linha podem se deslocar um pouco em layouts de várias colunas. Documentos de texto corrido saem praticamente idênticos.'
+      },
+      {
+        question: 'como passar de pdf para word',
+        answer: 'Tabelas com bordas visíveis costumam ser reconhecidas e viram tabelas de verdade no Word, com linhas e colunas editáveis. Tabelas sem bordas, alinhadas apenas por espaçamento, são mais difíceis de detectar e podem sair como parágrafos separados. Confira as tabelas antes de enviar o documento para alguém.'
+      },
+      {
+        question: 'como mudar pdf para word',
+        answer: 'Figuras, gráficos e logotipos são incorporados como imagens, no tamanho e na posição em que aparecem no PDF. Eles continuam sendo imagens no Word: dá para mover e redimensionar, mas não para editar o conteúdo do gráfico. Um gráfico que precise ser editável tem de ser refeito a partir dos dados originais.'
+      },
+      {
+        question: 'como mudar de pdf para word',
+        answer: 'A ferramenta funciona no navegador do celular igual ao computador, e o arquivo continua sem sair do aparelho. Depois que a página carrega uma vez, ela também funciona sem internet — útil para converter documentos em trânsito ou com conexão instável.'
+      },
+      {
+        question: 'como converter pdf para word gratuito',
+        answer: 'A conversão é gratuita e sem contrapartidas: nenhum cadastro, nenhuma marca d’água no documento, nenhum limite de quantos arquivos por dia e nenhuma versão paga escondendo recursos. O site é de código aberto e o repositório público mostra exatamente o que o navegador executa.'
+      },
+      {
+        question: 'como transformar de pdf para word',
+        answer: 'A conversão roda inteiramente no seu dispositivo, dentro da memória do navegador. O PDF não é copiado para nenhum servidor nosso nem de terceiros, e nós não temos como lê-lo — o que importa quando o documento é um contrato, um holerite ou um laudo médico.'
+      }
+    ],
+    content: `
+      <h2>Converter PDF para Word sem perder a formatação</h2>
+      <p>O motivo de tanta gente procurar um <strong>conversor de pdf para word</strong> que não estrague o layout é simples: os dois formatos descrevem uma página de maneiras opostas. O PDF posiciona cada caractere em uma coordenada fixa, como um desenho. O Word usa um texto que flui e se reorganiza conforme margens, espaçamento e tamanho de página. Passar <strong>de pdf para word</strong> é traduzir entre esses dois modelos, e é aí que aparecem margens duplicadas, quebras de linha estranhas e tabelas desmontadas.</p>
+      <p>Esta ferramenta reconstrói títulos, negrito, itálico, tamanhos de fonte, recuos e tabelas detectadas como formatação nativa do Word, em vez de jogar o texto em uma única caixa. Figuras e logotipos entram como imagens na posição original.</p>
+
+      <h2>PDF digital e PDF digitalizado não são a mesma coisa</h2>
+      <p>Esta é a checagem que evita a maior parte das frustrações ao <strong>transformar pdf para word</strong>. Abra o arquivo e tente selecionar uma frase. Se o texto é destacado, os caracteres existem de verdade e a conversão funciona. Se o cursor só desenha um retângulo, a página é uma fotografia: para o arquivo, aquele "texto" é um conjunto de pixels, e qualquer conversor direto devolverá uma página vazia ou uma imagem colada. Documentos digitalizados precisam de OCR antes, e o resultado recupera as <em>palavras</em>, não o design.</p>
+
+      <h2>Por que a conversão acontece no seu navegador</h2>
+      <p>A maioria dos conversores online copia o seu documento para um servidor, converte lá e devolve o resultado. Aqui não existe essa etapa: o processamento acontece na memória do seu próprio navegador, e o arquivo não sai do seu computador. Para contratos, documentos pessoais e material interno de empresa, essa diferença é a razão de existir do site — e o código aberto é a evidência de que a promessa é verdadeira.</p>
+    `
+  },
+  {
+    en: 'word-to-pdf',
+    slug: 'word-para-pdf',
+    name: 'Word para PDF',
+    title: 'Converter Word para PDF Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter Word (.docx) para PDF direto no navegador, com texto selecionável e sem marca d’água. O arquivo não sai do seu computador.',
+    headline: 'Word para PDF.',
+    subtitle: 'Converta documentos .docx em PDF com texto selecionável e quebras de página limpas, sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter Word para PDF, arraste um arquivo .docx para a ferramenta acima e baixe o PDF. Títulos, negrito, itálico, listas e tabelas são mantidos, e o resultado é um PDF vetorial de verdade: o texto continua selecionável e pesquisável, e as páginas quebram sem cortar linhas ao meio. A conversão roda no seu navegador e o arquivo não sai do seu computador.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'como converter word para pdf',
+        answer: 'Arraste o arquivo .docx para a ferramenta no topo da página e baixe o PDF. Não é preciso instalar nada nem criar conta, e o PDF sai sem marca d’água. O resultado abre em qualquer leitor de PDF, inclusive no celular.'
+      },
+      {
+        question: 'como converter de word para pdf',
+        answer: 'O PDF gerado é vetorial, não uma imagem da página: o texto continua selecionável, pesquisável e nítido em qualquer nível de zoom. Isso importa quando o documento vai ser lido em tela, indexado por um sistema ou anexado a um processo que exija texto pesquisável.'
+      },
+      {
+        question: 'como passar word para pdf',
+        answer: 'Títulos, negrito, itálico, listas numeradas e com marcadores e tabelas são preservados. As quebras de página são calculadas para não cortar uma linha de texto ao meio. Fontes muito incomuns, instaladas só no seu computador, podem ser substituídas por uma equivalente — vale conferir a primeira página antes de enviar o documento.'
+      },
+      {
+        question: 'Qual a diferença entre .doc e .docx nesta ferramenta?',
+        answer: 'A ferramenta trabalha com .docx, o formato usado pelo Word desde 2007. Arquivos .doc antigos precisam ser abertos no Word ou no LibreOffice e salvos novamente como .docx antes da conversão. É uma limitação do formato antigo, que é binário e fechado, não da ferramenta.'
+      },
+      {
+        question: 'O documento é copiado para algum servidor?',
+        answer: 'Não. A conversão acontece dentro do navegador, no seu dispositivo, e o arquivo não é copiado para nenhum servidor. Currículos, contratos e documentos com dados pessoais permanecem com você do começo ao fim.'
+      }
+    ],
+    content: `
+      <h2>Converter Word para PDF mantendo o texto selecionável</h2>
+      <p>Quem procura um <strong>conversor de word para pdf</strong> geralmente quer garantir duas coisas: que o documento seja exibido igual em qualquer computador e que ninguém o altere por engano. O PDF resolve as duas — mas só se a conversão gerar um PDF de verdade, e não uma imagem de cada página.</p>
+      <p>É a diferença entre um arquivo que pode ser pesquisado, copiado e lido por leitores de tela e um que é apenas uma fotografia do seu texto. Aqui a saída é sempre vetorial: passar <strong>de word para pdf</strong> mantém títulos, negrito, itálico, listas e tabelas como elementos reais, com o texto selecionável.</p>
+
+      <h2>Quando as fontes mudam — e como evitar</h2>
+      <p>Ao <strong>transformar de word para pdf</strong>, uma fonte instalada apenas no seu computador pode ser substituída por uma equivalente, o que desloca levemente o espaçamento. Documentos que usam as fontes comuns do Office não têm esse problema. Se o alinhamento for crítico — um currículo de uma página, por exemplo — confira o resultado antes de enviar.</p>
+
+      <h2>Sem cadastro, sem marca d’água, sem servidor</h2>
+      <p>A ferramenta é gratuita, não pede conta e não escreve marca d’água no resultado. E, diferentemente dos conversores online mais conhecidos, ela não copia o seu documento para um servidor: o processamento é feito pelo próprio navegador. Um currículo ou um contrato não precisa passar pela infraestrutura de ninguém para virar PDF.</p>
+    `
+  },
+  {
+    en: 'excel-to-pdf',
+    slug: 'excel-para-pdf',
+    name: 'Excel para PDF',
+    title: 'Converter Excel para PDF Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter planilhas Excel (.xlsx, .xls, .csv) para PDF direto no navegador, com tabelas reais e texto selecionável. A planilha não sai do seu computador.',
+    headline: 'Excel para PDF.',
+    subtitle: 'Converta planilhas em PDF com tabelas de verdade e cabeçalho repetido em cada página, sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter Excel para PDF, arraste uma planilha .xlsx, .xls ou .csv para a ferramenta acima e baixe o PDF. Cada aba é desenhada como uma tabela real, com bordas e um cabeçalho sombreado que se repete em todas as páginas, e o texto continua selecionável e pesquisável. Todas as abas da pasta de trabalho entram por padrão. A conversão roda no seu navegador e a planilha não sai do seu computador.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'como converter excel para pdf',
+        answer: 'Arraste a planilha para a ferramenta no topo da página e baixe o PDF. Cada aba vira uma tabela com bordas, começando em uma página própria com o nome da aba como título. Por padrão todas as abas são incluídas, mas dá para converter apenas a que você está visualizando.'
+      },
+      {
+        question: 'A área de impressão definida no Excel é respeitada?',
+        answer: 'Não. O conversor lê o intervalo utilizado da planilha — da primeira à última célula com conteúdo — e não a área de impressão configurada no Excel. Colunas ocultas também são impressas. Para controlar exatamente o que aparece no PDF, apague as linhas e colunas que não devem sair antes de converter, em vez de escondê-las.'
+      },
+      {
+        question: 'O que acontece com planilhas muito largas?',
+        answer: 'As colunas são redimensionadas em conjunto para caber na página, em vez de serem cortadas na margem direita, e o texto quebra em várias linhas dentro da célula. A orientação paisagem é o padrão justamente por isso. Tabelas longas são paginadas automaticamente e o cabeçalho se repete no topo de cada página.'
+      },
+      {
+        question: 'As fórmulas aparecem no PDF?',
+        answer: 'Não — o PDF mostra os valores calculados, não as fórmulas que os produziram. Para uma planilha de preços ou de custos isso costuma ser desejável: o destinatário vê os números sem ver a lógica por trás deles.'
+      },
+      {
+        question: 'A planilha é copiada para algum servidor?',
+        answer: 'Não. A leitura da planilha e a geração do PDF acontecem no seu navegador, no seu dispositivo. Planilhas costumam guardar o que uma empresa tem de mais sensível — folha de pagamento, tabela de preços, lista de clientes — e nada disso é copiado para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>Converter Excel para PDF com tabelas de verdade</h2>
+      <p>A maior parte dos problemas ao usar um <strong>conversor de excel para pdf</strong> aparece na hora de imprimir: colunas cortadas na margem, cabeçalho que some a partir da segunda página, texto virando imagem. Aqui cada aba é desenhada como uma tabela vetorial, com bordas e um cabeçalho sombreado que se repete em todas as páginas — e o texto continua selecionável e pesquisável, não é uma captura de tela.</p>
+      <p>Passar <strong>de excel para pdf</strong> inclui, por padrão, todas as abas da pasta de trabalho, cada uma começando em uma página nova com o nome da aba como título. Se você precisa de uma aba só, há a opção de converter apenas a que está sendo visualizada.</p>
+
+      <h2>O que o conversor lê — e o que ele ignora</h2>
+      <p>Vale saber antes de converter: a ferramenta lê o <strong>intervalo utilizado</strong> da planilha, ou seja, tudo entre a primeira e a última célula com conteúdo. Ela não usa a área de impressão que você configurou no Excel, e colunas ocultas continuam aparecendo no PDF. Para excluir algo do resultado, apague as linhas e colunas em vez de ocultá-las. Dizemos isso abertamente porque descobrir esse comportamento depois de enviar um relatório é bem pior.</p>
+
+      <h2>Seus números não saem do seu computador</h2>
+      <p>Planilhas concentram o que há de mais sensível em uma operação: salários, margens, listas de clientes. Um conversor que copia o arquivo para um servidor transforma isso em um problema de confiança. Esta ferramenta processa a planilha dentro do navegador, no seu próprio dispositivo — e o código é aberto, então a afirmação pode ser verificada em vez de aceita.</p>
+    `
+  }
+];
+
+export const ptTools: PtTool[] = [...ptToolsSeed, ...ptToolsBatch1];
 
 /**
  * Guides live at `/pt/guias/<slug>/`. Empty until the keyword-led wave: the

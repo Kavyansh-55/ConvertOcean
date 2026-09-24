@@ -46,6 +46,9 @@ const PAIRS = [
   { pt: 'comprimir-pdf', en: 'compress-pdf' },
   { pt: 'juntar-pdf', en: 'merge-pdf' },
   { pt: 'jpg-para-pdf', en: 'image-to-pdf' },
+  { pt: 'pdf-para-word', en: 'pdf-to-word' },
+  { pt: 'word-para-pdf', en: 'word-to-pdf' },
+  { pt: 'excel-para-pdf', en: 'excel-to-pdf' },
 ];
 
 let bad = 0;
