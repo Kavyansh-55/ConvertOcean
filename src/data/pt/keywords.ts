@@ -101,6 +101,30 @@ export const excluded: { term: string; why: string }[] = [
  * that ranks for "como converter pdf para powerpoint" and then cannot do it
  * earns a bounce and teaches Google the page does not satisfy the query.
  */
+/**
+ * Real demand, wrong page type: these want CODE, not a converter.
+ *
+ * `converter csv para json javascript`, `converter json para csv python`,
+ * `converter xml para json java` — someone typing a language name is looking
+ * for a snippet to paste into their editor, not for a web tool to click. Put
+ * them on a converter page and the visitor bounces immediately, which teaches
+ * Google the page does not answer the query.
+ *
+ * They belong on a guide. The English site already has exactly the right one,
+ * `/guides/convert-csv-to-json-in-code/`, so the Portuguese home for these is
+ * its translation rather than any tool page in ./index.ts.
+ *
+ * Every one is <100 volume, so this is a tidy-up for whenever the guides wave
+ * happens — not a reason to write a guide now.
+ */
+export const codeIntent: { term: string; kd: string; volume: string; lang: string }[] = [
+  { term: 'converter csv para json javascript', kd: 'n/a', volume: '<100', lang: 'JavaScript' },
+  { term: 'converter json para csv python', kd: 'n/a', volume: '<100', lang: 'Python' },
+  { term: 'converter xml para json c#', kd: 'n/a', volume: '<100', lang: 'C#' },
+  { term: 'converter xml para json java', kd: 'n/a', volume: '<100', lang: 'Java' },
+  { term: 'xml para json jquery', kd: 'n/a', volume: '<100', lang: 'jQuery' }
+];
+
 export const noToolYet: { term: string; kd: string; volume: string; needs: string }[] = [
   { term: 'como converter pdf para ppt', kd: 'n/a', volume: '<100', needs: 'pdf-to-ppt' },
   { term: 'como posso converter pdf para ppt online?', kd: 'n/a', volume: '<100', needs: 'pdf-to-ppt' },
@@ -288,6 +312,93 @@ export const pageKeywords: PageKeywords[] = [
     questions: [
       { term: 'como converter powerpoint para pdf', kd: 'n/a', volume: '<100' }
     ]
+  },
+
+  /* ---------------------------------------------------------------------
+     Batch 3 — data/developer converters, 2026-09-24.
+
+     The first batch where the numbers argue against the work. csv↔json comes
+     back HARD at <100 volume, which is the worst pairing there is: a contested
+     SERP with nothing behind it. Those SERPs are Stack Overflow, dev blogs and
+     established tooling, and no amount of on-page work moves a converter into
+     them. The pages are still built, because the goal is a complete site in
+     Portuguese and a visitor who lands on one still needs it to work — but
+     they should carry no ranking expectation, and they are not where effort
+     goes next. The xlsx↔csv pair is the only genuinely winnable set here.
+     --------------------------------------------------------------------- */
+  {
+    slug: 'xlsx-para-csv',
+    en: 'xlsx-to-csv',
+    primary: 'xlsx para csv',
+    phrase: [
+      { term: 'converter xlsx para csv', kd: 'Easy', volume: '>100' },
+      { term: 'xlsx para csv', kd: 'Easy', volume: '>100' },
+      { term: 'converter arquivo xlsx para csv', kd: 'Easy', volume: '<100' },
+      { term: 'conversor de xlsx para csv', kd: 'Easy', volume: '<100' },
+      { term: 'converter de xlsx para csv', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter xlsx para csv', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'csv-para-xlsx',
+    en: 'csv-to-xlsx',
+    primary: 'csv para xlsx',
+    phrase: [
+      { term: 'csv para xlsx', kd: 'Easy', volume: '>100' },
+      { term: 'converter csv para xlsx', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de csv para xlsx', kd: 'Easy', volume: '>100' },
+      { term: 'conversor csv para xlsx', kd: 'n/a', volume: '>100' }
+    ],
+    questions: [
+      { term: 'como converter csv para xlsx', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'csv-para-json',
+    en: 'csv-to-json',
+    primary: 'csv para json',
+    phrase: [
+      { term: 'csv para json', kd: 'Hard', volume: '<100' },
+      { term: 'converter csv para json', kd: 'Hard', volume: '<100' },
+      { term: 'conversor de csv para json', kd: 'n/a', volume: '<100' },
+      { term: 'converter arquivo csv para json', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'json-para-csv',
+    en: 'json-to-csv',
+    primary: 'json para csv',
+    phrase: [
+      { term: 'json para csv', kd: 'Hard', volume: '>100' },
+      { term: 'converter json para csv', kd: 'Hard', volume: '<100' },
+      { term: 'conversor de json para csv', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter json para csv', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'xml-para-json',
+    en: 'xml-to-json',
+    primary: 'xml para json',
+    phrase: [
+      { term: 'converter xml para json', kd: 'Easy', volume: '<100' },
+      { term: 'xml para json', kd: 'Easy', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'json-para-xlsx',
+    en: 'json-to-xlsx',
+    primary: 'json para xlsx',
+    phrase: [
+      { term: 'json para xlsx', kd: 'n/a', volume: '<100' },
+      { term: 'converter json para xlsx', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
   }
 ];
 

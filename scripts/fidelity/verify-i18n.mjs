@@ -54,6 +54,12 @@ const PAIRS = [
   { pt: 'word-para-txt', en: 'docx-to-txt' },
   { pt: 'powerpoint-para-pdf', en: 'pptx-to-pdf' },
   { pt: 'ppt-para-pdf', en: 'ppt-to-pdf' },
+  { pt: 'xlsx-para-csv', en: 'xlsx-to-csv' },
+  { pt: 'csv-para-xlsx', en: 'csv-to-xlsx' },
+  { pt: 'csv-para-json', en: 'csv-to-json' },
+  { pt: 'json-para-csv', en: 'json-to-csv' },
+  { pt: 'xml-para-json', en: 'xml-to-json' },
+  { pt: 'json-para-xlsx', en: 'json-to-xlsx' },
 ];
 
 let bad = 0;

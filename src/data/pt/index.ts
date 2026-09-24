@@ -607,7 +607,285 @@ const ptToolsBatch2: PtTool[] = [
   }
 ];
 
-export const ptTools: PtTool[] = [...ptToolsSeed, ...ptToolsBatch1, ...ptToolsBatch2];
+/**
+ * ---------------------------------------------------------------------------
+ * Keyword-led batch 3 — data and developer converters, 2026-09-24.
+ * ---------------------------------------------------------------------------
+ *
+ * Built for completeness, not for ranking. csv↔json comes back HARD at <100
+ * volume against SERPs made of Stack Overflow and dev tooling; xml↔json and
+ * json→xlsx have effectively no demand at all. Only the xlsx↔csv pair is
+ * winnable. These pages exist because someone who arrives still needs the tool
+ * to work and to read in their own language — the honest framing is in
+ * ./keywords.ts, so nobody later reads a thin page here as a failure.
+ *
+ * Language-modifier queries (`converter json para csv python`) are NOT answered
+ * here. Someone typing a language name wants a snippet, not a web tool; they
+ * belong to a guide. See `codeIntent` in ./keywords.ts.
+ */
+const ptToolsBatch3: PtTool[] = [
+  {
+    en: 'xlsx-to-csv',
+    slug: 'xlsx-para-csv',
+    name: 'XLSX para CSV',
+    title: 'Converter XLSX para CSV Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter planilhas Excel (.xlsx, .xls) em arquivos CSV limpos direto no navegador, com aspas e vírgulas tratadas corretamente.',
+    headline: 'XLSX para CSV.',
+    subtitle: 'Transforme uma planilha Excel em um CSV limpo, pronto para scripts e bancos de dados, sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter XLSX para CSV, selecione uma planilha .xlsx ou .xls na ferramenta acima e baixe a primeira aba como um CSV limpo, separado por vírgulas, que qualquer banco de dados, script ou ferramenta consegue ler. Valores que contêm vírgulas ou aspas são escapados corretamente. A conversão acontece no seu navegador e o arquivo não sai do seu computador.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'como converter xlsx para csv',
+        answer: 'Arraste a planilha para a ferramenta no topo da página e baixe o arquivo .csv. A primeira aba é exportada, com os valores separados por vírgula e a codificação UTF-8, pronta para importar em um banco de dados ou processar em um script.'
+      },
+      {
+        question: 'O que acontece com as outras abas da planilha?',
+        answer: 'O formato CSV guarda uma única tabela — não existe conceito de abas dentro de um .csv. Por isso a primeira aba é exportada. Se você precisa de outra, mova-a para a primeira posição no Excel antes de converter, ou converta uma vez por aba.'
+      },
+      {
+        question: 'Valores com vírgula dentro estragam o arquivo?',
+        answer: 'Não. Campos que contêm vírgulas, aspas ou quebras de linha são colocados entre aspas e escapados segundo a convenção padrão de CSV, então continuam sendo um campo só ao serem lidos. É justamente onde exportações mal feitas costumam quebrar uma importação.'
+      },
+      {
+        question: 'As fórmulas são exportadas?',
+        answer: 'O CSV recebe os valores calculados, não as fórmulas. O formato só armazena texto, então não haveria onde guardar uma fórmula — e para alimentar um banco de dados ou um script é o resultado que interessa.'
+      },
+      {
+        question: 'A planilha é copiada para algum servidor?',
+        answer: 'Não. A leitura da planilha e a geração do CSV acontecem no seu navegador, no seu dispositivo, e o arquivo não é copiado para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>De planilha para um CSV que não quebra na importação</h2>
+      <p>Um <strong>conversor de xlsx para csv</strong> parece trivial até a primeira importação falhar. O problema quase nunca é a conversão em si: é um campo com vírgula dentro, um valor com aspas, uma quebra de linha no meio de uma célula de observações. Sem escapamento correto, a linha se parte e o banco de dados recusa o arquivo.</p>
+      <p>Aqui o escapamento segue a convenção padrão de CSV, então <strong>converter arquivo xlsx para csv</strong> devolve algo que scripts, bancos e ferramentas de BI leem sem ajuste manual.</p>
+
+      <h2>Uma tabela por arquivo</h2>
+      <p>O CSV não tem abas: é uma tabela e ponto. Ao passar <strong>de xlsx para csv</strong>, a primeira aba é a exportada. Se a que você precisa está em outra posição, mova-a para o início no Excel antes de converter — é mais rápido do que qualquer alternativa.</p>
+
+      <h2>Dados sensíveis não precisam sair da máquina</h2>
+      <p>Exportações para CSV costumam ser o passo anterior a uma importação em sistema: cadastro de clientes, base de produtos, folha de pagamento. A conversão acontece dentro do navegador, no seu dispositivo, e nada é copiado para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'csv-to-xlsx',
+    slug: 'csv-para-xlsx',
+    name: 'CSV para XLSX',
+    title: 'Converter CSV para XLSX Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter arquivos CSV em planilhas Excel (.xlsx) direto no navegador, com as colunas já separadas e sem assistente de importação.',
+    headline: 'CSV para XLSX.',
+    subtitle: 'Transforme um CSV em uma planilha Excel de verdade, com as colunas já separadas, sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter CSV para XLSX, selecione o arquivo .csv na ferramenta acima e baixe uma planilha .xlsx nativa, que abre no Excel, no Google Sheets ou no LibreOffice com as colunas já separadas — sem assistente de importação. Campos entre aspas e vírgulas dentro dos valores são tratados corretamente. Tudo é processado no seu navegador.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'como converter csv para xlsx',
+        answer: 'Arraste o arquivo .csv para a ferramenta no topo da página e baixe a planilha .xlsx. Ela abre já com as colunas separadas, sem precisar passar pelo assistente "Texto para colunas" do Excel.'
+      },
+      {
+        question: 'Por que o Excel às vezes abre meu CSV tudo em uma coluna?',
+        answer: 'Porque o Excel usa o separador de listas do sistema operacional. Em configurações em português do Brasil esse separador costuma ser o ponto e vírgula, então um CSV separado por vírgula é lido como uma coluna só. Converter para .xlsx antes resolve o problema de uma vez, porque o arquivo já chega com as colunas definidas.'
+      },
+      {
+        question: 'Acentos e caracteres especiais são preservados?',
+        answer: 'Sim, desde que o CSV esteja em UTF-8, que é o padrão atual. A planilha gerada guarda o texto na própria estrutura do arquivo, então nomes com acento, cedilha e til deixam de depender de o Excel adivinhar a codificação — que é a causa mais comum de "Ã§" no lugar de "ç".'
+      },
+      {
+        question: 'Números e datas viram texto na planilha?',
+        answer: 'Os valores são gravados em células com o tipo apropriado sempre que possível, e não como texto puro, então dá para somar, ordenar e filtrar sem converter nada depois. Vale conferir colunas de datas, cujo formato de origem no CSV pode ser ambíguo.'
+      },
+      {
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. A leitura do CSV e a montagem da planilha acontecem no seu navegador, no seu dispositivo, e nada é copiado para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>O CSV que abre torto no Excel</h2>
+      <p>O motivo mais comum para procurar um <strong>conversor de csv para xlsx</strong> não é o formato — é o Excel abrindo tudo empilhado em uma coluna só. Isso acontece porque o Excel usa o separador de listas do sistema, que em configurações brasileiras costuma ser o ponto e vírgula, enquanto o arquivo está separado por vírgula.</p>
+      <p>Converter antes resolve de forma definitiva: o .xlsx já carrega a estrutura das colunas dentro dele, então não há o que o Excel adivinhar.</p>
+
+      <h2>Acentuação que não vira símbolo estranho</h2>
+      <p>O segundo problema clássico é a codificação. Um CSV é só texto, e cabe ao programa deduzir se está em UTF-8 ou em outra tabela — quando erra, "ç" vira "Ã§". Ao usar um <strong>conversor csv para xlsx</strong>, o texto passa a ser armazenado na estrutura da planilha, e a adivinhação deixa de existir.</p>
+
+      <h2>Células com tipo, não texto</h2>
+      <p><strong>Converter csv para xlsx</strong> aqui grava números como números e não como texto, então somar, ordenar e filtrar funciona imediatamente. Vale conferir colunas de data, cujo formato de origem pode ser ambíguo no CSV. E, como todo o resto do site, a conversão acontece no seu navegador — a base de clientes não precisa passar por servidor nenhum.</p>
+    `
+  },
+  {
+    en: 'csv-to-json',
+    slug: 'csv-para-json',
+    name: 'CSV para JSON',
+    title: 'Converter CSV para JSON Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter arquivos CSV em JSON estruturado direto no navegador: cada linha vira um objeto e os cabeçalhos viram chaves.',
+    headline: 'CSV para JSON.',
+    subtitle: 'Cada linha da planilha vira um objeto JSON, com os cabeçalhos como chaves — processado no seu próprio navegador.',
+    quickAnswer: 'Para converter CSV para JSON, selecione um arquivo .csv na ferramenta acima: cada linha da planilha vira um objeto JSON, com os cabeçalhos das colunas como chaves, reunidos em um único array estruturado. A leitura acontece inteiramente no seu navegador, o que torna a ferramenta segura para exportações confidenciais, fixtures de API e arquivos de configuração.',
+    category: 'Ferramentas para Desenvolvedores',
+    faqs: [
+      {
+        question: 'Como o CSV é mapeado para JSON?',
+        answer: 'A primeira linha é tratada como cabeçalho e cada uma das suas células vira uma chave. Cada linha seguinte vira um objeto com essas chaves, e todos os objetos são reunidos em um array. É o formato que a maioria das APIs e bibliotecas espera receber.'
+      },
+      {
+        question: 'Campos com vírgula dentro são tratados corretamente?',
+        answer: 'Sim. Valores entre aspas contendo vírgulas, aspas escapadas ou quebras de linha são interpretados como um campo único, segundo a convenção padrão de CSV — e não partidos em vários campos, que é onde conversões improvisadas costumam falhar.'
+      },
+      {
+        question: 'Os números viram number ou string no JSON?',
+        answer: 'O CSV não carrega informação de tipo: para o arquivo, tudo é texto. Se o seu consumidor exige tipos específicos, converta-os depois de carregar o JSON, ou valide o resultado antes de usar em produção.'
+      },
+      {
+        question: 'Dá para usar com dados confidenciais?',
+        answer: 'Sim, e é o motivo de a ferramenta rodar como roda. A leitura e a conversão acontecem na memória do seu navegador, e o arquivo não é copiado para nenhum servidor — exportações de banco de dados e listas de clientes não passam por infraestrutura de terceiros.'
+      },
+      {
+        question: 'Funciona sem internet?',
+        answer: 'Sim. Depois que a página carrega uma vez, a conversão continua funcionando offline, porque tudo o que ela precisa já está no navegador.'
+      }
+    ],
+    content: `
+      <h2>De planilha para um array de objetos</h2>
+      <p>Um <strong>conversor de csv para json</strong> resolve a ponte mais comum entre o mundo das planilhas e o do código. O CSV é uma tabela plana; o JSON é o formato que quase toda API, biblioteca e banco de dados moderno espera. <strong>Converter arquivo csv para json</strong> transforma a primeira linha em chaves e cada linha seguinte em um objeto dentro de um array.</p>
+
+      <h2>Onde a conversão costuma dar errado</h2>
+      <p>Quase sempre no escapamento. Um campo de endereço com vírgula, uma observação com aspas, um texto com quebra de linha no meio — sem tratamento correto, cada um deles parte a linha e produz um JSON silenciosamente errado. Aqui o tratamento segue a convenção padrão de CSV, então o campo chega inteiro.</p>
+      <p>Vale lembrar que o CSV não guarda tipos: tudo chega como texto. Se o destino exige números ou booleanos, a conversão de tipo é um passo seu, depois de carregar o JSON.</p>
+
+      <h2>Exportações confidenciais</h2>
+      <p>Os CSVs que viram JSON costumam ser exportações de banco de dados, fixtures de teste e arquivos de configuração — material que não deveria circular. Tudo aqui é processado dentro do navegador, no seu dispositivo, e o código aberto permite conferir a afirmação em vez de confiar nela.</p>
+    `
+  },
+  {
+    en: 'json-to-csv',
+    slug: 'json-para-csv',
+    name: 'JSON para CSV',
+    title: 'Converter JSON para CSV Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter arrays JSON em planilhas CSV direto no navegador: as chaves viram cabeçalhos e cada objeto vira uma linha.',
+    headline: 'JSON para CSV.',
+    subtitle: 'Achate um array de objetos JSON em uma planilha CSV, sem que os dados saiam do seu computador.',
+    quickAnswer: 'Para converter JSON para CSV, selecione um array de objetos JSON e a ferramenta o achata em uma planilha separada por vírgulas: as chaves dos objetos viram cabeçalhos de coluna e cada objeto vira uma linha. A conversão acontece no seu navegador, então respostas de API e exportações de banco de dados não são copiadas para nenhum servidor.',
+    category: 'Ferramentas para Desenvolvedores',
+    faqs: [
+      {
+        question: 'como converter json para csv',
+        answer: 'Cole ou selecione um array de objetos JSON na ferramenta acima e baixe o .csv. As chaves viram os cabeçalhos das colunas, cada objeto vira uma linha, e o arquivo abre direto em Excel, Google Sheets ou qualquer script.'
+      },
+      {
+        question: 'O que acontece com objetos aninhados?',
+        answer: 'O CSV é plano por natureza — não existe hierarquia dentro de uma célula. Estruturas aninhadas precisam ser achatadas para caber em colunas, o que significa que um JSON profundamente aninhado nem sempre tem uma representação tabular fiel. Arrays de objetos simples, o formato típico de uma resposta de API, convertem sem perda.'
+      },
+      {
+        question: 'E se os objetos tiverem chaves diferentes entre si?',
+        answer: 'As colunas do CSV são a união das chaves encontradas, e os objetos que não possuem determinada chave ficam com a célula vazia. Vale conferir o cabeçalho do resultado quando a origem é uma API que omite campos nulos.'
+      },
+      {
+        question: 'Valores com vírgula quebram o arquivo?',
+        answer: 'Não. Textos contendo vírgulas, aspas ou quebras de linha são escapados conforme a convenção padrão de CSV, de modo que continuam sendo um campo único quando o arquivo for lido.'
+      },
+      {
+        question: 'Respostas de API são copiadas para algum servidor?',
+        answer: 'Não. A conversão acontece na memória do seu navegador, no seu dispositivo. Respostas de API e exportações de banco de dados frequentemente contêm dados pessoais, e nenhum deles é copiado para lugar nenhum.'
+      }
+    ],
+    content: `
+      <h2>Do array de objetos para a planilha</h2>
+      <p>Um <strong>conversor de json para csv</strong> costuma ser usado no fim de um caminho: você recebeu uma resposta de API ou exportou uma coleção do banco, e agora alguém precisa olhar aquilo em uma planilha. <strong>Converter json para csv</strong> achata o array — as chaves viram cabeçalhos, cada objeto vira uma linha.</p>
+
+      <h2>O limite: hierarquia não cabe em uma tabela</h2>
+      <p>Vale dizer isto de forma direta, porque é a frustração mais comum. JSON representa estruturas aninhadas; CSV representa uma grade. Um objeto dentro de outro objeto não tem tradução natural para uma célula. Arrays de objetos simples — o formato típico de uma listagem de API — convertem sem perda; documentos profundamente aninhados exigem decidir antes o que vira coluna.</p>
+
+      <h2>Chaves que variam entre os objetos</h2>
+      <p>Quando alguns objetos trazem campos que outros não têm, as colunas resultantes são a união de todas as chaves, e as células ausentes ficam vazias. APIs que omitem campos nulos produzem exatamente esse cenário, então confira o cabeçalho do arquivo gerado.</p>
+      <p>Como em todo o site, nada disso passa por um servidor: a conversão acontece dentro do seu navegador.</p>
+    `
+  },
+  {
+    en: 'xml-to-json',
+    slug: 'xml-para-json',
+    name: 'XML para JSON',
+    title: 'Converter XML para JSON Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter estruturas XML aninhadas em JSON legível direto no navegador, com XML malformado reportado como erro em vez de saída inválida.',
+    headline: 'XML para JSON.',
+    subtitle: 'Transforme estruturas XML aninhadas em JSON legível, com erros de sintaxe apontados em vez de ignorados.',
+    quickAnswer: 'Para converter XML para JSON, selecione o arquivo .xml na ferramenta acima e baixe a estrutura JSON equivalente, com os elementos mapeados para chaves e os elementos repetidos para arrays. XML malformado é detectado por uma análise real de DOM e reportado como erro, em vez de produzir uma saída inválida — o que torna a ferramenta também uma forma rápida de validar o arquivo. Tudo roda no seu navegador.',
+    category: 'Ferramentas para Desenvolvedores',
+    faqs: [
+      {
+        question: 'Como os elementos XML viram JSON?',
+        answer: 'Cada elemento vira uma chave. Elementos repetidos com o mesmo nome dentro do mesmo pai viram um array, que é a tradução natural de uma lista em XML. A hierarquia do documento é preservada como objetos aninhados.'
+      },
+      {
+        question: 'O que acontece se o XML estiver malformado?',
+        answer: 'O erro é apontado, não ignorado. A leitura usa uma análise real de DOM, então uma tag não fechada ou um caractere inválido interrompe a conversão com uma mensagem, em vez de gerar um JSON silenciosamente incompleto. Na prática, isso faz da ferramenta um validador rápido de XML.'
+      },
+      {
+        question: 'Os atributos XML são preservados?',
+        answer: 'Sim. Atributos e conteúdo de texto são ambos representados na estrutura JSON resultante — uma distinção que existe em XML e não em JSON, e que por isso precisa de uma convenção explícita para não se perder.'
+      },
+      {
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. A análise do XML e a geração do JSON acontecem no navegador, no seu dispositivo. Arquivos de configuração, respostas SOAP e notas fiscais eletrônicas não são copiados para lugar nenhum.'
+      }
+    ],
+    content: `
+      <h2>Dois modelos de dados diferentes</h2>
+      <p>Usar um <strong>conversor xml para json</strong> não é uma troca de sintaxe: são modelos distintos. XML separa atributos de conteúdo de texto e permite elementos repetidos com o mesmo nome; JSON tem objetos, arrays e valores, sem noção de atributo. <strong>Converter xml para json</strong> exige, portanto, uma convenção clara — elementos viram chaves, repetições viram arrays, atributos são preservados de forma explícita.</p>
+
+      <h2>Um validador disfarçado de conversor</h2>
+      <p>A leitura é feita por uma análise real de DOM, não por manipulação de texto, então um XML malformado falha de forma visível em vez de produzir um resultado parcial. Se o objetivo é apenas descobrir por que um arquivo está sendo recusado por outro sistema, colá-lo aqui costuma responder em segundos.</p>
+
+      <h2>Processamento local</h2>
+      <p>Arquivos XML no Brasil frequentemente são notas fiscais eletrônicas, integrações e configurações de sistema — conteúdo que não deveria ser enviado a um serviço qualquer para uma conversão trivial. Aqui tudo acontece dentro do navegador, no seu dispositivo.</p>
+    `
+  },
+  {
+    en: 'json-to-xlsx',
+    slug: 'json-para-xlsx',
+    name: 'JSON para XLSX',
+    title: 'Converter JSON para XLSX Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter arrays JSON em planilhas Excel (.xlsx) direto no navegador, com células tipadas prontas para ordenar e filtrar.',
+    headline: 'JSON para XLSX.',
+    subtitle: 'Transforme um array de objetos JSON em uma planilha Excel pronta para ordenar e filtrar, sem que os dados saiam do seu computador.',
+    quickAnswer: 'Para converter JSON para XLSX, selecione um array de objetos JSON na ferramenta acima e baixe uma planilha .xlsx nativa. As chaves dos objetos viram cabeçalhos de coluna e cada objeto vira uma linha, com células tipadas em vez de texto puro, então o arquivo abre pronto para ordenar, filtrar e usar em tabelas dinâmicas. A conversão roda inteiramente no seu navegador.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'Como o JSON vira uma planilha?',
+        answer: 'As chaves dos objetos viram os cabeçalhos das colunas e cada objeto do array vira uma linha. O resultado é um .xlsx nativo, que abre no Excel, no Google Sheets e no LibreOffice sem assistente de importação.'
+      },
+      {
+        question: 'As células saem tipadas ou como texto?',
+        answer: 'Números são gravados como números e não como texto, então somar, ordenar e criar tabelas dinâmicas funciona imediatamente, sem precisar reconverter coluna por coluna depois de abrir o arquivo.'
+      },
+      {
+        question: 'E se o JSON tiver objetos aninhados?',
+        answer: 'Uma planilha é uma grade plana, sem hierarquia dentro da célula. Arrays de objetos simples — o formato típico de uma resposta de API — convertem diretamente. Estruturas profundamente aninhadas precisam ser achatadas antes, porque não existe representação tabular fiel para elas.'
+      },
+      {
+        question: 'Os dados são copiados para algum servidor?',
+        answer: 'Não. A leitura do JSON e a montagem da planilha acontecem no seu navegador, no seu dispositivo, e nada é copiado para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>Quando os dados precisam sair do código e virar planilha</h2>
+      <p>Um <strong>conversor json para xlsx</strong> costuma ser necessário no momento em que alguém fora da equipe técnica precisa olhar os dados. <strong>Converter json para xlsx</strong> entrega uma planilha nativa, com cabeçalhos e células tipadas, em vez de um CSV que ainda precisará ser interpretado pelo Excel.</p>
+
+      <h2>Por que .xlsx e não .csv</h2>
+      <p>O CSV é texto puro: o Excel precisa adivinhar o separador e a codificação, e é aí que colunas se juntam e acentos viram símbolos. O .xlsx carrega a estrutura e os tipos dentro do próprio arquivo, então abre certo na primeira tentativa — inclusive com acentuação preservada.</p>
+
+      <h2>O limite da tabela</h2>
+      <p>Arrays de objetos simples convertem sem perda. Estruturas aninhadas não têm tradução direta para linhas e colunas e precisam ser achatadas antes. E, como em todo o site, os dados são processados dentro do navegador e não são copiados para nenhum servidor.</p>
+    `
+  }
+];
+
+export const ptTools: PtTool[] = [
+  ...ptToolsSeed,
+  ...ptToolsBatch1,
+  ...ptToolsBatch2,
+  ...ptToolsBatch3
+];
 
 /**
  * Guides live at `/pt/guias/<slug>/`. Empty until the keyword-led wave: the
