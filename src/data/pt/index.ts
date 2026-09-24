@@ -1565,6 +1565,183 @@ const ptToolsBatch7: PtTool[] = [
   }
 ];
 
+/**
+ * ---------------------------------------------------------------------------
+ * Keyword-led batch 8 — the business tools, 2026-09-24.
+ * ---------------------------------------------------------------------------
+ *
+ * The batch that changed how the remaining tools should be named. `gerador de
+ * recibos` is <100. `modelo de recibo` is EASY at >10,000. Same tool, same job,
+ * a hundred times the demand — because Brazilians search for a MODEL, not a
+ * GENERATOR. The slugs here follow the job, not the English tool name.
+ *
+ * Nothing on these pages claims to produce a nota fiscal. That is a regulated
+ * electronic document issued through SEFAZ; a generated PDF is not one and
+ * never becomes one. /pt/modelo-de-fatura/ says so plainly, because a MEI who
+ * thinks a website issued their nota fiscal has a tax problem. See
+ * `regulatedDocument` and `fraudIntent` in ./keywords.ts.
+ */
+const ptToolsBatch8: PtTool[] = [
+  {
+    en: 'receipt-generator',
+    slug: 'modelo-de-recibo',
+    name: 'Modelo de Recibo',
+    title: 'Modelo de Recibo Online Grátis — Preencher e Baixar em PDF | ConvertOcean',
+    description: 'Preencha um modelo de recibo de pagamento, prestação de serviço, aluguel ou compra e venda e baixe em PDF. Seus dados não saem do seu computador.',
+    headline: 'Modelo de Recibo.',
+    subtitle: 'Preencha os dados, veja o recibo pronto na hora e baixe em PDF — sem cadastro e sem que nada saia do seu computador.',
+    quickAnswer: 'Para fazer um recibo, preencha na ferramenta acima os dados de quem recebe, de quem paga, o valor, a forma de pagamento e a descrição do que foi pago, e baixe o recibo em PDF no tamanho A4. Diferente da fatura, que pede o pagamento, o recibo confirma que ele já foi feito. Tudo é gerado dentro do seu navegador: valores, nomes e dados de clientes não saem do seu dispositivo.',
+    category: 'Ferramentas Empresariais',
+    faqs: [
+      {
+        question: 'como emitir recibo',
+        answer: 'Preencha os campos na ferramenta acima — quem recebeu, quem pagou, valor, data, forma de pagamento e a que se refere — e baixe o PDF. O recibo aparece pronto na tela enquanto você digita, então dá para conferir antes de gerar. Não é preciso cadastro nem instalar nada.'
+      },
+      {
+        question: 'como emitir um recibo de pagamento',
+        answer: 'Um recibo de pagamento precisa de cinco coisas para ter validade prática: identificação de quem recebeu (nome e CPF ou CNPJ), identificação de quem pagou, o valor em números e por extenso, a descrição do que foi pago e a data. A ferramenta pede todos esses campos. Guarde uma cópia: o recibo é a prova de quem pagou, e a segunda via costuma ser cobrada justamente por quem pagou.'
+      },
+      {
+        question: 'como emitir um recibo',
+        answer: 'Recibo simples, de aluguel, de prestação de serviço ou de compra e venda seguem a mesma estrutura — o que muda é a descrição do que foi pago. Descreva com precisão: "aluguel referente a setembro de 2026" vale mais do que "pagamento". Uma descrição vaga é o que torna um recibo inútil em uma discussão posterior.'
+      },
+      {
+        question: 'como emitir recibo de compra e venda',
+        answer: 'Em uma compra e venda, o recibo deve identificar o bem com clareza — modelo, número de série, placa, o que for aplicável — além do valor e das partes. É esse detalhe que liga o pagamento ao objeto específico. Para bens com registro, como veículos, o recibo não substitui a transferência oficial: ele comprova o pagamento, não a propriedade.'
+      },
+      {
+        question: 'como emitir recibo mei',
+        answer: 'O MEI pode emitir recibo normalmente, mas atenção à diferença: recibo não substitui nota fiscal. Para vendas a pessoa jurídica, o MEI é obrigado a emitir nota fiscal, que sai pelo sistema da prefeitura ou pelo portal do Simples Nacional. O recibo serve para registrar pagamentos em situações que não exigem nota, e como comprovante complementar.'
+      },
+      {
+        question: 'como emitir recibo de pagamento autônomo',
+        answer: 'O profissional autônomo usa o recibo para comprovar o pagamento recebido, com a descrição do serviço e o período. Quando o pagador é pessoa jurídica, geralmente há retenções na fonte — vale registrar o valor bruto, as retenções e o líquido na descrição, para que o documento bata com o que foi efetivamente pago.'
+      },
+      {
+        question: 'como criar recibo online',
+        answer: 'A ferramenta funciona inteiramente no navegador, no computador ou no celular, e não exige conta. O ponto que costuma passar despercebido: valores, nomes e CPFs digitados aqui não são copiados para nenhum servidor. Para um documento que reúne dados de duas pessoas e uma quantia, essa diferença importa.'
+      },
+      {
+        question: 'Posso baixar o modelo em Word?',
+        answer: 'Não — a saída é PDF em A4, pronto para imprimir ou enviar. A diferença é que aqui você não baixa um modelo em branco para preencher depois: preenche na tela e baixa o recibo já completo, com o valor por extenso calculado. Se o que você precisa é um arquivo editável para reutilizar, um modelo em Word é o caminho; se precisa do recibo pronto agora, este é mais rápido.'
+      }
+    ],
+    content: `
+      <h2>Recibo de pagamento, aluguel, serviço ou compra e venda</h2>
+      <p>Todos seguem a mesma estrutura — muda apenas a descrição. Um <strong>modelo de recibo simples</strong> serve para a maioria dos casos; um <strong>modelo de recibo de aluguel</strong> acrescenta o mês de referência e o imóvel; um <strong>modelo de recibo de prestação de serviço</strong> descreve o serviço e o período; um <strong>modelo de recibo de compra e venda</strong> identifica o bem.</p>
+      <p>O que todos precisam ter: quem recebeu, quem pagou, valor em números e por extenso, descrição e data.</p>
+
+      <h2>Recibo não é nota fiscal</h2>
+      <p>É a confusão mais cara nesse assunto. A nota fiscal é um documento fiscal eletrônico, emitido pelo sistema da prefeitura ou pela SEFAZ, com CNPJ e certificado digital. O recibo é um comprovante particular de pagamento. Um não substitui o outro: se a operação exige nota fiscal, emitir apenas recibo deixa a obrigação em aberto. Esta ferramenta gera recibos — não emite, e não pode emitir, nota fiscal.</p>
+
+      <h2>Descreva com precisão</h2>
+      <p>A parte que decide se o recibo vai servir depois é a descrição. "Pagamento" não identifica nada. "Aluguel referente a setembro de 2026, imóvel da Rua X, nº 10" identifica. Um recibo existe para ser usado em uma discussão futura, e vagueza é exatamente o que o inutiliza nesse momento.</p>
+
+      <h2>Os dados não saem do seu computador</h2>
+      <p>Um recibo reúne nome, CPF e valor de duas pessoas. Aqui tudo é montado dentro do navegador e nada é copiado para nenhum servidor — nem armazenado, nem rastreado.</p>
+    `
+  },
+  {
+    en: 'invoice-generator',
+    slug: 'modelo-de-fatura',
+    name: 'Modelo de Fatura',
+    title: 'Modelo de Fatura Online Grátis — Criar e Baixar em PDF | ConvertOcean',
+    description: 'Preencha um modelo de fatura de serviços, locação ou comercial e baixe em PDF. Não emite nota fiscal — e a página explica a diferença.',
+    headline: 'Modelo de Fatura.',
+    subtitle: 'Monte uma fatura com itens, valores e impostos e baixe em PDF — sem cadastro e sem que os dados saiam do seu computador.',
+    quickAnswer: 'Para criar uma fatura, preencha na ferramenta acima os seus dados, os do cliente e os itens cobrados: o documento é atualizado na tela enquanto você digita e baixa como PDF A4 pronto para imprimir. Uma fatura pede o pagamento; o recibo confirma que ele foi feito. Este documento não é uma nota fiscal e não a substitui. Tudo é gerado no seu navegador, sem que nomes, valores e dados de clientes saiam do seu dispositivo.',
+    category: 'Ferramentas Empresariais',
+    faqs: [
+      {
+        question: 'qual é o melhor software gerador de faturas',
+        answer: 'Depende do que você precisa que o documento faça. Se o objetivo é cobrar um cliente com um documento claro e profissional, uma ferramenta que monta e baixa o PDF na hora resolve, sem mensalidade e sem cadastro. Se o objetivo é cumprir obrigação fiscal, nenhuma ferramenta desse tipo serve: é preciso um emissor de nota fiscal integrado à prefeitura ou à SEFAZ.'
+      },
+      {
+        question: 'Esta fatura serve como nota fiscal?',
+        answer: 'Não, e a distinção é importante. A nota fiscal é um documento fiscal eletrônico, emitido por sistema oficial, com CNPJ e certificado digital, e é o que cumpre a obrigação tributária. A fatura gerada aqui é um documento de cobrança: identifica o serviço, os valores e o prazo. Muitos negócios usam os dois — a fatura para combinar e cobrar, a nota fiscal para formalizar.'
+      },
+      {
+        question: 'Qual a diferença entre fatura, recibo e nota fiscal?',
+        answer: 'A fatura pede o pagamento, antes de ele acontecer. O <a href="/pt/modelo-de-recibo/">recibo</a> confirma o pagamento, depois. A nota fiscal registra a operação perante o fisco e é obrigatória em boa parte das vendas e serviços. São três documentos com funções distintas, e é comum precisar de mais de um na mesma transação.'
+      },
+      {
+        question: 'Posso incluir impostos e descontos?',
+        answer: 'Sim. Os itens aceitam quantidade e valor unitário, e o total é calculado automaticamente com os acréscimos e abatimentos que você informar. Confira os percentuais antes de enviar — a ferramenta faz a conta que você pedir, mas não sabe qual regime tributário se aplica ao seu caso.'
+      },
+      {
+        question: 'Os dados do cliente ficam guardados?',
+        answer: 'Não. Nada é copiado para servidor nenhum, armazenado ou rastreado: a fatura é montada dentro do seu navegador e existe apenas no PDF que você baixa. Isso significa também que os dados não ficam salvos para a próxima fatura — a contrapartida de não manter uma base de clientes em lugar nenhum.'
+      }
+    ],
+    content: `
+      <h2>Fatura, recibo e nota fiscal são três coisas diferentes</h2>
+      <p>Vale começar por aqui, porque é onde quase toda confusão nasce no Brasil. A <strong>fatura</strong> é um documento de cobrança: descreve o que está sendo cobrado e pede o pagamento. O <a href="/pt/modelo-de-recibo/">recibo</a> comprova que o pagamento foi feito. A <strong>nota fiscal</strong> registra a operação perante o fisco — é emitida por sistema oficial, com CNPJ e certificado digital, e é ela que cumpre a obrigação tributária.</p>
+      <p>Esta ferramenta gera faturas. Ela não emite nota fiscal, e nenhum PDF gerado em um site pode fazê-lo.</p>
+
+      <h2>Para que serve uma fatura, então</h2>
+      <p>Para cobrar com clareza. Um <strong>modelo de fatura de serviços</strong> lista o que foi feito, quando e por quanto; um <strong>modelo de fatura de locação</strong> registra período e imóvel; um <strong>modelo de fatura comercial</strong> descreve os produtos, quantidades e valores. É o documento que evita a discussão sobre o que foi combinado — e, para trabalho com o exterior, frequentemente é o único documento pedido.</p>
+
+      <h2>Sem mensalidade, sem cadastro, sem base de dados</h2>
+      <p>A fatura é montada no seu navegador e existe apenas no PDF que você baixa. Nomes de clientes, valores e margens não são copiados para nenhum servidor. A contrapartida honesta: como nada é guardado, os dados não ficam salvos para a próxima fatura.</p>
+    `
+  },
+  {
+    en: 'profit-margin-calculator',
+    slug: 'calculadora-de-margem-de-lucro',
+    name: 'Calculadora de Margem de Lucro',
+    title: 'Calculadora de Margem de Lucro — Como Calcular | ConvertOcean',
+    description: 'Calcule margem de lucro, markup e lucro bruto a partir do custo e do preço de venda, com a fórmula à vista. Nada sai do seu computador.',
+    headline: 'Calculadora de Margem de Lucro.',
+    subtitle: 'Informe custo e preço de venda e veja margem, markup e lucro — com a fórmula ao lado do resultado.',
+    quickAnswer: 'Para calcular a margem de lucro, informe o custo e o preço de venda na ferramenta acima: a margem sai da divisão do lucro pelo preço de venda, multiplicada por 100. Um produto que custa R$ 60 e é vendido por R$ 100 tem lucro de R$ 40 e margem de 40%. A ferramenta mostra também o markup, que usa o mesmo lucro dividido pelo custo e dá 66,7% — são números diferentes para a mesma operação, e confundi-los é o erro mais comum.',
+    category: 'Ferramentas Empresariais',
+    faqs: [
+      {
+        question: 'como calcular margem de lucro',
+        answer: 'Margem = (preço de venda − custo) ÷ preço de venda × 100. Um item que custa R$ 60 e vende por R$ 100 dá lucro de R$ 40 sobre um preço de R$ 100, ou seja, 40% de margem. O ponto que decide tudo é o denominador: margem divide pelo PREÇO DE VENDA. Dividir pelo custo dá outra coisa — o markup.'
+      },
+      {
+        question: 'margem de lucro como calcular',
+        answer: 'Antes da fórmula, defina o que entra no custo. Margem bruta considera apenas o custo do produto ou do serviço. Margem líquida desconta também aluguel, salários, impostos e taxas de cartão. Muita gente calcula a margem bruta, acha o número confortável e descobre no fim do mês que a operação não fecha — porque o resto dos custos nunca entrou na conta.'
+      },
+      {
+        question: 'como calcular margem de lucro de um produto',
+        answer: 'Some tudo o que aquele produto específico custa até estar disponível para venda: valor de compra, frete, embalagem, impostos na entrada e comissão. Esse é o custo. A margem é a diferença entre o preço de venda e esse total, dividida pelo preço de venda. Deixar o frete de fora é o descuido mais frequente, e ele costuma comer vários pontos percentuais.'
+      },
+      {
+        question: 'como calcular margem de lucro em porcentagem',
+        answer: 'O resultado já é uma porcentagem: a divisão do lucro pelo preço de venda dá um número entre 0 e 1, e multiplicar por 100 converte. R$ 40 de lucro sobre R$ 100 de venda dá 0,4, ou 40%. A margem nunca pode passar de 100%, porque o lucro nunca é maior que o preço — se o seu cálculo passou disso, provavelmente você calculou markup.'
+      },
+      {
+        question: 'como calcular minha margem de lucro',
+        answer: 'Para o negócio inteiro em vez de um produto, use o faturamento total do período como preço de venda e a soma de todos os custos e despesas como custo. O resultado é a margem líquida do período. Fazer isso mês a mês mostra a tendência, que costuma ser mais útil do que o número isolado de um mês.'
+      },
+      {
+        question: 'como calcular margem de lucro no excel',
+        answer: 'Com o custo em A2 e o preço de venda em B2, a fórmula é =(B2-A2)/B2 e a célula deve ser formatada como porcentagem. Para markup, =(B2-A2)/A2. Se preferir não montar a planilha, a ferramenta acima faz os dois cálculos ao mesmo tempo e mostra a fórmula ao lado, para conferência.'
+      },
+      {
+        question: 'Qual a diferença entre margem e markup?',
+        answer: 'Ambos partem do mesmo lucro, mas dividem por bases diferentes: margem divide pelo preço de venda, markup divide pelo custo. Custo R$ 60, venda R$ 100: margem 40%, markup 66,7%. Quem define preço aplicando "40% de markup" achando que terá 40% de margem fica com 28,6% — e é assim que um negócio aparentemente lucrativo não fecha as contas.'
+      }
+    ],
+    content: `
+      <h2>A fórmula, e a armadilha dentro dela</h2>
+      <p><strong>Margem = (preço de venda − custo) ÷ preço de venda × 100.</strong> Simples — e é justamente por parecer simples que o erro passa despercebido.</p>
+      <p>O denominador é tudo. Margem divide pelo preço de venda; markup divide pelo custo. Um produto de custo R$ 60 vendido por R$ 100 tem margem de 40% e markup de 66,7%. São o mesmo R$ 40 de lucro descrito de duas maneiras, e trocar um pelo outro na hora de precificar derruba a margem real para 28,6%.</p>
+
+      <h2>Margem bruta e margem líquida</h2>
+      <p>A bruta considera só o custo do produto. A líquida desconta aluguel, folha, impostos, taxas de cartão e tudo o mais. Quem calcula apenas a bruta costuma achar o número confortável e descobrir no fechamento que a operação não se paga.</p>
+
+      <h2>Calcular a margem de um produto</h2>
+      <p>Para <strong>como calcular margem de lucro de um produto</strong>, o custo precisa incluir tudo até a prateleira: compra, frete, embalagem, impostos de entrada, comissão. O frete é o esquecido clássico e vale vários pontos percentuais.</p>
+
+      <h2>Seus números não saem do computador</h2>
+      <p>Custos e preços são informação sensível de qualquer negócio. O cálculo acontece dentro do navegador e nada é copiado para nenhum servidor.</p>
+    `
+  }
+];
+
 export const ptTools: PtTool[] = [
   ...ptToolsSeed,
   ...ptToolsBatch1,
@@ -1573,7 +1750,8 @@ export const ptTools: PtTool[] = [
   ...ptToolsBatch4,
   ...ptToolsBatch5,
   ...ptToolsBatch6,
-  ...ptToolsBatch7
+  ...ptToolsBatch7,
+  ...ptToolsBatch8
 ];
 
 /**

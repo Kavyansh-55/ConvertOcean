@@ -148,6 +148,59 @@ export const passwordIntent: { term: string; kd: string; volume: string }[] = [
 ];
 
 /**
+ * Fraud. Not targeted, not answered, not hinted at.
+ *
+ * `gerador de nota fiscal fake` and `gerador de nota fiscal falsa` ask for a
+ * generator of FALSE tax invoices. A nota fiscal is a legally regulated
+ * Brazilian tax document; fabricating one is document fraud and tax evasion.
+ * Both come back Easy, which only means nobody reputable competes for them.
+ *
+ * This is recorded rather than deleted so that the decision is explicit and
+ * cannot be quietly reversed by someone reading "Easy" on a keyword list.
+ */
+export const fraudIntent: { term: string; kd: string; volume: string }[] = [
+  { term: 'gerador de nota fiscal fake', kd: 'Easy', volume: '<100' },
+  { term: 'gerador de nota fiscal falsa', kd: 'Easy', volume: '<100' }
+];
+
+/**
+ * Regulated documents we cannot issue, and must not imply we can.
+ *
+ * "Emitir nota fiscal" means issuing an official electronic tax invoice. In
+ * Brazil that runs through SEFAZ or a municipal system, and requires a CNPJ, a
+ * digital certificate and government integration. Our invoice generator makes a
+ * PDF. A PDF is not a nota fiscal and never becomes one.
+ *
+ * Ranking for these would be worse than useless: a MEI who believes they have
+ * issued a nota fiscal because a website produced a document has a tax problem,
+ * not a file-conversion problem. The same applies to `receita saúde`, which is
+ * the Receita Federal's own app for health professionals' receipts.
+ *
+ * /pt/modelo-de-fatura/ states the distinction outright instead, because the
+ * confusion is real and the honest answer is genuinely useful.
+ */
+export const regulatedDocument: { term: string; kd: string; volume: string; needs: string }[] = [
+  { term: 'gerador de nota fiscal', kd: 'Hard', volume: '>100', needs: 'SEFAZ integration + CNPJ + digital certificate' },
+  { term: 'gerador de nota fiscal gratuito', kd: 'Medium', volume: '>100', needs: 'SEFAZ integration' },
+  { term: 'gerador de nota fiscal online', kd: 'n/a', volume: '<100', needs: 'SEFAZ integration' },
+  { term: 'gerador de nota fiscal para teste', kd: 'Hard', volume: '<100', needs: 'developer sandbox, not a document tool' },
+  { term: 'emitir nota fiscal online', kd: 'Hard', volume: '<100', needs: 'SEFAZ or municipal system' },
+  { term: 'como emitir nota fiscal online', kd: 'Hard', volume: '<100', needs: 'SEFAZ or municipal system' },
+  { term: 'emitir nota fiscal online grátis', kd: 'Medium', volume: '<100', needs: 'SEFAZ or municipal system' },
+  { term: 'emitir nota fiscal online gratis', kd: 'Medium', volume: '<100', needs: 'SEFAZ or municipal system' },
+  { term: 'como emitir nota fiscal online grátis', kd: 'n/a', volume: '<100', needs: 'SEFAZ or municipal system' },
+  { term: 'sistema para emitir nota fiscal online', kd: 'n/a', volume: '<100', needs: 'SEFAZ or municipal system' },
+  { term: 'emitir nota fiscal online sp mei', kd: 'n/a', volume: '<100', needs: 'São Paulo municipal system' },
+  { term: 'quem pode emitir nota fiscal paulista online', kd: 'n/a', volume: '<100', needs: 'Nota Fiscal Paulista programme' },
+  { term: 'como emitir nota fiscal eletronica online', kd: 'n/a', volume: '<100', needs: 'SEFAZ' },
+  { term: 'quem pode emitir nota fiscal online', kd: 'n/a', volume: '<100', needs: 'eligibility question, not a tool' },
+  { term: 'emitir recibo receita saude', kd: 'n/a', volume: '>100', needs: 'Receita Federal Receita Saúde app' },
+  { term: 'emitir recibo receita saúde', kd: 'n/a', volume: '>100', needs: 'Receita Federal Receita Saúde app' },
+  { term: 'como emitir recibo no receita saude', kd: 'n/a', volume: '>100', needs: 'Receita Federal Receita Saúde app' },
+  { term: 'qual o fato gerador da nota fiscal de serviço', kd: 'n/a', volume: '<100', needs: 'tax-law definition, not a tool at all' }
+];
+
+/**
  * The same word, a completely different subject: "diminuir" in Excel is
  * SUBTRACTION, not file size.
  *
@@ -211,7 +264,14 @@ export const belongsElsewhere: { term: string; kd: string; volume: string; page:
  * than quoting the query as a heading.
  */
 export const intentMismatch: { term: string; kd: string; volume: string; wants: string }[] = [
-  { term: 'jpg para png sem fundo', kd: 'n/a', volume: '>100', wants: 'background removal, not format conversion' }
+  { term: 'jpg para png sem fundo', kd: 'n/a', volume: '>100', wants: 'background removal, not format conversion' },
+  /* batch 8. These want a .docx template to download and edit; the generator
+     fills a form and outputs a PDF. Painful to leave — both are Easy at >1000
+     — but a visitor who came for a Word file and gets a PDF leaves immediately.
+     /pt/modelo-de-recibo/ answers the question in its own words rather than
+     ranking for it. */
+  { term: 'modelo de recibo word', kd: 'Easy', volume: '>1000', wants: 'an editable .docx template, not a generated PDF' },
+  { term: 'modelo de recibo de pagamento word', kd: 'Easy', volume: '>1000', wants: 'an editable .docx template, not a generated PDF' }
 ];
 
 /**
@@ -988,6 +1048,99 @@ export const pageKeywords: PageKeywords[] = [
     questions: [
       { term: 'planilha excel muito pesada como diminuir', kd: 'Easy', volume: '<100' },
       { term: 'como compactar excel', kd: 'n/a', volume: '<100' }
+    ]
+  },
+
+  /* ---------------------------------------------------------------------
+     Batch 8 — the business tools, 2026-09-24.
+
+     Kavya asked why "invoice generator" showed almost no Brazilian volume
+     despite being a big English term, having tried several Portuguese
+     translations. The answer is in this data and it is not a translation
+     problem — it is a market-structure one.
+
+     Brazilian businesses do not issue a generic "invoice". They issue a NOTA
+     FISCAL, a government-regulated electronic document produced through SEFAZ
+     or a municipal system. "Fatura" mostly means a bill you RECEIVE, like a
+     credit-card statement. So there is no large market for an invoice
+     generator, and the volume that does exist under `nota fiscal` is
+     unreachable for us by law, not by SEO.
+
+     What Brazilians actually search, for the same underlying job:
+     `modelo de recibo` — EASY at >10,000, with 9,047 keywords in the cluster
+     and eight separate variants at >1000, all Easy. That is the largest
+     winnable opportunity found anywhere in this programme, and it was hidden
+     behind the word "gerador". `gerador de recibos` is <100. `modelo de
+     recibo` is >10,000. Same tool, same job, 100× the demand, purely because
+     Brazilians search for a MODEL rather than a GENERATOR.
+
+     The lesson for the remaining tools: translate the JOB, not the tool name.
+     --------------------------------------------------------------------- */
+  {
+    slug: 'modelo-de-recibo',
+    en: 'receipt-generator',
+    primary: 'modelo de recibo',
+    phrase: [
+      { term: 'modelo de recibo', kd: 'Easy', volume: '>10,000' },
+      { term: 'modelo de recibo de pagamento', kd: 'Easy', volume: '>1000' },
+      { term: 'modelo de recibo de prestação de serviço', kd: 'Easy', volume: '>1000' },
+      { term: 'modelo de recibo simples', kd: 'Easy', volume: '>1000' },
+      { term: 'modelo de recibo de compra e venda', kd: 'Easy', volume: '>1000' },
+      { term: 'modelo de recibo de aluguel', kd: 'Easy', volume: '>1000' },
+      { term: 'modelo de recibo de pagamento de prestação de serviço', kd: 'Easy', volume: '>100' },
+      { term: 'modelo de recibo pdf', kd: 'Easy', volume: '>100' },
+      { term: 'emitir recibo', kd: 'Easy', volume: '>100' },
+      { term: 'emitir recibo online', kd: 'Easy', volume: '>100' },
+      { term: 'criar recibo online', kd: 'Easy', volume: '>100' },
+      { term: 'gerador de recibos', kd: 'Easy', volume: '<100' },
+      { term: 'emitir recibo de pagamento', kd: 'Easy', volume: '<100' },
+      { term: 'emitir recibo de compra e venda', kd: 'Easy', volume: '<100' },
+      { term: 'emitir recibo mei', kd: 'Medium', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como emitir recibo', kd: 'Easy', volume: '>100' },
+      { term: 'como emitir um recibo de pagamento', kd: 'Easy', volume: '>100' },
+      { term: 'como emitir recibo de compra e venda', kd: 'Easy', volume: '<100' },
+      { term: 'como emitir um recibo', kd: 'Easy', volume: '<100' },
+      { term: 'como emitir recibo mei', kd: 'Easy', volume: '<100' },
+      { term: 'como emitir recibo de pagamento autônomo', kd: 'n/a', volume: '<100' },
+      { term: 'como criar recibo online', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'modelo-de-fatura',
+    en: 'invoice-generator',
+    primary: 'modelo de fatura',
+    phrase: [
+      { term: 'modelo de fatura', kd: 'Medium', volume: '>100' },
+      { term: 'modelo de fatura de locação', kd: 'Easy', volume: '>100' },
+      { term: 'modelo de fatura de serviços', kd: 'Easy', volume: '>100' },
+      { term: 'modelo de fatura comercial', kd: 'Easy', volume: '<100' },
+      { term: 'gerador de faturas', kd: 'Easy', volume: '<100' },
+      { term: 'gerador de faturas gratuito', kd: 'n/a', volume: '<100' },
+      { term: 'melhor gerador de faturas para freelancers', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'qual é o melhor software gerador de faturas', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'calculadora-de-margem-de-lucro',
+    en: 'profit-margin-calculator',
+    primary: 'calculadora de margem de lucro',
+    phrase: [
+      { term: 'calculadora de margem de lucro', kd: 'Easy', volume: '>100' },
+      { term: 'calcular margem de lucro online', kd: 'Easy', volume: '<100' },
+      { term: 'calculadora de margem de lucro de um produto', kd: 'n/a', volume: '<100' },
+      { term: 'calculadora de margem de lucro online', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como calcular margem de lucro', kd: 'Easy', volume: '>1000' },
+      { term: 'como calcular margem de lucro de um produto', kd: 'Easy', volume: '>100' },
+      { term: 'margem de lucro como calcular', kd: 'Easy', volume: '>100' },
+      { term: 'como calcular margem de lucro em porcentagem', kd: 'Easy', volume: '<100' },
+      { term: 'como calcular margem de lucro no excel', kd: 'Easy', volume: '<100' },
+      { term: 'como calcular minha margem de lucro', kd: 'Easy', volume: '<100' }
     ]
   }
 ];

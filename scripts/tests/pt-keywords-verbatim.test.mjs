@@ -105,7 +105,9 @@ const DO_NOT_TARGET = [
   'export const coveredInBodyCopy', // real, but a near-duplicate of a heading already used
   'export const passwordIntent',    // cracking a PDF password: not a tool we have, nor one to advertise
   'export const belongsElsewhere',  // conversion queries that arrived in the split export
-  'export const wrongTool'          // "diminuir excel" is a subtraction formula, not file size
+  'export const wrongTool',         // "diminuir excel" is a subtraction formula, not file size
+  'export const fraudIntent',       // fake nota fiscal: document fraud
+  'export const regulatedDocument'  // nota fiscal issuance needs SEFAZ, not a PDF
 ];
 
 test('no keyword from a do-not-target list is used as a page target', () => {

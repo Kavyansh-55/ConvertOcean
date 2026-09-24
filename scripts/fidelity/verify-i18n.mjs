@@ -70,6 +70,9 @@ const PAIRS = [
   { pt: 'comprimir-word', en: 'compress-word' },
   { pt: 'comprimir-powerpoint', en: 'compress-powerpoint' },
   { pt: 'comprimir-excel', en: 'compress-excel' },
+  { pt: 'modelo-de-recibo', en: 'receipt-generator' },
+  { pt: 'modelo-de-fatura', en: 'invoice-generator' },
+  { pt: 'calculadora-de-margem-de-lucro', en: 'profit-margin-calculator' },
 ];
 
 let bad = 0;
