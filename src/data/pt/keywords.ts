@@ -318,7 +318,14 @@ export const wrongLanguage: { term: string; language: string }[] = [
   { term: 'calculadora de iva ecuador', language: 'es' },
   { term: 'calculadora de iva el salvador', language: 'es' },
   { term: 'calculadora de iva uruguay', language: 'es' },
-  { term: 'calculadora de iva paraguay', language: 'es' }
+  { term: 'calculadora de iva paraguay', language: 'es' },
+  /* batch 10 — not a foreign language, a different Portuguese. "Ficheiro" is
+     the European Portuguese word for file; Brazilians say "arquivo". Worth
+     noting because our hreflang is the bare `pt`, which claims every
+     Portuguese market, while the copy is written in pt-BR. Low volume, so no
+     action now — but if Portugal ever matters, this is the vocabulary split
+     that would justify a separate pt-PT. */
+  { term: 'ficheiro avif para png', language: 'pt-PT' }
 ];
 
 /**
@@ -453,7 +460,8 @@ export const codeIntent: { term: string; kd: string; volume: string; lang: strin
   { term: 'converter json para csv python', kd: 'n/a', volume: '<100', lang: 'Python' },
   { term: 'converter xml para json c#', kd: 'n/a', volume: '<100', lang: 'C#' },
   { term: 'converter xml para json java', kd: 'n/a', volume: '<100', lang: 'Java' },
-  { term: 'xml para json jquery', kd: 'n/a', volume: '<100', lang: 'jQuery' }
+  { term: 'xml para json jquery', kd: 'n/a', volume: '<100', lang: 'jQuery' },
+  { term: 'converter xls para csv java', kd: 'n/a', volume: '<100', lang: 'Java' }
 ];
 
 export const noToolYet: { term: string; kd: string; volume: string; needs: string }[] = [
@@ -1278,6 +1286,201 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'conversor de ofx para csv', kd: 'n/a', volume: '<100' },
       { term: 'converter ofx para csv online', kd: 'n/a', volume: '<100' }
     ],
+    questions: []
+  },
+
+  /* ---------------------------------------------------------------------
+     Batch 10 — the long tail, 2026-09-24. Fourteen tools, two tiers.
+
+     The image formats are the last big Easy volume in the programme:
+     `heic para jpg` and `converter heic para jpg` are BOTH Easy at >10,000,
+     and `converter webp para jpg` is Easy at >10,000. HEIC in particular is a
+     pure consumer problem — an iPhone photo that Windows and upload forms
+     refuse — which is exactly the mobile-heavy Brazilian audience.
+
+     The spreadsheet/XML converters are the opposite: everything <100, several
+     with no KD at all. Completion pages.
+
+     QBO to CSV returned no keywords whatsoever and is built blind, on the
+     tool's own behaviour rather than on research.
+     --------------------------------------------------------------------- */
+  {
+    slug: 'heic-para-jpg', en: 'heic-to-jpg', primary: 'heic para jpg',
+    phrase: [
+      { term: 'converter heic para jpg', kd: 'Easy', volume: '>10,000' },
+      { term: 'heic para jpg', kd: 'Easy', volume: '>10,000' },
+      { term: 'conversor de heic para jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'converter imagem heic para jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'converter arquivo heic para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter foto heic para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter de heic para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'arquivo heic para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'conversor heic para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter fotos heic para jpg', kd: 'Easy', volume: '>100' }
+    ],
+    questions: [
+      { term: 'como converter heic para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'como converter arquivo heic para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'como converter fotos heic para jpg', kd: 'Easy', volume: '<100' },
+      { term: 'como converter heic para jpg no iphone', kd: 'n/a', volume: '<100' },
+      { term: 'como mudar formato de foto heic para jpg', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'webp-para-jpg', en: 'webp-to-jpg', primary: 'converter webp para jpg',
+    phrase: [
+      { term: 'converter webp para jpg', kd: 'Easy', volume: '>10,000' },
+      { term: 'webp para jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'conversor de webp para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter imagem webp para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'arquivo webp para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter arquivo webp para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter de webp para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'de webp para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'imagem webp para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter foto webp para jpg', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter imagem webp para jpg', kd: 'Easy', volume: '<100' },
+      { term: 'como converter webp para jpg', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'heic-para-png', en: 'heic-to-png', primary: 'heic para png',
+    phrase: [
+      { term: 'converter heic para png', kd: 'Easy', volume: '>1000' },
+      { term: 'heic para png', kd: 'Easy', volume: '>1000' },
+      { term: 'converter imagem heic para png', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de heic para png', kd: 'Easy', volume: '>100' },
+      { term: 'arquivo heic para png', kd: 'Easy', volume: '>100' },
+      { term: 'converter de heic para png', kd: 'Easy', volume: '>100' },
+      { term: '.heic para png', kd: 'Easy', volume: '<100' },
+      { term: 'converter foto heic para png', kd: 'Easy', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'avif-para-jpg', en: 'avif-to-jpg', primary: 'avif para jpg',
+    phrase: [
+      { term: 'avif para jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'converter avif para jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'conversor avif para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter imagem avif para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de avif para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'converter de avif para jpg', kd: 'Easy', volume: '>100' },
+      { term: 'arquivo avif para jpg', kd: 'Easy', volume: '<100' },
+      { term: 'converter foto avif para jpg', kd: 'Easy', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'avif-para-png', en: 'avif-to-png', primary: 'avif para png',
+    phrase: [
+      { term: 'avif para png', kd: 'Easy', volume: '>1000' },
+      { term: 'converter avif para png', kd: 'Easy', volume: '>1000' },
+      { term: 'arquivo avif para png', kd: 'Easy', volume: '>100' },
+      { term: 'converter imagem avif para png', kd: 'Easy', volume: '>100' },
+      { term: 'converter arquivo avif para png', kd: 'Easy', volume: '<100' },
+      { term: 'conversor de avif para png', kd: 'Easy', volume: '<100' },
+      { term: 'converter de avif para png', kd: 'Easy', volume: '<100' },
+      { term: 'de avif para png', kd: 'Easy', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'jpg-para-webp', en: 'jpg-to-webp', primary: 'jpg para webp',
+    phrase: [
+      { term: 'jpg para webp', kd: 'Easy', volume: '>1000' },
+      { term: 'converter jpg para webp', kd: 'Easy', volume: '>100' },
+      { term: 'converter imagem jpg para webp', kd: 'Easy', volume: '<100' },
+      { term: 'conversor de jpg para webp', kd: 'Easy', volume: '<100' },
+      { term: 'de jpg para webp', kd: 'n/a', volume: '<100' }
+    ],
+    /* Both of its returned questions are the opposite conversion and live on
+       webp-para-jpg, where the tool can actually perform them. */
+    questions: []
+  },
+  {
+    slug: 'xls-para-pdf', en: 'xls-to-pdf', primary: 'xls para pdf',
+    phrase: [
+      { term: 'xls para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'converter xls para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de xls para pdf', kd: 'Easy', volume: '<100' },
+      { term: 'converter arquivo xls para pdf', kd: 'n/a', volume: '<100' },
+      { term: 'transformar arquivo xls para pdf', kd: 'n/a', volume: '<100' },
+      { term: '.xls para pdf', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'csv-para-pdf', en: 'csv-to-pdf', primary: 'csv para pdf',
+    phrase: [
+      { term: 'csv para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'converter csv para pdf', kd: 'Hard', volume: '>100' },
+      { term: 'arquivo csv para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'converter arquivo csv para pdf', kd: 'Easy', volume: '<100' },
+      { term: 'conversor de csv para pdf', kd: 'n/a', volume: '<100' },
+      { term: 'de csv para pdf', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'xls-para-csv', en: 'xls-to-csv', primary: 'xls para csv',
+    phrase: [
+      { term: 'converter xls para csv', kd: 'Easy', volume: '>100' },
+      { term: 'xls para csv', kd: 'Easy', volume: '>100' },
+      { term: 'conversor xls para csv', kd: 'n/a', volume: '<100' },
+      { term: 'conversor de xls para csv', kd: 'n/a', volume: '<100' },
+      { term: 'converter arquivo xls para csv', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter xls para csv', kd: 'n/a', volume: '<100' },
+      { term: 'converter xls para csv no excel', kd: 'n/a', volume: '<100' },
+      { term: 'qual a diferença de csv para xls', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'xml-para-csv', en: 'xml-to-csv', primary: 'xml para csv',
+    phrase: [
+      { term: 'xml para csv', kd: 'Easy', volume: '<100' },
+      { term: 'converter xml para csv', kd: 'Easy', volume: '<100' },
+      { term: 'conversor de xml para csv', kd: 'n/a', volume: '<100' },
+      { term: 'arquivo xml para csv', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter xml para csv', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'xml-para-xlsx', en: 'xml-to-xlsx', primary: 'xml para xlsx',
+    phrase: [
+      { term: 'xml para xlsx', kd: 'Easy', volume: '<100' },
+      { term: 'converter xml para xlsx', kd: 'Easy', volume: '<100' },
+      { term: 'conversor de xml para xlsx', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'xlsx-para-json', en: 'xlsx-to-json', primary: 'xlsx para json',
+    phrase: [
+      { term: 'converter xlsx para json', kd: 'Easy', volume: '<100' },
+      { term: 'xlsx para json', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'xls-para-json', en: 'xls-to-json', primary: 'xls para json',
+    phrase: [
+      { term: 'converter xls para json', kd: 'n/a', volume: '<100' },
+      { term: 'xls para json', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    /* No keyword data at all — Kavya found none. Built on the tool's own
+       behaviour so the locale is complete, with no ranking expectation. */
+    slug: 'qbo-para-csv', en: 'qbo-to-csv', primary: 'qbo para csv',
+    phrase: [],
     questions: []
   }
 ];

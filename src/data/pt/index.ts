@@ -1964,6 +1964,601 @@ const ptToolsBatch9: PtTool[] = [
   }
 ];
 
+/**
+ * ---------------------------------------------------------------------------
+ * Keyword-led batch 10 — the long tail, 2026-09-24. Fourteen tools, two tiers.
+ * ---------------------------------------------------------------------------
+ *
+ * The image formats carry the last large Easy volume in the programme:
+ * `heic para jpg` and `converter heic para jpg` are both Easy at >10,000, and
+ * `converter webp para jpg` is Easy at >10,000. HEIC is a pure consumer
+ * problem — an iPhone photo that Windows and upload forms refuse — which fits
+ * a mobile-heavy Brazilian audience exactly.
+ *
+ * The spreadsheet and XML converters are the other tier: everything <100,
+ * several with no KD at all. Completion pages, no ranking expectation.
+ *
+ * Accuracy note carried into the copy: HEIC needs a one-time ~1MB decoder
+ * download, while AVIF uses the browser's own built-in engine. Those are
+ * genuinely different experiences and the pages say so rather than sharing a
+ * vague "runs in your browser" line.
+ */
+const ptToolsBatch10: PtTool[] = [
+  {
+    en: 'heic-to-jpg',
+    slug: 'heic-para-jpg',
+    name: 'HEIC para JPG',
+    title: 'Converter HEIC para JPG Online Grátis — Foto do iPhone | ConvertOcean',
+    description: 'Converta fotos HEIC do iPhone para JPG direto no navegador, para abrir no Windows, no Android e em formulários que recusam o formato.',
+    headline: 'HEIC para JPG.',
+    subtitle: 'Transforme fotos do iPhone em JPG que abre em qualquer lugar — sem que a imagem saia do seu aparelho.',
+    quickAnswer: 'Para converter HEIC para JPG, selecione a foto .heic na ferramenta acima: um decodificador de código aberto a converte em um JPG com 92% de qualidade, que abre no Windows, no Android e em qualquer formulário de envio. O decodificador é baixado uma única vez (cerca de 1 MB) no primeiro arquivo e depois fica em cache. A foto não sai do seu aparelho.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como converter heic para jpg',
+        answer: 'Arraste a foto .heic para a ferramenta no topo da página e baixe o JPG. Na primeira conversão há um download único do decodificador, de cerca de 1 MB; a partir daí as conversões são imediatas. Não é preciso cadastro nem instalar aplicativo.'
+      },
+      {
+        question: 'como converter arquivo heic para jpg',
+        answer: 'O HEIC é o formato que o iPhone usa por padrão desde 2017. Ele economiza espaço, mas o Windows, muitos Androids e boa parte dos sites de envio não o reconhecem — é por isso que a foto simplesmente não abre ou é recusada no upload. A conversão para JPG resolve porque o JPG é aceito em todo lugar.'
+      },
+      {
+        question: 'como converter fotos heic para jpg',
+        answer: 'Dá para converter várias fotos na mesma sessão, uma após a outra, e o decodificador só é carregado na primeira. Como tudo roda no seu aparelho, a velocidade depende do seu processador e não de uma fila de servidor — e um lote grande de fotos não esbarra em limite diário.'
+      },
+      {
+        question: 'como converter heic para jpg no iphone',
+        answer: 'Dá para fazer aqui mesmo, pelo Safari, sem instalar nada. Mas há um caminho ainda mais direto se o problema for recorrente: em Ajustes, Câmera, Formatos, escolha "Mais Compatível" e o iPhone passa a fotografar direto em JPG. Isso não converte as fotos antigas — para essas, use a ferramenta.'
+      },
+      {
+        question: 'como mudar formato de foto heic para jpg',
+        answer: 'Renomear o arquivo de .heic para .jpg não funciona: a extensão é só o nome, e o conteúdo continua codificado em HEIC. O programa que abrir vai recusar ou mostrar erro. É preciso decodificar e recodificar a imagem de verdade, que é o que a ferramenta faz.'
+      },
+      {
+        question: 'A qualidade da foto piora?',
+        answer: 'Há uma recodificação, então tecnicamente sim, mas o JPG é gerado com 92% de qualidade — na prática indistinguível a olho nu para uma fotografia. O arquivo tende a ficar maior que o HEIC original, porque o HEIC comprime melhor. É o preço de um formato que abre em qualquer lugar.'
+      },
+      {
+        question: 'A foto é copiada para algum servidor?',
+        answer: 'Não. A decodificação acontece no seu aparelho, dentro do navegador. Fotos carregam metadados como localização e modelo do celular, e nada disso é copiado para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>Por que o iPhone gera um arquivo que ninguém abre</h2>
+      <p>Desde 2017 o iPhone fotografa em HEIC por padrão. O formato é tecnicamente melhor que o JPG — mesma qualidade em cerca de metade do tamanho — mas o Windows, muitos aparelhos Android e boa parte dos formulários de envio não o reconhecem. O resultado é a situação conhecida: a foto está no computador e simplesmente não abre.</p>
+      <p>Um <strong>conversor de heic para jpg</strong> resolve isso trocando o formato pelo que todo mundo aceita.</p>
+
+      <h2>Renomear não resolve</h2>
+      <p>Trocar o final do nome de .heic para .jpg não converte nada. A extensão é apenas um rótulo; o conteúdo continua codificado em HEIC e o programa que tentar abrir vai recusar. <strong>Converter imagem heic para jpg</strong> exige decodificar e recodificar de verdade.</p>
+
+      <h2>Evitar o problema na origem</h2>
+      <p>Se isso acontece com frequência, vale ajustar o iPhone: Ajustes, Câmera, Formatos, "Mais Compatível". A partir daí as fotos novas já saem em JPG. As antigas continuam em HEIC e precisam da conversão.</p>
+
+      <h2>O decodificador roda no seu aparelho</h2>
+      <p>O HEIC não é suportado nativamente pelos navegadores, então a ferramenta carrega um decodificador de código aberto de cerca de 1 MB na primeira foto. Depois disso ele fica em cache e as conversões são imediatas. O importante: ele roda no seu dispositivo — a foto, e os metadados de localização que ela carrega, não são copiados para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'webp-to-jpg',
+    slug: 'webp-para-jpg',
+    name: 'WebP para JPG',
+    title: 'Converter WebP para JPG Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta imagens WebP em JPG direto no navegador, para abrir em programas antigos e formulários que recusam o formato.',
+    headline: 'WebP para JPG.',
+    subtitle: 'Transforme imagens WebP em JPG que abre em qualquer programa — sem que o arquivo saia do seu dispositivo.',
+    quickAnswer: 'Para converter WebP para JPG, selecione a imagem .webp na ferramenta acima e baixe um JPG que abre em qualquer software, inclusive editores antigos que não reconhecem WebP. Como o JPG não tem transparência, áreas transparentes são achatadas sobre um fundo branco. A conversão acontece inteiramente no seu navegador.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'como converter imagem webp para jpg',
+        answer: 'Arraste o arquivo .webp para a ferramenta no topo da página e baixe o .jpg. O resultado abre no Word, no PowerPoint, em editores antigos e em qualquer formulário que recuse o formato WebP.'
+      },
+      {
+        question: 'como converter webp para jpg',
+        answer: 'O caso mais comum é uma imagem salva de um site: o navegador entrega em WebP, e o programa de destino não aceita. A conversão para JPG resolve porque o JPG é universalmente reconhecido — a contrapartida é que o arquivo costuma ficar maior, já que o WebP comprime melhor.'
+      },
+      {
+        question: 'O que acontece com o fundo transparente?',
+        answer: 'É achatado sobre branco, porque o JPG não tem canal de transparência. Para uma fotografia isso não muda nada. Para um logotipo recortado, o resultado terá um retângulo branco em volta — nesse caso converta para <a href="/pt/webp-para-png/">PNG</a>, que preserva a transparência.'
+      },
+      {
+        question: 'A qualidade piora?',
+        answer: 'Há uma recodificação, e o JPG é gerado em alta qualidade — a diferença não é perceptível a olho nu em fotografias. Em imagens com texto nítido ou áreas de cor chapada, o JPG introduz artefatos ao redor das bordas; para esses casos o PNG é a escolha melhor.'
+      },
+      {
+        question: 'A imagem é copiada para algum servidor?',
+        answer: 'Não. A conversão acontece no seu navegador, no seu dispositivo, e a imagem não é copiada para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>A imagem que você salvou e não consegue usar</h2>
+      <p>É a origem quase universal dessa busca: você salvou uma imagem de um site, tentou inserir em um documento ou enviar em um formulário, e o arquivo foi recusado. O WebP é o formato que a web moderna usa, mas muitos programas de escritório e sistemas mais antigos ainda não o abrem.</p>
+      <p><strong>Converter imagem webp para jpg</strong> devolve um formato que qualquer software aceita.</p>
+
+      <h2>JPG ou PNG?</h2>
+      <p>Depende do que a imagem contém. Para fotografias, JPG: menor e sem diferença visível. Para logotipos, capturas de tela e gráficos com texto — ou qualquer imagem com fundo transparente — <a href="/pt/webp-para-png/">WebP para PNG</a> é a escolha certa, porque o JPG achata a transparência sobre branco e borra as bordas do texto.</p>
+
+      <h2>O arquivo vai ficar maior</h2>
+      <p>O WebP existe porque comprime melhor. Ao passar <strong>de webp para jpg</strong>, espere um arquivo maior em troca da compatibilidade universal. Tudo processado dentro do navegador, sem cópia para servidor nenhum.</p>
+    `
+  },
+  {
+    en: 'heic-to-png',
+    slug: 'heic-para-png',
+    name: 'HEIC para PNG',
+    title: 'Converter HEIC para PNG Online Grátis — Sem Perdas | ConvertOcean',
+    description: 'Converta fotos HEIC do iPhone em PNG sem perdas direto no navegador, para editar em qualquer programa.',
+    headline: 'HEIC para PNG.',
+    subtitle: 'Converta fotos do iPhone em PNG sem perdas, aceito por qualquer editor — sem que a imagem saia do seu aparelho.',
+    quickAnswer: 'Para converter HEIC para PNG, selecione o arquivo .heic na ferramenta acima e baixe um PNG sem perdas, aceito por qualquer editor e plataforma. O decodificador de código aberto é carregado uma única vez (cerca de 1 MB) no primeiro arquivo e roda inteiramente no seu navegador. Espere um arquivo maior que o HEIC original, porque o PNG guarda cada pixel exatamente.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'Quando escolher PNG em vez de JPG?',
+        answer: 'Escolha PNG quando a imagem ainda vai ser editada, ou quando contém texto, capturas de tela ou gráficos com bordas nítidas — o PNG é sem perdas e não introduz os artefatos que o JPG cria. Para uma fotografia que vai apenas ser enviada ou impressa, <a href="/pt/heic-para-jpg/">HEIC para JPG</a> gera um arquivo bem menor.'
+      },
+      {
+        question: 'O arquivo PNG fica maior que a foto original?',
+        answer: 'Sim, normalmente bastante maior. O HEIC é um formato de compressão muito eficiente e o PNG guarda cada pixel sem aproximações. É a contrapartida de não perder nenhuma informação na conversão.'
+      },
+      {
+        question: 'Por que preciso baixar um decodificador?',
+        answer: 'Porque os navegadores não abrem HEIC nativamente — é um formato da Apple. A ferramenta carrega um decodificador de código aberto de cerca de 1 MB na primeira conversão, que depois fica em cache. Ele roda no seu aparelho, e é o que permite converter sem enviar a foto para lugar nenhum.'
+      },
+      {
+        question: 'A foto é copiada para algum servidor?',
+        answer: 'Não. A decodificação e a geração do PNG acontecem no seu dispositivo. Fotos carregam metadados como localização e modelo do aparelho, e nada é copiado para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>HEIC para um formato que editores aceitam</h2>
+      <p>O HEIC é o padrão de fotos do iPhone desde 2017 e quase nenhum editor de imagem o abre diretamente. Um <strong>conversor de heic para png</strong> resolve isso sem perdas: o PNG guarda cada pixel exatamente como estava, o que o torna a escolha certa quando a imagem ainda vai ser trabalhada.</p>
+
+      <h2>PNG ou JPG, para uma foto do celular</h2>
+      <p>Se a foto vai apenas ser enviada, impressa ou anexada, o <a href="/pt/heic-para-jpg/">JPG</a> gera um arquivo muito menor sem diferença visível. O PNG faz sentido quando a imagem será editada, recortada ou contém texto — casos em que a compressão com perdas do JPG se acumularia a cada salvamento.</p>
+
+      <h2>O decodificador, e por que ele existe</h2>
+      <p>Nenhum navegador lê HEIC nativamente. A ferramenta carrega um decodificador de código aberto de cerca de 1 MB na primeira conversão e o mantém em cache. Ele roda no seu aparelho — é justamente o que permite converter a foto sem copiá-la para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'avif-to-jpg',
+    slug: 'avif-para-jpg',
+    name: 'AVIF para JPG',
+    title: 'Converter AVIF para JPG Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta imagens AVIF em JPG direto no navegador, para abrir em qualquer programa ou formulário que recuse o formato.',
+    headline: 'AVIF para JPG.',
+    subtitle: 'Transforme imagens AVIF em JPG aceito em qualquer lugar — usando o próprio decodificador do navegador.',
+    quickAnswer: 'Para converter AVIF para JPG, selecione o arquivo .avif na ferramenta acima: o navegador o decodifica com o mecanismo AVIF que já traz embutido e gera um JPG com 92% de qualidade, que abre em qualquer software, cliente de e-mail ou formulário de envio. Áreas transparentes são achatadas sobre branco, porque o JPG não tem transparência. Nada sai do seu dispositivo.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'O que é um arquivo AVIF?',
+        answer: 'É um formato de imagem moderno, derivado do codec de vídeo AV1, que comprime ainda melhor que o WebP. Sites o usam para carregar mais rápido — e é justamente por ser recente que programas de escritório, editores antigos e muitos formulários ainda não o aceitam.'
+      },
+      {
+        question: 'Precisa baixar algum decodificador?',
+        answer: 'Não. Diferente do HEIC, o AVIF é suportado nativamente pelos navegadores modernos, então a conversão usa o mecanismo que o próprio navegador já tem. Não há download adicional e a conversão é imediata.'
+      },
+      {
+        question: 'O que acontece com a transparência?',
+        answer: 'É achatada sobre branco, porque o JPG não tem canal de transparência. Se a imagem tem fundo transparente e isso importa, use <a href="/pt/avif-para-png/">AVIF para PNG</a>, que a preserva.'
+      },
+      {
+        question: 'A imagem é copiada para algum servidor?',
+        answer: 'Não. A decodificação e a recodificação acontecem no seu navegador, no seu dispositivo, e a imagem não é copiada para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>Um formato novo demais para o resto do software</h2>
+      <p>O AVIF nasceu do codec de vídeo AV1 e comprime melhor que qualquer formato de imagem anterior — motivo pelo qual sites o adotaram rapidamente. O problema aparece depois: você salva a imagem e o editor, o Word ou o formulário de envio simplesmente não a reconhecem.</p>
+      <p>Um <strong>conversor avif para jpg</strong> resolve trocando por um formato que existe há trinta anos e que todo software aceita.</p>
+
+      <h2>Sem downloads extras</h2>
+      <p>Diferente do HEIC, que exige um decodificador próprio, o AVIF já é lido nativamente pelos navegadores modernos. <strong>Converter imagem avif para jpg</strong> usa o mecanismo que o seu navegador traz embutido, então não há espera nem download adicional.</p>
+
+      <h2>Transparência</h2>
+      <p>O AVIF suporta transparência; o JPG não. Áreas transparentes são achatadas sobre branco na conversão. Quando isso importa — um logotipo, uma imagem recortada — o caminho é <a href="/pt/avif-para-png/">AVIF para PNG</a>.</p>
+    `
+  },
+  {
+    en: 'avif-to-png',
+    slug: 'avif-para-png',
+    name: 'AVIF para PNG',
+    title: 'Converter AVIF para PNG Online Grátis — Sem Perdas | ConvertOcean',
+    description: 'Converta imagens AVIF em PNG sem perdas direto no navegador, com a transparência preservada.',
+    headline: 'AVIF para PNG.',
+    subtitle: 'Converta AVIF em PNG sem perdas, com a transparência preservada — processado no seu próprio dispositivo.',
+    quickAnswer: 'Para converter AVIF para PNG, selecione o arquivo .avif na ferramenta acima e baixe um PNG sem perdas, com qualquer transparência preservada. O PNG abre em todos os editores e passa em formulários que recusam formatos modernos, embora fique bem maior que o AVIF original. A conversão usa o decodificador do próprio navegador e nada sai do seu dispositivo.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'A transparência é preservada?',
+        answer: 'Sim. Tanto o AVIF quanto o PNG suportam canal alfa, então áreas transparentes atravessam a conversão intactas — diferente do <a href="/pt/avif-para-jpg/">AVIF para JPG</a>, que as achata sobre branco.'
+      },
+      {
+        question: 'Por que o PNG fica tão maior?',
+        answer: 'Porque o AVIF é um dos formatos mais eficientes que existem e o PNG guarda cada pixel sem aproximação. Uma imagem de 200 KB em AVIF pode facilmente passar de 1 MB em PNG. É o custo de um formato sem perdas que abre em qualquer lugar.'
+      },
+      {
+        question: 'A qualidade da imagem muda?',
+        answer: 'Não há perda adicional: o PNG guarda exatamente os pixels que o AVIF produziu. Se o AVIF de origem já era comprimido com perdas, essa compressão continua visível — a conversão não recupera detalhe que já não existia, mas também não degrada nada.'
+      },
+      {
+        question: 'A imagem é copiada para algum servidor?',
+        answer: 'Não. Tudo acontece no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>Do formato mais moderno para o mais compatível</h2>
+      <p>O AVIF comprime melhor que WebP, JPG ou PNG — e é exatamente por ser recente que tantos programas o recusam. Um <strong>conversor de avif para png</strong> troca eficiência por compatibilidade universal, mantendo a imagem intacta.</p>
+
+      <h2>Sem perdas, com transparência</h2>
+      <p>O PNG guarda cada pixel exatamente e preserva o canal alfa, então logotipos e imagens recortadas continuam com o fundo transparente. Nada é recomprimido: o que o AVIF já tinha é o que o PNG recebe.</p>
+
+      <h2>Espere um arquivo bem maior</h2>
+      <p>É a contrapartida inevitável. Ao <strong>converter arquivo avif para png</strong>, um arquivo de algumas centenas de kilobytes pode passar de um megabyte. Se o destino for a web, o AVIF original continua sendo a escolha melhor; o PNG faz sentido para edição e para sistemas que não aceitam o formato novo.</p>
+    `
+  },
+  {
+    en: 'jpg-to-webp',
+    slug: 'jpg-para-webp',
+    name: 'JPG para WebP',
+    title: 'Converter JPG para WebP Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta imagens JPG em WebP direto no navegador: 25–35% menores com qualidade equivalente, para acelerar o carregamento do site.',
+    headline: 'JPG para WebP.',
+    subtitle: 'Reduza o peso das imagens do seu site mantendo a qualidade — processado no seu próprio dispositivo.',
+    quickAnswer: 'Para converter JPG para WebP, selecione a imagem .jpg na ferramenta acima e baixe um WebP normalmente 25–35% menor com qualidade equivalente. Todos os navegadores modernos exibem WebP, o que faz dele a escolha melhor para imagens na web e para páginas que carregam mais rápido. A conversão acontece inteiramente no seu dispositivo.',
+    category: 'Ferramentas de Imagem',
+    faqs: [
+      {
+        question: 'Quanto menor fica a imagem?',
+        answer: 'Normalmente entre 25% e 35% menor com qualidade equivalente, variando com o conteúdo da foto. Fotografias detalhadas rendem mais; imagens simples, com poucas cores, ganham menos porque o JPG já as comprimia bem.'
+      },
+      {
+        question: 'Vale a pena converter fotos que já estão em JPG?',
+        answer: 'Para uso na web, sim: menos peso significa carregamento mais rápido, especialmente no celular. Para arquivamento, não há vantagem — e vale lembrar que converter um JPG para WebP é uma segunda compressão com perdas sobre uma imagem que já perdeu informação uma vez. Guarde o original se ele ainda for editado.'
+      },
+      {
+        question: 'Todos os navegadores exibem WebP?',
+        answer: 'Sim, todos os modernos — Chrome, Firefox, Safari, Edge e equivalentes em celular. A ressalva é fora do navegador: programas de escritório e editores antigos ainda recusam o formato. Para uma imagem que vai ser inserida no Word, mantenha o JPG.'
+      },
+      {
+        question: 'A imagem é copiada para algum servidor?',
+        answer: 'Não. A conversão acontece no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>Imagens mais leves, site mais rápido</h2>
+      <p>Em um site comum, as imagens respondem pela maior parte do peso de cada página. Usar um <strong>conversor de jpg para webp</strong> costuma reduzir de 25% a 35% do tamanho com qualidade equivalente — um ganho direto no tempo de carregamento, sobretudo em conexões móveis.</p>
+
+      <h2>Cuidado com a segunda compressão</h2>
+      <p>Uma coisa que raramente se diz: o JPG já é um formato com perdas, então <strong>converter imagem jpg para webp</strong> é comprimir de novo algo que já foi comprimido. O resultado é visualmente bom, mas guarde o original se a imagem ainda for editada — repetir esse ciclo várias vezes acumula degradação.</p>
+
+      <h2>Onde o WebP ainda não serve</h2>
+      <p>Navegadores exibem WebP sem problema. Programas de escritório e editores antigos, nem sempre. Para uma imagem destinada a um documento em vez de a uma página, o JPG continua sendo a escolha segura.</p>
+    `
+  },
+  {
+    en: 'xls-to-pdf',
+    slug: 'xls-para-pdf',
+    name: 'XLS para PDF',
+    title: 'Converter XLS para PDF Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta planilhas antigas .xls em PDF com tabelas reais e texto selecionável, direto no navegador.',
+    headline: 'XLS para PDF.',
+    subtitle: 'Converta planilhas no formato antigo .xls em PDF com tabelas de verdade — sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter uma planilha .xls antiga em PDF, adicione o arquivo na ferramenta acima e baixe um PDF em que cada aba é desenhada como uma tabela real, com bordas e cabeçalho sombreado que se repete nas quebras de página. O texto continua selecionável e pesquisável, em vez de virar uma imagem. Tudo acontece no seu navegador.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'Qual a diferença entre .xls e .xlsx aqui?',
+        answer: 'O .xls é o formato binário do Excel anterior a 2007 e o .xlsx é o atual. Esta página trata do antigo; para planilhas modernas use <a href="/pt/excel-para-pdf/">Excel para PDF</a>. O resultado é o mesmo — a diferença está apenas em como o arquivo de origem é lido.'
+      },
+      {
+        question: 'O texto do PDF fica selecionável?',
+        answer: 'Sim. As tabelas são desenhadas como elementos vetoriais reais, então o texto pode ser copiado, pesquisado e continua nítido em qualquer zoom — não é uma captura de tela da planilha.'
+      },
+      {
+        question: 'Todas as abas são incluídas?',
+        answer: 'Sim, cada aba começa em uma página própria com o nome dela como título. O conversor lê o intervalo utilizado da planilha, não a área de impressão configurada no Excel, e colunas ocultas continuam aparecendo. Para excluir algo, apague as linhas e colunas antes de converter.'
+      },
+      {
+        question: 'A planilha é copiada para algum servidor?',
+        answer: 'Não. A leitura e a geração do PDF acontecem no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>Planilhas antigas que ainda circulam</h2>
+      <p>O formato .xls foi substituído em 2007, mas continua aparecendo em sistemas legados, exportações de ERP e arquivos guardados há anos. Um <strong>conversor de xls para pdf</strong> resolve o caso em que o destinatário não precisa da planilha — precisa de um documento que abra em qualquer lugar e não possa ser alterado por engano.</p>
+
+      <h2>Tabelas de verdade, não imagens</h2>
+      <p>Cada aba vira uma tabela vetorial com bordas e cabeçalho repetido nas quebras de página, e o texto permanece selecionável. Isso importa quando o PDF será lido em tela, indexado ou usado como fonte para copiar valores.</p>
+
+      <h2>O que o conversor lê</h2>
+      <p>Ele usa o intervalo utilizado da planilha, e não a área de impressão. Colunas ocultas continuam saindo no PDF. Para controlar exatamente o que aparece, apague as linhas e colunas indesejadas antes de converter — ocultá-las não basta.</p>
+    `
+  },
+  {
+    en: 'csv-to-pdf',
+    slug: 'csv-para-pdf',
+    name: 'CSV para PDF',
+    title: 'Converter CSV para PDF Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta arquivos CSV em PDF com tabela formatada e cabeçalho repetido, direto no navegador.',
+    headline: 'CSV para PDF.',
+    subtitle: 'Transforme um CSV em uma tabela apresentável em PDF — sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter CSV para PDF, solte o arquivo .csv na ferramenta acima e baixe o PDF. As linhas são desenhadas como uma tabela real, com bordas e um cabeçalho sombreado que se repete a cada quebra de página, e o texto continua selecionável e pesquisável. A conversão acontece inteiramente no seu navegador.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'Por que converter um CSV em PDF?',
+        answer: 'Porque um CSV é texto cru: abre diferente em cada programa, não tem formatação e frequentemente aparece desalinhado para quem recebe. O PDF fixa a apresentação — a tabela chega igual para todo mundo e não pode ser alterada por engano.'
+      },
+      {
+        question: 'O cabeçalho se repete nas páginas seguintes?',
+        answer: 'Sim. Em tabelas longas, o cabeçalho é redesenhado no topo de cada página, o que é a diferença entre um relatório legível e uma sequência de números sem contexto a partir da segunda folha.'
+      },
+      {
+        question: 'Acentos aparecem corretamente?',
+        answer: 'Sim, para arquivos em UTF-8, que é o padrão atual. Um CSV antigo salvo em outra codificação pode exibir caracteres trocados — nesse caso reabra o arquivo em um editor, salve como UTF-8 e converta novamente.'
+      },
+      {
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. A leitura do CSV e a geração do PDF acontecem no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>De texto cru para um documento apresentável</h2>
+      <p>Um CSV não tem formatação, largura de coluna nem cabeçalho fixo — é texto separado por vírgulas, e cada programa o exibe de um jeito. Ao <strong>converter arquivo csv para pdf</strong>, você fixa a apresentação: a tabela chega idêntica a quem receber.</p>
+
+      <h2>Tabelas longas continuam legíveis</h2>
+      <p>O cabeçalho se repete a cada quebra de página, e as bordas separam as colunas visualmente. É o que distingue um relatório utilizável de páginas de números sem referência.</p>
+
+      <h2>Codificação</h2>
+      <p>Arquivos em UTF-8 preservam acentuação normalmente. Se o CSV vier de um sistema antigo em outra codificação, os acentos podem sair trocados — reabrir e salvar como UTF-8 antes resolve.</p>
+    `
+  },
+  {
+    en: 'xls-to-csv',
+    slug: 'xls-para-csv',
+    name: 'XLS para CSV',
+    title: 'Converter XLS para CSV Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta planilhas antigas .xls em CSV limpo direto no navegador, com vírgulas e aspas escapadas corretamente.',
+    headline: 'XLS para CSV.',
+    subtitle: 'Transforme uma planilha .xls antiga em CSV limpo, pronto para importar — sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter uma planilha .xls antiga em CSV, selecione o arquivo na ferramenta acima e baixe a primeira aba como texto separado por vírgulas, que qualquer banco de dados, script ou assistente de importação consegue ler. Valores que contêm vírgulas ou aspas são escapados corretamente. Tudo acontece no seu navegador.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'como converter xls para csv',
+        answer: 'Arraste o arquivo .xls para a ferramenta no topo da página e baixe o .csv. A primeira aba é exportada, com escapamento correto de vírgulas e aspas, em UTF-8 — pronto para importar em um sistema ou processar em um script.'
+      },
+      {
+        question: 'converter xls para csv no excel',
+        answer: 'No Excel, o caminho é Arquivo, Salvar como, e escolher "CSV (separado por vírgulas)". Funciona, mas tem duas armadilhas: o Excel usa o separador do sistema, que em configurações brasileiras costuma ser o ponto e vírgula em vez da vírgula, e a codificação padrão nem sempre é UTF-8 — o que faz acentos virarem símbolos estranhos no sistema de destino. A ferramenta aqui usa vírgula e UTF-8 sempre.'
+      },
+      {
+        question: 'qual a diferença de csv para xls',
+        answer: 'O .xls é um formato binário do Excel: guarda várias abas, fórmulas, formatação, larguras de coluna e gráficos. O CSV é texto puro, uma tabela só, sem fórmulas nem formatação — apenas os valores separados por vírgula. Por isso o CSV é universal e leve, e por isso ele perde tudo o que não for valor.'
+      },
+      {
+        question: 'E as outras abas da planilha?',
+        answer: 'O CSV guarda uma única tabela, então apenas a primeira aba é exportada. Se você precisa de outra, mova-a para a primeira posição no Excel antes de converter, ou converta uma vez por aba.'
+      },
+      {
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. A leitura da planilha e a geração do CSV acontecem no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>O formato antigo do Excel</h2>
+      <p>O .xls foi substituído pelo .xlsx em 2007, mas continua saindo de sistemas legados e exportações de ERP. Um <strong>conversor xls para csv</strong> é normalmente o passo anterior a uma importação: o sistema de destino aceita CSV, e a planilha antiga precisa virar texto.</p>
+
+      <h2>Por que não apenas salvar como CSV no Excel</h2>
+      <p>Funciona, com duas ressalvas conhecidas. O Excel usa o separador de listas do sistema operacional — em configurações brasileiras, geralmente o ponto e vírgula —, o que gera um arquivo que o destino recusa quando ele espera vírgula. E a codificação padrão nem sempre é UTF-8, o que transforma acentos em símbolos estranhos do outro lado. Aqui a saída é sempre vírgula e UTF-8.</p>
+
+      <h2>Uma tabela por arquivo</h2>
+      <p>CSV não tem abas. A primeira é exportada; se você precisa de outra, mova-a para o início antes de converter.</p>
+    `
+  },
+  {
+    en: 'xml-to-csv',
+    slug: 'xml-para-csv',
+    name: 'XML para CSV',
+    title: 'Converter XML para CSV Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta arquivos XML em tabela CSV direto no navegador, com elementos repetidos virando linhas e XML malformado reportado como erro.',
+    headline: 'XML para CSV.',
+    subtitle: 'Achate um XML em uma tabela CSV — com erros de sintaxe apontados em vez de ignorados.',
+    quickAnswer: 'Para converter XML para CSV, selecione o arquivo .xml na ferramenta acima e baixe uma tabela separada por vírgulas: elementos repetidos viram linhas e seus campos filhos viram colunas. XML malformado — uma tag não fechada, um caractere inválido — é reportado como erro em vez de gerar uma saída incompleta. Tudo acontece no seu navegador.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'como converter xml para csv',
+        answer: 'Arraste o arquivo .xml para a ferramenta e baixe o .csv. Os elementos que se repetem no documento viram as linhas da tabela, e os campos dentro de cada um viram as colunas — que é a estrutura que quase todo XML de exportação segue.'
+      },
+      {
+        question: 'E se o XML tiver muitos níveis aninhados?',
+        answer: 'Uma tabela é plana e o XML é hierárquico, então estruturas profundamente aninhadas não têm tradução direta: só o nível repetido principal e seus campos filhos entram como linhas e colunas. XMLs de exportação de sistemas costumam ter exatamente essa forma e convertem bem; documentos muito hierárquicos precisam de um tratamento anterior.'
+      },
+      {
+        question: 'O que acontece se o XML estiver quebrado?',
+        answer: 'A conversão para com uma mensagem, em vez de devolver uma tabela silenciosamente incompleta. A leitura é feita por uma análise real de DOM, o que também faz da ferramenta um jeito rápido de descobrir por que outro sistema está recusando o arquivo.'
+      },
+      {
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. A análise e a geração do CSV acontecem no seu navegador, no seu dispositivo — o que importa porque XMLs no Brasil costumam ser notas fiscais eletrônicas.'
+      }
+    ],
+    content: `
+      <h2>De hierarquia para tabela</h2>
+      <p>Um <strong>conversor de xml para csv</strong> resolve um descompasso estrutural: o XML representa hierarquia, o CSV representa uma grade. A conversão funciona bem quando o documento tem um elemento que se repete — cada repetição vira uma linha e seus campos viram colunas. É exatamente a forma de quase toda exportação de sistema.</p>
+
+      <h2>Erros apontados, não ignorados</h2>
+      <p>A leitura usa uma análise real de DOM. Um XML malformado interrompe a conversão com uma mensagem em vez de produzir uma tabela parcial — e isso costuma responder em segundos por que outro sistema está recusando o arquivo.</p>
+
+      <h2>Notas fiscais não precisam sair da máquina</h2>
+      <p>No Brasil, XML quase sempre significa nota fiscal eletrônica. Aqui a conversão acontece dentro do navegador e nada é copiado para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'xml-to-xlsx',
+    slug: 'xml-para-xlsx',
+    name: 'XML para XLSX',
+    title: 'Converter XML para Excel Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta arquivos XML em planilha Excel (.xlsx) com células tipadas, direto no navegador.',
+    headline: 'XML para XLSX.',
+    subtitle: 'Transforme um XML em planilha Excel pronta para ordenar e filtrar — sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter XML para Excel, selecione o arquivo .xml na ferramenta acima e baixe uma pasta .xlsx nativa com células tipadas, pronta para ordenar, filtrar e usar em tabelas dinâmicas. Elementos repetidos viram linhas e seus campos filhos viram colunas. XML malformado é reportado como erro em vez de gerar uma planilha incompleta.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'Por que .xlsx e não CSV?',
+        answer: 'O .xlsx carrega a estrutura e os tipos dentro do próprio arquivo, então abre certo na primeira tentativa — sem o Excel adivinhar separador e codificação, que é a origem de colunas coladas e acentos trocados. Se o destino é um sistema que espera texto, <a href="/pt/xml-para-csv/">XML para CSV</a> é a escolha.'
+      },
+      {
+        question: 'As células saem com tipo?',
+        answer: 'Números são gravados como números, não como texto, então somar, ordenar e criar tabelas dinâmicas funciona imediatamente. Vale conferir colunas de data, cujo formato de origem no XML pode ser ambíguo.'
+      },
+      {
+        question: 'E se o XML for muito aninhado?',
+        answer: 'Uma planilha é plana. O nível que se repete vira as linhas e seus campos filhos viram as colunas; hierarquias mais profundas não têm representação direta e precisam ser achatadas antes.'
+      },
+      {
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. A análise e a montagem da planilha acontecem no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>XML direto em planilha, sem passar por CSV</h2>
+      <p>O caminho usual — XML para CSV e depois abrir no Excel — esbarra nos dois problemas clássicos do CSV: o separador que o Excel adivinha errado e a codificação que transforma acentos em símbolos. Um <strong>conversor de xml para xlsx</strong> pula essa etapa e entrega uma planilha nativa, que abre certo na primeira tentativa.</p>
+
+      <h2>Células com tipo</h2>
+      <p>Números entram como números, prontos para somar e filtrar. Datas merecem conferência, porque o formato no XML de origem nem sempre é inequívoco.</p>
+
+      <h2>O limite da tabela</h2>
+      <p>Elementos repetidos viram linhas; seus campos, colunas. Estruturas profundamente aninhadas não cabem em uma grade e precisam ser preparadas antes. E, como em todo o site, o arquivo não é copiado para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'xlsx-to-json',
+    slug: 'xlsx-para-json',
+    name: 'XLSX para JSON',
+    title: 'Converter XLSX para JSON Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta uma planilha Excel em JSON estruturado direto no navegador: cabeçalhos viram chaves e cada linha vira um objeto.',
+    headline: 'XLSX para JSON.',
+    subtitle: 'Transforme uma planilha Excel em um array de objetos JSON — processado no seu próprio navegador.',
+    quickAnswer: 'Para converter Excel para JSON, selecione uma pasta .xlsx na ferramenta acima e baixe a primeira aba como um array de objetos: a linha de cabeçalho vira as chaves e cada linha vira um objeto. É o caminho direto de uma planilha para código, sem passar por CSV. Tudo é processado no seu navegador.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'como fica a estrutura do JSON?',
+        answer: 'A primeira linha da planilha é tratada como cabeçalho e cada célula dela vira uma chave. As linhas seguintes viram objetos com essas chaves, reunidos em um único array — o formato que a maioria das APIs e bibliotecas espera receber.'
+      },
+      {
+        question: 'Por que não converter para CSV e depois para JSON?',
+        answer: 'Porque o CSV perde a informação de tipo e introduz os problemas de separador e codificação no meio do caminho. Ir direto da planilha para JSON elimina uma etapa em que as coisas costumam quebrar.'
+      },
+      {
+        question: 'E as outras abas?',
+        answer: 'A primeira aba é convertida. Se você precisa de outra, mova-a para a primeira posição no Excel antes de converter.'
+      },
+      {
+        question: 'A planilha é copiada para algum servidor?',
+        answer: 'Não. A leitura e a conversão acontecem no seu navegador — o que importa porque planilhas convertidas para JSON costumam ser bases de clientes e exportações internas.'
+      }
+    ],
+    content: `
+      <h2>Da planilha direto para o código</h2>
+      <p>Um <strong>conversor xlsx para json</strong> encurta o caminho mais comum entre quem trabalha com planilhas e quem trabalha com código. A linha de cabeçalho vira as chaves, cada linha vira um objeto, e o resultado é um array pronto para consumir.</p>
+
+      <h2>Sem escala no CSV</h2>
+      <p>Passar pelo CSV no meio do caminho acrescenta dois pontos de falha — o separador que o Excel escolhe e a codificação do arquivo. Ir direto evita ambos.</p>
+
+      <h2>Processamento local</h2>
+      <p>Planilhas que viram JSON costumam ser bases de clientes, catálogos e exportações internas. Aqui tudo acontece dentro do navegador e nada é copiado para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'xls-to-json',
+    slug: 'xls-para-json',
+    name: 'XLS para JSON',
+    title: 'Converter XLS para JSON Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta uma planilha antiga .xls em JSON estruturado direto no navegador, sem etapas intermediárias.',
+    headline: 'XLS para JSON.',
+    subtitle: 'Transforme uma planilha .xls antiga em array de objetos JSON — processado no seu próprio navegador.',
+    quickAnswer: 'Para converter uma planilha .xls antiga em JSON, selecione o arquivo na ferramenta acima e baixe a primeira aba como um array de objetos, com a linha de cabeçalho fornecendo as chaves e cada linha virando um objeto. É o caminho mais curto de uma planilha legada para código. Tudo é processado no seu navegador.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'Qual a diferença para o XLSX para JSON?',
+        answer: 'Apenas o formato de entrada. O .xls é o binário do Excel anterior a 2007; o <a href="/pt/xlsx-para-json/">.xlsx</a> é o atual. A saída JSON é idêntica — cabeçalho como chaves, uma linha por objeto.'
+      },
+      {
+        question: 'Preciso converter o .xls para .xlsx antes?',
+        answer: 'Não. A ferramenta lê o formato antigo diretamente, o que evita uma etapa intermediária no Excel. É justamente o caso em que arquivos vindos de sistemas legados costumam travar.'
+      },
+      {
+        question: 'Os tipos são preservados?',
+        answer: 'Números vêm como números sempre que a planilha os armazena assim. Datas merecem conferência: em planilhas antigas o formato de data é frequentemente ambíguo, e vale validar o resultado antes de usar em produção.'
+      },
+      {
+        question: 'A planilha é copiada para algum servidor?',
+        answer: 'Não. A leitura e a conversão acontecem no seu navegador, no seu dispositivo.'
+      }
+    ],
+    content: `
+      <h2>Planilhas legadas, direto para JSON</h2>
+      <p>Arquivos .xls ainda saem de sistemas antigos e exportações de ERP. Um <strong>conversor xls para json</strong> lê o formato binário diretamente, sem exigir que você abra a planilha no Excel e a salve novamente como .xlsx só para poder converter.</p>
+
+      <h2>A estrutura</h2>
+      <p>Cabeçalho vira chaves, cada linha vira um objeto, tudo dentro de um array. O formato que APIs e bibliotecas esperam.</p>
+
+      <h2>Confira as datas</h2>
+      <p>Planilhas antigas guardam datas de maneiras inconsistentes. Números e texto atravessam bem; colunas de data merecem uma validação antes de irem para produção.</p>
+    `
+  },
+  {
+    en: 'qbo-to-csv',
+    slug: 'qbo-para-csv',
+    name: 'QBO para CSV',
+    title: 'Converter QBO para CSV Online Grátis — Extrato Bancário | ConvertOcean',
+    description: 'Converta arquivos .qbo do Web Connect em CSV ou Excel direto no navegador, quando o QuickBooks recusa o arquivo do banco.',
+    headline: 'QBO para CSV.',
+    subtitle: 'Transforme um arquivo .qbo em planilha para revisar as transações antes de importar — sem que o extrato saia do seu computador.',
+    quickAnswer: 'Para converter QBO para CSV, selecione o arquivo .qbo do Web Connect na ferramenta acima e baixe as transações em CSV ou Excel. É a saída usual quando o QuickBooks recusa o arquivo QBO de um banco, e permite revisar as linhas antes de importar. O extrato é lido dentro do seu navegador e não sai do seu computador.',
+    category: 'Ferramentas Empresariais',
+    faqs: [
+      {
+        question: 'O que é um arquivo QBO?',
+        answer: 'É o formato Web Connect que bancos disponibilizam para importação direta no QuickBooks. Ele é uma variante do OFX, com campos específicos exigidos pelo QuickBooks — e é justamente essa rigidez que faz o programa recusar arquivos de alguns bancos.'
+      },
+      {
+        question: 'Por que o QuickBooks recusa o arquivo do meu banco?',
+        answer: 'Normalmente por um detalhe de formato: um identificador de instituição que o programa não reconhece, uma data fora do padrão esperado ou um campo ausente. Converter para CSV contorna a importação direta e ainda permite revisar as transações antes de levá-las para o sistema.'
+      },
+      {
+        question: 'Posso baixar em Excel em vez de CSV?',
+        answer: 'Sim, há a opção de gerar uma pasta .xlsx. Ela evita o problema de o Excel abrir um CSV com tudo em uma coluna só, já que a estrutura das colunas viaja dentro do próprio arquivo.'
+      },
+      {
+        question: 'O extrato é copiado para algum servidor?',
+        answer: 'Não. A leitura acontece no seu navegador, no seu dispositivo. Um extrato lista cada transação de uma conta — é exatamente o arquivo que não deveria ser enviado a um serviço qualquer.'
+      }
+    ],
+    content: `
+      <h2>Quando o QuickBooks recusa o arquivo do banco</h2>
+      <p>O .qbo é o formato Web Connect, feito para importação direta no QuickBooks. Ele é rígido quanto a identificadores e formatos de data, e é comum um banco gerar um arquivo que o programa simplesmente não aceita.</p>
+      <p>Converter para CSV contorna a importação direta e dá algo que a importação automática não oferece: a chance de revisar as transações antes que elas entrem na contabilidade.</p>
+
+      <h2>CSV ou Excel</h2>
+      <p>A saída pode ser um CSV ou uma pasta .xlsx. O .xlsx evita o problema clássico de o Excel abrir um CSV com tudo empilhado em uma coluna, porque já carrega a estrutura das colunas dentro do arquivo.</p>
+
+      <h2>Um extrato não deveria circular</h2>
+      <p>Ele registra cada movimentação de uma conta. A leitura acontece dentro do navegador, no seu dispositivo, e o arquivo não é copiado para nenhum servidor.</p>
+    `
+  }
+];
+
 export const ptTools: PtTool[] = [
   ...ptToolsSeed,
   ...ptToolsBatch1,
@@ -1974,7 +2569,8 @@ export const ptTools: PtTool[] = [
   ...ptToolsBatch6,
   ...ptToolsBatch7,
   ...ptToolsBatch8,
-  ...ptToolsBatch9
+  ...ptToolsBatch9,
+  ...ptToolsBatch10
 ];
 
 /**

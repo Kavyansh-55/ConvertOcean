@@ -77,6 +77,20 @@ const PAIRS = [
   { pt: 'ponto-de-equilibrio', en: 'break-even-calculator' },
   { pt: 'calculadora-de-imposto', en: 'sales-tax-calculator' },
   { pt: 'ofx-para-csv', en: 'ofx-to-csv' },
+  { pt: 'heic-para-jpg', en: 'heic-to-jpg' },
+  { pt: 'heic-para-png', en: 'heic-to-png' },
+  { pt: 'webp-para-jpg', en: 'webp-to-jpg' },
+  { pt: 'jpg-para-webp', en: 'jpg-to-webp' },
+  { pt: 'avif-para-jpg', en: 'avif-to-jpg' },
+  { pt: 'avif-para-png', en: 'avif-to-png' },
+  { pt: 'xls-para-pdf', en: 'xls-to-pdf' },
+  { pt: 'csv-para-pdf', en: 'csv-to-pdf' },
+  { pt: 'xls-para-csv', en: 'xls-to-csv' },
+  { pt: 'xml-para-csv', en: 'xml-to-csv' },
+  { pt: 'xml-para-xlsx', en: 'xml-to-xlsx' },
+  { pt: 'xlsx-para-json', en: 'xlsx-to-json' },
+  { pt: 'xls-para-json', en: 'xls-to-json' },
+  { pt: 'qbo-para-csv', en: 'qbo-to-csv' },
 ];
 
 let bad = 0;
