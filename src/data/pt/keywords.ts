@@ -103,7 +103,60 @@ export const excluded: { term: string; why: string }[] = [
   { term: 'ilovepdf juntar pdf', why: 'competitor brand navigation' },
   { term: 'i love pdf juntar pdf', why: 'competitor brand navigation' },
   { term: 'ilove juntar pdf', why: 'competitor brand navigation' },
-  { term: 'mesclar pdf adobe', why: 'competitor brand navigation (Adobe)' }
+  { term: 'mesclar pdf adobe', why: 'competitor brand navigation (Adobe)' },
+  // batch 6
+  { term: 'dividir pdf i love pdf', why: 'competitor brand navigation' },
+  { term: 'ilovepdf dividir pdf', why: 'competitor brand navigation' },
+  { term: 'dividir pdf ilove', why: 'competitor brand navigation' },
+  { term: 'separar pdf i love pdf', why: 'competitor brand navigation' },
+  { term: 'ilovepdf separar pdf', why: 'competitor brand navigation' },
+  { term: 'separar pdf ilove', why: 'competitor brand navigation' },
+  { term: 'i love pdf separar pdf', why: 'competitor brand navigation' },
+  { term: 'smallpdf separar pdf', why: 'competitor brand navigation (Smallpdf)' },
+  { term: 'compactar pdf adobe', why: 'competitor brand navigation (Adobe)' },
+  { term: 'adobe compactar pdf', why: 'competitor brand navigation (Adobe)' },
+  { term: 'compactar pdf i love pdf', why: 'competitor brand navigation' },
+  { term: 'compactar pdf ilove', why: 'competitor brand navigation' },
+  { term: 'comprimir pdf i love pdf', why: 'competitor brand navigation' },
+  { term: 'ilovepdf comprimir pdf', why: 'competitor brand navigation' },
+  { term: 'comprimir pdf ilove', why: 'competitor brand navigation' },
+  { term: 'adobe comprimir pdf', why: 'competitor brand navigation (Adobe)' },
+  { term: 'adobe diminuir pdf', why: 'competitor brand navigation (Adobe)' },
+  { term: 'diminuir pdf adobe', why: 'competitor brand navigation (Adobe)' }
+];
+
+/**
+ * Password removal. Not a tool we have, and not one to advertise.
+ *
+ * "Quebrar" means to break, and the `quebrar pdf` question set is dominated by
+ * `como quebrar senha de pdf` — breaking a PDF's password. That is a different
+ * category from everything else in this file. It is not a converter, we do not
+ * build it, and a privacy-first site that markets itself on breaking document
+ * protection is arguing against its own position: the same encryption someone
+ * wants stripped here is what protects a contract or a payslip elsewhere.
+ *
+ * Volume is <100 across the set, so nothing is being given up. Recorded so the
+ * decision is visible rather than looking like an oversight — and because the
+ * split page DOES legitimately target `quebrar pdf` (Easy, >1000), which is a
+ * genuine split query. The word is shared; the intent is not.
+ */
+export const passwordIntent: { term: string; kd: string; volume: string }[] = [
+  { term: 'quebrar pdf protegido', kd: 'n/a', volume: '<100' },
+  { term: 'como quebrar senha de pdf', kd: 'Easy', volume: '<100' },
+  { term: 'como quebrar a senha de um pdf', kd: 'Easy', volume: '<100' },
+  { term: 'como quebrar senha pdf', kd: 'n/a', volume: '<100' }
+];
+
+/**
+ * Right cluster, wrong page: "quebrar pdf em word" is a CONVERSION query that
+ * arrived inside the split export because it shares the verb. It belongs to
+ * /pt/pdf-para-word/ and /pt/pdf-para-excel/, where the tools actually do it.
+ */
+export const belongsElsewhere: { term: string; kd: string; volume: string; page: string }[] = [
+  { term: 'quebrar pdf em word', kd: 'Medium', volume: '>100', page: 'pdf-para-word' },
+  { term: 'quebrar pdf para word', kd: 'Medium', volume: '<100', page: 'pdf-para-word' },
+  { term: 'como quebrar pdf para word', kd: 'Easy', volume: '<100', page: 'pdf-para-word' },
+  { term: 'quebrar pdf em excel', kd: 'Easy', volume: '<100', page: 'pdf-para-excel' }
 ];
 
 /**
@@ -197,7 +250,37 @@ export const coveredInBodyCopy: { term: string; page: string }[] = [
   { term: 'como extrair o texto de uma imagem', page: 'imagem-para-texto' },
   { term: 'como extrair um texto de uma imagem', page: 'imagem-para-texto' },
   { term: 'como converter uma imagem em texto', page: 'imagem-para-texto' },
-  { term: 'programa que passa imagem para texto', page: 'imagem-para-texto' }
+  { term: 'programa que passa imagem para texto', page: 'imagem-para-texto' },
+  /* batch 6. Split and compress returned the largest variant sets yet — the
+     compress cluster alone has three verbs × five ways of saying "file". */
+  { term: 'como dividir um arquivo pdf', page: 'dividir-pdf' },
+  { term: 'como dividir arquivo pdf', page: 'dividir-pdf' },
+  { term: 'como dividir arquivos pdf', page: 'dividir-pdf' },
+  { term: 'como dividir o pdf', page: 'dividir-pdf' },
+  { term: 'onde dividir documentos pdf com facilidade', page: 'dividir-pdf' },
+  { term: 'como separar pdf', page: 'dividir-pdf' },
+  { term: 'como separar páginas de pdf', page: 'dividir-pdf' },
+  { term: 'como quebrar um pdf', page: 'dividir-pdf' },
+  { term: 'como comprimir um arquivo pdf', page: 'comprimir-pdf' },
+  { term: 'como comprimir um pdf', page: 'comprimir-pdf' },
+  { term: 'como comprimir arquivos pdf', page: 'comprimir-pdf' },
+  { term: 'como comprimir arquivo pdf', page: 'comprimir-pdf' },
+  { term: 'como comprimir um arquivo em pdf', page: 'comprimir-pdf' },
+  { term: 'como compactar pdf', page: 'comprimir-pdf' },
+  { term: 'como compactar arquivo pdf', page: 'comprimir-pdf' },
+  { term: 'como compactar um arquivo pdf', page: 'comprimir-pdf' },
+  { term: 'como compactar um arquivo em pdf', page: 'comprimir-pdf' },
+  { term: 'como compactar um pdf', page: 'comprimir-pdf' },
+  { term: 'como compactar pdf gratuito', page: 'comprimir-pdf' },
+  { term: 'como diminuir pdf', page: 'comprimir-pdf' },
+  { term: 'como diminuir o tamanho de um pdf', page: 'comprimir-pdf' },
+  { term: 'como diminuir tamanho de pdf', page: 'comprimir-pdf' },
+  { term: 'como diminuir o tamanho do pdf', page: 'comprimir-pdf' },
+  { term: 'como diminuir um arquivo pdf', page: 'comprimir-pdf' },
+  { term: 'como diminuir o tamanho do arquivo pdf', page: 'comprimir-pdf' },
+  { term: 'como diminuir o mb de um pdf', page: 'comprimir-pdf' },
+  { term: 'o que significa comprimir pdf', page: 'comprimir-pdf' },
+  { term: 'o que é compactar pdf', page: 'comprimir-pdf' }
 ];
 
 /**
@@ -716,6 +799,92 @@ export const pageKeywords: PageKeywords[] = [
     ],
     questions: [
       { term: 'como converter txt para pdf', kd: 'n/a', volume: '<100' }
+    ]
+  },
+
+  /* ---------------------------------------------------------------------
+     Batch 6 — split and compress, 2026-09-24. Four synonyms and three.
+
+     Split: dividir / separar / quebrar / extrair páginas. `dividir pdf` and
+     `separar pdf` are BOTH Easy at >100K, which is the highest winnable volume
+     anywhere in this programme — the split SERP is evidently far softer than
+     the merge one, where every head term came back Hard.
+
+     Compress: compactar / comprimir / diminuir, all at Medium. One page each,
+     as with merge and OCR.
+
+     `dividir pdf por tamanho` (Easy, >1000) is worth noting because the tool
+     genuinely does it — split-pdf can cut a document into parts that each stay
+     under a size set in MB. That is an exact capability match with real volume,
+     which is rarer than it sounds.
+     --------------------------------------------------------------------- */
+  {
+    slug: 'dividir-pdf',
+    en: 'split-pdf',
+    primary: 'dividir pdf',
+    phrase: [
+      { term: 'dividir pdf', kd: 'Easy', volume: '>100K' },
+      { term: 'dividir pdf online', kd: 'Easy', volume: '>1000' },
+      { term: 'dividir pdf por tamanho', kd: 'Easy', volume: '>1000' },
+      { term: 'dividir pdf gratis', kd: 'Easy', volume: '>1000' },
+      { term: 'dividir pdf em partes', kd: 'Easy', volume: '>100' },
+      { term: 'dividir pdf grátis', kd: 'Easy', volume: '>100' },
+      { term: 'separar pdf', kd: 'Easy', volume: '>100K' },
+      { term: 'separar pdf online', kd: 'Easy', volume: '>1000' },
+      { term: 'separar pdf por paginas', kd: 'Easy', volume: '>100' },
+      { term: 'separar pdf gratis', kd: 'Easy', volume: '>100' },
+      { term: 'quebrar pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'quebrar pdf em paginas', kd: 'n/a', volume: '<100' },
+      { term: 'quebrar pdf online', kd: 'Easy', volume: '<100' },
+      { term: 'extrair paginas de pdf', kd: 'Easy', volume: '>100' },
+      { term: 'extrair páginas de pdf', kd: 'Easy', volume: '>100' },
+      { term: 'extrair paginas de pdf gratuito', kd: 'n/a', volume: '<100' },
+      { term: 'melhor ferramenta para extrair páginas de pdf', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como separar paginas pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'como dividir pdf', kd: 'Easy', volume: '>100' },
+      { term: 'como dividir um pdf', kd: 'Easy', volume: '>100' },
+      { term: 'como separar paginas de um pdf', kd: 'Easy', volume: '>100' },
+      { term: 'como dividir pdf em partes', kd: 'n/a', volume: '<100' },
+      { term: 'como dividir um pdf em dois', kd: 'Easy', volume: '<100' },
+      { term: 'como separar documentos em pdf', kd: 'Easy', volume: '<100' },
+      { term: 'como quebrar pdf', kd: 'Easy', volume: '<100' },
+      { term: 'onde dividir documentos pdf facilmente', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'comprimir-pdf',
+    en: 'compress-pdf',
+    primary: 'comprimir pdf',
+    phrase: [
+      { term: 'comprimir pdf', kd: 'Medium', volume: '>100K' },
+      { term: 'comprimir pdf gratuito', kd: 'Easy', volume: '>1000' },
+      { term: 'comprimir pdf online', kd: 'Medium', volume: '>1000' },
+      { term: 'comprimir pdf grátis', kd: 'Medium', volume: '>1000' },
+      { term: 'comprimir pdf gratis', kd: 'Medium', volume: '>1000' },
+      { term: 'compactar pdf', kd: 'Medium', volume: '>100K' },
+      { term: 'compactar pdf online', kd: 'Medium', volume: '>1000' },
+      { term: 'compactar pdf gratuito', kd: 'Medium', volume: '>1000' },
+      { term: 'compactar pdf gratis', kd: 'Easy', volume: '>1000' },
+      { term: 'compactar pdf grátis', kd: 'Medium', volume: '>1000' },
+      { term: 'diminuir pdf', kd: 'Medium', volume: '>10,000' },
+      { term: 'diminuir pdf online', kd: 'Easy', volume: '>100' },
+      { term: 'diminuir pdf gratis', kd: 'Medium', volume: '>100' },
+      { term: 'diminuir pdf tamanho', kd: 'Medium', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como comprimir pdf', kd: 'Medium', volume: '>1000' },
+      { term: 'como diminuir o tamanho de um arquivo pdf', kd: 'Medium', volume: '>1000' },
+      { term: 'como compactar arquivos pdf', kd: 'Medium', volume: '>1000' },
+      { term: 'como compactar arquivos em pdf', kd: 'Easy', volume: '>100' },
+      { term: 'como diminuir arquivo pdf', kd: 'Easy', volume: '>100' },
+      { term: 'como diminuir o tamanho de um arquivo em pdf', kd: 'Easy', volume: '>100' },
+      { term: 'como diminuir mb de pdf', kd: 'Medium', volume: '>100' },
+      { term: 'como comprimir um arquivo pdf muito grande', kd: 'n/a', volume: '<100' },
+      { term: 'como comprimir pdf sem perder qualidade', kd: 'n/a', volume: '<100' },
+      { term: 'o que é comprimir pdf', kd: 'Medium', volume: '<100' },
+      { term: 'como compactar pdf no iphone', kd: 'n/a', volume: '<100' }
     ]
   }
 ];

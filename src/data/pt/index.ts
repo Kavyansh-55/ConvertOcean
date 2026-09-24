@@ -100,26 +100,79 @@ const ptToolsSeed: PtTool[] = [
     category: 'Ferramentas PDF',
     faqs: [
       {
+        question: 'como comprimir pdf',
+        answer: 'Arraste o documento para a ferramenta no topo da página e escolha o nível de compressão. O tamanho final aparece antes de você baixar, então dá para testar um nível mais leve se o resultado ficar aquém do esperado. Não há cadastro, marca d’água nem limite diário.'
+      },
+      {
+        question: 'o que é comprimir pdf',
+        answer: 'É reduzir o tamanho do arquivo sem mudar o que está escrito nele. Comprimir, compactar e diminuir são a mesma operação — nomes diferentes para ela, e esta página faz as três. Na prática, a redução vem de recomprimir as imagens dentro do documento e de descartar dados que não afetam a leitura.'
+      },
+      {
+        question: 'como diminuir o tamanho de um arquivo pdf',
+        answer: 'O primeiro passo é saber onde está o peso. Abra o PDF e tente selecionar uma frase: se o texto é destacado, o documento é majoritariamente texto e já é pequeno — a compressão renderá pouco porque não há muito a tirar. Se o cursor só desenha um retângulo, cada página é uma imagem digitalizada, e é aí que a compressão faz diferença real.'
+      },
+      {
+        question: 'como diminuir mb de pdf',
+        answer: 'A redução depende do tipo de documento. Um PDF digitalizado de 8 MB costuma cair para algo entre 500 KB e 1,5 MB na compressão mais forte. Um PDF gerado pelo Word, que já é quase todo texto, pode cair apenas 10 ou 20%. Se um arquivo de texto já está pequeno e ainda assim precisa encolher, o caminho normalmente é remover páginas, não comprimir mais.'
+      },
+      {
+        question: 'como comprimir pdf sem perder qualidade',
+        answer: 'Em PDFs de texto, sim: o texto é vetorial e continua nítido e selecionável em qualquer nível de compressão. Em páginas digitalizadas, não existe compressão realmente sem perdas — as imagens são recomprimidas e há degradação visual, tanto maior quanto mais forte o nível. O caminho prático é escolher o nível mais leve que ainda caiba no limite exigido e conferir o resultado antes de enviar.'
+      },
+      {
+        question: 'como compactar arquivos em pdf',
+        answer: 'A compressão trabalha um documento por vez. Se você precisa reduzir vários, pode ser mais eficiente juntá-los primeiro em <a href="/pt/juntar-pdf/">juntar PDF</a> e comprimir o arquivo único: comprimir um documento só costuma render mais do que comprimir vários separadamente, porque elementos repetidos entre eles são aproveitados uma vez.'
+      },
+      {
+        question: 'como compactar arquivos pdf',
+        answer: 'Nem todo PDF encolhe. Documentos que já foram comprimidos antes, ou que são quase todo texto, chegam perto do mínimo possível e não têm muito a ceder — se o resultado mal mudou, é esse o motivo, e insistir em um nível mais forte só degrada o que já estava bom. O ganho grande está sempre nos digitalizados.'
+      },
+      {
+        question: 'como diminuir arquivo pdf',
+        answer: 'Quando a compressão não basta, existem dois caminhos antes de desistir. Remova as páginas desnecessárias em <a href="/pt/dividir-pdf/">dividir PDF</a> — muitos anexos carregam páginas em branco ou instruções que ninguém precisa enviar. E, se o documento for digitalizado, refazer a digitalização costuma render mais do que qualquer compressão sobre um arquivo já ruim.'
+      },
+      {
+        question: 'como diminuir o tamanho de um arquivo em pdf',
+        answer: 'Se o documento ainda vai ser digitalizado, o ajuste mais eficiente acontece antes: digitalize em 200 dpi em vez de 600, e em preto e branco ou escala de cinza quando o documento não tiver cor relevante. Um RG digitalizado assim sai pequeno de origem e pode nem precisar de compressão. É bem mais eficaz do que comprimir ao máximo um arquivo que nasceu grande demais.'
+      },
+      {
+        question: 'como comprimir um arquivo pdf muito grande',
+        answer: 'Arquivos muito grandes funcionam, mas o limite é a memória do seu próprio dispositivo, já que o processamento é local. Um PDF de centenas de megabytes pode deixar o navegador lento ou travar em um aparelho modesto. Nesse caso, divida o documento antes em <a href="/pt/dividir-pdf/">dividir PDF</a>, comprima cada parte e junte de novo se necessário.'
+      },
+      {
+        question: 'como compactar pdf no iphone',
+        answer: 'Funciona no Safari do iPhone como em qualquer navegador: abra a página, selecione o PDF pelo app Arquivos e baixe o resultado. Não é preciso instalar aplicativo, e o documento continua sem sair do aparelho. O que limita em celulares mais antigos é a memória disponível para arquivos grandes.'
+      },
+      {
         question: 'Como deixar meu PDF abaixo de 2 MB para o concurso?',
-        answer: 'Arraste o PDF para a ferramenta e escolha a compressão mais forte. O tamanho final aparece antes de você baixar, então dá para conferir se ficou dentro do limite do edital. Documentos digitalizados costumam cair bastante porque o peso está nas imagens das páginas — um RG ou diploma escaneado de 8 MB normalmente fica entre 500 KB e 1,5 MB. Se ainda passar do limite, digitalize novamente em 200 dpi e em preto e branco antes de comprimir.'
-      },
-      {
-        question: 'O arquivo é copiado para algum servidor?',
-        answer: 'Não. A compressão roda inteiramente no seu navegador, no seu próprio dispositivo. O documento não é copiado para nenhum servidor nosso nem de terceiros, e nós não temos como vê-lo. O código do site é aberto e pode ser conferido no repositório público.'
-      },
-      {
-        question: 'A compressão perde qualidade?',
-        answer: 'Depende do que existe no arquivo. Páginas digitalizadas passam por uma recompressão das imagens, então há perda visual — quanto mais forte a compressão, mais visível. PDFs gerados por Word ou pela impressão de uma planilha são quase todos texto, e nesses o texto continua nítido e selecionável em qualquer nível. A ferramenta mostra o tamanho final antes do download, então dá para testar um nível mais leve primeiro.'
+        answer: 'Escolha a compressão mais forte e confira o tamanho final antes de baixar. Documentos digitalizados costumam cair bastante — um RG ou diploma escaneado de 8 MB normalmente fica entre 500 KB e 1,5 MB. Se ainda passar do limite, digitalize novamente em 200 dpi e em preto e branco antes de comprimir.'
       },
       {
         question: 'O documento continua legível para a banca?',
         answer: 'Sim, desde que você confira o resultado antes de anexar. Os editais rejeitam arquivos ilegíveis, então abra o PDF comprimido e verifique se dá para ler nome, números de documento e assinaturas. Se a compressão mais forte borrar o texto, volte um nível: normalmente o arquivo ainda fica dentro do limite.'
       },
       {
-        question: 'Funciona no celular?',
-        answer: 'Sim. A ferramenta funciona no navegador do celular da mesma forma que no computador, e o arquivo continua sem sair do aparelho. Depois que a página carrega, ela também funciona sem internet.'
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. A compressão roda inteiramente no seu navegador, no seu próprio dispositivo. O documento não é copiado para nenhum servidor nosso nem de terceiros, e nós não temos como vê-lo. O código do site é aberto e pode ser conferido no repositório público.'
       }
-    ]
+    ],
+    content: `
+      <h2>Comprimir, compactar ou diminuir: a mesma coisa</h2>
+      <p>As três palavras descrevem a mesma operação, e esta página faz todas. Quem procura <strong>compactar pdf</strong>, <strong>diminuir pdf</strong> ou <strong>comprimir pdf gratuito</strong> está atrás do mesmo resultado: um arquivo menor, com o conteúdo intacto.</p>
+      <p>É gratuito, sem cadastro e sem marca d’água — <strong>compactar pdf gratis</strong> aqui significa a ferramenta inteira, não uma amostra.</p>
+
+      <h2>Onde está o peso do seu arquivo</h2>
+      <p>Esta é a parte que decide quanto você vai conseguir reduzir, e quase ninguém verifica antes. Abra o PDF e tente selecionar uma frase. Se o texto é destacado, o documento é essencialmente texto: ele já é pequeno, e a compressão vai render pouco porque não há muito a remover. Se o cursor apenas desenha um retângulo, cada página é uma fotografia — e é nesse caso que <strong>diminuir pdf tamanho</strong> produz quedas de 80% ou mais.</p>
+
+      <h2>Sem perder qualidade: depende do documento</h2>
+      <p>Em PDFs de texto, o texto é vetorial e permanece nítido e selecionável em qualquer nível. Em páginas digitalizadas não existe compressão sem perdas: as imagens são recomprimidas e há degradação, proporcional ao nível escolhido. Dizemos isso abertamente porque descobrir depois que a banca recusou um documento ilegível é bem pior do que escolher um nível mais leve agora.</p>
+
+      <h2>Arquivos muito grandes</h2>
+      <p>O processamento é local, então o limite é a memória do seu aparelho e não uma regra nossa. Para documentos de centenas de megabytes, divida antes em <a href="/pt/dividir-pdf/">dividir PDF</a>, comprima cada parte e junte novamente se preciso.</p>
+
+      <h2>O documento não sai do seu computador</h2>
+      <p>Contratos, holerites, laudos e documentos de concurso são exatamente o que as pessoas mais precisam comprimir — e o que menos deveria circular. Aqui a compressão acontece dentro do navegador e o arquivo não é copiado para nenhum servidor.</p>
+    `
   },
   {
     en: 'merge-pdf',
@@ -1256,13 +1309,100 @@ const ptToolsBatch5: PtTool[] = [
   }
 ];
 
+/**
+ * ---------------------------------------------------------------------------
+ * Keyword-led batch 6 — split, 2026-09-24.
+ * ---------------------------------------------------------------------------
+ *
+ * The compress half of this batch is not here: `compactar`, `comprimir` and
+ * `diminuir` are one tool, so they strengthened /pt/comprimir-pdf/ above.
+ * Split has FOUR synonyms — dividir, separar, quebrar, extrair páginas — and
+ * gets one page, slugged on `dividir pdf`.
+ *
+ * `dividir pdf` and `separar pdf` are both Easy at >100K: the softest
+ * high-volume SERP found anywhere in this programme, and a striking contrast
+ * with merge, where every head term came back Hard.
+ *
+ * "Quebrar" is shared with password cracking (`como quebrar senha de pdf`).
+ * The split sense is targeted; the password sense is not, and the page says
+ * plainly that it does not remove protection. See `passwordIntent`.
+ */
+const ptToolsBatch6: PtTool[] = [
+  {
+    en: 'split-pdf',
+    slug: 'dividir-pdf',
+    name: 'Dividir PDF',
+    title: 'Dividir PDF Online Grátis — Separar Páginas | ConvertOcean',
+    description: 'Dividir PDF em partes, separar páginas ou extrair apenas as que você precisa, direto no navegador. O arquivo não sai do seu computador.',
+    headline: 'Dividir PDF.',
+    subtitle: 'Separe páginas, corte o documento em partes iguais ou limite cada parte por tamanho — sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para dividir um PDF, selecione o arquivo na ferramenta acima e escolha o que deve sair: um PDF com as páginas que você marcar, um arquivo separado para cada página (entregue em ZIP), o documento inteiro cortado em um número de partes iguais, ou partes que fiquem abaixo de um tamanho definido em MB. As miniaturas permitem escolher as páginas clicando. Tudo acontece no seu navegador e o arquivo não sai do seu computador.',
+    category: 'Ferramentas PDF',
+    faqs: [
+      {
+        question: 'como separar paginas pdf',
+        answer: 'Arraste o PDF para a ferramenta e clique nas miniaturas das páginas que você quer. O resultado é um PDF contendo apenas as páginas marcadas, na ordem original. É o caminho para tirar uma procuração de dentro de um contrato ou uma página de assinatura de um documento longo.'
+      },
+      {
+        question: 'como dividir pdf',
+        answer: 'Há quatro saídas possíveis, e você escolhe antes de baixar: um PDF só com as páginas selecionadas; um arquivo separado para cada página, entregue em ZIP; o documento cortado em um número de partes iguais; ou partes que respeitem um limite de tamanho em MB que você define.'
+      },
+      {
+        question: 'como dividir um pdf',
+        answer: 'Selecione o arquivo e as miniaturas de todas as páginas aparecem na tela. A partir daí é uma questão de clicar: marque as que devem sair juntas, ou escolha uma das divisões automáticas. Nada é alterado no arquivo original — a ferramenta gera documentos novos.'
+      },
+      {
+        question: 'como separar paginas de um pdf',
+        answer: 'Clique nas miniaturas das páginas desejadas. Elas podem ser não consecutivas: marcar as páginas 1, 4 e 9 gera um único PDF com essas três, na ordem do documento original. Para separar cada página em um arquivo próprio, use a opção que entrega tudo em ZIP.'
+      },
+      {
+        question: 'como dividir pdf em partes',
+        answer: 'Escolha em quantas partes iguais o documento deve ser cortado e a divisão é feita automaticamente, respeitando os limites de página. Se o critério for tamanho em vez de quantidade, há a opção de definir um limite em MB e deixar a ferramenta calcular onde cortar — útil quando cada anexo precisa caber em um limite de envio.'
+      },
+      {
+        question: 'como dividir um pdf em dois',
+        answer: 'Use a divisão em partes iguais com duas partes, ou selecione manualmente as páginas de cada metade e baixe duas vezes. A segunda opção é a certa quando o corte não fica exatamente no meio — por exemplo, separar um contrato dos seus anexos.'
+      },
+      {
+        question: 'como separar documentos em pdf',
+        answer: 'Quando vários documentos foram digitalizados em um arquivo só — RG, comprovante e diploma em sequência —, marque as páginas de cada um e baixe separadamente, ou use a opção de um arquivo por página e depois recomponha o que precisar em <a href="/pt/juntar-pdf/">juntar PDF</a>.'
+      },
+      {
+        question: 'como quebrar pdf',
+        answer: 'Dividir, separar e quebrar são a mesma operação, e esta página faz as três. Vale um esclarecimento: "quebrar" às vezes é usado no sentido de remover a senha de um PDF protegido, e isso a ferramenta não faz. Aqui se trata de dividir um documento em partes ou páginas.'
+      },
+      {
+        question: 'onde dividir documentos pdf facilmente',
+        answer: 'O critério prático é onde o documento é processado. Aqui a divisão acontece dentro do seu navegador: não há fila, cadastro, limite diário nem espera de rede, e o arquivo não é copiado para nenhum servidor. Contratos e documentos pessoais permanecem no seu dispositivo, e depois que a página carrega a ferramenta funciona até sem internet.'
+      }
+    ],
+    content: `
+      <h2>Dividir, separar ou quebrar: a mesma operação</h2>
+      <p>Os três termos descrevem a mesma coisa, e esta página atende às três buscas. Se você procurou <strong>separar pdf</strong>, <strong>quebrar pdf</strong> ou <strong>extrair paginas de pdf</strong>, chegou ao lugar certo — muda apenas a palavra que cada pessoa usa.</p>
+
+      <h2>Quatro formas de dividir, escolhidas por você</h2>
+      <p>A ferramenta não impõe um único comportamento. Você pode extrair apenas as páginas que marcar nas miniaturas; gerar um arquivo por página, entregue em ZIP; cortar o documento em um número de partes iguais; ou — o caso que costuma ser mais difícil de encontrar — pedir <strong>dividir pdf por tamanho</strong>, definindo um limite em MB para que cada parte caiba no envio.</p>
+
+      <h2>Páginas não precisam ser consecutivas</h2>
+      <p>Ao <strong>separar pdf por paginas</strong>, marcar 1, 4 e 9 devolve um único PDF com essas três, na ordem original. É o que resolve casos como tirar a procuração de dentro de um processo ou isolar as páginas assinadas de um contrato.</p>
+
+      <h2>O que esta ferramenta não faz</h2>
+      <p>"Quebrar" também é usado no sentido de remover a senha de um documento protegido. Isso não é feito aqui. A proteção de um PDF existe por um motivo, e um site cuja premissa é a privacidade dos seus documentos não faria sentido oferecendo o contrário.</p>
+
+      <h2>Documentos que não saem do seu computador</h2>
+      <p>A divisão é feita pelo navegador, no seu dispositivo. Processos, contratos e documentos pessoais — exatamente o material que mais se precisa dividir — não são copiados para nenhum servidor.</p>
+    `
+  }
+];
+
 export const ptTools: PtTool[] = [
   ...ptToolsSeed,
   ...ptToolsBatch1,
   ...ptToolsBatch2,
   ...ptToolsBatch3,
   ...ptToolsBatch4,
-  ...ptToolsBatch5
+  ...ptToolsBatch5,
+  ...ptToolsBatch6
 ];
 
 /**
