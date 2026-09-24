@@ -1395,6 +1395,176 @@ const ptToolsBatch6: PtTool[] = [
   }
 ];
 
+/**
+ * ---------------------------------------------------------------------------
+ * Keyword-led batch 7 — the Office compressors, 2026-09-24.
+ * ---------------------------------------------------------------------------
+ *
+ * Completion pages: `comprimir word` at >1000 is the only term here above a few
+ * hundred. Built because the locale should be whole, not because these will
+ * drive traffic.
+ *
+ * The batch mattered for what it ruled OUT. `diminuir` means compress for a PDF
+ * and SUBTRACT in a spreadsheet, so the `diminuir excel` cluster is spreadsheet
+ * maths and is not targeted — see `wrongTool` in ./keywords.ts. One query was
+ * rescued from it, `planilha excel muito pesada como diminuir`, because it
+ * states the file-size intent outright.
+ *
+ * Each page describes what its own engine actually does, and they differ: Word
+ * and PowerPoint re-encode oversized pictures, while Excel mostly strips empty
+ * formatted cells. Writing one shared "we compress your file" answer across the
+ * three would be wrong on Excel, which is where the biggest reductions come
+ * from something most people have never heard of.
+ */
+const ptToolsBatch7: PtTool[] = [
+  {
+    en: 'compress-word',
+    slug: 'comprimir-word',
+    name: 'Comprimir Word',
+    title: 'Comprimir Word Online Grátis — Reduzir DOCX | ConvertOcean',
+    description: 'Reduza o tamanho de um documento Word (.docx) direto no navegador, recomprimindo apenas as imagens grandes demais. Texto e formatação ficam intactos.',
+    headline: 'Comprimir Word.',
+    subtitle: 'Reduza um .docx recomprimindo apenas as imagens guardadas maiores do que a página mostra — texto, estilos e tabelas continuam idênticos.',
+    quickAnswer: 'Para comprimir um documento Word, solte o .docx na ferramenta acima e ele é reduzido na hora. Um .docx é um arquivo ZIP, e quando fica grande demais quase sempre a causa são as imagens: uma captura de tela de um monitor de alta resolução pode ter 3.840 pixels de largura e vários megabytes, exibida em quinze centímetros na página. Texto, estilos, tabelas e alterações controladas permanecem exatamente como estavam.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'como comprimir arquivo word',
+        answer: 'Solte o .docx na ferramenta no topo da página e a redução acontece imediatamente. Se você precisa chegar a um tamanho específico, use a opção de definir um limite e informe o valor — a ferramenta procura o ajuste mais suave que ainda fique abaixo dele.'
+      },
+      {
+        question: 'como compactar arquivo word',
+        answer: 'Comprimir e compactar são a mesma coisa aqui. Vale saber que um .docx já é internamente um arquivo ZIP: colocá-lo dentro de outro ZIP não reduz praticamente nada, porque o conteúdo já está comprimido. O ganho real vem de tratar as imagens guardadas dentro do documento.'
+      },
+      {
+        question: 'como compactar imagens no word',
+        answer: 'O Word tem um recurso próprio para isso — selecione a imagem, vá em Formato da Imagem e use Compactar Imagens. O problema é que ele precisa ser acionado manualmente e é fácil esquecer de aplicar a todas. Esta ferramenta faz o mesmo automaticamente em todo o documento: procura imagens guardadas em resolução maior do que a página exibe e as reencoda no tamanho útil.'
+      },
+      {
+        question: 'o que é compactar imagem no word',
+        answer: 'É reduzir a resolução em que a imagem fica armazenada dentro do documento, para a resolução em que ela é de fato exibida. Uma foto de celular de 4.000 pixels colocada em uma caixa de dez centímetros continua guardada inteira no arquivo — o Word não descarta o excesso sozinho. Compactar é descartar essa diferença invisível, e é de onde vem quase toda a redução.'
+      },
+      {
+        question: 'O texto ou a formatação mudam?',
+        answer: 'Não. Texto, estilos, tabelas, cabeçalhos e alterações controladas permanecem exatamente como estavam — apenas as imagens são reencodadas. O documento continua editável no Word normalmente, e não há conversão de formato envolvida.'
+      },
+      {
+        question: 'O documento é copiado para algum servidor?',
+        answer: 'Não. A compressão acontece dentro do seu navegador, no seu dispositivo, e o arquivo não é copiado para nenhum servidor. Contratos, minutas e documentos internos permanecem com você.'
+      }
+    ],
+    content: `
+      <h2>Por que um .docx fica gigante</h2>
+      <p>Quem procura <strong>compactar word</strong> quase sempre tem o mesmo problema: um documento de poucas páginas que pesa dezenas de megabytes e não passa no anexo de e-mail. A causa raramente é o texto — texto é minúsculo. São as imagens.</p>
+      <p>Uma captura de tela de um monitor moderno tem quase 4.000 pixels de largura. Colada em um documento e reduzida visualmente a quinze centímetros, ela continua armazenada inteira: o Word guarda a imagem original e apenas a exibe menor. Multiplique por uma dezena de prints e o arquivo estoura.</p>
+
+      <h2>O que a ferramenta faz</h2>
+      <p>Ela procura exatamente essas imagens — as guardadas em resolução maior do que a página jamais mostra — e as reencoda no tamanho útil. Texto, estilos, tabelas e alterações controladas não são tocados. Para <strong>compactar word para 10mb</strong> ou qualquer outro limite, há a opção de informar o alvo e deixar a ferramenta encontrar o ajuste mais suave que cabe nele.</p>
+
+      <h2>Colocar em ZIP não resolve</h2>
+      <p>Um .docx já é um arquivo ZIP por dentro. Compactá-lo de novo em outro ZIP reduz quase nada, porque o conteúdo já está comprimido — é uma tentativa comum e frustrante. A redução só vem de mexer no que está dentro.</p>
+
+      <h2>Processamento local</h2>
+      <p>Tudo acontece no navegador, no seu dispositivo, e o documento não é copiado para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'compress-powerpoint',
+    slug: 'comprimir-powerpoint',
+    name: 'Comprimir PowerPoint',
+    title: 'Comprimir PowerPoint Online Grátis — Reduzir PPTX | ConvertOcean',
+    description: 'Reduza apresentações PowerPoint (.pptx) em 40–80% direto no navegador, recomprimindo apenas as imagens. Texto, layouts e animações ficam intactos.',
+    headline: 'Comprimir PowerPoint.',
+    subtitle: 'Reduza um .pptx recomprimindo apenas as imagens guardadas maiores do que o slide mostra — texto, layouts, anotações e animações continuam iguais.',
+    quickAnswer: 'Para comprimir uma apresentação, solte o .pptx na ferramenta acima e a redução acontece na hora — normalmente de 40% a 80% em apresentações com muitas fotos, porque imagens coladas ficam guardadas na resolução original da câmera e são exibidas em uma caixa de poucos centímetros. Para chegar a um limite específico, use a opção de definir o tamanho. Texto, layouts, anotações e animações permanecem exatamente como estavam.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'como comprimir powerpoint',
+        answer: 'Solte o .pptx na ferramenta no topo da página e a redução é imediata. Em apresentações com muitas fotos a queda costuma ficar entre 40% e 80%. Para um limite específico, informe o tamanho desejado e a ferramenta procura o ajuste mais suave que ainda caiba nele.'
+      },
+      {
+        question: 'como comprimir ppt',
+        answer: 'A ferramenta trabalha com .pptx. Arquivos .ppt antigos, do formato binário anterior a 2007, precisam ser abertos no PowerPoint ou no LibreOffice e salvos como .pptx primeiro — o formato antigo não pode ser lido dentro de um navegador.'
+      },
+      {
+        question: 'Os slides mudam de aparência?',
+        answer: 'Não. Texto, layouts, cores do tema, anotações do apresentador e animações permanecem exatamente como estavam — apenas as imagens são reencodadas, e só aquelas guardadas em resolução maior do que o slide exibe. A apresentação continua totalmente editável.'
+      },
+      {
+        question: 'Por que a apresentação ficou tão pesada?',
+        answer: 'Quase sempre por fotos coladas direto da câmera ou do celular. Uma imagem de 4.000 pixels colocada em uma caixa de dez centímetros continua guardada inteira dentro do arquivo: o PowerPoint apenas a exibe menor, sem descartar o excesso. Vinte fotos assim transformam uma apresentação simples em dezenas de megabytes.'
+      },
+      {
+        question: 'A apresentação é copiada para algum servidor?',
+        answer: 'Não. A compressão acontece no seu navegador, no seu dispositivo. Propostas comerciais e apresentações internas não são copiadas para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>O peso está nas fotos, não nos slides</h2>
+      <p>Uma apresentação que não cabe no e-mail quase nunca é longa demais — ela tem fotos grandes demais. Ao usar um <strong>conversor de comprimir powerpoint</strong>, o ganho vem de um detalhe pouco conhecido: o PowerPoint guarda cada imagem na resolução original em que ela foi colada, mesmo que o slide a exiba em uma caixa de poucos centímetros.</p>
+      <p>Uma foto de celular de 4.000 pixels exibida em dez centímetros carrega muitas vezes mais dados do que a tela jamais mostra. É por isso que a redução em apresentações cheias de imagens costuma ficar entre 40% e 80%.</p>
+
+      <h2>Nada além das imagens é alterado</h2>
+      <p>Texto, layouts, cores do tema, anotações do apresentador e animações ficam exatamente como estavam. O arquivo continua sendo um .pptx editável — não há conversão de formato nem achatamento de slides.</p>
+
+      <h2>Para um limite específico</h2>
+      <p>Se o destino exige um tamanho máximo, informe o valor e a ferramenta procura o ajuste mais suave que ainda fique abaixo dele, em vez de comprimir ao máximo e degradar mais do que o necessário.</p>
+
+      <h2>.ppt antigo precisa de um passo antes</h2>
+      <p>O formato binário .ppt não é legível dentro de um navegador. Abra no PowerPoint ou no LibreOffice, salve como .pptx e comprima em seguida.</p>
+    `
+  },
+  {
+    en: 'compress-excel',
+    slug: 'comprimir-excel',
+    name: 'Comprimir Excel',
+    title: 'Comprimir Excel Online Grátis — Reduzir Planilha XLSX | ConvertOcean',
+    description: 'Reduza planilhas Excel pesadas direto no navegador. A maior parte do peso são células vazias formatadas, não imagens — e é isso que a ferramenta remove.',
+    headline: 'Comprimir Excel.',
+    subtitle: 'Planilhas gigantes quase nunca estão cheias de dados — estão cheias de células vazias com formatação. É isso que a ferramenta remove.',
+    quickAnswer: 'Para comprimir uma planilha, solte o .xlsx na ferramenta acima e a redução acontece na hora. O excesso de tamanho em planilhas normalmente não vem de imagens: vem de linhas e colunas depois do fim dos seus dados que carregam um preenchimento ou uma borda e mais nada — o que acontece quando se seleciona colunas inteiras e se aplica formatação. O Excel guarda cada uma dessas células vazias, e uma pasta com 200 linhas de dados pode ocupar 15 MB.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'planilha excel muito pesada como diminuir',
+        answer: 'Solte o arquivo na ferramenta e a redução é imediata. O motivo de a planilha estar pesada quase sempre é o mesmo: em algum momento alguém selecionou colunas ou linhas inteiras e aplicou uma cor, uma borda ou um formato. O Excel passa a guardar cada célula vazia atingida, e o intervalo utilizado do arquivo se estende a milhares de linhas sem nenhum dado. É isso que é removido.'
+      },
+      {
+        question: 'como compactar excel',
+        answer: 'Comprimir e compactar são a mesma operação aqui. Vale notar que um .xlsx já é internamente um arquivo ZIP — colocá-lo dentro de outro ZIP não reduz praticamente nada. A redução real vem de limpar o intervalo utilizado e de reencodar imagens guardadas maiores do que a planilha exibe.'
+      },
+      {
+        question: 'Meus dados ou fórmulas são alterados?',
+        answer: 'As células com conteúdo — valores, fórmulas e a formatação delas — são preservadas. O que sai são células vazias que carregavam apenas formatação, fora do intervalo dos seus dados. Ainda assim, confira o resultado antes de substituir o original: a redução não é uma operação sem perdas, e a página oferece a escolha de quanto remover.'
+      },
+      {
+        question: 'Por que uma planilha pequena ocupa 15 MB?',
+        answer: 'Porque o tamanho do arquivo não acompanha a quantidade de dados, e sim o intervalo utilizado. Selecionar a coluna A inteira e pintá-la de amarelo marca mais de um milhão de células como formatadas. O Excel grava todas, embora estejam vazias. É a causa mais comum de planilhas absurdamente grandes, e quase ninguém a conhece.'
+      },
+      {
+        question: 'A planilha é copiada para algum servidor?',
+        answer: 'Não. Toda a leitura e a reescrita acontecem no seu navegador, no seu dispositivo. Folhas de pagamento, tabelas de preços e listas de clientes não são copiadas para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>Planilhas pesadas raramente estão cheias de dados</h2>
+      <p>Esta é a diferença entre <strong>comprimir excel</strong> e comprimir qualquer outro arquivo do Office. Em um Word ou num PowerPoint, o peso está nas imagens. Em uma planilha, quase sempre está em células vazias.</p>
+      <p>O mecanismo é simples e pouco conhecido: quando alguém seleciona uma coluna inteira e aplica uma cor, uma borda ou um formato de número, o Excel passa a considerar formatadas todas as células daquela coluna — mais de um milhão delas — e grava cada uma no arquivo. Uma pasta de trabalho com 200 linhas de dados reais pode chegar a 15 MB desse jeito.</p>
+
+      <h2>O que é removido</h2>
+      <p>A limpeza corta o intervalo utilizado de volta ao ponto onde os seus dados realmente terminam, e reencoda imagens guardadas maiores do que a planilha exibe. Valores, fórmulas e a formatação das células que contêm conteúdo são preservados.</p>
+      <p>A operação não é sem perdas, e a página deixa essa escolha explícita em vez de escondê-la. Confira o resultado antes de substituir o arquivo original.</p>
+
+      <h2>Colocar em ZIP não adianta</h2>
+      <p>Um .xlsx já é um ZIP internamente. Compactá-lo novamente rende quase nada — a redução precisa vir de dentro do arquivo.</p>
+
+      <h2>Seus números não saem do computador</h2>
+      <p>Planilhas concentram o que uma operação tem de mais sensível. Aqui a leitura e a reescrita acontecem dentro do navegador, e nada é copiado para nenhum servidor.</p>
+    `
+  }
+];
+
 export const ptTools: PtTool[] = [
   ...ptToolsSeed,
   ...ptToolsBatch1,
@@ -1402,7 +1572,8 @@ export const ptTools: PtTool[] = [
   ...ptToolsBatch3,
   ...ptToolsBatch4,
   ...ptToolsBatch5,
-  ...ptToolsBatch6
+  ...ptToolsBatch6,
+  ...ptToolsBatch7
 ];
 
 /**

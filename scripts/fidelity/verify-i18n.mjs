@@ -67,6 +67,9 @@ const PAIRS = [
   { pt: 'imagem-para-texto', en: 'image-to-text' },
   { pt: 'txt-para-pdf', en: 'txt-to-pdf' },
   { pt: 'dividir-pdf', en: 'split-pdf' },
+  { pt: 'comprimir-word', en: 'compress-word' },
+  { pt: 'comprimir-powerpoint', en: 'compress-powerpoint' },
+  { pt: 'comprimir-excel', en: 'compress-excel' },
 ];
 
 let bad = 0;

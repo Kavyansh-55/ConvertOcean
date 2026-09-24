@@ -148,6 +148,40 @@ export const passwordIntent: { term: string; kd: string; volume: string }[] = [
 ];
 
 /**
+ * The same word, a completely different subject: "diminuir" in Excel is
+ * SUBTRACTION, not file size.
+ *
+ * Batch 6 established that comprimir / compactar / diminuir are three names for
+ * compressing a PDF. Batch 7 shows that pattern does not survive the move to
+ * Excel. In a spreadsheet, "diminuir" is what you do to a number — `formula
+ * diminuir excel` (Easy, >100), `como somar e diminuir no excel`, `como
+ * diminuir porcentagem no excel`, `função diminuir excel` are all asking how to
+ * subtract in Excel. They have nothing to do with a file being too big.
+ *
+ * Carrying the earlier rule across would have pointed a file-compression page
+ * at spreadsheet-formula queries: a page that ranks, gets the click, and
+ * answers a question nobody asked. The whole `diminuir excel` cluster is
+ * therefore excluded, with one exception pulled out of it — `planilha excel
+ * muito pesada como diminuir` genuinely is about file size, and that one is
+ * targeted on /pt/comprimir-excel/.
+ *
+ * The lesson generalises: a synonym set verified on one tool is not
+ * transferable evidence about another. Each cluster gets read on its own.
+ */
+export const wrongTool: { term: string; kd: string; volume: string; actually: string }[] = [
+  { term: 'formula diminuir excel', kd: 'Easy', volume: '>100', actually: 'Excel subtraction formula' },
+  { term: 'diminuir excel', kd: 'Easy', volume: '<100', actually: 'Excel subtraction formula' },
+  { term: 'diminuir excel formula', kd: 'Easy', volume: '<100', actually: 'Excel subtraction formula' },
+  { term: 'função diminuir excel', kd: 'Easy', volume: '<100', actually: 'Excel subtraction formula' },
+  { term: 'como diminuir excel', kd: 'Easy', volume: '<100', actually: 'Excel subtraction formula' },
+  { term: 'como diminuir no excel', kd: 'Easy', volume: '>100', actually: 'Excel subtraction formula' },
+  { term: 'como diminuir porcentagem no excel', kd: 'Easy', volume: '<100', actually: 'Excel percentage formula' },
+  { term: 'como diminuir no excel formula', kd: 'Easy', volume: '<100', actually: 'Excel subtraction formula' },
+  { term: 'como somar e diminuir no excel', kd: 'Easy', volume: '<100', actually: 'Excel sum/subtract formulas' },
+  { term: 'compactar excel em zip', kd: 'n/a', volume: '<100', actually: 'ZIP archiving, not reducing the .xlsx itself' }
+];
+
+/**
  * Right cluster, wrong page: "quebrar pdf em word" is a CONVERSION query that
  * arrived inside the split export because it shares the verb. It belongs to
  * /pt/pdf-para-word/ and /pt/pdf-para-excel/, where the tools actually do it.
@@ -156,7 +190,8 @@ export const belongsElsewhere: { term: string; kd: string; volume: string; page:
   { term: 'quebrar pdf em word', kd: 'Medium', volume: '>100', page: 'pdf-para-word' },
   { term: 'quebrar pdf para word', kd: 'Medium', volume: '<100', page: 'pdf-para-word' },
   { term: 'como quebrar pdf para word', kd: 'Easy', volume: '<100', page: 'pdf-para-word' },
-  { term: 'quebrar pdf em excel', kd: 'Easy', volume: '<100', page: 'pdf-para-excel' }
+  { term: 'quebrar pdf em excel', kd: 'Easy', volume: '<100', page: 'pdf-para-excel' },
+  { term: 'comprimir word em pdf', kd: 'n/a', volume: '<100', page: 'word-para-pdf' }
 ];
 
 /**
@@ -188,7 +223,12 @@ export const intentMismatch: { term: string; kd: string; volume: string; wants: 
  * preview of how that question is phrased there.
  */
 export const wrongLanguage: { term: string; language: string }[] = [
-  { term: 'que es mejor para imprimir png o jpg', language: 'es' }
+  { term: 'que es mejor para imprimir png o jpg', language: 'es' },
+  /* Second leak, batch 7. "un" and "pese menos" are Spanish; Portuguese would
+     be "um ppt para que pese menos". Two leaks in seven batches suggests this
+     is routine for pt exports rather than a one-off, so it is worth scanning
+     for when the Spanish locale starts. */
+  { term: 'como comprimir un ppt para que pese menos', language: 'es' }
 ];
 
 /**
@@ -885,6 +925,69 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'como comprimir pdf sem perder qualidade', kd: 'n/a', volume: '<100' },
       { term: 'o que é comprimir pdf', kd: 'Medium', volume: '<100' },
       { term: 'como compactar pdf no iphone', kd: 'n/a', volume: '<100' }
+    ]
+  },
+
+  /* ---------------------------------------------------------------------
+     Batch 7 — the Office compressors, 2026-09-24.
+
+     Small volumes throughout: `comprimir word` at >1000 is the only term above
+     a few hundred. These are completion pages, not traffic drivers.
+
+     The batch's real value was negative: it disproved a rule. `diminuir` means
+     compress for PDF and SUBTRACT for Excel, so the whole `diminuir excel`
+     cluster is in `wrongTool` rather than on a compression page. One query was
+     rescued from it — `planilha excel muito pesada como diminuir` — and it is
+     the best question in the batch precisely because it states the file-size
+     intent explicitly.
+     --------------------------------------------------------------------- */
+  {
+    slug: 'comprimir-word',
+    en: 'compress-word',
+    primary: 'comprimir word',
+    phrase: [
+      { term: 'comprimir word', kd: 'Easy', volume: '>1000' },
+      { term: 'comprimir word online', kd: 'Easy', volume: '<100' },
+      { term: 'compactar word', kd: 'Easy', volume: '>100' },
+      { term: 'compactar word para 10mb', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como comprimir arquivo word', kd: 'n/a', volume: '<100' },
+      { term: 'como compactar arquivo word', kd: 'n/a', volume: '<100' },
+      { term: 'como compactar imagens no word', kd: 'n/a', volume: '<100' },
+      { term: 'o que é compactar imagem no word', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'comprimir-powerpoint',
+    en: 'compress-powerpoint',
+    primary: 'comprimir powerpoint',
+    phrase: [
+      { term: 'comprimir powerpoint', kd: 'Easy', volume: '>100' },
+      { term: 'comprimir ppt', kd: 'Easy', volume: '>100' },
+      { term: 'comprimir powerpoint online', kd: 'Easy', volume: '<100' },
+      { term: 'comprimir ppt online', kd: 'Easy', volume: '<100' },
+      { term: 'comprimir ppt online grátis', kd: 'Easy', volume: '<100' },
+      { term: 'comprimir powerpoint gratuito', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como comprimir powerpoint', kd: 'n/a', volume: '<100' },
+      { term: 'como comprimir ppt', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'comprimir-excel',
+    en: 'compress-excel',
+    primary: 'comprimir excel',
+    phrase: [
+      { term: 'comprimir excel', kd: 'Easy', volume: '>100' },
+      { term: 'compactar excel', kd: 'Easy', volume: '>100' },
+      { term: 'comprimir excel online', kd: 'Easy', volume: '<100' },
+      { term: 'compactar excel online', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'planilha excel muito pesada como diminuir', kd: 'Easy', volume: '<100' },
+      { term: 'como compactar excel', kd: 'n/a', volume: '<100' }
     ]
   }
 ];
