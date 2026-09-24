@@ -73,6 +73,10 @@ const PAIRS = [
   { pt: 'modelo-de-recibo', en: 'receipt-generator' },
   { pt: 'modelo-de-fatura', en: 'invoice-generator' },
   { pt: 'calculadora-de-margem-de-lucro', en: 'profit-margin-calculator' },
+  { pt: 'calculadora-de-porcentagem', en: 'percentage-calculator' },
+  { pt: 'ponto-de-equilibrio', en: 'break-even-calculator' },
+  { pt: 'calculadora-de-imposto', en: 'sales-tax-calculator' },
+  { pt: 'ofx-para-csv', en: 'ofx-to-csv' },
 ];
 
 let bad = 0;

@@ -122,7 +122,10 @@ export const excluded: { term: string; why: string }[] = [
   { term: 'comprimir pdf ilove', why: 'competitor brand navigation' },
   { term: 'adobe comprimir pdf', why: 'competitor brand navigation (Adobe)' },
   { term: 'adobe diminuir pdf', why: 'competitor brand navigation (Adobe)' },
-  { term: 'diminuir pdf adobe', why: 'competitor brand navigation (Adobe)' }
+  { term: 'diminuir pdf adobe', why: 'competitor brand navigation (Adobe)' },
+  // batch 9
+  { term: 'calculadora de porcentagem online - 4devs', why: 'competitor brand navigation (4devs)' },
+  { term: 'calculadora de porcentagem google', why: 'brand navigation (Google calculator)' }
 ];
 
 /**
@@ -231,7 +234,25 @@ export const wrongTool: { term: string; kd: string; volume: string; actually: st
   { term: 'como diminuir porcentagem no excel', kd: 'Easy', volume: '<100', actually: 'Excel percentage formula' },
   { term: 'como diminuir no excel formula', kd: 'Easy', volume: '<100', actually: 'Excel subtraction formula' },
   { term: 'como somar e diminuir no excel', kd: 'Easy', volume: '<100', actually: 'Excel sum/subtract formulas' },
-  { term: 'compactar excel em zip', kd: 'n/a', volume: '<100', actually: 'ZIP archiving, not reducing the .xlsx itself' }
+  { term: 'compactar excel em zip', kd: 'n/a', volume: '<100', actually: 'ZIP archiving, not reducing the .xlsx itself' },
+  /* batch 9. "Porcentagem/percentual de gordura" is BODY FAT — a body-composition
+     calculator taking skinfold measurements, nothing to do with arithmetic on a
+     percentage. `calculadora de percentual de gordura` is Easy at >100 and would
+     be pure bounce traffic. */
+  { term: 'calculadora de porcentagem de gordura', kd: 'Hard', volume: '<100', actually: 'body-fat percentage calculator' },
+  { term: 'calculadora de percentual de gordura', kd: 'Easy', volume: '>100', actually: 'body-fat percentage calculator' },
+  { term: 'calculadora de percentual de gordura corporal', kd: 'Easy', volume: '<100', actually: 'body-fat percentage calculator' },
+  { term: 'calculadora de percentual de gordura 7 dobras', kd: 'Easy', volume: '<100', actually: 'skinfold body-fat protocol' },
+  { term: 'como calcular porcentagem de gordura corporal online', kd: 'Easy', volume: '<100', actually: 'body-fat percentage calculator' },
+  /* ICMS is Brazil's state VAT, and it is not a flat percentage: substituicao
+     tributaria, interstate rates and base reduction all change the answer. Our
+     calculator applies a rate you type. Ranking for `calculadora de icms` would
+     hand someone a confidently wrong tax figure, which is worse than no page. */
+  { term: 'calculadora de icms', kd: 'Easy', volume: '<100', actually: 'Brazilian state VAT with ST and interstate rules, not a flat rate' },
+  { term: 'calculadora de icms st', kd: 'Easy', volume: '<100', actually: 'substituicao tributaria — a different calculation entirely' },
+  { term: 'calculadora de icms online', kd: 'Easy', volume: '<100', actually: 'Brazilian state VAT, not a flat rate' },
+  { term: 'calculadora de icms antecipado', kd: 'n/a', volume: '<100', actually: 'ICMS antecipado regime' },
+  { term: 'calculadora de icms importação', kd: 'n/a', volume: '<100', actually: 'import tax base calculation' }
 ];
 
 /**
@@ -288,7 +309,16 @@ export const wrongLanguage: { term: string; language: string }[] = [
      be "um ppt para que pese menos". Two leaks in seven batches suggests this
      is routine for pt exports rather than a one-off, so it is worth scanning
      for when the Spanish locale starts. */
-  { term: 'como comprimir un ppt para que pese menos', language: 'es' }
+  { term: 'como comprimir un ppt para que pese menos', language: 'es' },
+  /* batch 9. IVA is the Spanish/European VAT term; Brazil's equivalents are
+     ICMS, ISS and IPI. Every country modifier that came back is Spanish-speaking,
+     which is what gives it away — this cluster is not Brazilian demand. Useful
+     later: it is a preview of the Spanish locale's tax vocabulary. */
+  { term: 'calculadora de iva', language: 'es' },
+  { term: 'calculadora de iva ecuador', language: 'es' },
+  { term: 'calculadora de iva el salvador', language: 'es' },
+  { term: 'calculadora de iva uruguay', language: 'es' },
+  { term: 'calculadora de iva paraguay', language: 'es' }
 ];
 
 /**
@@ -300,7 +330,11 @@ export const wrongLanguage: { term: string; language: string }[] = [
  * for a long-tail opportunity.
  */
 export const notAQuery: { term: string; why: string }[] = [
-  { term: 'unir pdf – unir pdfs online, grátis', why: 'scraped <title> tag, not a search query' }
+  { term: 'unir pdf – unir pdfs online, grátis', why: 'scraped <title> tag, not a search query' },
+  /* A song lyric, not a business query. "Só quero o que é meu" rides on the
+     phrase rather than the accounting concept — the clearest reminder yet that
+     a keyword tool matches strings, not meanings. */
+  { term: 'ponto de equilíbrio só quero o que é meu', why: 'song lyric riding the phrase, not a break-even query' }
 ];
 
 /**
@@ -430,7 +464,12 @@ export const noToolYet: { term: string; kd: string; volume: string; needs: strin
   { term: 'como converter pdf para powerpoint', kd: 'Easy', volume: '>100', needs: 'pdf-to-ppt' },
   { term: 'como converter de pdf para powerpoint', kd: 'n/a', volume: '<100', needs: 'pdf-to-ppt' },
   { term: 'como passar pdf para powerpoint', kd: 'Easy', volume: '<100', needs: 'pdf-to-ppt' },
-  { term: 'qual o melhor conversor de pdf para powerpoint', kd: 'n/a', volume: '<100', needs: 'pdf-to-ppt' }
+  { term: 'qual o melhor conversor de pdf para powerpoint', kd: 'n/a', volume: '<100', needs: 'pdf-to-ppt' },
+  /* batch 9. The site converts OFX/QFX/QBO -> CSV, but not the reverse. Tiny
+     volume, so this is a note rather than a case for building it. */
+  { term: 'csv para ofx', kd: 'Easy', volume: '<100', needs: 'csv-to-ofx' },
+  { term: 'converter csv para ofx', kd: 'n/a', volume: '<100', needs: 'csv-to-ofx' },
+  { term: 'como converter csv para ofx', kd: 'n/a', volume: '<100', needs: 'csv-to-ofx' }
 ];
 
 /* Terms the export rated inconsistently across two views of the same data. */
@@ -1142,6 +1181,104 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'como calcular margem de lucro no excel', kd: 'Easy', volume: '<100' },
       { term: 'como calcular minha margem de lucro', kd: 'Easy', volume: '<100' }
     ]
+  },
+
+  /* ---------------------------------------------------------------------
+     Batch 9 — calculators and bank statements, 2026-09-24.
+
+     Batch 8's lesson holds again, twice. `calculadora de ponto de equilibrio`
+     is <100; `ponto de equilíbrio` is EASY at >1000 with a 12,052-keyword
+     cluster. `calculadora de porcentagem` is HARD; `como calcular porcentagem`
+     is >10,000 with a dozen Easy variants above 1000. In both cases the
+     translated tool name is the weakest term available and the concept or the
+     question is where the market is.
+
+     Percentage is the biggest cluster in the programme after `modelo de
+     recibo`, and it is also the most contaminated: "percentual de gordura" is
+     BODY FAT, which is a different calculator entirely. Those are in
+     `wrongTool`.
+     --------------------------------------------------------------------- */
+  {
+    slug: 'calculadora-de-porcentagem',
+    en: 'percentage-calculator',
+    primary: 'como calcular porcentagem',
+    phrase: [
+      { term: 'como calcular porcentagem', kd: 'Medium', volume: '>10,000' },
+      { term: 'calculadora de porcentagem', kd: 'Hard', volume: '>10,000' },
+      { term: 'calculadora de percentual', kd: 'Medium', volume: '>1000' },
+      { term: 'calculadora de porcentagem online', kd: 'Medium', volume: '>1000' },
+      { term: 'calcular porcentagem online', kd: 'Medium', volume: '>100' },
+      { term: 'calculadora de porcentagem de lucro', kd: 'Easy', volume: '>100' },
+      { term: 'calculadora de porcentagem de desconto', kd: 'Easy', volume: '<100' },
+      { term: 'calculadora de porcentagem entre dois valores', kd: 'Easy', volume: '<100' },
+      { term: 'calculadora de percentual de aumento', kd: 'Medium', volume: '<100' },
+      { term: 'calculadora de percentual online', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como calcular porcentagem de um valor', kd: 'Medium', volume: '>1000' },
+      { term: 'como calcular porcentagem na calculadora', kd: 'Easy', volume: '>1000' },
+      { term: 'como calcular porcentagem de aumento', kd: 'Easy', volume: '>1000' },
+      { term: 'como calcular porcentagem no excel', kd: 'Easy', volume: '>1000' },
+      { term: 'como fazer conta de porcentagem na calculadora', kd: 'Easy', volume: '>1000' },
+      { term: 'como calcular porcentagem de desconto', kd: 'Easy', volume: '>100' },
+      { term: 'como calcular porcentagem no celular', kd: 'Easy', volume: '>100' },
+      { term: 'como calcular porcentagem de um valor para outro', kd: 'Easy', volume: '>100' }
+    ]
+  },
+  {
+    slug: 'ponto-de-equilibrio',
+    en: 'break-even-calculator',
+    primary: 'ponto de equilíbrio',
+    phrase: [
+      { term: 'ponto de equilíbrio', kd: 'Easy', volume: '>1000' },
+      { term: 'ponto de equilibrio', kd: 'Easy', volume: '>1000' },
+      { term: 'ponto de equilíbrio financeiro', kd: 'Easy', volume: '>1000' },
+      { term: 'ponto de equilíbrio contábil', kd: 'Easy', volume: '>1000' },
+      { term: 'ponto de equilibrio contabil', kd: 'Easy', volume: '>100' },
+      { term: 'ponto de equilíbrio econômico', kd: 'Easy', volume: '>100' },
+      { term: 'calculo ponto de equilibrio', kd: 'Easy', volume: '>100' },
+      { term: 'margem de contribuição e ponto de equilíbrio', kd: 'Easy', volume: '>100' },
+      { term: 'calculadora de ponto de equilibrio', kd: 'Easy', volume: '<100' },
+      { term: 'analise de ponto de equilibrio', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como calcular ponto de equilibrio', kd: 'Easy', volume: '>100' },
+      { term: 'como calcular o ponto de equilíbrio', kd: 'Easy', volume: '>100' },
+      { term: 'o que é ponto de equilíbrio', kd: 'Easy', volume: '>100' },
+      { term: 'o que é ponto de equilibrio de uma empresa', kd: 'Easy', volume: '<100' },
+      { term: 'o que é ponto de equilibrio financeiro', kd: 'Easy', volume: '<100' },
+      { term: 'como calcular ponto de equilibrio contabil', kd: 'Easy', volume: '<100' },
+      { term: 'ponto de equilíbrio como calcular', kd: 'Easy', volume: '<100' },
+      { term: 'o que é analise de ponto de equilibrio', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'calculadora-de-imposto',
+    en: 'sales-tax-calculator',
+    primary: 'como calcular imposto sobre produto',
+    phrase: [
+      { term: 'calcular imposto sobre produto', kd: 'n/a', volume: '<100' },
+      { term: 'calcular imposto sobre produto importado', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como calcular imposto sobre produto', kd: 'Easy', volume: '<100' },
+      { term: 'como calcular imposto sobre produto importado', kd: 'n/a', volume: '<100' },
+      { term: 'como calcular imposto sobre produto formula', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'ofx-para-csv',
+    en: 'ofx-to-csv',
+    primary: 'ofx para csv',
+    phrase: [
+      { term: 'ofx para csv', kd: 'n/a', volume: '<100' },
+      { term: 'converter ofx para csv', kd: 'n/a', volume: '<100' },
+      { term: 'conversor ofx para csv', kd: 'n/a', volume: '<100' },
+      { term: 'converter arquivo ofx para csv', kd: 'n/a', volume: '<100' },
+      { term: 'conversor de ofx para csv', kd: 'n/a', volume: '<100' },
+      { term: 'converter ofx para csv online', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
   }
 ];
 

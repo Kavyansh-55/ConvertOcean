@@ -1742,6 +1742,228 @@ const ptToolsBatch8: PtTool[] = [
   }
 ];
 
+/**
+ * ---------------------------------------------------------------------------
+ * Keyword-led batch 9 — calculators and bank statements, 2026-09-24.
+ * ---------------------------------------------------------------------------
+ *
+ * Batch 8's lesson repeats twice here. `calculadora de ponto de equilibrio` is
+ * <100 while `ponto de equilíbrio` is Easy at >1000 across a 12,052-keyword
+ * cluster; `calculadora de porcentagem` is HARD while `como calcular
+ * porcentagem` is >10,000 with a dozen Easy variants above 1000. The concept
+ * and the question beat the translated tool name both times.
+ *
+ * /pt/calculadora-de-imposto/ is deliberately narrow. The tool applies a rate
+ * you type; it has no ICMS logic, and ICMS is not a flat percentage —
+ * substituição tributária, interstate rates and base reduction all change the
+ * answer. The page says so rather than competing for `calculadora de icms`,
+ * because handing someone a confidently wrong tax figure is worse than having
+ * no page at all. See `wrongTool` in ./keywords.ts.
+ */
+const ptToolsBatch9: PtTool[] = [
+  {
+    en: 'percentage-calculator',
+    slug: 'calculadora-de-porcentagem',
+    name: 'Calculadora de Porcentagem',
+    title: 'Como Calcular Porcentagem — Calculadora Online Grátis | ConvertOcean',
+    description: 'Calcule porcentagem de um valor, aumento, desconto e diferença entre dois valores, com a fórmula ao lado de cada resultado.',
+    headline: 'Calculadora de Porcentagem.',
+    subtitle: 'Porcentagem de um valor, aumento, desconto e diferença — com a fórmula mostrada ao lado de cada resultado.',
+    quickAnswer: 'Para calcular a porcentagem de um valor, multiplique o valor pela porcentagem e divida por 100: 15% de 200 é (200 × 15) ÷ 100 = 30. A calculadora acima também faz aumento, desconto, diferença percentual entre dois valores e acréscimo ou abatimento de uma porcentagem, mostrando a fórmula completa em cada resultado para você conferir a conta.',
+    category: 'Ferramentas Empresariais',
+    faqs: [
+      {
+        question: 'como calcular porcentagem de um valor',
+        answer: 'Multiplique o valor pela porcentagem e divida por 100. Para 15% de 200: (200 × 15) ÷ 100 = 30. O atalho mental é mover a vírgula — 10% de 200 é 20, então 15% é 20 mais metade de 20, ou seja, 30.'
+      },
+      {
+        question: 'como calcular porcentagem de aumento',
+        answer: 'Divida a diferença pelo valor inicial e multiplique por 100: de R$ 80 para R$ 100, o aumento é (100 − 80) ÷ 80 × 100 = 25%. O erro comum é dividir pelo valor final, que daria 20%. A base é sempre de onde você partiu.'
+      },
+      {
+        question: 'como calcular porcentagem de desconto',
+        answer: 'Para saber quanto vai pagar, multiplique o preço por (100 − desconto) ÷ 100: R$ 250 com 30% de desconto ficam 250 × 0,70 = R$ 175. Para descobrir qual desconto foi dado, divida a diferença pelo preço original: de R$ 250 para R$ 175, são 75 ÷ 250 = 30%.'
+      },
+      {
+        question: 'como calcular porcentagem de um valor para outro',
+        answer: 'Divida um pelo outro e multiplique por 100 — mas atenção ao que você quer saber. Se 40 é quanto por cento de 200, são 40 ÷ 200 = 20%. Se a pergunta é quanto 200 aumentou para chegar a 240, a base muda: (240 − 200) ÷ 200 = 20%. O denominador define a resposta.'
+      },
+      {
+        question: 'como calcular porcentagem na calculadora',
+        answer: 'Em uma calculadora comum, a tecla % já divide por 100. Para 15% de 200, digite 200 × 15 %. Para acrescentar 15%, digite 200 + 15 % e o resultado sai 230. Para descontar, 200 − 15 % dá 170. Modelos variam na ordem, então vale testar com uma conta cujo resultado você já conhece.'
+      },
+      {
+        question: 'como fazer conta de porcentagem na calculadora',
+        answer: 'A sequência que funciona na maioria dos modelos é valor, ×, número da porcentagem, %. O ponto que confunde: a tecla % não é um número que você soma — ela transforma o que veio antes. É por isso que 200 + 15 % devolve 230 e não 215: a calculadora entende "acrescente 15% de 200".'
+      },
+      {
+        question: 'como calcular porcentagem no celular',
+        answer: 'A calculadora do celular funciona igual, com uma diferença: em vários aparelhos a tecla % só aparece ao girar a tela para o modo horizontal ou ao abrir as funções científicas. Se você não encontra a tecla, dá para fazer sem ela — multiplique pelo decimal: 15% é × 0,15.'
+      },
+      {
+        question: 'como calcular porcentagem no excel',
+        answer: 'Com o valor em A1, use =A1*15% ou =A1*0,15 — as duas formas dão o mesmo resultado. Para variação percentual entre B1 e A1, use =(B1-A1)/A1 e formate a célula como porcentagem. Se o resultado aparecer como 0,25 em vez de 25%, é só formatação: aplique o formato de porcentagem à célula.'
+      }
+    ],
+    content: `
+      <h2>A conta, e o erro que quase todo mundo comete</h2>
+      <p>Calcular a porcentagem de um valor é direto: valor × porcentagem ÷ 100. O que engana é a <strong>variação</strong> percentual, porque ela depende de qual número entra no denominador.</p>
+      <p>De R$ 80 para R$ 100 há um aumento de 25% — a diferença de 20 sobre a base de 80. Mas de R$ 100 para R$ 80 a queda é de 20%, não de 25%, porque agora a base é 100. Subir 25% e cair 20% levam ao mesmo lugar, e é por isso que descontos sucessivos nunca somam: 20% e depois mais 10% não são 30%, são 28%.</p>
+
+      <h2>Porcentagem de lucro e de desconto</h2>
+      <p>Uma <strong>calculadora de porcentagem de desconto</strong> responde duas perguntas diferentes: quanto vou pagar, e qual desconto foi dado. Para o preço final, multiplique por (100 − desconto) ÷ 100. Para descobrir o desconto, divida a diferença pelo preço original.</p>
+      <p>Para <strong>calculadora de porcentagem de lucro</strong>, o denominador volta a importar: margem divide pelo preço de venda, markup divide pelo custo. A <a href="/pt/calculadora-de-margem-de-lucro/">calculadora de margem de lucro</a> trata esse caso em detalhe.</p>
+
+      <h2>A tecla % não é um número</h2>
+      <p>É a origem da confusão com a calculadora. A tecla % transforma o que veio antes dela, em vez de somar um valor. Por isso 200 + 15 % devolve 230: a calculadora lê "acrescente 15% de 200", e não "some 15".</p>
+
+      <h2>A fórmula fica à vista</h2>
+      <p>Cada resultado aparece com a conta que o produziu, para você conferir em vez de confiar. E, como em todo o site, o cálculo acontece dentro do navegador — nenhum número é copiado para servidor nenhum.</p>
+    `
+  },
+  {
+    en: 'break-even-calculator',
+    slug: 'ponto-de-equilibrio',
+    name: 'Ponto de Equilíbrio',
+    title: 'Ponto de Equilíbrio — Como Calcular | Calculadora Grátis | ConvertOcean',
+    description: 'Calcule o ponto de equilíbrio contábil, financeiro e econômico: quantas unidades vender para cobrir os custos, com margem de contribuição.',
+    headline: 'Ponto de Equilíbrio.',
+    subtitle: 'Descubra quantas unidades precisa vender para cobrir os custos — com margem de contribuição e meta de lucro.',
+    quickAnswer: 'O ponto de equilíbrio é o volume de vendas em que a receita cobre exatamente os custos: Ponto de Equilíbrio em unidades = Custos Fixos ÷ (Preço − Custo Variável por unidade). Com R$ 5.000 de custos fixos, preço de R$ 39 e custo variável de R$ 14, o equilíbrio está em 200 unidades. A calculadora também encontra o volume necessário para uma meta de lucro e o preço que a viabiliza.',
+    category: 'Ferramentas Empresariais',
+    faqs: [
+      {
+        question: 'o que é ponto de equilíbrio',
+        answer: 'É o volume de vendas em que a empresa não tem lucro nem prejuízo: a receita cobre exatamente todos os custos. Abaixo dele a operação consome caixa; acima, cada venda adicional contribui para o lucro. É o primeiro número que um negócio precisa conhecer, porque define a meta mínima de sobrevivência.'
+      },
+      {
+        question: 'como calcular ponto de equilibrio',
+        answer: 'Custos Fixos ÷ (Preço de venda − Custo variável por unidade). Com R$ 5.000 de custos fixos por mês, preço de R$ 39 e custo variável de R$ 14 por unidade, a margem de contribuição é R$ 25 e o ponto de equilíbrio são 200 unidades por mês. Em receita: 200 × R$ 39 = R$ 7.800.'
+      },
+      {
+        question: 'como calcular o ponto de equilíbrio',
+        answer: 'A parte difícil não é a fórmula, é separar os custos. Fixos são os que existem mesmo sem vender nada: aluguel, salários, software, contador. Variáveis mudam com cada venda: matéria-prima, embalagem, comissão, taxa de cartão, frete. Classificar errado desloca o resultado inteiro, e a taxa de cartão é a que mais costuma acabar do lado errado.'
+      },
+      {
+        question: 'ponto de equilíbrio como calcular',
+        answer: 'Comece pela margem de contribuição, que é preço menos custo variável unitário — o quanto cada venda deixa para pagar os custos fixos. Depois divida os custos fixos por ela. Se a margem de contribuição for negativa, não existe ponto de equilíbrio: vender mais aumenta o prejuízo, e o problema é o preço, não o volume.'
+      },
+      {
+        question: 'como calcular ponto de equilibrio contabil',
+        answer: 'O ponto de equilíbrio contábil considera todos os custos fixos, inclusive os que não saem do caixa, como a depreciação. É o cálculo padrão: custos fixos totais divididos pela margem de contribuição. Dá o volume em que o resultado contábil fica em zero.'
+      },
+      {
+        question: 'o que é ponto de equilibrio financeiro',
+        answer: 'O financeiro desconta dos custos fixos as despesas que não representam saída de caixa, como a depreciação. Por isso ele é sempre menor que o contábil: mostra o volume mínimo para o caixa não ficar negativo, ainda que contabilmente a empresa registre prejuízo. É o número útil em momentos de aperto de caixa.'
+      },
+      {
+        question: 'o que é ponto de equilibrio de uma empresa',
+        answer: 'Para a empresa inteira, em vez de um produto, use o faturamento total e a margem de contribuição média. O resultado é a receita mensal mínima. Se a empresa vende itens com margens muito diferentes, a média esconde o que cada linha contribui — nesse caso, calcular por produto revela mais.'
+      },
+      {
+        question: 'o que é analise de ponto de equilibrio',
+        answer: 'É usar o ponto de equilíbrio para testar decisões antes de tomá-las: quanto o volume precisa subir para bancar uma contratação, o que um aumento de aluguel faz com a meta mínima, se um desconto se paga em volume. O valor do cálculo não está no número em si, e sim em comparar cenários.'
+      }
+    ],
+    content: `
+      <h2>A fórmula, e onde ela costuma dar errado</h2>
+      <p><strong>Ponto de equilíbrio = Custos Fixos ÷ (Preço − Custo Variável unitário).</strong> O denominador é a margem de contribuição: o quanto cada venda deixa para pagar as contas fixas.</p>
+      <p>A fórmula é simples e o erro raramente está nela. Está na separação dos custos. Fixos existem mesmo com zero vendas — aluguel, folha, contador, software. Variáveis nascem com cada venda — matéria-prima, embalagem, comissão, frete e a taxa de cartão. Essa última é a mais frequentemente classificada errado, e ela sozinha desloca o resultado.</p>
+
+      <h2>Contábil, financeiro e econômico</h2>
+      <p>O <strong>ponto de equilíbrio contábil</strong> usa todos os custos fixos e mostra onde o resultado contábil zera. O <strong>ponto de equilíbrio financeiro</strong> desconta o que não sai do caixa, como depreciação, e por isso é sempre menor — é o número que importa quando a preocupação é caixa. O <strong>ponto de equilíbrio econômico</strong> acrescenta o retorno mínimo esperado pelo capital investido, respondendo não "quando paro de perder" mas "quando vale a pena ter feito".</p>
+
+      <h2>Margem de contribuição negativa</h2>
+      <p>Se o custo variável por unidade é maior que o preço, não existe ponto de equilíbrio: cada venda aumenta o prejuízo e nenhum volume resolve. É um diagnóstico de preço, não de vendas — e vale conferir isso antes de montar qualquer meta.</p>
+
+      <h2>Os números não saem do seu computador</h2>
+      <p>Custos, preços e margens são a informação mais sensível de um negócio. O cálculo acontece dentro do navegador e nada é copiado para nenhum servidor.</p>
+    `
+  },
+  {
+    en: 'sales-tax-calculator',
+    slug: 'calculadora-de-imposto',
+    name: 'Calculadora de Imposto',
+    title: 'Como Calcular Imposto sobre Produto — Calculadora | ConvertOcean',
+    description: 'Calcule o imposto sobre um produto a partir de uma alíquota que você informa, incluindo o cálculo inverso a partir do preço final.',
+    headline: 'Calculadora de Imposto.',
+    subtitle: 'Aplique uma alíquota sobre o preço, ou descubra o valor sem imposto a partir do preço final.',
+    quickAnswer: 'Para calcular o imposto sobre um produto, multiplique o preço sem imposto pela alíquota: R$ 100 a 8,25% adicionam R$ 8,25, totalizando R$ 108,25. A calculadora também faz o caminho inverso, encontrando o preço sem imposto a partir de um total que já o inclui. A alíquota é informada por você — a ferramenta não calcula ICMS, que depende de substituição tributária e de regras interestaduais.',
+    category: 'Ferramentas Empresariais',
+    faqs: [
+      {
+        question: 'como calcular imposto sobre produto',
+        answer: 'Multiplique o preço sem imposto pela alíquota em decimal: R$ 100 com alíquota de 18% dão R$ 18 de imposto e R$ 118 de total. Para o caminho inverso — descobrir o preço sem imposto a partir de um total que já o embute — divida o total por (1 + alíquota): R$ 118 ÷ 1,18 = R$ 100.'
+      },
+      {
+        question: 'como calcular imposto sobre produto formula',
+        answer: 'Imposto = preço × alíquota ÷ 100. Total = preço × (1 + alíquota ÷ 100). Preço sem imposto = total ÷ (1 + alíquota ÷ 100). A terceira é a que mais gera erro: subtrair 18% de um total que já inclui 18% não devolve o preço original, porque a base das duas contas é diferente.'
+      },
+      {
+        question: 'como calcular imposto sobre produto importado',
+        answer: 'Produto importado tem várias incidências em cadeia — imposto de importação, IPI, PIS/COFINS e ICMS —, e cada uma pode ter base de cálculo própria, inclusive com um tributo entrando na base do seguinte. Esta calculadora aplica uma alíquota por vez sobre a base que você informar; ela não monta essa cadeia. Para importação, confirme a sequência correta antes de precificar.'
+      },
+      {
+        question: 'Esta calculadora faz ICMS?',
+        answer: 'Não. O ICMS não é uma alíquota simples sobre o preço: há substituição tributária, diferença entre operações internas e interestaduais, redução de base de cálculo e regimes específicos por estado e por produto. Uma calculadora de percentual aplicaria um número e daria uma resposta confiante e errada. Aqui você informa a alíquota que já apurou, e a ferramenta faz a aritmética.'
+      },
+      {
+        question: 'Os valores são copiados para algum servidor?',
+        answer: 'Não. O cálculo acontece no seu navegador, no seu dispositivo, e nada é copiado para nenhum servidor.'
+      }
+    ],
+    content: `
+      <h2>O que esta calculadora faz</h2>
+      <p>Ela aplica uma alíquota que você informa sobre um valor, nos dois sentidos: do preço sem imposto para o total, e do total de volta ao preço sem imposto. É aritmética de tributo, feita com a fórmula à vista.</p>
+
+      <h2>O que ela não faz, e por quê</h2>
+      <p>Ela não calcula ICMS. O ICMS não é uma porcentagem aplicada ao preço: depende de substituição tributária, da diferença entre operação interna e interestadual, de redução de base de cálculo e de regras que mudam por estado e por produto. Uma ferramenta que aplicasse um número e chamasse o resultado de ICMS entregaria uma resposta errada com aparência de certa — e imposto errado custa mais caro do que não ter a ferramenta.</p>
+
+      <h2>O cálculo inverso</h2>
+      <p>É onde mais se erra. Um total de R$ 118 que já embute 18% não volta a R$ 100 se você subtrair 18% — isso daria R$ 96,76. A conta certa é dividir por 1,18, porque a base dos 18% é o preço original e não o total.</p>
+    `
+  },
+  {
+    en: 'ofx-to-csv',
+    slug: 'ofx-para-csv',
+    name: 'OFX para CSV',
+    title: 'Converter OFX para CSV Online Grátis — Extrato Bancário | ConvertOcean',
+    description: 'Converta um extrato bancário .ofx em planilha CSV ou Excel direto no navegador. O extrato não sai do seu computador.',
+    headline: 'OFX para CSV.',
+    subtitle: 'Transforme um extrato bancário .ofx em planilha, com as colunas que o seu sistema espera — sem que o extrato saia do seu computador.',
+    quickAnswer: 'Para converter OFX para CSV, selecione o extrato .ofx na ferramenta acima e baixe uma planilha com todas as transações: data, tipo, descrição, memorando, valor, número do documento e identificador da transação. Dá para trocar para uma pasta do Excel ou para um layout de três colunas, aceito pelos assistentes de importação dos bancos. O extrato é lido dentro do seu navegador e não sai do seu computador.',
+    category: 'Ferramentas Empresariais',
+    faqs: [
+      {
+        question: 'O que é um arquivo OFX?',
+        answer: 'É o formato padrão de extrato bancário eletrônico, oferecido para download pela maioria dos bancos e aceito por programas de finanças e contabilidade. Ele guarda cada transação com data, valor, descrição e identificador — mas não abre em planilha, que é o motivo de quase toda conversão.'
+      },
+      {
+        question: 'Quais colunas saem na planilha?',
+        answer: 'Data, tipo, descrição, memorando, valor, número do documento e identificador único da transação. Há também um layout reduzido de três colunas — data, descrição e valor — que é o formato que os assistentes de importação de muitos sistemas esperam receber.'
+      },
+      {
+        question: 'Posso baixar em Excel em vez de CSV?',
+        answer: 'Sim, é possível gerar uma pasta .xlsx no lugar do CSV. O .xlsx evita o problema clássico de o Excel abrir um CSV com tudo em uma coluna só, porque já carrega a estrutura das colunas dentro do arquivo.'
+      },
+      {
+        question: 'O extrato é copiado para algum servidor?',
+        answer: 'Não. A leitura do extrato e a geração da planilha acontecem no seu navegador, no seu dispositivo. Um extrato bancário lista cada transação de uma conta: é exatamente o tipo de arquivo que não deveria ser enviado a um serviço qualquer, e aqui ele não é copiado para lugar nenhum.'
+      }
+    ],
+    content: `
+      <h2>Do extrato do banco para a planilha</h2>
+      <p>O OFX é o formato padrão de extrato eletrônico e quase todo banco o oferece para download — mas ele não abre em planilha. Um <strong>conversor de ofx para csv</strong> resolve exatamente essa distância: transforma o extrato em linhas e colunas que o Excel, o Google Sheets ou o sistema contábil conseguem ler.</p>
+
+      <h2>O layout de três colunas</h2>
+      <p>Muitos assistentes de importação esperam apenas data, descrição e valor, e recusam arquivos com colunas a mais. Por isso existe essa saída reduzida além da completa — <strong>converter arquivo ofx para csv</strong> raramente é sobre os dados, e quase sempre sobre o formato que o outro sistema aceita.</p>
+
+      <h2>Um extrato não deveria circular</h2>
+      <p>Ele lista cada transação de uma conta: onde a pessoa comprou, quanto recebeu, para quem transferiu. A conversão acontece dentro do navegador, no seu dispositivo, e o arquivo não é copiado para nenhum servidor.</p>
+    `
+  }
+];
+
 export const ptTools: PtTool[] = [
   ...ptToolsSeed,
   ...ptToolsBatch1,
@@ -1751,7 +1973,8 @@ export const ptTools: PtTool[] = [
   ...ptToolsBatch5,
   ...ptToolsBatch6,
   ...ptToolsBatch7,
-  ...ptToolsBatch8
+  ...ptToolsBatch8,
+  ...ptToolsBatch9
 ];
 
 /**
