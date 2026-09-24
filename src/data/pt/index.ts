@@ -352,7 +352,262 @@ export const ptToolsBatch1: PtTool[] = [
   }
 ];
 
-export const ptTools: PtTool[] = [...ptToolsSeed, ...ptToolsBatch1];
+/**
+ * ---------------------------------------------------------------------------
+ * Keyword-led batch 2 — supplied by Kavya 2026-09-24. See ./keywords.ts.
+ * ---------------------------------------------------------------------------
+ *
+ * Same verbatim rule as batch 1. Two things shaped this batch specifically:
+ *
+ * - `/pt/ppt-para-pdf/` fronts the LEGACY tool, which cannot read a binary .ppt
+ *   in a browser at all. The term has >1000 volume, so people will arrive
+ *   expecting a conversion. The page says so in the first answer and sends them
+ *   to /pt/powerpoint-para-pdf/ — a page that ranks and then fails silently is
+ *   worse than one that ranks and redirects honestly.
+ *
+ * - Eight PDF→PowerPoint questions were researched and are NOT answered here,
+ *   because no such tool exists. They live in `noToolYet` in ./keywords.ts.
+ */
+const ptToolsBatch2: PtTool[] = [
+  {
+    en: 'pdf-to-excel',
+    slug: 'pdf-para-excel',
+    name: 'PDF para Excel',
+    title: 'Converter PDF para Excel Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter tabelas de PDF para planilha Excel (.xlsx) direto no navegador, com linhas e colunas alinhadas. O arquivo não sai do seu computador.',
+    headline: 'PDF para Excel.',
+    subtitle: 'Extraia tabelas de um PDF para uma planilha com linhas e colunas alinhadas, sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter PDF para Excel, selecione o arquivo na ferramenta acima e baixe a planilha .xlsx. As tabelas são reconstruídas célula a célula: valores com mais de uma palavra ficam inteiros e todas as linhas são alinhadas às mesmas colunas, em vez de espalhar cada pedaço de texto em uma célula própria. PDFs digitais convertem melhor; PDFs digitalizados precisam de OCR antes. Tudo roda no seu navegador e o arquivo não sai do seu computador.',
+    category: 'Conversor de Excel',
+    faqs: [
+      {
+        question: 'como converter pdf para excel',
+        answer: 'Arraste o PDF para a ferramenta no topo da página e baixe o arquivo .xlsx. Cada tabela detectada vira uma faixa de linhas e colunas na planilha, pronta para ordenar, filtrar e usar em fórmulas. Não é preciso cadastro nem instalação.'
+      },
+      {
+        question: 'como exportar pdf para excel',
+        answer: 'A exportação preserva a estrutura da tabela, não a aparência. Bordas, cores de fundo e fontes do PDF não são transportadas — o que volta são os valores, nas posições certas de linha e coluna. É isso que permite usar os números em cálculos em vez de apenas olhar para eles.'
+      },
+      {
+        question: 'como passar pdf para excel',
+        answer: 'Antes de converter, verifique se o PDF é digital: abra o arquivo e tente selecionar uma frase. Se o texto é destacado, a conversão funciona. Se o cursor só desenha um retângulo, a página é uma imagem digitalizada e não há texto para extrair — use primeiro a ferramenta de imagem para texto (OCR).'
+      },
+      {
+        question: 'como importar pdf para excel',
+        answer: 'Depois de baixar o .xlsx, abra-o diretamente no Excel, no LibreOffice ou no Google Sheets — é uma pasta de trabalho normal, não um arquivo importado com assistente. Se você precisa dos dados dentro de uma planilha já existente, copie as linhas e cole na aba de destino.'
+      },
+      {
+        question: 'como converter de pdf para excel',
+        answer: 'Tabelas com bordas visíveis e colunas bem separadas são as que saem melhor. Tabelas cujas colunas são alinhadas apenas por espaços, relatórios com várias tabelas na mesma página e células mescladas são mais difíceis de interpretar e podem exigir um ajuste manual depois. Confira os totais antes de usar os dados.'
+      },
+      {
+        question: 'como transferir pdf para excel',
+        answer: 'Valores com mais de uma palavra permanecem inteiros em uma única célula — "Receita bruta acumulada" não é quebrado em três células. Esse é o erro mais comum de conversores que tratam cada fragmento de texto como um campo separado, e é o que costuma inviabilizar a planilha resultante.'
+      },
+      {
+        question: 'como copiar uma tabela do pdf para o excel',
+        answer: 'Copiar e colar direto do leitor de PDF quase sempre resulta em tudo empilhado em uma coluna só, porque a área de transferência carrega apenas texto sem estrutura. A conversão reconstrói o alinhamento das colunas antes de gerar o arquivo, que é a diferença entre uma planilha utilizável e uma para refazer à mão.'
+      },
+      {
+        question: 'como alterar pdf para excel',
+        answer: 'O PDF original não é modificado em nenhum momento: a ferramenta lê o conteúdo e gera um arquivo .xlsx novo. Você fica com os dois arquivos, e o PDF permanece exatamente como estava.'
+      },
+      {
+        question: 'como copiar pdf para excel',
+        answer: 'A conversão acontece inteiramente no seu navegador e o PDF não é copiado para nenhum servidor. Isso importa aqui mais do que na maioria dos conversores: extratos bancários, relatórios financeiros e listas de clientes são justamente os PDFs que as pessoas mais querem transformar em planilha.'
+      }
+    ],
+    content: `
+      <h2>Converter PDF para Excel sem perder o alinhamento das colunas</h2>
+      <p>O problema de quase todo <strong>conversor de pdf para excel</strong> é que o PDF não guarda tabelas. Ele guarda caracteres em coordenadas. A grade que você enxerga é uma impressão visual: para o arquivo, não existem linhas nem colunas. Converter <strong>de pdf para excel</strong> significa deduzir essa estrutura a partir das posições do texto.</p>
+      <p>É por isso que tantas conversões devolvem tudo em uma coluna só, ou quebram "Receita bruta acumulada" em três células. Aqui a reconstrução é feita célula a célula: valores com várias palavras ficam inteiros e todas as linhas são alinhadas às mesmas colunas.</p>
+
+      <h2>Quais PDFs funcionam</h2>
+      <p>PDFs gerados digitalmente — exportados do Excel, do sistema da empresa, de um internet banking — são os que melhor se prestam a <strong>exportar pdf para excel</strong>, porque os caracteres existem de verdade. Um PDF digitalizado é uma fotografia da página: não há texto a extrair, e o caminho é passar antes por OCR. O teste leva dez segundos: tente selecionar uma frase no arquivo.</p>
+
+      <h2>Extratos e relatórios não precisam sair do seu computador</h2>
+      <p>Os PDFs que as pessoas mais querem virar planilha são exatamente os que menos deveriam circular: extratos bancários, folhas de pagamento, relatórios de vendas, listas de clientes. Esta ferramenta processa o arquivo dentro do navegador, no seu próprio dispositivo, e o documento não é copiado para nenhum servidor. O código é aberto, então a afirmação pode ser conferida.</p>
+    `
+  },
+  {
+    en: 'pdf-to-txt',
+    slug: 'pdf-para-txt',
+    name: 'PDF para TXT',
+    title: 'Converter PDF para TXT Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Extraia o texto de um PDF para um arquivo .txt direto no navegador, com a ordem de leitura preservada. O arquivo não sai do seu computador.',
+    headline: 'PDF para TXT.',
+    subtitle: 'Extraia o texto puro de um PDF, com a ordem de leitura e as quebras de linha preservadas, sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter PDF para TXT, selecione o arquivo na ferramenta acima e baixe um .txt com o texto puro, mantendo a ordem de leitura e as quebras de linha. Funciona com PDFs digitais, criados por computador; um PDF digitalizado não tem camada de texto e precisa de OCR antes. A extração acontece no seu navegador, então documentos confidenciais não saem do seu dispositivo.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'Como converter um PDF para TXT?',
+        answer: 'Arraste o PDF para a ferramenta no topo da página e baixe o arquivo .txt. O texto sai na ordem em que é lido, com as quebras de linha preservadas, pronto para abrir em qualquer editor — Bloco de Notas, VS Code, Word ou um script.'
+      },
+      {
+        question: 'A formatação é mantida no arquivo .txt?',
+        answer: 'Não, e isso é intencional. Texto puro não tem onde guardar fontes, tamanhos, cores, tabelas ou imagens — o formato só armazena caracteres. O que é preservado é o conteúdo e a ordem: parágrafos e quebras de linha continuam onde estavam.'
+      },
+      {
+        question: 'Funciona com PDF digitalizado?',
+        answer: 'Não. Um PDF digitalizado é uma imagem da página, sem camada de texto, então não há nada para extrair — o resultado viria vazio. Nesses casos use antes a ferramenta de imagem para texto, que faz o reconhecimento óptico dos caracteres.'
+      },
+      {
+        question: 'Para que serve converter PDF em texto puro?',
+        answer: 'Para tudo que precisa do conteúdo sem a embalagem: contar palavras, comparar duas versões de um contrato linha a linha, alimentar um script, indexar documentos em uma busca, ou colar um trecho longo sem arrastar formatação junto.'
+      },
+      {
+        question: 'O PDF é copiado para algum servidor?',
+        answer: 'Não. A leitura do PDF e a geração do .txt acontecem na memória do seu navegador, no seu dispositivo. O arquivo não é copiado para lugar nenhum, o que importa quando o documento é um contrato ou um laudo.'
+      }
+    ],
+    content: `
+      <h2>Extrair o texto de um PDF sem instalar nada</h2>
+      <p>Um <strong>conversor de pdf para txt</strong> resolve um problema específico: você quer o conteúdo, não a página. Texto puro é o formato mais portátil que existe — abre em qualquer editor, em qualquer sistema, hoje e daqui a vinte anos, e ocupa uma fração do tamanho do PDF original.</p>
+      <p>Esta ferramenta permite <strong>converter pdf para txt grátis</strong>, sem cadastro e sem limite diário, mantendo a ordem de leitura e as quebras de linha do documento original.</p>
+
+      <h2>O que o texto puro não consegue guardar</h2>
+      <p>Fontes, tamanhos, cores, tabelas, imagens e posicionamento não sobrevivem — não porque a conversão seja limitada, mas porque o formato .txt armazena apenas caracteres. Se você precisa manter a aparência do documento, o caminho é PDF para Word. Se precisa apenas das palavras, o .txt é o formato certo e o mais fácil de processar depois.</p>
+
+      <h2>Digital ou digitalizado: confira antes</h2>
+      <p>A extração só funciona em PDFs criados digitalmente. Abra o arquivo e tente selecionar uma frase: se o texto é destacado, há uma camada de texto e a conversão funciona. Se o cursor apenas desenha um retângulo, a página é uma imagem e o resultado sairia em branco — nesse caso o caminho é o OCR.</p>
+    `
+  },
+  {
+    en: 'docx-to-txt',
+    slug: 'word-para-txt',
+    name: 'Word para TXT',
+    title: 'Converter Word para TXT Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter documentos Word (.docx) em texto puro .txt direto no navegador, sem cadastro. O arquivo não sai do seu computador.',
+    headline: 'Word para TXT.',
+    subtitle: 'Extraia apenas as palavras de um documento .docx, sem formatação, sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter Word para TXT, selecione um arquivo .docx na ferramenta acima e baixe um .txt contendo apenas as palavras. A formatação é descartada de propósito: fontes, cores, tabelas e imagens não têm como sobreviver, porque o texto puro não tem onde guardá-las. É o formato certo para alimentar um script, comparar versões ou contar palavras. Tudo roda no seu navegador.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'como converter arquivo word para txt',
+        answer: 'Arraste o arquivo .docx para a ferramenta no topo da página e baixe o .txt. O resultado contém apenas o texto do documento, na ordem original, pronto para abrir em qualquer editor ou processar em um script.'
+      },
+      {
+        question: 'como converter documento word para txt',
+        answer: 'Documentos .doc antigos precisam ser abertos no Word ou no LibreOffice e salvos novamente como .docx antes. O formato .doc é binário e fechado, e não pode ser lido dentro do navegador — é uma limitação do formato, não da ferramenta.'
+      },
+      {
+        question: 'Por que a formatação some?',
+        answer: 'Porque o .txt guarda apenas caracteres. Não existe lugar no formato para negrito, tabelas, cores ou imagens. A perda é deliberada e costuma ser o motivo da conversão: quem quer só o conteúdo geralmente quer justamente se livrar da formatação.'
+      },
+      {
+        question: 'Quando vale a pena converter Word para texto puro?',
+        answer: 'Para comparar duas versões de um documento linha a linha, alimentar um script ou uma ferramenta de análise, colar um texto longo em outro lugar sem arrastar estilos junto, ou reduzir o tamanho de um arquivo que só precisa das palavras.'
+      },
+      {
+        question: 'O documento é copiado para algum servidor?',
+        answer: 'Não. A extração acontece no seu navegador, no seu dispositivo, e o arquivo não é copiado para nenhum servidor. Depois que a página carrega, a ferramenta também funciona sem internet.'
+      }
+    ],
+    content: `
+      <h2>Quando um documento precisa virar apenas texto</h2>
+      <p>Um <strong>conversor word para txt</strong> existe para o caso em que a formatação é o problema, não o valor. Ao <strong>converter texto word para txt</strong>, você fica com o conteúdo puro: sem estilos herdados, sem tabelas, sem imagens, sem os metadados que um .docx carrega junto.</p>
+      <p>É o formato certo quando o texto vai ser processado por outra coisa — um script, um comparador de versões, um contador de palavras, um sistema de busca — em vez de ser lido como documento.</p>
+
+      <h2>.docx sim, .doc não</h2>
+      <p>A ferramenta trabalha com .docx, o formato usado pelo Word desde 2007. Arquivos .doc antigos são binários e fechados, e não podem ser abertos dentro do navegador: basta abri-los no Word ou no LibreOffice e salvar como .docx antes de converter.</p>
+
+      <h2>Processamento local</h2>
+      <p>A conversão acontece na memória do navegador, no seu próprio dispositivo, e o documento não é copiado para nenhum servidor. Para minutas, contratos e textos não publicados, essa é a diferença entre usar uma ferramenta online e enviar o material para a infraestrutura de terceiros.</p>
+    `
+  },
+  {
+    en: 'pptx-to-pdf',
+    slug: 'powerpoint-para-pdf',
+    name: 'PowerPoint para PDF',
+    title: 'Converter PowerPoint para PDF Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter apresentações PowerPoint (.pptx) para PDF direto no navegador, um slide por página, com tema e layout preservados.',
+    headline: 'PowerPoint para PDF.',
+    subtitle: 'Converta apresentações .pptx em PDF com o layout e o tema reais, um slide por página, sem que o arquivo saia do seu computador.',
+    quickAnswer: 'Para converter PowerPoint para PDF, selecione um arquivo .pptx na ferramenta acima e baixe um PDF que mantém o layout, o tema, as cores, o texto e as tabelas de cada slide — um slide por página. É a forma de compartilhar uma apresentação que fica idêntica em qualquer dispositivo, mesmo sem o PowerPoint instalado. Arquivos .ppt antigos precisam ser salvos como .pptx antes. Tudo roda no seu navegador.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'como converter powerpoint para pdf',
+        answer: 'Arraste o arquivo .pptx para a ferramenta no topo da página e baixe o PDF. Cada slide vira uma página, com as cores do tema, as fontes, o plano de fundo e as tabelas preservados. Não é preciso ter o PowerPoint instalado.'
+      },
+      {
+        question: 'O PDF fica igual à apresentação original?',
+        answer: 'O layout, o tema, as cores, o texto e as tabelas são mantidos, um slide por página. O que não sobrevive são os elementos que dependem de tempo: animações, transições e vídeos incorporados viram o estado final do slide, porque um PDF é um documento estático.'
+      },
+      {
+        question: 'As anotações do apresentador entram no PDF?',
+        answer: 'As anotações são levadas para uma camada de texto invisível do PDF — elas não aparecem impressas sobre o slide, mas podem ser encontradas em uma busca dentro do arquivo. Se a apresentação vai ser distribuída, vale saber que esse conteúdo acompanha o documento.'
+      },
+      {
+        question: 'Por que converter uma apresentação em PDF?',
+        answer: 'Porque um .pptx muda de aparência conforme a versão do PowerPoint e as fontes instaladas em cada computador, e pode ser editado por engano. O PDF fica idêntico em qualquer dispositivo, abre sem software específico e é o formato esperado quando uma apresentação é anexada a um e-mail ou a um processo.'
+      },
+      {
+        question: 'A apresentação é copiada para algum servidor?',
+        answer: 'Não. Os slides são interpretados e desenhados pelo próprio navegador, no seu dispositivo, e o arquivo não é copiado para nenhum servidor. Apresentações internas, propostas comerciais e material não divulgado permanecem com você.'
+      }
+    ],
+    content: `
+      <h2>Converter PowerPoint para PDF mantendo o tema</h2>
+      <p>Quem procura um <strong>conversor de powerpoint para pdf</strong> geralmente quer resolver um problema conhecido: a apresentação abre diferente no computador de quem recebe. Fontes ausentes, versões diferentes do PowerPoint e telas de outro tamanho mudam o resultado. Passar <strong>de powerpoint para pdf</strong> congela a aparência: cada slide vira uma página, e essa página é a mesma em qualquer lugar.</p>
+      <p>Aqui os slides são desenhados com o layout e o tema reais — cores, fontes, plano de fundo e tabelas —, e não como capturas de tela.</p>
+
+      <h2>O que não atravessa a conversão</h2>
+      <p>Animações, transições e vídeos incorporados não sobrevivem, porque o PDF é estático: o que fica é o estado final de cada slide. Se a apresentação depende de elementos que aparecem em sequência, vale separá-los em slides diferentes antes de converter.</p>
+
+      <h2>Arquivos .ppt antigos</h2>
+      <p>O formato binário .ppt não pode ser lido dentro de um navegador. Abra o arquivo no PowerPoint ou no LibreOffice, salve como .pptx e converta em seguida — é um passo só, e depois dele tudo funciona normalmente.</p>
+    `
+  },
+  {
+    en: 'ppt-to-pdf',
+    slug: 'ppt-para-pdf',
+    name: 'PPT para PDF',
+    title: 'Converter PPT para PDF Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converter apresentações PPT para PDF direto no navegador. Arquivos .ppt antigos precisam de um passo extra — a página explica qual.',
+    headline: 'PPT para PDF.',
+    subtitle: 'O formato .ppt antigo precisa de um passo a mais antes de virar PDF — e depois dele os slides são convertidos no seu próprio dispositivo.',
+    quickAnswer: 'Para converter PPT para PDF, adicione o arquivo na ferramenta acima e baixe um PDF com um slide por página, com as cores do tema, as fontes, o plano de fundo e as tabelas preservados. Atenção ao formato: o .ppt binário antigo não pode ser lido dentro de um navegador — abra-o no PowerPoint ou no LibreOffice, salve como .pptx e converta em seguida. Tudo roda no seu dispositivo.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      {
+        question: 'como converter ppt para pdf',
+        answer: 'Se o seu arquivo é .pptx, arraste-o para a ferramenta e baixe o PDF. Se é um .ppt antigo, é preciso um passo a mais: abra no PowerPoint ou no LibreOffice e salve como .pptx primeiro. O formato .ppt é binário e fechado, e nenhum navegador consegue lê-lo — nem aqui, nem em qualquer outro conversor que funcione no seu dispositivo.'
+      },
+      {
+        question: 'Como sei se meu arquivo é .ppt ou .pptx?',
+        answer: 'Veja a extensão no nome do arquivo. Terminando em .pptx, ele foi salvo pelo PowerPoint 2007 ou posterior e funciona direto. Terminando em .ppt, é o formato antigo e precisa ser salvo novamente. No Windows, se as extensões estiverem ocultas, ative "Extensões de nomes de arquivos" na aba Exibir do Explorador.'
+      },
+      {
+        question: 'Como salvar um .ppt como .pptx?',
+        answer: 'Abra a apresentação no PowerPoint, vá em Arquivo, Salvar como, e escolha "Apresentação do PowerPoint (*.pptx)" na lista de formatos. No LibreOffice Impress, use Arquivo, Salvar como, e selecione "PowerPoint 2007-365 (.pptx)". Depois disso a conversão para PDF funciona normalmente.'
+      },
+      {
+        question: 'O resultado é igual ao da conversão de .pptx?',
+        answer: 'Sim — depois do re-salvamento é exatamente o mesmo motor de conversão: um slide por página, com o layout, o tema, as cores e as tabelas preservados. O passo extra serve apenas para traduzir o arquivo antigo para um formato que o navegador consegue abrir.'
+      },
+      {
+        question: 'O arquivo é copiado para algum servidor?',
+        answer: 'Não. A conversão acontece no seu navegador, no seu dispositivo, e nada é copiado para nenhum servidor — inclusive o passo de re-salvar, que você faz no seu próprio computador, sem que o arquivo passe por nós em momento algum.'
+      }
+    ],
+    content: `
+      <h2>PPT e PPTX não são o mesmo formato</h2>
+      <p>É a distinção que decide se um <strong>conversor de ppt para pdf</strong> vai funcionar. O .pptx, usado pelo PowerPoint desde 2007, é um pacote aberto que um navegador consegue abrir e interpretar. O .ppt é o formato binário anterior, fechado e sem especificação pública utilizável no navegador — nenhuma ferramenta que rode no seu próprio dispositivo consegue lê-lo diretamente.</p>
+      <p>Dizemos isso de forma direta porque a alternativa seria aceitar o arquivo e falhar depois, ou copiá-lo para um servidor para converter lá — que é exatamente o que este site não faz.</p>
+
+      <h2>O passo a mais, uma vez só</h2>
+      <p>Abra a apresentação no PowerPoint ou no LibreOffice Impress e salve como .pptx. Leva alguns segundos, acontece no seu computador e não envolve nenhum serviço externo. A partir daí, <strong>passar ppt para pdf</strong> funciona como qualquer outra conversão daqui: um slide por página, com o tema e o layout reais.</p>
+
+      <h2>Depois do re-salvamento</h2>
+      <p>O motor é o mesmo da página de <a href="/pt/powerpoint-para-pdf/">PowerPoint para PDF</a>: cores do tema, fontes, plano de fundo e tabelas preservados, um slide por página, tudo processado dentro do navegador. Animações e transições não sobrevivem, porque o PDF é estático.</p>
+    `
+  }
+];
+
+export const ptTools: PtTool[] = [...ptToolsSeed, ...ptToolsBatch1, ...ptToolsBatch2];
 
 /**
  * Guides live at `/pt/guias/<slug>/`. Empty until the keyword-led wave: the

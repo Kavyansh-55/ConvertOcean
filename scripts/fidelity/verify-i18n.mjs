@@ -49,6 +49,11 @@ const PAIRS = [
   { pt: 'pdf-para-word', en: 'pdf-to-word' },
   { pt: 'word-para-pdf', en: 'word-to-pdf' },
   { pt: 'excel-para-pdf', en: 'excel-to-pdf' },
+  { pt: 'pdf-para-excel', en: 'pdf-to-excel' },
+  { pt: 'pdf-para-txt', en: 'pdf-to-txt' },
+  { pt: 'word-para-txt', en: 'docx-to-txt' },
+  { pt: 'powerpoint-para-pdf', en: 'pptx-to-pdf' },
+  { pt: 'ppt-para-pdf', en: 'ppt-to-pdf' },
 ];
 
 let bad = 0;

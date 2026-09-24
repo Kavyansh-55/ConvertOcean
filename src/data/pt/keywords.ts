@@ -76,7 +76,40 @@ export const excluded: { term: string; why: string }[] = [
   { term: 'i love word para pdf', why: 'competitor brand navigation' },
   { term: 'ilovepdf excel para pdf', why: 'competitor brand navigation' },
   { term: 'i love pdf excel para pdf', why: 'competitor brand navigation' },
-  { term: 'i love excel para pdf', why: 'competitor brand navigation' }
+  { term: 'i love excel para pdf', why: 'competitor brand navigation' },
+  // batch 2
+  { term: 'ilovepdf pdf para excel', why: 'competitor brand navigation' },
+  { term: 'i love pdf para excel', why: 'competitor brand navigation' },
+  { term: 'love pdf para excel', why: 'competitor brand navigation' },
+  { term: 'i love pdf ppt para pdf', why: 'competitor brand navigation' },
+  { term: 'ilovepdf ppt para pdf', why: 'competitor brand navigation' },
+  { term: 'ilovepdf powerpoint para pdf', why: 'competitor brand navigation' }
+];
+
+/**
+ * Researched, real, and unbuildable: these ask for PDF → PowerPoint, and there
+ * is no such tool on this site.
+ *
+ * Eight of the ten questions returned for `ppt para pdf` and `powerpoint para
+ * pdf` are the reverse conversion. The English side hit the identical wall and
+ * recorded it in SEO-ROADMAP.md — `how to convert pdf to ppt`, "Easy in AU and
+ * has no tool on this site". Two languages independently surfacing the same
+ * demand for a tool we do not have is a product signal, not a keyword problem,
+ * so it is kept here rather than discarded.
+ *
+ * Do NOT answer these on /pt/ppt-para-pdf/ or /pt/powerpoint-para-pdf/. A page
+ * that ranks for "como converter pdf para powerpoint" and then cannot do it
+ * earns a bounce and teaches Google the page does not satisfy the query.
+ */
+export const noToolYet: { term: string; kd: string; volume: string; needs: string }[] = [
+  { term: 'como converter pdf para ppt', kd: 'n/a', volume: '<100', needs: 'pdf-to-ppt' },
+  { term: 'como posso converter pdf para ppt online?', kd: 'n/a', volume: '<100', needs: 'pdf-to-ppt' },
+  { term: 'como converter pdf para ppt online', kd: 'n/a', volume: '<100', needs: 'pdf-to-ppt' },
+  { term: 'qual o melhor conversor de pdf para ppt', kd: 'n/a', volume: '<100', needs: 'pdf-to-ppt' },
+  { term: 'como converter pdf para powerpoint', kd: 'Easy', volume: '>100', needs: 'pdf-to-ppt' },
+  { term: 'como converter de pdf para powerpoint', kd: 'n/a', volume: '<100', needs: 'pdf-to-ppt' },
+  { term: 'como passar pdf para powerpoint', kd: 'Easy', volume: '<100', needs: 'pdf-to-ppt' },
+  { term: 'qual o melhor conversor de pdf para powerpoint', kd: 'n/a', volume: '<100', needs: 'pdf-to-ppt' }
 ];
 
 /* Terms the export rated inconsistently across two views of the same data. */
@@ -153,16 +186,27 @@ export const pageKeywords: PageKeywords[] = [
     ]
   },
   /**
-   * Not yet built. These nine questions arrived inside the `Excel para pdf`
-   * export but every one of them asks for the opposite conversion, which is a
-   * different tool (/pdf-to-excel/). They are parked here so the research is
-   * not lost and so nobody files them onto the Excel-to-PDF page later.
+   * Built in batch 2. These nine questions first arrived inside the `Excel para
+   * pdf` export, where they did not belong — every one asks for the opposite
+   * conversion. Parking them then meant the research survived until the tool
+   * they actually describe came round.
+   *
+   * The strongest page in either batch: `pdf para excel` and `converter pdf
+   * para excel` are both Easy at >10,000.
    */
   {
     slug: 'pdf-para-excel',
     en: 'pdf-to-excel',
     primary: 'pdf para excel',
-    phrase: [],
+    phrase: [
+      { term: 'pdf para excel', kd: 'Easy', volume: '>10,000' },
+      { term: 'converter pdf para excel', kd: 'Easy', volume: '>10,000' },
+      { term: 'conversor de pdf para excel', kd: 'Easy', volume: '>1000' },
+      { term: 'converter de pdf para excel', kd: 'Easy', volume: '>1000' },
+      { term: 'de pdf para excel', kd: 'Easy', volume: '>1000' },
+      { term: 'exportar pdf para excel', kd: 'Easy', volume: '>1000' },
+      { term: 'conversor pdf para excel', kd: 'Easy', volume: '>100' }
+    ],
     questions: [
       { term: 'como converter pdf para excel', kd: 'Easy', volume: '>100' },
       { term: 'como exportar pdf para excel', kd: 'Easy', volume: '<100' },
@@ -173,6 +217,76 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'como copiar uma tabela do pdf para o excel', kd: 'Easy', volume: '<100' },
       { term: 'como alterar pdf para excel', kd: 'n/a', volume: '<100' },
       { term: 'como copiar pdf para excel', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'pdf-para-txt',
+    en: 'pdf-to-txt',
+    primary: 'pdf para txt',
+    phrase: [
+      { term: 'pdf para txt', kd: 'Easy', volume: '>1000' },
+      { term: 'converter pdf para txt', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de pdf para txt', kd: 'Easy', volume: '<100' },
+      { term: 'pdf para txt converter', kd: 'n/a', volume: '<100' },
+      { term: 'converter pdf para txt grátis', kd: 'Easy', volume: '<100' },
+      { term: 'conversor pdf para txt', kd: 'n/a', volume: '<100' },
+      { term: 'converter pdf para txt online', kd: 'n/a', volume: '<100' }
+    ],
+    /* The Questions tab returned nothing for this one. That is a real result,
+       not a gap to fill with invented questions — people search this as a
+       transactional term, so the page is built on the phrase set. */
+    questions: []
+  },
+  {
+    slug: 'word-para-txt',
+    en: 'docx-to-txt',
+    primary: 'word para txt',
+    phrase: [
+      { term: 'word para txt', kd: 'Easy', volume: '<100' },
+      { term: 'converter word para txt', kd: 'Easy', volume: '<100' },
+      { term: 'converter word para txt online', kd: 'n/a', volume: '<100' },
+      { term: 'conversor word para txt', kd: 'n/a', volume: '<100' },
+      { term: 'converter texto word para txt', kd: 'n/a', volume: '<100' }
+    ],
+    /* The Questions tab was empty here too — but two question-form queries were
+       sitting in the PHRASE list, which is where Ahrefs put them because they
+       contain the seed term. They are questions and they are used as such. */
+    questions: [
+      { term: 'como converter arquivo word para txt', kd: 'n/a', volume: '<100' },
+      { term: 'como converter documento word para txt', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'ppt-para-pdf',
+    en: 'ppt-to-pdf',
+    primary: 'ppt para pdf',
+    phrase: [
+      { term: 'ppt para pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'converter ppt para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de ppt para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'de ppt para pdf', kd: 'Easy', volume: '<100' },
+      { term: 'converter de ppt para pdf', kd: 'Easy', volume: '<100' },
+      { term: 'passar ppt para pdf', kd: 'Easy', volume: '<100' },
+      { term: 'conversor ppt para pdf', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'como converter ppt para pdf', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'powerpoint-para-pdf',
+    en: 'pptx-to-pdf',
+    primary: 'powerpoint para pdf',
+    phrase: [
+      { term: 'powerpoint para pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'converter powerpoint para pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'conversor de powerpoint para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'converter de powerpoint para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'de powerpoint para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'passar powerpoint para pdf', kd: 'Easy', volume: '>100' }
+    ],
+    questions: [
+      { term: 'como converter powerpoint para pdf', kd: 'n/a', volume: '<100' }
     ]
   }
 ];
