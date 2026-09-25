@@ -1,0 +1,280 @@
+---
+/**
+ * The Portuguese locale root.
+ *
+ * Until this existed, every one of the 75 Portuguese pages linked to `/` —
+ * the logo, the nav "Início", the footer brand — and landed the reader on the
+ * English homepage. The locale had no root of its own, which also left Google
+ * no entry point into /pt/ except the sitemap.
+ *
+ * Written rather than translated, and deliberately NOT a copy of
+ * src/pages/index.astro. Two reasons:
+ *
+ *   1. That page carries ~950 lines of scoped CSS. Moving a <style> block into
+ *      a shared component silently re-scopes it — this project has lost six
+ *      rounds to exactly that, and the English homepage is the worst page on
+ *      the site to break for the sake of code reuse.
+ *   2. The same principle the rest of this locale follows: a Brazilian arriving
+ *      here is looking for different things than an English reader. The page
+ *      leads with the researched clusters — modelo de recibo, redimensionar
+ *      imagem, HEIC, dividir PDF — and with the concurso workflow, which is the
+ *      strategic reason this locale exists.
+ *
+ * It reuses Layout and CategoryCard, so the design system, bands and tokens
+ * are the shared ones. Nothing here is styled by hand.
+ */
+import Layout from '../../layouts/Layout.astro';
+import CategoryCard from '../../components/CategoryCard.astro';
+import { getTools, getCategories } from '../../i18n/content';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'pt';
+
+const title = 'ConvertOcean — Conversor de Arquivos Online e 100% Privado';
+const description =
+  'Converta, junte, divida e comprima arquivos direto no navegador. Nada é copiado para servidores: os seus documentos não saem do seu computador.';
+
+const ptTools = getTools(lang);
+const ptCategories = getCategories(lang);
+
+const countFor = (enCategory: string) =>
+  ptTools.filter(t => t.categorySlug === enCategory).length;
+
+/* The tools the keyword research put at the top: every one of these sits on a
+   cluster that came back Easy with real volume. Ordered by that volume, not by
+   what the English homepage happens to feature. */
+const destaques = [
+  'modelo-de-recibo', 'redimensionar-imagem', 'heic-para-jpg', 'dividir-pdf',
+  'comprimir-pdf', 'imagem-para-pdf', 'webp-para-jpg', 'juntar-pdf',
+  'pdf-para-word', 'calculadora-de-porcentagem', 'imagem-para-texto', 'jpg-para-png',
+];
+const populares = destaques
+  .map(s => ptTools.find(t => t.slug === s))
+  .filter((t): t is NonNullable<typeof t> => Boolean(t));
+
+const faqList = [
+  {
+    q: 'Os arquivos são enviados para algum servidor?',
+    a: 'Não. Toda a conversão acontece dentro do seu navegador, no seu próprio dispositivo. Nenhum arquivo é copiado para servidores nossos ou de terceiros, e o código do site é aberto — a afirmação pode ser verificada, não apenas aceita.'
+  },
+  {
+    q: 'Preciso criar conta ou pagar alguma coisa?',
+    a: 'Não. Todas as ferramentas são gratuitas, sem cadastro, sem marca d’água no resultado e sem limite diário de uso. Não existe versão paga escondendo recursos.'
+  },
+  {
+    q: 'Funciona no celular?',
+    a: 'Sim. As ferramentas funcionam no navegador do celular da mesma forma que no computador, e os arquivos continuam sem sair do aparelho. Depois que a página carrega uma vez, a maioria delas funciona até sem internet.'
+  },
+  {
+    q: 'Serve para documentos de concurso público?',
+    a: 'Sim, é um dos usos mais comuns. Editais costumam exigir PDF ou JPG abaixo de 2 MB, com no máximo algumas páginas por arquivo. Você pode digitalizar, juntar os documentos em um único PDF, comprimir até caber no limite e conferir a legibilidade antes de anexar — tudo sem que os seus documentos pessoais saiam do computador.'
+  },
+  {
+    q: 'Existe limite de tamanho de arquivo?',
+    a: 'Não impomos um limite artificial. O que limita é a memória do seu próprio dispositivo, já que o processamento é local — em um computador comum, arquivos de dezenas de megabytes são processados sem problema.'
+  }
+];
+---
+
+<Layout title={title} description={description} lang={lang} faqList={faqList} band="lime">
+  <main id="main-content" tabindex="-1">
+
+    <section class="band band--lime hero-band">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <h1 class="hero-title">Converta arquivos. Sem enviar nada.</h1>
+          <p class="hero-sub">
+            Converta, junte, divida e comprima PDF, imagens, planilhas e documentos
+            direto no navegador. Os seus arquivos não saem do seu computador — e o
+            código é aberto para você conferir.
+          </p>
+          <div class="hero-actions">
+            <a href="/pt/ferramentas-pdf/" class="button button-primary">Ferramentas de PDF</a>
+            <a href="/pt/ferramentas-de-imagem/" class="button button-secondary">Ferramentas de imagem</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band band--bone">
+      <div class="home-section">
+        <h2 class="home-section-title">Mais usadas</h2>
+        <p class="home-section-sub">As ferramentas que os brasileiros mais procuram por aqui.</p>
+        <div class="home-tool-grid">
+          {populares.map(tool => (
+            <a href={`/pt/${tool.slug}/`} class="home-tool">
+              <span class="home-tool-icon" aria-hidden="true">{tool.icon}</span>
+              <span class="home-tool-name">{tool.name}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="band band--paper">
+      <div class="home-section">
+        <h2 class="home-section-title">Documentos de concurso</h2>
+        <p class="home-section-sub">
+          Os editais quase sempre pedem a mesma coisa: PDF ou JPG, abaixo de 2 MB,
+          legível. Estes três passos resolvem, e os seus documentos pessoais não
+          saem do seu computador.
+        </p>
+        <ol class="home-steps">
+          <li>
+            <strong>1. Transforme as fotos em PDF.</strong> Documentos fotografados
+            viram um PDF organizado em <a href="/pt/imagem-para-pdf/">Imagem para PDF</a>,
+            uma foto por página.
+          </li>
+          <li>
+            <strong>2. Junte tudo em um arquivo.</strong> RG, CPF, diploma e
+            comprovantes na ordem que o edital pedir, com
+            <a href="/pt/juntar-pdf/">Juntar PDF</a>.
+          </li>
+          <li>
+            <strong>3. Comprima até caber no limite.</strong>
+            <a href="/pt/comprimir-pdf/">Comprimir PDF</a> mostra o tamanho final
+            antes de baixar — confira se o texto continua legível para a banca.
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="band band--bone">
+      <div class="home-section">
+        <h2 class="home-section-title">Por categoria</h2>
+        <div class="grid-container-inner">
+          {ptCategories.map(cat => (
+            <CategoryCard
+              href={`/pt/${cat.slug}/`}
+              categorySlug={cat.en}
+              name={cat.name}
+              count={`(${countFor(cat.en)})`}
+              description={cat.subtitle}
+              action={`Abrir ${cat.name}`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="band band--paper">
+      <div class="home-section">
+        <h2 class="home-section-title">Por que nada é enviado</h2>
+        <p class="home-section-sub">
+          A maioria dos conversores online copia o seu arquivo para um servidor,
+          converte lá e devolve o resultado. Aqui essa etapa não existe: o
+          processamento acontece na memória do próprio navegador.
+        </p>
+        <p class="home-section-sub">
+          Isso muda o que você pode enviar com tranquilidade. Contratos, holerites,
+          extratos bancários, documentos de concurso e fotos com dados de
+          localização permanecem no seu dispositivo do começo ao fim. E como o
+          repositório é público, a afirmação pode ser conferida em vez de aceita.
+        </p>
+        <p class="home-section-sub">
+          A contrapartida é honesta: rodar no navegador impõe um teto de fidelidade
+          em algumas conversões, e cada página diz onde ele está em vez de escondê-lo.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <style>
+    /* Layout only. Every colour, size and radius comes from the tokens in
+       theme.css, through the band this section sits on. */
+    .hero-band { padding: var(--spacing-3xl) 0; }
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg);
+    }
+    .hero-copy { max-width: 46rem; }
+    .hero-title {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-md);
+    }
+    .hero-sub {
+      font-size: var(--fs-lead);
+      color: var(--colors-body);
+      margin: 0 0 var(--spacing-lg);
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); }
+
+    .home-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+    }
+    .home-section-title {
+      font-size: var(--fs-heading);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-sm);
+    }
+    .home-section-sub {
+      font-size: var(--fs-body);
+      color: var(--colors-body);
+      max-width: 60ch;
+      margin: 0 0 var(--spacing-md);
+    }
+
+    .home-tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-lg);
+    }
+    .home-tool {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
+      border-radius: var(--rounded-lg);
+      background: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      color: var(--colors-ink);
+      text-decoration: none;
+      font-weight: var(--fw-bold);
+      /* 44px minimum touch target (WCAG 2.5.8). */
+      min-height: 44px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .home-tool:hover { border-color: var(--colors-link); transform: translateY(-2px); }
+    .home-tool:focus-visible { outline: 2px solid var(--colors-link-deep); outline-offset: 2px; }
+    .home-tool-icon { font-size: 20px; line-height: 1; }
+    .home-tool-name { font-size: var(--fs-small); }
+
+    .home-steps {
+      margin: var(--spacing-lg) 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: var(--spacing-md);
+      max-width: 62ch;
+    }
+    .home-steps li {
+      color: var(--colors-body);
+      font-size: var(--fs-body);
+      padding-left: var(--spacing-md);
+      border-left: 3px solid var(--colors-hairline);
+    }
+    .home-steps strong { color: var(--colors-ink); }
+
+    .grid-container-inner {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-lg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .home-tool { transition: none; }
+      .home-tool:hover { transform: none; }
+    }
+  </style>
+</Layout>

@@ -198,6 +198,11 @@ function link(enPath: string, lang: Locale, translatedPath: string) {
   pathGraph.set(key, entry);
 }
 
+/* The locale root. Registered explicitly because the homepage has no slug to
+   derive from — and without it every "Início", logo and footer-brand link on
+   all 75 Portuguese pages resolved to the English homepage. */
+link('/', 'pt', '/pt/');
+
 for (const t of ptTools) link(`/${t.en}/`, 'pt', `/pt/${t.slug}/`);
 for (const g of ptGuides) link(`/guides/${g.en}/`, 'pt', `/pt/guias/${g.slug}/`);
 for (const c of activePtCategories) link(`/${c.en}/`, 'pt', `/pt/${c.slug}/`);
