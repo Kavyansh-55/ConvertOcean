@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -137,29 +138,29 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Processing image…</div>
+  <div id="progressLabel" class="progress-label">{t('Processing image…', lang)}</div>
 </div>
 
 <!-- Upload Card -->
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="📐" width="40" height="40" /></div>
-  <div class="upload-text-primary">Drag and drop an image here, or click to browse</div>
-  <div class="upload-text-secondary">JPG, JPEG, PNG, or WebP (Max 15MB)</div>
-  <button type="button" class="upload-cta">Choose file</button>
+  <div class="upload-text-primary">{t('Drag and drop an image here, or click to browse', lang)}</div>
+  <div class="upload-text-secondary">{t('JPG, JPEG, PNG, or WebP (Max 15MB)', lang)}</div>
+  <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept="image/jpeg,image/jpg,image/png,image/webp" />
 </div>
 
 <div class="resizer-workspace" id="rzWorkspace" style="display: none;">
   <div class="resizer-panel">
-    <div class="resizer-panel-title">Resize Settings</div>
+    <div class="resizer-panel-title">{t('Resize Settings', lang)}</div>
 
     <div class="mode-tabs">
-      <button class="mode-tab active" aria-pressed="true" data-mode="dimensions" id="rzTabDims">Resize by Dimensions</button>
-      <button class="mode-tab" aria-pressed="false" data-mode="filesize" id="rzTabSize">Compress to File Size</button>
+      <button class="mode-tab active" aria-pressed="true" data-mode="dimensions" id="rzTabDims">{t('Resize by Dimensions', lang)}</button>
+      <button class="mode-tab" aria-pressed="false" data-mode="filesize" id="rzTabSize">{t('Compress to File Size', lang)}</button>
     </div>
 
     <div id="rzDimFields">
-      <div class="resizer-panel-title" style="border: none; padding: 0;">Common Form Presets</div>
+      <div class="resizer-panel-title" style="border: none; padding: 0;">{t('Common Form Presets', lang)}</div>
       <div class="preset-chips" style="margin-bottom: var(--spacing-sm);">
         <button class="preset-chip" data-w="200" data-h="230">Form Photo 200×230</button>
         <button class="preset-chip" data-w="140" data-h="60">Signature 140×60</button>
@@ -168,21 +169,21 @@ const { slug, headline, subtitle } = Astro.props;
       </div>
       <div class="dim-row">
         <div class="form-group">
-          <label class="form-label" for="rzWidth">Width (px)</label>
+          <label class="form-label" for="rzWidth">{t('Width (px)', lang)}</label>
           <input type="number" id="rzWidth" class="form-input" min="1" max="10000" step="1" />
         </div>
         <div class="form-group">
-          <label class="form-label" for="rzHeight">Height (px)</label>
+          <label class="form-label" for="rzHeight">{t('Height (px)', lang)}</label>
           <input type="number" id="rzHeight" class="form-input" min="1" max="10000" step="1" />
         </div>
         <label class="lock-toggle" for="rzLock">
-          <input type="checkbox" id="rzLock" checked /> Lock ratio
+          <input type="checkbox" id="rzLock" checked /> {t('Lock ratio', lang)}
         </label>
       </div>
     </div>
 
     <div id="rzSizeFields" style="display: none;">
-      <div class="resizer-panel-title" style="border: none; padding: 0;">Common Upload Limits</div>
+      <div class="resizer-panel-title" style="border: none; padding: 0;">{t('Common Upload Limits', lang)}</div>
       <div class="preset-chips" style="margin-bottom: var(--spacing-sm);">
         <button class="preset-chip" data-kb="10">10 KB</button>
         <button class="preset-chip" data-kb="20">20 KB</button>
@@ -191,13 +192,13 @@ const { slug, headline, subtitle } = Astro.props;
         <button class="preset-chip" data-kb="200">200 KB</button>
       </div>
       <div class="form-group">
-        <label class="form-label" for="rzTargetKB">Target File Size (KB)</label>
+        <label class="form-label" for="rzTargetKB">{t('Target File Size (KB)', lang)}</label>
         <input type="number" id="rzTargetKB" class="form-input" value="20" min="2" max="10000" step="1" />
       </div>
     </div>
 
     <div class="form-group">
-      <label class="form-label" for="rzFormat">Output Format</label>
+      <label class="form-label" for="rzFormat">{t('Output Format', lang)}</label>
       <select id="rzFormat" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); width: 100%;">
         <option value="jpg" selected>JPG (.jpg) — smallest, best for forms</option>
         <option value="jpeg">JPEG (.jpeg) — same format, .jpeg extension</option>
@@ -207,22 +208,22 @@ const { slug, headline, subtitle } = Astro.props;
     </div>
 
     <div class="form-group" id="rzQualityGroup">
-      <label class="form-label" for="rzQuality">Quality: <span id="rzQualityVal">90</span>%</label>
+      <label class="form-label" for="rzQuality">{t('Quality:', lang)} <span id="rzQualityVal">90</span>%</label>
       <input type="range" id="rzQuality" min="30" max="100" value="90" step="1" style="width: 100%;" />
     </div>
 
-    <button class="button button-primary" id="rzApply" style="align-self: flex-start;">Resize Image</button>
+    <button class="button button-primary" id="rzApply" style="align-self: flex-start;">{t('Resize Image', lang)}</button>
   </div>
 
   <div class="resizer-panel">
-    <div class="resizer-panel-title">Preview & Result</div>
+    <div class="resizer-panel-title">{t('Preview & Result', lang)}</div>
     <div class="img-preview-box">
       <img id="rzPreview" class="img-preview" alt="Resized image preview" />
     </div>
-    <div class="result-summary" id="rzSummary">Choose an image to begin.</div>
+    <div class="result-summary" id="rzSummary">{t('Choose an image to begin.', lang)}</div>
     <div class="button-group">
-      <button class="button button-primary" id="rzDownload" disabled>Download</button>
-      <button class="button button-danger" id="rzClear">Clear</button>
+      <button class="button button-primary" id="rzDownload" disabled>{t('Download', lang)}</button>
+      <button class="button button-danger" id="rzClear">{t('Clear', lang)}</button>
     </div>
   </div>
 </div>
@@ -485,7 +486,7 @@ const { slug, headline, subtitle } = Astro.props;
       dropZone.style.display = 'flex';
       fileInput.value = '';
       $('rzDownload').disabled = true;
-      $('rzSummary').textContent = 'Choose an image to begin.';
+      $('rzSummary').textContent = __t('Choose an image to begin.');
     });
   })();
 </script>

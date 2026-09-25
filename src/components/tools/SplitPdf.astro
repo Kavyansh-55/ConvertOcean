@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -148,46 +149,46 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Processing file…</div>
+  <div id="progressLabel" class="progress-label">{t('Processing file…', lang)}</div>
 </div>
 
 <!-- Upload Card -->
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="🥞" width="40" height="40" /></div>
-  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
-  <div class="upload-text-secondary">A single PDF (Max 25MB)</div>
-  <button type="button" class="upload-cta">Choose file</button>
+  <div class="upload-text-primary">{t('Drag and drop file here, or click to browse', lang)}</div>
+  <div class="upload-text-secondary">{t('A single PDF (Max 25MB)', lang)}</div>
+  <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept=".pdf" />
 </div>
 
 <div id="splitWorkspace" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
   <fieldset class="split-modes">
-    <legend class="input-label">What should come out</legend>
+    <legend class="input-label">{t('What should come out', lang)}</legend>
     <label class="split-mode"><input type="radio" name="splitMode" value="one" checked />
-      <span><strong>One PDF</strong> containing the pages I pick</span></label>
+      <span><strong>{t('One PDF', lang)}</strong> {t('containing the pages I pick', lang)}</span></label>
     <label class="split-mode"><input type="radio" name="splitMode" value="each" />
-      <span><strong>A separate PDF for every page</strong> I pick, in a ZIP</span></label>
+      <span><strong>{t('A separate PDF for every page', lang)}</strong> {t('I pick, in a ZIP', lang)}</span></label>
     <label class="split-mode"><input type="radio" name="splitMode" value="parts" />
-      <span><strong>The whole PDF in</strong>{' '}
+      <span><strong>{t('The whole PDF in', lang)}</strong>{' '}
         <input type="number" id="partCount" class="form-input split-mode-num" value="2" min="2" max="100"
                aria-label="Number of equal parts" inputmode="numeric" autocomplete="off" />{' '}
-        <strong>equal parts</strong>, in a ZIP</span></label>
+        <strong>{t('equal parts', lang)}</strong>{t(', in a ZIP', lang)}</span></label>
     <label class="split-mode"><input type="radio" name="splitMode" value="size" />
-      <span><strong>The whole PDF in parts under</strong>{' '}
+      <span><strong>{t('The whole PDF in parts under', lang)}</strong>{' '}
         <input type="number" id="partSize" class="form-input split-mode-num" value="2" min="0.1" step="0.1"
                aria-label="Maximum size of each part, in MB" inputmode="decimal" autocomplete="off" />{' '}
-        <strong>MB each</strong>, in a ZIP</span></label>
+        <strong>{t('MB each', lang)}</strong>{t(', in a ZIP', lang)}</span></label>
     <p class="split-mode-note" id="splitModeNote"></p>
   </fieldset>
   <div class="split-range-bar">
     <div class="split-range-field">
-      <label class="input-label" for="pageRanges">Pages to extract</label>
+      <label class="input-label" for="pageRanges">{t('Pages to extract', lang)}</label>
       <input type="text" id="pageRanges" class="form-input" placeholder="e.g. 1-5, 8, 11-13" autocomplete="off" />
-      <span class="split-range-hint" id="pageRangeHint">Type page numbers or ranges — or click the pages below.</span>
+      <span class="split-range-hint" id="pageRangeHint">{t('Type page numbers or ranges — or click the pages below.', lang)}</span>
     </div>
     <div class="split-range-actions">
-      <button type="button" class="button button-secondary" id="btnSelectAllPages">Select all</button>
-      <button type="button" class="button button-secondary" id="btnClearPages">Clear selection</button>
+      <button type="button" class="button button-secondary" id="btnSelectAllPages">{t('Select all', lang)}</button>
+      <button type="button" class="button button-secondary" id="btnClearPages">{t('Clear selection', lang)}</button>
     </div>
   </div>
   <div id="pagesGrid" class="pages-grid" style="margin-bottom: var(--spacing-md);"></div>
@@ -195,8 +196,8 @@ const { slug, headline, subtitle } = Astro.props;
     <input type="text" id="splitOutputName" class="form-input" style="max-width: 300px;" value="extracted_pages.pdf"
            aria-label="Name for the file you get back" autocomplete="off" />
     <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" id="btnExtract">Extract Selected Pages</button>
-      <button class="button button-danger" id="btnClear">Clear</button>
+      <button class="button button-primary" id="btnExtract">{t('Extract Selected Pages', lang)}</button>
+      <button class="button button-danger" id="btnClear">{t('Clear', lang)}</button>
     </div>
   </div>
 </div>
@@ -421,7 +422,7 @@ const { slug, headline, subtitle } = Astro.props;
       pageRangeHint.classList.toggle('invalid', !!invalid);
       pageRangeHint.textContent = msg || (
         selectedPages.size === 0
-          ? 'Type page numbers or ranges — or click the pages below.'
+          ? __t('Type page numbers or ranges — or click the pages below.')
           : selectedPages.size + ' of ' + total + ' page' + (total === 1 ? '' : 's') + ' selected.'
       );
     }
@@ -489,7 +490,7 @@ const { slug, headline, subtitle } = Astro.props;
       }
       pagesGrid.classList.toggle('inactive', whole);
       pagesGrid.toggleAttribute('inert', whole);
-      btnExtract.textContent = mode === 'one' ? 'Extract Selected Pages'
+      btnExtract.textContent = mode === 'one' ? __t('Extract Selected Pages')
         : mode === 'each' ? 'Extract Pages as Separate Files'
         : 'Split into Parts';
       splitModeNote.textContent = whole

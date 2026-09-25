@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -37,15 +38,15 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Processing file…</div>
+  <div id="progressLabel" class="progress-label">{t('Processing file…', lang)}</div>
 </div>
 
 <!-- Upload Card -->
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="📊" width="40" height="40" /></div>
-  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
-  <div class="upload-text-secondary">PDF (Max 25MB)</div>
-  <button type="button" class="upload-cta">Choose file</button>
+  <div class="upload-text-primary">{t('Drag and drop file here, or click to browse', lang)}</div>
+  <div class="upload-text-secondary">{t('PDF (Max 25MB)', lang)}</div>
+  <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept=".pdf" />
 </div>
 
@@ -54,8 +55,8 @@ const { slug, headline, subtitle } = Astro.props;
 <div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
   <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
   <div class="button-group">
-    <button class="button button-primary" id="btnDownload">Download XLSX</button>
-    <button class="button button-danger" id="btnClear">Clear</button>
+    <button class="button button-primary" id="btnDownload">{t('Download XLSX', lang)}</button>
+    <button class="button button-danger" id="btnClear">{t('Clear', lang)}</button>
   </div>
 </div>
 

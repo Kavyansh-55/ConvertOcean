@@ -1,4 +1,5 @@
 ---
+import { t } from '../i18n/ui';
 import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
 import { getTools, activePtCategories, type PtCategory } from '../i18n/content';
@@ -345,7 +346,7 @@ const categoryIntro = lang === 'en' ? categoryIntroMap[category] : undefined;
             <p class="tool-description">{tool.description}</p>
           </div>
           <div class="tool-action-link">
-            Open Tool
+            {t('Open Tool', lang)}
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -358,8 +359,8 @@ const categoryIntro = lang === 'en' ? categoryIntroMap[category] : undefined;
     {filteredTools.length === 0 && (
       <div style="text-align: center; padding: var(--spacing-3xl) 0; color: var(--colors-mute);">
         <div style="font-size: 36px; margin-bottom: var(--spacing-sm);">📭</div>
-        <p>No tools are currently active in this category.</p>
-        <a href={relLink('/')} class="button button-secondary" style="margin-top: var(--spacing-md); display: inline-flex;">Back to Homepage</a>
+        <p>{t('No tools are currently active in this category.', lang)}</p>
+        <a href={relLink('/')} class="button button-secondary" style="margin-top: var(--spacing-md); display: inline-flex;">{t('Back to Homepage', lang)}</a>
       </div>
     )}
     <!-- Category Intro (unique prose per hub) -->
@@ -370,7 +371,7 @@ const categoryIntro = lang === 'en' ? categoryIntroMap[category] : undefined;
     <!-- FAQ Section -->
     {faqList && faqList.length > 0 && (
       <section class="faq-section" style="margin-top: var(--spacing-3xl);">
-        <h2 class="faq-title" style="font-size: 20px; margin-bottom: var(--spacing-lg);">Frequently Asked Questions</h2>
+        <h2 class="faq-title" style="font-size: 20px; margin-bottom: var(--spacing-lg);">{t('Frequently Asked Questions', lang)}</h2>
         <div class="faq-container">
           {faqList.map(faq => (
             <div class="faq-item">

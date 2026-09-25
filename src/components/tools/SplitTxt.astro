@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -60,13 +61,13 @@ const { slug, headline, subtitle } = Astro.props;
 <div class="workspace-layout">
   <!-- Upload & Preview Panel -->
   <div class="panel-card">
-    <h2 class="panel-section-title">Select & Parts Preview</h2>
+    <h2 class="panel-section-title">{t('Select & Parts Preview', lang)}</h2>
     
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon"><CategoryIcon icon="📝" width="40" height="40" /></div>
-      <div class="upload-text-primary">Drag and drop text file here, or click to browse</div>
+      <div class="upload-text-primary">{t('Drag and drop text file here, or click to browse', lang)}</div>
       <div class="upload-text-secondary">TXT, MD, LOG, CSV, XML (Max 20MB)</div>
-      <button type="button" class="upload-cta">Choose file</button>
+      <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
       <input type="file" id="fileInput" class="file-input" accept=".txt,.md,.log,.csv,.xml,.json" />
     </div>
 
@@ -77,7 +78,7 @@ const { slug, headline, subtitle } = Astro.props;
           <strong id="loadedFileName" style="font-size: 14px; color: var(--colors-ink);"></strong>
           <div id="loadedFileSize" style="font-size: 12px; color: var(--colors-mute);"></div>
         </div>
-        <button class="button button-danger" id="btnClear" style="height: 32px; padding: 0 var(--spacing-sm);">Clear</button>
+        <button class="button button-danger" id="btnClear" style="height: 32px; padding: 0 var(--spacing-sm);">{t('Clear', lang)}</button>
       </div>
     </div>
 
@@ -86,14 +87,14 @@ const { slug, headline, subtitle } = Astro.props;
 
   <!-- Settings & Split Panel -->
   <div class="panel-card">
-    <h2 class="panel-section-title">Split Configuration</h2>
+    <h2 class="panel-section-title">{t('Split Configuration', lang)}</h2>
     
     <div class="form-group">
-      <label class="form-label" for="splitMethod">Split Method</label>
+      <label class="form-label" for="splitMethod">{t('Split Method', lang)}</label>
       <select class="select-input" id="splitMethod">
-        <option value="lines">By Line Count (e.g. every 1000 lines)</option>
-        <option value="size">By File Size (e.g. every 500 KB)</option>
-        <option value="delimiter">By Text Delimiter</option>
+        <option value="lines">{t('By Line Count (e.g. every 1000 lines)', lang)}</option>
+        <option value="size">{t('By File Size (e.g. every 500 KB)', lang)}</option>
+        <option value="delimiter">{t('By Text Delimiter', lang)}</option>
       </select>
     </div>
 
@@ -111,12 +112,12 @@ const { slug, headline, subtitle } = Astro.props;
 
     <!-- Delimiter Settings -->
     <div class="form-group" id="delimiterGroup" style="display: none;">
-      <label class="form-label" for="splitDelimiter">Delimiter text boundary</label>
+      <label class="form-label" for="splitDelimiter">{t('Delimiter text boundary', lang)}</label>
       <input type="text" class="form-input" id="splitDelimiter" placeholder="e.g. --- SECTION ---" />
     </div>
 
     <div class="button-group" style="margin-top: auto; display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" id="btnSplit" disabled style="flex: 1;">Split &amp; Download ZIP</button>
+      <button class="button button-primary" id="btnSplit" disabled style="flex: 1;">{t('Split & Download ZIP', lang)}</button>
     </div>
   </div>
 </div>

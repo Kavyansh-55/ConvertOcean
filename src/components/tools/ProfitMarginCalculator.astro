@@ -1,5 +1,6 @@
 ---
-const { slug, headline, subtitle } = Astro.props;
+import { t } from '../../i18n/ui';
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -151,16 +152,16 @@ const { slug, headline, subtitle } = Astro.props;
 
 <div class="calc-workspace">
   <div class="calc-panel">
-    <div class="calc-panel-title">Calculation Mode</div>
+    <div class="calc-panel-title">{t('Calculation Mode', lang)}</div>
     <div class="mode-tabs">
-      <button class="mode-tab active" aria-pressed="true" data-mode="margin" id="pmTabMargin">Cost & Revenue → Margin</button>
-      <button class="mode-tab" aria-pressed="false" data-mode="selling" id="pmTabSelling">Cost & Margin → Price</button>
+      <button class="mode-tab active" aria-pressed="true" data-mode="margin" id="pmTabMargin">{t('Cost & Revenue → Margin', lang)}</button>
+      <button class="mode-tab" aria-pressed="false" data-mode="selling" id="pmTabSelling">{t('Cost & Margin → Price', lang)}</button>
       <button class="mode-tab" aria-pressed="false" data-mode="cost" id="pmTabCost">Revenue & Margin → Cost</button>
     </div>
 
-    <div class="calc-panel-title">Currency & Values</div>
+    <div class="calc-panel-title">{t('Currency & Values', lang)}</div>
     <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
-      <label class="form-label" for="pmCurrency" style="font-size: 13px; font-weight: 500;">Currency</label>
+      <label class="form-label" for="pmCurrency" style="font-size: 13px; font-weight: 500;">{t('Currency', lang)}</label>
       <select id="pmCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink);">
         <option value="$" selected>$ – US Dollar (USD)</option>
         <option value="€">€ – Euro (EUR)</option>
@@ -179,11 +180,11 @@ const { slug, headline, subtitle } = Astro.props;
       </select>
     </div>
 
-    <div class="calc-panel-title">Enter Values</div>
+    <div class="calc-panel-title">{t('Enter Values', lang)}</div>
 
     <div id="pmFieldsMargin">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
-        <label class="form-label" for="pmCost1" id="pmLblCost1">Cost Price ($)</label>
+        <label class="form-label" for="pmCost1" id="pmLblCost1">{t('Cost Price ($)', lang)}</label>
         <input type="number" id="pmCost1" class="form-input" value="60" min="0" step="0.01" />
       </div>
       <div class="form-group">
@@ -194,11 +195,11 @@ const { slug, headline, subtitle } = Astro.props;
 
     <div id="pmFieldsSelling" style="display:none;">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
-        <label class="form-label" for="pmCost2" id="pmLblCost2">Cost Price ($)</label>
+        <label class="form-label" for="pmCost2" id="pmLblCost2">{t('Cost Price ($)', lang)}</label>
         <input type="number" id="pmCost2" class="form-input" value="60" min="0" step="0.01" />
       </div>
       <div class="form-group">
-        <label class="form-label" for="pmMargin2">Desired Profit Margin (%)</label>
+        <label class="form-label" for="pmMargin2">{t('Desired Profit Margin (%)', lang)}</label>
         <input type="number" id="pmMargin2" class="form-input" value="40" min="0" max="100" step="0.01" />
       </div>
     </div>
@@ -209,16 +210,16 @@ const { slug, headline, subtitle } = Astro.props;
         <input type="number" id="pmRevenue3" class="form-input" value="100" min="0" step="0.01" />
       </div>
       <div class="form-group">
-        <label class="form-label" for="pmMargin3">Desired Profit Margin (%)</label>
+        <label class="form-label" for="pmMargin3">{t('Desired Profit Margin (%)', lang)}</label>
         <input type="number" id="pmMargin3" class="form-input" value="40" min="0" max="100" step="0.01" />
       </div>
     </div>
 
-    <button class="button button-primary" id="pmCalcBtn" style="align-self: flex-start;">Calculate</button>
+    <button class="button button-primary" id="pmCalcBtn" style="align-self: flex-start;">{t('Calculate', lang)}</button>
   </div>
 
   <div class="calc-panel">
-    <div class="calc-panel-title">Results</div>
+    <div class="calc-panel-title">{t('Results', lang)}</div>
 
     <div class="result-card" id="pmResults">
       <div class="result-row">
@@ -234,7 +235,7 @@ const { slug, headline, subtitle } = Astro.props;
         <span class="result-value" id="pmResProfit">$40.00</span>
       </div>
       <div class="result-row">
-        <span class="result-label">Cost</span>
+        <span class="result-label">{t('Cost', lang)}</span>
         <span class="result-value" id="pmResCost">$60.00</span>
       </div>
       <div class="result-row">
@@ -243,13 +244,13 @@ const { slug, headline, subtitle } = Astro.props;
       </div>
     </div>
 
-    <div class="calc-panel-title" style="margin-top: var(--spacing-sm);">Cost vs Profit Ratio</div>
+    <div class="calc-panel-title" style="margin-top: var(--spacing-sm);">{t('Cost vs Profit Ratio', lang)}</div>
     <div class="margin-bar-container">
       <div class="margin-bar-cost" id="pmBarCost" style="width:60%;">Cost 60%</div>
       <div class="margin-bar-profit" id="pmBarProfit" style="width:40%;">Profit 40%</div>
     </div>
 
-    <div class="calc-panel-title" style="margin-top: var(--spacing-sm);">Formula Used</div>
+    <div class="calc-panel-title" style="margin-top: var(--spacing-sm);">{t('Formula Used', lang)}</div>
     <div class="formula-box" id="pmFormula">
       Profit = Revenue − Cost = $100.00 − $60.00 = $40.00<br/>
       Margin = (Profit ÷ Revenue) × 100 = (40 ÷ 100) × 100 = 40.00%<br/>

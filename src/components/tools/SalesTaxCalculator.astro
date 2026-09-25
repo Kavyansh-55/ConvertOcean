@@ -1,7 +1,8 @@
 ---
+import { t } from '../../i18n/ui';
 import { stateSalesTaxRates, AS_OF, US_AVERAGE_COMBINED } from '../../data/us-sales-tax-rates';
 
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -177,13 +178,13 @@ const { slug, headline, subtitle } = Astro.props;
 
 <div class="tax-workspace">
   <div class="tax-panel">
-    <div class="tax-panel-title">Calculation Mode</div>
+    <div class="tax-panel-title">{t('Calculation Mode', lang)}</div>
     <div class="tax-mode-tabs">
-      <button class="tax-mode-tab active" aria-pressed="true" id="taxTabAdd">Add Sales Tax</button>
+      <button class="tax-mode-tab active" aria-pressed="true" id="taxTabAdd">{t('Add Sales Tax', lang)}</button>
       <button class="tax-mode-tab" aria-pressed="false" id="taxTabRemove">Remove Sales Tax</button>
     </div>
 
-    <div class="tax-panel-title">Country / Region <span style="text-transform: none; font-weight: 400;">&mdash; sales tax, VAT &amp; GST</span></div>
+    <div class="tax-panel-title">{t('Country / Region', lang)} <span style="text-transform: none; font-weight: 400;">&mdash; sales tax, VAT &amp; GST</span></div>
     <div class="preset-grid" id="taxPresetGrid">
       <button class="preset-btn active" data-rate={US_AVERAGE_COMBINED.toFixed(2)}>US Avg {US_AVERAGE_COMBINED.toFixed(2)}%</button>
       <button class="preset-btn" data-rate="20">UK VAT 20%</button>
@@ -193,11 +194,11 @@ const { slug, headline, subtitle } = Astro.props;
       <button class="preset-btn" data-rate="19">DE VAT 19%</button>
       <button class="preset-btn" data-rate="18">IN GST 18%</button>
       <button class="preset-btn" data-rate="10">JP Tax 10%</button>
-      <button class="preset-btn" id="presetBtnCustom" data-rate="custom">Custom Rate</button>
+      <button class="preset-btn" id="presetBtnCustom" data-rate="custom">{t('Custom Rate', lang)}</button>
     </div>
     <p class="tax-state-note">Any country works &mdash; pick a preset, or type your own rate below. Currency is set separately.</p>
 
-    <div class="tax-panel-title">United States &mdash; rate by state <span style="text-transform: none; font-weight: 400;">(optional)</span></div>
+    <div class="tax-panel-title">United States &mdash; rate by state <span style="text-transform: none; font-weight: 400;">{t('(optional)', lang)}</span></div>
     <div class="form-group" style="margin-bottom: 0; display: flex; flex-direction: column; gap: var(--spacing-xxs);">
       <label class="form-label" for="taxUsState" style="font-size: 13px; font-weight: 500;">US buyers: pick a state to load its combined rate</label>
       <select id="taxUsState" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink);">
@@ -213,9 +214,9 @@ const { slug, headline, subtitle } = Astro.props;
       </p>
     </div>
 
-    <div class="tax-panel-title">Currency & Values</div>
+    <div class="tax-panel-title">{t('Currency & Values', lang)}</div>
     <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
-      <label class="form-label" for="taxCurrency" style="font-size: 13px; font-weight: 500;">Currency</label>
+      <label class="form-label" for="taxCurrency" style="font-size: 13px; font-weight: 500;">{t('Currency', lang)}</label>
       <select id="taxCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink);">
         <option value="$" selected>$ &ndash; US Dollar (USD)</option>
         <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
@@ -234,14 +235,14 @@ const { slug, headline, subtitle } = Astro.props;
       </select>
     </div>
 
-    <div class="tax-panel-title">Enter Values</div>
+    <div class="tax-panel-title">{t('Enter Values', lang)}</div>
     <div id="taxFieldsAdd">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="taxPrice1" id="taxLblPrice1">Pre-Tax Price ($)</label>
         <input type="number" id="taxPrice1" class="form-input" value="100" min="0" step="0.01" />
       </div>
       <div class="form-group">
-        <label class="form-label" for="taxRate1">Tax Rate (%)</label>
+        <label class="form-label" for="taxRate1">{t('Tax Rate (%)', lang)}</label>
         <input type="number" id="taxRate1" class="form-input" value="7.53" min="0" max="100" step="0.01" />
       </div>
     </div>
@@ -252,12 +253,12 @@ const { slug, headline, subtitle } = Astro.props;
         <input type="number" id="taxTotal2" class="form-input" value="107.53" min="0" step="0.01" />
       </div>
       <div class="form-group">
-        <label class="form-label" for="taxRate2">Tax Rate (%)</label>
+        <label class="form-label" for="taxRate2">{t('Tax Rate (%)', lang)}</label>
         <input type="number" id="taxRate2" class="form-input" value="7.53" min="0" max="100" step="0.01" />
       </div>
     </div>
 
-    <button class="button button-primary" id="taxCalcBtn" style="align-self: flex-start;">Calculate Tax</button>
+    <button class="button button-primary" id="taxCalcBtn" style="align-self: flex-start;">{t('Calculate Tax', lang)}</button>
   </div>
 
   <div class="tax-panel">
@@ -282,24 +283,24 @@ const { slug, headline, subtitle } = Astro.props;
       </div>
     </div>
 
-    <div class="tax-panel-title" style="margin-top: var(--spacing-sm);">Detailed Breakdown</div>
+    <div class="tax-panel-title" style="margin-top: var(--spacing-sm);">{t('Detailed Breakdown', lang)}</div>
     <div class="tax-breakdown">
       <table>
         <thead>
           <tr>
             <th>Component</th>
-            <th>Amount</th>
+            <th>{t('Amount', lang)}</th>
           </tr>
         </thead>
         <tbody id="taxBreakdownBody">
-          <tr><td>Base Price</td><td>$100.00</td></tr>
+          <tr><td>{t('Base Price', lang)}</td><td>$100.00</td></tr>
           <tr><td>Tax (7.53%)</td><td>$7.53</td></tr>
           <tr><td style="font-weight:600; color: var(--colors-ink);">Total</td><td style="font-weight:600; color: var(--colors-ink);">$107.53</td></tr>
         </tbody>
       </table>
     </div>
 
-    <div class="tax-panel-title" style="margin-top: var(--spacing-sm);">Formula Used</div>
+    <div class="tax-panel-title" style="margin-top: var(--spacing-sm);">{t('Formula Used', lang)}</div>
     <div class="formula-box" id="taxFormula">
       Tax Amount = Price × (Rate ÷ 100) = $100.00 × 0.0753 = $7.53<br/>
       Total = Price + Tax = $100.00 + $7.53 = $107.53

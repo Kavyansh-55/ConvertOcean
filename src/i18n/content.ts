@@ -262,6 +262,28 @@ export function switcherTarget(pathname: string, target: Locale): string {
   return target === DEFAULT_LOCALE ? '/' : `/${LOCALES[target].prefix}/`;
 }
 
+/**
+ * Resolve an ENGLISH path to its equivalent in `lang`, for navigation links.
+ *
+ * This exists because the obvious implementation is wrong in a way that is
+ * invisible until something crawls the site. Header and Footer originally built
+ * locale links by prefixing: `/compress-pdf/` became `/pt/compress-pdf/`. But
+ * Portuguese slugs are translated, so the real page is `/pt/comprimir-pdf/` and
+ * the prefixed URL 404s. That produced 76 distinct dead links on all 75
+ * Portuguese pages — every tool in the footer, every category in the nav, the
+ * logo, the sitemap link — and nothing in the build said a word about it.
+ *
+ * A path with no translation falls back to the English URL rather than
+ * inventing a prefixed one. A working cross-language link is imperfect; a 404
+ * is not. `scripts/tests/i18n-links.test.mjs` fails the build if any internal
+ * link points at a page that was not built.
+ */
+export function localeHref(enPath: string, lang: Locale): string {
+  const key = normalizePath(enPath);
+  if (lang === DEFAULT_LOCALE) return key;
+  return pathGraph.get(key)?.[lang] ?? key;
+}
+
 /** Which locales serve this page. Used to decide whether to show the switcher. */
 export function localesForPath(pathname: string): Locale[] {
   const variants = pathGraph.get(canonicalEnglishPath(pathname));

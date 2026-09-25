@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -83,15 +84,15 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Processing file…</div>
+  <div id="progressLabel" class="progress-label">{t('Processing file…', lang)}</div>
 </div>
 
 <!-- Upload Card -->
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="🥞" width="40" height="40" /></div>
-  <div class="upload-text-primary">Drag and drop a spreadsheet file here, or click to browse</div>
-  <div class="upload-text-secondary">XLS, XLSX, or CSV workbook (Max 25MB)</div>
-  <button type="button" class="upload-cta">Choose file</button>
+  <div class="upload-text-primary">{t('Drag and drop a spreadsheet file here, or click to browse', lang)}</div>
+  <div class="upload-text-secondary">{t('XLS, XLSX, or CSV workbook (Max 25MB)', lang)}</div>
+  <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv" />
 </div>
 
@@ -99,10 +100,10 @@ const { slug, headline, subtitle } = Astro.props;
 <div id="workspacePanel" class="panel-card" style="display: none; margin-top: var(--spacing-lg);">
   <div class="form-row" style="margin-bottom: var(--spacing-md);">
     <div class="form-group">
-      <label class="form-label" for="splitMode">Split Method</label>
+      <label class="form-label" for="splitMode">{t('Split Method', lang)}</label>
       <select id="splitMode" class="select-input" style="height: 36px; padding: 0 10px; font-size: 13px;">
-        <option value="sheets">Extract Worksheets (Split by Sheets)</option>
-        <option value="rows">Split Worksheet Rows (Partition by Row Count)</option>
+        <option value="sheets">{t('Extract Worksheets (Split by Sheets)', lang)}</option>
+        <option value="rows">{t('Split Worksheet Rows (Partition by Row Count)', lang)}</option>
       </select>
     </div>
   </div>
@@ -110,11 +111,11 @@ const { slug, headline, subtitle } = Astro.props;
   <!-- Sheets Selection Section -->
   <div id="sheetsSection">
     <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs); flex-wrap: wrap;">
-      <div id="sheetsSectionLabel" style="font-size: 12px; font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: 0.02em; font-family: var(--font-sans); color: var(--colors-mute);">Worksheets to extract</div>
-      <button type="button" id="sheetsToggleAll" style="background: none; border: none; padding: 0; font-size: 12px; font-weight: var(--fw-bold); color: var(--colors-link); cursor: pointer; min-height: 24px;">Clear all</button>
+      <div id="sheetsSectionLabel" style="font-size: 12px; font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: 0.02em; font-family: var(--font-sans); color: var(--colors-mute);">{t('Worksheets to extract', lang)}</div>
+      <button type="button" id="sheetsToggleAll" style="background: none; border: none; padding: 0; font-size: 12px; font-weight: var(--fw-bold); color: var(--colors-link); cursor: pointer; min-height: 24px;">{t('Clear all', lang)}</button>
     </div>
     <p style="font-size: 13px; color: var(--colors-body); margin: 0 0 var(--spacing-sm);">
-      Each selected worksheet becomes its own file, delivered together in a ZIP. Click a card to include or exclude it.
+      {t('Each selected worksheet becomes its own file, delivered together in a ZIP. Click a card to include or exclude it.', lang)}
     </p>
     <div class="sheets-grid" id="sheetsGrid"></div>
   </div>
@@ -123,24 +124,24 @@ const { slug, headline, subtitle } = Astro.props;
   <div id="rowsSection" style="display: none;">
     <div class="form-row" style="margin-bottom: var(--spacing-md);">
       <div class="form-group">
-        <label class="form-label" for="rowSplitSheetSelect">Select Worksheet to Split</label>
+        <label class="form-label" for="rowSplitSheetSelect">{t('Select Worksheet to Split', lang)}</label>
         <select id="rowSplitSheetSelect" class="select-input" style="height: 36px; padding: 0 10px; font-size: 13px;"></select>
       </div>
       <div class="form-group">
-        <label class="form-label" for="rowSplitLimit">Rows per File</label>
+        <label class="form-label" for="rowSplitLimit">{t('Rows per File', lang)}</label>
         <input type="number" id="rowSplitLimit" class="form-input" min="1" value="1000" style="height: 36px; font-size: 13px;" />
       </div>
     </div>
     <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-bottom: var(--spacing-md);">
       <input type="checkbox" id="rowSplitHeader" checked style="width: 16px; height: 16px; accent-color: var(--colors-ink); cursor: pointer;" />
-      <label for="rowSplitHeader" style="font-size: 13px; color: var(--colors-body); cursor: pointer; user-select: none;">First row is header (keep header in all split files)</label>
+      <label for="rowSplitHeader" style="font-size: 13px; color: var(--colors-body); cursor: pointer; user-select: none;">{t('First row is header (keep header in all split files)', lang)}</label>
     </div>
   </div>
 
   <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-md); border-top: 1px solid var(--colors-hairline); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
     <div style="display: flex; align-items: center; gap: var(--spacing-md); flex-wrap: wrap;">
       <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
-        <label for="exportFormat" style="font-size:13px; font-weight:600; color:var(--colors-body);">Export Format:</label>
+        <label for="exportFormat" style="font-size:13px; font-weight:600; color:var(--colors-body);">{t('Export Format:', lang)}</label>
         <select id="exportFormat" class="select-input" style="height: 36px; padding: 0 10px; font-size:13px; width: 100px;">
           <option value="xlsx">XLSX</option>
           <option value="csv">CSV</option>
@@ -149,8 +150,8 @@ const { slug, headline, subtitle } = Astro.props;
     </div>
     
     <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" id="processBtn">Extract Selected Sheets</button>
-      <button class="button button-danger" id="btnClearSplit">Clear</button>
+      <button class="button button-primary" id="processBtn">{t('Extract Selected Sheets', lang)}</button>
+      <button class="button button-danger" id="btnClearSplit">{t('Clear', lang)}</button>
     </div>
   </div>
 </div>
@@ -212,7 +213,7 @@ const { slug, headline, subtitle } = Astro.props;
       if (mode === 'sheets') {
         sheetsSection.style.display = 'block';
         rowsSection.style.display = 'none';
-        processBtn.textContent = 'Extract Selected Sheets';
+        processBtn.textContent = __t('Extract Selected Sheets');
       } else {
         sheetsSection.style.display = 'none';
         rowsSection.style.display = 'block';
@@ -307,7 +308,7 @@ const { slug, headline, subtitle } = Astro.props;
       const total = activeFile.sheets.length;
       label.textContent = `Worksheets to extract — ${selectedSheets.size} of ${total} selected`;
       const toggle = document.getElementById('sheetsToggleAll');
-      if (toggle) toggle.textContent = selectedSheets.size === total ? 'Clear all' : 'Select all';
+      if (toggle) toggle.textContent = selectedSheets.size === total ? __t('Clear all') : __t('Select all');
     }
 
     const toggleAllSheets = function () {
@@ -587,7 +588,7 @@ const { slug, headline, subtitle } = Astro.props;
       splitMode.value = 'sheets';
       sheetsSection.style.display = 'block';
       rowsSection.style.display = 'none';
-      processBtn.textContent = 'Extract Selected Sheets';
+      processBtn.textContent = __t('Extract Selected Sheets');
       workspacePanel.style.display = 'none';
       dropZone.style.display = 'flex';
       hideError();

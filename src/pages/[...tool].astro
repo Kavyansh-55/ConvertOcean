@@ -1,4 +1,5 @@
 ---
+import { t } from '../i18n/ui';
 import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
 import { guides } from '../data/guides';
@@ -505,12 +506,12 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
   */}
   <main id="main-content" tabindex="-1" class="tool-main">
     <!-- Active Tool Interface -->
-    <ToolComponent slug={enSlug} headline={toolData.headline} subtitle={toolData.subtitle} />
+    <ToolComponent slug={enSlug} lang={lang} name={toolData.name} headline={toolData.headline} subtitle={toolData.subtitle} />
 
     <!-- Quick Answer (AEO extractable definition block) -->
     {toolData.quickAnswer && (
       <aside class="quick-answer" data-reveal>
-        <span class="quick-answer-label">Quick Answer</span>
+        <span class="quick-answer-label">{t('Quick Answer', lang)}</span>
         <p class="quick-answer-text" set:html={toolData.quickAnswer}></p>
       </aside>
     )}
@@ -518,28 +519,28 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     <!-- How It Works Section -->
     {toolData.categorySlug !== 'business-tools' && (
       <section class="steps-section" data-reveal>
-        <h2 style="font-size: var(--fs-heading); font-weight: var(--fw-extrabold); letter-spacing: var(--ls-heading); color: var(--colors-ink);">How It Works</h2>
-        <p style="font-size: var(--fs-body); color: var(--colors-body); margin-top: 6px;">Four simple steps to process your files securely client-side:</p>
+        <h2 style="font-size: var(--fs-heading); font-weight: var(--fw-extrabold); letter-spacing: var(--ls-heading); color: var(--colors-ink);">{t('How It Works', lang)}</h2>
+        <p style="font-size: var(--fs-body); color: var(--colors-body); margin-top: 6px;">{t('Four simple steps to process your files securely client-side:', lang)}</p>
         <div class="steps-grid">
           <div class="step-card">
             <span class="step-number">1.</span>
-            <h3 class="step-title">Choose File</h3>
-            <p class="step-desc">Drag and drop or browse files directly from your storage. Files reside only in temporary browser memory.</p>
+            <h3 class="step-title">{t('Choose File', lang)}</h3>
+            <p class="step-desc">{t('Drag and drop or browse files directly from your storage. Files reside only in temporary browser memory.', lang)}</p>
           </div>
           <div class="step-card">
             <span class="step-number">2.</span>
-            <h3 class="step-title">Select Output</h3>
+            <h3 class="step-title">{t('Select Output', lang)}</h3>
             <p class="step-desc">Pick your target conversion configuration or adjust quality/compression sliders according to your preference.</p>
           </div>
           <div class="step-card">
             <span class="step-number">3.</span>
-            <h3 class="step-title">Convert Locally</h3>
-            <p class="step-desc">All compilers and processors compile files locally in browser sandbox memory. No servers are used.</p>
+            <h3 class="step-title">{t('Convert Locally', lang)}</h3>
+            <p class="step-desc">{t('All compilers and processors compile files locally in browser sandbox memory. No servers are used.', lang)}</p>
           </div>
           <div class="step-card">
             <span class="step-number">4.</span>
-            <h3 class="step-title">Download Instantly</h3>
-            <p class="step-desc">Instantly download your output file. Memory cache is purged automatically when you close the tab.</p>
+            <h3 class="step-title">{t('Download Instantly', lang)}</h3>
+            <p class="step-desc">{t('Instantly download your output file. Memory cache is purged automatically when you close the tab.', lang)}</p>
           </div>
         </div>
       </section>
@@ -552,27 +553,27 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
 
     <!-- Why Use ConvertOcean Section -->
     <section class="features-section">
-      <h2 style="font-size: var(--fs-heading); font-weight: var(--fw-extrabold); letter-spacing: var(--ls-heading); color: var(--colors-ink);">Why Choose ConvertOcean?</h2>
+      <h2 style="font-size: var(--fs-heading); font-weight: var(--fw-extrabold); letter-spacing: var(--ls-heading); color: var(--colors-ink);">{t('Why Choose ConvertOcean?', lang)}</h2>
       <div class="features-grid" data-reveal-stagger>
         <div class="feature-card">
           <div class="feature-icon-wrapper">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--colors-accent);"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
-          <h3 class="feature-title">Files Stay On Your Device</h3>
+          <h3 class="feature-title">{t('Files Stay On Your Device', lang)}</h3>
           <p class="feature-desc">Traditional sites upload files to external servers. ConvertOcean processes your data 100% locally. Perfect for corporate records and private papers.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon-wrapper">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #f5a623;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           </div>
-          <h3 class="feature-title">Browser-Powered Processing</h3>
+          <h3 class="feature-title">{t('Browser-Powered Processing', lang)}</h3>
           <p class="feature-desc">By eliminating network upload/download queues, conversions run at client-side machine speeds. It continues working even when offline.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon-wrapper">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #7928ca;"><rect width="18" height="14" x="3" y="8" rx="2"/><path d="M12 5a3 3 0 1 0-3 3h6a3 3 0 1 0-3-3Z"/><path d="M12 8v14"/><path d="M3 12h18"/></svg>
           </div>
-          <h3 class="feature-title">Free & No Accounts</h3>
+          <h3 class="feature-title">{t('Free & No Accounts', lang)}</h3>
           <p class="feature-desc">Enjoy unlimited file sizes and conversions. No account creations, no email newsletter subscriptions, and no advertising trackers.</p>
         </div>
       </div>
@@ -581,7 +582,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     <!-- Related Tools Section -->
     {relatedToolsData.length > 0 && (
       <section class="related-section">
-        <h2 style="font-size: var(--fs-heading); font-weight: var(--fw-extrabold); letter-spacing: var(--ls-heading); color: var(--colors-ink);">Related File Utilities</h2>
+        <h2 style="font-size: var(--fs-heading); font-weight: var(--fw-extrabold); letter-spacing: var(--ls-heading); color: var(--colors-ink);">{t('Related File Utilities', lang)}</h2>
         <div class="related-grid" data-reveal-stagger>
           {relatedToolsData.map(rt => (
             <a href={relLink(`/${rt.slug}/`)} class="related-card">
@@ -598,11 +599,11 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     <!-- Related Guides & Resources Section -->
     {relatedGuides.length > 0 && (
       <section class="related-guides-section">
-        <h2 style="font-size: var(--fs-heading); font-weight: var(--fw-extrabold); letter-spacing: var(--ls-heading); color: var(--colors-ink);">Related Guides & Resources.</h2>
+        <h2 style="font-size: var(--fs-heading); font-weight: var(--fw-extrabold); letter-spacing: var(--ls-heading); color: var(--colors-ink);">{t('Related Guides & Resources.', lang)}</h2>
         <div class="related-guides-grid" data-reveal-stagger>
           {relatedGuides.map(g => (
             <a href={relLink(`/${guidesBase(lang)}/${g.slug}/`)} class="tool-related-guide-card">
-              <span class="tool-related-guide-tag">Guide</span>
+              <span class="tool-related-guide-tag">{t('Guide', lang)}</span>
               <h3 class="tool-related-guide-name">{g.title.split(' | ')[0].split(' - ')[0]}</h3>
               <p class="tool-related-guide-desc">{g.description}</p>
               <span class="tool-related-guide-action">
@@ -620,7 +621,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     <!-- FAQ Accordion Component -->
     {faqList && faqList.length > 0 && (
       <section class="faq-section" data-reveal style="max-width: 100%; padding: 0; margin-top: var(--spacing-3xl);">
-        <h2 class="faq-title" style="font-size: 20px; margin-bottom: var(--spacing-lg);">Frequently Asked Questions</h2>
+        <h2 class="faq-title" style="font-size: 20px; margin-bottom: var(--spacing-lg);">{t('Frequently Asked Questions', lang)}</h2>
         <div class="faq-container">
           {faqList.map(faq => (
             <div class="faq-item">

@@ -1,5 +1,6 @@
 ---
-const { slug, headline, subtitle } = Astro.props;
+import { t } from '../../i18n/ui';
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -117,12 +118,12 @@ const { slug, headline, subtitle } = Astro.props;
 <div class="pct-grid">
   <!-- Card 1: X% of Y -->
   <div class="pct-card">
-    <div class="pct-card-title"><span class="pct-num">1</span> Find X% of Y</div>
-    <div class="pct-desc">What is X percent of Y?</div>
+    <div class="pct-card-title"><span class="pct-num">1</span> {t('Find X% of Y', lang)}</div>
+    <div class="pct-desc">{t('What is X percent of Y?', lang)}</div>
     <div class="pct-inputs">
-      <span>What is</span>
+      <span>{t('What is', lang)}</span>
       <input type="number" id="pct1X" value="15" step="any" />
-      <span>% of</span>
+      <span>{t('% of', lang)}</span>
       <input type="number" id="pct1Y" value="200" step="any" />
       <span>?</span>
     </div>
@@ -135,7 +136,7 @@ const { slug, headline, subtitle } = Astro.props;
   <!-- Card 2: X is what % of Y -->
   <div class="pct-card">
     <div class="pct-card-title"><span class="pct-num">2</span> X is what % of Y?</div>
-    <div class="pct-desc">Find what percentage X is of Y.</div>
+    <div class="pct-desc">{t('Find what percentage X is of Y.', lang)}</div>
     <div class="pct-inputs">
       <input type="number" id="pct2X" value="30" step="any" />
       <span>is what % of</span>
@@ -151,9 +152,9 @@ const { slug, headline, subtitle } = Astro.props;
   <!-- Card 3: Percentage Change -->
   <div class="pct-card">
     <div class="pct-card-title"><span class="pct-num">3</span> Percentage Change</div>
-    <div class="pct-desc">Calculate % increase or decrease from X to Y.</div>
+    <div class="pct-desc">{t('Calculate % increase or decrease from X to Y.', lang)}</div>
     <div class="pct-inputs">
-      <span>From</span>
+      <span>{t('From', lang)}</span>
       <input type="number" id="pct3X" value="80" step="any" />
       <span>to</span>
       <input type="number" id="pct3Y" value="100" step="any" />
@@ -166,15 +167,15 @@ const { slug, headline, subtitle } = Astro.props;
 
   <!-- Card 4: Add/Subtract % -->
   <div class="pct-card">
-    <div class="pct-card-title"><span class="pct-num">4</span> Add or Subtract %</div>
-    <div class="pct-desc">Add or subtract a percentage from a number.</div>
+    <div class="pct-card-title"><span class="pct-num">4</span> {t('Add or Subtract %', lang)}</div>
+    <div class="pct-desc">{t('Add or subtract a percentage from a number.', lang)}</div>
     <div class="pct-inputs">
       <select id="pct4Op" class="select-input" style="width:90px; height:40px; font-size:13px;">
-        <option value="add">Add</option>
+        <option value="add">{t('Add', lang)}</option>
         <option value="sub">Subtract</option>
       </select>
       <input type="number" id="pct4X" value="20" step="any" />
-      <span>% to/from</span>
+      <span>{t('% to/from', lang)}</span>
       <input type="number" id="pct4Y" value="150" step="any" />
     </div>
     <div class="pct-result-box">

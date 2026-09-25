@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
 // Same engine either way. The viewer opens with the full tag table expanded
 // because inspecting is the job; the remover keeps it collapsed behind a toggle
@@ -189,14 +190,14 @@ const isRemover = slug === 'exif-remover';
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Reading photo…</div>
+  <div id="progressLabel" class="progress-label">{t('Reading photo…', lang)}</div>
 </div>
 
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="🔍" width="40" height="40" /></div>
-  <div class="upload-text-primary">Drag and drop a photo here, or click to browse</div>
-  <div class="upload-text-secondary">JPG, PNG or WebP (Max 25MB)</div>
-  <button type="button" class="upload-cta">Choose file</button>
+  <div class="upload-text-primary">{t('Drag and drop a photo here, or click to browse', lang)}</div>
+  <div class="upload-text-secondary">{t('JPG, PNG or WebP (Max 25MB)', lang)}</div>
+  <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
 </div>
 
@@ -236,8 +237,8 @@ const isRemover = slug === 'exif-remover';
 
       <div class="xf-actions">
         <span class="xf-result" id="xfResult"></span>
-        <button class="button button-primary" id="btnDownload">Download cleaned photo</button>
-        <button class="button button-danger" id="btnClear">Clear</button>
+        <button class="button button-primary" id="btnDownload">{t('Download cleaned photo', lang)}</button>
+        <button class="button button-danger" id="btnClear">{t('Clear', lang)}</button>
       </div>
     </div>
   </div>
@@ -335,7 +336,7 @@ const isRemover = slug === 'exif-remover';
         return;
       }
 
-      showProgress(30, 'Reading photo…');
+      showProgress(30, __t('Reading photo…'));
       const reader = new FileReader();
       reader.onerror = () => showError('The file could not be read from disk. If it is synced by a cloud drive, make sure it has finished downloading to this device.');
       reader.onload = e => {

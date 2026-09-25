@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 {/* `is:global` on purpose. Astro rewrites scoped selectors to
@@ -254,14 +255,14 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Reading the document…</div>
+  <div id="progressLabel" class="progress-label">{t('Reading the document…', lang)}</div>
 </div>
 
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="🗜️" width="40" height="40" /></div>
-  <div class="upload-text-primary">Drag and drop a PDF here, or click to browse</div>
-  <div class="upload-text-secondary">A single PDF (Max 25MB)</div>
-  <button type="button" class="upload-cta">Choose file</button>
+  <div class="upload-text-primary">{t('Drag and drop a PDF here, or click to browse', lang)}</div>
+  <div class="upload-text-secondary">{t('A single PDF (Max 25MB)', lang)}</div>
+  <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept=".pdf,application/pdf" />
 </div>
 
@@ -278,32 +279,32 @@ const { slug, headline, subtitle } = Astro.props;
     </div>
     <p class="cmp-sr" role="status" aria-live="polite" id="cmpLive"></p>
     <div class="cmp-hero-actions">
-      <button class="button button-primary" id="cmpDownload" disabled>Download</button>
-      <button class="button button-danger" id="cmpClear">Start over</button>
+      <button class="button button-primary" id="cmpDownload" disabled>{t('Download', lang)}</button>
+      <button class="button button-danger" id="cmpClear">{t('Start over', lang)}</button>
     </div>
   </div>
 
   <div class="cmp-settings">
-    <div class="cmp-settings-label" id="cmpPresetLabel">How hard to compress</div>
+    <div class="cmp-settings-label" id="cmpPresetLabel">{t('How hard to compress', lang)}</div>
     <div class="cmp-preset-row" role="group" aria-labelledby="cmpPresetLabel" id="cmpPresetRow">
       <button type="button" class="cmp-preset" data-preset="light" aria-pressed="false">
-        <div class="cmp-preset-name">Light</div>
-        <div class="cmp-preset-note">Safe for printing</div>
+        <div class="cmp-preset-name">{t('Light', lang)}</div>
+        <div class="cmp-preset-note">{t('Safe for printing', lang)}</div>
         <div class="cmp-preset-size" data-size-for="light"></div>
       </button>
       <button type="button" class="cmp-preset" data-preset="balanced" aria-pressed="true">
-        <div class="cmp-preset-name">Recommended</div>
-        <div class="cmp-preset-note">Best for screen and email</div>
+        <div class="cmp-preset-name">{t('Recommended', lang)}</div>
+        <div class="cmp-preset-note">{t('Best for screen and email', lang)}</div>
         <div class="cmp-preset-size" data-size-for="balanced"></div>
       </button>
       <button type="button" class="cmp-preset" data-preset="strong" aria-pressed="false">
-        <div class="cmp-preset-name">Strong</div>
-        <div class="cmp-preset-note">Smallest, visibly softer</div>
+        <div class="cmp-preset-name">{t('Strong', lang)}</div>
+        <div class="cmp-preset-note">{t('Smallest, visibly softer', lang)}</div>
         <div class="cmp-preset-size" data-size-for="strong"></div>
       </button>
       <button type="button" class="cmp-preset" data-preset="target" aria-pressed="false">
-        <div class="cmp-preset-name">Fit a size</div>
-        <div class="cmp-preset-note">Meet an upload limit</div>
+        <div class="cmp-preset-name">{t('Fit a size', lang)}</div>
+        <div class="cmp-preset-note">{t('Meet an upload limit', lang)}</div>
         <div class="cmp-preset-size" data-size-for="target"></div>
       </button>
     </div>
@@ -319,14 +320,14 @@ const { slug, headline, subtitle } = Astro.props;
       </div>
       <div class="cmp-target-row">
         <div class="form-group" style="margin: 0;">
-          <label class="form-label" for="cmpTargetKB">Target size (KB)</label>
+          <label class="form-label" for="cmpTargetKB">{t('Target size (KB)', lang)}</label>
           <input type="number" id="cmpTargetKB" class="form-input" value="500"
                  min="10" max="25000" step="10" inputmode="numeric"
                  autocomplete="off" name="target-size-kb" />
         </div>
-        <button class="button button-primary" id="cmpFit">Fit to this size</button>
+        <button class="button button-primary" id="cmpFit">{t('Fit to this size', lang)}</button>
       </div>
-      <div class="cmp-target-note" id="cmpTargetNote">The tool finds the gentlest setting that still fits under your limit, and tells you if the size is not reachable.</div>
+      <div class="cmp-target-note" id="cmpTargetNote">{t('The tool finds the gentlest setting that still fits under your limit, and tells you if the size is not reachable.', lang)}</div>
     </div>
   </div>
 
@@ -337,12 +338,12 @@ const { slug, headline, subtitle } = Astro.props;
       nothing had been re-encoded. It now opens itself only when an image was
       actually changed, which is the only time there is anything to see. */}
   <details class="cmp-compare" id="cmpCompare" style="display: none;">
-    <summary class="cmp-compare-summary">Check the result — compare the pages before and after</summary>
+    <summary class="cmp-compare-summary">{t('Check the result — compare the pages before and after', lang)}</summary>
     <div class="cmp-compare-head">
-      <div class="cmp-settings-label" style="margin: 0;">Drag the slider to compare</div>
+      <div class="cmp-settings-label" style="margin: 0;">{t('Drag the slider to compare', lang)}</div>
       <div class="cmp-page-nav">
         <button type="button" class="button button-secondary" id="cmpPrevPage" aria-label="Previous page">‹</button>
-        <span id="cmpPageLabel">Page 1 of 1</span>
+        <span id="cmpPageLabel">{t('Page 1 of 1', lang)}</span>
         <button type="button" class="button button-secondary" id="cmpNextPage" aria-label="Next page">›</button>
       </div>
     </div>
@@ -353,16 +354,16 @@ const { slug, headline, subtitle } = Astro.props;
     </div>
     <input type="range" id="cmpWipe" class="cmp-wipe-range" min="0" max="100" value="50"
            aria-label="Comparison position: left of the line shows the original, right shows the compressed file" />
-    <div class="cmp-wipe-tags"><span>Original</span><span>Compressed</span></div>
+    <div class="cmp-wipe-tags"><span>{t('Original', lang)}</span><span>{t('Compressed', lang)}</span></div>
   </details>
 
   <details class="cmp-details" id="cmpDetails" style="display: none;">
-    <summary>What changed in your file</summary>
+    <summary>{t('What changed in your file', lang)}</summary>
     <div class="cmp-untouched" id="cmpUntouched"></div>
     <div class="cmp-table-scroll">
       <table class="cmp-img-table">
         <thead>
-          <tr><th>Image</th><th>Drawn at</th><th>Action</th><th>Size</th><th>Why</th></tr>
+          <tr><th>{t('Image', lang)}</th><th>{t('Drawn at', lang)}</th><th>{t('Action', lang)}</th><th>{t('Size', lang)}</th><th>{t('Why', lang)}</th></tr>
         </thead>
         <tbody id="cmpImgRows"></tbody>
       </table>
@@ -455,7 +456,7 @@ const { slug, headline, subtitle } = Astro.props;
       hideError();
       cache.clear();
       pageNo = 1;
-      showProgress(5, 'Reading the document…');
+      showProgress(5, __t('Reading the document…'));
 
       try {
         const original = new Uint8Array(await file.arrayBuffer());
@@ -501,7 +502,7 @@ const { slug, headline, subtitle } = Astro.props;
         : { dpi: presets[key].dpi, quality: presets[key].quality };
 
       btnDownload.disabled = true;
-      showProgress(3, 'Reading the document…');
+      showProgress(3, __t('Reading the document…'));
       try {
         const out = await window.coCompressPdf(job.original.slice(), opts, window.PDFLib, {
           progress: showProgress,

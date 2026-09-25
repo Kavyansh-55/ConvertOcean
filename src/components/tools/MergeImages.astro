@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style is:global>
@@ -92,19 +93,19 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Processing files…</div>
+  <div id="progressLabel" class="progress-label">{t('Processing files…', lang)}</div>
 </div>
 
 <div class="workspace-layout merge-images-container">
   <!-- Upload & List Panel -->
   <div class="panel-card">
-    <h2 class="panel-section-title">Add & Arrange Images</h2>
+    <h2 class="panel-section-title">{t('Add & Arrange Images', lang)}</h2>
     
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon"><CategoryIcon icon="🖼️" width="40" height="40" /></div>
-      <div class="upload-text-primary">Drag and drop images, or click to browse</div>
-      <div class="upload-text-secondary">PNG, JPG, WebP, SVG (Max 15MB each, multiple allowed)</div>
-      <button type="button" class="upload-cta">Choose file</button>
+      <div class="upload-text-primary">{t('Drag and drop images, or click to browse', lang)}</div>
+      <div class="upload-text-secondary">{t('PNG, JPG, WebP, SVG (Max 15MB each, multiple allowed)', lang)}</div>
+      <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
       <input type="file" id="fileInput" class="file-input" accept="image/*" multiple />
     </div>
 
@@ -113,29 +114,29 @@ const { slug, headline, subtitle } = Astro.props;
 
   <!-- Settings & Export Panel -->
   <div class="panel-card">
-    <h2 class="panel-section-title">Merge Configuration</h2>
+    <h2 class="panel-section-title">{t('Merge Configuration', lang)}</h2>
     
     <div class="form-group">
-      <label class="form-label" for="mergeMode">Output Format</label>
+      <label class="form-label" for="mergeMode">{t('Output Format', lang)}</label>
       <select class="select-input" id="mergeMode">
-        <option value="pdf">PDF (Separate Pages)</option>
-        <option value="stitch-v">Stitch Image (Vertically)</option>
-        <option value="stitch-h">Stitch Image (Horizontally)</option>
+        <option value="pdf">{t('PDF (Separate Pages)', lang)}</option>
+        <option value="stitch-v">{t('Stitch Image (Vertically)', lang)}</option>
+        <option value="stitch-h">{t('Stitch Image (Horizontally)', lang)}</option>
       </select>
     </div>
 
     <div class="form-group" id="pdfLayoutGroup">
-      <label class="form-label" for="pdfPageSize">PDF Page Layout</label>
+      <label class="form-label" for="pdfPageSize">{t('PDF Page Layout', lang)}</label>
       <select class="select-input" id="pdfPageSize">
-        <option value="fit">Fit Image Dimensions</option>
-        <option value="a4-p">A4 Portrait (with Margins)</option>
-        <option value="a4-l">A4 Landscape (with Margins)</option>
+        <option value="fit">{t('Fit Image Dimensions', lang)}</option>
+        <option value="a4-p">{t('A4 Portrait (with Margins)', lang)}</option>
+        <option value="a4-l">{t('A4 Landscape (with Margins)', lang)}</option>
       </select>
     </div>
 
     <div class="button-group" style="margin-top: auto; display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" id="btnMerge" disabled style="flex: 1;">Generate & Download</button>
-      <button class="button button-danger" id="btnClear" disabled>Clear All</button>
+      <button class="button button-primary" id="btnMerge" disabled style="flex: 1;">{t('Generate & Download', lang)}</button>
+      <button class="button button-danger" id="btnClear" disabled>{t('Clear All', lang)}</button>
     </div>
   </div>
 </div>

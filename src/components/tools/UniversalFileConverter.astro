@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -151,9 +152,9 @@ const { slug, headline, subtitle } = Astro.props;
 <!-- Upload Card -->
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="📄" width="40" height="40" /></div>
-  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-primary">{t('Drag and drop file here, or click to browse', lang)}</div>
   <div class="upload-text-secondary">Supports Excel (.xlsx, .xls), CSV (.csv), and text files (.txt) (Max size: 25MB)</div>
-  <button type="button" class="upload-cta">Choose file</button>
+  <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv,.txt" />
 </div>
 
@@ -181,11 +182,11 @@ const { slug, headline, subtitle } = Astro.props;
     </div>
 
     <div class="button-group" style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
-      <button id="btnExportPdf" class="button button-primary">Export to PDF</button>
-      <button id="btnExportJson" class="button button-secondary">Export to JSON</button>
-      <button id="btnExportCsv" class="button button-secondary">Export to CSV</button>
-      <button id="btnExportXlsx" class="button button-secondary">Export to XLSX</button>
-      <button id="btnClear" class="button button-danger">Convert Another</button>
+      <button id="btnExportPdf" class="button button-primary">{t('Export to PDF', lang)}</button>
+      <button id="btnExportJson" class="button button-secondary">{t('Export to JSON', lang)}</button>
+      <button id="btnExportCsv" class="button button-secondary">{t('Export to CSV', lang)}</button>
+      <button id="btnExportXlsx" class="button button-secondary">{t('Export to XLSX', lang)}</button>
+      <button id="btnClear" class="button button-danger">{t('Convert Another', lang)}</button>
     </div>
   </div>
 </div>
@@ -203,7 +204,7 @@ const { slug, headline, subtitle } = Astro.props;
     <div class="empty-state" id="emptyState">
       <div class="empty-state-icon"><CategoryIcon icon="📥" width="40" height="40" /></div>
       <div>No file loaded yet</div>
-      <div style="font-size: 13px;">Drag a spreadsheet or text document above to inspect and convert.</div>
+      <div style="font-size: 13px;">{t('Drag a spreadsheet or text document above to inspect and convert.', lang)}</div>
     </div>
   </div>
 </div>
@@ -221,11 +222,11 @@ const { slug, headline, subtitle } = Astro.props;
       </ul>
     </div>
     <div>
-      <h3 class="format-category-title">Spreadsheets</h3>
+      <h3 class="format-category-title">{t('Spreadsheets', lang)}</h3>
       <ul class="format-list">
         <li class="format-item">XLSX (.xlsx)</li>
         <li class="format-item">XLS (.xls)</li>
-        <li class="format-item">CSV (.csv)</li>
+        <li class="format-item">{t('CSV (.csv)', lang)}</li>
       </ul>
     </div>
     <div>
@@ -242,7 +243,7 @@ const { slug, headline, subtitle } = Astro.props;
       <ul class="format-list">
         <li class="format-item">JSON (.json)</li>
         <li class="format-item">XML (.xml)</li>
-        <li class="format-item">CSV (.csv)</li>
+        <li class="format-item">{t('CSV (.csv)', lang)}</li>
       </ul>
     </div>
   </div>

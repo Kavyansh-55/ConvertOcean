@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { normalizePath } from '../i18n/config';
 import { alternatesForPath } from '../i18n/content';
+import { t, dictionaryFor } from '../i18n/ui';
 
 /** Kept in one place so canonical, hreflang and schema can never disagree. */
 const SITE = 'https://convertocean.com';
@@ -34,6 +35,11 @@ const {
 // bug lived — `gu` matched the start of /guides/ and canonicalised the whole
 // guides section to `convertocean.comides/`, live, for a month. Its segment
 // boundary now lives in i18n/config.ts, applied to locales we actually serve.
+/* Handed to the tool components' inline scripts, which set some labels at
+   runtime and cannot call t(). Null on English, so that build ships nothing.
+   Declared after the props destructure — `lang` does not exist before it. */
+const uiDict = dictionaryFor(lang);
+
 const canonicalPath = normalizePath(Astro.url.pathname);
 const canonicalURL = `${SITE}${canonicalPath}`;
 
@@ -441,7 +447,12 @@ const relLink = (target: string) => {
 
 </head>
 <body>
-  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <script is:inline define:vars={{ uiDict }}>
+  /* Identity when no dictionary is present, so English behaves exactly as
+     before and a missing key degrades to the English string. */
+  window.__t = function (s) { return (uiDict && uiDict[s]) || s; };
+</script>
+  <a href="#main-content" class="skip-link">{t('Skip to main content', lang)}</a>
 
   <Header lang={lang} categorySlug={categorySlug} band={band} />
 

@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -71,9 +72,9 @@ const { slug, headline, subtitle } = Astro.props;
 <!-- Upload Card -->
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="✂️" width="40" height="40" /></div>
-  <div class="upload-text-primary">Drag and drop PowerPoint here, or click to browse</div>
-  <div class="upload-text-secondary">A single .pptx PowerPoint file (Max 25MB)</div>
-  <button type="button" class="upload-cta">Choose file</button>
+  <div class="upload-text-primary">{t('Drag and drop PowerPoint here, or click to browse', lang)}</div>
+  <div class="upload-text-secondary">{t('A single .pptx PowerPoint file (Max 25MB)', lang)}</div>
+  <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept=".pptx" />
 </div>
 
@@ -83,10 +84,10 @@ const { slug, headline, subtitle } = Astro.props;
 
   <div class="split-control-group">
     <div style="display: flex; flex-direction: column; gap: 4px;">
-      <span class="input-label">Split Mode:</span>
+      <span class="input-label">{t('Split Mode:', lang)}</span>
       <select id="splitMode" class="select-input">
-        <option value="every">Split every slide into its own presentation</option>
-        <option value="ranges">Extract custom range(s)</option>
+        <option value="every">{t('Split every slide into its own presentation', lang)}</option>
+        <option value="ranges">{t('Extract custom range(s)', lang)}</option>
       </select>
     </div>
 
@@ -100,8 +101,8 @@ const { slug, headline, subtitle } = Astro.props;
   <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--colors-hairline); padding-top: var(--spacing-md); margin-top: var(--spacing-lg);">
     <span id="fileNameDisplay" style="font-weight: var(--fw-bold); font-size: 14px;"></span>
     <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" id="btnSplit">Split & Download</button>
-      <button class="button button-danger" id="btnClear">Clear File</button>
+      <button class="button button-primary" id="btnSplit">{t('Split & Download', lang)}</button>
+      <button class="button button-danger" id="btnClear">{t('Clear File', lang)}</button>
     </div>
   </div>
 </div>

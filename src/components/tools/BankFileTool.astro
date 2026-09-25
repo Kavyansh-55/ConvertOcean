@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
 // All three slugs read the same format — OFX is the container, QFX and QBO are
 // Intuit's variants of it. The page leads with the extension the visitor came
@@ -198,15 +199,15 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Reading statement…</div>
+  <div id="progressLabel" class="progress-label">{t('Reading statement…', lang)}</div>
 </div>
 
 <!-- File picker -->
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="🏦" width="40" height="40" /></div>
-  <div class="upload-text-primary">Drag and drop your statement here, or click to browse</div>
+  <div class="upload-text-primary">{t('Drag and drop your statement here, or click to browse', lang)}</div>
   <div class="upload-text-secondary">{primary} file — {others[0]} and {others[1]} work too (Max 25MB)</div>
-  <button type="button" class="upload-cta">Choose file</button>
+  <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept=".ofx,.qfx,.qbo,.OFX,.QFX,.QBO" />
 </div>
 
@@ -215,24 +216,24 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
   <div id="bftWarnings" class="bft-warnings" style="display: none;"></div>
 
   <div class="bft-option-row">
-    <span class="bft-option-label" id="lblOutput">Download as</span>
+    <span class="bft-option-label" id="lblOutput">{t('Download as', lang)}</span>
     <div class="bft-tabs" role="group" aria-labelledby="lblOutput">
       <button type="button" class="bft-tab active" aria-pressed="true" data-opt="output" data-value="csv">CSV</button>
-      <button type="button" class="bft-tab" aria-pressed="false" data-opt="output" data-value="xlsx">Excel (.xlsx)</button>
+      <button type="button" class="bft-tab" aria-pressed="false" data-opt="output" data-value="xlsx">{t('Excel (.xlsx)', lang)}</button>
     </div>
   </div>
 
   <div class="bft-option-row">
-    <span class="bft-option-label" id="lblLayout">Columns</span>
+    <span class="bft-option-label" id="lblLayout">{t('Columns', lang)}</span>
     <div class="bft-tabs" role="group" aria-labelledby="lblLayout">
-      <button type="button" class="bft-tab active" aria-pressed="true" data-opt="layout" data-value="full">Full detail</button>
-      <button type="button" class="bft-tab" aria-pressed="false" data-opt="layout" data-value="three">Date, Description, Amount</button>
-      <button type="button" class="bft-tab" aria-pressed="false" data-opt="layout" data-value="four">Date, Description, Debit, Credit</button>
+      <button type="button" class="bft-tab active" aria-pressed="true" data-opt="layout" data-value="full">{t('Full detail', lang)}</button>
+      <button type="button" class="bft-tab" aria-pressed="false" data-opt="layout" data-value="three">{t('Date, Description, Amount', lang)}</button>
+      <button type="button" class="bft-tab" aria-pressed="false" data-opt="layout" data-value="four">{t('Date, Description, Debit, Credit', lang)}</button>
     </div>
   </div>
 
   <div class="bft-option-row">
-    <span class="bft-option-label" id="lblDate">Date format</span>
+    <span class="bft-option-label" id="lblDate">{t('Date format', lang)}</span>
     <div class="bft-tabs" role="group" aria-labelledby="lblDate">
       <button type="button" class="bft-tab active" aria-pressed="true" data-opt="dateFormat" data-value="iso">2026-01-31</button>
       <button type="button" class="bft-tab" aria-pressed="false" data-opt="dateFormat" data-value="us">01/31/2026</button>
@@ -247,8 +248,8 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
 
   <div class="bft-actions">
     <span class="bft-filename" id="fileNameDisplay"></span>
-    <button class="button button-primary" id="btnDownload">Download CSV</button>
-    <button class="button button-danger" id="btnClear">Clear</button>
+    <button class="button button-primary" id="btnDownload">{t('Download CSV', lang)}</button>
+    <button class="button button-danger" id="btnClear">{t('Clear', lang)}</button>
   </div>
 </div>
 
@@ -369,7 +370,7 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
         return;
       }
 
-      showProgress(25, 'Reading statement…');
+      showProgress(25, __t('Reading statement…'));
       const reader = new FileReader();
       reader.onerror = function() {
         showError('The file could not be read from disk. If it is synced by OneDrive, iCloud or Google Drive, make sure it has finished downloading to this device.');
@@ -519,7 +520,7 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
         ? 'Showing the first ' + PREVIEW_ROWS + ' of ' + rows.length + ' rows. Account numbers are masked in this preview only — the downloaded file keeps them in full.'
         : 'Showing all ' + rows.length + ' rows. Account numbers are masked in this preview only — the downloaded file keeps them in full.';
 
-      btnDownload.textContent = options.output === 'xlsx' ? 'Download Excel' : 'Download CSV';
+      btnDownload.textContent = options.output === 'xlsx' ? 'Download Excel' : __t('Download CSV');
     }
 
     document.querySelectorAll('.bft-tab').forEach(tab => {
@@ -598,13 +599,13 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
 
       sheet['!ref'] = window.XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: lastRow, c: lastCol } });
       sheet['!cols'] = columns.map(col => ({
-        wch: col === 'Description' || col === 'Memo' ? 34 : Math.max(12, col.length + 2)
+        wch: col === __t('Description') || col === 'Memo' ? 34 : Math.max(12, col.length + 2)
       }));
 
       const wb = window.XLSX.utils.book_new();
       window.XLSX.utils.book_append_sheet(wb, sheet, 'Transactions');
 
-      const summaryRows = [['Account', 'Type', 'Currency', 'Period start', 'Period end', 'Ledger balance', 'Transactions']];
+      const summaryRows = [['Account', 'Type', __t('Currency'), 'Period start', 'Period end', 'Ledger balance', 'Transactions']];
       for (const a of parsed.accounts) {
         summaryRows.push([
           a.accountId, a.accountType || a.kind, a.currency,

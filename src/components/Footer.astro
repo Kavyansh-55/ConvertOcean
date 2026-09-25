@@ -1,11 +1,13 @@
 ---
+import { t } from '../i18n/ui';
+import { localeHref } from '../i18n/content';
+import type { Locale } from '../i18n/config';
+
 const { lang = 'en' } = Astro.props;
 
-const relLink = (target: string) => {
-  const cleanTarget = target.startsWith('/') ? target : `/${target}`;
-  if (lang === 'en') return cleanTarget;
-  return `/${lang}${cleanTarget}`;
-};
+/* Same fix as Header: resolve through the content graph. Every tool link in
+   this footer was previously a prefixed guess, and every translated one 404'd. */
+const relLink = (target: string) => localeHref(target, lang as Locale);
 ---
 
 {/* Footer — the closing deep band. Every link, rule and label inside it
@@ -19,14 +21,14 @@ const relLink = (target: string) => {
           <img src="/logo.png" alt="ConvertOcean Logo" class="brand-logo-img" width="42" height="42" loading="lazy" decoding="async" style="width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; transition: transform 0.2s ease;" />
           <span class="brand-text">Convert<span class="brand-text-sub">ocean</span></span>
         </a>
-        <p class="footer-desc">Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.</p>
+        <p class="footer-desc">{t('Privacy-first browser-based file utilities. Convert, merge, split and extract file data 100% locally in your browser sandbox.', lang)}</p>
 
         {/* The comparison pages used to hang off the bottom of the
             "Resources & Company" list, which made that column 18 rows
             tall. The grid row takes its height from the tallest column,
             so the brand cell sat above ~420px of empty maroon. They are
             their own thing anyway, and this is the space they fill. */}
-        <span class="footer-title footer-title--compare">Compare</span>
+        <span class="footer-title footer-title--compare">{t('Compare', lang)}</span>
         <div class="footer-links footer-links--compare">
           <a href={relLink('/vs/smallpdf/')} class="footer-link">vs Smallpdf</a>
           <a href={relLink('/vs/ilovepdf/')} class="footer-link">vs iLovePDF</a>
@@ -42,90 +44,90 @@ const relLink = (target: string) => {
       </div>
       
       <div class="footer-column">
-        <span class="footer-title">File Converter</span>
+        <span class="footer-title">{t('File Converter', lang)}</span>
         <div class="footer-links">
-          <a href={relLink('/excel-to-pdf/')} class="footer-link">Excel to PDF</a>
-          <a href={relLink('/word-to-pdf/')} class="footer-link">Word to PDF</a>
-          <a href={relLink('/pdf-to-word/')} class="footer-link">PDF to Word</a>
-          <a href={relLink('/txt-to-pdf/')} class="footer-link">TXT to PDF</a>
-          <a href={relLink('/pdf-to-txt/')} class="footer-link">PDF to TXT</a>
-          <a href={relLink('/csv-to-json/')} class="footer-link">CSV to JSON</a>
-          <a href={relLink('/json-to-csv/')} class="footer-link">JSON to CSV</a>
-          <a href={relLink('/xlsx-to-csv/')} class="footer-link">XLSX to CSV</a>
-          <a href={relLink('/csv-to-xlsx/')} class="footer-link">CSV to XLSX</a>
-          <a href={relLink('/json-to-xlsx/')} class="footer-link">JSON to XLSX</a>
-          <a href={relLink('/xml-to-json/')} class="footer-link">XML to JSON</a>
+          <a href={relLink('/excel-to-pdf/')} class="footer-link">{t('Excel to PDF', lang)}</a>
+          <a href={relLink('/word-to-pdf/')} class="footer-link">{t('Word to PDF', lang)}</a>
+          <a href={relLink('/pdf-to-word/')} class="footer-link">{t('PDF to Word', lang)}</a>
+          <a href={relLink('/txt-to-pdf/')} class="footer-link">{t('TXT to PDF', lang)}</a>
+          <a href={relLink('/pdf-to-txt/')} class="footer-link">{t('PDF to TXT', lang)}</a>
+          <a href={relLink('/csv-to-json/')} class="footer-link">{t('CSV to JSON', lang)}</a>
+          <a href={relLink('/json-to-csv/')} class="footer-link">{t('JSON to CSV', lang)}</a>
+          <a href={relLink('/xlsx-to-csv/')} class="footer-link">{t('XLSX to CSV', lang)}</a>
+          <a href={relLink('/csv-to-xlsx/')} class="footer-link">{t('CSV to XLSX', lang)}</a>
+          <a href={relLink('/json-to-xlsx/')} class="footer-link">{t('JSON to XLSX', lang)}</a>
+          <a href={relLink('/xml-to-json/')} class="footer-link">{t('XML to JSON', lang)}</a>
         </div>
       </div>
       
       <div class="footer-column">
-        <span class="footer-title">PDF, Split & Merge</span>
+        <span class="footer-title">{t('PDF, Split & Merge', lang)}</span>
         <div class="footer-links">
-          <a href={relLink('/compress-pdf/')} class="footer-link">Compress PDF</a>
-          <a href={relLink('/compress-powerpoint/')} class="footer-link">Compress PowerPoint</a>
-          <a href={relLink('/compress-word/')} class="footer-link">Compress Word</a>
-          <a href={relLink('/compress-excel/')} class="footer-link">Compress Excel</a>
-          <a href={relLink('/merge-pdf/')} class="footer-link">Merge PDF</a>
-          <a href={relLink('/split-pdf/')} class="footer-link">Split PDF</a>
-          <a href={relLink('/merge-word/')} class="footer-link">Merge Word</a>
-          <a href={relLink('/split-word/')} class="footer-link">Split Word</a>
-          <a href={relLink('/merge-pptx/')} class="footer-link">Merge PowerPoint</a>
-          <a href={relLink('/split-pptx/')} class="footer-link">Split PowerPoint</a>
-          <a href={relLink('/merge-excel/')} class="footer-link">Merge Excel & CSV</a>
-          <a href={relLink('/split-excel/')} class="footer-link">Split Excel & CSV</a>
-          <a href={relLink('/merge-images/')} class="footer-link">Merge Images</a>
-          <a href={relLink('/split-image/')} class="footer-link">Split Image</a>
-          <a href={relLink('/merge-txt/')} class="footer-link">Merge Text & TXT</a>
-          <a href={relLink('/split-txt/')} class="footer-link">Split Text & TXT</a>
+          <a href={relLink('/compress-pdf/')} class="footer-link">{t('Compress PDF', lang)}</a>
+          <a href={relLink('/compress-powerpoint/')} class="footer-link">{t('Compress PowerPoint', lang)}</a>
+          <a href={relLink('/compress-word/')} class="footer-link">{t('Compress Word', lang)}</a>
+          <a href={relLink('/compress-excel/')} class="footer-link">{t('Compress Excel', lang)}</a>
+          <a href={relLink('/merge-pdf/')} class="footer-link">{t('Merge PDF', lang)}</a>
+          <a href={relLink('/split-pdf/')} class="footer-link">{t('Split PDF', lang)}</a>
+          <a href={relLink('/merge-word/')} class="footer-link">{t('Merge Word', lang)}</a>
+          <a href={relLink('/split-word/')} class="footer-link">{t('Split Word', lang)}</a>
+          <a href={relLink('/merge-pptx/')} class="footer-link">{t('Merge PowerPoint', lang)}</a>
+          <a href={relLink('/split-pptx/')} class="footer-link">{t('Split PowerPoint', lang)}</a>
+          <a href={relLink('/merge-excel/')} class="footer-link">{t('Merge Excel & CSV', lang)}</a>
+          <a href={relLink('/split-excel/')} class="footer-link">{t('Split Excel & CSV', lang)}</a>
+          <a href={relLink('/merge-images/')} class="footer-link">{t('Merge Images', lang)}</a>
+          <a href={relLink('/split-image/')} class="footer-link">{t('Split Image', lang)}</a>
+          <a href={relLink('/merge-txt/')} class="footer-link">{t('Merge Text & TXT', lang)}</a>
+          <a href={relLink('/split-txt/')} class="footer-link">{t('Split Text & TXT', lang)}</a>
         </div>
       </div>
       
       <div class="footer-column">
-        <span class="footer-title">Image & OCR</span>
+        <span class="footer-title">{t('Image & OCR', lang)}</span>
         <div class="footer-links">
-          <a href={relLink('/image-resizer/')} class="footer-link">Image Resizer</a>
-          <a href={relLink('/png-to-jpg/')} class="footer-link">PNG to JPG</a>
-          <a href={relLink('/jpg-to-png/')} class="footer-link">JPG to PNG</a>
-          <a href={relLink('/png-to-webp/')} class="footer-link">PNG to WebP</a>
-          <a href={relLink('/webp-to-png/')} class="footer-link">WebP to PNG</a>
-          <a href={relLink('/exif-viewer/')} class="footer-link">EXIF Viewer</a>
-          <a href={relLink('/exif-remover/')} class="footer-link">Remove EXIF Data</a>
-          <a href={relLink('/heic-to-jpg/')} class="footer-link">HEIC to JPG</a>
-          <a href={relLink('/heic-to-png/')} class="footer-link">HEIC to PNG</a>
-          <a href={relLink('/avif-to-jpg/')} class="footer-link">AVIF to JPG</a>
-          <a href={relLink('/avif-to-png/')} class="footer-link">AVIF to PNG</a>
-          <a href={relLink('/image-to-text/')} class="footer-link">Image to Text OCR</a>
-          <a href={relLink('/image-to-pdf/')} class="footer-link">Image to PDF</a>
-          <a href={relLink('/image-tools/')} class="footer-link">Image Tools</a>
+          <a href={relLink('/image-resizer/')} class="footer-link">{t('Image Resizer', lang)}</a>
+          <a href={relLink('/png-to-jpg/')} class="footer-link">{t('PNG to JPG', lang)}</a>
+          <a href={relLink('/jpg-to-png/')} class="footer-link">{t('JPG to PNG', lang)}</a>
+          <a href={relLink('/png-to-webp/')} class="footer-link">{t('PNG to WebP', lang)}</a>
+          <a href={relLink('/webp-to-png/')} class="footer-link">{t('WebP to PNG', lang)}</a>
+          <a href={relLink('/exif-viewer/')} class="footer-link">{t('EXIF Viewer', lang)}</a>
+          <a href={relLink('/exif-remover/')} class="footer-link">{t('Remove EXIF Data', lang)}</a>
+          <a href={relLink('/heic-to-jpg/')} class="footer-link">{t('HEIC to JPG', lang)}</a>
+          <a href={relLink('/heic-to-png/')} class="footer-link">{t('HEIC to PNG', lang)}</a>
+          <a href={relLink('/avif-to-jpg/')} class="footer-link">{t('AVIF to JPG', lang)}</a>
+          <a href={relLink('/avif-to-png/')} class="footer-link">{t('AVIF to PNG', lang)}</a>
+          <a href={relLink('/image-to-text/')} class="footer-link">{t('Image to Text OCR', lang)}</a>
+          <a href={relLink('/image-to-pdf/')} class="footer-link">{t('Image to PDF', lang)}</a>
+          <a href={relLink('/image-tools/')} class="footer-link">{t('Image Tools', lang)}</a>
         </div>
       </div>
       
       <div class="footer-column">
-        <span class="footer-title">Business Tools</span>
+        <span class="footer-title">{t('Business Tools', lang)}</span>
         <div class="footer-links">
-          <a href={relLink('/invoice-generator/')} class="footer-link">Invoice Generator</a>
-          <a href={relLink('/receipt-generator/')} class="footer-link">Receipt Generator</a>
-          <a href={relLink('/profit-margin-calculator/')} class="footer-link">Profit Margin Calculator</a>
-          <a href={relLink('/break-even-calculator/')} class="footer-link">Break-Even Calculator</a>
-          <a href={relLink('/percentage-calculator/')} class="footer-link">Percentage Calculator</a>
-          <a href={relLink('/sales-tax-calculator/')} class="footer-link">Sales Tax Calculator</a>
-          <a href={relLink('/ofx-to-csv/')} class="footer-link">OFX to CSV</a>
-          <a href={relLink('/qfx-to-csv/')} class="footer-link">QFX to CSV</a>
-          <a href={relLink('/qbo-to-csv/')} class="footer-link">QBO to CSV</a>
+          <a href={relLink('/invoice-generator/')} class="footer-link">{t('Invoice Generator', lang)}</a>
+          <a href={relLink('/receipt-generator/')} class="footer-link">{t('Receipt Generator', lang)}</a>
+          <a href={relLink('/profit-margin-calculator/')} class="footer-link">{t('Profit Margin Calculator', lang)}</a>
+          <a href={relLink('/break-even-calculator/')} class="footer-link">{t('Break-Even Calculator', lang)}</a>
+          <a href={relLink('/percentage-calculator/')} class="footer-link">{t('Percentage Calculator', lang)}</a>
+          <a href={relLink('/sales-tax-calculator/')} class="footer-link">{t('Sales Tax Calculator', lang)}</a>
+          <a href={relLink('/ofx-to-csv/')} class="footer-link">{t('OFX to CSV', lang)}</a>
+          <a href={relLink('/qfx-to-csv/')} class="footer-link">{t('QFX to CSV', lang)}</a>
+          <a href={relLink('/qbo-to-csv/')} class="footer-link">{t('QBO to CSV', lang)}</a>
         </div>
       </div>
       
       <div class="footer-column">
-        <span class="footer-title">Resources & Company</span>
+        <span class="footer-title">{t('Resources & Company', lang)}</span>
         <div class="footer-links">
-          <a href={relLink('/guides/')} class="footer-link">Guides &amp; Resources</a>
-          <a href={relLink('/word-counter/')} class="footer-link">Word Counter</a>
-          <a href={relLink('/json-formatter/')} class="footer-link">JSON Formatter</a>
-          <a href={relLink('/about/')} class="footer-link">About Us</a>
-          <a href={relLink('/contact/')} class="footer-link">Contact Us</a>
-          <a href={relLink('/privacy/')} class="footer-link">Privacy Policy</a>
-          <a href={relLink('/terms/')} class="footer-link">Terms &amp; Conditions</a>
-          <a href={relLink('/sitemap/')} class="footer-link">Sitemap</a>
+          <a href={relLink('/guides/')} class="footer-link">{t('Guides & Resources', lang)}</a>
+          <a href={relLink('/word-counter/')} class="footer-link">{t('Word Counter', lang)}</a>
+          <a href={relLink('/json-formatter/')} class="footer-link">{t('JSON Formatter', lang)}</a>
+          <a href={relLink('/about/')} class="footer-link">{t('About Us', lang)}</a>
+          <a href={relLink('/contact/')} class="footer-link">{t('Contact Us', lang)}</a>
+          <a href={relLink('/privacy/')} class="footer-link">{t('Privacy Policy', lang)}</a>
+          <a href={relLink('/terms/')} class="footer-link">{t('Terms & Conditions', lang)}</a>
+          <a href={relLink('/sitemap/')} class="footer-link">{t('Sitemap', lang)}</a>
         </div>
       </div>
     </div>
@@ -134,10 +136,10 @@ const relLink = (target: string) => {
       <div class="privacy-disclaimer-wrapper">
         <div class="privacy-disclaimer-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></div>
         <p class="privacy-disclaimer">
-          <strong>100% Local Sandboxed Processing:</strong> Disconnect your device from the internet and test any tool. It operates entirely on-device using WebAssembly (WASM). Your confidential files never touch our servers or any third-party infrastructure.
+          <strong>{t('100% Local Sandboxed Processing:', lang)}</strong> Disconnect your device from the internet and test any tool. It operates entirely on-device using WebAssembly (WASM). Your confidential files never touch our servers or any third-party infrastructure.
         </p>
       </div>
-      <p class="copyright">&copy; 2026 ConvertOcean. All rights reserved.</p>
+      <p class="copyright">&copy; {t('2026 ConvertOcean. All rights reserved.', lang)}</p>
     </div>
   </div>
 </footer>

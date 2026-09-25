@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style is:global>
@@ -93,19 +94,19 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Merging files…</div>
+  <div id="progressLabel" class="progress-label">{t('Merging files…', lang)}</div>
 </div>
 
 <div class="workspace-layout merge-txt-container">
   <!-- Upload & Arrange List Panel -->
   <div class="panel-card">
-    <h2 class="panel-section-title">Add & Arrange Texts</h2>
+    <h2 class="panel-section-title">{t('Add & Arrange Texts', lang)}</h2>
     
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon"><CategoryIcon icon="📝" width="40" height="40" /></div>
-      <div class="upload-text-primary">Drag and drop text files here, or click to browse</div>
-      <div class="upload-text-secondary">TXT, MD, LOG, CSV, XML (Max 5MB each, multiple allowed)</div>
-      <button type="button" class="upload-cta">Choose file</button>
+      <div class="upload-text-primary">{t('Drag and drop text files here, or click to browse', lang)}</div>
+      <div class="upload-text-secondary">{t('TXT, MD, LOG, CSV, XML (Max 5MB each, multiple allowed)', lang)}</div>
+      <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
       <input type="file" id="fileInput" class="file-input" accept=".txt,.md,.log,.csv,.xml,.json" multiple />
     </div>
 
@@ -114,34 +115,34 @@ const { slug, headline, subtitle } = Astro.props;
 
   <!-- Merge Settings Panel -->
   <div class="panel-card">
-    <h2 class="panel-section-title">Merge Configuration</h2>
+    <h2 class="panel-section-title">{t('Merge Configuration', lang)}</h2>
     
     <div class="form-group">
-      <label class="form-label" for="separatorType">File Separator</label>
+      <label class="form-label" for="separatorType">{t('File Separator', lang)}</label>
       <select class="select-input" id="separatorType">
         <option value="newline">Single Newline (\n)</option>
         <option value="double-newline">Double Newline (\n\n)</option>
-        <option value="none">No Separator</option>
-        <option value="custom">Custom Text Separator</option>
+        <option value="none">{t('No Separator', lang)}</option>
+        <option value="custom">{t('Custom Text Separator', lang)}</option>
       </select>
     </div>
 
     <div class="form-group" id="customSepGroup" style="display: none;">
-      <label class="form-label" for="customSeparator">Custom Separator Text</label>
+      <label class="form-label" for="customSeparator">{t('Custom Separator Text', lang)}</label>
       <input type="text" class="form-input" id="customSeparator" placeholder="e.g. --- FILE SEPARATOR ---" />
     </div>
 
     <div class="form-group">
-      <label class="form-label" for="includeFilename">Prefix file content with filename?</label>
+      <label class="form-label" for="includeFilename">{t('Prefix file content with filename?', lang)}</label>
       <select class="select-input" id="includeFilename">
-        <option value="no">No</option>
+        <option value="no">{t('No', lang)}</option>
         <option value="yes-header">Yes, as a header (e.g. === file.txt ===)</option>
       </select>
     </div>
 
     <div class="button-group" style="margin-top: auto; display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" id="btnMerge" disabled style="flex: 1;">Merge &amp; Download</button>
-      <button class="button button-danger" id="btnClear" disabled>Clear All</button>
+      <button class="button button-primary" id="btnMerge" disabled style="flex: 1;">{t('Merge & Download', lang)}</button>
+      <button class="button button-danger" id="btnClear" disabled>{t('Clear All', lang)}</button>
     </div>
   </div>
 </div>

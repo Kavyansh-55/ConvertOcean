@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style is:global>
@@ -65,19 +66,19 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Processing files…</div>
+  <div id="progressLabel" class="progress-label">{t('Processing files…', lang)}</div>
 </div>
 
 <div class="workspace-layout merge-word-container">
   <!-- Upload & Arrange List Panel -->
   <div class="panel-card">
-    <h2 class="panel-section-title">Add & Arrange Word Documents</h2>
+    <h2 class="panel-section-title">{t('Add & Arrange Word Documents', lang)}</h2>
     
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon"><CategoryIcon icon="📝" width="40" height="40" /></div>
-      <div class="upload-text-primary">Drag and drop Word files here, or click to browse</div>
-      <div class="upload-text-secondary">.docx Word files (Max 15MB each, multiple allowed)</div>
-      <button type="button" class="upload-cta">Choose file</button>
+      <div class="upload-text-primary">{t('Drag and drop Word files here, or click to browse', lang)}</div>
+      <div class="upload-text-secondary">{t('.docx Word files (Max 15MB each, multiple allowed)', lang)}</div>
+      <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
       <input type="file" id="fileInput" class="file-input" accept=".docx" multiple />
     </div>
 
@@ -86,16 +87,16 @@ const { slug, headline, subtitle } = Astro.props;
 
   <!-- Settings & Merge Panel -->
   <div class="panel-card">
-    <h2 class="panel-section-title">Merge Configuration</h2>
+    <h2 class="panel-section-title">{t('Merge Configuration', lang)}</h2>
     
     <div class="form-group">
-      <label class="form-label" for="mergeOutputName">Output Filename</label>
+      <label class="form-label" for="mergeOutputName">{t('Output Filename', lang)}</label>
       <input type="text" id="mergeOutputName" class="form-input" value="merged_document.docx" />
     </div>
 
     <div class="button-group" style="margin-top: auto; display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" id="btnMerge" disabled style="flex: 1;">Merge & Download</button>
-      <button class="button button-danger" id="btnClear" disabled>Clear Queue</button>
+      <button class="button button-primary" id="btnMerge" disabled style="flex: 1;">{t('Merge & Download', lang)}</button>
+      <button class="button button-danger" id="btnClear" disabled>{t('Clear Queue', lang)}</button>
     </div>
   </div>
 </div>

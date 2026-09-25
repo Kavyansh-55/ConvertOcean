@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
 let acceptMime = ".docx";
 let uploadLabel = "Word document (.docx) (Max 15MB)";
@@ -52,15 +53,15 @@ if (slug === 'docx-to-txt') {
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Processing file…</div>
+  <div id="progressLabel" class="progress-label">{t('Processing file…', lang)}</div>
 </div>
 
 <!-- Upload Card -->
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="📝" width="40" height="40" /></div>
-  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
+  <div class="upload-text-primary">{t('Drag and drop file here, or click to browse', lang)}</div>
   <div class="upload-text-secondary">{uploadLabel}</div>
-  <button type="button" class="upload-cta">Choose file</button>
+  <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept={acceptMime} />
 </div>
 
@@ -78,7 +79,7 @@ if (slug === 'docx-to-txt') {
   <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
   <div class="button-group">
     <button class="button button-primary" id="btnDownload">Download {targetFormat}</button>
-    <button class="button button-danger" id="btnClear">Clear</button>
+    <button class="button button-danger" id="btnClear">{t('Clear', lang)}</button>
   </div>
 </div>
 

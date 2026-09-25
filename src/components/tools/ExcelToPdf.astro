@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -58,15 +59,15 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Processing file…</div>
+  <div id="progressLabel" class="progress-label">{t('Processing file…', lang)}</div>
 </div>
 
 <!-- Upload Card -->
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="📊" width="40" height="40" /></div>
-  <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
-  <div class="upload-text-secondary">XLS, XLSX, or CSV (Max 25MB)</div>
-  <button type="button" class="upload-cta">Choose file</button>
+  <div class="upload-text-primary">{t('Drag and drop file here, or click to browse', lang)}</div>
+  <div class="upload-text-secondary">{t('XLS, XLSX, or CSV (Max 25MB)', lang)}</div>
+  <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv" />
 </div>
 
@@ -79,21 +80,21 @@ const { slug, headline, subtitle } = Astro.props;
 <!-- Options -->
 <div id="optionsRow" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; gap: var(--spacing-lg); align-items: center; flex-wrap: wrap;">
   <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
-    <input type="checkbox" id="optHeader" checked /> First row is a header
+    <input type="checkbox" id="optHeader" checked /> {t('First row is a header', lang)}
   </label>
   <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
-    <input type="checkbox" id="optLandscape" checked /> Landscape orientation
+    <input type="checkbox" id="optLandscape" checked /> {t('Landscape orientation', lang)}
   </label>
   <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
-    <input type="checkbox" id="optAllSheets" checked /> Include all sheets
+    <input type="checkbox" id="optAllSheets" checked /> {t('Include all sheets', lang)}
   </label>
 </div>
 
 <div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
   <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
   <div class="button-group">
-    <button class="button button-primary" id="btnConvert">Convert & Download PDF</button>
-    <button class="button button-danger" id="btnClear">Clear</button>
+    <button class="button button-primary" id="btnConvert">{t('Convert & Download PDF', lang)}</button>
+    <button class="button button-danger" id="btnClear">{t('Clear', lang)}</button>
   </div>
 </div>
 

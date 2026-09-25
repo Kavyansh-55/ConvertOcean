@@ -1,5 +1,6 @@
 ---
-const { slug, headline, subtitle } = Astro.props;
+import { t } from '../../i18n/ui';
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -321,7 +322,7 @@ const { slug, headline, subtitle } = Astro.props;
 <div class="split-workspace">
   <section class="editor-pane">
     <div class="form-card">
-      <div class="form-card-title">Receipt Settings</div>
+      <div class="form-card-title">{t('Receipt Settings', lang)}</div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="rcptNo">Receipt Number</label>
@@ -334,7 +335,7 @@ const { slug, headline, subtitle } = Astro.props;
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label" for="rcptCurrency">Currency</label>
+          <label class="form-label" for="rcptCurrency">{t('Currency', lang)}</label>
           <select id="rcptCurrency" class="select-input">
             <option value="$" selected>$ &ndash; US Dollar (USD)</option>
             <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
@@ -353,23 +354,23 @@ const { slug, headline, subtitle } = Astro.props;
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label" for="rcptTaxSelect">Tax Configuration</label>
+          <label class="form-label" for="rcptTaxSelect">{t('Tax Configuration', lang)}</label>
           <select id="rcptTaxSelect" class="select-input">
-            <option value="none">No Tax</option>
+            <option value="none">{t('No Tax', lang)}</option>
             <option value="GST" selected>GST (18%)</option>
             <option value="IGST">IGST (18%)</option>
             <option value="VAT">VAT (15%)</option>
-            <option value="custom">Custom Tax Rate</option>
+            <option value="custom">{t('Custom Tax Rate', lang)}</option>
           </select>
         </div>
       </div>
       <div id="rcptCustomTaxGroup" class="form-row" style="display: none; margin-top: var(--spacing-xxs);">
         <div class="form-group">
-          <label class="form-label" for="rcptCustomTaxLabel">Tax Label</label>
+          <label class="form-label" for="rcptCustomTaxLabel">{t('Tax Label', lang)}</label>
           <input type="text" id="rcptCustomTaxLabel" class="form-input" value="Tax" style="height: 36px; font-size: 13px;" />
         </div>
         <div class="form-group">
-          <label class="form-label" for="rcptCustomTaxRate">Tax Rate (%)</label>
+          <label class="form-label" for="rcptCustomTaxRate">{t('Tax Rate (%)', lang)}</label>
           <input type="number" id="rcptCustomTaxRate" class="form-input" value="5" min="0" max="100" step="0.01" style="height: 36px; font-size: 13px;" />
         </div>
       </div>
@@ -377,10 +378,10 @@ const { slug, headline, subtitle } = Astro.props;
         <div class="form-group">
           <label class="form-label" for="rcptPayMethod">Payment Method</label>
           <select id="rcptPayMethod" class="select-input">
-            <option value="Cash">Cash</option>
-            <option value="Credit Card" selected>Credit Card</option>
-            <option value="Debit Card">Debit Card</option>
-            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="Cash">{t('Cash', lang)}</option>
+            <option value="Credit Card" selected>{t('Credit Card', lang)}</option>
+            <option value="Debit Card">{t('Debit Card', lang)}</option>
+            <option value="Bank Transfer">{t('Bank Transfer', lang)}</option>
             <option value="PayPal">PayPal</option>
             <option value="Check">Check</option>
           </select>
@@ -391,15 +392,15 @@ const { slug, headline, subtitle } = Astro.props;
     <div class="form-card">
       <div class="form-card-title">From (Business / Seller)</div>
       <div class="form-group">
-        <label class="form-label" for="rcptVendorName">Business Name</label>
+        <label class="form-label" for="rcptVendorName">{t('Business Name', lang)}</label>
         <input type="text" id="rcptVendorName" class="form-input" value="Kavya J. Studio" />
       </div>
       <div class="form-group">
-        <label class="form-label" for="rcptVendorAddress">Address & Contact</label>
+        <label class="form-label" for="rcptVendorAddress">{t('Address & Contact', lang)}</label>
         <textarea id="rcptVendorAddress" class="textarea-input">12 Developer Lane, Indiranagar&#10;Bengaluru, KA 560038&#10;hello@kavyaj.studio</textarea>
       </div>
       <div class="form-group">
-        <label class="form-label" for="rcptVendorTaxId">Business GSTIN / VAT ID / Tax ID (Optional)</label>
+        <label class="form-label" for="rcptVendorTaxId">{t('Business GSTIN / VAT ID / Tax ID (Optional)', lang)}</label>
         <input type="text" id="rcptVendorTaxId" class="form-input" placeholder="e.g., GSTIN, VAT, or ABN" style="height: 36px; font-size: 13px;" />
       </div>
     </div>
@@ -407,47 +408,47 @@ const { slug, headline, subtitle } = Astro.props;
     <div class="form-card">
       <div class="form-card-title">To (Customer / Buyer)</div>
       <div class="form-group">
-        <label class="form-label" for="rcptClientName">Customer Name</label>
+        <label class="form-label" for="rcptClientName">{t('Customer Name', lang)}</label>
         <input type="text" id="rcptClientName" class="form-input" value="Galactic Group Ltd." />
       </div>
       <div class="form-group">
-        <label class="form-label" for="rcptClientAddress">Address & Details</label>
+        <label class="form-label" for="rcptClientAddress">{t('Address & Details', lang)}</label>
         <textarea id="rcptClientAddress" class="textarea-input">45 Cloud Towers, Tech City&#10;Mumbai, MH 400001&#10;billing@galactic.com</textarea>
       </div>
       <div class="form-group">
-        <label class="form-label" for="rcptClientTaxId">Customer GSTIN / VAT ID / Tax ID (Optional)</label>
+        <label class="form-label" for="rcptClientTaxId">{t('Customer GSTIN / VAT ID / Tax ID (Optional)', lang)}</label>
         <input type="text" id="rcptClientTaxId" class="form-input" placeholder="e.g., Client GSTIN, VAT" style="height: 36px; font-size: 13px;" />
       </div>
     </div>
 
     <div class="form-card">
-      <div class="form-card-title">Itemized Line Items</div>
+      <div class="form-card-title">{t('Itemized Line Items', lang)}</div>
       <table class="item-edit-table" id="rcptItemEditTable">
         <thead>
           <tr>
-            <th style="width: 50%;">Description</th>
-            <th style="width: 15%;">Qty</th>
-            <th style="width: 25%;" id="rcptRateHeader">Rate ($)</th>
+            <th style="width: 50%;">{t('Description', lang)}</th>
+            <th style="width: 15%;">{t('Qty', lang)}</th>
+            <th style="width: 25%;" id="rcptRateHeader">{t('Rate ($)', lang)}</th>
             <th style="width: 10%;"></th>
           </tr>
         </thead>
         <tbody id="rcptItemEditRows">
         </tbody>
       </table>
-      <button class="button button-secondary" id="rcptBtnAddItem" style="height: 34px; font-size: 13px; margin-top: var(--spacing-xs);">+ Add Line Item</button>
+      <button class="button button-secondary" id="rcptBtnAddItem" style="height: 34px; font-size: 13px; margin-top: var(--spacing-xs);">{t('+ Add Line Item', lang)}</button>
     </div>
 
     <div class="form-card">
-      <div class="form-card-title">Notes</div>
+      <div class="form-card-title">{t('Notes', lang)}</div>
       <div class="form-group">
         <label class="form-label" for="rcptNotes">Receipt Notes</label>
-        <textarea id="rcptNotes" class="textarea-input">Thank you for your payment.&#10;This receipt confirms payment has been received in full.</textarea>
+        <textarea id="rcptNotes" class="textarea-input">{t('Thank you for your payment. This receipt confirms payment has been received in full.', lang)}</textarea>
       </div>
     </div>
 
     <div class="actions-bar" style="margin-bottom: 20px; display: flex; gap: var(--spacing-sm);">
-      <button id="rcptBtnDownload" class="button button-primary">Download Receipt PDF</button>
-      <button id="rcptBtnClear" class="button button-danger">Clear Form</button>
+      <button id="rcptBtnDownload" class="button button-primary">{t('Download Receipt PDF', lang)}</button>
+      <button id="rcptBtnClear" class="button button-danger">{t('Clear Form', lang)}</button>
     </div>
   </section>
 
@@ -457,35 +458,35 @@ const { slug, headline, subtitle } = Astro.props;
         <div class="receipt-pdf-header">
           <div>
             <div class="pdf-brand-title" id="rcptPdfVendorTitle">Kavya J. Studio</div>
-            <div class="pdf-meta-text" id="rcptPdfVendorSub">Payment Receipt</div>
+            <div class="pdf-meta-text" id="rcptPdfVendorSub">{t('Payment Receipt', lang)}</div>
           </div>
           <div>
-            <div class="pdf-doc-type">Payment Receipt</div>
+            <div class="pdf-doc-type">{t('Payment Receipt', lang)}</div>
             <div class="pdf-meta-text" style="text-align: right;">
-              No: <strong id="rcptPdfNo">REC-2026-001</strong><br />
-              Date: <span id="rcptPdfDate">--/--/----</span><br />
-              Method: <span id="rcptPdfMethod" class="payment-badge">Credit Card</span>
+              {t('No:', lang)} <strong id="rcptPdfNo">REC-2026-001</strong><br />
+              {t('Date:', lang)} <span id="rcptPdfDate">--/--/----</span><br />
+              Method: <span id="rcptPdfMethod" class="payment-badge">{t('Credit Card', lang)}</span>
             </div>
           </div>
         </div>
 
         <div class="receipt-pdf-addresses">
           <div>
-            <div class="address-col-title">Received From</div>
+            <div class="address-col-title">{t('Received From', lang)}</div>
             <!-- Same gap as the invoice: "Customer Name" was collected into
                  rcptData and used only to name the downloaded file, so the
                  payer never appeared on the receipt itself. -->
             <div class="address-details" id="rcptPdfClientName" style="font-weight: 700;"></div>
             <div class="address-details" id="rcptPdfClientAddr"></div>
             <div id="rcptClientTaxIdContainer" style="display: none; font-size: 11px; margin-top: 4px; color: #4d4d4d;">
-              <strong>Tax ID:</strong> <span id="rcptClientTaxId"></span>
+              <strong>{t('Tax ID:', lang)}</strong> <span id="rcptClientTaxId"></span>
             </div>
           </div>
           <div>
             <div class="address-col-title">Received By</div>
             <div class="address-details" id="rcptPdfVendorAddr"></div>
             <div id="rcptVendorTaxIdContainer" style="display: none; font-size: 11px; margin-top: 4px; color: #4d4d4d;">
-              <strong>Tax ID:</strong> <span id="rcptVendorTaxId"></span>
+              <strong>{t('Tax ID:', lang)}</strong> <span id="rcptVendorTaxId"></span>
             </div>
           </div>
         </div>
@@ -494,9 +495,9 @@ const { slug, headline, subtitle } = Astro.props;
           <thead>
             <tr>
               <th style="width: 50%;">Item Description</th>
-              <th style="width: 10%; text-align: right;">Qty</th>
-              <th style="width: 20%; text-align: right;">Unit Rate</th>
-              <th style="width: 20%; text-align: right;">Amount</th>
+              <th style="width: 10%; text-align: right;">{t('Qty', lang)}</th>
+              <th style="width: 20%; text-align: right;">{t('Unit Rate', lang)}</th>
+              <th style="width: 20%; text-align: right;">{t('Amount', lang)}</th>
             </tr>
           </thead>
           <tbody id="rcptPdfTableRows">
@@ -507,7 +508,7 @@ const { slug, headline, subtitle } = Astro.props;
           <div class="pdf-summary-block">
             <table class="pdf-totals-table">
               <tr>
-                <td>Subtotal</td>
+                <td>{t('Subtotal', lang)}</td>
                 <td class="right-align" id="rcptPdfSubtotal">$0.00</td>
               </tr>
               <tr id="rcptPdfTaxRow">
@@ -515,7 +516,7 @@ const { slug, headline, subtitle } = Astro.props;
                 <td class="right-align" id="rcptPdfTaxAmount">$0.00</td>
               </tr>
               <tr class="grand-total">
-                <td>Amount Paid</td>
+                <td>{t('Amount Paid', lang)}</td>
                 <td class="right-align" id="rcptPdfGrandTotal">$0.00</td>
               </tr>
             </table>
@@ -523,7 +524,7 @@ const { slug, headline, subtitle } = Astro.props;
 
           <div class="receipt-pdf-footer">
             <div>
-              <div class="address-col-title">Notes</div>
+              <div class="address-col-title">{t('Notes', lang)}</div>
               <div class="pdf-terms" id="rcptPdfNotes"></div>
             </div>
             <div class="pdf-thankyou">Payment received. Thank you.</div>
@@ -539,7 +540,7 @@ const { slug, headline, subtitle } = Astro.props;
     let rcptData = {
       No: "REC-2026-001",
       Date: "",
-      PayMethod: "Credit Card",
+      PayMethod: __t("Credit Card"),
       TaxModel: "GST",
       TaxRate: 0.18,
       VendorName: "Kavya J. Studio",

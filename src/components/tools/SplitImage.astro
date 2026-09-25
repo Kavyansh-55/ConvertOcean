@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 ---
 
 <style>
@@ -55,19 +56,19 @@ const { slug, headline, subtitle } = Astro.props;
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Processing image…</div>
+  <div id="progressLabel" class="progress-label">{t('Processing image…', lang)}</div>
 </div>
 
 <div class="workspace-layout">
   <!-- Upload & Preview Panel -->
   <div class="panel-card">
-    <h2 class="panel-section-title">Select & Preview</h2>
+    <h2 class="panel-section-title">{t('Select & Preview', lang)}</h2>
     
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon"><CategoryIcon icon="🖼️" width="40" height="40" /></div>
-      <div class="upload-text-primary">Drag and drop image here, or click to browse</div>
-      <div class="upload-text-secondary">PNG, JPG, WebP (Max 20MB)</div>
-      <button type="button" class="upload-cta">Choose file</button>
+      <div class="upload-text-primary">{t('Drag and drop image here, or click to browse', lang)}</div>
+      <div class="upload-text-secondary">{t('PNG, JPG, WebP (Max 20MB)', lang)}</div>
+      <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
       <input type="file" id="fileInput" class="file-input" accept="image/*" />
     </div>
 
@@ -81,38 +82,38 @@ const { slug, headline, subtitle } = Astro.props;
 
   <!-- Settings & Split Actions Panel -->
   <div class="panel-card">
-    <h2 class="panel-section-title">Split Configuration</h2>
+    <h2 class="panel-section-title">{t('Split Configuration', lang)}</h2>
     
     <div class="form-group">
-      <label class="form-label" for="splitMode">Split Mode</label>
+      <label class="form-label" for="splitMode">{t('Split Mode', lang)}</label>
       <select class="select-input" id="splitMode">
-        <option value="grid">Grid (Rows &amp; Columns)</option>
-        <option value="horiz">Equal Horizontal Cuts</option>
-        <option value="vert">Equal Vertical Cuts</option>
+        <option value="grid">{t('Grid (Rows & Columns)', lang)}</option>
+        <option value="horiz">{t('Equal Horizontal Cuts', lang)}</option>
+        <option value="vert">{t('Equal Vertical Cuts', lang)}</option>
       </select>
     </div>
 
     <!-- Grid Inputs -->
     <div class="grid-inputs" id="gridInputsGroup">
       <div class="form-group">
-        <label class="form-label" for="numRows">Rows</label>
+        <label class="form-label" for="numRows">{t('Rows', lang)}</label>
         <input type="number" class="form-input" id="numRows" min="1" max="10" value="2" />
       </div>
       <div class="form-group">
-        <label class="form-label" for="numCols">Columns</label>
+        <label class="form-label" for="numCols">{t('Columns', lang)}</label>
         <input type="number" class="form-input" id="numCols" min="1" max="10" value="2" />
       </div>
     </div>
 
     <!-- Direction Cuts Input -->
     <div class="form-group" id="cutsInputsGroup" style="display: none;">
-      <label class="form-label" id="cutsLabel" for="numCuts">Number of Parts</label>
+      <label class="form-label" id="cutsLabel" for="numCuts">{t('Number of Parts', lang)}</label>
       <input type="number" class="form-input" id="numCuts" min="2" max="20" value="3" />
     </div>
 
     <div class="button-group" style="margin-top: auto; display: flex; gap: var(--spacing-sm);">
-      <button class="button button-primary" id="btnSplit" disabled style="flex: 1;">Split &amp; Download ZIP</button>
-      <button class="button button-danger" id="btnClear" disabled>Clear</button>
+      <button class="button button-primary" id="btnSplit" disabled style="flex: 1;">{t('Split & Download ZIP', lang)}</button>
+      <button class="button button-danger" id="btnClear" disabled>{t('Clear', lang)}</button>
     </div>
   </div>
 </div>

@@ -1,6 +1,7 @@
 ---
+import { t } from '../../i18n/ui';
 import CategoryIcon from '../CategoryIcon.astro';
-const { slug, headline, subtitle } = Astro.props;
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 let targetFormat = "PDF";
 ---
 
@@ -55,14 +56,14 @@ let targetFormat = "PDF";
     <div class="progress-bar-container">
       <div id="progressBarFill" class="progress-bar-fill"></div>
     </div>
-    <div id="progressLabel" class="progress-label">Processing…</div>
+    <div id="progressLabel" class="progress-label">{t('Processing…', lang)}</div>
   </div>
 
   <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInputPptx').click()">
     <div class="upload-icon"><CategoryIcon icon="📊" width="40" height="40" /></div>
-    <div class="upload-text-primary">Drag and drop file here, or click to browse</div>
-    <div class="upload-text-secondary">.pptx PowerPoint file (Max 25MB)</div>
-    <button type="button" class="upload-cta">Choose file</button>
+    <div class="upload-text-primary">{t('Drag and drop file here, or click to browse', lang)}</div>
+    <div class="upload-text-secondary">{t('.pptx PowerPoint file (Max 25MB)', lang)}</div>
+    <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
     <input type="file" id="fileInputPptx" class="file-input" accept=".pptx,.ppt" />
   </div>
 
@@ -70,7 +71,7 @@ let targetFormat = "PDF";
     <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
     <div class="button-group" style="display:flex; gap:var(--spacing-xs);">
       <button class="button button-primary" id="btnDownload">Download {targetFormat}</button>
-      <button class="button button-danger"  id="btnClear">Clear</button>
+      <button class="button button-danger"  id="btnClear">{t('Clear', lang)}</button>
     </div>
   </div>
 

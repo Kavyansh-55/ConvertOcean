@@ -1,5 +1,6 @@
 ---
-const { slug, headline, subtitle } = Astro.props;
+import { t } from '../../i18n/ui';
+const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 const isWord = slug === 'compress-word';
 const isExcel = slug === 'compress-excel';
 const accept = isExcel ? '.xlsx' : isWord ? '.docx' : '.pptx';
@@ -162,7 +163,7 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
 </div>
 
 <div id="errorBanner" class="error-banner">
-  <strong>Could not compress this file.</strong>
+  <strong>{t('Could not compress this file.', lang)}</strong>
   <span id="errorMessage"></span>
 </div>
 
@@ -170,12 +171,12 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
   <div class="progress-bar">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Reading the document…</div>
+  <div id="progressLabel" class="progress-label">{t('Reading the document…', lang)}</div>
 </div>
 
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon">🗜️</div>
-  <p class="upload-text">Drop your {kindLabel} here, or click to choose one</p>
+  <p class="upload-text">{t('Drop your', lang)} {kindLabel} {t('here, or click to choose one', lang)}</p>
   <p class="upload-hint">{accept} · up to 25MB · never leaves your device</p>
   <input type="file" id="fileInput" class="file-input" accept={accept} />
 </div>
@@ -192,8 +193,8 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
     </div>
     <p class="cof-sr" role="status" aria-live="polite" id="cofLive"></p>
     <div class="cof-hero-actions">
-      <button class="button button-primary" id="cofDownload" disabled>Download</button>
-      <button class="button button-danger" id="cofClear">Start over</button>
+      <button class="button button-primary" id="cofDownload" disabled>{t('Download', lang)}</button>
+      <button class="button button-danger" id="cofClear">{t('Start over', lang)}</button>
     </div>
   </div>
 
@@ -208,7 +209,7 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
         <label class="cof-trim-row">
           <input type="checkbox" id="cofTrim" checked />
           <span>
-            <strong>Trim the empty formatted cells</strong>
+            <strong>{t('Trim the empty formatted cells', lang)}</strong>
             <span class="cof-trim-note">
               This is where almost all of a spreadsheet's size goes: rows and columns
               past your data that carry a border or a fill and nothing else, usually
@@ -221,14 +222,14 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
         </label>
       </div>
     )}
-    <div class="cof-settings-label" id="cofPresetLabel">How hard to compress</div>
+    <div class="cof-settings-label" id="cofPresetLabel">{t('How hard to compress', lang)}</div>
     <div class="cof-preset-row" role="group" aria-labelledby="cofPresetLabel" id="cofPresetRow"></div>
 
     {/* People overwhelmingly arrive with a number in mind — "under 10 MB for
         email", "under 2 MB for the portal" — rather than a quality
         preference. A preset cannot answer that question. */}
     <div class="cof-target">
-      <label class="cof-target-label" for="cofTargetMB">Or fit a size</label>
+      <label class="cof-target-label" for="cofTargetMB">{t('Or fit a size', lang)}</label>
       <div class="cof-target-row">
         <input type="number" id="cofTargetMB" class="form-input cof-target-input"
                min="0.1" step="0.1" value="10" aria-describedby="cofTargetNote" />
@@ -236,16 +237,16 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
           <option value="MB" selected>MB</option>
           <option value="KB">KB</option>
         </select>
-        <button class="button button-primary" id="cofFit">Fit to this size</button>
+        <button class="button button-primary" id="cofFit">{t('Fit to this size', lang)}</button>
       </div>
       <div class="cof-target-note" id="cofTargetNote">
-        Finds the gentlest setting that still comes in under your limit, and tells you plainly if the size is not reachable.
+        {t('Finds the gentlest setting that still comes in under your limit, and tells you plainly if the size is not reachable.', lang)}
       </div>
     </div>
   </div>
 
   <details class="cof-changed" id="cofChanged">
-    <summary>What changed in your file</summary>
+    <summary>{t('What changed in your file', lang)}</summary>
     {/* The workbook engine saves most of its bytes outside the image table, so
         the table alone would leave a reader looking at "kept, kept" under a
         headline claiming 75% off. */}
@@ -253,7 +254,7 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
     <div class="cof-table-scroll">
       <table class="cof-img-table">
         <thead>
-          <tr><th>Image</th><th>Stored</th><th>Shown at</th><th>Result</th><th>Why</th></tr>
+          <tr><th>{t('Image', lang)}</th><th>{t('Stored', lang)}</th><th>{t('Shown at', lang)}</th><th>{t('Result', lang)}</th><th>{t('Why', lang)}</th></tr>
         </thead>
         <tbody id="cofImgRows"></tbody>
       </table>
@@ -486,7 +487,7 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
         return;
       }
       hideError();
-      progress(5, 'Reading the document…');
+      progress(5, __t('Reading the document…'));
       job = { name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) };
       workspace.style.display = 'block';
       dropZone.style.display = 'none';
