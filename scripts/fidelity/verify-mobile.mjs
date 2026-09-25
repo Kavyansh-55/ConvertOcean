@@ -115,6 +115,20 @@ const PAGES = [
   /* Pages with no tool component of their own. */
   '/', '/file-converter/',
 
+  /* The Portuguese locale. Its chrome and tool labels are separate strings from
+     the English ones and are typically 15-25% longer — "Escolher arquivo" for
+     "Choose file", "Redimensionar Imagem" for "Image Resizer" — which is real
+     overflow risk in a button or a card that fits in English. These pages carry
+     UI that has never been measured at a narrow width. */
+  '/pt/',                        // the locale homepage
+  '/pt/mapa-do-site/',           // dense two-column link lists
+  '/pt/conversor-de-arquivos/',  // auto-fill card grid
+  '/pt/sobre/',                  // prose
+  '/pt/comprimir-pdf/',          // CompressPdf, the longest translated controls
+  '/pt/redimensionar-imagem/',   // ImageResizer, preset chips and tabs
+  '/pt/modelo-de-recibo/',       // ReceiptGenerator, a long form
+  '/pt/dividir-pdf/',            // SplitPdf, radio rows with inline inputs
+
   /* One per component. The comment is the component, because that is the unit
      this list is really covering. */
   '/excel-to-pdf/',              // ExcelToPdf

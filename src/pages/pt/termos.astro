@@ -1,0 +1,107 @@
+---
+/**
+ * Portuguese terms of use.
+ *
+ * Mirrors the substance of src/pages/terms.astro, with one deliberate
+ * correction: the English page says "By uploading a file, you acknowledge and
+ * authorize ConvertOcean to utilize your local device's resources". That
+ * sentence contradicts the site's single load-bearing claim — nothing is
+ * uploaded — and it is the exact slip CLAUDE.md names as non-negotiable. The
+ * Portuguese says what actually happens: the browser uses your own processor.
+ * The English page should be corrected to match.
+ */
+import Layout from '../../layouts/Layout.astro';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'pt';
+const title = 'Termos e Condições | ConvertOcean';
+const description =
+  'Condições de uso das ferramentas do ConvertOcean: gratuitas, sem cadastro, executadas no seu próprio navegador.';
+---
+
+<Layout title={title} description={description} lang={lang} band="bone">
+  <main id="main-content" tabindex="-1" class="band band--bone">
+    <article class="prose">
+      <h1>Termos e condições</h1>
+      <p class="lead">
+        Ao usar as ferramentas deste site, você concorda com as condições abaixo.
+      </p>
+
+      <h2>1. Serviço gratuito</h2>
+      <p>
+        O ConvertOcean oferece conversão, compressão, divisão e geração de arquivos
+        de forma totalmente gratuita. Não há assinatura, limite de uso, marca
+        d’água no resultado nem necessidade de cadastro.
+      </p>
+
+      <h2>2. Uso dos recursos do seu dispositivo</h2>
+      <p>
+        As ferramentas executam o processamento diretamente no seu navegador. Ao
+        selecionar um arquivo, você autoriza o site a usar a memória e o processador
+        do <strong>seu próprio dispositivo</strong> para realizar a conversão. Nada é
+        copiado para servidores — e é por isso que arquivos muito grandes dependem da
+        capacidade do seu aparelho, e não de um limite imposto por nós.
+      </p>
+
+      <h2>3. Propriedade dos seus dados</h2>
+      <p>
+        Como todo o processamento é local, não recebemos, não armazenamos e não
+        inspecionamos os seus arquivos. A propriedade e a responsabilidade sobre o
+        conteúdo permanecem inteiramente suas.
+      </p>
+
+      <h2>4. Isenção de garantias</h2>
+      <p>
+        As ferramentas são fornecidas <strong>"no estado em que se encontram"</strong>,{' '}
+        sem garantia de qualquer natureza. Como a conversão acontece inteiramente no
+        navegador, não garantimos que:
+      </p>
+      <ul>
+        <li>toda extensão ou estrutura de layout será convertida com fidelidade perfeita;</li>
+        <li>a aba do navegador suportará conjuntos de dados extremamente grandes;</li>
+        <li>o site funcionará sem interrupção em qualquer configuração ou navegador antigo.</li>
+      </ul>
+      <p>
+        Cada página de ferramenta descreve abertamente onde está o limite de fidelidade
+        da sua conversão, em vez de escondê-lo.
+      </p>
+
+      <h2>5. Limitação de responsabilidade</h2>
+      <p>
+        Em nenhuma hipótese o ConvertOcean, seus desenvolvedores ou colaboradores serão
+        responsáveis por danos — incluindo perda de dados ou lucros cessantes —
+        decorrentes do uso ou da impossibilidade de uso das ferramentas. Confira sempre
+        o arquivo gerado antes de usá-lo para uma finalidade importante, especialmente
+        quando houver prazo ou exigência formal envolvida.
+      </p>
+
+      <h2>6. Alterações</h2>
+      <p>
+        Estes termos podem ser revisados a qualquer momento. O uso continuado do site
+        implica concordância com a versão vigente.
+      </p>
+    </article>
+  </main>
+
+  <style>
+    .prose { max-width: 70ch; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-lg); }
+    .prose h1 {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-md);
+    }
+    .prose h2 {
+      font-size: var(--fs-subheading);
+      font-weight: var(--fw-extrabold);
+      color: var(--colors-ink);
+      margin: var(--spacing-xl) 0 var(--spacing-sm);
+    }
+    .prose .lead { font-size: var(--fs-lead); color: var(--colors-body); }
+    .prose p, .prose li { color: var(--colors-body); font-size: var(--fs-body); line-height: 1.65; }
+    .prose ul { padding-left: var(--spacing-lg); display: grid; gap: var(--spacing-xs); }
+    .prose a { color: var(--colors-link-deep); }
+    .prose strong { color: var(--colors-ink); }
+  </style>
+</Layout>

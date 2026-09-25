@@ -3547,5 +3547,50 @@ export const ptTools: PtTool[] = [
  */
 export const ptGuides: PtGuide[] = [];
 
-/** About, privacy and terms. Added once the tool pages are in place. */
-export const ptStaticPages: PtStaticPage[] = [];
+/**
+ * The non-tool pages, so the nav and footer resolve to Portuguese instead of
+ * falling back to English. Each `slug` must match a file in src/pages/pt/.
+ *
+ * `/guides/` is absent on purpose: ptGuides is still empty, and a guides index
+ * listing nothing is worse than the English one it currently falls back to.
+ * The `/vs/` comparison pages are absent for the same reason — they are long
+ * competitor write-ups that have not been localised.
+ */
+export const ptStaticPages: PtStaticPage[] = [
+  {
+    en: 'file-converter',
+    slug: 'conversor-de-arquivos',
+    title: 'Conversor de Arquivos Online Grátis — 100% Privado | ConvertOcean',
+    description: 'Converta PDF, Word, Excel, PowerPoint, imagens e dados direto no navegador.'
+  },
+  {
+    en: 'sitemap',
+    slug: 'mapa-do-site',
+    title: 'Mapa do Site — Todas as Ferramentas | ConvertOcean',
+    description: 'Todas as ferramentas em português, organizadas por categoria.'
+  },
+  {
+    en: 'about',
+    slug: 'sobre',
+    title: 'Sobre o ConvertOcean | Conversor de Arquivos Privado',
+    description: 'Por que tudo é processado no navegador, e o que isso custa.'
+  },
+  {
+    en: 'privacy',
+    slug: 'privacidade',
+    title: 'Política de Privacidade | ConvertOcean',
+    description: 'Os seus arquivos não saem do seu dispositivo.'
+  },
+  {
+    en: 'terms',
+    slug: 'termos',
+    title: 'Termos e Condições | ConvertOcean',
+    description: 'Condições de uso das ferramentas do ConvertOcean.'
+  },
+  {
+    en: 'contact',
+    slug: 'contato',
+    title: 'Fale Conosco | ConvertOcean',
+    description: 'Como entrar em contato: dúvidas, erros de tradução ou solicitações sobre dados.'
+  }
+];

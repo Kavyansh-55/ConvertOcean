@@ -1,0 +1,138 @@
+---
+/**
+ * The "conversor de arquivos" landing page — the Portuguese counterpart of
+ * /file-converter/, which every Portuguese page links to from the nav.
+ *
+ * Built from the locale data rather than a hand-written list, so it lists
+ * exactly the conversions that exist and can never point at a page that was
+ * never built.
+ */
+import Layout from '../../layouts/Layout.astro';
+import { getTools } from '../../i18n/content';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'pt';
+const title = 'Conversor de Arquivos Online Grátis — 100% Privado | ConvertOcean';
+const description =
+  'Converta PDF, Word, Excel, PowerPoint, imagens e dados direto no navegador. Os arquivos não saem do seu computador.';
+
+const tools = getTools(lang);
+
+/* Grouped by what the reader is converting FROM, which is how the search
+   queries are phrased — "pdf para word", "imagem para pdf" — rather than by
+   the internal category the tool belongs to. */
+const groups = [
+  { title: 'A partir de PDF', match: (s: string) => s.startsWith('pdf-para') },
+  { title: 'Para PDF', match: (s: string) => s.endsWith('-para-pdf') },
+  { title: 'Imagens', match: (s: string) => /^(jpg|jpeg|png|webp|heic|avif|svg|imagem)-para|^redimensionar|^dividir-imagem|^juntar-fotos/.test(s) },
+  { title: 'Planilhas e dados', match: (s: string) => /^(xls|xlsx|csv|json|xml|ofx|qfx|qbo)-para/.test(s) },
+  { title: 'Documentos', match: (s: string) => /^(word|docx|ppt|powerpoint)-para|documentos-word|arquivo-word|arquivos-txt|arquivo-txt|powerpoint$/.test(s) },
+];
+
+const seen = new Set<string>();
+const sections = groups.map(g => {
+  const items = tools
+    .filter(t => !seen.has(t.slug) && g.match(t.slug))
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+  items.forEach(t => seen.add(t.slug));
+  return { title: g.title, items };
+}).filter(s => s.items.length > 0);
+
+/* Anything the groups above did not claim still gets a home — a tool silently
+   missing from this page is the same quiet omission the locale keeps hitting. */
+const rest = tools
+  .filter(t => !seen.has(t.slug))
+  .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+---
+
+<Layout title={title} description={description} lang={lang} category="Conversor de Arquivos" categorySlug="file-converter" band="lime">
+  <main id="main-content" tabindex="-1">
+    <section class="band band--lime">
+      <div class="fc-wrap">
+        <h1 class="fc-title">Conversor de arquivos.</h1>
+        <p class="fc-lead">
+          {tools.length} conversores que funcionam dentro do navegador. Escolha o
+          formato de origem — e o arquivo não sai do seu computador em nenhum momento.
+        </p>
+      </div>
+    </section>
+
+    <section class="band band--bone">
+      <div class="fc-wrap">
+        {sections.map(sec => (
+          <section class="fc-group">
+            <h2 class="fc-group-title">{sec.title}</h2>
+            <div class="fc-grid">
+              {sec.items.map(t => (
+                <a href={`/pt/${t.slug}/`} class="fc-item">
+                  <span class="fc-item-icon" aria-hidden="true">{t.icon}</span>
+                  <span>{t.name}</span>
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
+
+        {rest.length > 0 && (
+          <section class="fc-group">
+            <h2 class="fc-group-title">Outras ferramentas</h2>
+            <div class="fc-grid">
+              {rest.map(t => (
+                <a href={`/pt/${t.slug}/`} class="fc-item">
+                  <span class="fc-item-icon" aria-hidden="true">{t.icon}</span>
+                  <span>{t.name}</span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .fc-wrap { max-width: 1100px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-lg); }
+    .fc-title {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-sm);
+    }
+    .fc-lead { font-size: var(--fs-lead); color: var(--colors-body); max-width: 60ch; margin: 0; }
+    .fc-group { margin-bottom: var(--spacing-2xl); }
+    .fc-group-title {
+      font-size: var(--fs-heading);
+      font-weight: var(--fw-extrabold);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-md);
+    }
+    .fc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: var(--spacing-sm);
+    }
+    .fc-item {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      /* 44px touch target (WCAG 2.5.8). */
+      min-height: 44px;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      background: var(--colors-canvas);
+      color: var(--colors-ink);
+      text-decoration: none;
+      font-size: var(--fs-small);
+      font-weight: var(--fw-bold);
+      transition: border-color 0.2s;
+    }
+    .fc-item:hover { border-color: var(--colors-link); }
+    .fc-item:focus-visible { outline: 2px solid var(--colors-link-deep); outline-offset: 2px; }
+    .fc-item-icon { font-size: 18px; line-height: 1; }
+    @media (prefers-reduced-motion: reduce) { .fc-item { transition: none; } }
+  </style>
+</Layout>

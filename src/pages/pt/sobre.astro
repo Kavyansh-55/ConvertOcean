@@ -1,0 +1,103 @@
+---
+/**
+ * Portuguese "about" page. Written for a reader who has just landed from a
+ * Brazilian search result and is deciding whether to trust the site with a
+ * document — so it leads with the verifiable claim rather than with a story.
+ */
+import Layout from '../../layouts/Layout.astro';
+import { getTools } from '../../i18n/content';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'pt';
+const title = 'Sobre o ConvertOcean | Conversor de Arquivos Privado';
+const description =
+  'Por que o ConvertOcean processa tudo no navegador, o que isso permite e o que custa. Código aberto e verificável.';
+const toolCount = getTools(lang).length;
+---
+
+<Layout title={title} description={description} lang={lang} band="bone">
+  <main id="main-content" tabindex="-1" class="band band--bone">
+    <article class="prose">
+      <h1>Sobre o ConvertOcean</h1>
+      <p class="lead">
+        {toolCount} ferramentas de arquivo que funcionam inteiramente dentro do seu
+        navegador. Nenhum arquivo é copiado para servidores — e o código é aberto,
+        para que isso possa ser verificado em vez de acreditado.
+      </p>
+
+      <h2>A decisão que define o site</h2>
+      <p>
+        Praticamente todo conversor online funciona da mesma forma: você seleciona um
+        arquivo, ele é copiado para um servidor, convertido lá e devolvido. É simples
+        de construir e permite conversões muito sofisticadas — mas significa que o seu
+        contrato, o seu holerite ou o seu documento de identidade passaram pela
+        infraestrutura de outra pessoa.
+      </p>
+      <p>
+        Aqui essa etapa não existe. A conversão acontece na memória do próprio
+        navegador, usando JavaScript e mecanismos compilados em WebAssembly. O arquivo
+        não sai do seu dispositivo em nenhum momento.
+      </p>
+
+      <h2>O que isso custa</h2>
+      <p>
+        Vale dizer com clareza, porque é o outro lado da mesma escolha. Rodar no
+        navegador impõe um teto de fidelidade em algumas conversões: um PDF com layout
+        muito complexo não vira um Word perfeito, e formatos binários antigos como
+        .doc e .ppt simplesmente não podem ser lidos sem um servidor. O tamanho máximo
+        de arquivo depende da memória do seu aparelho, não de um plano pago.
+      </p>
+      <p>
+        Cada página descreve o limite da sua própria ferramenta em vez de escondê-lo.
+        Preferimos que você saiba onde a conversão falha antes de depender dela.
+      </p>
+
+      <h2>Código aberto</h2>
+      <p>
+        A afirmação "nada é enviado" só vale alguma coisa se puder ser checada. O
+        repositório é público em{' '}
+        <a href="https://github.com/Kavyansh-55/ConvertOcean" rel="noopener">github.com/Kavyansh-55/ConvertOcean</a>,{' '}
+        e há um teste prático que qualquer pessoa pode fazer: desconecte o aparelho da
+        internet, carregue uma ferramenta e use-a. Ela continua funcionando, porque não
+        há nada do outro lado esperando o seu arquivo.
+      </p>
+
+      <h2>Gratuito, e por quê</h2>
+      <p>
+        Não há cadastro, assinatura, marca d’água nem limite diário. Como o
+        processamento roda no seu dispositivo, não existe custo de servidor por
+        conversão para recuperar — o site se sustenta com publicidade nas páginas, não
+        com o seu arquivo.
+      </p>
+
+      <h2>Em português</h2>
+      <p>
+        As páginas em português não são uma tradução automática das versões em inglês:
+        foram escritas a partir do que as pessoas realmente procuram no Brasil, do
+        documento de concurso que precisa caber em 2 MB à foto do iPhone em HEIC que o
+        Windows não abre. Se algo estiver errado ou soar estranho, a{' '}
+        <a href="/pt/contato/">página de contato</a> é o caminho.
+      </p>
+    </article>
+  </main>
+
+  <style>
+    .prose { max-width: 70ch; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-lg); }
+    .prose h1 {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-md);
+    }
+    .prose h2 {
+      font-size: var(--fs-subheading);
+      font-weight: var(--fw-extrabold);
+      color: var(--colors-ink);
+      margin: var(--spacing-xl) 0 var(--spacing-sm);
+    }
+    .prose .lead { font-size: var(--fs-lead); color: var(--colors-body); }
+    .prose p { color: var(--colors-body); font-size: var(--fs-body); line-height: 1.65; }
+    .prose a { color: var(--colors-link-deep); }
+  </style>
+</Layout>

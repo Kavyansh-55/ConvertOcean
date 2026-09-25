@@ -1,0 +1,113 @@
+---
+/**
+ * Portuguese privacy policy.
+ *
+ * A translation of the substance of src/pages/privacy.astro, not of its
+ * wording — the claims have to be identical because they describe the same
+ * software, but the phrasing is written for a Brazilian reader and names the
+ * LGPD, which is the law they will be thinking of.
+ */
+import Layout from '../../layouts/Layout.astro';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'pt';
+const title = 'Política de Privacidade | ConvertOcean';
+const description =
+  'Os seus arquivos não saem do seu dispositivo. Como o ConvertOcean funciona, o que é coletado e o que nunca é.';
+---
+
+<Layout title={title} description={description} lang={lang} band="bone">
+  <main id="main-content" tabindex="-1" class="band band--bone">
+    <article class="prose">
+      <h1>Política de privacidade</h1>
+      <p class="lead">
+        A privacidade aqui não é uma promessa de política — é uma consequência de
+        como o site foi construído. A conversão acontece dentro do seu navegador,
+        então não existe envio que pudéssemos interceptar.
+      </p>
+
+      <h2>1. Processamento 100% no seu dispositivo</h2>
+      <p>
+        O ConvertOcean converte, comprime, divide e monta arquivos inteiramente no
+        seu navegador, usando JavaScript e mecanismos compilados em WebAssembly.
+        Os seus arquivos <strong>não são copiados para nenhum servidor, nem
+        processados ou armazenados fora do seu aparelho</strong>. Todo o trabalho é
+        feito pelo processador do seu próprio dispositivo.
+      </p>
+
+      <h2>2. O que nunca chega até nós</h2>
+      <p>
+        Os dados dos seus arquivos nunca nos alcançam porque nunca saem do seu
+        dispositivo. Não coletamos, não recebemos e não armazenamos:
+      </p>
+      <ul>
+        <li>o conteúdo de qualquer arquivo aberto em uma ferramenta;</li>
+        <li>os nomes dos seus arquivos, nem o texto digitado no contador de palavras,
+          no formatador de JSON ou em qualquer gerador;</li>
+        <li>a sua identidade — não há cadastro, e-mail, verificação nem forma de pagamento.</li>
+      </ul>
+      <p>
+        Isso é garantido pela arquitetura, não apenas pelo texto desta página. O
+        código do site é aberto e pode ser conferido em{' '}
+        <a href="https://github.com/Kavyansh-55/ConvertOcean" rel="noopener">github.com/Kavyansh-55/ConvertOcean</a>.
+      </p>
+
+      <h2>3. O que é coletado: métricas anônimas de uso</h2>
+      <p>
+        Usamos o Google Analytics para entender quais ferramentas são úteis. Ele
+        registra dados comuns de navegação — páginas visitadas, região aproximada,
+        tipo de dispositivo — e eventos que indicam <em>que</em> algo aconteceu, nunca{' '}
+        <em>o que</em> era: que um arquivo foi selecionado, e que um resultado foi
+        gerado e entregue. Nem o conteúdo nem o nome do arquivo acompanham esses
+        eventos, porque essa informação não existe do nosso lado.
+      </p>
+
+      <h2>4. Publicidade</h2>
+      <p>
+        O site pode exibir anúncios fornecidos por terceiros, que utilizam cookies
+        para medir desempenho e limitar repetições. Esses cookies não têm acesso aos
+        seus arquivos — eles vivem na camada da página, e os arquivos nunca saem da
+        memória do navegador.
+      </p>
+
+      <h2>5. Seus direitos (LGPD)</h2>
+      <p>
+        A Lei Geral de Proteção de Dados garante a você o direito de saber quais
+        dados pessoais são tratados, de corrigi-los, de solicitar sua exclusão e de
+        revogar consentimento. Na prática, aqui esse conjunto é mínimo por
+        construção: não mantemos cadastro, não guardamos arquivos e não formamos
+        perfil de pessoa identificada. Para qualquer solicitação, use a{' '}
+        <a href="/pt/contato/">página de contato</a>.
+      </p>
+
+      <h2>6. Alterações</h2>
+      <p>
+        Esta política pode ser atualizada. Mudanças relevantes na forma como os dados
+        são tratados serão refletidas aqui, e a arquitetura descrita acima — o
+        processamento local — é a parte que não muda.
+      </p>
+    </article>
+  </main>
+
+  <style>
+    .prose { max-width: 70ch; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-lg); }
+    .prose h1 {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-md);
+    }
+    .prose h2 {
+      font-size: var(--fs-subheading);
+      font-weight: var(--fw-extrabold);
+      color: var(--colors-ink);
+      margin: var(--spacing-xl) 0 var(--spacing-sm);
+    }
+    .prose .lead { font-size: var(--fs-lead); color: var(--colors-body); }
+    .prose p, .prose li { color: var(--colors-body); font-size: var(--fs-body); line-height: 1.65; }
+    .prose ul { padding-left: var(--spacing-lg); display: grid; gap: var(--spacing-xs); }
+    .prose a { color: var(--colors-link-deep); }
+    .prose strong { color: var(--colors-ink); }
+  </style>
+</Layout>

@@ -230,6 +230,10 @@ const faqList = [
       margin-top: var(--spacing-lg);
     }
     .home-tool {
+      /* Prevents the 300ms double-tap zoom delay on touch, as the nav
+         controls in theme.css already do. */
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
       display: flex;
       align-items: center;
       gap: var(--spacing-sm);

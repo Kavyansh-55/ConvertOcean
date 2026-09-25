@@ -1,0 +1,89 @@
+---
+/**
+ * Portuguese contact page.
+ *
+ * Deliberately a mailto rather than a form. The English page carries a form,
+ * but a form needs somewhere to post to — and a site whose whole claim is that
+ * nothing reaches a server should not open a second channel that quietly does.
+ * An email address is honest about where the message goes.
+ */
+import Layout from '../../layouts/Layout.astro';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'pt';
+const SUPPORT_EMAIL = 'kavyanshtech7@gmail.com';
+const title = 'Fale Conosco | ConvertOcean';
+const description =
+  'Como entrar em contato com o ConvertOcean: dúvidas, erros de tradução, problemas em uma ferramenta ou solicitações sobre dados.';
+---
+
+<Layout title={title} description={description} lang={lang} band="bone">
+  <main id="main-content" tabindex="-1" class="band band--bone">
+    <article class="prose">
+      <h1>Fale conosco</h1>
+      <p class="lead">
+        Escreva para <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>. Lemos
+        tudo, em português ou em inglês.
+      </p>
+
+      <h2>O que ajuda a resolver mais rápido</h2>
+      <ul>
+        <li>
+          <strong>Um problema em uma ferramenta:</strong> diga qual página, o que você
+          esperava e o que aconteceu. O tipo e o tamanho aproximado do arquivo ajudam
+          muito — mas <em>não envie o arquivo</em>: ele quase sempre contém dados
+          pessoais, e nós não precisamos dele para investigar.
+        </li>
+        <li>
+          <strong>Um erro de português:</strong> a tradução do site foi escrita por
+          pessoa, não gerada automaticamente, mas erros passam. Indicar a página e o
+          trecho já basta.
+        </li>
+        <li>
+          <strong>Uma ferramenta que falta:</strong> diga o que você estava tentando
+          fazer, não só o formato. Saber a tarefa costuma mudar o que vale a pena
+          construir.
+        </li>
+      </ul>
+
+      <h2>Solicitações sobre dados</h2>
+      <p>
+        Para pedidos relacionados à LGPD — acesso, correção ou exclusão —, use o mesmo
+        endereço. Vale saber de antemão que o conjunto é mínimo por construção: não há
+        cadastro, os arquivos nunca chegam até nós e não formamos perfil de pessoa
+        identificada. Os detalhes estão na{' '}
+        <a href="/pt/privacidade/">política de privacidade</a>.
+      </p>
+
+      <h2>Problemas no código</h2>
+      <p>
+        O site é de código aberto. Erros técnicos e sugestões também podem ser
+        registrados diretamente em{' '}
+        <a href="https://github.com/Kavyansh-55/ConvertOcean" rel="noopener">github.com/Kavyansh-55/ConvertOcean</a>,{' '}
+        onde ficam visíveis para qualquer pessoa acompanhar.
+      </p>
+    </article>
+  </main>
+
+  <style>
+    .prose { max-width: 70ch; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-lg); }
+    .prose h1 {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-md);
+    }
+    .prose h2 {
+      font-size: var(--fs-subheading);
+      font-weight: var(--fw-extrabold);
+      color: var(--colors-ink);
+      margin: var(--spacing-xl) 0 var(--spacing-sm);
+    }
+    .prose .lead { font-size: var(--fs-lead); color: var(--colors-body); }
+    .prose p, .prose li { color: var(--colors-body); font-size: var(--fs-body); line-height: 1.65; }
+    .prose ul { padding-left: var(--spacing-lg); display: grid; gap: var(--spacing-md); }
+    .prose a { color: var(--colors-link-deep); }
+    .prose strong { color: var(--colors-ink); }
+  </style>
+</Layout>
