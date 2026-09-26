@@ -607,7 +607,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
               <h3 class="tool-related-guide-name">{g.title.split(' | ')[0].split(' - ')[0]}</h3>
               <p class="tool-related-guide-desc">{g.description}</p>
               <span class="tool-related-guide-action">
-                Read Guide
+                {t('Read Guide', lang)}
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>

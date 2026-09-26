@@ -41,6 +41,8 @@ const pt: Record<string, string> = {
   'Invoices, receipts & calculators': 'Faturas, recibos e calculadoras',
   'All Tools Sitemap': 'Mapa de todas as ferramentas',
   'Skip to main content': 'Ir para o conteúdo principal',
+  'ConvertOcean — convert files, upload nothing. 69 free tools that run inside your browser tab.':
+    'ConvertOcean — converta arquivos sem enviar nada. 69 ferramentas gratuitas que funcionam dentro da aba do navegador.',
   'Toggle dark mode': 'Alternar modo escuro',
   'Open navigation menu': 'Abrir menu de navegação',
 
@@ -71,6 +73,12 @@ const pt: Record<string, string> = {
   'Related Guides & Resources.': 'Guias e materiais relacionados.',
   'Guide': 'Guia',
   'Frequently Asked Questions': 'Perguntas frequentes',
+  'Frequently Asked Questions.': 'Perguntas frequentes.',
+  'Resources': 'Materiais',
+  'Related resources & guides.': 'Materiais e guias relacionados.',
+  'Read Guide': 'Ler o guia',
+  'Guides & Resources.': 'Guias e materiais.',
+  'Published:': 'Publicado em:',
 
   // ---- Category page ---------------------------------------------------
   'No tools are currently active in this category.':

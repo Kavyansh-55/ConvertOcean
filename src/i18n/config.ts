@@ -34,13 +34,23 @@ export interface LocaleConfig {
   label: string;
   /** Two-letter form for the nav pill, where the full name will not fit. */
   short: string;
+  /**
+   * Open Graph locale, in OG's underscore form — `pt_BR`, not `pt`.
+   *
+   * Separate from `hreflang` on purpose, and the two legitimately disagree.
+   * hreflang is `pt` so Google serves these pages to every Portuguese market.
+   * Open Graph has no such fallback concept: WhatsApp, Facebook and LinkedIn
+   * want a concrete language_TERRITORY pair, and the copy is Brazilian. In
+   * Brazil this is not a detail — WhatsApp is how links actually travel.
+   */
+  ogLocale: string;
 }
 
 export const DEFAULT_LOCALE: Locale = 'en';
 
 export const LOCALES: Record<Locale, LocaleConfig> = {
-  en: { prefix: '', hreflang: 'en', label: 'English', short: 'EN' },
-  pt: { prefix: 'pt', hreflang: 'pt', label: 'Português', short: 'PT' }
+  en: { prefix: '', hreflang: 'en', label: 'English', short: 'EN', ogLocale: 'en_US' },
+  pt: { prefix: 'pt', hreflang: 'pt', label: 'Português', short: 'PT', ogLocale: 'pt_BR' }
 };
 
 /** Every locale code, default first. */

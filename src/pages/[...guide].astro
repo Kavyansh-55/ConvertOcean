@@ -1,33 +1,68 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { guides } from '../../data/guides';
-import { tools } from '../../data/tools';
-import CategoryIcon from '../../components/CategoryIcon.astro';
+import { t } from '../i18n/ui';
+import Layout from '../layouts/Layout.astro';
+import { guides } from '../data/guides';
+import { tools } from '../data/tools';
+import CategoryIcon from '../components/CategoryIcon.astro';
+import { ptGuides } from '../data/pt';
+import { getGuide, getGuides, getTools, localeHref } from '../i18n/content';
+import { guidesBase, type Locale } from '../i18n/config';
 
+/**
+ * One route file for every locale's guides, via a rest parameter:
+ * `guides/png-vs-jpg` and `pt/guias/png-ou-jpg` are both valid values.
+ *
+ * The same decision as [...tool].astro, for the same reason. A parallel
+ * src/pages/pt/guias/[slug].astro would mean either duplicating 536 lines or
+ * extracting them into a shared component — and this file carries a 368-line
+ * scoped <style> block. Moving a style block between files silently re-scopes
+ * it, which this project has lost six rounds to. A rest parameter moves no CSS
+ * at all.
+ *
+ * Portuguese guides use translated slugs (`/pt/guias/png-ou-jpg/`), so the
+ * section name and the slug both differ from English — which is why the path
+ * is built from the locale data rather than by prefixing.
+ */
 export function getStaticPaths() {
-  return guides.map(g => ({ params: { slug: g.slug } }));
+  const english = guides.map(g => ({
+    params: { guide: `guides/${g.slug}` },
+    props: { lang: 'en' as Locale, slug: g.slug }
+  }));
+  const portuguese = ptGuides.map(g => ({
+    params: { guide: `pt/guias/${g.slug}` },
+    props: { lang: 'pt' as Locale, slug: g.slug }
+  }));
+  return [...english, ...portuguese];
 }
 
-const { slug } = Astro.params;
-const { lang = 'en' } = Astro.props;
+const { lang = 'en' as Locale, slug } = Astro.props;
 
-const guide = guides.find(g => g.slug === slug);
+const guide = getGuide(slug, lang);
 if (!guide) {
-  return Astro.redirect('/guides/');
+  return Astro.redirect(localeHref('/guides/', lang));
 }
 
-// Find recommended tools mapping
-const recommendedTools = tools.filter(t => guide.relatedTools.includes(t.slug));
+/* Locale-scoped: a Portuguese guide must only link to Portuguese pages.
+   mergeGuide has already filtered relatedTools and relatedGuides down to what
+   exists in this locale, so an untranslated neighbour drops out rather than
+   dead-ending. */
+const recommendedTools = getTools(lang).filter(t => guide.relatedTools.includes(t.slug));
+const relatedGuides = getGuides(lang).filter(g => guide.relatedGuides.includes(g.slug));
 
-// Find related guides mapping
-const relatedGuides = guides.filter(g => guide.relatedGuides.includes(g.slug));
+const relLink = (target: string) => localeHref(target, lang);
 
-// Localize links helper
-const relLink = (target: string) => {
-  const cleanTarget = target.startsWith('/') ? target : `/${target}`;
-  if (lang === 'en') return cleanTarget;
-  return `/${lang}${cleanTarget}`;
-};
+/**
+ * Prefix for links to pages in THIS locale whose slug is already localised.
+ *
+ * localeHref() takes an ENGLISH path and looks it up in the content graph. The
+ * tools and guides above come from getTools(lang)/getGuides(lang), so their
+ * slugs are already Portuguese — passing those to localeHref finds nothing and
+ * falls through to the input, producing `/png-para-jpg/` for a page that lives
+ * at `/pt/png-para-jpg/`. That is the same prefix-versus-resolve mistake that
+ * put 76 dead links on every Portuguese page; caught here by
+ * scripts/tests/i18n-links.test.mjs before it shipped.
+ */
+const localeRoot = lang === 'en' ? '' : `/${lang}`;
 
 // Format FAQ list for Layout.astro standard schema
 const faqList = guide.faqs.map(f => ({ q: f.question, a: f.answer }));
@@ -426,11 +461,11 @@ const articleData = {
     <!-- Guide Header Section -->
     <article class="guide-header">
       <div class="guide-meta">
-        <span>Published: {guide.publishDate}</span>
+        <span>{t('Published:', lang)} {guide.publishDate}</span>
         <span class="meta-separator">•</span>
         <span>{guide.readTime}</span>
         <span class="meta-separator">•</span>
-        <span>Resources</span>
+        <span>{t('Resources', lang)}</span>
       </div>
       <h1 class="guide-title">{guide.h1}</h1>
       <p class="guide-intro">{guide.intro}</p>
@@ -446,8 +481,8 @@ const articleData = {
           <p class="tool-callout-title">Secure client-side {tool.name} tool.</p>
           <p class="tool-callout-desc">{tool.description}</p>
         </div>
-        <a href={relLink(`/${tool.slug}/`)} class="tool-callout-btn">
-          Open Tool
+        <a href={`${localeRoot}/${tool.slug}/`} class="tool-callout-btn">
+          {t('Open Tool', lang)}
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -461,7 +496,7 @@ const articleData = {
     <!-- FAQ Accordion section -->
     {guide.faqs && guide.faqs.length > 0 && (
       <section class="faq-section">
-        <h2 class="faq-title">Frequently Asked Questions.</h2>
+        <h2 class="faq-title">{t('Frequently Asked Questions.', lang)}</h2>
         <div class="faq-container">
           {guide.faqs.map(faq => (
             <div class="faq-item">
@@ -484,15 +519,15 @@ const articleData = {
     <!-- Related Guides section -->
     {relatedGuides.length > 0 && (
       <section class="related-guides-section">
-        <h2 class="related-guides-title">Related resources & guides.</h2>
+        <h2 class="related-guides-title">{t('Related resources & guides.', lang)}</h2>
         <div class="related-guides-grid">
           {relatedGuides.map(rg => (
-            <a href={relLink(`/guides/${rg.slug}/`)} class="related-guide-card">
-              <span class="related-guide-tag">Guide</span>
+            <a href={`${localeRoot}/${guidesBase(lang)}/${rg.slug}/`} class="related-guide-card">
+              <span class="related-guide-tag">{t('Guide', lang)}</span>
               <h3 class="related-guide-name">{rg.title.split(' - ')[0]}</h3>
               <p class="related-guide-desc">{rg.description.substring(0, 100)}…</p>
               <span class="related-guide-action">
-                Read Guide
+                {t('Read Guide', lang)}
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>

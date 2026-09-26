@@ -51,6 +51,15 @@ export interface PtGuide {
   description: string;
   h1: string;
   readTime: string;
+  /**
+   * Written in Portuguese, e.g. "24 de setembro de 2026".
+   *
+   * Without it the page inherits the English guide's date string — "July 10,
+   * 2026" — rendered under a Portuguese label. The schema.org datePublished is
+   * parsed from the ENGLISH base date, so it stays valid either way; this is
+   * only what the reader sees.
+   */
+  publishDate?: string;
   intro: string;
   contentHtml: string;
   faqs: { question: string; answer: string }[];
@@ -148,6 +157,7 @@ function mergeGuide(base: GuideData, overlay: PtGuide): GuideData {
     description: overlay.description,
     h1: overlay.h1,
     readTime: overlay.readTime,
+    publishDate: overlay.publishDate ?? base.publishDate,
     intro: overlay.intro,
     contentHtml: overlay.contentHtml,
     faqs: overlay.faqs,
@@ -202,6 +212,9 @@ function link(enPath: string, lang: Locale, translatedPath: string) {
    derive from — and without it every "Início", logo and footer-brand link on
    all 75 Portuguese pages resolved to the English homepage. */
 link('/', 'pt', '/pt/');
+/* The guides index. Its section name is translated too — /guides/ becomes
+   /pt/guias/ — so it cannot be derived by prefixing. */
+link('/guides/', 'pt', '/pt/guias/');
 
 for (const t of ptTools) link(`/${t.en}/`, 'pt', `/pt/${t.slug}/`);
 for (const g of ptGuides) link(`/guides/${g.en}/`, 'pt', `/pt/guias/${g.slug}/`);

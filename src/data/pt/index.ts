@@ -3545,7 +3545,220 @@ export const ptTools: PtTool[] = [
  * pages should be written from researched queries rather than translated from
  * the English guides, which target a different audience entirely.
  */
-export const ptGuides: PtGuide[] = [];
+/**
+ * Guides live at `/pt/guias/<slug>/`.
+ *
+ * Three to start, chosen because the keyword research pointed at them
+ * explicitly rather than because they were next in the English list:
+ *
+ *   - png-vs-jpg   batch 4 found four comparison questions (`qual a diferença
+ *                  de png para jpg`, `qual é melhor para imprimir jpg ou png`,
+ *                  `para postar no instagram é melhor png ou jpg`) that belong
+ *                  in a guide, not on a converter page.
+ *   - redimensionar-foto-assinatura  `redimensionar imagem` is EASY at >10,000,
+ *                  and the concurso upload limits are the strategic reason this
+ *                  locale exists.
+ *   - juntar-varios-pdf  `como juntar varios pdf em um só` is EASY at >1000 —
+ *                  the best question keyword in any batch.
+ *
+ * Written from the Portuguese queries, not translated from the English guides,
+ * which target a different audience.
+ */
+export const ptGuides: PtGuide[] = [
+  {
+    en: 'png-vs-jpg',
+    slug: 'png-ou-jpg',
+    title: 'PNG ou JPG: Qual a Diferença e Quando Usar Cada Um | ConvertOcean',
+    description: 'A diferença real entre PNG e JPG, qual escolher para imprimir, para o Instagram e para logotipos — com o teste que decide em dois segundos.',
+    h1: 'PNG ou JPG: qual a diferença, e qual usar.',
+    readTime: '6 min de leitura',
+    publishDate: '24 de setembro de 2026',
+    intro: 'PNG e JPG resolvem problemas diferentes, e escolher errado custa qualidade ou megabytes. Este guia explica a diferença em termos práticos e responde às três perguntas que realmente aparecem: qual imprime melhor, qual usar no Instagram e o que fazer com fundo transparente.',
+    contentHtml: `
+      <h2>A diferença em uma frase</h2>
+      <p>O <strong>JPG</strong> usa compressão com perdas: ele descarta informação para ficar pequeno, e perde um pouco mais a cada vez que o arquivo é salvo de novo. O <strong>PNG</strong> é sem perdas — guarda cada pixel exatamente — e suporta transparência, que o JPG não tem.</p>
+      <p>Na prática: JPG para fotografias, PNG para tudo que tenha texto, linhas finas, cor chapada ou fundo transparente.</p>
+
+      <h2>O teste dos dois segundos</h2>
+      <p>Olhe a imagem e pergunte: <em>isto é uma fotografia?</em></p>
+      <ul>
+        <li><strong>Sim</strong> — uma paisagem, um retrato, um produto fotografado. Use JPG. A compressão dele foi desenhada exatamente para variação suave de cor, e a diferença visual é imperceptível em um arquivo várias vezes menor.</li>
+        <li><strong>Não</strong> — uma captura de tela, um logotipo, um gráfico, um cartaz com texto. Use PNG. O JPG cria pequenos borrões ao redor de bordas nítidas, e em texto isso aparece.</li>
+      </ul>
+
+      <h2>Qual é melhor para imprimir</h2>
+      <p>Para fotografias destinadas à impressão, o JPG em alta qualidade basta e é o que a maioria das gráficas aceita sem objeção. Para material com texto, linhas finas ou cores chapadas — um convite, um certificado, um cartaz — o PNG imprime mais limpo, porque não introduz os artefatos que a compressão do JPG cria nas bordas.</p>
+      <p>Mas o formato importa menos do que a <strong>resolução</strong>. Para impressão, trabalhe em 300 dpi: uma foto de 10×15 cm precisa de aproximadamente 1.181×1.772 pixels. Um PNG de baixa resolução imprime pior que um JPG de alta. Se a dúvida é tamanho e não formato, o guia certo é o de <a href="/pt/guias/redimensionar-foto-assinatura/">redimensionar fotos e assinaturas</a>.</p>
+
+      <h2>Instagram: PNG ou JPG?</h2>
+      <p>Para fotografias, JPG. O Instagram recomprime tudo o que recebe, então enviar um PNG grande não melhora o resultado final — apenas gasta mais dados no envio e chega ao mesmo lugar.</p>
+      <p>A exceção é conteúdo com texto nítido ou gráficos de cor chapada: um card, um infográfico, um slide de carrossel. Nesses casos o PNG chega mais limpo e sobrevive melhor à recompressão da plataforma. Se o carrossel vem de uma imagem larga cortada em partes, <a href="/pt/dividir-imagem/">dividir imagem</a> gera os quadros em resolução total.</p>
+
+      <h2>Transparência: só o PNG tem</h2>
+      <p>É a diferença que não tem meio-termo. O JPG não possui canal de transparência: converter um logotipo com fundo transparente para JPG achata tudo sobre branco, e o resultado tem um retângulo branco visível quando colocado sobre qualquer outra cor.</p>
+      <p>Vale desfazer a confusão inversa também: converter um JPG para PNG <em>não</em> remove o fundo. O PNG aceita transparência, mas o JPG não tem nenhuma para preservar — o resultado é um PNG com o mesmo fundo opaco. Apagar o fundo é identificar o objeto na imagem, que é outro tipo de ferramenta.</p>
+
+      <h2>E o WebP?</h2>
+      <p>O WebP faz as duas coisas: comprime melhor que o JPG e mantém transparência como o PNG. Para imagens de site é quase sempre a escolha melhor. Fora do navegador, porém, muitos programas de escritório ainda o recusam — para um arquivo que vai ao Word ou a um formulário, PNG ou JPG continuam sendo o caminho seguro.</p>
+
+      <h2>Em resumo</h2>
+      <ul>
+        <li><strong>Fotografia</strong> → JPG</li>
+        <li><strong>Texto, logotipo, captura de tela</strong> → PNG</li>
+        <li><strong>Fundo transparente</strong> → PNG (ou WebP)</li>
+        <li><strong>Imagem para o seu site</strong> → WebP</li>
+        <li><strong>Impressão</strong> → o formato importa menos que os 300 dpi</li>
+      </ul>
+    `,
+    faqs: [
+      {
+        question: 'qual a diferença de png para jpg',
+        answer: 'O JPG comprime com perdas e não tem transparência; o PNG é sem perdas e tem. Isso torna o JPG muito menor em fotografias e o PNG melhor em texto, logotipos e capturas de tela. Um JPG também perde um pouco de qualidade a cada novo salvamento, o que o PNG não faz.'
+      },
+      {
+        question: 'qual é melhor para imprimir jpg ou png',
+        answer: 'Para fotografias, JPG em alta qualidade resolve e é o que gráficas esperam. Para texto, linhas finas e cores chapadas, o PNG imprime mais limpo. Em ambos os casos o fator decisivo é a resolução: trabalhe em 300 dpi, porque nenhum formato recupera detalhe que a imagem não tem.'
+      },
+      {
+        question: 'para postar no instagram é melhor png ou jpg',
+        answer: 'JPG para fotos — o Instagram recomprime tudo, então um PNG grande não melhora o resultado e só consome mais dados no envio. PNG para cards, infográficos e qualquer coisa com texto nítido, que sobrevive melhor à recompressão da plataforma.'
+      },
+      {
+        question: 'Converter JPG para PNG melhora a qualidade?',
+        answer: 'Não. A conversão preserva exatamente o que já existe, mas não recupera o que a compressão do JPG descartou. Converter para PNG é útil antes de começar a editar, porque impede que novas perdas se acumulem a cada salvamento — não para consertar uma imagem já degradada.'
+      },
+      {
+        question: 'Converter para PNG deixa o fundo transparente?',
+        answer: 'Não. O PNG aceita transparência, mas um JPG não tem canal de transparência — não existe fundo transparente no original para preservar. O resultado é um PNG com o mesmo fundo opaco. Remover o fundo exige identificar o objeto na imagem, o que é outra ferramenta.'
+      }
+    ]
+  },
+  {
+    en: 'resize-photo-signature-for-online-forms',
+    slug: 'redimensionar-foto-assinatura',
+    title: 'Redimensionar Foto e Assinatura para Formulários e Concursos | ConvertOcean',
+    description: 'Como deixar foto e assinatura nas medidas e no tamanho de arquivo que o edital exige, sem perder legibilidade — e sem que os documentos saiam do seu computador.',
+    h1: 'Redimensionar foto e assinatura para formulários online.',
+    readTime: '7 min de leitura',
+    publishDate: '24 de setembro de 2026',
+    intro: 'Inscrições de concurso, vestibular e processos seletivos quase sempre exigem duas coisas ao mesmo tempo: medidas exatas em pixels e um limite de tamanho em KB. São exigências diferentes, e tentar resolver as duas com o mesmo ajuste é o motivo mais comum de o envio ser recusado várias vezes seguidas.',
+    contentHtml: `
+      <h2>Dois requisitos, dois ajustes</h2>
+      <p>Leia o edital com atenção, porque ele costuma pedir os dois:</p>
+      <ul>
+        <li><strong>Dimensões</strong> — algo como 200×230 pixels para a foto, 140×60 para a assinatura. É a forma do arquivo.</li>
+        <li><strong>Tamanho do arquivo</strong> — algo como "no máximo 20 KB" ou "até 2 MB". É o peso do arquivo.</li>
+      </ul>
+      <p>Uma imagem pode ter as dimensões corretas e ainda pesar demais, ou pesar pouco e estar no formato errado. O <a href="/pt/redimensionar-imagem/">redimensionador</a> trata os dois separadamente, e é assim que devem ser tratados.</p>
+
+      <h2>Comece com a melhor imagem que tiver</h2>
+      <p>Reduzir preserva qualidade; ampliar não. Ao diminuir, os pixels são combinados e o resultado costuma ficar nítido. Ao aumentar, o programa precisa inventar informação que não existe, e o resultado fica borrado — irrecuperavelmente.</p>
+      <p>Por isso: fotografe ou digitalize na maior resolução disponível e reduza a partir dali. Nunca parta de uma miniatura.</p>
+
+      <h2>A foto</h2>
+      <p>Enquadre o rosto de frente, com fundo claro e uniforme, sem sombra atravessando o rosto. Depois defina as dimensões exatas que o edital pede. Se a proporção do edital não bate com a da sua foto, corte antes em vez de deixar a imagem esticar — um rosto distorcido é motivo de recusa em várias bancas.</p>
+
+      <h2>A assinatura</h2>
+      <p>Assine com caneta preta em papel branco, sem pauta. Fotografe ou digitalize de frente, com boa luz e sem sombra. Recorte deixando pouca margem em volta do traço — uma assinatura pequena no meio de muito branco fica ilegível depois da redução.</p>
+      <p>Se o edital pedir fundo branco e a foto ficar acinzentada, digitalizar em preto e branco costuma resolver e ainda reduz bastante o tamanho do arquivo.</p>
+
+      <h2>Chegar ao limite de KB</h2>
+      <p>Com as dimensões já corretas, use o modo de tamanho-alvo e informe o limite — 20 KB, 50 KB, o que o edital disser. A ferramenta procura a qualidade que chega mais perto sem ultrapassar, e mostra o tamanho final antes do download.</p>
+      <p>Se mesmo no limite a imagem ficar ilegível, o problema é anterior: ou as dimensões pedidas são pequenas demais para a quantidade de detalhe, ou a origem já era ruim. Refazer a foto rende mais do que insistir na compressão.</p>
+
+      <h2>Documentos digitalizados e o limite de 2 MB</h2>
+      <p>Para os documentos em si — RG, CPF, diploma, comprovantes — o caminho é outro. Digitalize em 200 dpi (não 600) e em preto e branco quando não houver cor relevante: isso sozinho costuma resolver o tamanho. Depois:</p>
+      <ol>
+        <li>Transforme as fotos em PDF com <a href="/pt/imagem-para-pdf/">imagem para PDF</a>, uma por página.</li>
+        <li>Reúna tudo na ordem do edital com <a href="/pt/juntar-pdf/">juntar PDF</a>.</li>
+        <li>Se ainda passar do limite, use <a href="/pt/comprimir-pdf/">comprimir PDF</a> — comprimir um arquivo único rende mais do que comprimir vários separados.</li>
+      </ol>
+
+      <h2>Confira antes de anexar</h2>
+      <p>Abra o arquivo final e leia. Nome, números de documento e assinatura precisam estar legíveis — editais rejeitam imagens ilegíveis, e a recusa costuma vir depois do prazo. Se a compressão mais forte borrou o texto, volte um nível: normalmente o arquivo ainda cabe.</p>
+
+      <h2>Seus documentos não saem do computador</h2>
+      <p>Foto, assinatura, RG e comprovante de residência são exatamente o tipo de arquivo que não deveria circular. Todas as ferramentas citadas aqui processam a imagem dentro do navegador, no seu próprio aparelho — nada é copiado para nenhum servidor.</p>
+    `,
+    faqs: [
+      {
+        question: 'Como deixar a foto abaixo de 20 KB?',
+        answer: 'Ajuste primeiro as dimensões que o edital pede, depois use o modo de tamanho-alvo e informe 20 KB. A ferramenta procura a qualidade que chega mais perto do limite sem ultrapassar e mostra o tamanho final antes de você baixar. Se o resultado ficar ilegível, o problema está na imagem de origem, não na compressão.'
+      },
+      {
+        question: 'Qual a diferença entre pixels e KB no edital?',
+        answer: 'Pixels descrevem a forma da imagem — 200×230 é largura por altura. KB descreve o peso do arquivo. São exigências independentes: uma imagem pode ter as medidas certas e pesar demais. Ajuste as dimensões primeiro e o tamanho depois.'
+      },
+      {
+        question: 'Posso ampliar uma foto pequena para as medidas pedidas?',
+        answer: 'Tecnicamente sim, mas o resultado fica borrado. Ampliar obriga o programa a inventar pixels que não existem no arquivo. Se a foto original é menor que o exigido, refazer a foto é a única solução que realmente funciona.'
+      },
+      {
+        question: 'A assinatura precisa de fundo branco?',
+        answer: 'Muitos editais exigem. Assine com caneta preta em papel branco sem pauta e digitalize de frente, com boa luz. Se o fundo sair acinzentado, digitalizar em preto e branco costuma resolver e ainda reduz o tamanho do arquivo.'
+      },
+      {
+        question: 'Os meus documentos ficam guardados em algum lugar?',
+        answer: 'Não. Todas as ferramentas citadas processam a imagem dentro do navegador, no seu próprio dispositivo. Foto, assinatura e documentos não são copiados para nenhum servidor, e o código do site é aberto para conferência.'
+      }
+    ]
+  },
+  {
+    en: 'merge-multiple-pdf-files',
+    slug: 'juntar-varios-pdf',
+    title: 'Como Juntar Vários PDF em Um Só Arquivo | ConvertOcean',
+    description: 'Como reunir vários PDF em um único arquivo, na ordem certa, incluindo fotos e documentos digitalizados — sem que nada saia do seu computador.',
+    h1: 'Como juntar vários PDF em um só.',
+    readTime: '5 min de leitura',
+    publishDate: '24 de setembro de 2026',
+    intro: 'Reunir vários documentos em um único PDF é a exigência mais comum de sistemas que aceitam um anexo só — editais, processos, envios a clientes. O procedimento é simples; o que costuma dar errado é a ordem, o tamanho final e o que fazer quando alguns dos arquivos são fotos.',
+    contentHtml: `
+      <h2>O procedimento</h2>
+      <p>Adicione todos os arquivos de uma vez em <a href="/pt/juntar-pdf/">juntar PDF</a>, arraste as miniaturas até a sequência ficar correta e baixe o arquivo único. Não há cadastro, marca d’água nem limite de quantos documentos podem ser reunidos.</p>
+      <p>A ordem em que os arquivos aparecem na tela é a ordem das páginas no resultado. Confira antes de baixar: depois de unido, mudar a sequência significa refazer a operação.</p>
+
+      <h2>Quando alguns arquivos são fotos</h2>
+      <p>Imagens não são PDFs, então há um passo antes. Converta-as em <a href="/pt/imagem-para-pdf/">imagem para PDF</a> — cada foto vira uma página — e depois junte esse arquivo aos demais. Se todas as fotos pertencem ao mesmo conjunto, a conversão já pode reuni-las de uma vez.</p>
+
+      <h2>O arquivo final vai ficar grande</h2>
+      <p>Unir não comprime: o resultado tem aproximadamente a soma dos originais. Se o destino impõe um limite de tamanho, a ordem que funciona é unir primeiro e comprimir depois, em <a href="/pt/comprimir-pdf/">comprimir PDF</a>. Comprimir um arquivo único rende mais do que comprimir vários separadamente, porque elementos repetidos entre eles são aproveitados uma vez só.</p>
+
+      <h2>O que sobrevive à união</h2>
+      <p>O conteúdo de cada documento entra completo: o texto continua selecionável e nada é recomprimido. O que não atravessa são marcadores e campos de formulário dos arquivos de origem — se algum deles era um formulário preenchível, o resultado deixa de sê-lo.</p>
+
+      <h2>Para documentos de concurso</h2>
+      <p>Monte a sequência exatamente como o edital descreve, e não como os arquivos estavam nomeados. Depois de unir, confira duas coisas: se o arquivo está dentro do limite de tamanho — quase sempre 2 MB — e se cada documento continua legível. Bancas recusam anexos ilegíveis, e a recusa costuma chegar depois do prazo.</p>
+
+      <h2>Juntar, unir ou mesclar</h2>
+      <p>São três nomes para a mesma operação. Mesclar um PDF não altera o conteúdo das páginas, não reduz o tamanho e não recomprime nada — apenas coloca tudo dentro de um arquivo só. É o que se pede quando um sistema aceita apenas um anexo.</p>
+
+      <h2>Nada sai do seu computador</h2>
+      <p>A união acontece dentro do navegador, no seu dispositivo. Contratos, extratos e documentos pessoais — justamente os que mais se precisa reunir — não são copiados para nenhum servidor.</p>
+    `,
+    faqs: [
+      {
+        question: 'como juntar varios pdf em um só',
+        answer: 'Adicione todos os arquivos de uma vez na ferramenta, arraste as miniaturas até a ordem ficar correta e baixe o PDF único. Não há limite de quantidade: o que limita é a memória do seu próprio dispositivo, já que o processamento é local.'
+      },
+      {
+        question: 'como juntar fotos em pdf',
+        answer: 'Fotos não são PDFs, então converta-as primeiro em imagem para PDF — uma foto por página — e depois junte esse arquivo aos outros documentos. Se as fotos pertencem ao mesmo conjunto, a conversão pode reuni-las de uma vez.'
+      },
+      {
+        question: 'O arquivo final fica muito pesado?',
+        answer: 'Sim, o PDF unido tem aproximadamente a soma dos originais, porque unir não comprime. Se houver limite de tamanho, una primeiro e comprima depois — comprimir um arquivo único rende mais do que comprimir vários separados.'
+      },
+      {
+        question: 'A ordem das páginas é mantida?',
+        answer: 'Sim. As páginas entram exatamente na ordem em que os arquivos aparecem na tela, e dentro de cada arquivo a ordem original é preservada. Confira a sequência antes de baixar, porque depois é preciso refazer a união para alterá-la.'
+      },
+      {
+        question: 'Os documentos ficam visíveis para vocês?',
+        answer: 'Não. A união acontece no seu navegador, no seu dispositivo, e os arquivos não são copiados para nenhum servidor. Documentos com dados pessoais permanecem com você do começo ao fim.'
+      }
+    ]
+  }
+];
 
 /**
  * The non-tool pages, so the nav and footer resolve to Portuguese instead of

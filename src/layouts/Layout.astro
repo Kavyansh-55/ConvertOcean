@@ -2,7 +2,7 @@
 import '../styles/theme.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { normalizePath } from '../i18n/config';
+import { normalizePath, LOCALES, LOCALE_CODES, type Locale } from '../i18n/config';
 import { alternatesForPath } from '../i18n/content';
 import { t, dictionaryFor } from '../i18n/ui';
 
@@ -238,13 +238,23 @@ const relLink = (target: string) => {
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
+  {/* Open Graph locale. Only emitted as an alternate where a translation
+      genuinely exists, for the same reason hreflang is: advertising a
+      variant that is not there is worse than advertising none. */}
+  <meta property="og:locale" content={LOCALES[lang as Locale].ogLocale} />
+  {alternates
+    .filter(a => a.lang !== 'x-default' && a.lang !== LOCALES[lang as Locale].hreflang)
+    .map(a => {
+      const other = LOCALE_CODES.find(c => LOCALES[c].hreflang === a.lang);
+      return other ? <meta property="og:locale:alternate" content={LOCALES[other].ogLocale} /> : null;
+    })}
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonicalURL} />
   <meta property="og:image" content="https://convertocean.com/og-cover-v2.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="ConvertOcean — convert files, upload nothing. 65 free tools that run inside your browser tab." />
+  <meta property="og:image:alt" content={t('ConvertOcean — convert files, upload nothing. 69 free tools that run inside your browser tab.', lang)} />
   <meta property="og:site_name" content="ConvertOcean" />
 
   <!-- Twitter / X -->

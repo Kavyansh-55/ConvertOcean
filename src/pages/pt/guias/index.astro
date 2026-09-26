@@ -1,0 +1,147 @@
+---
+/**
+ * The Portuguese guides index.
+ *
+ * A separate file rather than a rest route, because `/pt/guias/` is an index
+ * path — `[...guide].astro` emits `pt/guias/<slug>`, and a static index sits
+ * beside it without colliding.
+ *
+ * Listed from ptGuides, so it shows what genuinely exists. Three guides is a
+ * small list and the page says so rather than padding it out: the alternative
+ * considered was leaving the nav link falling through to the English index,
+ * which sends a Portuguese reader somewhere they cannot use.
+ */
+import Layout from '../../../layouts/Layout.astro';
+import CategoryIcon from '../../../components/CategoryIcon.astro';
+import { getGuides, getTools } from '../../../i18n/content';
+import type { Locale } from '../../../i18n/config';
+
+const lang: Locale = 'pt';
+
+const title = 'Guias e Materiais — Como Converter Arquivos | ConvertOcean';
+const description =
+  'Guias práticos sobre conversão de arquivos: PNG ou JPG, redimensionar foto e assinatura para concursos, e juntar vários PDF em um só.';
+
+const guides = getGuides(lang);
+const tools = getTools(lang);
+
+/** The tools each guide points at, for the card footer. */
+const toolsFor = (slugs: string[]) =>
+  tools.filter(t => slugs.includes(t.slug)).slice(0, 3);
+---
+
+<Layout title={title} description={description} lang={lang} category="Guias" categorySlug="guides" band="bone">
+  <main id="main-content" tabindex="-1" class="band band--bone">
+    <div class="gi-wrap">
+      <h1 class="gi-title">Guias e materiais.</h1>
+      <p class="gi-lead">
+        Explicações práticas para as decisões que aparecem antes da conversão:
+        qual formato escolher, como caber num limite de tamanho e como montar um
+        anexo único. Escritos para o que se procura no Brasil, não traduzidos.
+      </p>
+
+      <div class="gi-grid">
+        {guides.map(g => (
+          <article class="gi-card">
+            <a href={`/pt/guias/${g.slug}/`} class="gi-card-link">
+              <span class="gi-tag">Guia</span>
+              <h2 class="gi-card-title">{g.h1.replace(/\.$/, '')}</h2>
+              <p class="gi-card-desc">{g.description}</p>
+              <span class="gi-meta">{g.readTime}</span>
+            </a>
+            {toolsFor(g.relatedTools).length > 0 && (
+              <div class="gi-tools">
+                {toolsFor(g.relatedTools).map(t => (
+                  <a href={`/pt/${t.slug}/`} class="gi-tool">
+                    <CategoryIcon categorySlug={t.categorySlug} width={14} height={14} />
+                    {t.name}
+                  </a>
+                ))}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+
+      <p class="gi-note">
+        Mais guias estão a caminho. Enquanto isso, cada página de ferramenta
+        responde às perguntas mais comuns sobre ela — e o{' '}
+        <a href="/pt/mapa-do-site/">mapa do site</a> lista todas as {tools.length}.
+      </p>
+    </div>
+  </main>
+
+  <style>
+    .gi-wrap { max-width: 1000px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-lg); }
+    .gi-title {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-sm);
+    }
+    .gi-lead { font-size: var(--fs-lead); color: var(--colors-body); max-width: 62ch; margin: 0 0 var(--spacing-xl); }
+    .gi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--spacing-lg);
+    }
+    .gi-card {
+      background: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+    .gi-card-link {
+      text-decoration: none;
+      display: block;
+      /* 44px touch target (WCAG 2.5.8) — the whole card head is the link. */
+      min-height: 44px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .gi-card-link:focus-visible { outline: 2px solid var(--colors-link-deep); outline-offset: 4px; }
+    .gi-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: var(--fw-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--colors-link-deep);
+      background: var(--colors-link-bg-soft);
+      padding: 2px 8px;
+      border-radius: var(--rounded-pill);
+      margin-bottom: var(--spacing-sm);
+    }
+    .gi-card-title {
+      font-size: var(--fs-body);
+      font-weight: var(--fw-extrabold);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-xs);
+      line-height: 1.3;
+    }
+    .gi-card-desc { font-size: var(--fs-small); color: var(--colors-body); margin: 0 0 var(--spacing-xs); line-height: 1.55; }
+    .gi-meta { font-size: 12px; color: var(--colors-body); }
+    .gi-tools { display: flex; flex-wrap: wrap; gap: var(--spacing-xs); margin-top: auto; padding-top: var(--spacing-sm); border-top: 1px solid var(--colors-hairline); }
+    .gi-tool {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      min-height: 44px;
+      padding: 0 var(--spacing-xs);
+      font-size: 12px;
+      font-weight: var(--fw-bold);
+      color: var(--colors-body);
+      text-decoration: none;
+      border-radius: var(--rounded-sm);
+      touch-action: manipulation;
+    }
+    .gi-tool:hover { color: var(--colors-ink); background: var(--colors-canvas-soft-2); }
+    .gi-tool:focus-visible { outline: 2px solid var(--colors-link-deep); outline-offset: 2px; }
+    .gi-note { margin-top: var(--spacing-xl); font-size: var(--fs-small); color: var(--colors-body); }
+    .gi-note a { color: var(--colors-link-deep); }
+  </style>
+</Layout>
