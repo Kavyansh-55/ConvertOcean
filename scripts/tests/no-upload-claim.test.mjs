@@ -32,6 +32,21 @@ const BANNED = [
   'when you upload it',
   'upload it here',
   'upload your file to convert',
+  // /terms/ said "By uploading a file, you acknowledge…" and slipped past the
+  // list above for months — on the page where wording is most binding.
+  'by uploading',
+  'when uploading',
+  'while uploading',
+  'upload a file to',
+  'your uploaded file',
+  'the uploaded file',
+  // Portuguese: the /pt/ locale can make the same slip in its own words.
+  'ao fazer upload',
+  'faça upload',
+  'faça o upload',
+  'fazer o upload do',
+  'arquivo enviado',
+  'arquivos enviados',
 ];
 
 /* Lines that legitimately use the word: what competitors do, what other
@@ -43,6 +58,8 @@ const ALLOWED = [
   'platforms strip metadata when you upload',                  // exif copy
   'platforms re-compress what you upload',                     // exif faq
   'which makes "upload your file to convert it" a bad deal',   // excel-converter, quoting the model it rejects
+  'When logged into Adobe, your uploaded files are saved',     // vs/adobe
+  'correction: the English page says "By uploading a file',    // pt/termos, a comment quoting the fixed slip
 ];
 
 function walk(dir, out = []) {
