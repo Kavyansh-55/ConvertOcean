@@ -761,5 +761,25 @@ async function stylesheetsFor(path) {
   say(!/class="nav-link active"[^>]*>[\s\S]{0,300}?Início/.test(contato), '/pt/contato/ no longer highlights "Início"');
 }
 
+/* ------------------------------------------------- 2026-09-27 PT functional parity
+   The Portuguese OCR behaviour (accents) is asserted end to end by
+   `CO_ORIGIN=https://convertocean.com npm run generators`; these pin the
+   served pieces. */
+{
+  const conv = (await get('/pt/conversor-de-arquivos/')).body;
+  say(/id="dropZone"/.test(conv) && /id="fileInput"/.test(conv), '/pt/conversor-de-arquivos/ carries the working converter');
+  say(/"FAQPage"/.test(conv) && !/Supports Excel \(\.xlsx/.test(conv), 'with a Portuguese FAQ and translated converter labels');
+  const ocr = (await get('/pt/imagem-para-texto/')).body;
+  say(/document\.documentElement\.lang === 'pt' \? 'por' : 'eng'/.test(ocr), '/pt/imagem-para-texto/ loads the Portuguese OCR model');
+  const cat = (await get('/pt/ferramentas-pdf/')).body;
+  say(/class="category-intro"/.test(cat) && /"FAQPage"/.test(cat), '/pt/ferramentas-pdf/ has its intro and FAQ');
+  const contato = (await get('/pt/contato/')).body;
+  say(/id="contactForm"/.test(contato) && /class="contact-channels"/.test(contato), '/pt/contato/ has the form and channel cards');
+  const rec = (await get('/pt/modelo-de-recibo/')).body;
+  say(!/>Received By<|>Payment received\. Thank you\.</.test(rec), '/pt/modelo-de-recibo/ PDF labels are Portuguese');
+  const home = (await get('/pt/')).body;
+  say(!/limite\.<\/strong><a/.test(home), '/pt/ homepage: "limite. Comprimir PDF" keeps its space');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
