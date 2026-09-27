@@ -61,7 +61,7 @@ const targetFormat = slug === 'heic-to-png' ? 'PNG' : 'JPG';
 <div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
   <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
   <div class="button-group">
-    <button class="button button-primary" id="btnDownload">Download {targetFormat}</button>
+    <button class="button button-primary" id="btnDownload">{t('Download', lang)} {targetFormat}</button>
     <button class="button button-danger" id="btnClear">{t('Clear', lang)}</button>
   </div>
 </div>

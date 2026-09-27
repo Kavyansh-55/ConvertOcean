@@ -171,7 +171,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <label class="split-mode"><input type="radio" name="splitMode" value="parts" />
       <span><strong>{t('The whole PDF in', lang)}</strong>{' '}
         <input type="number" id="partCount" class="form-input split-mode-num" value="2" min="2" max="100"
-               aria-label="Number of equal parts" inputmode="numeric" autocomplete="off" />{' '}
+               aria-label={t('Number of equal parts', lang)} inputmode="numeric" autocomplete="off" />{' '}
         <strong>{t('equal parts', lang)}</strong>{t(', in a ZIP', lang)}</span></label>
     <label class="split-mode"><input type="radio" name="splitMode" value="size" />
       <span><strong>{t('The whole PDF in parts under', lang)}</strong>{' '}

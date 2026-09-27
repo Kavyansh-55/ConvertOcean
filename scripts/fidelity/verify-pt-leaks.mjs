@@ -41,8 +41,19 @@ try {
     const p = await b.newPage();
     await p.setCacheEnabled(false);
     await p.goto(u, { waitUntil: 'networkidle2', timeout: 60000 });
+    /* Every text node, hidden or not. innerText skips hidden elements, and
+       the first version of this scan used it — so every panel a tool shows
+       only after a file is loaded went unchecked, and /pt/comprimir-excel/
+       passed with an English paragraph in its options panel. */
     const text = await p.evaluate(() => {
-      const t = [document.body.innerText];
+      const t = [];
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+        acceptNode(n) {
+          const tag = n.parentElement && n.parentElement.closest('script,style,noscript,template,code,pre');
+          return tag ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+        },
+      });
+      for (let n = walker.nextNode(); n; n = walker.nextNode()) t.push(n.nodeValue.replace(/\s+/g, ' '));
       // placeholders, aria-labels and titles are interface text too
       document.querySelectorAll('[placeholder],[aria-label],[title]').forEach(e =>
         ['placeholder', 'aria-label', 'title'].forEach(a => e.getAttribute(a) && t.push(e.getAttribute(a))));

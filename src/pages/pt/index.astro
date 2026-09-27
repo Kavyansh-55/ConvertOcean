@@ -25,6 +25,7 @@
  */
 import Layout from '../../layouts/Layout.astro';
 import CategoryCard from '../../components/CategoryCard.astro';
+import CategoryIcon from '../../components/CategoryIcon.astro';
 import { getTools, getCategories } from '../../i18n/content';
 import type { Locale } from '../../i18n/config';
 
@@ -103,7 +104,7 @@ const faqList = [
         <div class="home-tool-grid">
           {populares.map(tool => (
             <a href={`/pt/${tool.slug}/`} class="home-tool">
-              <span class="home-tool-icon" aria-hidden="true">{tool.icon}</span>
+              <span class="home-tool-icon" aria-hidden="true"><CategoryIcon icon={tool.icon} width="20" height="20" /></span>
               <span class="home-tool-name">{tool.name}</span>
             </a>
           ))}
@@ -131,7 +132,7 @@ const faqList = [
             <a href="/pt/juntar-pdf/">Juntar PDF</a>.
           </li>
           <li>
-            <strong>3. Comprima até caber no limite.</strong>
+            <strong>3. Comprima até caber no limite.</strong>{' '}
             <a href="/pt/comprimir-pdf/">Comprimir PDF</a> mostra o tamanho final
             antes de baixar — confira se o texto continua legível para a banca.
           </li>
@@ -250,7 +251,9 @@ const faqList = [
     }
     .home-tool:hover { border-color: var(--colors-link); transform: translateY(-2px); }
     .home-tool:focus-visible { outline: 2px solid var(--colors-link-deep); outline-offset: 2px; }
-    .home-tool-icon { font-size: 20px; line-height: 1; }
+    /* Line icons, as everywhere else on the site; the emoji this used to
+       render were a different visual language from the English pages. */
+    .home-tool-icon { display: inline-flex; color: var(--colors-ink); flex-shrink: 0; }
     .home-tool-name { font-size: var(--fs-small); }
 
     .home-steps {

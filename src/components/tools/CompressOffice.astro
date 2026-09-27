@@ -163,7 +163,7 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
 </div>
 
 <div id="errorBanner" class="error-banner">
-  <strong>{t('Could not compress this file.', lang)}</strong>
+  <strong>{t('Could not compress this file.', lang)}</strong>{' '}
   <span id="errorMessage"></span>
 </div>
 
@@ -209,14 +209,9 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
         <label class="cof-trim-row">
           <input type="checkbox" id="cofTrim" checked />
           <span>
-            <strong>{t('Trim the empty formatted cells', lang)}</strong>
+            <strong>{t('Trim the empty formatted cells', lang)}</strong>{' '}
             <span class="cof-trim-note">
-              This is where almost all of a spreadsheet's size goes: rows and columns
-              past your data that carry a border or a fill and nothing else, usually
-              from selecting whole columns and formatting them. Your values, formulas,
-              charts and formatting inside the used range are untouched — but a cell
-              beyond the data will no longer inherit the fill it had, so if your file
-              is a template waiting to be filled in, turn this off.
+              {t("This is where almost all of a spreadsheet's size goes: rows and columns past your data that carry a border or a fill and nothing else, usually from selecting whole columns and formatting them. Your values, formulas, charts and formatting inside the used range are untouched — but a cell beyond the data will no longer inherit the fill it had, so if your file is a template waiting to be filled in, turn this off.", lang)}
             </span>
           </span>
         </label>

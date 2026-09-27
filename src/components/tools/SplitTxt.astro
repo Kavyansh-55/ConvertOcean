@@ -55,7 +55,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Splitting file…</div>
+  <div id="progressLabel" class="progress-label">{t('Splitting file…', lang)}</div>
 </div>
 
 <div class="workspace-layout">
@@ -106,7 +106,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     <!-- Size Settings -->
     <div class="form-group" id="sizeGroup" style="display: none;">
-      <label class="form-label" for="splitSize">Max segment size (KB)</label>
+      <label class="form-label" for="splitSize">{t('Max segment size (KB)', lang)}</label>
       <input type="number" class="form-input" id="splitSize" min="10" value="500" />
     </div>
 

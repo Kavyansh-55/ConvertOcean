@@ -87,7 +87,17 @@ export function findings(src, file) {
     const inlineThenText =
       CLOSES_INLINE.test(here) && /^[\w"'\u201c\u2018(]/.test(next);
 
-    if (textThenInline || inlineThenText) {
+    /* A third shape, missed until 2026-09-27: one inline element closing and
+       the next opening on the following line. "…no limite.</strong>⏎<a>" shipped
+       as "limite.Comprimir PDF" on the Portuguese homepage. */
+    /* Limited to emphasis closing: </strong>, </em>, </b> and </i> live
+       inside sentences, whereas sibling <span>s and <a>s on separate lines
+       are overwhelmingly badges, chips and buttons laid out by flex or grid,
+       where no space is wanted. */
+    const inlineThenInline =
+      /<\/(?:strong|em|b|i)>[.,;:!?)"'’”]*$/.test(here) && OPENS_INLINE.test(next);
+
+    if (textThenInline || inlineThenText || inlineThenInline) {
       out.push(`${relative('.', file).split(sep).join('/')}:${i + 1}  ${here.trim().slice(-60)}  ⏎  ${next.slice(0, 50)}`);
     }
   }

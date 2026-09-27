@@ -234,12 +234,13 @@ const categoryFaqsMap: Record<string, { q: string; a: string }[]> = {
   ]
 };
 
-// English-only. These blocks are written in English and carry hard-coded
-// English links (/merge-pdf/, /guides/…), so rendering them under /pt/ would
-// put English prose on a Portuguese page and leak every internal link out of
-// the locale. Portuguese category prose and FAQs are written in the
-// keyword-led wave, from researched queries — not translated from these.
-const faqList = lang === 'en' ? (categoryFaqsMap[category] || []) : [];
+// The maps above are English-only: they carry hard-coded English links
+// (/merge-pdf/, /guides/…), so rendering them under /pt/ would put English
+// prose on a Portuguese page and leak every internal link out of the locale.
+// Portuguese pages take their own intro and FAQs from src/data/pt/index.ts
+// (written 2026-09-27 from what the tools verifiably do, not translated —
+// several of the English answers overclaim).
+const faqList = lang === 'en' ? (categoryFaqsMap[category] || []) : (ptCategory?.faqs ?? []);
 
 // Unique per-category intro prose (rendered between the tool grid and FAQs)
 const categoryIntroMap: Record<string, string> = {
@@ -268,7 +269,7 @@ const categoryIntroMap: Record<string, string> = {
     <p>Developer data is full of things that should never touch a third-party server — API keys in config files, customer records in exports, tokens in webhook payloads. These utilities convert between CSV, JSON, and XML, validate and pretty-print with the <a href="/json-formatter/">JSON Formatter</a>, and analyze text with the <a href="/word-counter/">Word Counter</a>, all using your browser's native parsers. That local-first design also means they work offline and at native speed — a large CSV parses as fast as your machine allows, not as fast as an upload queue. For the mechanics of moving spreadsheet data into application code, see the <a href="/guides/csv-to-json/">CSV to JSON developer guide</a>.</p>
   `
 };
-const categoryIntro = lang === 'en' ? categoryIntroMap[category] : undefined;
+const categoryIntro = lang === 'en' ? categoryIntroMap[category] : ptCategory?.intro;
 ---
 
 <Layout band="lime" title={title} description={description} lang={lang} category={catInfo.name} categorySlug={category} faqList={faqList}>

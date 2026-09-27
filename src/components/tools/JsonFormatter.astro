@@ -291,7 +291,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
   <div class="jf-panel">
     <div class="jf-panel-header">
       <span class="jf-panel-title">{t('FORMATTED OUTPUT', lang)}</span>
-      <label class="jf-toggle-wrap" id="jf-minify-label" title="Toggle minified output">
+      <label class="jf-toggle-wrap" id="jf-minify-label" title={t('Toggle minified output', lang)}>
         <span class="jf-toggle" id="jf-minify-toggle"></span>{' '}
         Minify
       </label>

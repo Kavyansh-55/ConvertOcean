@@ -34,7 +34,19 @@ export const ptCategories: PtCategory[] = [
     title: 'Ferramentas de PDF Online e Gratuitas — 100% Privadas | ConvertOcean',
     description: 'Comprimir, juntar, dividir e converter PDF direto no navegador. Nenhum arquivo sai do seu computador.',
     headline: 'Ferramentas de PDF.',
-    subtitle: 'Comprima, junte, divida e converta PDF sem que o arquivo saia do seu computador.'
+    subtitle: 'Comprima, junte, divida e converta PDF sem que o arquivo saia do seu computador.',
+    /* Written 2026-09-27 from what the tools verifiably do, not translated
+       from the English FAQs (several of which overclaim). Not keyword-led. */
+    intro: `
+    <h2>Todas as ferramentas de PDF, sem que o documento saia do computador.</h2>
+    <p>O trabalho com PDF costuma ser uma sequência de tarefas pequenas em volta do mesmo documento: <a href="/pt/juntar-pdf/">juntar</a> vários arquivos em um só, <a href="/pt/dividir-pdf/">dividir</a> por páginas, em partes iguais ou em partes abaixo de um tamanho, <a href="/pt/comprimir-pdf/">comprimir</a> até caber no limite de um edital e converter para <a href="/pt/pdf-para-word/">Word</a>, <a href="/pt/pdf-para-excel/">Excel</a> ou <a href="/pt/pdf-para-txt/">texto</a>. Todas essas operações rodam no seu navegador, então contratos, extratos e documentos pessoais não passam por nenhum servidor.</p>
+    <p>Para montar um PDF a partir de fotos, comece pelo <a href="/pt/imagem-para-pdf/">imagem para PDF</a>. E se você vai juntar vários documentos para uma inscrição, o guia <a href="/pt/guias/juntar-varios-pdf/">como juntar vários PDF em um só</a> mostra a ordem que dá menos retrabalho.</p>
+    `,
+    faqs: [
+      { q: 'Posso juntar PDF com fotos ou arquivos do Word?', a: 'Não diretamente: o juntar PDF une arquivos que já são PDF. Converta antes as fotos com o imagem para PDF e os documentos com o Word para PDF, e depois junte tudo na ordem que precisar.' },
+      { q: 'Existe limite de tamanho ou de páginas?', a: 'Cada ferramenta aceita arquivos de até 25 MB, e não há limite de quantidade de uso. Como o processamento acontece no seu aparelho, a velocidade depende da memória e do processador dele, não de uma fila em servidor.' },
+      { q: 'Comprimir o PDF deixa o texto ilegível?', a: 'O compressor reduz principalmente as imagens guardadas em resolução maior do que a página exibe; texto, links e campos de formulário continuam como estavam. Você também pode definir um tamanho-alvo em KB para chegar ao limite de um edital.' }
+    ]
   },
   {
     en: 'image-tools',
@@ -43,7 +55,19 @@ export const ptCategories: PtCategory[] = [
     title: 'Ferramentas de Imagem Online — Redimensionar e Converter | ConvertOcean',
     description: 'Redimensione, converta e comprima imagens JPG, PNG, WebP e HEIC direto no navegador, sem que nada saia do seu dispositivo.',
     headline: 'Ferramentas de imagem.',
-    subtitle: 'Redimensione, converta e comprima fotos sem que elas saiam do seu dispositivo.'
+    subtitle: 'Redimensione, converta e comprima fotos sem que elas saiam do seu dispositivo.',
+    /* Written 2026-09-27 from what the tools verifiably do, not translated
+       from the English FAQs (several of which overclaim). Not keyword-led. */
+    intro: `
+    <h2>Converta, redimensione e junte imagens sem enviar um único pixel.</h2>
+    <p>Cada formato tem seu lugar: JPG comprime bem fotografias, PNG preserva capturas de tela e logotipos com transparência, e WebP deixa imagens para sites bem menores. Estas ferramentas convertem entre eles — incluindo as fotos <a href="/pt/heic-para-jpg/">HEIC do iPhone</a> —, <a href="/pt/redimensionar-imagem/">redimensionam</a> em pixels ou até um tamanho em KB, <a href="/pt/juntar-fotos/">juntam fotos</a> em uma imagem só e transformam imagens em <a href="/pt/imagem-para-pdf/">PDF</a> ou em <a href="/pt/imagem-para-texto/">texto editável</a>.</p>
+    <p>Nada é enviado — o que importa mais do que parece, porque fotos carregam metadados como a localização. O <a href="/pt/ver-exif/">ver dados EXIF</a> mostra o que uma foto revela, e o <a href="/pt/remover-exif/">remover EXIF</a> apaga esses dados sem recomprimir a imagem.</p>
+    `,
+    faqs: [
+      { q: 'Qual formato de imagem é melhor para sites?', a: 'WebP, na maioria dos casos: aceita transparência e costuma ficar bem menor que o JPG equivalente. Para fotografias que vão ser impressas ou enviadas a sistemas antigos, JPG continua sendo o mais compatível.' },
+      { q: 'Converter um JPG para PNG melhora a qualidade?', a: 'Não. O PNG não perde qualidade em salvamentos futuros, mas não recupera o detalhe que a compressão do JPG já descartou. A imagem fica igual, só que em um arquivo maior.' },
+      { q: 'Como deixar uma foto abaixo de um limite em KB?', a: 'Use o modo de tamanho-alvo do redimensionar imagem: informe o limite, como 50 KB ou 200 KB, e a ferramenta procura a maior qualidade que cabe nele, mostrando o tamanho final antes do download.' }
+    ]
   },
   {
     en: 'document-tools',
@@ -52,7 +76,19 @@ export const ptCategories: PtCategory[] = [
     title: 'Ferramentas para Word, PowerPoint e TXT | ConvertOcean',
     description: 'Converta, junte e divida documentos do Word, PowerPoint e arquivos de texto direto no navegador.',
     headline: 'Ferramentas de documentos.',
-    subtitle: 'Word, PowerPoint e arquivos de texto — tudo processado no seu próprio navegador.'
+    subtitle: 'Word, PowerPoint e arquivos de texto — tudo processado no seu próprio navegador.',
+    /* Written 2026-09-27 from what the tools verifiably do, not translated
+       from the English FAQs (several of which overclaim). Not keyword-led. */
+    intro: `
+    <h2>Word, PowerPoint e texto — convertidos no seu próprio aparelho.</h2>
+    <p>Documentos mudam de formato o tempo todo: um Word vira PDF para enviar com o <a href="/pt/word-para-pdf/">Word para PDF</a>, um PDF recebido volta a ser editável com o <a href="/pt/pdf-para-word/">PDF para Word</a>, apresentações viram PDF com o <a href="/pt/powerpoint-para-pdf/">PowerPoint para PDF</a>. Também dá para <a href="/pt/juntar-documentos-word/">juntar documentos Word</a>, <a href="/pt/dividir-arquivo-word/">dividir um Word</a> a cada Título 1 e juntar ou dividir apresentações e arquivos de texto.</p>
+    <p>Tudo é lido e montado dentro do navegador. Contratos, relatórios internos e trabalhos ainda não entregues não são copiados para nenhum servidor.</p>
+    `,
+    faqs: [
+      { q: 'Dá para extrair o texto de um Word escaneado?', a: 'Não pelo conversor de Word: um documento escaneado guarda imagens das páginas, não texto. Transforme as páginas em imagem e passe pelo imagem para texto, que faz o reconhecimento (OCR) no próprio aparelho.' },
+      { q: 'A formatação é mantida ao juntar documentos Word?', a: 'O conteúdo, as tabelas e as imagens de cada arquivo entram inteiros, e cada documento começa em uma página nova. Os estilos podem variar quando os arquivos definem o mesmo estilo de formas diferentes — uma revisão rápida dos títulos resolve.' },
+      { q: 'Posso reduzir o tamanho de um Word ou PowerPoint?', a: 'Sim. O comprimir Word e o comprimir PowerPoint reduzem principalmente as imagens embutidas, que são quase sempre a maior parte do arquivo, e devolvem um documento que continua editável.' }
+    ]
   },
   {
     en: 'excel-converter',
@@ -61,7 +97,19 @@ export const ptCategories: PtCategory[] = [
     title: 'Conversor de Excel Online — XLSX, CSV e PDF | ConvertOcean',
     description: 'Converta planilhas Excel para PDF, CSV e JSON direto no navegador, sem que a planilha saia do seu computador.',
     headline: 'Conversor de Excel.',
-    subtitle: 'Planilhas para PDF, CSV e JSON — processadas no seu navegador, não em um servidor.'
+    subtitle: 'Planilhas para PDF, CSV e JSON — processadas no seu navegador, não em um servidor.',
+    /* Written 2026-09-27 from what the tools verifiably do, not translated
+       from the English FAQs (several of which overclaim). Not keyword-led. */
+    intro: `
+    <h2>Planilhas convertidas sem que os números saiam do seu computador.</h2>
+    <p>Planilhas guardam o que uma empresa tem de mais sensível — folha de pagamento, tabela de preços, lista de clientes. Estas ferramentas convertem entre XLSX, XLS, CSV, JSON e XML nos dois sentidos, geram PDF para impressão com o <a href="/pt/excel-para-pdf/">Excel para PDF</a>, <a href="/pt/unir-arquivos-excel/">juntam</a> e <a href="/pt/dividir-arquivo-excel/">dividem</a> pastas de trabalho e <a href="/pt/comprimir-excel/">comprimem</a> arquivos inchados. Extratos bancários em OFX, QFX ou QBO viram planilha com o <a href="/pt/ofx-para-csv/">OFX para CSV</a>.</p>
+    <p>As fórmulas são calculadas no navegador e só os valores resultantes são exportados, então a lógica da sua planilha fica com você.</p>
+    `,
+    faqs: [
+      { q: 'As fórmulas aparecem no arquivo convertido?', a: 'Não. O conversor calcula as fórmulas e exporta os valores resultantes. Macros (.xlsm) e consultas a bases externas não são executadas.' },
+      { q: 'A área de impressão do Excel é respeitada ao gerar PDF?', a: 'Não. O Excel para PDF usa o intervalo utilizado de cada aba — da primeira à última célula com conteúdo — e colunas ocultas também saem no PDF. Para controlar o que aparece, apague as linhas e colunas desnecessárias antes de converter.' },
+      { q: 'Por que a minha planilha é tão grande sem ter quase nada?', a: 'Quase sempre é o intervalo utilizado: uma formatação aplicada a milhares de linhas vazias faz o Excel guardar todas elas. O comprimir Excel remove esse excesso e mostra o tamanho antes e depois.' }
+    ]
   },
   {
     en: 'business-tools',
@@ -70,7 +118,19 @@ export const ptCategories: PtCategory[] = [
     title: 'Gerador de Nota, Recibo e Calculadoras | ConvertOcean',
     description: 'Gere notas e recibos e calcule margem de lucro, ponto de equilíbrio e percentuais direto no navegador.',
     headline: 'Ferramentas empresariais.',
-    subtitle: 'Notas, recibos e calculadoras — seus números não saem do seu dispositivo.'
+    subtitle: 'Notas, recibos e calculadoras — seus números não saem do seu dispositivo.',
+    /* Written 2026-09-27 from what the tools verifiably do, not translated
+       from the English FAQs (several of which overclaim). Not keyword-led. */
+    intro: `
+    <h2>Contas e documentos do dia a dia do negócio, calculados com privacidade.</h2>
+    <p>Seis ferramentas cobrem os números mais comuns de quem trabalha por conta própria ou tem uma pequena empresa: a <a href="/pt/calculadora-de-margem-de-lucro/">calculadora de margem de lucro</a> e o <a href="/pt/ponto-de-equilibrio/">ponto de equilíbrio</a> respondem perguntas de preço e de volume mínimo, a <a href="/pt/calculadora-de-porcentagem/">calculadora de porcentagem</a> e a <a href="/pt/calculadora-de-imposto/">calculadora de imposto</a> resolvem as contas do dia a dia, e o <a href="/pt/modelo-de-recibo/">modelo de recibo</a> e o <a href="/pt/modelo-de-fatura/">modelo de fatura</a> geram documentos em PDF, em reais e com PIX.</p>
+    <p>Cada calculadora mostra a fórmula ao lado do resultado, para você conferir a conta. Custos, margens e dados de clientes ficam no seu navegador.</p>
+    `,
+    faqs: [
+      { q: 'O modelo de fatura emite nota fiscal?', a: 'Não. Nota fiscal só pode ser emitida pelo sistema da SEFAZ ou da prefeitura. O modelo de fatura gera um documento de cobrança em PDF — útil para detalhar serviços e condições de pagamento, mas sem valor fiscal.' },
+      { q: 'Qual a diferença entre margem de lucro e markup?', a: 'A margem é a parte do preço de venda que é lucro; o markup é quanto se soma ao custo para chegar ao preço. Um produto que custa R$ 60 e é vendido por R$ 100 tem margem de 40% e markup de 66,7%. A margem nunca passa de 100%; o markup pode passar.' },
+      { q: 'Dá para calcular o imposto a partir de um valor que já inclui o imposto?', a: 'Sim. A calculadora de imposto tem o cálculo reverso: informe o valor total com imposto e a alíquota, e ela mostra o preço sem imposto e o valor exato do imposto.' }
+    ]
   },
   {
     en: 'developer-tools',
@@ -79,7 +139,18 @@ export const ptCategories: PtCategory[] = [
     title: 'Formatador de JSON e Contador de Palavras | ConvertOcean',
     description: 'Formate e valide JSON, conte palavras e converta dados direto no navegador, sem enviar nada para servidores.',
     headline: 'Ferramentas para desenvolvedores.',
-    subtitle: 'JSON, CSV e texto — processados localmente, nunca em um servidor.'
+    subtitle: 'JSON, CSV e texto — processados localmente, nunca em um servidor.',
+    /* Written 2026-09-27 from what the tools verifiably do, not translated
+       from the English FAQs (several of which overclaim). Not keyword-led. */
+    intro: `
+    <h2>Utilitários de dados que não mandam seus dados para lugar nenhum.</h2>
+    <p>Dados de desenvolvimento estão cheios do que nunca deveria passar por um servidor de terceiros — chaves de API em arquivos de configuração, registros de clientes em exportações, tokens em payloads. Estas ferramentas convertem entre <a href="/pt/csv-para-json/">CSV e JSON</a>, transformam <a href="/pt/xml-para-json/">XML em JSON</a>, validam e formatam com o <a href="/pt/formatar-json/">formatador de JSON</a> e analisam textos com o <a href="/pt/contador-de-palavras/">contador de palavras</a>.</p>
+    <p>Como tudo roda no navegador, também funciona sem internet e na velocidade do seu próprio processador.</p>
+    `,
+    faqs: [
+      { q: 'O formatador de JSON mostra onde está o erro?', a: 'Sim. Quando o JSON é inválido, o formatador indica a linha e a coluna do problema, mostra o trecho com um marcador no ponto exato e descreve o erro — vírgula sobrando, aspas faltando, chave sem fechar.' },
+      { q: 'Arquivos CSV grandes funcionam?', a: 'Funcionam até 25 MB por arquivo. A leitura acontece na memória da aba, então a velocidade depende do seu aparelho, não de uma fila em servidor.' }
+    ]
   }
 ];
 
@@ -1291,7 +1362,7 @@ const ptToolsBatch5: PtTool[] = [
       },
       {
         question: 'aplicativo que converte imagem para texto',
-        answer: 'Não é preciso instalar aplicativo nenhum. A ferramenta funciona no navegador do celular exatamente como no computador, inclusive com fotos tiradas na hora, e a imagem continua sem sair do aparelho. Depois que a página carrega uma vez, ela também funciona sem internet.'
+        answer: 'Não é preciso instalar aplicativo nenhum. A ferramenta funciona no navegador do celular exatamente como no computador, inclusive com fotos tiradas na hora, e a imagem continua sem sair do aparelho. Depois do primeiro reconhecimento, que baixa o modelo de idioma, ela também funciona sem internet.'
       },
       {
         question: 'programa que converte imagem para texto',

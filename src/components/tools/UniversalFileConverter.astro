@@ -23,6 +23,14 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       grid-template-columns: repeat(2, 1fr);
     }
   }
+  /* A 1fr column cannot shrink below its longest word, and the Portuguese
+     "DADOS ESTRUTURADOS" in bold capitals made the pair 8px too wide at
+     320px, scrolling the page sideways. One column on the narrowest phones. */
+  @media (max-width: 340px) {
+    .formats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
   .format-category-title {
     font-size: 14px;
     font-weight: 700;
@@ -153,7 +161,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="📄" width="40" height="40" /></div>
   <div class="upload-text-primary">{t('Drag and drop file here, or click to browse', lang)}</div>
-  <div class="upload-text-secondary">Supports Excel (.xlsx, .xls), CSV (.csv), and text files (.txt) (Max size: 25MB)</div>
+  <div class="upload-text-secondary">{t('Supports Excel (.xlsx, .xls), CSV (.csv), and text files (.txt) (Max size: 25MB)', lang)}</div>
   <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv,.txt" />
 </div>
@@ -170,14 +178,14 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div class="compression-settings" id="compressionSettings">
       <div class="form-group" id="pdfQualityContainer" style="display: flex; flex-direction: column; gap: 4px;">
         <div class="control-label" style="font-size: 11px; font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; gap: var(--spacing-sm);">
-          <span>PDF Export Quality</span>
+          <span>{t('PDF Export Quality', lang)}</span>
           <span id="pdfQualityVal" style="font-family: monospace; font-weight: var(--fw-bold); color: var(--colors-link);">90%</span>
         </div>
-        <input type="range" id="pdfQualityRange" aria-label="PDF image quality (percent)" min="10" max="100" value="90" style="width: 140px; accent-color: var(--colors-ink); height: 6px; cursor: pointer;" />
+        <input type="range" id="pdfQualityRange" aria-label={t('PDF image quality (percent)', lang)} min="10" max="100" value="90" style="width: 140px; accent-color: var(--colors-ink); height: 6px; cursor: pointer;" />
       </div>
       <label style="font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; color: var(--colors-body);">
         <input type="checkbox" id="minifyJsonCheck" checked style="accent-color: var(--colors-ink); cursor: pointer; width: 15px; height: 15px;" />
-        <span>Minify/Compress JSON</span>
+        <span>{t('Minify/Compress JSON', lang)}</span>
       </label>
     </div>
 
@@ -197,13 +205,13 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 <!-- Preview Card -->
 <div class="preview-card" style="margin-top: var(--spacing-lg);">
   <div class="preview-header">
-    <span class="preview-title">DATA PREVIEW CONTAINER</span>
-    <span id="previewTypeBadge" style="font-family: monospace; font-size: 12px; color: var(--colors-mute);">NO ACTIVE FILE</span>
+    <span class="preview-title">{t('DATA PREVIEW CONTAINER', lang)}</span>
+    <span id="previewTypeBadge" style="font-family: monospace; font-size: 12px; color: var(--colors-mute);">{t('NO ACTIVE FILE', lang)}</span>
   </div>
   <div id="previewBody" class="preview-body">
     <div class="empty-state" id="emptyState">
       <div class="empty-state-icon"><CategoryIcon icon="📥" width="40" height="40" /></div>
-      <div>No file loaded yet</div>
+      <div>{t('No file loaded yet', lang)}</div>
       <div style="font-size: 13px;">{t('Drag a spreadsheet or text document above to inspect and convert.', lang)}</div>
     </div>
   </div>
@@ -211,11 +219,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
 <!-- Supported Formats Info Section -->
 <section class="supported-formats-box">
-  <h2 style="font-size: var(--fs-subhead); font-weight: var(--fw-bold); letter-spacing: var(--ls-subhead); color: var(--colors-ink);">Supported Conversion Formats</h2>
-  <p style="font-size: 14px; color: var(--colors-body); margin-top: 4px;">Convert Ocean supports offline, in-browser compilation of the following categories:</p>
+  <h2 style="font-size: var(--fs-subhead); font-weight: var(--fw-bold); letter-spacing: var(--ls-subhead); color: var(--colors-ink);">{t('Supported Conversion Formats', lang)}</h2>
+  <p style="font-size: 14px; color: var(--colors-body); margin-top: 4px;">{t('Convert Ocean supports offline, in-browser compilation of the following categories:', lang)}</p>
   <div class="formats-grid">
     <div>
-      <h3 class="format-category-title">Documents</h3>
+      <h3 class="format-category-title">{t('Documents', lang)}</h3>
       <ul class="format-list">
         <li class="format-item">TXT (.txt)</li>
         <li class="format-item">PDF (.pdf)</li>
@@ -230,7 +238,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       </ul>
     </div>
     <div>
-      <h3 class="format-category-title">Images</h3>
+      <h3 class="format-category-title">{t('Images', lang)}</h3>
       <ul class="format-list">
         <li class="format-item">PNG (.png)</li>
         <li class="format-item">JPG / JPEG</li>
@@ -239,7 +247,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       </ul>
     </div>
     <div>
-      <h3 class="format-category-title">Structured Data</h3>
+      <h3 class="format-category-title">{t('Structured Data', lang)}</h3>
       <ul class="format-list">
         <li class="format-item">JSON (.json)</li>
         <li class="format-item">XML (.xml)</li>
@@ -317,7 +325,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     function handleFileSelect(file) {
       hideError();
       if (file.size > MAX_FILE_SIZE_BYTES) {
-        showError(`File is too large (${(file.size / (1024 * 1024)).toFixed(2)} MB). Max supported is 25MB.`);
+        showError(`${__t('File is too large')} (${(file.size / (1024 * 1024)).toFixed(2)} MB). ${__t('Max supported is 25MB.')}`);
         return;
       }
 
@@ -344,7 +352,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             renderSpreadsheet();
             showControls();
           } catch (err) {
-            showError("Failed to parse spreadsheet file.");
+            showError(__t('Failed to parse spreadsheet file.'));
             console.error(err);
           }
         };
@@ -357,12 +365,12 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             renderText();
             showControls();
           } catch (err) {
-            showError("Failed to read text file.");
+            showError(__t('Failed to read text file.'));
           }
         };
         reader.readAsText(file);
       } else {
-        showError("Unsupported extension. Use .xlsx, .xls, .csv, or .txt.");
+        showError(__t('Unsupported extension. Use .xlsx, .xls, .csv, or .txt.'));
       }
     }
 
@@ -410,7 +418,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const sheet = activeFileData.workbook.Sheets[activeFileData.activeSheet];
       const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
       if (rows.length === 0) {
-        previewBody.innerHTML = `<div class="empty-state">No readable data rows in this sheet.</div>`;
+        previewBody.innerHTML = `<div class="empty-state">${__t('No readable data rows in this sheet.')}</div>`;
         return;
       }
       let html = '<table class="preview-table">';
@@ -515,7 +523,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       fileInput.value = "";
       previewBody.innerHTML = '';
       previewBody.appendChild(emptyState);
-      previewTypeBadge.textContent = "NO ACTIVE FILE";
+      previewTypeBadge.textContent = __t('NO ACTIVE FILE');
       sheetsBar.innerHTML = '';
       sheetsBar.style.display = 'none';
 

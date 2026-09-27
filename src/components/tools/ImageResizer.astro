@@ -200,9 +200,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div class="form-group">
       <label class="form-label" for="rzFormat">{t('Output Format', lang)}</label>
       <select id="rzFormat" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); width: 100%;">
-        <option value="jpg" selected>JPG (.jpg) — smallest, best for forms</option>
+        <option value="jpg" selected>JPG (.jpg) — {t('smallest, best for forms', lang)}</option>
         <option value="jpeg">JPEG (.jpeg) — same format, .jpeg extension</option>
-        <option value="png">PNG (.png) — lossless, larger files</option>
+        <option value="png">PNG (.png) — {t('lossless, larger files', lang)}</option>
         <option value="webp">WebP (.webp) — modern, very small</option>
       </select>
     </div>

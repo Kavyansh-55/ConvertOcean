@@ -222,6 +222,49 @@ try {
     await page.close();
   }
 
+  /* ---------------------------------------------- image OCR, Portuguese
+     The engine loaded only the English model on every page, so a Brazilian
+     OCR-ing a document lost every ç, ã, õ and ê — on /pt/imagem-para-texto/,
+     the page built for "transformar imagem em texto" (Easy, >10,000). Accents
+     are the whole test: the words must come back WITH them. */
+  {
+    const page = await browser.newPage();
+    await page.setCacheEnabled(false);
+    await page.goto(ORIGIN + '/pt/imagem-para-texto/', { waitUntil: 'networkidle2', timeout: 45000 });
+    await new Promise((r) => setTimeout(r, 600));
+
+    const words = ['INFORMAÇÃO', 'CORAÇÃO', 'VOCÊ', 'AÇÕES'];
+    const png = await page.evaluate((ws) => {
+      const c = document.createElement('canvas');
+      c.width = 900; c.height = 320;
+      const g = c.getContext('2d');
+      g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+      g.fillStyle = '#000'; g.font = 'bold 64px Arial';
+      ws.forEach((w, i) => g.fillText(w, 40, 80 + i * 70));
+      return c.toDataURL('image/png');
+    }, words);
+    const imgPath = join(DL, 'ocr-sample-pt.png');
+    writeFileSync(imgPath, Buffer.from(png.split(',')[1], 'base64'));
+
+    const input = await page.$('input[type=file]');
+    await input.uploadFile(imgPath);
+
+    let text = '';
+    const deadline = Date.now() + 120000;
+    while (Date.now() < deadline) {
+      text = await page.evaluate(() => document.getElementById('txtOutput')?.value
+        || document.getElementById('txtOutput')?.textContent || '');
+      if (text && text.trim().length > 3) break;
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+
+    const upper = text.toUpperCase();
+    const found = words.filter((w) => upper.includes(w));
+    say(found.length >= 3,
+        `Portuguese OCR keeps accents: ${found.length}/${words.length} words exact (${found.join(', ') || 'none'}) — read: ${text.replace(/\s+/g, ' ').trim().slice(0, 60)}`);
+    await page.close();
+  }
+
   /* ------------------------------------------------- legacy .ppt refusal */
   {
     const page = await browser.newPage();

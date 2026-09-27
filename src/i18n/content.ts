@@ -74,6 +74,10 @@ export interface PtCategory {
   description: string;
   headline: string;
   subtitle: string;
+  /** Intro prose under the tool grid (HTML with /pt/ links). */
+  intro?: string;
+  /** Category FAQs; also emitted as FAQPage structured data. */
+  faqs?: { q: string; a: string }[];
 }
 
 /** About, privacy, terms and the like: path pairs plus their copy blocks. */

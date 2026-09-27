@@ -430,7 +430,7 @@ const sample = isPt ? {
     </div>
 
     <div class="form-card">
-      <div class="form-card-title">From (Business / Seller)</div>
+      <div class="form-card-title">{t('From (Business / Seller)', lang)}</div>
       <div class="form-group">
         <label class="form-label" for="rcptVendorName">{t('Business Name', lang)}</label>
         <input type="text" id="rcptVendorName" class="form-input" value={sample.VendorName} />
@@ -446,7 +446,7 @@ const sample = isPt ? {
     </div>
 
     <div class="form-card">
-      <div class="form-card-title">To (Customer / Buyer)</div>
+      <div class="form-card-title">{t('To (Customer / Buyer)', lang)}</div>
       <div class="form-group">
         <label class="form-label" for="rcptClientName">{t('Customer Name', lang)}</label>
         <input type="text" id="rcptClientName" class="form-input" value={sample.ClientName} />
@@ -524,7 +524,7 @@ const sample = isPt ? {
             </div>
           </div>
           <div>
-            <div class="address-col-title">Received By</div>
+            <div class="address-col-title">{t('Received By', lang)}</div>
             <div class="address-details" id="rcptPdfVendorAddr"></div>
             <div id="rcptVendorTaxIdContainer" style="display: none; font-size: 11px; margin-top: 4px; color: #4d4d4d;">
               <strong>{t('Tax ID:', lang)}</strong> <span id="rcptVendorTaxId"></span>
@@ -535,7 +535,7 @@ const sample = isPt ? {
         <table class="receipt-pdf-table">
           <thead>
             <tr>
-              <th style="width: 50%;">Item Description</th>
+              <th style="width: 50%;">{t('Item Description', lang)}</th>
               <th style="width: 10%; text-align: right;">{t('Qty', lang)}</th>
               <th style="width: 20%; text-align: right;">{t('Unit Rate', lang)}</th>
               <th style="width: 20%; text-align: right;">{t('Amount', lang)}</th>
@@ -568,7 +568,7 @@ const sample = isPt ? {
               <div class="address-col-title">{t('Notes', lang)}</div>
               <div class="pdf-terms" id="rcptPdfNotes"></div>
             </div>
-            <div class="pdf-thankyou">Payment received. Thank you.</div>
+            <div class="pdf-thankyou">{t('Payment received. Thank you.', lang)}</div>
           </div>
         </div>
       </div>

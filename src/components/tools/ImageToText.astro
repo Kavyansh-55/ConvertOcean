@@ -158,25 +158,31 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         workspaceGrid.style.display = 'grid';
         dropZone.style.display = 'none';
         
-        showProgress(10, "Initializing OCR threads…");
+        showProgress(10, __t("Initializing OCR threads…"));
         try {
           const worker = await Tesseract.createWorker({
             logger: m => {
               if (m.status === 'recognizing text') {
                 const pct = Math.round(m.progress * 100);
-                showProgress(pct, `Extracting Text: ${pct}%`);
+                showProgress(pct, `${__t("Extracting Text:")} ${pct}%`);
               }
             }
           });
-          await worker.loadLanguage('eng');
-          await worker.initialize('eng');
+          /* Portuguese pages load the Portuguese model. The English one has no
+             ç, ã, õ or ê: it read INFORMAÇÃO CORAÇÃO VOCÊ AÇÕES as INFORMAGAO
+             CORACAO VOCE ACOES — 0 of 4 — on /pt/imagem-para-texto/. The
+             Portuguese model reads unaccented English words just as well.
+             Guarded by the Portuguese OCR check in verify-generators.mjs. */
+          const OCR_LANG = document.documentElement.lang === 'pt' ? 'por' : 'eng';
+          await worker.loadLanguage(OCR_LANG);
+          await worker.initialize(OCR_LANG);
           const { data: { text } } = await worker.recognize(file);
           
           ocrText = text;
-          txtOutput.value = text || "No text detected.";
+          txtOutput.value = text || __t("No text detected.");
           await worker.terminate();
         } catch(err) {
-          showError("Failed to extract characters.");
+          showError(__t("Failed to extract characters."));
         }
         hideProgress();
       };

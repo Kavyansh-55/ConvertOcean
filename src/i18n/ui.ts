@@ -138,6 +138,62 @@ const pt: Record<string, string> = {
   'and': 'e',
   'work too (Max 25MB)': 'também funcionam (máx. 25 MB)',
 
+  // ---- Universal file converter (was on no Portuguese page until 2026-09-27)
+  'Supports Excel (.xlsx, .xls), CSV (.csv), and text files (.txt) (Max size: 25MB)': 'Aceita Excel (.xlsx, .xls), CSV (.csv) e arquivos de texto (.txt) (máx. 25 MB)',
+  'PDF Export Quality': 'Qualidade do PDF',
+  'PDF image quality (percent)': 'Qualidade das imagens no PDF (porcentagem)',
+  'Minify/Compress JSON': 'Compactar o JSON',
+  'DATA PREVIEW CONTAINER': 'PRÉ-VISUALIZAÇÃO DOS DADOS',
+  'NO ACTIVE FILE': 'NENHUM ARQUIVO',
+  'No file loaded yet': 'Nenhum arquivo carregado',
+  'Supported Conversion Formats': 'Formatos aceitos',
+  'Convert Ocean supports offline, in-browser compilation of the following categories:': 'O ConvertOcean converte, dentro do navegador e sem internet, as seguintes categorias:',
+  'Documents': 'Documentos',
+  'Images': 'Imagens',
+  'Structured Data': 'Dados estruturados',
+  'File is too large': 'O arquivo é grande demais',
+  'Max supported is 25MB.': 'O máximo aceito é 25 MB.',
+  'Failed to parse spreadsheet file.': 'Não foi possível ler a planilha.',
+  'Failed to read text file.': 'Não foi possível ler o arquivo de texto.',
+  'Unsupported extension. Use .xlsx, .xls, .csv, or .txt.': 'Formato não aceito. Use .xlsx, .xls, .csv ou .txt.',
+  'No readable data rows in this sheet.': 'Esta aba não tem linhas de dados legíveis.',
+
+  // ---- OCR runtime messages
+  'Initializing OCR threads…': 'Preparando o reconhecimento…',
+  'Extracting Text:': 'Extraindo o texto:',
+  'No text detected.': 'Nenhum texto encontrado.',
+  'Failed to extract characters.': 'Não foi possível extrair o texto.',
+
+  // ---- Options panels shown only after a file loads (2026-09-27 hidden-text scan)
+  'This is where almost all of a spreadsheet\'s size goes: rows and columns past your data that carry a border or a fill and nothing else, usually from selecting whole columns and formatting them. Your values, formulas, charts and formatting inside the used range are untouched — but a cell beyond the data will no longer inherit the fill it had, so if your file is a template waiting to be filled in, turn this off.': 'É aqui que está quase todo o tamanho de uma planilha: linhas e colunas depois dos seus dados que só carregam uma borda ou um preenchimento, quase sempre de quando colunas inteiras foram selecionadas e formatadas. Valores, fórmulas, gráficos e a formatação dentro do intervalo utilizado não mudam — mas uma célula além dos dados deixa de herdar o preenchimento que tinha. Se o arquivo é um modelo à espera de ser preenchido, desligue esta opção.',
+  'Keep the rotation flag': 'Manter a informação de rotação',
+  '— it is not private, and removing it makes photos taken sideways display sideways.': '— ela não é privada, e removê-la faz fotos tiradas de lado aparecerem de lado.',
+  'Keep the colour profile': 'Manter o perfil de cor',
+  '— ICC data describes colour, not you. Removing it can visibly shift colours.': '— o perfil ICC descreve cores, não você. Removê-lo pode alterar as cores visivelmente.',
+
+  // ---- Short labels found by the loose 2026-09-27 scan (mostly hidden panels)
+  'Paste from clipboard': 'Colar da área de transferência',
+  'Text to analyse': 'Texto para analisar',
+  'Start typing to see keyword frequency…': 'Comece a digitar para ver a frequência das palavras…',
+  'From (Business / Seller)': 'De (empresa / vendedor)',
+  'To (Customer / Buyer)': 'Para (cliente / comprador)',
+  'Received By': 'Recebido por',
+  'Item Description': 'Descrição do item',
+  'Payment received. Thank you.': 'Pagamento recebido. Obrigado!',
+  'smallest, best for forms': 'menor, ideal para formulários',
+  'lossless, larger files': 'sem perda, arquivos maiores',
+  'Max segment size (KB)': 'Tamanho máximo de cada parte (KB)',
+  'Splitting file…': 'Dividindo o arquivo…',
+  'Previous page': 'Página anterior',
+  'Next page': 'Próxima página',
+  'Number of equal parts': 'Número de partes iguais',
+  'Split by Heading 1': 'Dividir a cada Título 1',
+  'Split by Paragraph Count': 'Dividir por número de parágrafos',
+  'Toggle minified output': 'Alternar saída compactada',
+  'JSON (Max 15MB)': 'JSON (máx. 15 MB)',
+  'XLSX or XLS (Max 25MB)': 'XLSX ou XLS (máx. 25 MB)',
+  'CSV (Max 25MB)': 'CSV (máx. 25 MB)',
+
   // ---- Footer: tool names ----------------------------------------------
   // These must match the `name` of the same tool in src/data/pt/index.ts.
   'Excel to PDF': 'Excel para PDF',
@@ -604,4 +660,9 @@ const RUNTIME_KEYS = [
   'Rate', 'Cash', 'Debit Card', 'Bank Transfer', 'Check',
   'VALID', 'INVALID', 'JSON is valid.', 'Line', 'Column', 'IDLE',
   'Fix the JSON error to see formatted output.',
+  'File is too large', 'Max supported is 25MB.', 'Failed to parse spreadsheet file.',
+  'Failed to read text file.', 'Unsupported extension. Use .xlsx, .xls, .csv, or .txt.',
+  'No readable data rows in this sheet.', 'NO ACTIVE FILE',
+  'Initializing OCR threads…', 'Extracting Text:', 'No text detected.', 'Failed to extract characters.',
+  'Start typing to see keyword frequency…',
 ];

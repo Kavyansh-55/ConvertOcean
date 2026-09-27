@@ -86,8 +86,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div style="display: flex; flex-direction: column; gap: 4px;">
       <span class="input-label">{t('Split Mode:', lang)}</span>
       <select id="splitMode" class="select-input">
-        <option value="headings">Split by Heading 1</option>
-        <option value="paragraphs">Split by Paragraph Count</option>
+        <option value="headings">{t('Split by Heading 1', lang)}</option>
+        <option value="paragraphs">{t('Split by Paragraph Count', lang)}</option>
       </select>
     </div>
 

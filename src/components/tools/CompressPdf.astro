@@ -342,9 +342,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div class="cmp-compare-head">
       <div class="cmp-settings-label" style="margin: 0;">{t('Drag the slider to compare', lang)}</div>
       <div class="cmp-page-nav">
-        <button type="button" class="button button-secondary" id="cmpPrevPage" aria-label="Previous page">‹</button>
+        <button type="button" class="button button-secondary" id="cmpPrevPage" aria-label={t('Previous page', lang)}>‹</button>
         <span id="cmpPageLabel">{t('Page 1 of 1', lang)}</span>
-        <button type="button" class="button button-secondary" id="cmpNextPage" aria-label="Next page">›</button>
+        <button type="button" class="button button-secondary" id="cmpNextPage" aria-label={t('Next page', lang)}>›</button>
       </div>
     </div>
     <div class="cmp-stage" id="cmpStage">

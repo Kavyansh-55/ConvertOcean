@@ -70,7 +70,7 @@ let targetFormat = "PDF";
   <div id="actionControls" class="panel-card" style="display:none; margin-top:var(--spacing-md); margin-bottom:var(--spacing-md); flex-direction:row; justify-content:space-between; align-items:center;">
     <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
     <div class="button-group" style="display:flex; gap:var(--spacing-xs);">
-      <button class="button button-primary" id="btnDownload">Download {targetFormat}</button>
+      <button class="button button-primary" id="btnDownload">{t('Download', lang)} {targetFormat}</button>
       <button class="button button-danger"  id="btnClear">{t('Clear', lang)}</button>
     </div>
   </div>
