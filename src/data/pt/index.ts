@@ -3812,6 +3812,111 @@ export const ptGuides: PtGuide[] = [
         answer: 'Não. A união acontece no seu navegador, no seu dispositivo, e os arquivos não são copiados para nenhum servidor. Documentos com dados pessoais permanecem com você do começo ao fim.'
       }
     ]
+  },
+  {
+    en: 'photos-to-pdf-scanning',
+    /* 2026-09-27. The only guide seed with real volume: `escanear documento`
+       came back with 782 phrase keywords and 148 questions, a cluster of Easy
+       >1000 terms (pelo celular, no iphone, na impressora). Built around what
+       a concurso applicant actually hits — a PDF, a size limit, front and
+       back of an ID — which the ranking tutorials (TechTudo, Tecnoblog) do
+       not cover. Phone and WhatsApp steps were checked against Apple's and
+       Google's help pages and TechTudo's walkthrough, not written from
+       memory; labels drift between versions, so the text names where an
+       option lives rather than promising exact menus. */
+    slug: 'escanear-documento',
+    title: 'Como Escanear Documento pelo Celular: iPhone, Android e WhatsApp | ConvertOcean',
+    description: 'Como escanear documento pelo celular sem instalar nada — no iPhone, no Android e pelo WhatsApp — e como deixar o PDF pronto para concurso: legível, na ordem certa e abaixo de 2 MB.',
+    h1: 'Como escanear documento pelo celular — e deixar o PDF pronto para enviar.',
+    readTime: '8 min de leitura',
+    publishDate: '27 de setembro de 2026',
+    intro: 'O celular já substituiu o scanner, e na maioria dos aparelhos não é preciso instalar nada: o iPhone escaneia pelo app Notas, o Android pelo Google Drive e os dois pelo WhatsApp. O que costuma dar errado vem depois — o PDF que passa de 2 MB, o RG com frente e verso em arquivos separados, a página fora de ordem. Este guia cobre as duas partes.',
+    contentHtml: `
+      <h2>O que muda entre escanear e tirar uma foto</h2>
+      <p>Escanear um documento é registrar a página de modo que ela fique plana, reta e legível — como uma cópia, não como uma foto do papel em cima da mesa. Os scanners do celular fazem isso sozinhos: detectam as bordas da folha, corrigem a inclinação, cortam o fundo e clareiam o papel. Uma foto comum mantém a mesa, a sombra da sua mão e a perspectiva torta.</p>
+      <p>Por isso, quando o edital pede o documento “digitalizado”, use a função de escanear em vez da câmera comum sempre que puder.</p>
+
+      <h2>Como escanear documento no iPhone, sem aplicativo</h2>
+      <p>O iPhone escaneia pelo app <strong>Notas</strong>, que já vem instalado:</p>
+      <ol>
+        <li>Abra o Notas e crie uma nota nova.</li>
+        <li>Toque no botão de anexo e escolha <strong>Escanear Documentos</strong>.</li>
+        <li>Aponte a câmera para a folha. No modo automático, o iPhone captura sozinho quando reconhece as bordas; no manual, toque no obturador, ajuste os cantos e toque em <strong>Manter Escaneamento</strong>.</li>
+        <li>Escaneie as páginas seguintes e toque em <strong>Salvar</strong>.</li>
+      </ol>
+      <p>Se o destino é um arquivo PDF, o app <strong>Arquivos</strong> é ainda mais direto: toque no botão de mais opções, escolha <strong>Escanear Documentos</strong>, faça o mesmo processo e escolha a pasta onde salvar — o escaneamento vira um PDF pronto para anexar.</p>
+
+      <h2>Como escanear documento no Android</h2>
+      <p>O caminho que funciona em quase todo Android — Samsung, Motorola, Xiaomi — é o <strong>Google Drive</strong>:</p>
+      <ol>
+        <li>No app do Drive, toque no botão da câmera.</li>
+        <li>Fotografe a página; a área de corte aparece destacada.</li>
+        <li>Use <strong>Cortar e girar</strong> para acertar as bordas, <strong>Filtrar</strong> para deixar em preto e branco e <strong>Adicionar</strong> para as próximas páginas.</li>
+        <li>Toque em <strong>Concluído</strong>, escolha o formato <strong>.pdf</strong> e toque em <strong>Salvar</strong>.</li>
+      </ol>
+      <p>Nos Galaxy, a própria câmera da Samsung também digitaliza: com a opção de digitalização de documentos ativada nas configurações da câmera, ela reconhece a folha e oferece um botão para escanear. O nome e o lugar da opção mudam entre versões da One UI, então o Drive é o caminho mais previsível.</p>
+
+      <h2>Como escanear pelo WhatsApp</h2>
+      <p>Nas versões recentes, o WhatsApp tem um scanner embutido. Em uma conversa, toque no botão de anexar, escolha <strong>Documento</strong> e depois <strong>Escanear documento</strong>. Ajuste as bordas, toque em <strong>Manter Escaneamento</strong> e envie — o documento vai como PDF.</p>
+      <p>É o mais rápido quando o destino é o próprio WhatsApp. Se a opção não aparecer, atualize o aplicativo; se ainda assim não aparecer, escaneie pelo Notas ou pelo Drive e anexe o PDF.</p>
+
+      <h2>Na impressora multifuncional</h2>
+      <p>Cada fabricante tem o seu programa, e é ele que dá mais controle: o Epson ScanSmart e o Epson Smart Panel, o HP Smart, o Canon IJ Scan Utility. No Windows, o <strong>Fax e Scanner do Windows</strong> também digitaliza de qualquer impressora instalada. Três ajustes resolvem a maior parte dos problemas:</p>
+      <ul>
+        <li><strong>Formato PDF</strong>, não JPG, quando o destino pede documento.</li>
+        <li><strong>200 dpi</strong> para documentos. Texto continua nítido, e o arquivo fica muito menor que em 600 dpi.</li>
+        <li><strong>Preto e branco ou tons de cinza</strong> quando a cor não importa — é a maior economia de tamanho que existe.</li>
+      </ul>
+
+      <h2>Para concurso e inscrição: o que costuma dar errado</h2>
+      <p>Editais e portais de inscrição quase sempre pedem as mesmas coisas: arquivo em PDF, limite de tamanho — muitas vezes 2 MB — e documento legível. A recusa por ilegibilidade costuma chegar depois do prazo, então confira antes de enviar: abra o arquivo final, dê zoom e leia nome, número do documento e assinatura.</p>
+
+      <h3>RG ou CNH com frente e verso</h3>
+      <p>Se o edital aceita duas páginas, basta escanear a frente e depois o verso no mesmo documento. Se pede <strong>frente e verso na mesma folha</strong>, monte as duas fotos em uma imagem só com o <a href="/pt/juntar-fotos/">juntar fotos</a>, na vertical, e converta essa imagem em PDF.</p>
+
+      <h3>Já tem as fotos? Transforme em PDF sem aplicativo</h3>
+      <p>Se você fotografou com a câmera comum, o <a href="/pt/imagem-para-pdf/">imagem para PDF</a> converte as fotos direto no navegador do celular: uma foto por página, em A4, na ordem em que você as escolher. Fotos tiradas em pé entram em pé — a orientação que o celular registra na foto é respeitada. Adicione as páginas na sequência certa; se uma entrar fora do lugar, remova-a e adicione de novo.</p>
+
+      <h3>O PDF ficou grande demais</h3>
+      <p>Passe o arquivo pelo <a href="/pt/comprimir-pdf/">comprimir PDF</a>. Se o problema são muitas fotos pesadas, reduza-as antes com o <a href="/pt/redimensionar-imagem/">redimensionar imagem</a>: 1.500 a 2.000 pixels no lado maior mantêm o texto legível com uma fração do tamanho. E, para reunir vários documentos na ordem que o edital pede, use o <a href="/pt/juntar-pdf/">juntar PDF</a> — o guia de <a href="/pt/guias/juntar-varios-pdf/">como juntar vários PDF em um só</a> mostra o passo a passo.</p>
+      <p>Se o edital também pede foto e assinatura em medidas exatas, isso é outro ajuste — veja <a href="/pt/guias/redimensionar-foto-assinatura/">como redimensionar foto e assinatura</a>.</p>
+
+      <h2>Escaneou, mas precisa do texto?</h2>
+      <p>Um documento escaneado é uma imagem do texto: dá para ler, mas não para copiar ou editar. Para recuperar as palavras, passe a imagem pelo <a href="/pt/imagem-para-texto/">imagem para texto</a>, que faz o reconhecimento (OCR) no próprio aparelho.</p>
+
+      <h2>Seus documentos ficam com você</h2>
+      <p>RG, CPF, comprovante de residência e contracheque são exatamente os arquivos que não deveriam circular. Muitos aplicativos de scanner gratuitos guardam os escaneamentos na nuvem deles; os scanners que já vêm no celular dispensam essa instalação, e as ferramentas do ConvertOcean processam tudo no navegador, no seu aparelho — nada é copiado para nenhum servidor.</p>
+    `,
+    faqs: [
+      {
+        question: 'como escanear um documento',
+        answer: 'Há três caminhos, todos sem custo: o celular (app Notas no iPhone, Google Drive no Android), o WhatsApp (Anexar › Documento › Escanear documento) e a impressora multifuncional, pelo programa do fabricante. Para documentos que vão para inscrições e portais, salve em PDF e confira se ficou legível antes de enviar.'
+      },
+      {
+        question: 'como escanear um documento pelo celular',
+        answer: 'Use o scanner que já vem no sistema, que corrige a inclinação e recorta o fundo sozinho. Coloque a folha sobre uma superfície escura e lisa, com luz uniforme e sem sombra da sua mão, e deixe a folha ocupar quase toda a tela. Evite o flash: ele cria um reflexo que apaga parte do texto.'
+      },
+      {
+        question: 'como escanear documento no iphone',
+        answer: 'Abra o app Notas, toque no botão de anexo e escolha Escanear Documentos. O iPhone captura sozinho quando reconhece as bordas da página; depois toque em Salvar. Para obter um PDF direto em uma pasta, use o app Arquivos, que tem a mesma opção Escanear Documentos.'
+      },
+      {
+        question: 'como escanear um documento na impressora',
+        answer: 'Coloque a folha virada para baixo no vidro, abra o programa do fabricante no computador (Epson ScanSmart, HP Smart, Canon IJ Scan Utility) ou o Fax e Scanner do Windows e escolha PDF como formato. Para documentos, 200 dpi em preto e branco dão um arquivo nítido e leve.'
+      },
+      {
+        question: 'como escanear documento pelo whatsapp',
+        answer: 'Em uma conversa, toque em anexar, escolha Documento e depois Escanear documento. Ajuste as bordas, toque em Manter Escaneamento e envie: o documento vai como PDF. Se a opção não aparecer, atualize o WhatsApp.'
+      },
+      {
+        question: 'o que é escanear um documento',
+        answer: 'É transformar uma folha de papel em um arquivo digital que reproduz a página plana e legível, como uma cópia. Diferente de uma foto comum, o escaneamento corrige a perspectiva, recorta o fundo e clareia o papel, e o resultado costuma ser salvo em PDF.'
+      },
+      {
+        question: 'Qual o tamanho máximo do PDF para concurso?',
+        answer: 'Depende do edital, mas 2 MB por arquivo é um limite comum. Se o seu PDF passar disso, escaneie em 200 dpi e em preto e branco, e passe o resultado pelo comprimir PDF. Confira sempre o limite no próprio edital, porque ele varia entre concursos e entre documentos do mesmo concurso.'
+      }
+    ]
   }
 ];
 

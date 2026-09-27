@@ -662,7 +662,8 @@ async function stylesheetsFor(path) {
 
   const sm = (await get('/sitemap.xml')).body;
   const ptLocs = (sm.match(/<loc>[^<]*\/pt\/[^<]*<\/loc>/g) || []).length;
-  say(ptLocs === 86, `sitemap.xml lists all 86 Portuguese URLs (found ${ptLocs})`);
+  /* >= rather than ===: later batches add /pt/ URLs; the latest batch asserts the exact count. */
+  say(ptLocs >= 86, `sitemap.xml lists all 86 launch Portuguese URLs (found ${ptLocs})`);
 }
 
 /* ------------------------------------------------- 2026-09-27 batch 13
@@ -700,6 +701,41 @@ async function stylesheetsFor(path) {
     say(!/reordene|arraste as miniaturas|arrastando cada miniatura|arraste para reordenar|coloque-as na ordem desejada/i.test(b),
         `${p} promises no drag-to-reorder control`);
   }
+}
+
+/* ------------------------------------------------- 2026-09-27 scanning batch
+   Phone photos (EXIF "rotate 90°") were painted sideways and squashed by
+   image-to-pdf and merge-images' PDF mode. Both now go through
+   window.coPdfImage, which lives in the shared tool bundle; the end-to-end
+   proof is the fidelity recipes "phone photo with EXIF rotation", which can
+   be pointed at production with CO_ORIGIN. */
+{
+  for (const t of ['image-to-pdf', 'merge-images']) {
+    const b = (await get(`/${t}/`)).body;
+    say(b.includes('window.coPdfImage('), `${t}: embeds images through coPdfImage (EXIF-aware)`);
+    const bundles = [...new Set([...b.matchAll(/\/_astro\/[^"']+\.js/g)].map(m => m[0]))];
+    let found = false;
+    for (const u of bundles) { if ((await get(u)).body.includes('Exif')) { found = true; break; } }
+    say(found, `${t}: the served bundle carries the EXIF orientation reader`);
+  }
+
+  const g = await get('/pt/guias/escanear-documento/');
+  say(g.status === 200, '/pt/guias/escanear-documento/ is served');
+  say(/<title>Como Escanear Documento pelo Celular/.test(g.body), 'and targets "como escanear documento pelo celular" in its title');
+  say(g.body.includes('hreflang="en" href="https://convertocean.com/guides/photos-to-pdf-scanning/"'), 'and pairs with the English photos-to-pdf guide');
+  for (const q of ['como escanear um documento', 'como escanear documento no iphone', 'como escanear documento pelo whatsapp']) {
+    say(g.body.includes(q), `and carries "${q}"`);
+  }
+  const en = (await get('/guides/photos-to-pdf-scanning/')).body;
+  say(en.includes('hreflang="pt" href="https://convertocean.com/pt/guias/escanear-documento/"'), 'the English guide points back at it');
+  say(!/arrange them in reading order|wide whiteboard shots on landscape|renaming files 01/i.test(en),
+      'the English guide no longer promises reordering, landscape pages or filename ordering');
+  say((await get('/pt/guias/')).body.includes('/pt/guias/escanear-documento/'), '/pt/guias/ lists the new guide');
+
+  const sm = (await get('/sitemap.xml')).body;
+  const ptLocs = (sm.match(/<loc>[^<]*\/pt\/[^<]*<\/loc>/g) || []).length;
+  say(ptLocs === 87 && sm.includes('/pt/guias/escanear-documento/'),
+      `sitemap.xml lists 87 Portuguese URLs including the guide (found ${ptLocs})`);
 }
 
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');

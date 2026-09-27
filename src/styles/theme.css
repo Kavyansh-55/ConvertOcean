@@ -1807,6 +1807,10 @@ select:focus-visible,
   user-select: none;
   color: var(--colors-ink);
   touch-action: manipulation;
+  /* Padding plus one line of lead text lands at ~44px, so a single-line
+     question sat on the touch-target boundary and font rounding decided
+     whether it passed (/exif-remover/ read 43.x at 320px on 2026-09-27). */
+  min-height: 48px;
 }
 
 .faq-answer {

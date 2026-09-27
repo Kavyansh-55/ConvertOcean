@@ -222,6 +222,10 @@ const articleData = {
       text-decoration: none;
       transition: background-color 0.2s, transform 0.2s;
       flex-shrink: 0;
+      /* 13.5px text with xs padding came out 36px tall — under the 44px touch
+         target on every guide, English included. No suite had ever visited a
+         guide page on a phone until verify-mobile added one (2026-09-27). */
+      min-height: 44px;
     }
 
     .tool-callout-btn:hover {

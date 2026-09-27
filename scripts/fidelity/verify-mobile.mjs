@@ -128,6 +128,8 @@ const PAGES = [
   '/pt/redimensionar-imagem/',   // ImageResizer, preset chips and tabs
   '/pt/modelo-de-recibo/',       // ReceiptGenerator, a long form
   '/pt/dividir-pdf/',            // SplitPdf, radio rows with inline inputs
+  '/pt/guias/escanear-documento/', // the longest PT guide: nested h3s, ordered steps
+  '/guides/photos-to-pdf-scanning/', // an English guide: same template, never measured on a phone
 
   /* One per component. The comment is the component, because that is the unit
      this list is really covering. */

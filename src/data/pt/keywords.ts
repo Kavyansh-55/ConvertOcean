@@ -1937,6 +1937,36 @@ export const pageKeywords: PageKeywords[] = [
   {
     slug: 'qfx-para-csv', en: 'qfx-to-csv', primary: 'qfx para csv',
     phrase: [], questions: []
+  },
+  /* ---------------------------------------------------------------------
+     GUIDE — /pt/guias/escanear-documento/, 2026-09-27. Kavya's Ahrefs export
+     (Brazil) for the seed `escanear documento`: 782 phrase-match keywords and
+     148 questions — the only guide seed of eight that had real volume. The
+     other seven were <100 or turned out to be tool queries (batch 13).
+
+     Deliberately NOT targeted: printer-model queries (`…epson l3250`, `…hp
+     smart tank 584`) — dozens of models, each with its own software; the guide
+     covers the manufacturers' apps in general and does not pretend to
+     step-by-step instructions it cannot verify for every model.
+     --------------------------------------------------------------------- */
+  {
+    slug: 'escanear-documento', en: 'photos-to-pdf-scanning', primary: 'como escanear documento pelo celular',
+    phrase: [
+      { term: 'escanear documento', kd: 'Medium', volume: '>1000' },
+      { term: 'escanear documento iphone', kd: 'Easy', volume: '>1000' },
+      { term: 'escanear documento online', kd: 'Easy', volume: '>100' },
+      { term: 'aplicativo para escanear documento', kd: 'Easy', volume: '>100' },
+      { term: 'escanear documento pelo celular', kd: 'Easy', volume: '>100' },
+      { term: 'escanear documento online grátis', kd: 'n/a', volume: '>100' }
+    ],
+    questions: [
+      { term: 'como escanear um documento', kd: 'Easy', volume: '>1000' },
+      { term: 'como escanear um documento pelo celular', kd: 'Easy', volume: '>1000' },
+      { term: 'como escanear documento no iphone', kd: 'Easy', volume: '>1000' },
+      { term: 'como escanear um documento na impressora', kd: 'Easy', volume: '>1000' },
+      { term: 'como escanear documento pelo whatsapp', kd: 'Easy', volume: '>100' },
+      { term: 'o que é escanear um documento', kd: 'Easy', volume: '>100' }
+    ]
   }
 ];
 
