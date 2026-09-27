@@ -182,12 +182,12 @@ const ptToolsSeed: PtTool[] = [
     description: 'Una vários PDF em um único arquivo direto no navegador, na ordem que você quiser. Nenhum documento sai do seu computador.',
     headline: 'Juntar PDF.',
     subtitle: 'Una vários documentos em um único PDF, na ordem que você escolher — sem que nada saia do seu computador.',
-    quickAnswer: 'Para juntar vários PDF em um só, arraste os arquivos para a ferramenta acima, arraste-os para a ordem desejada e baixe o documento único. Tudo é montado dentro do seu navegador, sem que os arquivos saiam do seu computador. É o caminho normal para reunir RG, CPF, diploma e comprovantes em um único anexo quando o edital pede um arquivo só.',
+    quickAnswer: 'Para juntar vários PDF em um só, adicione os arquivos na ferramenta acima na ordem em que devem aparecer e baixe o documento único. Tudo é montado dentro do seu navegador, sem que os arquivos saiam do seu computador. É o caminho normal para reunir RG, CPF, diploma e comprovantes em um único anexo quando o edital pede um arquivo só.',
     category: 'Ferramentas PDF',
     faqs: [
       {
         question: 'como juntar varios pdf em um só',
-        answer: 'Arraste todos os arquivos de uma vez para a ferramenta no topo da página e depois reordene-os arrastando cada miniatura. A ordem em que aparecem na tela é a ordem das páginas no arquivo final. Quando a sequência estiver certa, baixe o PDF único. Não há cadastro, marca d’água nem limite de quantos arquivos você pode reunir.'
+        answer: 'Adicione os arquivos na ferramenta no topo da página, na sequência em que devem aparecer. A ordem da lista na tela é a ordem das páginas no arquivo final; se um entrar fora do lugar, remova-o no ✕ e adicione de novo — ele vai para o fim da lista. Quando a sequência estiver certa, baixe o PDF único. Não há cadastro, marca d’água nem limite de quantos arquivos você pode reunir.'
       },
       {
         question: 'como juntar dois pdf',
@@ -211,7 +211,7 @@ const ptToolsSeed: PtTool[] = [
       },
       {
         question: 'como unir varios pdf em um só',
-        answer: 'Adicione todos de uma vez em vez de um a um: a ferramenta aceita múltiplos arquivos na mesma seleção e os organiza em uma lista que você pode reordenar. Para documentos de concurso, monte a sequência exatamente como o edital pede antes de baixar, porque conferir depois custa refazer.'
+        answer: 'Adicione todos de uma vez em vez de um a um: a ferramenta aceita múltiplos arquivos na mesma seleção e os mantém na ordem da lista. Se a ordem importar, adicione um arquivo por vez: cada novo entra no fim da lista. Para documentos de concurso, monte a sequência exatamente como o edital pede antes de baixar, porque conferir depois custa refazer.'
       },
       {
         question: 'como mesclar pdf',
@@ -223,7 +223,7 @@ const ptToolsSeed: PtTool[] = [
       },
       {
         question: 'Como juntar RG, CPF e diploma em um único PDF?',
-        answer: 'Adicione todos os documentos de uma vez e arraste as miniaturas até que a ordem corresponda à exigida pelo edital. Se os documentos estiverem em JPG, converta-os antes com <a href="/pt/imagem-para-pdf/">JPG para PDF</a>. Depois de unido, confira se o arquivo está dentro do limite de tamanho — quase sempre 2 MB — e comprima se necessário.'
+        answer: 'Adicione os documentos na ordem exigida pelo edital — um por vez, se preciso, já que cada arquivo novo entra no fim da lista. Se os documentos estiverem em JPG, converta-os antes com <a href="/pt/imagem-para-pdf/">JPG para PDF</a>. Depois de unido, confira se o arquivo está dentro do limite de tamanho — quase sempre 2 MB — e comprima se necessário.'
       },
       {
         question: 'O conteúdo dos documentos fica visível para vocês?',
@@ -255,35 +255,67 @@ const ptToolsSeed: PtTool[] = [
        term does not appear in the Brazilian data at all — while `imagem para
        pdf` and `converter imagem em pdf` are each Medium at >10,000. */
     slug: 'imagem-para-pdf',
+    /* Batch 13, 2026-09-27: batch 12 changed the slug but not the page — the
+       title still said "JPG para PDF", a term absent from the Brazilian data,
+       and none of the seven researched questions had been added. The old copy
+       also promised a drag-to-reorder control the tool does not have; pages
+       follow the order the images are chosen, which verify-order.mjs now
+       guarantees. */
     name: 'Imagem para PDF',
-    title: 'Converter JPG para PDF Online Grátis | ConvertOcean',
-    description: 'Transforme fotos e documentos digitalizados em JPG ou PNG em um arquivo PDF direto no navegador, sem que as imagens saiam do seu dispositivo.',
-    headline: 'JPG para PDF.',
-    subtitle: 'Transforme fotos de documentos em um PDF organizado — sem que as imagens saiam do seu dispositivo.',
-    quickAnswer: 'Para converter JPG em PDF, arraste as imagens para a ferramenta acima, coloque-as na ordem desejada e baixe o PDF. Cada foto vira uma página. A conversão acontece dentro do seu navegador e as imagens não saem do seu dispositivo. É o caminho usual para transformar fotos de documentos em um anexo aceito por editais e sistemas que só recebem PDF.',
+    title: 'Imagem para PDF — Converter Imagem em PDF Online Grátis | ConvertOcean',
+    description: 'Converter imagem em PDF direto no navegador: JPG, PNG e WebP viram um PDF com uma imagem por página, no computador ou no celular. As imagens não saem do seu dispositivo.',
+    headline: 'Imagem para PDF.',
+    subtitle: 'Converta fotos e documentos fotografados em um PDF — uma imagem por página, sem que nada saia do seu dispositivo.',
+    quickAnswer: 'Para converter imagem em PDF, selecione um ou mais arquivos JPG, PNG ou WebP na ferramenta acima e baixe o PDF. Cada imagem vira uma página A4, ajustada para caber sem ser esticada, na ordem em que você escolheu os arquivos. A conversão acontece dentro do seu navegador e as imagens não saem do seu dispositivo — o caminho usual para transformar fotos de documentos em um anexo aceito por editais e sistemas que só recebem PDF.',
     category: 'Ferramentas PDF',
     faqs: [
       {
-        question: 'Como transformar a foto de um documento em PDF?',
-        answer: 'Arraste a foto para a ferramenta e baixe o PDF. Para um documento com frente e verso, coloque as duas imagens na ordem certa antes de baixar — cada uma vira uma página. Fotos tiradas com o celular funcionam, mas alinhe o documento na tela e evite sombras: editais rejeitam imagens ilegíveis.'
+        question: 'como converter imagem em pdf',
+        answer: 'Selecione a imagem na ferramenta no topo da página e clique para baixar o PDF. Não há cadastro, marca d’água nem instalação. Cada imagem ocupa uma página A4 em pé, centralizada e reduzida até caber nas margens; uma imagem menor que a página não é ampliada, para não perder nitidez.'
       },
       {
-        question: 'Posso juntar várias fotos em um único PDF?',
-        answer: 'Sim. Arraste todas as imagens de uma vez e reordene-as arrastando cada miniatura. Todas entram no mesmo PDF, uma por página, na ordem que aparecer na tela.'
+        question: 'como converter imagem para pdf',
+        answer: 'Os formatos aceitos são JPG, JPEG, PNG e WebP. Fotos do iPhone em HEIC precisam virar JPG antes — use o <a href="/pt/heic-para-jpg/">HEIC para JPG</a> e depois volte aqui. Capturas de tela em PNG funcionam direto e mantêm o texto nítido.'
       },
       {
-        question: 'Quais formatos de imagem são aceitos?',
-        answer: 'JPG, JPEG, PNG e WebP. Fotos de celular em HEIC precisam ser convertidas para JPG antes — existe uma ferramenta específica para isso no site.'
+        question: 'como passar uma imagem para pdf',
+        answer: 'Quando o sistema de destino só aceita PDF — inscrição em concurso, portal de faculdade, envio para o RH — passar a imagem para PDF é o passo que falta. O conteúdo não muda: a imagem é colocada dentro de uma página de PDF, com a mesma resolução que tinha. Se a foto estava ilegível, o PDF também vai estar; vale conferir a foto antes.'
+      },
+      {
+        question: 'como converter uma imagem em pdf',
+        answer: 'Para uma imagem só, o resultado é um PDF de uma página. Se a imagem estiver deitada (paisagem), ela é reduzida para caber na largura da página em pé; para um documento fotografado de lado, gire a foto no celular antes de converter, e ela vai ocupar a página inteira.'
+      },
+      {
+        question: 'como juntar imagens em pdf',
+        answer: 'Selecione várias imagens de uma vez: todas entram no mesmo PDF, uma por página, na ordem em que foram escolhidas. A lista não é reordenável — se uma entrar fora do lugar, remova-a no ✕ e adicione de novo, que ela vai para o fim. Quando a ordem importa, o mais seguro é adicionar uma imagem por vez.'
+      },
+      {
+        question: 'como converter imagem em pdf no celular',
+        answer: 'A ferramenta funciona no navegador do celular, sem aplicativo: toque na área de envio, escolha as fotos da galeria e baixe o PDF. Para documentos, fotografe de frente, com boa luz e sem sombra sobre o papel — editais rejeitam imagens ilegíveis, e nenhuma conversão recupera o que a foto não captou.'
+      },
+      {
+        question: 'como juntar duas imagens em um pdf',
+        answer: 'O caso mais comum é frente e verso de um documento, como RG ou CNH. Adicione primeiro a foto da frente e depois a do verso: o PDF sai com duas páginas, nessa ordem. Se o edital pedir frente e verso na mesma página, o caminho é outro — use o <a href="/pt/juntar-fotos/">juntar fotos</a> para montar uma imagem única e converta essa imagem aqui.'
+      },
+      {
+        question: 'O PDF gerado fica muito grande?',
+        answer: 'Pode ficar, porque fotos de celular são pesadas e a imagem entra no PDF com a resolução original. Se o destino impõe limite — quase sempre 2 MB em concursos —, passe o resultado pelo <a href="/pt/comprimir-pdf/">comprimir PDF</a> depois de gerar, ou reduza as fotos antes com o <a href="/pt/redimensionar-imagem/">redimensionar imagem</a>.'
       },
       {
         question: 'As fotos são copiadas para algum servidor?',
         answer: 'Não. A montagem do PDF é feita pelo seu navegador, no seu aparelho. Fotos de documentos pessoais não são copiadas para lugar nenhum e nós não temos acesso a elas.'
-      },
-      {
-        question: 'O PDF gerado fica muito grande?',
-        answer: 'Fotos de celular são pesadas, então um PDF com várias páginas pode passar de 10 MB. Se houver limite de tamanho, passe o resultado pelo comprimir PDF depois de gerar — documentos digitalizados costumam reduzir bastante sem comprometer a leitura.'
       }
-    ]
+    ],
+    content: `
+      <h2>Imagem para PDF, uma página por imagem</h2>
+      <p>Cada arquivo escolhido vira uma página A4 em pé, com margem, e a imagem é reduzida até caber — nunca ampliada, porque ampliar só deixa a imagem borrada. É o formato que editais e portais esperam quando pedem um documento “em PDF”.</p>
+
+      <h2>A ordem é a ordem em que você escolhe</h2>
+      <p>As páginas seguem a sequência em que os arquivos foram adicionados, mesmo quando uma foto grande e uma pequena são escolhidas juntas. Não existe arrastar para reordenar: para corrigir a posição de uma imagem, remova-a e adicione de novo, e ela vai para o fim da lista.</p>
+
+      <h2>Depois de converter: tamanho e junção</h2>
+      <p>Se o PDF passar do limite do sistema de destino, <a href="/pt/comprimir-pdf/">comprima o PDF</a>. Se precisar reunir o resultado com outros documentos que já estão em PDF, use o <a href="/pt/juntar-pdf/">juntar PDF</a>. Nenhum dos dois passos envia os arquivos para lugar nenhum.</p>
+    `
   }
 ];
 
@@ -420,11 +452,19 @@ export const ptToolsBatch1: PtTool[] = [
         answer: 'Arraste a planilha para a ferramenta no topo da página e baixe o PDF. Cada aba vira uma tabela com bordas, começando em uma página própria com o nome da aba como título. Por padrão todas as abas são incluídas, mas dá para converter apenas a que você está visualizando.'
       },
       {
+        question: 'como transformar excel em pdf',
+        answer: 'Dá para fazer pelo próprio Excel, em Arquivo › Salvar como › PDF, mas o resultado depende da configuração de página de cada aba, e é aí que colunas somem na margem. Aqui a planilha é desenhada como tabela de verdade, em paisagem, com o cabeçalho repetido em cada página — e funciona sem ter o Excel instalado.'
+      },
+      {
+        question: 'como transformar excel em pdf no celular',
+        answer: 'Abra esta página no navegador do celular, toque na área de envio e escolha a planilha no gerenciador de arquivos ou em um anexo baixado. O PDF é gerado no próprio aparelho, sem instalar aplicativo nem ter o Excel no celular. Planilhas muito largas ficam mais legíveis se você der zoom no PDF resultante, que mantém o texto nítido.'
+      },
+      {
         question: 'A área de impressão definida no Excel é respeitada?',
         answer: 'Não. O conversor lê o intervalo utilizado da planilha — da primeira à última célula com conteúdo — e não a área de impressão configurada no Excel. Colunas ocultas também são impressas. Para controlar exatamente o que aparece no PDF, apague as linhas e colunas que não devem sair antes de converter, em vez de escondê-las.'
       },
       {
-        question: 'O que acontece com planilhas muito largas?',
+        question: 'como transformar excel em pdf sem cortar',
         answer: 'As colunas são redimensionadas em conjunto para caber na página, em vez de serem cortadas na margem direita, e o texto quebra em várias linhas dentro da célula. A orientação paisagem é o padrão justamente por isso. Tabelas longas são paginadas automaticamente e o cabeçalho se repete no topo de cada página.'
       },
       {
@@ -1215,12 +1255,20 @@ const ptToolsBatch5: PtTool[] = [
     slug: 'imagem-para-texto',
     name: 'Imagem para Texto',
     title: 'Converter Imagem em Texto Online Grátis — OCR 100% Privado | ConvertOcean',
-    description: 'Extrair texto de imagem com OCR direto no navegador: fotos, capturas de tela e documentos digitalizados viram texto editável. A imagem não sai do seu dispositivo.',
+    description: 'Transformar imagem em texto com OCR direto no navegador: fotos, capturas de tela e documentos digitalizados viram texto editável. A imagem não sai do seu dispositivo.',
     headline: 'Imagem para Texto.',
     subtitle: 'Extraia o texto de fotos, capturas de tela e documentos digitalizados — o reconhecimento acontece no seu próprio aparelho.',
-    quickAnswer: 'Para converter imagem em texto, selecione um JPG, PNG ou WebP na ferramenta acima: o mecanismo de OCR reconhece o texto impresso e devolve texto editável e copiável, dentro do seu navegador. Imagens nítidas e em boa resolução, com texto impresso, dão a melhor precisão; texto manuscrito é bem menos confiável. Nenhuma imagem sai do seu dispositivo.',
+    quickAnswer: 'Para converter ou transformar imagem em texto, selecione um JPG, PNG ou WebP na ferramenta acima: o mecanismo de OCR reconhece o texto impresso e devolve texto editável e copiável, dentro do seu navegador. Imagens nítidas e em boa resolução, com texto impresso, dão a melhor precisão; texto manuscrito é bem menos confiável. Nenhuma imagem sai do seu dispositivo.',
     category: 'Ferramentas de Imagem',
     faqs: [
+      {
+        question: 'como transformar imagem em texto',
+        answer: 'Selecione a foto ou captura de tela na ferramenta acima e espere o reconhecimento terminar — o texto aparece pronto para copiar, editar ou baixar como .txt. “Transformar” e “converter” descrevem a mesma coisa aqui: o OCR lê as letras da imagem e devolve os caracteres, sem aplicativo e sem enviar a imagem para lugar nenhum.'
+      },
+      {
+        question: 'como transformar imagem em texto no word',
+        answer: 'O Word não faz isso sozinho com uma imagem colada: ela continua sendo imagem. O caminho é extrair o texto aqui, copiar e colar no Word — de preferência com “Manter Somente Texto”, porque a formatação da imagem não é reconstruída. Depois aplique os estilos no próprio Word.'
+      },
       {
         question: 'como converter imagem em texto',
         answer: 'Arraste a imagem para a ferramenta no topo da página e aguarde o reconhecimento. O texto aparece em uma caixa, pronto para copiar ou baixar. Funciona com JPG, PNG e WebP, e não exige cadastro nem instalação.'
@@ -1256,7 +1304,7 @@ const ptToolsBatch5: PtTool[] = [
     ],
     content: `
       <h2>O que o OCR faz — e o que ele não faz</h2>
-      <p>Um <strong>conversor de imagem para texto</strong> usa reconhecimento óptico de caracteres: o programa examina os pixels, identifica as formas das letras e devolve os caracteres correspondentes. É o que permite <strong>extrair texto de imagem</strong> sem redigitar nada.</p>
+      <p>Para <strong>transformar imagem em texto</strong>, a ferramenta precisa ler as letras que estão desenhadas nos pixels. Um <strong>conversor de imagem para texto</strong> usa reconhecimento óptico de caracteres: o programa examina os pixels, identifica as formas das letras e devolve os caracteres correspondentes. É o que permite <strong>extrair texto de imagem</strong> sem redigitar nada.</p>
       <p>O que ele devolve são as palavras. A <strong>transcrição de imagem para texto</strong> não recupera negrito, fontes, colunas ou tabelas — essa informação visual não é reconstruída, e o resultado é texto corrido pronto para editar.</p>
 
       <h2>A qualidade da foto decide o resultado</h2>
@@ -2785,7 +2833,7 @@ const ptToolsBatch11: PtTool[] = [
       },
       {
         question: 'como juntar 2 fotos em 1',
-        answer: 'Adicione as duas, escolha a direção e baixe. A ordem em que aparecem na tela é a ordem na imagem final; arraste para reordenar antes de gerar.'
+        answer: 'Adicione as duas, escolha a direção e baixe. A ordem em que aparecem na tela é a ordem na imagem final, e ela segue a sequência em que as fotos foram escolhidas — adicione primeiro a que deve vir primeiro.'
       },
       {
         question: 'como juntar varias fotos em uma só',
@@ -3240,12 +3288,16 @@ const ptToolsBatch12: PtTool[] = [
     slug: 'juntar-documentos-word',
     name: 'Juntar Documentos Word',
     title: 'Juntar Documentos Word Online Grátis — Unir DOCX | ConvertOcean',
-    description: 'Una vários documentos .docx em um só direto no navegador, com as imagens de todos os arquivos preservadas.',
+    description: 'Juntar arquivos Word em um só direto no navegador: vários .docx viram um documento único, com as imagens de todos os arquivos preservadas.',
     headline: 'Juntar Documentos Word.',
     subtitle: 'Una vários .docx em um único documento — com as imagens de cada arquivo preservadas.',
     quickAnswer: 'Para juntar documentos Word, adicione dois ou mais arquivos .docx na ferramenta acima e baixe um documento único combinado. As imagens embutidas em cada arquivo de origem são transportadas e religadas corretamente, que é justamente onde a maioria dos unificadores em navegador falha. Um limite declarado: estilos e formatação podem variar quando os documentos usam definições diferentes.',
     category: 'Ferramentas de Documentos',
     faqs: [
+      {
+        question: 'como juntar arquivos word em um só',
+        answer: 'Selecione todos os .docx na ferramenta acima e baixe o documento único. Cada arquivo começa em uma página nova, na ordem em que foi escolhido — a lista não é reordenável, então adicione um por vez se a sequência importar. Tabelas, imagens e o texto de cada arquivo entram inteiros.'
+      },
       {
         question: 'como juntar documentos no word',
         answer: 'Dentro do Word, o caminho é a aba Inserir, seta ao lado de Objeto, e Texto de Arquivo — que insere o conteúdo de outro documento no ponto do cursor. Funciona, mas é um arquivo por vez e é fácil perder a posição. Aqui você adiciona todos de uma vez e baixa o resultado combinado.'
@@ -3256,7 +3308,7 @@ const ptToolsBatch12: PtTool[] = [
       },
       {
         question: 'como juntar varios documentos word em um só',
-        answer: 'O procedimento é o mesmo com qualquer quantidade. Vale reordenar antes de gerar, porque mudar a ordem depois significa refazer a união. Para relatórios montados por várias pessoas, conferir a sequência costuma ser mais importante que a união em si.'
+        answer: 'O procedimento é o mesmo com qualquer quantidade. Adicione os arquivos na ordem certa antes de gerar: a lista não é reordenável, e mudar a sequência depois significa refazer a união. Para relatórios montados por várias pessoas, conferir a sequência costuma ser mais importante que a união em si.'
       },
       {
         question: 'A formatação é preservada?',
@@ -3276,6 +3328,9 @@ const ptToolsBatch12: PtTool[] = [
 
       <h2>Dentro do Word, dá mais trabalho</h2>
       <p>O caminho nativo é Inserir, Objeto, Texto de Arquivo — um arquivo por vez, no ponto do cursor. Para dois documentos é aceitável; para oito, não.</p>
+
+      <h2>Juntar arquivos Word em PDF</h2>
+      <p>O resultado aqui é um .docx, que continua editável. Se o destino pede PDF, junte primeiro e depois passe o documento único pelo <a href="/pt/word-para-pdf/">Word para PDF</a> — assim a numeração e as quebras de página já saem na ordem certa.</p>
     `
   },
   {
@@ -3420,7 +3475,7 @@ const ptToolsBatch12: PtTool[] = [
       },
       {
         question: 'Posso definir a ordem dos slides?',
-        answer: 'Os slides entram na ordem dos arquivos adicionados, e dentro de cada arquivo na ordem original. Organize a sequência dos arquivos antes de gerar; reordenar slides individualmente é trabalho para o PowerPoint depois.'
+        answer: 'Os slides entram na ordem dos arquivos adicionados, e dentro de cada arquivo na ordem original. Adicione os arquivos na sequência certa antes de gerar; reordenar slides individualmente é trabalho para o PowerPoint depois.'
       },
       {
         question: 'Arquivos .ppt antigos funcionam?',
@@ -3436,7 +3491,7 @@ const ptToolsBatch12: PtTool[] = [
       <p>Cada slide é copiado junto com o layout que o define, de modo que a estrutura de cada apresentação sobrevive à união. Isso preserva o conteúdo fielmente — e significa que apresentações com temas diferentes produzem um deck visivelmente misto.</p>
 
       <h2>A ordem é a dos arquivos</h2>
-      <p>Organize a sequência antes de gerar. Reordenar slides individualmente depois é trabalho para o PowerPoint.</p>
+      <p>Adicione os arquivos na sequência certa antes de gerar. Reordenar slides individualmente depois é trabalho para o PowerPoint.</p>
 
       <h2>.ppt precisa de um passo antes</h2>
       <p>O formato binário antigo não é legível no navegador: salve como .pptx primeiro. É o mesmo passo descrito em <a href="/pt/ppt-para-pdf/">PPT para PDF</a>.</p>
@@ -3714,7 +3769,7 @@ export const ptGuides: PtGuide[] = [
     intro: 'Reunir vários documentos em um único PDF é a exigência mais comum de sistemas que aceitam um anexo só — editais, processos, envios a clientes. O procedimento é simples; o que costuma dar errado é a ordem, o tamanho final e o que fazer quando alguns dos arquivos são fotos.',
     contentHtml: `
       <h2>O procedimento</h2>
-      <p>Adicione todos os arquivos de uma vez em <a href="/pt/juntar-pdf/">juntar PDF</a>, arraste as miniaturas até a sequência ficar correta e baixe o arquivo único. Não há cadastro, marca d’água nem limite de quantos documentos podem ser reunidos.</p>
+      <p>Adicione todos os arquivos de uma vez em <a href="/pt/juntar-pdf/">juntar PDF</a>, na ordem em que devem aparecer, e baixe o arquivo único. Não há cadastro, marca d’água nem limite de quantos documentos podem ser reunidos.</p>
       <p>A ordem em que os arquivos aparecem na tela é a ordem das páginas no resultado. Confira antes de baixar: depois de unido, mudar a sequência significa refazer a operação.</p>
 
       <h2>Quando alguns arquivos são fotos</h2>
@@ -3738,7 +3793,7 @@ export const ptGuides: PtGuide[] = [
     faqs: [
       {
         question: 'como juntar varios pdf em um só',
-        answer: 'Adicione todos os arquivos de uma vez na ferramenta, arraste as miniaturas até a ordem ficar correta e baixe o PDF único. Não há limite de quantidade: o que limita é a memória do seu próprio dispositivo, já que o processamento é local.'
+        answer: 'Adicione os arquivos na ferramenta na ordem em que devem aparecer e baixe o PDF único. Não há limite de quantidade: o que limita é a memória do seu próprio dispositivo, já que o processamento é local.'
       },
       {
         question: 'como juntar fotos em pdf',

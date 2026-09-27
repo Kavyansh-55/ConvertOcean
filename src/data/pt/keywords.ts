@@ -144,7 +144,9 @@ export const excluded: { term: string; why: string }[] = [
   { term: 'i love pdf juntar imagens em pdf', why: 'competitor brand navigation' },
   { term: 'i love pdf imagem para pdf', why: 'competitor brand navigation' },
   { term: 'ilovepdf imagem para pdf', why: 'competitor brand navigation' },
-  { term: 'jpeg para jpg ilovepdf', why: 'competitor brand navigation' }
+  { term: 'jpeg para jpg ilovepdf', why: 'competitor brand navigation' },
+  // batch 13
+  { term: 'i love pdf juntar arquivos word', why: 'competitor brand navigation' }
 ];
 
 /**
@@ -293,7 +295,8 @@ export const wrongTool: { term: string; kd: string; volume: string; actually: st
   { term: 'calculadora de icms st', kd: 'Easy', volume: '<100', actually: 'substituicao tributaria — a different calculation entirely' },
   { term: 'calculadora de icms online', kd: 'Easy', volume: '<100', actually: 'Brazilian state VAT, not a flat rate' },
   { term: 'calculadora de icms antecipado', kd: 'n/a', volume: '<100', actually: 'ICMS antecipado regime' },
-  { term: 'calculadora de icms importação', kd: 'n/a', volume: '<100', actually: 'import tax base calculation' }
+  { term: 'calculadora de icms importação', kd: 'n/a', volume: '<100', actually: 'import tax base calculation' },
+  { term: 'como transformar texto em imagem', kd: 'Medium', volume: '<100', actually: 'the reverse direction — rendering text as a picture, not OCR' }
 ];
 
 /**
@@ -405,7 +408,8 @@ export const notAQuery: { term: string; why: string }[] = [
  * give, so it is not worth a heading or an FAQ that promises it.
  */
 export const ambiguousIntent: { term: string; kd: string; volume: string; why: string }[] = [
-  { term: 'traduzir imagem para texto', kd: 'Easy', volume: '>100', why: '"traduzir" may mean translate between languages; OCR does not translate' }
+  { term: 'traduzir imagem para texto', kd: 'Easy', volume: '>100', why: '"traduzir" may mean translate between languages; OCR does not translate' },
+  { term: 'como transformar excel em pdf editavel', kd: 'n/a', volume: '<100', why: 'wants a fillable/editable PDF; the converter produces a fixed PDF' }
 ];
 
 /**
@@ -472,7 +476,8 @@ export const coveredInBodyCopy: { term: string; page: string }[] = [
   { term: 'como diminuir o tamanho do arquivo pdf', page: 'comprimir-pdf' },
   { term: 'como diminuir o mb de um pdf', page: 'comprimir-pdf' },
   { term: 'o que significa comprimir pdf', page: 'comprimir-pdf' },
-  { term: 'o que é compactar pdf', page: 'comprimir-pdf' }
+  { term: 'o que é compactar pdf', page: 'comprimir-pdf' },
+  { term: 'juntar arquivos word em pdf', page: 'juntar-documentos-word' }
 ];
 
 /**
@@ -627,7 +632,15 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'conversor excel para pdf', kd: 'Easy', volume: '>100' }
     ],
     questions: [
-      { term: 'como converter excel para pdf', kd: 'Easy', volume: '<100' }
+      { term: 'como converter excel para pdf', kd: 'Easy', volume: '<100' },
+      /* batch 13, 2026-09-27 — checked as a guide seed, but it is the tool's
+         own job. "sem cortar" is answered truthfully: wide sheets are scaled
+         to fit (ExcelToPdf.astro, and the fidelity check "Wide sheet does not
+         clip columns"). `...editavel` is not a target — the output is a PDF,
+         not an editable form — and `...windows 10` wants an OS how-to. */
+      { term: 'como transformar excel em pdf', kd: 'Easy', volume: '>100' },
+      { term: 'como transformar excel em pdf sem cortar', kd: 'n/a', volume: '<100' },
+      { term: 'como transformar excel em pdf no celular', kd: 'n/a', volume: '<100' }
     ]
   },
   /**
@@ -994,9 +1007,21 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'extrair texto de imagem online grátis', kd: 'Easy', volume: '>100' },
       { term: 'extrair texto de imagem online', kd: 'Easy', volume: '>100' },
       { term: 'extrair texto de imagem pdf', kd: 'Easy', volume: '<100' },
-      { term: 'ia para extrair texto de imagem', kd: 'n/a', volume: '<100' }
+      { term: 'ia para extrair texto de imagem', kd: 'n/a', volume: '<100' },
+      /* batch 13, 2026-09-27. Found by checking a GUIDE seed, not a tool seed:
+         "transformar" is a second head verb for this exact task, Easy at
+         >10,000 — as large as `converter imagem em texto` — and the page
+         never used it once. Same job, same tool, so it lands here rather
+         than on a guide. `como transformar texto em imagem` (the reverse
+         direction) arrived in the same export and is not a target. */
+      { term: 'transformar imagem em texto', kd: 'Easy', volume: '>10,000' },
+      { term: 'transformar imagem em texto online', kd: 'Medium', volume: '>100' },
+      { term: 'transformar imagem em texto editável', kd: 'Easy', volume: '<100' },
+      { term: 'transformar imagem em texto word', kd: 'Easy', volume: '<100' }
     ],
     questions: [
+      { term: 'como transformar imagem em texto', kd: 'Easy', volume: '>100' },
+      { term: 'como transformar imagem em texto no word', kd: 'Easy', volume: '<100' },
       { term: 'como converter imagem em texto', kd: 'Easy', volume: '>100' },
       { term: 'como extrair texto de uma imagem', kd: 'Easy', volume: '>100' },
       { term: 'como converter imagem em texto editável', kd: 'n/a', volume: '<100' },
@@ -1853,9 +1878,15 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'juntar documentos word em um só', kd: 'Easy', volume: '<100' },
       { term: 'juntar documentos word online', kd: 'Easy', volume: '<100' },
       { term: 'unir arquivos word sem perder formatação', kd: 'n/a', volume: '<100' },
-      { term: 'unir arquivos word em um só', kd: 'n/a', volume: '<100' }
+      { term: 'unir arquivos word em um só', kd: 'n/a', volume: '<100' },
+      /* batch 13, 2026-09-27. "arquivos" is searched as much as "documentos"
+         (both >100) and the page only ever said the latter. */
+      { term: 'juntar arquivos word', kd: 'Easy', volume: '>100' },
+      { term: 'juntar arquivos word em um só', kd: 'Easy', volume: '>100' },
+      { term: 'juntar arquivos word online', kd: 'Easy', volume: '<100' }
     ],
     questions: [
+      { term: 'como juntar arquivos word em um só', kd: 'Easy', volume: '<100' },
       { term: 'como juntar documentos no word', kd: 'Easy', volume: '<100' },
       { term: 'como juntar dois documentos word', kd: 'Easy', volume: '<100' },
       { term: 'como juntar varios documentos word em um só', kd: 'n/a', volume: '<100' }
