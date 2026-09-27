@@ -1,6 +1,44 @@
 ---
 import { t } from '../../i18n/ui';
 const { slug, headline, subtitle, lang = 'en'} = Astro.props;
+
+/* Sample data per locale, rendered into the form AND read by the script from
+   #rcptSample, so the two cannot drift. The Portuguese page used to open on a
+   Bengaluru vendor, a Mumbai client, GST at 18% and US dollars — with no Real
+   in the currency list and no PIX, on the page built for "modelo de recibo".
+   The English sample is unchanged. */
+const isPt = lang === 'pt';
+const sample = isPt ? {
+  No: 'REC-2026-001',
+  PayMethod: 'PIX',
+  TaxModel: 'none',
+  CustomTaxLabel: 'Imposto',
+  TaxRate: 0,   // must travel with TaxModel: 'none' + 0.18 hid the row but still added 18% to the total
+  VendorName: 'Estúdio Exemplo',
+  VendorAddress: 'Rua das Flores, 123 — Sala 4\nSão Paulo, SP 01000-000\ncontato@estudioexemplo.com.br',
+  ClientName: 'Maria Oliveira',
+  ClientAddress: 'Av. Brasil, 456\nRio de Janeiro, RJ 20000-000\nmaria@exemplo.com.br',
+  Notes: 'Recebemos o pagamento integral dos serviços descritos acima. Obrigado!',
+  LineItems: [
+    { desc: 'Criação de site institucional', qty: 1, rate: 3500.00 },
+    { desc: 'Pacote de manutenção mensal', qty: 2, rate: 750.00 }
+  ]
+} : {
+  No: 'REC-2026-001',
+  PayMethod: 'Credit Card',
+  TaxModel: 'GST',
+  CustomTaxLabel: 'Tax',
+  TaxRate: 0.18,
+  VendorName: 'Kavya J. Studio',
+  VendorAddress: '12 Developer Lane, Indiranagar\nBengaluru, KA 560038\nhello@kavyaj.studio',
+  ClientName: 'Galactic Group Ltd.',
+  ClientAddress: '45 Cloud Towers, Tech City\nMumbai, MH 400001\nbilling@galactic.com',
+  Notes: 'Thank you for your payment.\nThis receipt confirms payment has been received in full.',
+  LineItems: [
+    { desc: 'Website Development Services', qty: 1, rate: 3500.00 },
+    { desc: 'SEO Optimization Package', qty: 2, rate: 750.00 }
+  ]
+};
 ---
 
 <style>
@@ -337,7 +375,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         <div class="form-group">
           <label class="form-label" for="rcptCurrency">{t('Currency', lang)}</label>
           <select id="rcptCurrency" class="select-input">
-            <option value="$" selected>$ &ndash; US Dollar (USD)</option>
+            <option value="$" selected={!isPt}>$ &ndash; US Dollar (USD)</option>
+            <option value="R$" selected={isPt}>R$ &ndash; Real Brasileiro (BRL)</option>
             <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
             <option value="&pound;">&pound; &ndash; British Pound (GBP)</option>
             <option value="&#8377;">&#8377; &ndash; Indian Rupee (INR)</option>
@@ -356,8 +395,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         <div class="form-group">
           <label class="form-label" for="rcptTaxSelect">{t('Tax Configuration', lang)}</label>
           <select id="rcptTaxSelect" class="select-input">
-            <option value="none">{t('No Tax', lang)}</option>
-            <option value="GST" selected>GST (18%)</option>
+            <option value="none" selected={isPt}>{t('No Tax', lang)}</option>
+            <option value="GST" selected={!isPt}>GST (18%)</option>
             <option value="IGST">IGST (18%)</option>
             <option value="VAT">VAT (15%)</option>
             <option value="custom">{t('Custom Tax Rate', lang)}</option>
@@ -367,7 +406,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <div id="rcptCustomTaxGroup" class="form-row" style="display: none; margin-top: var(--spacing-xxs);">
         <div class="form-group">
           <label class="form-label" for="rcptCustomTaxLabel">{t('Tax Label', lang)}</label>
-          <input type="text" id="rcptCustomTaxLabel" class="form-input" value="Tax" style="height: 36px; font-size: 13px;" />
+          <input type="text" id="rcptCustomTaxLabel" class="form-input" value={sample.CustomTaxLabel} style="height: 36px; font-size: 13px;" />
         </div>
         <div class="form-group">
           <label class="form-label" for="rcptCustomTaxRate">{t('Tax Rate (%)', lang)}</label>
@@ -376,14 +415,15 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label" for="rcptPayMethod">Payment Method</label>
+          <label class="form-label" for="rcptPayMethod">{t('Payment Method', lang)}</label>
           <select id="rcptPayMethod" class="select-input">
+            <option value="PIX" selected={isPt}>PIX</option>
             <option value="Cash">{t('Cash', lang)}</option>
-            <option value="Credit Card" selected>{t('Credit Card', lang)}</option>
+            <option value="Credit Card" selected={!isPt}>{t('Credit Card', lang)}</option>
             <option value="Debit Card">{t('Debit Card', lang)}</option>
             <option value="Bank Transfer">{t('Bank Transfer', lang)}</option>
             <option value="PayPal">PayPal</option>
-            <option value="Check">Check</option>
+            <option value="Check">{t('Check', lang)}</option>
           </select>
         </div>
       </div>
@@ -393,15 +433,15 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <div class="form-card-title">From (Business / Seller)</div>
       <div class="form-group">
         <label class="form-label" for="rcptVendorName">{t('Business Name', lang)}</label>
-        <input type="text" id="rcptVendorName" class="form-input" value="Kavya J. Studio" />
+        <input type="text" id="rcptVendorName" class="form-input" value={sample.VendorName} />
       </div>
       <div class="form-group">
         <label class="form-label" for="rcptVendorAddress">{t('Address & Contact', lang)}</label>
-        <textarea id="rcptVendorAddress" class="textarea-input">12 Developer Lane, Indiranagar&#10;Bengaluru, KA 560038&#10;hello@kavyaj.studio</textarea>
+        <textarea id="rcptVendorAddress" class="textarea-input">{sample.VendorAddress}</textarea>
       </div>
       <div class="form-group">
         <label class="form-label" for="rcptVendorTaxId">{t('Business GSTIN / VAT ID / Tax ID (Optional)', lang)}</label>
-        <input type="text" id="rcptVendorTaxId" class="form-input" placeholder="e.g., GSTIN, VAT, or ABN" style="height: 36px; font-size: 13px;" />
+        <input type="text" id="rcptVendorTaxId" class="form-input" placeholder={t('e.g., GSTIN, VAT, or ABN', lang)} style="height: 36px; font-size: 13px;" />
       </div>
     </div>
 
@@ -409,15 +449,15 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <div class="form-card-title">To (Customer / Buyer)</div>
       <div class="form-group">
         <label class="form-label" for="rcptClientName">{t('Customer Name', lang)}</label>
-        <input type="text" id="rcptClientName" class="form-input" value="Galactic Group Ltd." />
+        <input type="text" id="rcptClientName" class="form-input" value={sample.ClientName} />
       </div>
       <div class="form-group">
         <label class="form-label" for="rcptClientAddress">{t('Address & Details', lang)}</label>
-        <textarea id="rcptClientAddress" class="textarea-input">45 Cloud Towers, Tech City&#10;Mumbai, MH 400001&#10;billing@galactic.com</textarea>
+        <textarea id="rcptClientAddress" class="textarea-input">{sample.ClientAddress}</textarea>
       </div>
       <div class="form-group">
         <label class="form-label" for="rcptClientTaxId">{t('Customer GSTIN / VAT ID / Tax ID (Optional)', lang)}</label>
-        <input type="text" id="rcptClientTaxId" class="form-input" placeholder="e.g., Client GSTIN, VAT" style="height: 36px; font-size: 13px;" />
+        <input type="text" id="rcptClientTaxId" class="form-input" placeholder={t('e.g., Client GSTIN, VAT', lang)} style="height: 36px; font-size: 13px;" />
       </div>
     </div>
 
@@ -442,7 +482,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <div class="form-card-title">{t('Notes', lang)}</div>
       <div class="form-group">
         <label class="form-label" for="rcptNotes">Receipt Notes</label>
-        <textarea id="rcptNotes" class="textarea-input">{t('Thank you for your payment. This receipt confirms payment has been received in full.', lang)}</textarea>
+        <textarea id="rcptNotes" class="textarea-input">{sample.Notes}</textarea>
+        <script type="application/json" id="rcptSample" set:html={JSON.stringify(sample)}></script>
       </div>
     </div>
 
@@ -540,7 +581,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     let rcptData = {
       No: "REC-2026-001",
       Date: "",
-      PayMethod: __t("Credit Card"),
+      PayMethod: "Credit Card",
       TaxModel: "GST",
       TaxRate: 0.18,
       VendorName: "Kavya J. Studio",
@@ -556,8 +597,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         { desc: "SEO Optimization Package", qty: 2, rate: 750.00 }
       ]
     };
+    /* The locale's sample, rendered by the component (see #rcptSample). */
+    Object.assign(rcptData, JSON.parse(document.getElementById('rcptSample').textContent));
+    rcptData.PayMethod = __t(rcptData.PayMethod);
 
-    let rcptCurrSym = '$';
+    let rcptCurrSym = document.getElementById('rcptCurrency').value;
     const $ = (id) => document.getElementById(id);
 
     window.addEventListener('load', () => {
@@ -581,7 +625,14 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       pane.style.minHeight = `${800 * s + 40}px`;
     }
 
-    function fmt(n) { return rcptCurrSym + n.toFixed(2); }
+    /* Brazilian receipts read "R$ 5.000,00", not "R$5000.00". English keeps
+       its existing format exactly. */
+    const PT_MONEY = document.documentElement.lang === 'pt';
+    function fmt(n) {
+      return PT_MONEY
+        ? rcptCurrSym + ' ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        : rcptCurrSym + n.toFixed(2);
+    }
 
     function updatePreview() {
       $('rcptPdfVendorTitle').textContent = rcptData.VendorName || "Business Name";
@@ -648,7 +699,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       tbody.innerHTML = '';
       // Update header
       const hdr = $('rcptRateHeader');
-      if (hdr) hdr.textContent = `Rate (${rcptCurrSym})`;
+      if (hdr) hdr.textContent = `${__t('Rate')} (${rcptCurrSym})`;
       rcptData.LineItems.forEach((item, i) => {
         const tr = document.createElement('tr');
         tr.className = 'item-edit-row';
@@ -685,7 +736,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     $('rcptNo').addEventListener('input', e => { rcptData.No = e.target.value; updatePreview(); });
     $('rcptDate').addEventListener('change', e => { rcptData.Date = e.target.value; updatePreview(); });
-    $('rcptPayMethod').addEventListener('change', e => { rcptData.PayMethod = e.target.value; updatePreview(); });
+    /* The option's visible text, not its value: the value is English, and the
+       PDF printed "Bank Transfer" on a Portuguese receipt. */
+    $('rcptPayMethod').addEventListener('change', e => { rcptData.PayMethod = e.target.options[e.target.selectedIndex].text; updatePreview(); });
     $('rcptCurrency').addEventListener('change', e => {
       rcptCurrSym = e.target.value;
       renderEditorTable();

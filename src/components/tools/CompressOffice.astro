@@ -177,7 +177,7 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon">🗜️</div>
   <p class="upload-text">{t('Drop your', lang)} {kindLabel} {t('here, or click to choose one', lang)}</p>
-  <p class="upload-hint">{accept} · up to 25MB · never leaves your device</p>
+  <p class="upload-hint">{accept} · {t('up to 25MB · never leaves your device', lang)}</p>
   <input type="file" id="fileInput" class="file-input" accept={accept} />
 </div>
 

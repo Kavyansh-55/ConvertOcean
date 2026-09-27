@@ -55,6 +55,8 @@ const pt: Record<string, string> = {
   'Drag and drop or browse files directly from your storage. Files reside only in temporary browser memory.':
     'Arraste e solte, ou escolha o arquivo no seu dispositivo. Ele fica apenas na memória temporária do navegador.',
   'Select Output': 'Escolha a saída',
+  'Pick your target conversion configuration or adjust quality/compression sliders according to your preference.':
+    'Escolha o formato de saída ou ajuste a qualidade e o nível de compressão como preferir.',
   'Pick your target conversion configuration or adjust quality/compression sliders according to your needs.':
     'Defina o formato de destino ou ajuste a qualidade e a compressão conforme a sua necessidade.',
   'Convert Locally': 'Converta localmente',
@@ -67,7 +69,11 @@ const pt: Record<string, string> = {
     'Sites tradicionais copiam os arquivos para servidores externos. O ConvertOcean processa os seus dados 100% localmente.',
   'Why Choose ConvertOcean?': 'Por que usar o ConvertOcean?',
   'Files Stay On Your Device': 'Os arquivos ficam no seu dispositivo',
+  'Traditional sites upload files to external servers. ConvertOcean processes your data 100% locally. Perfect for corporate records and private papers.':
+    'Os sites tradicionais mandam o arquivo para servidores externos. O ConvertOcean processa tudo 100% no seu aparelho — ideal para documentos da empresa e papéis pessoais.',
   'Browser-Powered Processing': 'Processamento no navegador',
+  'By eliminating network upload/download queues, conversions run at client-side machine speeds. It continues working even when offline.':
+    'Sem fila de envio e download, a conversão roda na velocidade do seu próprio aparelho — e continua funcionando mesmo sem internet.',
   'Free & No Accounts': 'Gratuito e sem cadastro',
   'Related File Utilities': 'Ferramentas relacionadas',
   'Related Guides & Resources.': 'Guias e materiais relacionados.',
@@ -97,9 +103,40 @@ const pt: Record<string, string> = {
   'Terms & Conditions': 'Termos e condições',
   'Sitemap': 'Mapa do site',
   '100% Local Sandboxed Processing:': 'Processamento 100% local:',
-  'Disconnect your device from the internet and test any tool. It operates entirely on-device.':
-    'Desconecte o aparelho da internet e teste qualquer ferramenta. Tudo funciona no próprio dispositivo.',
+  /* The English sentence was later extended, which silently orphaned the
+     old key — the footer then rendered English on all 87 /pt/ pages. The
+     leak scan (npm run pt-leaks) is what catches that class now. */
+  'Disconnect your device from the internet and test any tool. It operates entirely on-device using WebAssembly (WASM). Your confidential files never touch our servers or any third-party infrastructure.':
+    'Desconecte o aparelho da internet e teste qualquer ferramenta: tudo funciona no próprio dispositivo, com WebAssembly (WASM). Seus arquivos confidenciais nunca passam pelos nossos servidores nem por infraestrutura de terceiros.',
   '2026 ConvertOcean. All rights reserved.': '2026 ConvertOcean. Todos os direitos reservados.',
+
+  // ---- Tool labels found by the 2026-09-27 leak scan -----------------
+  'Any country works — pick a preset, or type your own rate below. Currency is set separately.': 'Funciona para qualquer país — escolha um valor pronto ou digite a sua alíquota abaixo. A moeda é escolhida separadamente.',
+  'United States — rate by state': 'Estados Unidos — alíquota por estado',
+  'US buyers: pick a state to load its combined rate': 'Compras nos EUA: escolha um estado para carregar a alíquota combinada',
+  '— Choose a state —': '— Escolha um estado —',
+  'State rate plus the average local rate, as of': 'Alíquota estadual mais a média das alíquotas locais, em',
+  'Local rates vary by address, so treat this as an estimate': 'As alíquotas locais variam conforme o endereço, então trate o valor como estimativa',
+  'see the full rate table and how to find your exact rate': 'veja a tabela completa e como achar a alíquota exata (em inglês)',
+  'X is what % of Y?': 'X é quantos % de Y?',
+  'is what % of': 'é quantos % de',
+  'up to 25MB · never leaves your device': 'até 25 MB · não sai do seu dispositivo',
+  'Comparison position: left of the line shows the original, right shows the compressed file': 'Posição da comparação: à esquerda da linha, o original; à direita, o arquivo comprimido',
+  'Paste or type your text here to instantly analyze word count, character count, reading time, and keyword density…': 'Cole ou digite o seu texto aqui para contar palavras, caracteres, tempo de leitura e densidade de palavras-chave na hora…',
+  'Maximum size of each part, in MB': 'Tamanho máximo de cada parte, em MB',
+  'Name for the file you get back': 'Nome do arquivo que você vai receber',
+  'OCR Text output will generate here…': 'O texto reconhecido vai aparecer aqui…',
+  'The line containing the error': 'A linha com o erro',
+  'VALID': 'VÁLIDO',
+  'INVALID': 'INVÁLIDO',
+  'JSON is valid.': 'O JSON é válido.',
+  'Line': 'Linha',
+  'Column': 'Coluna',
+  'Fix the JSON error to see formatted output.': 'Corrija o erro no JSON para ver o resultado formatado.',
+  'IDLE': 'AGUARDANDO',
+  'File': 'Arquivo',
+  'and': 'e',
+  'work too (Max 25MB)': 'também funcionam (máx. 25 MB)',
 
   // ---- Footer: tool names ----------------------------------------------
   // These must match the `name` of the same tool in src/data/pt/index.ts.
@@ -439,6 +476,11 @@ const pt: Record<string, string> = {
   'Credit Card': 'Cartão de crédito',
   'Debit Card': 'Cartão de débito',
   'Bank Transfer': 'Transferência bancária',
+  'Payment Method': 'Forma de pagamento',
+  'e.g., GSTIN, VAT, or ABN': 'ex.: CNPJ ou CPF',
+  'e.g., Client GSTIN, VAT': 'ex.: CNPJ ou CPF do cliente',
+  'Check': 'Cheque',
+  'Rate': 'Valor unitário',
   '(optional)': '(opcional)',
 
   // Margin / break-even
@@ -559,4 +601,7 @@ const RUNTIME_KEYS = [
   'Formatted JSON will appear here with syntax highlighting…',
   'Units for Target Profit', 'Break-Even Point', 'Break-Even Revenue',
   'Credit Card', 'Business Name', 'Base Price',
+  'Rate', 'Cash', 'Debit Card', 'Bank Transfer', 'Check',
+  'VALID', 'INVALID', 'JSON is valid.', 'Line', 'Column', 'IDLE',
+  'Fix the JSON error to see formatted output.',
 ];

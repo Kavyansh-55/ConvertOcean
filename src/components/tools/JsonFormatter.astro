@@ -283,7 +283,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     </div>
     <div class="jf-error-detail" id="jf-error-detail" hidden>
       <span class="jf-error-loc" id="jf-error-loc"></span>
-      <pre class="jf-error-excerpt" aria-label="The line containing the error"><code id="jf-error-code"></code><span class="jf-error-caret" id="jf-error-caret"></span></pre>
+      <pre class="jf-error-excerpt" aria-label={t('The line containing the error', lang)}><code id="jf-error-code"></code><span class="jf-error-caret" id="jf-error-caret"></span></pre>
     </div>
   </div>
 
@@ -371,16 +371,16 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     function setValid(parsed) {
       lastParsed = parsed;
-      badge.textContent = '✓ VALID';
+      badge.textContent = '✓ ' + __t('VALID');
       badge.className = 'jf-status-badge jf-status-valid';
-      msgEl.textContent = 'JSON is valid.';
+      msgEl.textContent = __t('JSON is valid.');
       detailEl.hidden = true;
       renderOutput(parsed);
     }
 
     function setInvalid(err) {
       lastParsed = null;
-      badge.textContent = '✗ INVALID';
+      badge.textContent = '✗ ' + __t('INVALID');
       badge.className = 'jf-status-badge jf-status-invalid';
 
       // JSON.parse decides *whether* the document is valid; it is a poor guide
@@ -392,7 +392,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const found = locateJsonError(inputEl.value);
       if (found) {
         msgEl.textContent = found.message + '.';
-        locEl.textContent = 'Line ' + found.line + ', Column ' + found.column;
+        locEl.textContent = __t('Line') + ' ' + found.line + ', ' + __t('Column') + ' ' + found.column;
         errCodeEl.textContent = found.excerpt + '\n';
         caretEl.textContent = found.caret;
         detailEl.hidden = false;
@@ -402,17 +402,17 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         msgEl.textContent = err.message;
         detailEl.hidden = true;
       }
-      outputEl.innerHTML = '<span class="jf-placeholder-msg">Fix the JSON error to see formatted output.</span>';
+      outputEl.innerHTML = '<span class="jf-placeholder-msg">' + __t('Fix the JSON error to see formatted output.') + '</span>';
       metaEl.textContent = '';
     }
 
     function setIdle() {
       lastParsed = null;
-      badge.textContent = 'IDLE';
+      badge.textContent = __t('IDLE');
       badge.className = 'jf-status-badge jf-status-idle';
       msgEl.textContent = __t('Paste JSON to validate and format.');
       detailEl.hidden = true;
-      outputEl.innerHTML = '<span class="jf-placeholder-msg">Formatted JSON will appear here with syntax highlighting…</span>';
+      outputEl.innerHTML = '<span class="jf-placeholder-msg">' + __t('Formatted JSON will appear here with syntax highlighting…') + '</span>';
       metaEl.textContent = '';
     }
 

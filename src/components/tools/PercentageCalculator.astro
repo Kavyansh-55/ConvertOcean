@@ -135,11 +135,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
   <!-- Card 2: X is what % of Y -->
   <div class="pct-card">
-    <div class="pct-card-title"><span class="pct-num">2</span> X is what % of Y?</div>
+    <div class="pct-card-title"><span class="pct-num">2</span> {t('X is what % of Y?', lang)}</div>
     <div class="pct-desc">{t('Find what percentage X is of Y.', lang)}</div>
     <div class="pct-inputs">
       <input type="number" id="pct2X" value="30" step="any" />
-      <span>is what % of</span>
+      <span>{t('is what % of', lang)}</span>
       <input type="number" id="pct2Y" value="200" step="any" />
       <span>?</span>
     </div>

@@ -196,13 +196,13 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <button class="preset-btn" data-rate="10">JP Tax 10%</button>
       <button class="preset-btn" id="presetBtnCustom" data-rate="custom">{t('Custom Rate', lang)}</button>
     </div>
-    <p class="tax-state-note">Any country works &mdash; pick a preset, or type your own rate below. Currency is set separately.</p>
+    <p class="tax-state-note">{t('Any country works — pick a preset, or type your own rate below. Currency is set separately.', lang)}</p>
 
-    <div class="tax-panel-title">United States &mdash; rate by state <span style="text-transform: none; font-weight: 400;">{t('(optional)', lang)}</span></div>
+    <div class="tax-panel-title">{t('United States — rate by state', lang)} <span style="text-transform: none; font-weight: 400;">{t('(optional)', lang)}</span></div>
     <div class="form-group" style="margin-bottom: 0; display: flex; flex-direction: column; gap: var(--spacing-xxs);">
-      <label class="form-label" for="taxUsState" style="font-size: 13px; font-weight: 500;">US buyers: pick a state to load its combined rate</label>
+      <label class="form-label" for="taxUsState" style="font-size: 13px; font-weight: 500;">{t('US buyers: pick a state to load its combined rate', lang)}</label>
       <select id="taxUsState" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink);">
-        <option value="" selected>— Choose a state —</option>
+        <option value="" selected>{t('— Choose a state —', lang)}</option>
         {stateSalesTaxRates.map(s => (
           <option value={s.abbr} data-rate={s.combined.toFixed(2)} data-state={s.state}>
             {s.state} — {s.combined.toFixed(2)}%
@@ -210,7 +210,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         ))}
       </select>
       <p class="tax-state-note" id="taxStateNote">
-        State rate plus the average local rate, as of {AS_OF}. Local rates vary by address, so treat this as an estimate &mdash; <a href="/guides/us-sales-tax-by-state/">see the full rate table and how to find your exact rate</a>.
+        {t('State rate plus the average local rate, as of', lang)} {AS_OF}. {t('Local rates vary by address, so treat this as an estimate', lang)} &mdash; <a href="/guides/us-sales-tax-by-state/">{t('see the full rate table and how to find your exact rate', lang)}</a>.
       </p>
     </div>
 

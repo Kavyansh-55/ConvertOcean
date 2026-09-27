@@ -176,7 +176,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <label class="split-mode"><input type="radio" name="splitMode" value="size" />
       <span><strong>{t('The whole PDF in parts under', lang)}</strong>{' '}
         <input type="number" id="partSize" class="form-input split-mode-num" value="2" min="0.1" step="0.1"
-               aria-label="Maximum size of each part, in MB" inputmode="decimal" autocomplete="off" />{' '}
+               aria-label={t('Maximum size of each part, in MB', lang)} inputmode="decimal" autocomplete="off" />{' '}
         <strong>{t('MB each', lang)}</strong>{t(', in a ZIP', lang)}</span></label>
     <p class="split-mode-note" id="splitModeNote"></p>
   </fieldset>
@@ -194,7 +194,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
   <div id="pagesGrid" class="pages-grid" style="margin-bottom: var(--spacing-md);"></div>
   <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
     <input type="text" id="splitOutputName" class="form-input" style="max-width: 300px;" value="extracted_pages.pdf"
-           aria-label="Name for the file you get back" autocomplete="off" />
+           aria-label={t('Name for the file you get back', lang)} autocomplete="off" />
     <div class="button-group" style="display: flex; gap: var(--spacing-sm);">
       <button class="button button-primary" id="btnExtract">{t('Extract Selected Pages', lang)}</button>
       <button class="button button-danger" id="btnClear">{t('Clear', lang)}</button>

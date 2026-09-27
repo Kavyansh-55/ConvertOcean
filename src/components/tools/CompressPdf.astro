@@ -353,7 +353,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <div class="cmp-wipe-line" aria-hidden="true"></div>
     </div>
     <input type="range" id="cmpWipe" class="cmp-wipe-range" min="0" max="100" value="50"
-           aria-label="Comparison position: left of the line shows the original, right shows the compressed file" />
+           aria-label={t('Comparison position: left of the line shows the original, right shows the compressed file', lang)} />
     <div class="cmp-wipe-tags"><span>{t('Original', lang)}</span><span>{t('Compressed', lang)}</span></div>
   </details>
 

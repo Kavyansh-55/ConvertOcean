@@ -206,7 +206,7 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="🏦" width="40" height="40" /></div>
   <div class="upload-text-primary">{t('Drag and drop your statement here, or click to browse', lang)}</div>
-  <div class="upload-text-secondary">{primary} file — {others[0]} and {others[1]} work too (Max 25MB)</div>
+  <div class="upload-text-secondary">{t('File', lang)} {primary} — {others[0]} {t('and', lang)} {others[1]} {t('work too (Max 25MB)', lang)}</div>
   <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept=".ofx,.qfx,.qbo,.OFX,.QFX,.QBO" />
 </div>

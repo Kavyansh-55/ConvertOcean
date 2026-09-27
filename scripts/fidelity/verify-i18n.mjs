@@ -190,6 +190,44 @@ for (const { pt, en } of PAIRS) {
   }
 }
 
+/* The generators opened the Portuguese pages on a Bengaluru vendor, GST and
+   US dollars, with no Real and no PIX — on the page built for "modelo de
+   recibo". The Portuguese defaults are R$, PIX and no tax, and "no tax" must
+   mean the total really carries none: TaxModel 'none' with a leftover 0.18
+   rate hides the tax row while still adding 18%. The payment method printed
+   on the PDF used to be the option's English value. */
+{
+  const money = (s) => parseFloat(String(s).replace(/[^\d,.-]/g, '').replace(/\.(?=\d{3}\b)/g, '').replace(',', '.'));
+  await page.goto(`${ORIGIN}/pt/modelo-de-recibo/`, { waitUntil: 'networkidle2', timeout: 60000 });
+  const r = await page.evaluate(() => ({
+    currency: document.getElementById('rcptCurrency')?.value,
+    method: document.getElementById('rcptPayMethod')?.value,
+    tax: document.getElementById('rcptTaxSelect')?.value,
+    vendor: document.getElementById('rcptVendorName')?.value,
+    subtotal: document.getElementById('rcptPdfSubtotal')?.textContent,
+    grand: document.getElementById('rcptPdfGrandTotal')?.textContent,
+    pdfMethod: document.getElementById('rcptPdfMethod')?.textContent,
+  }));
+  say(r.currency === 'R$', '/pt/modelo-de-recibo/ defaults to the Real', r.currency);
+  say(r.method === 'PIX' && r.pdfMethod === 'PIX', 'and to PIX, printed as PIX', `${r.method} / ${r.pdfMethod}`);
+  say(r.tax === 'none' && money(r.subtotal) === money(r.grand) && money(r.grand) > 0,
+      'and "no tax" carries no hidden tax (total = subtotal)', `${r.subtotal} → ${r.grand}`);
+  say(!/Kavya J\. Studio|Bengaluru|Mumbai/.test(r.vendor || ''), 'and opens on a Brazilian sample, not the Indian one', r.vendor);
+  say(/^R\$ \d{1,3}(\.\d{3})*,\d{2}$/.test((r.grand || '').trim()), 'and prints money the Brazilian way (R$ 5.000,00)', r.grand);
+  await page.select('#rcptPayMethod', 'Bank Transfer');
+  const printed = await page.$eval('#rcptPdfMethod', e => e.textContent);
+  say(printed === 'Transferência bancária', 'a changed payment method prints in Portuguese', printed);
+
+  await page.goto(`${ORIGIN}/pt/modelo-de-fatura/`, { waitUntil: 'networkidle2', timeout: 60000 });
+  const f = await page.evaluate(() => ({
+    currency: document.getElementById('invCurrency')?.value,
+    tax: document.getElementById('inputTaxSelect')?.value,
+    terms: document.getElementById('inputTerms')?.value,
+  }));
+  say(f.currency === 'R$' && f.tax === 'none', '/pt/modelo-de-fatura/ defaults to R$ and no tax', `${f.currency} / ${f.tax}`);
+  say(!/HDFC|IFSC/.test(f.terms || ''), 'and its terms carry no Indian bank details', (f.terms || '').slice(0, 60));
+}
+
 await browser.close();
 console.log(bad ? `\n${bad} failed` : '\nall passed');
 process.exit(bad ? 1 : 0);

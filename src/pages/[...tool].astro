@@ -530,7 +530,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
           <div class="step-card">
             <span class="step-number">2.</span>
             <h3 class="step-title">{t('Select Output', lang)}</h3>
-            <p class="step-desc">Pick your target conversion configuration or adjust quality/compression sliders according to your preference.</p>
+            <p class="step-desc">{t('Pick your target conversion configuration or adjust quality/compression sliders according to your preference.', lang)}</p>
           </div>
           <div class="step-card">
             <span class="step-number">3.</span>
@@ -547,8 +547,16 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
     )}
 
     <!-- Unique SEO Article Content Section -->
+    {/* The English articles carry their own `<div class="content-card">` in
+        the data; the Portuguese ones never did, so on every /pt/ tool page the
+        article sat bare on the page instead of in the card. Wrap here when the
+        data has not, so both locales render the same frame. */}
     {toolData.content && (
-      <section class="rich-text" data-reveal set:html={toolData.content}></section>
+      <section class="rich-text" data-reveal set:html={
+        toolData.content.includes('content-card')
+          ? toolData.content
+          : `<div class="content-card">${toolData.content}</div>`
+      }></section>
     )}
 
     <!-- Why Use ConvertOcean Section -->
@@ -560,14 +568,14 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--colors-accent);"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
           <h3 class="feature-title">{t('Files Stay On Your Device', lang)}</h3>
-          <p class="feature-desc">Traditional sites upload files to external servers. ConvertOcean processes your data 100% locally. Perfect for corporate records and private papers.</p>
+          <p class="feature-desc">{t('Traditional sites upload files to external servers. ConvertOcean processes your data 100% locally. Perfect for corporate records and private papers.', lang)}</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon-wrapper">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #f5a623;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           </div>
           <h3 class="feature-title">{t('Browser-Powered Processing', lang)}</h3>
-          <p class="feature-desc">By eliminating network upload/download queues, conversions run at client-side machine speeds. It continues working even when offline.</p>
+          <p class="feature-desc">{t('By eliminating network upload/download queues, conversions run at client-side machine speeds. It continues working even when offline.', lang)}</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon-wrapper">

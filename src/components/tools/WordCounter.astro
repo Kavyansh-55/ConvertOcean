@@ -304,7 +304,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       id="wc-textarea"
       aria-label="Text to analyse"
       class="wc-textarea"
-      placeholder="Paste or type your text here to instantly analyze word count, character count, reading time, and keyword density…"
+      placeholder={t('Paste or type your text here to instantly analyze word count, character count, reading time, and keyword density…', lang)}
       spellcheck="false"
     ></textarea>
     <div class="wc-char-limit-bar" id="wc-limit-bar-wrap" style="display:none;">

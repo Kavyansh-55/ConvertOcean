@@ -1,6 +1,41 @@
 ---
 import { t } from '../../i18n/ui';
 const { slug, headline, subtitle, lang = 'en'} = Astro.props;
+
+/* Sample data per locale, rendered into the form AND read by the script from
+   #invSample, so the two cannot drift. The Portuguese page opened on HDFC
+   Bank account and IFSC details, GST at 18% and US dollars, with no Real in
+   the currency list. The Portuguese sample is a plain fatura: it must not
+   imply a nota fiscal, which only SEFAZ or a municipal system can issue.
+   The English sample is unchanged. */
+const isPt = lang === 'pt';
+const sample = isPt ? {
+  TaxModel: 'none',
+  TaxRate: 0,
+  CustomTaxLabel: 'Imposto',
+  VendorName: 'Estúdio Exemplo',
+  VendorAddress: 'Rua das Flores, 123 — Sala 4\nSão Paulo, SP 01000-000\ncontato@estudioexemplo.com.br',
+  ClientName: 'Empresa Cliente Ltda.',
+  ClientAddress: 'Av. Paulista, 1000\nSão Paulo, SP 01310-100\nfinanceiro@cliente.com.br',
+  Terms: 'Pagamento via PIX — chave: financeiro@estudioexemplo.com.br\nVencimento em 15 dias a partir da data de emissão.',
+  LineItems: [
+    { desc: 'Desenvolvimento de site institucional', qty: 1, rate: 2500.00 },
+    { desc: 'Otimização de desempenho (horas)', qty: 4, rate: 350.00 }
+  ]
+} : {
+  TaxModel: 'GST',
+  TaxRate: 0.18,
+  CustomTaxLabel: 'Tax',
+  VendorName: 'Kavya J. Studio',
+  VendorAddress: '12 Developer Lane, Indiranagar\nBengaluru, KA 560038\nhello@kavyaj.studio',
+  ClientName: 'Galactic Group Ltd.',
+  ClientAddress: '45 Cloud Towers, Tech City\nMumbai, MH 400001\nbilling@galactic.com',
+  Terms: 'Bank: HDFC Bank | A/C: 9876543210\nIFSC: HDFC0000123\nPayment is due within 15 days of invoice date.',
+  LineItems: [
+    { desc: 'Advanced Multi-page Web UI Scaffolding', qty: 1, rate: 2500.00 },
+    { desc: 'Client-side Performance Optimization Suite', qty: 4, rate: 350.00 }
+  ]
+};
 ---
 
 <style>
@@ -338,8 +373,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         <div class="form-group">
           <label class="form-label" for="inputTaxSelect">{t('Tax Configuration', lang)}</label>
           <select id="inputTaxSelect" class="select-input">
-            <option value="none">{t('No Tax', lang)}</option>
-            <option value="GST" selected>GST (18%)</option>
+            <option value="none" selected={isPt}>{t('No Tax', lang)}</option>
+            <option value="GST" selected={!isPt}>GST (18%)</option>
             <option value="IGST">IGST (18%)</option>
             <option value="VAT">VAT (15%)</option>
             <option value="custom">{t('Custom Tax Rate', lang)}</option>
@@ -349,7 +384,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <div id="customTaxGroup" class="form-row" style="display: none; margin-top: var(--spacing-xxs);">
         <div class="form-group">
           <label class="form-label" for="inputCustomTaxLabel">{t('Tax Label', lang)}</label>
-          <input type="text" id="inputCustomTaxLabel" class="form-input" value="Tax" style="height: 36px; font-size: 13px;" />
+          <input type="text" id="inputCustomTaxLabel" class="form-input" value={sample.CustomTaxLabel} style="height: 36px; font-size: 13px;" />
         </div>
         <div class="form-group">
           <label class="form-label" for="inputCustomTaxRate">{t('Tax Rate (%)', lang)}</label>
@@ -360,7 +395,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         <div class="form-group">
           <label class="form-label" for="invCurrency">{t('Currency', lang)}</label>
           <select id="invCurrency" class="select-input">
-            <option value="$" selected>$ &ndash; US Dollar (USD)</option>
+            <option value="$" selected={!isPt}>$ &ndash; US Dollar (USD)</option>
+            <option value="R$" selected={isPt}>R$ &ndash; Real Brasileiro (BRL)</option>
             <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
             <option value="&pound;">&pound; &ndash; British Pound (GBP)</option>
             <option value="&#8377;">&#8377; &ndash; Indian Rupee (INR)</option>
@@ -394,15 +430,15 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <div class="form-card-title">{t('From (Vendor / Company)', lang)}</div>
       <div class="form-group">
         <label class="form-label" for="inputVendorName">{t('Billing Entity Name', lang)}</label>
-        <input type="text" id="inputVendorName" class="form-input" value="Kavya J. Studio" />
+        <input type="text" id="inputVendorName" class="form-input" value={sample.VendorName} />
       </div>
       <div class="form-group">
         <label class="form-label" for="inputVendorAddress">{t('Address & Contact Info', lang)}</label>
-        <textarea id="inputVendorAddress" class="textarea-input" rows="3">12 Developer Lane, Indiranagar&#10;Bengaluru, KA 560038&#10;hello@kavyaj.studio</textarea>
+        <textarea id="inputVendorAddress" class="textarea-input" rows="3">{sample.VendorAddress}</textarea>
       </div>
       <div class="form-group">
         <label class="form-label" for="inputVendorTaxId">{t('Business GSTIN / VAT ID / Tax ID (Optional)', lang)}</label>
-        <input type="text" id="inputVendorTaxId" class="form-input" placeholder="e.g., GSTIN, VAT, or ABN" style="height: 36px; font-size: 13px;" />
+        <input type="text" id="inputVendorTaxId" class="form-input" placeholder={t('e.g., GSTIN, VAT, or ABN', lang)} style="height: 36px; font-size: 13px;" />
       </div>
     </div>
 
@@ -411,15 +447,15 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <div class="form-card-title">{t('To (Client Recipient)', lang)}</div>
       <div class="form-group">
         <label class="form-label" for="inputClientName">{t('Client Entity Name', lang)}</label>
-        <input type="text" id="inputClientName" class="form-input" value="Galactic Group Ltd." />
+        <input type="text" id="inputClientName" class="form-input" value={sample.ClientName} />
       </div>
       <div class="form-group">
         <label class="form-label" for="inputClientAddress">{t('Address & Details', lang)}</label>
-        <textarea id="inputClientAddress" class="textarea-input" rows="3">45 Cloud Towers, Tech City&#10;Mumbai, MH 400001&#10;billing@galactic.com</textarea>
+        <textarea id="inputClientAddress" class="textarea-input" rows="3">{sample.ClientAddress}</textarea>
       </div>
       <div class="form-group">
         <label class="form-label" for="inputClientTaxId">{t('Customer GSTIN / VAT ID / Tax ID (Optional)', lang)}</label>
-        <input type="text" id="inputClientTaxId" class="form-input" placeholder="e.g., Client GSTIN, VAT" style="height: 36px; font-size: 13px;" />
+        <input type="text" id="inputClientTaxId" class="form-input" placeholder={t('e.g., Client GSTIN, VAT', lang)} style="height: 36px; font-size: 13px;" />
       </div>
     </div>
 
@@ -446,7 +482,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <div class="form-card-title">{t('Terms & Bank Notes', lang)}</div>
       <div class="form-group">
         <label class="form-label" for="inputTerms">{t('Payment Terms & Instructions', lang)}</label>
-        <textarea id="inputTerms" class="textarea-input" rows="3">Bank: HDFC Bank | A/C: 9876543210&#10;IFSC: HDFC0000123&#10;Payment is due within 15 days of invoice date.</textarea>
+        <textarea id="inputTerms" class="textarea-input" rows="3">{sample.Terms}</textarea>
+        <script type="application/json" id="invSample" set:html={JSON.stringify(sample)}></script>
       </div>
     </div>
 
@@ -566,8 +603,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         { desc: "Client-side Performance Optimization Suite", qty: 4, rate: 350.00 }
       ]
     };
+    /* The locale's sample, rendered by the component (see #invSample). */
+    Object.assign(invoiceData, JSON.parse(document.getElementById('invSample').textContent));
 
-    let invCurrSym = '$';
+    let invCurrSym = document.getElementById('invCurrency').value;
     const inputInvNo = document.getElementById('inputInvNo');
     const inputTaxSelect = document.getElementById('inputTaxSelect');
     const invCurrency = document.getElementById('invCurrency');
@@ -612,7 +651,14 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       previewPane.style.minHeight = `${900 * scale + 40}px`;
     }
 
-    function fmt(n) { return invCurrSym + n.toFixed(2); }
+    /* Brazilian receipts read "R$ 5.000,00", not "R$5000.00". English keeps
+       its existing format exactly. */
+    const PT_MONEY = document.documentElement.lang === 'pt';
+    function fmt(n) {
+      return PT_MONEY
+        ? invCurrSym + ' ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        : invCurrSym + n.toFixed(2);
+    }
 
     function updatePreviewPage() {
       document.getElementById('pdfVendorTitle').textContent = invoiceData.VendorName || "Billing Entity";
@@ -681,7 +727,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     function renderEditorTable() {
       itemEditRows.innerHTML = '';
       const hdr = document.getElementById('invRateHeader');
-      if (hdr) hdr.textContent = `Rate (${invCurrSym})`;
+      if (hdr) hdr.textContent = `${__t('Rate')} (${invCurrSym})`;
       invoiceData.LineItems.forEach((item, index) => {
         const tr = document.createElement('tr');
         tr.className = 'item-edit-row';

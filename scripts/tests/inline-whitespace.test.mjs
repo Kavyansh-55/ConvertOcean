@@ -57,11 +57,23 @@ export function findings(src, file) {
   /* Style and script bodies are not markup; a line break inside them is not a
      space and never was. */
   let inRaw = false;
-  for (let i = 0; i < lines.length - 1; i++) {
+  /* The frontmatter is code, not markup — and it used to blind this test: a
+     comment in src/pages/pt/index.astro that mentioned "a <style> block" in
+     prose switched raw mode on, and the real </style> sat at the bottom of the
+     file, so the whole page's markup was skipped. "com⏎<a>Juntar PDF</a>"
+     shipped to production that way (2026-09-27). Raw mode now opens only on a
+     real tag at the start of a line, and a self-closing one opens nothing. */
+  let start = 0;
+  if (lines[0] && lines[0].trim() === '---') {
+    const end = lines.findIndex((l, j) => j > 0 && l.trim() === '---');
+    if (end > 0) start = end + 1;
+  }
+  for (let i = start; i < lines.length - 1; i++) {
     const line = lines[i];
-    if (/<(style|script)[\s>]/.test(line)) inRaw = true;
+    const opens = /^\s*<(style|script)[\s>]/.test(line) && !/\/>\s*$/.test(line);
+    if (opens) inRaw = true;
     if (/<\/(style|script)>/.test(line)) { inRaw = false; continue; }
-    if (inRaw) continue;
+    if (inRaw || opens) continue;
 
     const here = line.replace(/\s+$/, '');
     const next = lines[i + 1].replace(/^\s+/, '');
