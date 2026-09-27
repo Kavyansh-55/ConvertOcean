@@ -163,28 +163,30 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       }
 
       showProgress(20, 'Reading images…');
+      /* Each image keeps its selection slot, so pages follow the order the
+         images were chosen rather than the order their reads finished — a
+         large photo chosen first used to become page 2. There is no reorder
+         control, so the chosen order is the only order the reader gets.
+         Guarded by scripts/fidelity/verify-order.mjs. */
       let loaded = 0;
-      imageFiles.forEach(file => {
+      const slots = new Array(imageFiles.length);
+      const finish = () => {
+        if (++loaded < imageFiles.length) return;
+        selectedFiles.push(...slots.filter(Boolean));
+        renderImageList();
+        hideProgress();
+      };
+      imageFiles.forEach((file, i) => {
         const reader = new FileReader();
         reader.onload = function(e) {
-          selectedFiles.push({
+          slots[i] = {
             id: Math.random().toString(36).substr(2, 9),
             file: file,
             dataUrl: e.target.result
-          });
-          loaded++;
-          if (loaded === imageFiles.length) {
-            renderImageList();
-            hideProgress();
-          }
+          };
+          finish();
         };
-        reader.onerror = function() {
-          loaded++;
-          if (loaded === imageFiles.length) {
-            renderImageList();
-            hideProgress();
-          }
-        };
+        reader.onerror = finish;
         reader.readAsDataURL(file);
       });
     }

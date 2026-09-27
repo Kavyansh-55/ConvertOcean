@@ -185,29 +185,36 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       let processed = 0;
       showProgress(10, "Loading PDF documents…");
 
-      files.forEach(f => {
+      /* Reads finish in whatever order they finish — a large PDF chosen first
+         used to land AFTER a small one chosen second, because each file was
+         pushed when its parse completed. Each file keeps its selection slot
+         and the batch joins the list in the order it was chosen. The shared
+         finish() also means a file that fails to parse no longer strands the
+         others unlisted. Guarded by scripts/fidelity/verify-order.mjs. */
+      const slots = new Array(files.length);
+      const finish = () => {
+        if (++processed < files.length) return;
+        mergeFiles.push(...slots.filter(Boolean));
+        fileInput.value = ''; // reset so same file can be re-added
+        renderList();
+        hideProgress();
+      };
+
+      files.forEach((f, i) => {
         const reader = new FileReader();
         reader.onload = async function(e) {
           try {
             const bytes = new Uint8Array(e.target.result);
             const doc = await PDFLib.PDFDocument.load(bytes);
-            mergeFiles.push({
+            slots[i] = {
               name: f.name,
               bytes: bytes,
               pages: doc.getPageCount()
-            });
-            processed++;
-
-            if (processed === files.length) {
-              fileInput.value = ''; // reset so same file can be re-added
-              renderList();
-              hideProgress();
-            }
+            };
           } catch(err) {
-            processed++;
             showError("Failed to parse " + f.name + ". Please make sure it is a valid PDF.");
-            hideProgress();
           }
+          finish();
         };
         reader.readAsArrayBuffer(f);
       });

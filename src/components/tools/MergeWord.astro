@@ -185,12 +185,24 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       let processed = 0;
       showProgress(10, "Loading Word documents…");
 
-      files.forEach(f => {
+      /* Each file keeps its selection slot; the batch joins the list in the
+         order chosen, not the order the reads finished. See MergePdf and
+         scripts/fidelity/verify-order.mjs. finish() runs on every path, so a
+         skipped or unreadable file no longer strands the others unlisted. */
+      const slots = new Array(files.length);
+      const finish = () => {
+        if (++processed < files.length) return;
+        mergeFiles.push(...slots.filter(Boolean));
+        fileInput.value = ''; // reset so same file can be re-added
+        renderList();
+        hideProgress();
+      };
+
+      files.forEach((f, i) => {
         const ext = f.name.split('.').pop().toLowerCase();
         if (ext !== 'docx') {
           showError(`Skipped "${f.name}": Unsupported format. Only .docx is supported.`);
-          processed++;
-          if (processed === files.length) hideProgress();
+          finish();
           return;
         }
 
@@ -218,31 +230,16 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
               showError(`Skipped "${f.name}": ` + (window.coNothingToConvert
                 ? window.coNothingToConvert('document')
                 : 'it has nothing in it to merge.'));
-              processed++;
-              if (processed === files.length) {
-                fileInput.value = '';
-                renderList();
-                hideProgress();
-              }
-              return;
-            }
-
-            mergeFiles.push({
-              name: f.name,
-              bytes: bytes
-            });
-            processed++;
-
-            if (processed === files.length) {
-              fileInput.value = ''; // reset so same file can be re-added
-              renderList();
-              hideProgress();
+            } else {
+              slots[i] = {
+                name: f.name,
+                bytes: bytes
+              };
             }
           } catch(err) {
-            processed++;
             showError("Failed to parse " + f.name);
-            hideProgress();
           }
+          finish();
         };
         reader.readAsArrayBuffer(f);
       });

@@ -24,7 +24,7 @@
  */
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, rmSync } from 'node:fs';
 
 /* Resolved from this file rather than from process.cwd(), so a suite works
    when run from a subdirectory. Three of the verifiers assumed the repo root
@@ -62,6 +62,19 @@ export const OUT = join(TESTING, 'out');
 export const browserProfile = (name) => {
   const dir = join(TESTING, 'browser-profiles', name);
   mkdirSync(dir, { recursive: true });
+  /* A profile that persists also persists its HTTP cache. The static server
+     sends Last-Modified with no Cache-Control, so the browser applies
+     heuristic freshness and serves a page it saw minutes ago WITHOUT asking —
+     a suite re-run right after a rebuild then tests the previous build.
+     Found 2026-09-27: verify-order kept failing against a fix that was on
+     disk and being served, because the browser never requested it. Clearing
+     the HTTP cache here covers every suite at once; cookies, storage and the
+     rest of the profile are untouched. */
+  for (const cache of ['Cache', 'Code Cache']) {
+    try {
+      rmSync(join(dir, 'Default', cache), { recursive: true, force: true, maxRetries: 3 });
+    } catch { /* held by a running browser — that launch would fail anyway */ }
+  }
   return dir;
 };
 

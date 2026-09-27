@@ -18,6 +18,7 @@
     "mobile": "node scripts/fidelity/verify-mobile.mjs",
     "limits": "node scripts/fidelity/verify-limits.mjs",
     "races": "node scripts/fidelity/verify-races.mjs",
+    "order": "node scripts/fidelity/verify-order.mjs",
     "degenerate": "node scripts/fidelity/verify-degenerate.mjs",
     "calculators": "node scripts/fidelity/verify-calculators.mjs",
     "generators": "node scripts/fidelity/verify-generators.mjs",
