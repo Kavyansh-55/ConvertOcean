@@ -191,44 +191,6 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       });
     }
 
-    /* EXIF Orientation (1–8) of a JPEG data URL, or 1 when absent. Reads only
-       the APP1 segment; any malformed input falls back to 1, which embeds the
-       file exactly as before. */
-    function jpegOrientation(dataUrl) {
-      try {
-        const bin = atob(dataUrl.slice(dataUrl.indexOf(',') + 1, dataUrl.indexOf(',') + 1 + 87384));
-        const u8 = (i) => bin.charCodeAt(i);
-        if (u8(0) !== 0xFF || u8(1) !== 0xD8) return 1;
-        let p = 2;
-        while (p + 4 < bin.length) {
-          if (u8(p) !== 0xFF) return 1;
-          const marker = u8(p + 1);
-          const len = (u8(p + 2) << 8) | u8(p + 3);
-          if (marker === 0xE1 && bin.slice(p + 4, p + 10) === 'Exif\0\0') {
-            const t = p + 10;
-            const le = bin.slice(t, t + 2) === 'II';
-            const r16 = (o) => le ? u8(t + o) | (u8(t + o + 1) << 8) : (u8(t + o) << 8) | u8(t + o + 1);
-            const r32 = (o) => le
-              ? (u8(t + o) | (u8(t + o + 1) << 8) | (u8(t + o + 2) << 16)) + u8(t + o + 3) * 16777216
-              : u8(t + o) * 16777216 + ((u8(t + o + 1) << 16) | (u8(t + o + 2) << 8) | u8(t + o + 3));
-            const ifd = r32(4);
-            const n = r16(ifd);
-            for (let k = 0; k < n; k++) {
-              const e = ifd + 2 + k * 12;
-              if (r16(e) === 0x0112) {
-                const v = r16(e + 8);
-                return v >= 1 && v <= 8 ? v : 1;
-              }
-            }
-            return 1;
-          }
-          if (marker === 0xDA) return 1; // image data begins; no EXIF before it
-          p += 2 + len;
-        }
-      } catch (e) { /* fall through */ }
-      return 1;
-    }
-
     function removeImage(id) {
       selectedFiles = selectedFiles.filter(f => f.id !== id);
       renderImageList();
@@ -324,27 +286,12 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           const x = (PW - finalW) / 2;
           const y = (PH - finalH) / 2;
           
-          let format = 'JPEG';
-          if (imgData.indexOf('data:image/png') === 0) format = 'PNG';
-          else if (imgData.indexOf('data:image/webp') === 0) format = 'WEBP';
-
-          /* Phones usually save a portrait photo as landscape pixels plus an
-             EXIF "rotate 90°" tag. The browser honours the tag, so img.width
-             and img.height above are the ROTATED size — but jsPDF embeds the
-             JPEG bytes as stored and never reads EXIF, so a photographed ID
-             came out sideways and squashed into the rotated box. When the tag
-             asks for a transform, draw through a canvas (drawImage applies
-             it) and embed that; everything else is still embedded untouched,
-             byte for byte. Guarded by the image-to-pdf fidelity recipe. */
-          let embed = imgData;
-          if (format === 'JPEG' && jpegOrientation(imgData) > 1) {
-            const c = document.createElement('canvas');
-            c.width = imgWidth;
-            c.height = imgHeight;
-            c.getContext('2d').drawImage(img, 0, 0, imgWidth, imgHeight);
-            embed = c.toDataURL('image/jpeg', 0.92);
-          }
-
+          /* Phones save a portrait photo as landscape pixels plus an EXIF
+             "rotate 90°" tag; jsPDF ignores the tag, so photographed IDs came
+             out sideways and squashed. coPdfImage draws those through a canvas
+             and leaves everything else byte for byte — scripts/pdf-image.js,
+             guarded by the image-to-pdf EXIF fidelity recipe. */
+          const { data: embed, format } = window.coPdfImage(img, imgData);
           doc.addImage(embed, format, x, y, finalW, finalH);
         }
 

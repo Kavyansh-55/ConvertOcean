@@ -309,6 +309,36 @@ export const imageRecipes = [
     },
   },
 
+  /* The recipe above passed while this tool painted a rotated phone JPEG
+     sideways and squashed, because it counted images and never looked at
+     their shape; WebP was also handed to jsPDF labelled 'JPEG'. This compares
+     every embedded image's pixel aspect with the aspect of the box it is
+     painted into, as multisets, since object order and paint order differ. */
+  {
+    slug: 'merge-images',
+    title: 'Merge images → PDF (phone photo with EXIF rotation, and WebP)',
+    fixture: ['torture.jpg', 'torture.webp'],
+    ready: '#imagesList',
+    download: '#btnMerge',
+    outName: 'merge-images-exif.pdf',
+    kind: 'pdf',
+    async checks({ out, bytes }) {
+      const pdf = Buffer.from(bytes).toString('latin1');
+      const embedded = [...pdf.matchAll(/\/Width (\d+)\s*\/Height (\d+)/g)].map(m => +m[1] / +m[2]).sort();
+      const drawn = [...pdf.matchAll(/([\d.]+) 0 0 ([\d.]+) [\d.-]+ [\d.-]+ cm/g)].map(m => +m[1] / +m[2]).sort();
+      const same = embedded.length === 2 && drawn.length === 2
+        && embedded.every((a, i) => Math.abs(a - drawn[i]) < 0.02);
+      const fmt = (xs) => xs.map(x => x.toFixed(3)).join(', ');
+      return [
+        ok('opens', 'Output is a readable PDF', out.pages > 0, `${out.pages} pages`, 'blocker'),
+        ok('both', 'Both images embedded (JPEG and WebP)', out.imageCount >= 2,
+           `${out.imageCount} painted images`, 'blocker'),
+        ok('unsquashed', 'Each embedded image has the shape of the box it is drawn in',
+           same, `embedded [${fmt(embedded)}] vs drawn [${fmt(drawn)}]`, 'blocker'),
+      ];
+    },
+  },
+
   /* ---- EXIF ----------------------------------------------------------- */
   {
     slug: 'exif-viewer',

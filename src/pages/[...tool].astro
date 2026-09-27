@@ -656,6 +656,7 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
   import { compressXlsx } from '../scripts/xlsx-compress.js';
   import { messageForError } from '../scripts/ensure-lib.js';
   import { installClickGuard } from '../scripts/click-guard.js';
+  import { pdfImage } from '../scripts/pdf-image.js';
 
   startLibraryRecovery();
 
@@ -671,6 +672,8 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
   window.coAnyFileTooLarge = anyFileTooLarge;
   window.coNothingToConvert = nothingToConvert;
   window.coFormatSize = formatSize;
+  /* Image → jsPDF, honouring EXIF rotation. See scripts/pdf-image.js. */
+  window.coPdfImage = pdfImage;
 
   /* The PDF compressor's engine is a few hundred lines of decode/re-encode
      rules with pure, testable parts, so it lives in a module with unit tests
