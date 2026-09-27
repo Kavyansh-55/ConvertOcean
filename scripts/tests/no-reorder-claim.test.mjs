@@ -31,10 +31,12 @@ const BANNED = [
   // English
   'drag to reorder', 'drag the thumbnails', 'drag them into order',
   'reorder the files', 'reorder the pages', 'rearrange the files',
+  'arrange them in reading order', 'arrange the photos', 'rename photos numerically',
 ];
 
 /* Lines that use the words while saying the control does NOT exist. */
 const ALLOWED = [
+  'There is no drag-to-reorder',        // en guide, saying the control does not exist
   'Não existe arrastar para reordenar',
   'a lista não é reordenável',
   'A lista não é reordenável',

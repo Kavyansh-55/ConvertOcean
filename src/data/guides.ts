@@ -962,10 +962,10 @@ export const guides: GuideData[] = [
     intro: 'The phone camera has replaced the scanner, but portals and inboxes still expect documents — one PDF, pages in order, reasonable file size. This guide covers the full workflow: photographing pages so they stay readable, combining them into a single PDF, keeping the size sensible, and knowing when you need OCR instead.',
     contentHtml: `
       <h2>Step 1: Photograph Pages Like a Scanner Would</h2>
-      <p>Every later step inherits the quality of the capture, so five seconds of care here beats any amount of processing: place the page on a contrasting flat surface, shoot from directly above (tilted shots turn rectangles into trapezoids), use daylight or even room light rather than flash (which blows out a glossy stripe), and fill the frame with the page. Photograph every page before you start converting — renaming files 01, 02, 03 as you go makes ordering trivial.</p>
+      <p>Every later step inherits the quality of the capture, so five seconds of care here beats any amount of processing: place the page on a contrasting flat surface, shoot from directly above (tilted shots turn rectangles into trapezoids), use daylight or even room light rather than flash (which blows out a glossy stripe), and fill the frame with the page. Photograph every page before you start converting, so you can add them in one pass.</p>
 
       <h2>Step 2: Combine Images into One PDF</h2>
-      <p>Open <a href="/image-to-pdf/">Image to PDF</a>, add the page photos, and arrange them in reading order — the PDF preserves your sequence exactly, one image per page, scaled to fit standard page margins. Match orientation to the content: portrait receipts on portrait pages, wide whiteboard shots on landscape. The result is a proper multi-page document that uploads, emails, and prints the way portals expect — instead of five loose photos arriving in whatever order an inbox chooses. (When the destination prefers a single tall image rather than pages — a chat thread, for instance — <a href="/merge-images/">Merge Images</a> stitches the photos instead.)</p>
+      <p>Open <a href="/image-to-pdf/">Image to PDF</a>, and add the page photos in reading order — the PDF follows the order you choose them, one image per page, on A4 portrait pages scaled to fit the margins. There is no drag-to-reorder, so if a page lands out of place, remove it and add it again (it goes to the end); adding pages one at a time is the surest way to keep a long document in sequence. A wide whiteboard shot is scaled down to the page width rather than turned, so rotate it first if you want it to fill the page. Phone photos that display upright are placed upright — the rotation your camera records is applied. The result is a proper multi-page document that uploads, emails, and prints the way portals expect — instead of five loose photos arriving in whatever order an inbox chooses. (When the destination prefers a single tall image rather than pages — a chat thread, for instance — <a href="/merge-images/">Merge Images</a> stitches the photos instead.)</p>
 
       <h2>Step 3: Control the File Size</h2>
       <p>Page photos are big, and a ten-page scan can balloon past upload limits. Two levers: photograph in JPG rather than PNG (screenshots aside, photographic pages compress far smaller as JPG — convert first if needed), and pre-shrink very large camera images with the <a href="/image-resizer/">Image Resizer</a> before combining; 1500–2000 pixels on the long edge keeps text crisp at a fraction of the size.</p>
@@ -979,7 +979,7 @@ export const guides: GuideData[] = [
     faqs: [
       {
         question: 'How do I combine multiple photos into one PDF?',
-        answer: 'Use an image-to-PDF tool: add the photos, arrange them in reading order, and download — each image becomes one page of a single PDF, scaled to fit the page. Rename photos numerically before starting and the ordering step takes seconds.'
+        answer: 'Use an image-to-PDF tool: add the photos in reading order and download — each image becomes one page of a single PDF, scaled to fit the page. The pages follow the order you choose the files in, so add them in sequence (one at a time if the order matters).'
       },
       {
         question: 'Why is my scanned PDF so large, and how do I shrink it?',

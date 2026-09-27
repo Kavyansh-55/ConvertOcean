@@ -174,6 +174,58 @@ export const imageRecipes = [
     },
   },
 
+  /* A phone photo: stored 240×160 with EXIF Orientation=6 (rotate 90° CW),
+     so it DISPLAYS 160×240. The browser honours the tag and jsPDF does not —
+     until 2026-09-27 the tool drew the raw landscape pixels into the rotated
+     portrait box, sideways and squashed (embedded 1.5:1 into a 0.667 box),
+     on production. The only way to see it is to compare the embedded image's
+     pixel shape with the box it is painted into. */
+  {
+    slug: 'image-to-pdf',
+    title: 'Image → PDF (phone photo with EXIF rotation)',
+    fixture: 'torture.jpg',
+    ready: '#actionControls',
+    download: '#btnDownload',
+    outName: 'image-to-pdf-exif.pdf',
+    kind: 'pdf',
+    async checks({ out, bytes }) {
+      const pdf = Buffer.from(bytes).toString('latin1');
+      const w = +(pdf.match(/\/Width (\d+)/) || [])[1];
+      const h = +(pdf.match(/\/Height (\d+)/) || [])[1];
+      const cm = pdf.match(/([\d.]+) 0 0 ([\d.]+) [\d.]+ [\d.]+ cm/);
+      const drawnW = cm ? +cm[1] : 0, drawnH = cm ? +cm[2] : 0;
+      const embedded = w && h ? w / h : 0;
+      const drawn = drawnW && drawnH ? drawnW / drawnH : 0;
+      return [
+        ok('opens', 'Output is a readable PDF', out.pages > 0, `${out.pages} pages`, 'blocker'),
+        ok('upright', 'The photo is painted upright (portrait, as it displays)',
+           drawnH > drawnW, `drawn ${drawnW}×${drawnH}pt`, 'blocker'),
+        ok('unsquashed', 'The embedded pixels have the shape of the box they are drawn in',
+           embedded > 0 && Math.abs(embedded - drawn) < 0.02,
+           `embedded ${w}×${h} (${embedded.toFixed(3)}) into ${drawn.toFixed(3)}`, 'blocker'),
+      ];
+    },
+  },
+
+  /* WebP is in the accept list and every page says it works; no recipe had
+     ever sent one. jsPDF needs its own WebP path for this. */
+  {
+    slug: 'image-to-pdf',
+    title: 'Image → PDF (WebP)',
+    fixture: 'torture.webp',
+    ready: '#actionControls',
+    download: '#btnDownload',
+    outName: 'image-to-pdf-webp.pdf',
+    kind: 'pdf',
+    async checks({ out }) {
+      return [
+        ok('opens', 'Output is a readable PDF', out.pages > 0, `${out.pages} pages`, 'blocker'),
+        ok('embedded', 'The WebP image is actually embedded', out.imageCount > 0,
+           `${out.imageCount} painted images`, 'blocker'),
+      ];
+    },
+  },
+
   /* ---- resize --------------------------------------------------------- */
   {
     slug: 'image-resizer',
