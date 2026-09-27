@@ -665,5 +665,42 @@ async function stylesheetsFor(path) {
   say(ptLocs === 86, `sitemap.xml lists all 86 Portuguese URLs (found ${ptLocs})`);
 }
 
+/* ------------------------------------------------- 2026-09-27 batch 13
+   Six multi-file tools kept the order their reads FINISHED, not the order the
+   files were chosen. The inline scripts now fill a per-file slot; the served
+   HTML carries `slots[i] = ` only if the fix is live. The behaviour itself is
+   asserted end to end by `CO_ORIGIN=https://convertocean.com npm run order`. */
+{
+  for (const t of ['merge-pdf', 'merge-word', 'merge-pptx', 'merge-txt', 'image-to-pdf', 'merge-images']) {
+    const b = (await get(`/${t}/`)).body;
+    say(b.includes('slots[i] = ') && !/reader\.onload[\s\S]{0,400}?(mergeFiles|selectedFiles|uploadedTexts|uploadedFiles)\.push\(\{/.test(b),
+        `${t}: files keep their chosen order (slot fill, no push-on-load)`);
+  }
+
+  const ip = (await get('/pt/imagem-para-pdf/')).body;
+  say(/<title>Imagem para PDF — Converter Imagem em PDF/.test(ip), '/pt/imagem-para-pdf/ targets "imagem para pdf" in its title');
+  say(!/JPG para PDF\.<\/h1>|<title>Converter JPG para PDF/.test(ip), 'and no longer titles itself "JPG para PDF"');
+  for (const q of ['como converter imagem em pdf', 'como juntar duas imagens em um pdf', 'como converter imagem em pdf no celular']) {
+    say(ip.includes(q), `/pt/imagem-para-pdf/ carries "${q}"`);
+  }
+
+  const ocr = (await get('/pt/imagem-para-texto/')).body;
+  say(ocr.includes('como transformar imagem em texto'), '/pt/imagem-para-texto/ carries "como transformar imagem em texto"');
+  say(/Transformar imagem em texto com OCR/.test(ocr), 'and targets it in the meta description');
+
+  const xl = (await get('/pt/excel-para-pdf/')).body;
+  say(xl.includes('como transformar excel em pdf sem cortar'), '/pt/excel-para-pdf/ carries "...sem cortar"');
+
+  const mw = (await get('/pt/juntar-documentos-word/')).body;
+  say(mw.includes('como juntar arquivos word em um só'), '/pt/juntar-documentos-word/ carries "como juntar arquivos word em um só"');
+
+  /* No page may promise a reorder control — none exists. */
+  for (const p of ['/pt/juntar-pdf/', '/pt/imagem-para-pdf/', '/pt/juntar-fotos/', '/pt/']) {
+    const b = (await get(p)).body;
+    say(!/reordene|arraste as miniaturas|arrastando cada miniatura|arraste para reordenar|coloque-as na ordem desejada/i.test(b),
+        `${p} promises no drag-to-reorder control`);
+  }
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
