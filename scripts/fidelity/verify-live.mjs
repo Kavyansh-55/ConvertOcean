@@ -738,5 +738,28 @@ async function stylesheetsFor(path) {
       `sitemap.xml lists 87 Portuguese URLs including the guide (found ${ptLocs})`);
 }
 
+/* ------------------------------------------------- 2026-09-27 PT parity fixes
+   English on Portuguese pages: the footer sentence (all 87 pages), three
+   tool-template sentences (all 69 tools), and generator samples. The full
+   text scan is `CO_ORIGIN=https://convertocean.com npm run pt-leaks`; the
+   receipt behaviour is asserted by `npm run i18n:tools`. These pin the
+   specific strings so a regression shows up here too. */
+{
+  const tool = (await get('/pt/comprimir-pdf/')).body;
+  say(!/Disconnect your device from the internet/.test(tool) && /Desconecte o aparelho da internet/.test(tool),
+      '/pt/ footer "100% local" sentence is Portuguese');
+  say(!/Pick your target conversion configuration/.test(tool) && /Escolha o formato de saída/.test(tool),
+      '/pt/ tool template "how it works" step 2 is Portuguese');
+  say(!/Traditional sites upload files to external servers/.test(tool), '/pt/ tool feature cards are Portuguese');
+  say(/<div class="content-card">/.test(tool), '/pt/ tool article sits in its content card');
+  const home = (await get('/pt/')).body;
+  say(!/pedir, com<a|Imagem para PDF<\/a>,uma/.test(home), '/pt/ homepage has its spaces back ("com Juntar PDF")');
+  const rec = (await get('/pt/modelo-de-recibo/')).body;
+  say(/value="R\$" selected/.test(rec) && /value="PIX" selected/.test(rec), '/pt/modelo-de-recibo/ defaults to R$ and PIX');
+  say(!/Kavya J\. Studio|Bengaluru/.test(rec.split('id="rcptSample"')[1]?.slice(0, 600) || ''), 'and its sample is Brazilian');
+  const contato = (await get('/pt/contato/')).body;
+  say(!/class="nav-link active"[^>]*>[\s\S]{0,300}?Início/.test(contato), '/pt/contato/ no longer highlights "Início"');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
