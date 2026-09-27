@@ -26,8 +26,14 @@ import { test } from 'node:test';
 import assert from 'node:assert';
 import { readFileSync } from 'node:fs';
 
-const KEYWORDS = readFileSync('src/data/pt/keywords.ts', 'utf8');
-const CONTENT = readFileSync('src/data/pt/index.ts', 'utf8');
+/* CRLF-normalised. With core.autocrlf=true the working copy is CRLF, and the
+   block split below (`\n  {\n`) then matched nothing — so the verbatim test
+   passed with zero pages checked, on every run on Kavya's machine. Found
+   2026-09-27 when new questions that were on no page did not fail it; the
+   floor asserted in the first test keeps a vacuous pass from coming back. */
+const read = (p) => readFileSync(p, 'utf8').replace(/\r\n/g, '\n');
+const KEYWORDS = read('src/data/pt/keywords.ts');
+const CONTENT = read('src/data/pt/index.ts');
 
 /** Pull `{ term: '...', ... }` entries out of a named array block. */
 function termsIn(section) {
@@ -59,6 +65,9 @@ function questionsForBuiltPages() {
 
 test('every researched question reaches its page character for character', () => {
   const missing = [];
+  const pages = questionsForBuiltPages().filter(p => p.built);
+  assert.ok(pages.length >= 60,
+    `only ${pages.length} built pages found in keywords.ts — the parser is not reading the file`);
   for (const { slug, built, questions } of questionsForBuiltPages()) {
     if (!built) continue;
     for (const q of questions) {
