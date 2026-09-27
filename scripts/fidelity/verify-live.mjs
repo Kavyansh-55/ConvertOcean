@@ -617,5 +617,53 @@ async function stylesheetsFor(path) {
   say(!/before uploading/i.test(c), 'excel-converter does not say "before uploading"');
 }
 
+/* ------------------------------------------------- 2026-09-27 deploy
+   The Portuguese locale (86 /pt/ URLs) and the /terms/ upload wording.
+
+   The locale's worst bug was invisible in source and silent in the build:
+   Header/Footer prefixed English paths, so every page linked /pt/compress-pdf/
+   while the page lives at /pt/comprimir-pdf/ — 76 dead links on 75 pages,
+   passing the hreflang tests. So this block does not stop at "the homepage
+   returns 200": it follows every /pt/ link on the locale homepage and a tool
+   page and requires each one to resolve. */
+{
+  const t = (await get('/terms/')).body;
+  say(!/by uploading/i.test(t), '/terms/ no longer says "By uploading a file"');
+  say(/When you choose a file/.test(t), 'and says "When you choose a file" instead');
+
+  for (const [pt, en] of [['/pt/comprimir-pdf/', '/compress-pdf/'],
+                          ['/pt/modelo-de-recibo/', '/receipt-generator/'],
+                          ['/pt/redimensionar-imagem/', '/image-resizer/']]) {
+    const p = await get(pt);
+    say(p.status === 200, `${pt} is served`);
+    say(p.body.includes('<html lang="pt"'), `${pt} declares lang="pt"`);
+    say(p.body.includes(`<link rel="canonical" href="${ORIGIN}${pt}">`), `${pt} self-canonicalises`);
+    say(p.body.includes(`hreflang="en" href="${ORIGIN}${en}"`), `${pt} points its English alternate at ${en}`);
+    say(p.body.includes('content="pt_BR"'), `${pt} carries og:locale pt_BR`);
+    const e = (await get(en)).body;
+    say(e.includes(`hreflang="pt" href="${ORIGIN}${pt}"`), `${en} points its Portuguese alternate back at ${pt}`);
+  }
+
+  for (const hub of ['/pt/', '/pt/comprimir-pdf/']) {
+    const body = (await get(hub)).body;
+    const links = [...new Set([...body.matchAll(/href="(\/pt\/[^"#?]*)"/g)].map(m => m[1]))];
+    const dead = [];
+    for (const l of links) {
+      const r = await fetch(ORIGIN + l, { method: 'HEAD', redirect: 'manual', signal: AbortSignal.timeout(25000) });
+      if (r.status !== 200) dead.push(`${l} ${r.status}`);
+    }
+    say(links.length > 20 && dead.length === 0,
+        `${hub}: all ${links.length} /pt/ links resolve${dead.length ? ' — dead: ' + dead.join(', ') : ''}`);
+  }
+
+  for (const p of ['/pt/guias/', '/pt/guias/png-ou-jpg/', '/pt/termos/', '/pt/mapa-do-site/']) {
+    say((await get(p)).status === 200, `${p} is served`);
+  }
+
+  const sm = (await get('/sitemap.xml')).body;
+  const ptLocs = (sm.match(/<loc>[^<]*\/pt\/[^<]*<\/loc>/g) || []).length;
+  say(ptLocs === 86, `sitemap.xml lists all 86 Portuguese URLs (found ${ptLocs})`);
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
