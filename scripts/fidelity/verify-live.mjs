@@ -781,5 +781,25 @@ async function stylesheetsFor(path) {
   say(!/limite\.<\/strong><a/.test(home), '/pt/ homepage: "limite. Comprimir PDF" keeps its space');
 }
 
+/* ------------------------------------------------- 2026-09-28 EN generators + FAQ claims */
+{
+  const inv = (await get('/invoice-generator/')).body;
+  say(!/HDFC|IFSC|Kavya J\. Studio|Bengaluru/.test(inv.split('id="invSample"')[1]?.slice(0, 900) || inv),
+      '/invoice-generator/ opens on the US sample, not HDFC/GST');
+  const rec = (await get('/receipt-generator/')).body;
+  say(/Brightline Design Co\./.test(rec) && !/Kavya J\. Studio/.test(rec.split('id="rcptSample"')[1]?.slice(0, 900) || ''),
+      '/receipt-generator/ opens on the US sample');
+  const pdf = (await get('/pdf-tools/')).body;
+  say(/Merge PDF combines PDF files only/.test(pdf) && !/determined by your system's RAM/.test(pdf),
+      '/pdf-tools/ FAQ no longer overclaims merge formats or size limits');
+  const img = (await get('/image-tools/')).body;
+  say(!/convert batches of images offline/.test(img), '/image-tools/ FAQ no longer claims batch conversion');
+  const xl = (await get('/excel-converter/')).body;
+  say(/reads the result Excel saved for each formula/.test(xl) && !/Formulas are evaluated locally/.test(xl),
+      '/excel-converter/ says formulas are read, not evaluated');
+  const pt = (await get('/pt/conversor-excel/')).body;
+  say(!/calcula as fórmulas|fórmulas são calculadas no navegador/.test(pt), '/pt/conversor-excel/ says the same in Portuguese');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);

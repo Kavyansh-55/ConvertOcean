@@ -278,6 +278,10 @@ try {
       ['/invoice-generator/', { cur: 'invCurrency', tax: 'inputTaxSelect', sub: 'pdfSubtotal', grand: 'pdfGrandTotal', text: ['inputVendorAddress', 'inputClientAddress', 'inputTerms'] }],
     ]) {
       await page.goto(ORIGIN + path, { waitUntil: 'networkidle2', timeout: 45000 });
+      /* The preview renders after load; reading at once raced it on the
+         slower live site and saw $0.00 (2026-09-28). Wait for a real total. */
+      await page.waitForFunction((id) => /[1-9]/.test(document.getElementById(id)?.textContent || ''),
+        { timeout: 20000 }, ids.grand).catch(() => {});
       const r = await page.evaluate((ids) => ({
         cur: document.getElementById(ids.cur)?.value,
         tax: document.getElementById(ids.tax)?.value,
