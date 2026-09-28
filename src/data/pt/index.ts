@@ -103,10 +103,10 @@ export const ptCategories: PtCategory[] = [
     intro: `
     <h2>Planilhas convertidas sem que os números saiam do seu computador.</h2>
     <p>Planilhas guardam o que uma empresa tem de mais sensível — folha de pagamento, tabela de preços, lista de clientes. Estas ferramentas convertem entre XLSX, XLS, CSV, JSON e XML nos dois sentidos, geram PDF para impressão com o <a href="/pt/excel-para-pdf/">Excel para PDF</a>, <a href="/pt/unir-arquivos-excel/">juntam</a> e <a href="/pt/dividir-arquivo-excel/">dividem</a> pastas de trabalho e <a href="/pt/comprimir-excel/">comprimem</a> arquivos inchados. Extratos bancários em OFX, QFX ou QBO viram planilha com o <a href="/pt/ofx-para-csv/">OFX para CSV</a>.</p>
-    <p>As fórmulas são calculadas no navegador e só os valores resultantes são exportados, então a lógica da sua planilha fica com você.</p>
+    <p>Só o resultado que o Excel salvou para cada fórmula é exportado — nunca a fórmula em si —, então a lógica da sua planilha fica com você.</p>
     `,
     faqs: [
-      { q: 'As fórmulas aparecem no arquivo convertido?', a: 'Não. O conversor calcula as fórmulas e exporta os valores resultantes. Macros (.xlsm) e consultas a bases externas não são executadas.' },
+      { q: 'As fórmulas aparecem no arquivo convertido?', a: 'Não. O conversor exporta o resultado que o Excel salvou para cada fórmula; as fórmulas não são recalculadas. Macros (.xlsm) e consultas a bases externas não são executadas.' },
       { q: 'A área de impressão do Excel é respeitada ao gerar PDF?', a: 'Não. O Excel para PDF usa o intervalo utilizado de cada aba — da primeira à última célula com conteúdo — e colunas ocultas também saem no PDF. Para controlar o que aparece, apague as linhas e colunas desnecessárias antes de converter.' },
       { q: 'Por que a minha planilha é tão grande sem ter quase nada?', a: 'Quase sempre é o intervalo utilizado: uma formatação aplicada a milhares de linhas vazias faz o Excel guardar todas elas. O comprimir Excel remove esse excesso e mostra o tamanho antes e depois.' }
     ]

@@ -265,6 +265,36 @@ try {
     await page.close();
   }
 
+  /* ------------------------------------------- English generator defaults
+     The English site targets US/UK/CA/AU, and both generators opened on a
+     Bengaluru vendor, GST 18% and HDFC/IFSC bank details (2026-09-28). The
+     US sample must default to USD and no tax, and "no tax" must mean the
+     total carries none. */
+  {
+    const page = await browser.newPage();
+    await page.setCacheEnabled(false);
+    for (const [path, ids] of [
+      ['/receipt-generator/', { cur: 'rcptCurrency', tax: 'rcptTaxSelect', sub: 'rcptPdfSubtotal', grand: 'rcptPdfGrandTotal', text: ['rcptVendorAddress', 'rcptClientAddress'] }],
+      ['/invoice-generator/', { cur: 'invCurrency', tax: 'inputTaxSelect', sub: 'pdfSubtotal', grand: 'pdfGrandTotal', text: ['inputVendorAddress', 'inputClientAddress', 'inputTerms'] }],
+    ]) {
+      await page.goto(ORIGIN + path, { waitUntil: 'networkidle2', timeout: 45000 });
+      const r = await page.evaluate((ids) => ({
+        cur: document.getElementById(ids.cur)?.value,
+        tax: document.getElementById(ids.tax)?.value,
+        sub: document.getElementById(ids.sub)?.textContent,
+        grand: document.getElementById(ids.grand)?.textContent,
+        text: ids.text.map(i => document.getElementById(i)?.value || '').join(' | '),
+      }), ids);
+      const num = (s) => parseFloat(String(s).replace(/[^\d.]/g, ''));
+      say(r.cur === '$' && r.tax === 'none', `${path} defaults to USD and no tax`, `${r.cur} / ${r.tax}`);
+      say(r.sub != null && num(r.sub) === num(r.grand) && num(r.grand) > 0,
+          `${path} "no tax" carries no hidden tax`, `${r.sub} → ${r.grand}`);
+      say(!/HDFC|IFSC|GST|Bengaluru|Mumbai|Kavya J\./.test(r.text),
+          `${path} opens on the US sample, not the Indian one`, r.text.slice(0, 70));
+    }
+    await page.close();
+  }
+
   /* ------------------------------------------------- legacy .ppt refusal */
   {
     const page = await browser.newPage();

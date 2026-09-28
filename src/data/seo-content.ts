@@ -165,7 +165,7 @@ export const seoContentMap: Record<string, SEOData> = {
   <p>Our SheetJS compiler reads XLSX binaries client-side, extracts the raw cell values, and formats them into standard comma-separated text files instantly.</p>
 
   <h3>What Survives the Trip — and What Does Not.</h3>
-  <p>CSV stores nothing but values, and that is precisely why import pipelines want it. Formulas are evaluated and only their results are written; colors, borders, merged cells, charts, and macros are dropped; and only the first visible worksheet is exported, so move the sheet you need to the front of the workbook before converting. One classic gotcha to check: date cells. Excel stores dates as serial numbers under formatted display text, and different importers interpret bare values differently — if your target system is strict about date formats, format the column as text in Excel first.</p>
+  <p>CSV stores nothing but values, and that is precisely why import pipelines want it. Only the result Excel saved for each formula is written; colors, borders, merged cells, charts, and macros are dropped; and only the first worksheet — the leftmost tab, even a hidden one — is exported, so move the sheet you need to the front of the workbook before converting. One classic gotcha to check: date cells. Excel stores dates as serial numbers under formatted display text, and different importers interpret bare values differently — if your target system is strict about date formats, format the column as text in Excel first.</p>
 
   <h3>Where XLSX-to-CSV Fits in Real Workflows.</h3>
   <ul>
@@ -579,7 +579,7 @@ export const seoContentMap: Record<string, SEOData> = {
   <p>Legacy Microsoft Excel XLS files (used prior to 2007) are binary formats that struggle to render consistently across modern office tools. Converting XLS to PDF locks the data in a universally supported visual document format.</p>
 
   <h3>Rescuing Old Workbooks as Permanent Records.</h3>
-  <p>XLS files tend to be the old ones — accounting archives, inherited business records, exports from retired systems — and every year fewer applications open them faithfully. Converting them to PDF turns an aging binary file into a fixed document that will render identically decades from now, which is usually the actual goal: nobody edits a 2005 ledger, they just need to be able to read and file it. Formulas are evaluated to their final values during conversion, so the printed figures match what Excel last calculated.</p>
+  <p>XLS files tend to be the old ones — accounting archives, inherited business records, exports from retired systems — and every year fewer applications open them faithfully. Converting them to PDF turns an aging binary file into a fixed document that will render identically decades from now, which is usually the actual goal: nobody edits a 2005 ledger, they just need to be able to read and file it. Each formula prints as the value Excel last saved for it, so the figures match what Excel last calculated.</p>
   <p>As with any spreadsheet-to-PDF export, page width is the thing to watch: wide sheets need landscape orientation or trimmed columns to avoid cut-offs — our <a href="/guides/excel-to-pdf/">Excel to PDF guide</a> covers the fixes. Working with modern .xlsx files instead? Use <a href="/excel-to-pdf/">Excel to PDF</a> directly, or migrate the legacy data forward first with <a href="/xls-to-csv/">XLS to CSV</a>. All parsing runs in your browser — old financial records stay on your machine.</p>
 </div>
     `,

@@ -23,17 +23,21 @@ const sample = isPt ? {
     { desc: 'Otimização de desempenho (horas)', qty: 4, rate: 350.00 }
   ]
 } : {
-  TaxModel: 'GST',
-  TaxRate: 0.18,
+  /* US sample (2026-09-28): the English site targets US/UK/CA/AU, and the
+     page used to open on HDFC Bank / IFSC details and GST 18%. No bank
+     numbers at all — a sample that looks like real account details gets
+     copied into real invoices. .example addresses (RFC 2606). */
+  TaxModel: 'none',
+  TaxRate: 0,
   CustomTaxLabel: 'Tax',
-  VendorName: 'Kavya J. Studio',
-  VendorAddress: '12 Developer Lane, Indiranagar\nBengaluru, KA 560038\nhello@kavyaj.studio',
-  ClientName: 'Galactic Group Ltd.',
-  ClientAddress: '45 Cloud Towers, Tech City\nMumbai, MH 400001\nbilling@galactic.com',
-  Terms: 'Bank: HDFC Bank | A/C: 9876543210\nIFSC: HDFC0000123\nPayment is due within 15 days of invoice date.',
+  VendorName: 'Brightline Design Co.',
+  VendorAddress: '450 Market Street, Suite 12\nSan Francisco, CA 94105\nbilling@brightline.example',
+  ClientName: 'Harbor & Pine LLC',
+  ClientAddress: '88 Congress Street\nBoston, MA 02109\naccounts@harborpine.example',
+  Terms: 'Payment is due within 15 days of the invoice date.\nPay by ACH bank transfer or card — details on request.',
   LineItems: [
-    { desc: 'Advanced Multi-page Web UI Scaffolding', qty: 1, rate: 2500.00 },
-    { desc: 'Client-side Performance Optimization Suite', qty: 4, rate: 350.00 }
+    { desc: 'Website design and build (5 pages)', qty: 1, rate: 2500.00 },
+    { desc: 'Performance optimization (hours)', qty: 4, rate: 350.00 }
   ]
 };
 ---
@@ -52,6 +56,12 @@ const sample = isPt ? {
     }
   }
   .editor-pane {
+    /* The textareas below use field-sizing: content, which also makes their
+       longest line their min-content WIDTH. A grid item will not shrink below
+       its min-content, so one long line of payment terms widened the whole
+       column and the page scrolled sideways at 320px. min-width: 0 lets the
+       pane take the track width and the textareas wrap inside it. */
+    min-width: 0;
     background-color: var(--colors-canvas);
     border: 1px solid var(--colors-hairline);
     border-radius: var(--rounded-lg);
@@ -373,8 +383,8 @@ const sample = isPt ? {
         <div class="form-group">
           <label class="form-label" for="inputTaxSelect">{t('Tax Configuration', lang)}</label>
           <select id="inputTaxSelect" class="select-input">
-            <option value="none" selected={isPt}>{t('No Tax', lang)}</option>
-            <option value="GST" selected={!isPt}>GST (18%)</option>
+            <option value="none" selected>{t('No Tax', lang)}</option>
+            <option value="GST">GST (18%)</option>
             <option value="IGST">IGST (18%)</option>
             <option value="VAT">VAT (15%)</option>
             <option value="custom">{t('Custom Tax Rate', lang)}</option>

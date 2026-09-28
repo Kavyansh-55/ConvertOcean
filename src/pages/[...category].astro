@@ -141,15 +141,15 @@ const categoryFaqsMap: Record<string, { q: string; a: string }[]> = {
   'pdf-tools': [
     {
       q: "Can I merge files of different orientations or formats?",
-      a: "Yes, you can combine multiple PDF files, images, or text documents together. Layout dimensions are calculated and formatted to standard A4/Letter size or stitched into landscape viewports."
+      a: "Merge PDF combines PDF files only, and every page keeps its own size and orientation — a landscape page stays landscape. To include photos or scans, turn them into a PDF first with Image to PDF, then merge the result with the rest."
     },
     {
       q: "Is there a maximum file size or page limit when splitting PDF files?",
-      a: "Because all PDF split and merge compilation runs client-side on your device, the file size limit is determined by your system's RAM. Most modern browsers can easily split or merge PDF documents up to several hundred megabytes."
+      a: "Each PDF can be up to 25 MB, and there is no page limit and no daily cap. Because splitting runs on your own device, speed depends on its memory and processor rather than on a server queue."
     },
     {
-      q: "How does ConvertOcean merge PDF files without losing interactive elements?",
-      a: "Our client-side merger consolidates resource libraries (like fonts, page coordinates, and form structures) to prevent file size bloat while keeping links, text flows, and standard annotations intact."
+      q: "Does merging PDFs change the pages or lose text?",
+      a: "No. Each page is copied across as it is rather than re-rendered: text stays selectable and searchable, embedded fonts come with it, and page sizes are unchanged. Interactive extras such as fillable form fields are not guaranteed to keep working after a merge, so check a merged form before you send it."
     }
   ],
   'image-tools': [
@@ -162,22 +162,22 @@ const categoryFaqsMap: Record<string, { q: string; a: string }[]> = {
       a: "No. While PNG is a lossless format that prevents further compression artifacts in future saves, it cannot restore visual pixels or metadata discarded by the original lossy JPG compression."
     },
     {
-      q: "Can I run image format conversions in batch mode offline?",
-      a: "Yes. All image rasterization, color channel processing, and metadata updates run locally using HTML5 canvas capabilities in browser sandbox memory, meaning you can convert batches of images offline."
+      q: "Do the image converters work offline?",
+      a: "Yes. Conversion runs in your browser with the canvas API, so once the page has loaded it keeps working without a connection. The format converters take one image at a time; to put several photos into one file, use Merge Images or Image to PDF."
     }
   ],
   'excel-converter': [
     {
       q: "Does this tool evaluate formulas and macros when converting Excel files?",
-      a: "Our spreadsheet engine evaluates the calculated cell values in the sheet and renders the text or numbers. Standard formulas are evaluated local-side, but macros (.xlsm) or external database lookups are not supported."
+      a: "No — it reads the result Excel saved for each formula and exports that value, so the figures match what Excel last calculated. Formulas are not recalculated, and macros (.xlsm) or external data connections do not run. A workbook written by a program that saves formulas without their results will export those cells empty; open and save it in Excel first."
     },
     {
       q: "Which sheet is processed when converting multi-sheet workbooks to CSV?",
-      a: "When converting XLSX/XLS workbooks to CSV, only the first visible sheet is parsed and exported. To convert other sheets, you can reorder them to the front of the workbook in Excel before converting."
+      a: "The first sheet in the workbook — the leftmost tab, even if it is hidden. To convert another sheet, move it to the front in Excel before converting, or split the workbook into one file per sheet with Split Excel."
     },
     {
       q: "How secure is my financial spreadsheet data on ConvertOcean?",
-      a: "Absolutely secure. All cell parsing, formula compilation, and CSV/JSON exports are computed in your browser sandbox memory on your local machine. No corporate records, budgets, or pricing tables leave your hardware."
+      a: "Your file never leaves your device. Reading the workbook and writing the CSV or JSON both happen in your browser, on your own machine, so budgets, payroll and pricing tables are not sent anywhere."
     }
   ],
   'document-tools': [
@@ -229,7 +229,7 @@ const categoryFaqsMap: Record<string, { q: string; a: string }[]> = {
     },
     {
       q: "Can I convert large database CSV payloads locally?",
-      a: "Absolutely. Local parsing speeds are determined entirely by your device CPU performance and memory. Large CSV files are parsed instantly directly in your browser tab memory sandbox."
+      a: "Yes, up to 25 MB per file. Parsing happens in your browser tab's memory, so speed depends on your device's processor and memory rather than on a server queue."
     }
   ]
 };
@@ -254,7 +254,7 @@ const categoryIntroMap: Record<string, string> = {
   `,
   'excel-converter': `
     <h2>Spreadsheet Conversions That Keep Your Numbers on Your Machine.</h2>
-    <p>Spreadsheets are where businesses keep their most sensitive numbers — payroll, pricing, customer lists — which makes "upload your file to convert it" a bad deal. This suite converts Excel workbooks between XLSX, XLS, CSV, JSON, and XML in both directions, exports print-ready PDFs with <a href="/excel-to-pdf/">Excel to PDF</a>, and merges or splits workbooks, all inside your browser using a client-side spreadsheet engine. Formulas are evaluated locally and only their calculated values are exported, so your pricing logic stays private. Wide sheets in PDF exports? The converter scales the columns to fit rather than clipping them — our guide on <a href="/guides/excel-to-pdf/">Excel to PDF without losing formatting</a> covers the rest.</p>
+    <p>Spreadsheets are where businesses keep their most sensitive numbers — payroll, pricing, customer lists — which makes "upload your file to convert it" a bad deal. This suite converts Excel workbooks between XLSX, XLS, CSV, JSON, and XML in both directions, exports print-ready PDFs with <a href="/excel-to-pdf/">Excel to PDF</a>, and merges or splits workbooks, all inside your browser using a client-side spreadsheet engine. Only the value Excel saved for each formula is exported, never the formula itself, so your pricing logic stays private. Wide sheets in PDF exports? The converter scales the columns to fit rather than clipping them — our guide on <a href="/guides/excel-to-pdf/">Excel to PDF without losing formatting</a> covers the rest.</p>
   `,
   'document-tools': `
     <h2>Document Conversions for Word, Text, and Presentations — All Local.</h2>

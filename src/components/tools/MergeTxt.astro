@@ -120,8 +120,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div class="form-group">
       <label class="form-label" for="separatorType">{t('File Separator', lang)}</label>
       <select class="select-input" id="separatorType">
-        <option value="newline">Single Newline (\n)</option>
-        <option value="double-newline">Double Newline (\n\n)</option>
+        <option value="newline">{t('Single Newline (\\n)', lang)}</option>
+        <option value="double-newline">{t('Double Newline (\\n\\n)', lang)}</option>
         <option value="none">{t('No Separator', lang)}</option>
         <option value="custom">{t('Custom Text Separator', lang)}</option>
       </select>
@@ -136,7 +136,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <label class="form-label" for="includeFilename">{t('Prefix file content with filename?', lang)}</label>
       <select class="select-input" id="includeFilename">
         <option value="no">{t('No', lang)}</option>
-        <option value="yes-header">Yes, as a header (e.g. === file.txt ===)</option>
+        <option value="yes-header">{t('Yes, as a header (e.g. === file.txt ===)', lang)}</option>
       </select>
     </div>
 

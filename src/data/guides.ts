@@ -812,7 +812,7 @@ export const guides: GuideData[] = [
 
       <h2>The Conversion Traps</h2>
       <ul>
-        <li><strong>CSV loses everything but values.</strong> Converting XLSX to CSV evaluates formulas and keeps results only; styles, extra tabs, and charts are gone. Fine for data transfer, catastrophic for your only copy — keep the XLSX master.</li>
+        <li><strong>CSV loses everything but values.</strong> Converting XLSX to CSV keeps only the value Excel saved for each formula; styles, extra tabs, and charts are gone. Fine for data transfer, catastrophic for your only copy — keep the XLSX master.</li>
         <li><strong>Excel mangles raw CSVs on open.</strong> Double-clicking a CSV lets Excel guess types: leading zeros vanish from phone numbers, long IDs become scientific notation, and date-like strings get rewritten. Convert the file properly with <a href="/csv-to-xlsx/">CSV to XLSX</a> so values land in typed cells once, deliberately.</li>
         <li><strong>Only the first sheet exports.</strong> CSV is single-sheet by definition, so converting a multi-tab workbook exports one tab. Split the workbook first with <a href="/split-excel/">Split Excel</a> if you need every sheet as its own CSV.</li>
         <li><strong>Encoding matters.</strong> Accented names and non-Latin text survive as UTF-8; ancient tools exporting other encodings produce the familiar Ã© corruption. Modern converters read and write UTF-8 throughout.</li>
@@ -842,7 +842,7 @@ export const guides: GuideData[] = [
       },
       {
         question: 'Does converting XLSX to CSV keep my formulas?',
-        answer: 'No — CSV stores only values, so formulas are evaluated and their results written out. That is usually what a data pipeline wants, but never convert your only copy: keep the XLSX master and export CSVs from it.'
+        answer: 'No — CSV stores only values, so only the result Excel saved for each formula is written out. That is usually what a data pipeline wants, but never convert your only copy: keep the XLSX master and export CSVs from it.'
       },
       {
         question: 'Can I still open old XLS files?',

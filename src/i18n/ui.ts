@@ -194,6 +194,11 @@ const pt: Record<string, string> = {
   'XLSX or XLS (Max 25MB)': 'XLSX ou XLS (máx. 25 MB)',
   'CSV (Max 25MB)': 'CSV (máx. 25 MB)',
 
+  // ---- Merge TXT separator options
+  'Single Newline (\\n)': 'Uma quebra de linha (\\n)',
+  'Double Newline (\\n\\n)': 'Duas quebras de linha (\\n\\n)',
+  'Yes, as a header (e.g. === file.txt ===)': 'Sim, como cabeçalho (ex.: === arquivo.txt ===)',
+
   // ---- Footer: tool names ----------------------------------------------
   // These must match the `name` of the same tool in src/data/pt/index.ts.
   'Excel to PDF': 'Excel para PDF',

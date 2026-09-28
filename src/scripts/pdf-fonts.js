@@ -375,10 +375,22 @@ export const PDFMAKE_SUBSTITUTES = {
 
 const vfsCache = new Map();
 
+/* One retry. A single dropped request used to fall straight back to Roboto,
+   so a Courier code line in a Word file silently lost its monospace face —
+   seen in a fidelity run on 2026-09-28 that passed on the next two runs. */
 async function fetchBase64(url) {
   if (vfsCache.has(url)) return vfsCache.get(url);
-  const r = await fetch(url);
-  if (!r.ok) throw new Error('font fetch failed: ' + r.status);
+  let r;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      r = await fetch(url);
+      if (r.ok) break;
+    } catch (e) {
+      if (attempt === 1) throw e;
+    }
+    if (attempt === 0) await new Promise((res) => setTimeout(res, 800));
+  }
+  if (!r || !r.ok) throw new Error('font fetch failed: ' + (r ? r.status : 'network'));
   const b64 = toBase64(await r.arrayBuffer());
   vfsCache.set(url, b64);
   return b64;
