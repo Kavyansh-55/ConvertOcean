@@ -20,6 +20,7 @@
     "limits": "node scripts/fidelity/verify-limits.mjs",
     "races": "node scripts/fidelity/verify-races.mjs",
     "order": "node scripts/fidelity/verify-order.mjs",
+    "offline": "node scripts/fidelity/verify-offline.mjs",
     "degenerate": "node scripts/fidelity/verify-degenerate.mjs",
     "calculators": "node scripts/fidelity/verify-calculators.mjs",
     "generators": "node scripts/fidelity/verify-generators.mjs",

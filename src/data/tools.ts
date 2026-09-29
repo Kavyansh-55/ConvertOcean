@@ -289,7 +289,7 @@ const rawTools: ToolData[] = [
     description: 'Merge multiple PDF files client-side in your browser. 100% private, secure, and offline capable. No uploads.',
     headline: 'Merge PDF.',
     subtitle: 'Stitch multiple PDF documents together client-side in your browser memory.',
-    quickAnswer: 'To merge PDF files into one document, add your PDFs above, arrange them in the order you need, and download the combined file. Merging happens locally in your browser — contracts, statements, and reports are never uploaded to a server, and there are no page or file limits.',
+    quickAnswer: 'To merge PDF files into one document, add your PDFs above in the order you want them, and download the combined file. Merging happens locally in your browser — contracts, statements, and reports are never uploaded to a server. There is no limit on the number of files, and each can be up to 25 MB.',
     icon: '🥞',
     category: 'PDF Tools',
     categorySlug: 'pdf-tools',
@@ -446,11 +446,11 @@ const rawTools: ToolData[] = [
     faqs: [
       { question: 'How do I create a receipt using ConvertOcean?', answer: 'Simply fill in your business details, customer information, payment method, and line items in the editor panel. The receipt preview updates in real time. Click "Download Receipt PDF" to save a professional A4 PDF receipt instantly.' },
       { question: 'Can I customize the receipt with my business branding?', answer: 'Yes. You can enter your business name, address, contact details, and custom notes. The receipt renders with a clean, professional layout suitable for any industry.' },
-      { question: 'What payment methods can I include on the receipt?', answer: 'You can select from Cash, Credit Card, Debit Card, Bank Transfer, PayPal, Check, or enter a custom payment method. The selected method appears on the generated receipt.' },
+      { question: 'What payment methods can I include on the receipt?', answer: 'Choose from PIX, Cash, Credit Card, Debit Card, Bank Transfer, PayPal and Check. The method you pick is printed on the receipt; there is no free-text option for another method.' },
       { question: 'Is my financial data safe when generating receipts?', answer: 'Absolutely. ConvertOcean processes all receipt data 100% locally in your browser sandbox memory. No financial details, customer names, or transaction amounts are ever uploaded to any server.' },
       { question: 'Can I generate receipts for free without limits?', answer: 'Yes. The Receipt Generator is completely free with no limits on the number of receipts you can create, customize, or download as PDF files.' },
       { question: 'What is the difference between an invoice and a receipt?', answer: 'An invoice is a request for payment sent before a transaction is completed. A receipt is a confirmation of payment issued after a transaction has been processed. Use our Invoice Generator for billing and this Receipt Generator for payment confirmations.' },
-      { question: 'Can I add tax calculations to my receipts?', answer: 'Yes. You can select from GST (18%), IGST (18%), VAT (15%), or No Tax configurations. Tax amounts are automatically calculated and displayed on the receipt.' }
+      { question: 'Can I add tax calculations to my receipts?', answer: 'Yes. Pick GST (18%), IGST (18%) or VAT (15%), or enter a custom tax rate, and the tax and total are calculated for you. “No Tax” is the default.' }
     ],
     relatedTools: ['invoice-generator', 'profit-margin-calculator', 'sales-tax-calculator', 'percentage-calculator'],
     content: receiptGeneratorContent
@@ -469,7 +469,7 @@ const rawTools: ToolData[] = [
     faqs: [
       { question: 'What is the difference between profit margin and markup?', answer: 'Profit margin is the percentage of revenue that is profit (Profit ÷ Revenue × 100). Markup is the percentage added to cost to get the selling price (Profit ÷ Cost × 100). For example, buying at $60 and selling at $100 gives a 40% margin but a 66.7% markup.' },
       { question: 'How do I calculate gross profit margin?', answer: 'Gross Profit Margin = ((Revenue − Cost of Goods Sold) ÷ Revenue) × 100. Enter your revenue and cost values in our calculator to get instant results with a visual breakdown.' },
-      { question: 'Can I calculate the selling price from a desired margin?', answer: 'Yes. Switch to "Find Selling Price" mode, enter your cost and desired profit margin percentage, and the calculator will compute the required selling price and expected profit.' },
+      { question: 'Can I calculate the selling price from a desired margin?', answer: 'Yes. Choose the “Cost & Margin → Price” tab, enter your cost and the margin you want, and the calculator gives the selling price and the profit on each sale.' },
       { question: 'Is this calculator accurate for business accounting?', answer: 'Yes. Our calculator uses standard financial formulas for profit margin, markup, and gross profit calculations. Results are computed with full decimal precision for professional accuracy.' },
       { question: 'Can I use this for e-commerce product pricing?', answer: 'Absolutely. Enter your product cost (including shipping, manufacturing, etc.) and your desired margin or selling price to determine optimal pricing strategies for your online store.' },
       { question: 'Does this calculator store my financial data?', answer: 'No. All calculations are performed locally in your browser. No financial figures, costs, or revenue data are transmitted to any server or stored anywhere.' },
@@ -519,7 +519,7 @@ const rawTools: ToolData[] = [
       { question: 'How do I calculate percentage decrease?', answer: 'Percentage Decrease = ((Old Value − New Value) ÷ Old Value) × 100. For example, if a price drops from $100 to $75, the decrease is ((100 − 75) ÷ 100) × 100 = 25%.' },
       { question: 'What is the difference between percentage change and percentage difference?', answer: 'Percentage change compares a new value to an original value (has direction: increase or decrease). Percentage difference compares two values without implying which is the original: |A − B| ÷ ((A + B) ÷ 2) × 100.' },
       { question: 'Can I calculate what percentage one number is of another?', answer: 'Yes. To find what percentage X is of Y, use the formula: (X ÷ Y) × 100. Our calculator includes this mode with instant results and formula display.' },
-      { question: 'Is this calculator free to use?', answer: 'Yes. The Percentage Calculator is 100% free with no limits, no account required, and no advertisements. All calculations run locally in your browser.' },
+      { question: 'Is this calculator free to use?', answer: 'Yes. It is free, needs no account and has no usage limits. All calculations run locally in your browser.' },
       { question: 'Can I add or subtract a percentage from a number?', answer: 'Yes. Our calculator includes modes to add X% to Y (Y + Y×X/100) and subtract X% from Y (Y − Y×X/100), useful for calculating tips, discounts, and tax-inclusive prices.' },
       { question: 'Does the calculator show the formula used?', answer: 'Yes. Every calculation displays the step-by-step formula breakdown so you can understand and verify the math behind each result.' }
     ],
@@ -540,7 +540,7 @@ const rawTools: ToolData[] = [
     faqs: [
       { question: 'How do I calculate sales tax on a purchase?', answer: 'Sales Tax Amount = Price × (Tax Rate ÷ 100). Total Price = Price + Sales Tax Amount. For example, a $100 item with 8.25% tax: Tax = $8.25, Total = $108.25. Enter your values for instant results.' },
       { question: 'How do I reverse calculate tax from a total price?', answer: 'To find the pre-tax price from a tax-inclusive total: Pre-Tax Price = Total ÷ (1 + Tax Rate ÷ 100). For example, a $108.25 total at 8.25% tax: Pre-tax = $108.25 ÷ 1.0825 = $100.00.' },
-      { question: 'What tax rate presets are available?', answer: 'We include presets for US Average (7.12%), UK VAT (20%), Canada GST (5%), Canada HST (13%), Australia GST (10%), Germany VAT (19%), India GST (18%), and Japan Consumption Tax (10%). You can also enter any custom tax rate.' },
+      { question: 'What tax rate presets are available?', answer: 'Presets for the US average combined rate (7.53%), UK VAT (20%), Canada GST (5%) and HST (13%), Australia GST (10%), Germany VAT (19%), India GST (18%) and Japan (10%), plus a picker for every US state’s average combined rate. You can also enter any custom rate.' },
       { question: 'Can I calculate tax for multiple items?', answer: 'Yes. Enter the total pre-tax amount for all your items and the applicable tax rate. The calculator will compute the total tax and grand total for the entire purchase.' },
       { question: 'What is the difference between sales tax, VAT, and GST?', answer: 'Sales tax is charged at the point of sale (common in the US). VAT (Value Added Tax) is charged at each production stage (common in Europe/UK). GST (Goods and Services Tax) is similar to VAT and used in countries like Australia, Canada, and India. Our calculator works with all types.' },
       { question: 'Is my purchase data stored or tracked?', answer: 'No. All tax calculations are performed 100% locally in your browser sandbox memory. No prices, tax amounts, or purchase details are ever uploaded to any server.' },
@@ -722,7 +722,7 @@ const rawTools: ToolData[] = [
     description: 'Convert XML data to Microsoft Excel XLSX sheets offline. 100% browser-level privacy.',
     headline: 'XML to XLSX.',
     subtitle: 'Compile nested XML documents into standard Excel spreadsheets (.xlsx) locally.',
-    quickAnswer: 'To convert XML to Excel, select your .xml file above and download a native .xlsx workbook with typed cells, ready to sort, filter, and pivot. Repeating elements become rows and their child fields become columns. Malformed XML is detected and reported rather than producing garbled rows. The conversion runs entirely in your browser, so enterprise payloads never touch a server.',
+    quickAnswer: 'To convert XML to Excel, select your .xml file above and download a native .xlsx workbook, ready to sort, filter, and pivot. Repeating elements become rows and their child fields become columns. Malformed XML is detected and reported rather than producing garbled rows. The conversion runs entirely in your browser, so enterprise payloads never touch a server.',
     icon: '📊',
     category: 'Excel Converter',
     categorySlug: 'excel-converter',
@@ -934,7 +934,7 @@ const rawTools: ToolData[] = [
     description: 'Convert Word document files (.docx) to print-ready PDF files in your browser. 100% private and offline-capable.',
     headline: 'Word to PDF.',
     subtitle: 'Convert Word documents (.docx) to a clean, selectable-text PDF locally on your device.',
-    quickAnswer: 'To convert Word to PDF, drop a .docx file into the tool above and download the PDF. Headings, bold and italic text, lists and tables carry over, and the result is a real vector PDF — the text stays selectable and searchable, and pages break cleanly without slicing through a line. The conversion runs locally in your browser sandbox — no uploads, no account, and no file-size limits.',
+    quickAnswer: 'To convert Word to PDF, drop a .docx file into the tool above and download the PDF. Headings, bold and italic text, lists and tables carry over, and the result is a real vector PDF — the text stays selectable and searchable, and pages break cleanly without slicing through a line. The conversion runs locally in your browser sandbox — no uploads and no account, for .docx files up to 15 MB.',
     icon: '📝',
     category: 'Document Tools',
     categorySlug: 'document-tools',
@@ -1251,7 +1251,7 @@ const rawTools: ToolData[] = [
     description: 'Convert JPG, PNG, and WebP images to PDF documents directly in your browser. No server uploads. 100% private, secure, and offline capable.',
     headline: 'Image to PDF.',
     subtitle: 'Convert images to a cleanly formatted PDF document client-side.',
-    quickAnswer: 'To turn images into a PDF, add your JPG, PNG, or WebP files above, arrange them in the order you want, and download a single PDF with one image per page. It is ideal for submitting scanned pages, photo sets, or receipts as one file. Every image is embedded locally, so nothing is uploaded.',
+    quickAnswer: 'To turn images into a PDF, add your JPG, PNG, or WebP files above in the order you want the pages, and download a single PDF with one image per page, each scaled to fit an A4 page. It is ideal for submitting scanned pages, photo sets, or receipts as one file. Every image is embedded locally, so nothing is uploaded.',
     icon: '🖼️',
     category: 'Image Tools',
     categorySlug: 'image-tools',

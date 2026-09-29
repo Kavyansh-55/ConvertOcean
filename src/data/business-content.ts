@@ -319,7 +319,7 @@ export const salesTaxCalculatorContent = `
     Our tool includes quick presets for major international tax jurisdictions:
   </p>
   <ul>
-    <li><strong>United States:</strong> Features the US Average Combined Sales Tax Rate (7.12%).</li>
+    <li><strong>United States:</strong> Features the US average combined sales tax rate (7.53%), plus a picker for each state.</li>
     <li><strong>United Kingdom:</strong> Features the UK Standard Value Added Tax (VAT) rate of 20%.</li>
     <li><strong>Canada:</strong> Includes the standard GST (5%) and common HST (13%) configurations.</li>
     <li><strong>Australia:</strong> Includes the standard Australian GST rate of 10%.</li>

@@ -262,7 +262,7 @@ const ptToolsSeed: PtTool[] = [
       },
       {
         question: 'como juntar dois pdf',
-        answer: 'O procedimento é o mesmo de qualquer quantidade: arraste os dois arquivos juntos e confirme qual vem primeiro antes de baixar. Se estiverem na ordem errada, basta arrastar uma das miniaturas para trocar de posição — é mais rápido do que refazer a união depois.'
+        answer: 'O procedimento é o mesmo de qualquer quantidade: adicione os dois arquivos na ordem em que devem aparecer e confira a lista antes de baixar. A lista não é reordenável: se um arquivo ficou fora de lugar, remova-o com ✕ e adicione de novo, e ele vai para o fim.'
       },
       {
         question: 'como juntar arquivos pdf',
@@ -286,7 +286,7 @@ const ptToolsSeed: PtTool[] = [
       },
       {
         question: 'como mesclar pdf',
-        answer: 'Arraste os arquivos, ordene e baixe. Vale lembrar que mesclar não reduz tamanho: o PDF final tem aproximadamente a soma dos originais. Se houver limite de tamanho no destino, passe o resultado pelo <a href="/pt/comprimir-pdf/">comprimir PDF</a> depois de mesclar — comprimir um arquivo só rende mais do que comprimir vários separados.'
+        answer: 'Adicione os arquivos na ordem certa e baixe. Vale lembrar que mesclar não reduz tamanho: o PDF final tem aproximadamente a soma dos originais. Se houver limite de tamanho no destino, passe o resultado pelo <a href="/pt/comprimir-pdf/">comprimir PDF</a> depois de mesclar — comprimir um arquivo só rende mais do que comprimir vários separados.'
       },
       {
         question: 'o que é mesclar pdf',
@@ -484,7 +484,7 @@ export const ptToolsBatch1: PtTool[] = [
       },
       {
         question: 'como passar word para pdf',
-        answer: 'Títulos, negrito, itálico, listas numeradas e com marcadores e tabelas são preservados. As quebras de página são calculadas para não cortar uma linha de texto ao meio. Fontes muito incomuns, instaladas só no seu computador, podem ser substituídas por uma equivalente — vale conferir a primeira página antes de enviar o documento.'
+        answer: 'Títulos, negrito, itálico, listas numeradas e com marcadores e tabelas são preservados. As quebras de página são calculadas para não cortar uma linha de texto ao meio. O texto é desenhado com fontes substitutas embutidas no PDF — Roboto para fontes sem serifa, Noto Serif para fontes com serifa e Noto Mono para texto monoespaçado —, então as quebras de linha podem diferir um pouco das do Word. Vale conferir a primeira página antes de enviar o documento.'
       },
       {
         question: 'Qual a diferença entre .doc e .docx nesta ferramenta?',

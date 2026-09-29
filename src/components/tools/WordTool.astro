@@ -207,9 +207,17 @@ if (slug === 'docx-to-txt') {
     function extractText(documentDoc) {
       const paras = Array.from(documentDoc.getElementsByTagName('w:p'));
       return paras.map((p) => {
+        /* Text, tabs and breaks in document order. Tabs used to be collected
+           in a second pass and prepended, so "Name<tab>Value" came out as
+           "<tab>NameValue" — the tab moved and the two words fused. A w:tab
+           inside w:tabs is a tab-stop definition in the paragraph
+           properties, not a tab character, so only run-level ones count. */
         let s = '';
-        for (const t of Array.from(p.getElementsByTagName('w:t'))) s += t.textContent;
-        for (const tab of Array.from(p.getElementsByTagName('w:tab'))) s = '\t' + s;
+        for (const el of Array.from(p.getElementsByTagName('*'))) {
+          if (el.nodeName === 'w:t') s += el.textContent;
+          else if (el.nodeName === 'w:tab' && el.parentNode && el.parentNode.nodeName === 'w:r') s += '\t';
+          else if ((el.nodeName === 'w:br' || el.nodeName === 'w:cr') && el.parentNode && el.parentNode.nodeName === 'w:r') s += '\n';
+        }
         return s;
       }).join('\n');
     }

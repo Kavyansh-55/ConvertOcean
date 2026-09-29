@@ -134,6 +134,11 @@ export const documentRecipes = [
         ok('lines', 'Paragraph structure preserved (not one run-on line)',
            out.split('\n').filter((l) => l.trim()).length >= 10,
            `${out.split('\n').filter((l) => l.trim()).length} non-empty lines`, 'major'),
+        /* The tab stays between the words it separated. It used to be moved
+           to the start of the line, fusing them into "TabLeftTabRight". */
+        ok('tabs', 'A tab stays where it was in the line',
+           /(^|\n)TabLeft\tTabRight\r?(\n|$)/.test(out),
+           JSON.stringify((out.match(/[^\n]*TabLeft[^\n]*/) || ['(line missing)'])[0]), 'major'),
       ];
     },
   },

@@ -6,8 +6,8 @@
  * sequência ficar correta" — on eight lines across four pages. None of the
  * multi-file tools (MergePdf, MergeWord, MergePptx, MergeExcel, MergeTxt,
  * MergeImages, ImageToPdf) can reorder: the list is the order the files were
- * chosen, and the only control is ✕ to remove one. The English copy never
- * made the claim; the translation invented it.
+ * chosen, and the only control is ✕ to remove one. The English copy made it
+ * too, in wordings this list did not name until 2026-09-29.
  *
  * For a concurso applicant told to "drag the thumbnails into the order the
  * edital requires", a control that is not there means a document submitted in
@@ -28,10 +28,15 @@ const BANNED = [
   'reordene', 'reordená', 'reordenar os arquivos', 'lista que você pode reordenar',
   'arraste as miniaturas', 'arrastando cada miniatura', 'arraste-os para a ordem',
   'coloque-as na ordem desejada', 'arraste para reordenar',
+  'arrastar uma das miniaturas', 'ordene e baixe', 'trocar de posição',
   // English
   'drag to reorder', 'drag the thumbnails', 'drag them into order',
   'reorder the files', 'reorder the pages', 'rearrange the files',
   'arrange them in reading order', 'arrange the photos', 'rename photos numerically',
+  // Found 2026-09-29 on /merge-pdf/, /image-to-pdf/ and /merge-images/, which
+  // the list above had never covered — the English copy DID make the claim.
+  'arrange them in the order', 'arrange them in order', 'drag and drop thumbnails',
+  'adjust the layout sequence', 'rearrange the order',
 ];
 
 /* Lines that use the words while saying the control does NOT exist. */

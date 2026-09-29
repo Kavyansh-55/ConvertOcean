@@ -91,8 +91,8 @@ export const seoContentMap: Record<string, SEOData> = {
       { question: "how to convert excel to pdf without losing formatting", answer: "Select your .xlsx, .xls or .csv above and download the PDF. Column widths from the workbook are honoured rather than guessed, each sheet becomes a real bordered table with a shaded header row that repeats on every page, and the text stays selectable and searchable instead of being flattened into an image. What cannot carry over is anything that needs a calculation engine: macros, pivot-table interactivity and conditional-formatting rules, because a PDF is a static page." },
       { question: "how to convert excel to pdf in one page", answer: "Leave landscape orientation ticked and the converter scales the columns to fit the page width, so the sheet is never clipped sideways. Width is what it fits; a long sheet still continues onto further pages, with the header row repeated at the top of each. To get closer to a single page, delete the helper columns outright — hiding a column does not drop it, it still comes through — and the converter already trims empty trailing rows for you." },
       { question: "how to save excel as pdf", answer: "In Excel itself, use File then Save As (or Export) and choose PDF. If Excel is not installed, or the figures are confidential, drop the workbook into the converter above instead — it builds the PDF in your browser, so the file never leaves your device. All sheets in the workbook are included by default, and only the calculated value of each cell is printed, never the formula behind it." },
-      { question: "Are formulas visible inside the exported PDF document?", answer: "No. The converter evaluates the calculated values of each cell and prints the raw figures. Your backend formulas remain private." },
-      { question: "Can I convert multiple worksheets to a single PDF?", answer: "Yes, our client-side parser reads all visible sheets in the workbook and appends them sequentially into the output PDF document." }
+      { question: "Are formulas visible inside the exported PDF document?", answer: "No. The PDF shows the value each cell displayed when the workbook was last saved, never the formula behind it, so the calculation logic stays private." },
+      { question: "Can I convert multiple worksheets to a single PDF?", answer: "Yes. Every sheet in the workbook goes into the one PDF, each starting on its own page. Hidden sheets are included too, so delete any sheet you do not want to share before converting, or untick “Include all sheets” to export only the sheet you are previewing." }
     ]
   },
   'csv-to-json': {
@@ -122,7 +122,7 @@ export const seoContentMap: Record<string, SEOData> = {
     faqs: [
       { question: "How are CSV headers converted to JSON keys?", answer: "The parser reads the first row of your CSV file as keys, and converts every subsequent row into a key-value object nested in a JSON array." },
       { question: "Does the converter support custom delimiters like semicolons?", answer: "Yes. The parser auto-detects standard delimiters, including commas, semicolons, tabs, and pipes." },
-      { question: "Is there a row count limit for CSV to JSON conversion?", answer: "The limits are determined by your browser tab RAM. Tabular databases with up to 100,000 rows compile in seconds." }
+      { question: "Is there a row count limit for CSV to JSON conversion?", answer: "There is no row limit, only a 25 MB file-size limit. Because the file is parsed on your own device, a very large CSV takes longer on a slower phone or laptop than on a fast desktop." }
     ]
   },
   'json-to-csv': {
@@ -150,7 +150,7 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "What JSON structures are supported by the converter?", answer: "We support standard arrays of JSON objects. If your input is a single object, the parser will wrap it and output a single-row CSV." },
+      { question: "What JSON structures are supported by the converter?", answer: "An array of objects is the standard case: each object becomes a row. If the file is a single object that wraps an array, such as {\"data\": [ ... ]}, the largest array of objects inside it is used as the rows. A single object with no array inside becomes one row." },
       { question: "How does the tool handle nested objects or arrays?", answer: "Nested object parameters are flattened using dot-notation (e.g., {'user': {'name': 'John'}} becomes a column named 'user.name')." },
       { question: "Are special characters and commas in text values escaped?", answer: "Yes. Fields containing commas, newlines, or quote marks are wrapped in double quotes in the CSV output." }
     ]
@@ -180,7 +180,7 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Which spreadsheet gets exported when converting XLSX files?", answer: "The compiler extracts the first visible sheet in the workbook. If you need a different sheet, reorder it in Excel beforehand." },
+      { question: "Which spreadsheet gets exported when converting XLSX files?", answer: "The first sheet in the workbook, as ordered by its tabs, including when that sheet is hidden. If you need a different sheet, move it to the first position in Excel and save, or use Split Excel to pull out the sheet you want." },
       { question: "Are formatting elements, colors, or graphs preserved in the CSV?", answer: "No. CSV files are plain text files that only store cell values. All styling, charts, and macros are discarded." },
       { question: "Does the local converter support legacy XLS files?", answer: "Yes, both legacy XLS (Excel 97-2003) and modern XLSX workbook formats are parsed client-side." }
     ]
@@ -230,9 +230,9 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "How is the sheet named in the generated Excel file?", answer: "The generated worksheet is named 'Sheet1' by default, which can be modified inside any spreadsheet editor." },
+      { question: "How is the sheet named in the generated Excel file?", answer: "The worksheet is named “Data”. You can rename it in Excel, Google Sheets or LibreOffice after opening the file." },
       { question: "Are nested JSON data structures flattened in the output?", answer: "Yes, nested object parameters are flattened to fit standard spreadsheet columns." },
-      { question: "Is there a limit to how many JSON records I can convert?", answer: "The limit is governed by the browser's memory. Up to 50,000 JSON records are compiled within seconds." }
+      { question: "Is there a limit to how many JSON records I can convert?", answer: "There is no record limit, only a 25 MB file-size limit. The conversion runs on your own device, so a very large file takes longer on a slower machine." }
     ]
   },
   'xml-to-json': {
@@ -260,9 +260,9 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "How are XML tag attributes represented in the JSON output?", answer: "Tag attributes are mapped to keys prefixed with '@' or nested inside an attributes property, keeping them distinct from child tags." },
+      { question: "How are XML tag attributes represented in the JSON output?", answer: "Attributes become ordinary keys on the element’s object, alongside its child elements, with no prefix. An element that has attributes and text keeps the text under a \"#text\" key. If an attribute and a child element share a name, the child element’s value wins, so check files where that can happen." },
       { question: "Does the parser validate the XML document syntax?", answer: "Yes, the local DOM parser checks if the XML is well-formed and alerts you if there are parsing errors." },
-      { question: "How are self-closing XML tags handled in the JSON structure?", answer: "Self-closing tags are parsed as null values or empty objects, matching standard schema practices." }
+      { question: "How are self-closing XML tags handled in the JSON structure?", answer: "An empty element such as <note/> becomes an empty string. If it carries attributes, such as <item id=\"7\"/>, it becomes an object holding those attributes." }
     ]
   },
   'png-to-jpg': {
@@ -285,8 +285,8 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Why does my transparent PNG background turn white or black after converting?", answer: "The JPG format does not support transparency. Empty alpha-channel regions are filled with a solid background color (default is white) during conversion." },
-      { question: "How do I control the compression size of the output JPG?", answer: "You can adjust the quality slider in the converter panel to find the optimal balance between visual quality and file size." },
+      { question: "Why does my transparent PNG background turn white or black after converting?", answer: "JPG has no transparency, so transparent areas are always filled with white before the image is encoded. There is no background-colour option. Use PNG to WebP instead if you need smaller files that keep transparency." },
+      { question: "How do I control the compression size of the output JPG?", answer: "There is no quality slider: the JPG is always encoded at 92% quality, which is visually indistinguishable from the original for photos. If you need the file under a specific size, such as 50 KB for a form, use the Image Resizer’s “Compress to File Size” mode instead." },
       { question: "Does the conversion happen on my device?", answer: "Yes, all canvas rendering and format writing occur entirely in your local browser sandbox memory." }
     ]
   },
@@ -339,9 +339,9 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Will my transparent background be preserved in the WebP output?", answer: "Yes, WebP supports full alpha-channel transparency, so transparent PNG elements translate perfectly." },
+      { question: "Will my transparent background be preserved in the WebP output?", answer: "Yes. WebP has a full alpha channel, so transparent and semi-transparent areas stay transparent. The WebP is encoded lossily at 92% quality, so the colour pixels are not bit-for-bit identical to the PNG, but the difference is not visible at normal viewing sizes." },
       { question: "Is WebP widely supported by web browsers?", answer: "Yes, WebP is supported by all modern browsers, including Safari, Chrome, Edge, and Firefox." },
-      { question: "What quality level should I choose for WebP compression?", answer: "A quality setting between 80% and 85% typically yields significant file size reductions with no visible loss in quality." }
+      { question: "What quality level should I choose for WebP compression?", answer: "You do not need to choose one. The tool always encodes at 92% quality, which keeps photos and graphics visually unchanged while producing a smaller file than the PNG in most cases. There is no quality slider." }
     ]
   },
   'webp-to-png': {
@@ -398,7 +398,7 @@ export const seoContentMap: Record<string, SEOData> = {
     `,
     faqs: [
       { question: "How does the converter split text into pages?", answer: "The compiler measures line heights and character counts, wrapping long lines and inserting page breaks to fit within A4/Letter margins." },
-      { question: "Can I customize the font or layout settings?", answer: "Yes. The converter provides options to adjust font sizes, line heights, page margins, and document orientations locally." },
+      { question: "Can I customize the font or layout settings?", answer: "No. Every PDF uses the same layout: A4 portrait, 10-point Courier, and margins of about 16 mm, with long lines wrapped. A fixed monospaced layout keeps logs and code aligned the way they are in the text file." },
       { question: "Is my text data secure when converting to PDF?", answer: "Absolutely. The layout compiling library (jsPDF) runs locally in browser memory, meaning no text is ever sent over the network." }
     ]
   },
@@ -460,7 +460,7 @@ export const seoContentMap: Record<string, SEOData> = {
     faqs: [
       { question: "What image formats are supported by the OCR engine?", answer: "We support PNG, JPG, JPEG, and WebP formats. High-contrast images yield the best recognition rates." },
       { question: "How accurate is the character recognition?", answer: "Our engine is highly accurate for printed, standard font text. Handwriting or blurred images may yield errors." },
-      { question: "Are my scanned documents private?", answer: "Yes. All OCR processing is performed locally on your device's CPU/GPU via WebAssembly, with no server interactions." }
+      { question: "Are my scanned documents private?", answer: "Yes. The image is read by the OCR engine inside your browser and never leaves your device. The engine and its English language data are downloaded to your browser the first time you use the tool; that download carries nothing of yours." }
     ]
   },
   'merge-pdf': {
@@ -488,9 +488,9 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Is there a file count limit when merging PDFs?", answer: "No. The only limitation is the memory allocation of your browser tab and device hardware." },
-      { question: "Will the bookmarks and links remain active?", answer: "Yes, our local parser copies document outlines, links, and bookmark pointers, adapting them to the combined file structure." },
-      { question: "Does merging compress the file size?", answer: "The merger groups duplicate resources (like fonts) to prevent bloat, but does not aggressively compress images unless optimized separately." }
+      { question: "Is there a file count limit when merging PDFs?", answer: "There is no limit on how many PDFs you add, but each file can be up to 25 MB. Everything is held in your browser’s memory, so a very large set of files merges more slowly on a phone than on a desktop." },
+      { question: "Will the bookmarks and links remain active?", answer: "Links drawn on the pages, such as web links, come through with their pages. The bookmarks panel (the document outline) does not: the merged PDF has no bookmarks, even when the source files had them. Password-protected PDFs need their password removed before merging." },
+      { question: "Does merging compress the file size?", answer: "No. The pages are copied as they are, so the merged file is roughly the size of the source files added together. If the result is too large, run it through Compress PDF afterwards." }
     ]
   },
   'split-pdf': {
@@ -563,10 +563,10 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: 'Can I combine multiple images into one PDF?', answer: 'Yes. Add as many JPG, PNG, or WebP images as you need and arrange them in order — each image becomes one page of a single multi-page PDF document.' },
+      { question: 'Can I combine multiple images into one PDF?', answer: 'Yes. Add as many JPG, PNG or WebP images as you need, in the order you want the pages, and each image becomes one page of a single PDF. To move an image, remove it and add it again at the end.' },
       { question: 'Are my photos uploaded to a server?', answer: 'No. The PDF is compiled entirely inside your browser using client-side rendering. Receipts, IDs, and personal photos never leave your device, and the tool works offline once loaded.' },
       { question: 'Will the PDF text be searchable?', answer: 'No. Images convert to pictures placed on PDF pages, so any text in them remains part of the image. If you need searchable, editable text, extract it first with the Image to Text OCR tool.' },
-      { question: 'What page size does the PDF use?', answer: 'Images are placed onto standard A4/Letter pages and scaled to fit within the margins, in portrait or landscape orientation to match your image proportions.' },
+      { question: 'What page size does the PDF use?', answer: 'Every page is A4 portrait with a 40-point margin. Each image is scaled down to fit inside it and centred; small images are not enlarged, and a wide image is not turned to landscape, so rotate it first if you want it to fill the page.' },
       { question: 'Which image formats can I convert to PDF?', answer: 'JPG/JPEG, PNG, and WebP are supported. JPG photos produce the smallest PDFs; PNG is best when the source is a screenshot or graphic with sharp text.' }
     ]
   },
@@ -585,7 +585,7 @@ export const seoContentMap: Record<string, SEOData> = {
     `,
     faqs: [
       { question: "How is XLS table wrapping handled during PDF conversion?", answer: "Standard numeric rows and columns are mapped and wrapped to fit standard A4 landscape or portrait pages." },
-      { question: "Can I convert protected XLS sheets?", answer: "Protected or password-encrypted XLS sheets cannot be parsed. Please unlock the spreadsheet before importing." },
+      { question: "Can I convert protected XLS sheets?", answer: "A workbook that needs a password to open cannot be read; remove the password in Excel first. Sheets that are only protected against editing open normally and convert like any other." },
       { question: "Is my corporate data uploaded to a server?", answer: "No. Our XLS converter uses local JavaScript libraries to parse the binary structure in browser memory." }
     ]
   },
@@ -605,7 +605,7 @@ export const seoContentMap: Record<string, SEOData> = {
     faqs: [
       { question: "How does the tool handle long text columns in CSV?", answer: "The parser auto-wraps text values within columns to prevent clipping, adjusting row heights dynamically." },
       { question: "Can I set the column widths manually?", answer: "The column width is automatically calculated based on the content of the columns to maximize layout usage." },
-      { question: "Does it support custom delimiters like tabs?", answer: "Yes. Delimiter presets let you parse Tab-Separated (TSV) or Semicolon-Separated spreadsheets to PDF." }
+      { question: "Does it support custom delimiters like tabs?", answer: "The delimiter is detected automatically from the first line: comma, semicolon, tab or pipe. There is nothing to choose, and a semicolon-separated export from European Excel works without changes." }
     ]
   },
   'xlsx-to-json': {
@@ -622,9 +622,9 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "How does the parser handle empty spreadsheet cells?", answer: "Empty cells are converted to null values or empty strings in the JSON keys map." },
-      { question: "Does the converter parse multiple sheets?", answer: "By default, it parses the first sheet. You can select other sheets if configure options are provided." },
-      { question: "Are date formatting styles preserved?", answer: "You can choose to parse dates as ISO strings, formatted text, or raw Excel serial numbers." }
+      { question: "How does the parser handle empty spreadsheet cells?", answer: "An empty cell inside the table becomes an empty string (\"\") on that row’s object, so every object has the same keys." },
+      { question: "Does the converter parse multiple sheets?", answer: "No. Only the first sheet is converted. To convert another sheet, move it to the first position in Excel, or pull it out on its own with Split Excel first." },
+      { question: "Are date formatting styles preserved?", answer: "Dates and numbers come out as the text Excel displays: a cell formatted as 03/15/2026 becomes \"03/15/2026\", not a serial number or an ISO date. There is no option to change this, so set the date format you want in Excel before converting." }
     ]
   },
   'xls-to-json': {
@@ -643,7 +643,7 @@ export const seoContentMap: Record<string, SEOData> = {
     faqs: [
       { question: "Is the binary XLS structure parsed securely?", answer: "Yes, the parser reads the raw binary file directly inside your browser sandbox. No file data is sent online." },
       { question: "Does it handle formula strings or just values?", answer: "The parser extracts the calculated values from the cells, not the raw formula strings." },
-      { question: "What is the row limit for legacy XLS conversion?", answer: "Legacy XLS files are limited by Excel to 65,536 rows, which our compiler processes instantly." }
+      { question: "What is the row limit for legacy XLS conversion?", answer: "The .xls format itself stops at 65,536 rows per sheet. The tool has no row limit of its own, only a 25 MB file-size limit." }
     ]
   },
   'xls-to-csv': {
@@ -660,7 +660,7 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Are multiple tabs consolidated when converting XLS to CSV?", answer: "No, CSV files are single-sheet files. The parser converts only the primary worksheet in the XLS file." },
+      { question: "Are multiple tabs consolidated when converting XLS to CSV?", answer: "No. A CSV holds one sheet, so only the first sheet in the workbook is converted, including when that sheet is hidden. Use Split Excel with CSV output to get every sheet as its own file." },
       { question: "How are special characters encoded in the output CSV?", answer: "The generated CSV file is compiled in standard UTF-8 encoding, preserving localized characters." },
       { question: "Is my spreadsheet data safe?", answer: "Yes, the file is parsed locally on your device, with no network transmission." }
     ]
@@ -680,7 +680,7 @@ export const seoContentMap: Record<string, SEOData> = {
     `,
     faqs: [
       { question: "How does the tool align XML fields into CSV columns?", answer: "The engine scans all XML tags to compile a complete list of fields, mapping repeating child nodes into CSV rows." },
-      { question: "What happens if tags have optional parameters?", answer: "Missing attributes are filled with empty spaces, ensuring column alignments remain consistent." },
+      { question: "What happens if tags have optional parameters?", answer: "The columns are the union of every field found across all the records, so a field that only some records have still gets a column. Records that lack it get an empty cell there." },
       { question: "Is the XML parsed locally?", answer: "Yes, using the browser's standard DOMParser engine. No data is sent to external servers." }
     ]
   },
@@ -698,9 +698,9 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "How are repeated elements handled in the XLSX worksheet?", answer: "Repeated nodes are parsed into subsequent rows, while parent nodes map to columns or repeated header columns." },
+      { question: "How are repeated elements handled in the XLSX worksheet?", answer: "The largest group of repeating sibling elements becomes the rows. Nested child elements are flattened into columns named with dots, such as address.city, and a child that repeats inside one record gets numbered columns, such as tag.0 and tag.1." },
       { question: "Does the output support Excel formatting properties?", answer: "The spreadsheet is created with standard OpenXML parameters and can be styled in Excel." },
-      { question: "Is there a limit on XML file complexity?", answer: "Complex XML documents are resolved locally. The limit is determined by browser memory." }
+      { question: "Is there a limit on XML file complexity?", answer: "Files can be up to 25 MB. Nesting is followed to 12 levels deep; anything deeper is kept as plain text in its column." }
     ]
   },
   'jpg-to-webp': {
@@ -727,9 +727,9 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Does converting to WebP degrade photographic details?", answer: "No. WebP uses advanced compression algorithms to preserve gradients and details with smaller file sizes." },
+      { question: "Does converting to WebP degrade photographic details?", answer: "WebP is a lossy format, so the image is re-encoded, but at 92% quality the difference from your JPG is not visible at normal viewing sizes. As with any lossy format, avoid converting the same image back and forth repeatedly." },
       { question: "Does WebP support transparency if my JPG is flat?", answer: "WebP supports transparency, but since JPG files do not have an alpha channel, the output remains a flat image." },
-      { question: "How much space can I save?", answer: "Most JPG photographs are reduced in size by 20% to 50% depending on the quality settings chosen." }
+      { question: "How much space can I save?", answer: "It depends on the photo. Re-encoded at the fixed 92% quality setting, a JPG usually comes out smaller as WebP, and the preview shows the result before you download it. There are no quality settings to adjust." }
     ]
   },
   'webp-to-jpg': {
@@ -758,7 +758,7 @@ export const seoContentMap: Record<string, SEOData> = {
     `,
     faqs: [
       { question: "Will my transparent pixels turn black or white in the JPG?", answer: "Because JPG does not support transparency, empty background pixels will be converted to solid white." },
-      { question: "Can I adjust the JPEG export compression?", answer: "Yes, you can configure the quality slider to control the file size and resolution of the output JPG." },
+      { question: "Can I adjust the JPEG export compression?", answer: "No. The JPG is always encoded at 92% quality at the image’s original pixel size, and there is no quality slider or resize control on this page. To reach a specific file size or dimensions, use the Image Resizer." },
       { question: "Is my image uploaded during the conversion?", answer: "No. The conversion is drawn on an off-screen HTML5 Canvas directly in browser memory." }
     ]
   },
@@ -914,7 +914,7 @@ export const seoContentMap: Record<string, SEOData> = {
     `,
     faqs: [
       { question: "Will the SVG transparency be preserved in the PNG?", answer: "Yes. PNG supports alpha transparency, meaning transparent SVG background properties are preserved." },
-      { question: "Can I specify the output resolution of the PNG?", answer: "Yes. You can scale the raster height and width to output high-resolution PNG images without pixelation." },
+      { question: "Can I specify the output resolution of the PNG?", answer: "Not directly. The size is set automatically: a small SVG is scaled up until its shorter side is 1,024 pixels, a large one is capped at 4,096 pixels on its longer side, and an SVG with no size of its own is drawn at 1,024 × 768. For exact pixel dimensions, resize the PNG afterwards with the Image Resizer." },
       { question: "How does the conversion process SVG paths?", answer: "The browser's layout engine parses the SVG paths locally and draws them onto a standard pixel canvas." }
     ]
   },
@@ -933,8 +933,8 @@ export const seoContentMap: Record<string, SEOData> = {
     `,
     faqs: [
       { question: "What background color is used to fill transparent SVG layers?", answer: "The converter fills transparent SVG backgrounds with solid white during JPG rasterization." },
-      { question: "Does the output JPG suffer from pixelation?", answer: "If you configure a high width/height parameter, the vector paths render sharply before being saved as a JPG." },
-      { question: "Does the local converter support inline CSS styles inside the SVG?", answer: "Yes. All standard SVG vector properties, including styles and fills, are rasterized locally." }
+      { question: "Does the output JPG suffer from pixelation?", answer: "Small SVGs are drawn at a minimum of 1,024 pixels on the shorter side, so edges and text come out crisp at normal viewing sizes. The size is chosen automatically; there is no width or height control on this page." },
+      { question: "Does the local converter support inline CSS styles inside the SVG?", answer: "Styles written inside the SVG, including a <style> block, fills and strokes, are rendered. Anything the SVG loads from elsewhere is not: web fonts, linked images and external stylesheets are blocked when a browser draws an SVG as an image, so text falls back to a system font. Convert text to outlines in your design tool if the typeface must be exact." }
     ]
   },
   'svg-to-webp': {
@@ -952,7 +952,7 @@ export const seoContentMap: Record<string, SEOData> = {
     `,
     faqs: [
       { question: "Does WebP support vector scaling?", answer: "No, WebP is a raster format. Once converted, the image consists of fixed pixels and will pixelate if stretched." },
-      { question: "Can I adjust the quality settings during rasterization?", answer: "Yes, you can control quality and compression to optimize the output file size." },
+      { question: "Can I adjust the quality settings during rasterization?", answer: "No. The WebP is always encoded at 92% quality, and the canvas size is chosen automatically (at least 1,024 pixels on the shorter side, at most 4,096 on the longer). There are no quality or size controls on this page." },
       { question: "Is the rasterization processed on client hardware?", answer: "Yes. The browser reads the SVG and writes the WebP binary using local codecs." }
     ]
   },
@@ -980,9 +980,9 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Does the converter preserve embedded images?", answer: "Yes. Images, margins, list formats, and headers are parsed and compiled into the output PDF document." },
+      { question: "Does the converter preserve embedded images?", answer: "Yes. Inline images, page margins, lists, tables and the default header and footer are carried into the PDF. Floating shapes and text boxes are not reproduced exactly, so check a document that depends on them." },
       { question: "Can I convert legacy .doc files?", answer: "This tool is optimized for modern OpenXML DOCX files. For legacy .doc files, save them as .docx in Word before converting." },
-      { question: "How does the local converter handle missing fonts?", answer: "It maps standard document styles to standard fallback system fonts like Arial or Helvetica to preserve alignment." }
+      { question: "How does the local converter handle missing fonts?", answer: "Fonts are not taken from your computer. Text is drawn in a substitute that matches its category: Roboto for sans-serif faces such as Calibri or Arial, Noto Serif for serif faces such as Times New Roman, and Noto Mono for monospaced text. The substitute is embedded in the PDF, so it looks the same on every machine, but line breaks can differ slightly from Word’s." }
     ,
       { question: "how to save word doc as pdf", answer: "Two ways. In Word itself, use File then Save As (or Export) and pick PDF from the file-type list. If Word is not installed, or the document is confidential, drop the .docx into the converter above instead — it produces the PDF in your browser, so the file never leaves your device. Either route keeps headings, images, tables and page breaks; ours also embeds the fonts it draws with so the layout holds on any machine." }
     ]
@@ -1033,9 +1033,9 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Are footnotes and annotations extracted?", answer: "Standard paragraphs and list elements are extracted. Text headers or annotations are flattened in reading order." },
+      { question: "Are footnotes and annotations extracted?", answer: "Only the main body text is extracted: paragraphs, list items and the text inside tables, one paragraph per line. Headers, footers, footnotes, endnotes and comments are stored separately in a .docx and are not included." },
       { question: "Will images in the Word document be saved?", answer: "No, plain text files only support character data. All images and graphics are discarded during extraction." },
-      { question: "How fast is the extraction process?", answer: "Since the mammoth.js parser runs locally, even large manuscripts are converted in less than a second." }
+      { question: "How fast is the extraction process?", answer: "Usually well under a second for an ordinary document, because the text is read straight from the file’s XML on your own device. Word files can be up to 15 MB." }
     ]
   },
   'pptx-to-pdf': {
@@ -1094,7 +1094,7 @@ export const seoContentMap: Record<string, SEOData> = {
     faqs: [
       { question: "How does the tool handle legacy .ppt files?", answer: "It tells you the truth rather than producing a broken file: .ppt is an OLE compound binary that browsers cannot open, so selecting one shows a message asking you to re-save it as .pptx first. Open it in PowerPoint or the free LibreOffice Impress, use File → Save As and choose .pptx, then select that file here. Conversion still runs entirely on your device." },
       { question: "Will embedded videos play in the PDF?", answer: "No, PDF files represent static print pages. Video controls and audio clips are discarded." },
-      { question: "Can I run this converter without an internet connection?", answer: "Yes, all conversion libraries load into the browser cache, enabling offline slide compilation." }
+      { question: "Can I run this converter without an internet connection?", answer: "Yes. The libraries it needs load with the page, so once the page has loaded the conversion itself works without a connection." }
     ,
       { question: "how to save ppt as pdf", answer: "In PowerPoint, use File then Save As (or Export) and choose PDF. If PowerPoint is not installed, or the deck is confidential, select the .pptx above instead and the PDF is built in your browser, so the file never leaves your device. Each slide becomes one page, and the slide's text is laid invisibly over the rendered image, so the PDF stays selectable, searchable and readable by a screen reader rather than being a stack of flat pictures." },
       { question: "how to convert ppt to pdf", answer: "Select your .pptx above and download the PDF — one page per slide, in the deck's own proportions. Note this converter needs the modern .pptx format; a legacy .ppt has to be opened in PowerPoint or LibreOffice and re-saved as .pptx first. Speaker notes are carried across into the PDF's invisible text layer, so they stay searchable and copyable without printing over the slide. Embedded video cannot play inside a PDF, so a video slide exports as its poster frame." },
@@ -1126,7 +1126,7 @@ export const seoContentMap: Record<string, SEOData> = {
     `,
     faqs: [
       { question: "Will Excel spreadsheet formulas be reconstructed?", answer: "No. The converter parses the static numeric values on the page. Formulate calculations must be entered in Excel manually." },
-      { question: "How does the engine identify table borders?", answer: "The layout engine evaluates horizontal and vertical gridlines or spaces between words to align them into columns." },
+      { question: "How does the engine identify table borders?", answer: "It does not use the ruled lines. It reads the position of every piece of text on the page, rebuilds the lines, and aligns the words into columns by where they sit. Tables with clear column spacing convert best; a table whose cells wrap onto several lines may need tidying in Excel." },
       { question: "Is my document secure?", answer: "Yes. All extraction algorithms execute locally inside browser memory, keeping your documents confidential." }
     ,
       { question: "how to copy a table from pdf to excel", answer: "Select the PDF above and the converter reads the position of every text fragment on the page, merges the fragments back into real lines, and aligns them into columns — so a table arrives as rows and cells rather than as one pasted blob you have to clean up by hand. Copy-pasting from a PDF reader loses the column structure because a PDF stores placed glyphs, not a grid. Each page is separated by a blank row in the output." },
@@ -1149,8 +1149,8 @@ export const seoContentMap: Record<string, SEOData> = {
     `,
     faqs: [
       { question: "Can I merge CSV files with XLSX files?", answer: "Yes, our merger parses spreadsheet cells regardless of the source file extension and appends data rows." },
-      { question: "How does the tool handle columns that do not match?", answer: "The merger maps cells by header names. Columns that are not present in all sheets are appended as empty rows." },
-      { question: "Is there a row count limit for merging?", answer: "The boundaries are determined by browser memory. We recommend files under 50MB for optimal performance." }
+      { question: "How does the tool handle columns that do not match?", answer: "Columns are never matched up. Each source sheet is copied into the merged workbook as its own tab, named after its source file and sheet, so sheets with different columns stay separate rather than being combined into one table." },
+      { question: "Is there a row count limit for merging?", answer: "There is no row limit. Each file can be up to 25 MB, and the whole merge happens in your browser’s memory." }
     ]
   },
   'split-excel': {
@@ -1167,8 +1167,8 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Can I split a sheet by a specific column value?", answer: "Yes. You can partition rows into separate files based on the values in a selected column." },
-      { question: "Are Excel cell styles preserved in the split files?", answer: "Standard values and data types are written to new XLSX files. Complex visual styles or macros are discarded." },
+      { question: "Can I split a sheet by a specific column value?", answer: "No. There are two ways to split: each worksheet into its own file, or one sheet into chunks of a fixed number of rows. Splitting by the values in a column is not available." },
+      { question: "Are Excel cell styles preserved in the split files?", answer: "When you split an .xlsx by worksheet with .xlsx output, each file is a copy of the original workbook with the other sheets removed, so fills, fonts, borders, column widths and frozen panes stay as they were. Splitting by row count, splitting a .xls or .csv, or choosing CSV output writes the values without that styling." },
       { question: "How do I download the split sheets?", answer: "The splitter packages the files and exports them as a single ZIP archive client-side." }
     ]
   },
@@ -1191,8 +1191,8 @@ export const seoContentMap: Record<string, SEOData> = {
     `,
     faqs: [
       { question: "What formats can I merge together?", answer: "You can upload and merge JPG, PNG, WebP, and SVG files together." },
-      { question: "Will transparency be kept in the combined image?", answer: "Yes, if you select PNG as the output format, the transparent pixels will be preserved." },
-      { question: "Can I rearrange the order of the images?", answer: "Yes. You can drag and drop thumbnails in the interface to adjust the layout sequence." }
+      { question: "Will transparency be kept in the combined image?", answer: "Yes. A stitched image is always saved as PNG, so transparent areas stay transparent. In the PDF output, images are placed on white pages." },
+      { question: "Can I rearrange the order of the images?", answer: "No. There is no drag-to-reorder: the images are used in the order you add them. To change the order, remove an image with ✕ and add it again, which puts it at the end." }
     ]
   },
   'split-image': {
@@ -1209,8 +1209,8 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Can I specify the crop coordinates manually?", answer: "Yes. You can configure grid parameters or input crop sizes to slice the image." },
-      { question: "What output formats are supported for the tiles?", answer: "You can download the crop tiles in PNG or JPG format." },
+      { question: "Can I specify the crop coordinates manually?", answer: "No. You choose a grid of rows and columns, or a number of equal horizontal or vertical slices, and every piece is the same size. Cutting at custom coordinates is not available." },
+      { question: "What output formats are supported for the tiles?", answer: "Tiles keep the source format family: a PNG is cut into PNG tiles, and a JPG or WebP is cut into JPG tiles. There is no format choice on this page." },
       { question: "How are the cropped tiles downloaded?", answer: "The crop engine packages all tiles into a single ZIP archive for instant local download." }
     ]
   },
@@ -1229,7 +1229,7 @@ export const seoContentMap: Record<string, SEOData> = {
     `,
     faqs: [
       { question: "Can I separate the merged files with custom headers?", answer: "Yes. You can configure separators, insert filename headers, or append custom delimiters between the texts." },
-      { question: "Does the tool support markdown and code files?", answer: "Yes. The compiler handles any text-based format, including .txt, .md, .csv, .log, and source code files." },
+      { question: "Does the tool support markdown and code files?", answer: "It accepts .txt, .md, .log, .csv, .xml and .json files, up to 5 MB each. Source code files with other extensions are not accepted by the file picker; rename them to .txt first." },
       { question: "Is my text data safe?", answer: "All files are concatenated client-side in standard browser sandbox memory. No contents are uploaded." }
     ]
   },
@@ -1251,7 +1251,7 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Can I split a log file by a specific date or string pattern?", answer: "Yes. You can enter a custom regex or text marker to split the file at every occurrence." },
+      { question: "Can I split a log file by a specific date or string pattern?", answer: "Yes, by a text marker. Choose “By Text Delimiter” and enter the exact text to split on, such as a date prefix or a separator line. It is matched literally, not as a regular expression." },
       { question: "Are character encodings preserved?", answer: "Yes. The local parser reads and writes files in standard UTF-8 encoding." },
       { question: "How do I download the partition outputs?", answer: "The segments are compressed into a single ZIP file and downloaded locally." }
     ]
@@ -1270,8 +1270,8 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Will my paragraph formatting and fonts be preserved?", answer: "Yes. Paragraph styles and styles embedded in the individual documents are preserved and merged." },
-      { question: "Can I merge document pages with different margins?", answer: "Yes, margins and orientations are handled by section breaks inside the combined DOCX file." },
+      { question: "Will my paragraph formatting and fonts be preserved?", answer: "Formatting written directly on the text comes through, but style definitions are not merged: the combined document uses the first document’s styles, so a heading or body style from a later document takes on the first document’s appearance for that style name." },
+      { question: "Can I merge document pages with different margins?", answer: "No. The combined document takes its page size, margins and orientation from the first document, so a later document with different margins or a landscape layout is reflowed onto the first document’s pages." },
       { question: "Does it support tables and images?", answer: "Yes. Embedded tables and images are compiled into the output document." }
     ]
   },
@@ -1289,7 +1289,7 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Can I split a document at custom headings?", answer: "Yes. You can select specific heading tiers (e.g. Heading 1, Heading 2) as split points." },
+      { question: "Can I split a document at custom headings?", answer: "It splits at Heading 1 only, or after a set number of paragraphs. Headings are recognised by Word’s built-in Heading 1 style, so a heading formatted by hand with a large bold font is not a split point." },
       { question: "Are headers and footers preserved in the split files?", answer: "Standard headers and footers are replicated across the split document segments." },
       { question: "How are the split documents downloaded?", answer: "The segmented DOCX files are packaged into a single ZIP archive for instant download." }
     ]
@@ -1308,7 +1308,7 @@ export const seoContentMap: Record<string, SEOData> = {
 </div>
     `,
     faqs: [
-      { question: "Will slide layouts and background designs be preserved?", answer: "Yes, slide layouts and master slide references are preserved and concatenated." },
+      { question: "Will slide layouts and background designs be preserved?", answer: "Each slide’s layout is copied with it, but every layout is attached to the first presentation’s slide master. Slides from a later deck with a different theme can therefore take on the first deck’s master background, colours or fonts, so check them after merging." },
       { question: "Can I merge slides of different ratios?", answer: "We recommend merging presentations of the same aspect ratio (e.g. both 16:9) to prevent slide distortion." },
       { question: "Is my presentation uploaded?", answer: "No. PPTX zip files are parsed and compiled client-side in browser memory." }
     ]

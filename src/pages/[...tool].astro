@@ -665,8 +665,11 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
   import { messageForError } from '../scripts/ensure-lib.js';
   import { installClickGuard } from '../scripts/click-guard.js';
   import { pdfImage } from '../scripts/pdf-image.js';
+  import { preloadPdfWorker } from '../scripts/pdf-worker.js';
 
-  startLibraryRecovery();
+  /* Once pdf.js is known to be present, fetch its worker now so a PDF dropped
+     after the connection drops still opens. See scripts/pdf-worker.js. */
+  startLibraryRecovery().then(() => preloadPdfWorker());
 
   /* One tap, one file: a double-tap used to run the whole conversion twice. */
   installClickGuard();

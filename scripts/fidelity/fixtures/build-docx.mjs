@@ -164,6 +164,12 @@ const body = [
   // M13 non-Latin + accented text: exercises font fallback
   para(run('M13 &#220;n&#239;cod&#233; &#8212; Devanagari: &#2344;&#2350;&#2360;&#2381;&#2340;&#2375; &#8212; CJK: &#22793;&#25563;')),
 
+  // A tab between two words, in a paragraph that also DEFINES a tab stop.
+  // docx-to-txt once moved every tab to the start of the line and counted
+  // the tab-stop definition as a tab too: "		TabLeftTabRight".
+  para(run('TabLeft') + '<w:r><w:tab/></w:r>' + run('TabRight'),
+    '<w:tabs><w:tab w:val="left" w:pos="4320"/></w:tabs>'),
+
   // M14/M15 table: header shading, explicit borders, fixed widths, merged cell
   tableXml,
   para(''), // a table must not sit directly against the following sectPr
