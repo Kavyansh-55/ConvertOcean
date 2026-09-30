@@ -35,6 +35,7 @@
 import {
   planResample, judgeCandidate, encodeJpeg, dialToSettings, EMU_PER_POINT,
 } from './image-compress.js';
+import { tr } from './i18n-runtime.js';
 
 /** Parts that are images we might touch. Anything else is copied verbatim. */
 const IMAGE_RE = /^(ppt|word|xl)\/media\/[^/]+\.(png|jpe?g)$/i;
@@ -196,10 +197,10 @@ export async function compressOoxml(bytes, options, JSZipLib, hooks) {
   const on = Object.assign({ progress: () => {}, yield: () => Promise.resolve() }, hooks || {});
 
   const zip = await JSZipLib.loadAsync(bytes);
-  on.progress(8, 'Reading the document…');
+  on.progress(8, tr('Reading the document…'));
 
   const placements = await measurePlacements(zip);
-  on.progress(18, 'Measuring how each image is displayed…');
+  on.progress(18, tr('Measuring how each image is displayed…'));
 
   /* ---- pass one: look at every image exactly once --------------------- */
 
@@ -210,7 +211,7 @@ export async function compressOoxml(bytes, options, JSZipLib, hooks) {
   for (let k = 0; k < imageParts.length; k++) {
     const path = imageParts[k];
     on.progress(18 + Math.round((k / Math.max(1, imageParts.length)) * 30),
-      `Checking image ${k + 1} of ${imageParts.length}…`);
+      tr('Checking image {0} of {1}…', k + 1, imageParts.length));
     await on.yield();
 
     const raw = new Uint8Array(await zip.file(path).async('uint8array'));
@@ -219,7 +220,7 @@ export async function compressOoxml(bytes, options, JSZipLib, hooks) {
     const name = path.split('/').pop();
 
     if (!dims) {
-      entries.push({ path, name, raw, skip: 'the image header could not be read' });
+      entries.push({ path, name, raw, skip: tr('the image header could not be read') });
       continue;
     }
 
@@ -232,7 +233,7 @@ export async function compressOoxml(bytes, options, JSZipLib, hooks) {
     try {
       bitmap = await createImageBitmap(new Blob([raw], { type: isPng ? 'image/png' : 'image/jpeg' }));
     } catch {
-      entries.push({ ...base, skip: 'this image could not be decoded, so it was left as it was' });
+      entries.push({ ...base, skip: tr('this image could not be decoded, so it was left as it was') });
       continue;
     }
 
@@ -242,7 +243,7 @@ export async function compressOoxml(bytes, options, JSZipLib, hooks) {
       pctx.drawImage(bitmap, 0, 0);
       if (hasTransparency(pctx, bitmap.width, bitmap.height)) {
         bitmap.close?.();
-        entries.push({ ...base, skip: 'it has transparent areas, and JPEG cannot keep those' });
+        entries.push({ ...base, skip: tr('it has transparent areas, and JPEG cannot keep those') });
         continue;
       }
     }
@@ -347,8 +348,8 @@ export async function compressOoxml(bytes, options, JSZipLib, hooks) {
       const t = (lo + hi) / 2;
       const settings = dialToSettings(t);
       on.progress(50 + Math.round((p / MAX_PASSES) * 30),
-        `Fitting your document to that size — attempt ${p + 1}…`);
-      const attempt = await encodeAt(settings, `Fitting your document to that size — attempt ${p + 1}…`, 0, 0);
+        tr('Fitting your document to that size — attempt {0}…', p + 1));
+      const attempt = await encodeAt(settings, tr('Fitting your document to that size — attempt {0}…', p + 1), 0, 0);
       const size = estimate(attempt);
 
       /* "Closest to the target" is the wrong thing to keep. A result over the
@@ -377,7 +378,7 @@ export async function compressOoxml(bytes, options, JSZipLib, hooks) {
 
   /* ---- write the file -------------------------------------------------- */
 
-  on.progress(85, 'Putting the document back together…');
+  on.progress(85, tr('Putting the document back together…'));
   const renames = new Map();
   const images = [];
 

@@ -57,6 +57,7 @@
  * arrived at. Rebuild the package entry by entry and you lose that protection.
  */
 import { compressOoxml } from './ooxml-compress.js';
+import { tr } from './i18n-runtime.js';
 
 const SHEET_RE = /^xl\/worksheets\/sheet[^/]+\.xml$/i;
 
@@ -225,7 +226,7 @@ export async function trimWorkbook(bytes, JSZipLib, opts = {}, on = {}) {
   if (opts.trimUsedRange !== false) {
     for (let i = 0; i < sheets.length; i++) {
       progress(10 + Math.round((i / Math.max(1, sheets.length)) * 25),
-        `Checking sheet ${i + 1} of ${sheets.length}…`);
+        tr('Checking sheet {0} of {1}…', i + 1, sheets.length));
       await yieldNow();
 
       const path = sheets[i];
@@ -251,7 +252,7 @@ export async function trimWorkbook(bytes, JSZipLib, opts = {}, on = {}) {
     calcChainDropped = await removePart(zip, 'xl/calcChain.xml');
   }
 
-  progress(40, 'Rewriting the workbook…');
+  progress(40, tr('Rewriting the workbook…'));
   const out = await zip.generateAsync({
     type: 'uint8array',
     compression: 'DEFLATE',
@@ -286,7 +287,7 @@ export async function compressXlsx(bytes, options, JSZipLib, hooks) {
     options || {});
   const on = Object.assign({ progress: () => {}, yield: () => Promise.resolve() }, hooks || {});
 
-  on.progress(5, 'Reading the workbook…');
+  on.progress(5, tr('Reading the workbook…'));
   const trimmed = await trimWorkbook(bytes, JSZipLib, opts, on);
 
   /* The image pass runs on the trimmed bytes, so a target size is measured

@@ -66,7 +66,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon"><CategoryIcon icon="📝" width="40" height="40" /></div>
       <div class="upload-text-primary">{t('Drag and drop text file here, or click to browse', lang)}</div>
-      <div class="upload-text-secondary">TXT, MD, LOG, CSV, XML (Max 20MB)</div>
+      <div class="upload-text-secondary">{t('TXT, MD, LOG, CSV, XML (Max 20MB)', lang)}</div>
       <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
       <input type="file" id="fileInput" class="file-input" accept=".txt,.md,.log,.csv,.xml,.json" />
     </div>
@@ -100,7 +100,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     <!-- Lines Settings -->
     <div class="form-group" id="linesGroup">
-      <label class="form-label" for="splitLines">Lines per segment</label>
+      <label class="form-label" for="splitLines">{t('Lines per segment', lang)}</label>
       <input type="number" class="form-input" id="splitLines" min="1" value="1000" />
     </div>
 
@@ -113,7 +113,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <!-- Delimiter Settings -->
     <div class="form-group" id="delimiterGroup" style="display: none;">
       <label class="form-label" for="splitDelimiter">{t('Delimiter text boundary', lang)}</label>
-      <input type="text" class="form-input" id="splitDelimiter" placeholder="e.g. --- SECTION ---" />
+      <input type="text" class="form-input" id="splitDelimiter" placeholder={t('e.g. --- SECTION ---', lang)} />
     </div>
 
     <div class="button-group" style="margin-top: auto; display: flex; gap: var(--spacing-sm);">
@@ -212,7 +212,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       originalName = file.name;
       fileSizeVal = file.size;
 
-      showProgress(20, "Reading text file content…");
+      showProgress(20, __t("Reading text file content…"));
 
       const reader = new FileReader();
       reader.onload = function(event) {
@@ -224,7 +224,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         if (!String(rawTextContent).trim()) {
           showError(window.coNothingToConvert
             ? window.coNothingToConvert('text file')
-            : 'This text file has nothing in it to split.');
+            : __t('This text file has nothing in it to split.'));
           return;
         }
 
@@ -235,7 +235,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         btnSplit.disabled = false;
       };
       reader.onerror = function() {
-        showError("Failed to read text file.");
+        showError(__t("Failed to read text file."));
         hideProgress();
       };
       reader.readAsText(file);
@@ -258,7 +258,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       if (!rawTextContent) return;
 
       const method = splitMethod.value;
-      showProgress(15, "Parsing text chunks…");
+      showProgress(15, __t("Parsing text chunks…"));
 
       let segments = [];
       const baseName = originalName.replace(/\.[^/.]+$/, "");
@@ -309,12 +309,12 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         }
 
         if (segments.length === 0) {
-          showError("No segments compiled from the configuration.");
+          showError(__t("No segments compiled from the configuration."));
           hideProgress();
           return;
         }
 
-        showProgress(60, "Generating ZIP archive…");
+        showProgress(60, __t("Generating ZIP archive…"));
         const zip = new JSZip();
         
         partsGrid.innerHTML = '';
@@ -350,7 +350,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
         partsGrid.style.display = 'flex';
 
-        showProgress(85, "Saving split ZIP…");
+        showProgress(85, __t("Saving split ZIP…"));
         const content = await zip.generateAsync({ type: 'blob' });
         
         const link = document.createElement('a');
@@ -361,7 +361,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         
         hideProgress();
       } catch (err) {
-        showError("Split failed: " + err.message);
+        showError(__tf('Split failed: {0}', err.message));
         hideProgress();
       }
     });

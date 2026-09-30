@@ -67,7 +67,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
 <div id="workspaceGrid" class="workspace-grid" style="display: none;">
   <div class="panel-card" style="align-items: center; justify-content: center; background:#1e1e1e;">
-    <img id="imgPreview" style="max-width: 100%; max-height: 250px; object-fit: contain;" alt="OCR Preview" />
+    <img id="imgPreview" style="max-width: 100%; max-height: 250px; object-fit: contain;" alt={t('OCR Preview', lang)} />
   </div>
   <div class="panel-card">
     <textarea id="txtOutput" class="txt-output" readonly placeholder={t('OCR Text output will generate here…', lang)}></textarea>
@@ -164,7 +164,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             logger: m => {
               if (m.status === 'recognizing text') {
                 const pct = Math.round(m.progress * 100);
-                showProgress(pct, `${__t("Extracting Text:")} ${pct}%`);
+                showProgress(pct, __t("Extracting Text:") + ' ' + pct + '%');
               }
             }
           });
@@ -191,7 +191,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     btnCopy.addEventListener('click', () => {
       navigator.clipboard.writeText(ocrText);
-      alert("Copied to clipboard!");
+      alert(__t("Copied to clipboard!"));
     });
 
     btnDownload.addEventListener('click', () => {

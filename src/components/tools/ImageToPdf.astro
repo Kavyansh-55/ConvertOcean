@@ -158,11 +158,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       hideError();
       const imageFiles = files.filter(f => f.type.startsWith('image/'));
       if (imageFiles.length === 0) {
-        showError("Please choose valid image files (JPG, PNG, WebP).");
+        showError(__t("Please choose valid image files (JPG, PNG, WebP)."));
         return;
       }
 
-      showProgress(20, 'Reading images…');
+      showProgress(20, __t('Reading images…'));
       /* Each image keeps its selection slot, so pages follow the order the
          images were chosen rather than the order their reads finished — a
          large photo chosen first used to become page 2. There is no reorder
@@ -219,7 +219,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
               <div class="image-size" style="font-size: 12px; color: var(--colors-mute);">${sizeKb} KB</div>
             </div>
           </div>
-          <button class="btn-remove" onclick="window.removeImagePdf('${item.id}')" title="Remove" aria-label="Remove ${item.name || 'image'}" style="background: none; border: none; color: var(--colors-danger); cursor: pointer; font-size: 18px; padding: 4px; flex-shrink: 0; min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; touch-action: manipulation;">✕</button>
+          <button class="btn-remove" onclick="window.removeImagePdf('${item.id}')" title="${__t('Remove')}" aria-label="${__tf('Remove {0}', item.name || __t('image'))}" style="background: none; border: none; color: var(--colors-danger); cursor: pointer; font-size: 18px; padding: 4px; flex-shrink: 0; min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; touch-action: manipulation;">✕</button>
         `;
         imageList.appendChild(div);
       });
@@ -228,23 +228,23 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       actionControls.style.display = 'flex';
       dropZone.style.display = 'flex'; // Allow adding more
       dropZone.style.marginTop = 'var(--spacing-md)';
-      fileCountDisplay.textContent = `${selectedFiles.length} image(s) selected`;
+      fileCountDisplay.textContent = __tf(selectedFiles.length === 1 ? '{0} image selected' : '{0} images selected', selectedFiles.length);
     }
 
     // ── PDF conversion ───────────────────────────────────────────────
     btnDownload.addEventListener('click', async () => {
       hideError();
       if (!window.jspdf || !window.jspdf.jsPDF) {
-        showError('PDF library not loaded. Please check your internet connection and reload the page.');
+        showError(__t('PDF library not loaded. Please check your internet connection and reload the page.'));
         return;
       }
       if (selectedFiles.length === 0) {
-        showError('No images selected.');
+        showError(__t('No images selected.'));
         return;
       }
 
       try {
-        showProgress(20, 'Preparing PDF…');
+        showProgress(20, __t('Preparing PDF…'));
         const { jsPDF } = window.jspdf;
         
         // A4 portrait dimensions in points
@@ -256,7 +256,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         for (let i = 0; i < selectedFiles.length; i++) {
           if (i > 0) doc.addPage([PW, PH]);
           
-          showProgress(20 + Math.round((i / selectedFiles.length) * 60), `Processing image ${i + 1} of ${selectedFiles.length}…`);
+          showProgress(20 + Math.round((i / selectedFiles.length) * 60), __tf('Processing image {0} of {1}…', i + 1, selectedFiles.length));
           
           const imgData = selectedFiles[i].dataUrl;
           
@@ -295,7 +295,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           doc.addImage(embed, format, x, y, finalW, finalH);
         }
 
-        showProgress(95, 'Saving PDF…');
+        showProgress(95, __t('Saving PDF…'));
         const pdfName = selectedFiles.length === 1 
           ? selectedFiles[0].file.name.replace(/\.[^/.]+$/, '') + '.pdf' 
           : 'images-to-pdf.pdf';
@@ -306,10 +306,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
            tools bypassed it and were silently missing from the conversion
            counts. */
         window.downloadBlob(doc.output('blob'), pdfName, 'application/pdf');
-        showProgress(100, 'Done!');
+        showProgress(100, __t('Done!'));
         setTimeout(hideProgress, 900);
       } catch (err) {
-        showError('PDF creation failed: ' + (err && err.message ? err.message : String(err)));
+        showError(__tf('PDF creation failed: {0}', (err && err.message ? err.message : String(err))));
         hideProgress();
       }
     });

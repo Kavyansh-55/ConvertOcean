@@ -221,7 +221,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         html += '<tr>' + rows[i].map(c => '<td>' + escapeHtml(c) + '</td>').join('') + '</tr>';
       }
       html += '</tbody></table>';
-      if (rows.length > bodyStart + 60) html += '<div style="padding:8px 0;font-size:12px;color:var(--colors-body);">…' + (rows.length - bodyStart - 60) + ' more rows in the PDF</div>';
+      if (rows.length > bodyStart + 60) html += '<div style="padding:8px 0;font-size:12px;color:var(--colors-body);">…' + __tf('{0} more rows in the PDF', rows.length - bodyStart - 60) + '</div>';
       previewBody.innerHTML = html;
     }
 
@@ -234,7 +234,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 25);
       if (tooLarge) { showError(tooLarge); return; }
       originalName = file.name;
-      showProgress(20, 'Parsing spreadsheet…');
+      showProgress(20, __t('Parsing spreadsheet…'));
 
       /* A CSV is text, and it has to be decoded as such.
          Handing its raw bytes to the spreadsheet library let that library pick
@@ -249,7 +249,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         try {
           if (isCsv) {
             const rows = trimGrid(parseCsv(String(e.target.result)));
-            sheets = rows.length ? [{ name: 'Sheet1', rows }] : [];
+            // A CSV has no sheet name of its own; name it in the page's language.
+            sheets = rows.length ? [{ name: __t('Sheet1'), rows }] : [];
           } else {
             const data = new Uint8Array(e.target.result);
 
@@ -308,7 +309,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           }
 
           if (!sheets.length) {
-            showError('This workbook has no data to convert.');
+            showError(__t('This workbook has no data to convert.'));
             hideProgress();
             return;
           }
@@ -330,7 +331,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           const why = err instanceof LibraryUnavailableError
             ? libraryUnavailableMessage('spreadsheet engine')
             : (raw ? diagnoseSpreadsheet(raw, file.name) : null);
-          showError(why || 'Failed to parse the file. Please ensure it is a valid CSV/Excel workbook.');
+          showError(why || __t('Failed to parse the file. Please ensure it is a valid CSV/Excel workbook.'));
           console.error('[excel-to-pdf] parse failed:', err);
         }
         hideProgress();
@@ -348,7 +349,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     btnConvert.addEventListener('click', async () => {
       if (!sheets.length) return;
-      showProgress(40, 'Building PDF tables…');
+      showProgress(40, __t('Building PDF tables…'));
       try {
         /* Same guard as the reading path: the PDF engine is a CDN script,
            and a reader who got this far should not lose their work to it. */
@@ -389,12 +390,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         };
 
         if (fontState.failed.length) {
-          showError('Could not load the ' + fontState.failed.join(' and ') +
-            ' font, so some characters may not appear correctly. Check your connection and try again.');
+          showError(__tf('Could not load the {0} font, so some characters may not appear correctly. Check your connection and try again.',
+            fontState.failed.map(__t).join(__t(' and '))));
         } else if (fontState.unsupported.length) {
-          showError('This file contains ' + fontState.unsupported.join(' and ') +
-            ' characters, which cannot be embedded in a PDF here. They will be blank in the output — ' +
-            'everything else converts normally.');
+          showError(__tf('This file contains {0} characters, which cannot be embedded in a PDF here. They will be blank in the output — everything else converts normally.',
+            [...fontState.unsupported].map(__t).join(__t(' and '))));
         }
 
         toRender.forEach((sheet, si) => {
@@ -455,7 +455,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       } catch (err) {
         showError(err instanceof LibraryUnavailableError
           ? libraryUnavailableMessage('PDF engine')
-          : 'PDF compilation failed.');
+          : __t('PDF compilation failed.'));
         console.error('[excel-to-pdf] export failed:', err);
       }
       hideProgress();

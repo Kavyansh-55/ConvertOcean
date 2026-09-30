@@ -59,7 +59,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="📄" width="40" height="40" /></div>
   <div class="upload-text-primary">{t('Drag and drop file here, or click to browse', lang)}</div>
-  <div class="upload-text-secondary">TXT (Max 15MB)</div>
+  <div class="upload-text-secondary">{t('TXT (Max 15MB)', lang)}</div>
   <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept=".txt,.text,.log,.md,.csv" />
 </div>
@@ -134,15 +134,14 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       if (tooLarge) { showError(tooLarge); return; }
       hideError();
       originalName = file.name;
-      showProgress(20, 'Reading text file…');
+      showProgress(20, __t('Reading text file…'));
       // Catch an unreadable file here rather than at the download step, where
       // the only symptom was "No text content to convert" against a file the
       // person could see had text in it. A 0-byte read is what a OneDrive or
       // iCloud placeholder that has not been downloaded locally looks like.
       if (file.size === 0) {
         showError(
-          `"${file.name}" is empty (0 bytes). If it lives in OneDrive, iCloud or ` +
-          `Google Drive, open it once so the file is downloaded to this device, then try again.`
+          __tf('"{0}" is empty (0 bytes). If it lives in OneDrive, iCloud or Google Drive, open it once so the file is downloaded to this device, then try again.', file.name)
         );
         hideProgress();
         return;
@@ -155,8 +154,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
         if (!textContents.trim()) {
           showError(
-            `"${file.name}" contains no readable text (read ${raw.length} characters from ` +
-            `${(file.size / 1024).toFixed(1)} KB). If it is not a plain-text file, convert it with the matching tool instead.`
+            __tf('"{0}" contains no readable text (read {1} characters from {2} KB). If it is not a plain-text file, convert it with the matching tool instead.', file.name, raw.length, (file.size / 1024).toFixed(1))
           );
           textContents = '';
           hideProgress();
@@ -167,9 +165,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         const sizeKb    = (file.size / 1024).toFixed(1);
         // Show a truncated preview (first 200 lines) so the <pre> doesn't hang the browser
         const previewLines = textContents.split('\n').slice(0, 200).join('\n');
-        txtPreview.textContent = previewLines + (lineCount > 200 ? `\n\n… (showing first 200 of ${lineCount.toLocaleString()} lines — full file will be converted)` : '');
+        txtPreview.textContent = previewLines + (lineCount > 200 ? '\n\n… (' + __tf('showing first 200 of {0} lines — full file will be converted', lineCount.toLocaleString()) + ')' : '');
         txtPreview.style.display = 'block';
-        fileMeta.textContent = `${file.name} — ${lineCount.toLocaleString()} lines · ${sizeKb} KB`;
+        fileMeta.textContent = __tf('{0} — {1} lines · {2} KB', file.name, lineCount.toLocaleString(), sizeKb);
         fileMeta.style.display = 'block';
         fileNameDisplay.textContent = file.name;
         actionControls.style.display = 'flex';
@@ -177,7 +175,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         hideProgress();
       };
       reader.onerror = function() {
-        showError('Failed to read text file.');
+        showError(__t('Failed to read text file.'));
         hideProgress();
       };
       reader.readAsText(file, 'UTF-8');
@@ -189,17 +187,17 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
       // Check library loaded
       if (!window.jspdf || !window.jspdf.jsPDF) {
-        showError('PDF library not loaded. Please check your internet connection and reload the page.');
+        showError(__t('PDF library not loaded. Please check your internet connection and reload the page.'));
         return;
       }
 
       if (!textContents) {
-        showError('No text content to convert — add the text file again, and if it is stored in OneDrive, iCloud or Google Drive make sure it has been downloaded to this device.');
+        showError(__t('No text content to convert — add the text file again, and if it is stored in OneDrive, iCloud or Google Drive make sure it has been downloaded to this device.'));
         return;
       }
 
       try {
-        showProgress(30, 'Preparing PDF…');
+        showProgress(30, __t('Preparing PDF…'));
 
         const { jsPDF } = window.jspdf;
 
@@ -232,12 +230,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         };
 
         if (fontState.failed.length) {
-          showError('Could not load the ' + fontState.failed.join(' and ') +
-            ' font, so those characters may not appear correctly. Check your connection and try again.');
+          showError(__tf('Could not load the {0} font, so those characters may not appear correctly. Check your connection and try again.',
+            fontState.failed.map(__t).join(__t(' and '))));
         } else if (fontState.unsupported.length) {
-          showError('This text contains ' + fontState.unsupported.join(' and ') +
-            ' characters, which cannot be embedded in a PDF here. They will be blank in the output — ' +
-            'the rest of the document converts normally.');
+          showError(__tf('This text contains {0} characters, which cannot be embedded in a PDF here. They will be blank in the output — the rest of the document converts normally.',
+            [...fontState.unsupported].map(__t).join(__t(' and '))));
         }
 
         // Usable text area
@@ -248,7 +245,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         const linesPerPage = Math.floor((PH - MB - firstLineY) / LH) + 1;
         // PH - MB - firstLineY = 841.89 - 45 - 55 = 741.89  → floor(741.89/15)+1 = 49+1 = 50
 
-        showProgress(40, 'Splitting text into lines…');
+        showProgress(40, __t('Splitting text into lines…'));
 
         // Expand every raw line into word-wrapped sub-lines
         const rawLines = textContents.split('\n');
@@ -267,7 +264,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         }
 
         const totalPages = Math.max(1, Math.ceil(allLines.length / linesPerPage));
-        showProgress(55, `Building ${totalPages} page(s)…`);
+        showProgress(55, __tf('Building {0} page(s)…', totalPages));
 
         // Render each page
         for (let pg = 0; pg < totalPages; pg++) {
@@ -285,17 +282,17 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             y += LH;
           }
 
-          showProgress(55 + Math.round(((pg + 1) / totalPages) * 40), `Page ${pg + 1} of ${totalPages}…`);
+          showProgress(55 + Math.round(((pg + 1) / totalPages) * 40), __tf('Page {0} of {1}…', pg + 1, totalPages));
         }
 
-        showProgress(98, 'Saving…');
+        showProgress(98, __t('Saving…'));
         const pdfName = originalName.replace(/\.[^/.]+$/, '') + '.pdf';
         /* Shared helper rather than jsPDF save() — see ImageToPdf. */
         window.downloadBlob(doc.output('blob'), pdfName, 'application/pdf');
-        showProgress(100, 'Done!');
+        showProgress(100, __t('Done!'));
         setTimeout(hideProgress, 900);
       } catch (err) {
-        showError('PDF creation failed: ' + (err && err.message ? err.message : String(err)));
+        showError(__tf('PDF creation failed: {0}', (err && err.message ? err.message : String(err))));
         hideProgress();
       }
     });

@@ -183,7 +183,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       if (tooLarge) { showError(tooLarge); return; }
       hideError();
       let processed = 0;
-      showProgress(10, "Loading PDF documents…");
+      showProgress(10, __t("Loading PDF documents…"));
 
       /* Reads finish in whatever order they finish — a large PDF chosen first
          used to land AFTER a small one chosen second, because each file was
@@ -212,7 +212,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
               pages: doc.getPageCount()
             };
           } catch(err) {
-            showError("Failed to parse " + f.name + ". Please make sure it is a valid PDF.");
+            showError(__tf('Failed to parse "{0}". Please make sure it is a valid PDF.', f.name));
           }
           finish();
         };
@@ -236,8 +236,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         div.innerHTML = `
           <div class="file-item-name">${file.name}</div>
           <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-            <span class="file-item-meta">${file.pages} pgs</span>
-            <button class="icon-btn danger" aria-label="Remove ${file.name}" onclick="window.removeMergeFile(${index})">✕</button>
+            <span class="file-item-meta">${__tf(file.pages === 1 ? '{0} page' : '{0} pages', file.pages)}</span>
+            <button class="icon-btn danger" aria-label="${__tf('Remove {0}', file.name)}" onclick="window.removeMergeFile(${index})">✕</button>
           </div>
         `;
         fileItemsList.appendChild(div);
@@ -254,10 +254,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     btnMerge.addEventListener('click', async () => {
       if (mergeFiles.length < 2) {
-        showError("Please add at least 2 PDF files.");
+        showError(__t("Please add at least 2 PDF files."));
         return;
       }
-      showProgress(20, "Compiling PDF merging…");
+      showProgress(20, __t("Compiling PDF merging…"));
       try {
         const mergedPdf = await PDFLib.PDFDocument.create();
         for (let i = 0; i < mergeFiles.length; i++) {
@@ -271,7 +271,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         if(!name.endsWith('.pdf')) name += '.pdf';
         window.downloadBlob(new Blob([mergedBytes], { type: "application/pdf" }), name);
       } catch(err) {
-        showError("Failed to merge PDF files.");
+        showError(__t("Failed to merge PDF files."));
       }
       hideProgress();
     });

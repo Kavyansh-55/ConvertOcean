@@ -217,7 +217,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       } else {
         sheetsSection.style.display = 'none';
         rowsSection.style.display = 'block';
-        processBtn.textContent = 'Split Rows & Download ZIP';
+        processBtn.textContent = __t('Split Rows & Download ZIP');
       }
     });
 
@@ -249,11 +249,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       hideError();
       const ext = file.name.split('.').pop().toLowerCase();
       if (!['xlsx', 'xls', 'csv'].includes(ext)) {
-        showError("Unsupported format. Choose a valid Excel (.xlsx, .xls) or CSV file.");
+        showError(__t("Unsupported format. Choose a valid Excel (.xlsx, .xls) or CSV file."));
         return;
       }
 
-      showProgress(20, "Reading spreadsheet workbook…");
+      showProgress(20, __t("Reading spreadsheet workbook…"));
       try {
         const bytes = await readFileAsArrayBuffer(file);
         const workbook = XLSX.read(bytes, { type: 'array' });
@@ -270,7 +270,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         if (!hasAnyData) {
           showError(window.coNothingToConvert
             ? window.coNothingToConvert('workbook')
-            : 'This workbook has nothing in it to split.');
+            : __t('This workbook has nothing in it to split.'));
           hideProgress();
           return;
         }
@@ -288,7 +288,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         workspacePanel.style.display = 'block';
         dropZone.style.display = 'none';
       } catch (err) {
-        showError("Failed to parse spreadsheet file.");
+        showError(__t("Failed to parse spreadsheet file."));
       }
       hideProgress();
     }
@@ -306,7 +306,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const label = document.getElementById('sheetsSectionLabel');
       if (!label || !activeFile) return;
       const total = activeFile.sheets.length;
-      label.textContent = `Worksheets to extract — ${selectedSheets.size} of ${total} selected`;
+      label.textContent = __tf('Worksheets to extract — {0} of {1} selected', selectedSheets.size, total);
       const toggle = document.getElementById('sheetsToggleAll');
       if (toggle) toggle.textContent = selectedSheets.size === total ? __t('Clear all') : __t('Select all');
     }
@@ -341,7 +341,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           <input type="checkbox" class="sheet-checkbox" id="sheet-chk-${index}" checked onchange="toggleSheetSelect(${index})">
           <div class="sheet-info">
             <span class="sheet-name">${sheetName}</span>
-            <span class="sheet-meta">${rows} rows</span>
+            <span class="sheet-meta">${__tf(rows === 1 ? '{0} row' : '{0} rows', rows)}</span>
           </div>
         `;
         card.onclick = (e) => {
@@ -398,11 +398,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     async function extractSheets() {
       if (selectedSheets.size === 0) {
-        showError("Please select at least 1 worksheet to extract.");
+        showError(__t("Please select at least 1 worksheet to extract."));
         return;
       }
 
-      showProgress(30, "Extracting selected sheets…");
+      showProgress(30, __t("Extracting selected sheets…"));
       try {
         const format = exportFormat.value;
         const zip = new JSZip();
@@ -438,7 +438,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           counter++;
         }
 
-        showProgress(75, "Compiling zip package…");
+        showProgress(75, __t("Compiling zip package…"));
         const zipContent = await zip.generateAsync({ type: "blob" });
         
         const zipName = activeFile.name.replace(/\.[^/.]+$/, "") + '_split_sheets.zip';
@@ -452,7 +452,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       } catch (err) {
-        showError("Failed to split sheets.");
+        showError(__t("Failed to split sheets."));
       }
       hideProgress();
     }
@@ -463,22 +463,22 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const hasHeader = rowSplitHeader.checked;
 
       if (!sheetName) {
-        showError("Please select a worksheet to split.");
+        showError(__t("Please select a worksheet to split."));
         return;
       }
       if (rowsPerFile < 1) {
-        showError("Rows per file must be at least 1.");
+        showError(__t("Rows per file must be at least 1."));
         return;
       }
 
-      showProgress(30, "Partitioning rows…");
+      showProgress(30, __t("Partitioning rows…"));
       try {
         const format = exportFormat.value;
         const zip = new JSZip();
 
         const sheet = activeFile.workbook.Sheets[sheetName];
         if (!sheet) {
-          showError("Worksheet not found.");
+          showError(__t("Worksheet not found."));
           hideProgress();
           return;
         }
@@ -490,7 +490,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         const dataStartRow = hasHeader ? Math.min(startRow + 1, endRow + 1) : startRow;
 
         if (dataStartRow > endRow) {
-          showError("The selected worksheet does not contain enough rows to split.");
+          showError(__t("The selected worksheet does not contain enough rows to split."));
           hideProgress();
           return;
         }
@@ -560,7 +560,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           fileIndex++;
         }
 
-        showProgress(75, "Compiling zip package…");
+        showProgress(75, __t("Compiling zip package…"));
         const zipContent = await zip.generateAsync({ type: "blob" });
 
         const zipName = `${baseName}_split_rows.zip`;
@@ -574,7 +574,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       } catch (err) {
-        showError("Failed to split rows: " + err.message);
+        showError(__tf('Failed to split rows: {0}', err.message));
       }
       hideProgress();
     }

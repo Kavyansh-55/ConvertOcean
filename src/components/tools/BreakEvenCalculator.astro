@@ -166,20 +166,20 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
       <label class="form-label" for="beCurrency" style="font-size: 13px; font-weight: 500;">{t('Currency', lang)}</label>
       <select id="beCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink);">
-        <option value="$" selected>$ – US Dollar (USD)</option>
-        <option value="€">€ – Euro (EUR)</option>
-        <option value="£">£ – British Pound (GBP)</option>
-        <option value="₹">₹ – Indian Rupee (INR)</option>
-        <option value="¥">¥ – Japanese Yen (JPY)</option>
-        <option value="¥">¥ – Chinese Yuan (CNY)</option>
-        <option value="C$">C$ – Canadian Dollar (CAD)</option>
-        <option value="A$">A$ – Australian Dollar (AUD)</option>
-        <option value="CHF">CHF – Swiss Franc (CHF)</option>
-        <option value="AED">AED – UAE Dirham (AED)</option>
-        <option value="SGD">SGD – Singapore Dollar (SGD)</option>
-        <option value="R">R – South African Rand (ZAR)</option>
-        <option value="zł">zł – Polish Złoty (PLN)</option>
-        <option value="₩">₩ – South Korean Won (KRW)</option>
+        <option value="$" selected>{t('$ – US Dollar (USD)', lang)}</option>
+        <option value="€">{t('€ – Euro (EUR)', lang)}</option>
+        <option value="£">{t('£ – British Pound (GBP)', lang)}</option>
+        <option value="₹">{t('₹ – Indian Rupee (INR)', lang)}</option>
+        <option value="¥">{t('¥ – Japanese Yen (JPY)', lang)}</option>
+        <option value="¥">{t('¥ – Chinese Yuan (CNY)', lang)}</option>
+        <option value="C$">{t('C$ – Canadian Dollar (CAD)', lang)}</option>
+        <option value="A$">{t('A$ – Australian Dollar (AUD)', lang)}</option>
+        <option value="CHF">{t('CHF – Swiss Franc (CHF)', lang)}</option>
+        <option value="AED">{t('AED – UAE Dirham (AED)', lang)}</option>
+        <option value="SGD">{t('SGD – Singapore Dollar (SGD)', lang)}</option>
+        <option value="R">{t('R – South African Rand (ZAR)', lang)}</option>
+        <option value="zł">{t('zł – Polish Złoty (PLN)', lang)}</option>
+        <option value="₩">{t('₩ – South Korean Won (KRW)', lang)}</option>
       </select>
     </div>
 
@@ -243,7 +243,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div class="result-card" id="beResults">
       <div class="result-row">
         <span class="result-label" id="beResMainLbl">{t('Break-Even Point', lang)}</span>
-        <span class="result-value highlight" id="beResMain">200 units</span>
+        <span class="result-value highlight" id="beResMain">{t('200 units', lang)}</span>
       </div>
       <div class="result-row">
         <span class="result-label" id="beResRevenueLbl">{t('Break-Even Revenue', lang)}</span>
@@ -261,15 +261,15 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     <div class="calc-panel-title" style="margin-top: var(--spacing-sm);">{t('Where Each Sales Dollar Goes', lang)}</div>
     <div class="be-bar-container">
-      <div class="be-bar-var" id="beBarVar" style="width:36%;">Variable 36%</div>
-      <div class="be-bar-cm" id="beBarCM" style="width:64%;">Contribution 64%</div>
+      <div class="be-bar-var" id="beBarVar" style="width:36%;">{t('Variable 36%', lang)}</div>
+      <div class="be-bar-cm" id="beBarCM" style="width:64%;">{t('Contribution 64%', lang)}</div>
     </div>
 
     <div class="calc-panel-title" style="margin-top: var(--spacing-sm);">{t('Formula Used', lang)}</div>
     <div class="formula-box" id="beFormula">
-      Contribution Margin = Price − Variable Cost = $39.00 − $14.00 = $25.00<br/>
-      Break-Even Units = Fixed Costs ÷ Contribution Margin = $5,000.00 ÷ $25.00 = 200 units<br/>
-      Break-Even Revenue = Break-Even Units × Price = 200 × $39.00 = $7,800.00
+      {t('Contribution Margin = Price − Variable Cost = $39.00 − $14.00 = $25.00', lang)}<br/>
+      {t('Break-Even Units = Fixed Costs ÷ Contribution Margin = $5,000.00 ÷ $25.00 = 200 units', lang)}<br/>
+      {t('Break-Even Revenue = Break-Even Units × Price = 200 × $39.00 = $7,800.00', lang)}
     </div>
   </div>
 </div>
@@ -288,10 +288,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     });
 
     function updateCurrencyLabels() {
-      ['beLblFixed1','beLblFixed2','beLblFixed3'].forEach(id => { $(id).textContent = `Total Fixed Costs (${currSym})`; });
-      ['beLblVar1','beLblVar2','beLblVar3'].forEach(id => { $(id).textContent = `Variable Cost per Unit (${currSym})`; });
-      ['beLblPrice1','beLblPrice2'].forEach(id => { $(id).textContent = `Selling Price per Unit (${currSym})`; });
-      $('beLblProfit2').textContent = `Target Profit (${currSym})`;
+      ['beLblFixed1','beLblFixed2','beLblFixed3'].forEach(id => { $(id).textContent = __tf('Total Fixed Costs ({0})', currSym); });
+      ['beLblVar1','beLblVar2','beLblVar3'].forEach(id => { $(id).textContent = __tf('Variable Cost per Unit ({0})', currSym); });
+      ['beLblPrice1','beLblPrice2'].forEach(id => { $(id).textContent = __tf('Selling Price per Unit ({0})', currSym); });
+      $('beLblProfit2').textContent = __tf('Target Profit ({0})', currSym);
     }
 
     const tabs = document.querySelectorAll('.mode-tab');
@@ -311,25 +311,25 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     function fmt(n) {
       return currSym + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
-    function fmtUnits(n) { return Math.ceil(n).toLocaleString() + ' units'; }
+    function fmtUnits(n) { const u = Math.ceil(n); return __tf(u === 1 ? '{0} unit' : '{0} units', u.toLocaleString()); }
 
     function setBar(varCost, price) {
       const container = $('beBarVar').parentElement;
       if (price <= 0 || varCost >= price) {
         $('beBarVar').style.width = '100%';
-        $('beBarVar').textContent = 'No contribution — price does not exceed variable cost';
+        $('beBarVar').textContent = __t('No contribution — price does not exceed variable cost');
         $('beBarCM').style.width = '0%';
         $('beBarCM').textContent = '';
-        container.setAttribute('aria-label', 'No contribution margin: price does not exceed variable cost');
+        container.setAttribute('aria-label', __t('No contribution margin: price does not exceed variable cost'));
         return;
       }
       const varPct = Math.max(5, (varCost / price) * 100);
       const cmPct = Math.max(5, 100 - varPct);
       $('beBarVar').style.width = varPct + '%';
-      $('beBarVar').textContent = `Variable ${Math.round(varPct)}%`;
+      $('beBarVar').textContent = __tf('Variable {0}%', Math.round(varPct));
       $('beBarCM').style.width = cmPct + '%';
-      $('beBarCM').textContent = `Contribution ${Math.round(cmPct)}%`;
-      container.setAttribute('aria-label', `Each sales dollar: ${Math.round(varPct)}% variable cost, ${Math.round(cmPct)}% contribution margin`);
+      $('beBarCM').textContent = __tf('Contribution {0}%', Math.round(cmPct));
+      container.setAttribute('aria-label', __tf('Each unit of sales: {0}% variable cost, {1}% contribution margin', Math.round(varPct), Math.round(cmPct)));
     }
 
     function showInvalid(message) {
@@ -350,7 +350,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         const cm = price - varCost;
         setBar(varCost, price);
         if (price <= 0 || cm <= 0) {
-          showInvalid('Break-even is not reachable: the selling price per unit must be greater than the variable cost per unit. Raise the price or reduce the variable cost.');
+          showInvalid(__t('Break-even is not reachable: the selling price per unit must be greater than the variable cost per unit. Raise the price or reduce the variable cost.'));
           if (price > 0) {
             $('beResCM').textContent = fmt(cm);
             $('beResRatio').textContent = ((cm / price) * 100).toFixed(2) + '%';
@@ -365,11 +365,15 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         $('beResRevenue').textContent = fmt(revenue);
         $('beResCM').textContent = fmt(cm);
         $('beResRatio').textContent = ratio.toFixed(2) + '%';
-        const roundNote = Number.isInteger(exactUnits) ? '' : ` (exactly ${exactUnits.toFixed(2)}, rounded up)`;
-        $('beFormula').innerHTML = `Contribution Margin = Price − Variable Cost = ${fmt(price)} − ${fmt(varCost)} = ${fmt(cm)}<br/>Break-Even Units = Fixed Costs ÷ Contribution Margin = ${fmt(fixed)} ÷ ${fmt(cm)} = ${units.toLocaleString()} units${roundNote}<br/>Break-Even Revenue = Break-Even Units × Price = ${units.toLocaleString()} × ${fmt(price)} = ${fmt(revenue)}`;
+        const roundNote = Number.isInteger(exactUnits) ? '' : ' ' + __tf('(exactly {0}, rounded up)', exactUnits.toFixed(2));
+        $('beFormula').innerHTML = [
+          __tf('Contribution Margin = Price − Variable Cost = {0} − {1} = {2}', fmt(price), fmt(varCost), fmt(cm)),
+          __tf('Break-Even Units = Fixed Costs ÷ Contribution Margin = {0} ÷ {1} = {2}', fmt(fixed), fmt(cm), fmtUnits(units)) + roundNote,
+          __tf('Break-Even Revenue = Break-Even Units × Price = {0} × {1} = {2}', units.toLocaleString(), fmt(price), fmt(revenue)),
+        ].join('<br/>');
       } else if (mode === 'profit') {
         $('beResMainLbl').textContent = __t('Units for Target Profit');
-        $('beResRevenueLbl').textContent = 'Revenue Required';
+        $('beResRevenueLbl').textContent = __t('Revenue Required');
         const fixed = parseFloat($('beFixed2').value) || 0;
         const varCost = parseFloat($('beVar2').value) || 0;
         const price = parseFloat($('bePrice2').value) || 0;
@@ -377,7 +381,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         const cm = price - varCost;
         setBar(varCost, price);
         if (price <= 0 || cm <= 0) {
-          showInvalid('The target is not reachable: the selling price per unit must be greater than the variable cost per unit. Raise the price or reduce the variable cost.');
+          showInvalid(__t('The target is not reachable: the selling price per unit must be greater than the variable cost per unit. Raise the price or reduce the variable cost.'));
           if (price > 0) {
             $('beResCM').textContent = fmt(cm);
             $('beResRatio').textContent = ((cm / price) * 100).toFixed(2) + '%';
@@ -392,17 +396,21 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         $('beResRevenue').textContent = fmt(revenue);
         $('beResCM').textContent = fmt(cm);
         $('beResRatio').textContent = ratio.toFixed(2) + '%';
-        const roundNote = Number.isInteger(exactUnits) ? '' : ` (exactly ${exactUnits.toFixed(2)}, rounded up)`;
-        $('beFormula').innerHTML = `Contribution Margin = Price − Variable Cost = ${fmt(price)} − ${fmt(varCost)} = ${fmt(cm)}<br/>Units Required = (Fixed Costs + Target Profit) ÷ Contribution Margin = (${fmt(fixed)} + ${fmt(target)}) ÷ ${fmt(cm)} = ${units.toLocaleString()} units${roundNote}<br/>Revenue Required = Units × Price = ${units.toLocaleString()} × ${fmt(price)} = ${fmt(revenue)}`;
+        const roundNote = Number.isInteger(exactUnits) ? '' : ' ' + __tf('(exactly {0}, rounded up)', exactUnits.toFixed(2));
+        $('beFormula').innerHTML = [
+          __tf('Contribution Margin = Price − Variable Cost = {0} − {1} = {2}', fmt(price), fmt(varCost), fmt(cm)),
+          __tf('Units Required = (Fixed Costs + Target Profit) ÷ Contribution Margin = ({0} + {1}) ÷ {2} = {3}', fmt(fixed), fmt(target), fmt(cm), fmtUnits(units)) + roundNote,
+          __tf('Revenue Required = Units × Price = {0} × {1} = {2}', units.toLocaleString(), fmt(price), fmt(revenue)),
+        ].join('<br/>');
       } else {
-        $('beResMainLbl').textContent = 'Required Price per Unit';
-        $('beResRevenueLbl').textContent = 'Revenue at Break-Even';
+        $('beResMainLbl').textContent = __t('Required Price per Unit');
+        $('beResRevenueLbl').textContent = __t('Revenue at Break-Even');
         const fixed = parseFloat($('beFixed3').value) || 0;
         const varCost = parseFloat($('beVar3').value) || 0;
         const units = parseFloat($('beUnits3').value) || 0;
         if (units <= 0) {
           setBar(1, 0);
-          showInvalid('Enter the number of units you expect to sell (at least 1) to compute the price needed to break even.');
+          showInvalid(__t('Enter the number of units you expect to sell (at least 1) to compute the price needed to break even.'));
           return;
         }
         const cm = fixed / units;
@@ -414,7 +422,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         $('beResRevenue').textContent = fmt(revenue);
         $('beResCM').textContent = fmt(cm);
         $('beResRatio').textContent = ratio.toFixed(2) + '%';
-        $('beFormula').innerHTML = `Required Contribution / Unit = Fixed Costs ÷ Units = ${fmt(fixed)} ÷ ${units.toLocaleString()} = ${fmt(cm)}<br/>Required Price = Variable Cost + Required Contribution = ${fmt(varCost)} + ${fmt(cm)} = ${fmt(price)}<br/>Revenue at Break-Even = Price × Units = ${fmt(price)} × ${units.toLocaleString()} = ${fmt(revenue)}`;
+        $('beFormula').innerHTML = [
+          __tf('Required Contribution / Unit = Fixed Costs ÷ Units = {0} ÷ {1} = {2}', fmt(fixed), units.toLocaleString(), fmt(cm)),
+          __tf('Required Price = Variable Cost + Required Contribution = {0} + {1} = {2}', fmt(varCost), fmt(cm), fmt(price)),
+          __tf('Revenue at Break-Even = Price × Units = {0} × {1} = {2}', fmt(price), units.toLocaleString(), fmt(revenue)),
+        ].join('<br/>');
       }
     }
 

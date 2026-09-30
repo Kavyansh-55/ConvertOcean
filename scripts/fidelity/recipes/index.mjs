@@ -34,6 +34,7 @@ export const uncovered = [
   { slug: 'sales-tax-calculator', why: 'arithmetic — covered by npm run calculators (forward and reverse tax)' },
   { slug: 'compress-powerpoint', why: 'compression is not a conversion — covered end to end by npm run compress:office, which unzips the result and checks each part' },
   { slug: 'compress-word', why: 'shares the engine and the suite above; npm run compress:office asserts the page loads and accepts .docx' },
+  { slug: 'compress-excel', why: 'its used-range engine is covered end to end by npm run compress:office (rows and cells dropped, formulas and values intact)' },
 ];
 
 /**

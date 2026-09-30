@@ -20,6 +20,8 @@
  * well as run in the browser. The DOM wiring stays in SpreadsheetTool.astro.
  */
 
+import { tr } from './i18n-runtime.js';
+
 /* ------------------------------------------------------------------- CSV */
 
 /**
@@ -115,14 +117,45 @@ export function isoDateToSerial(y, m, d) {
  * number, not 44,123,456), and more than 15 significant digits cannot survive
  * a double, so both stay text.
  *
+ * Two conventions are opt-in, because each is only unambiguous in context:
+ *
+ *   - `decimalComma`: "1.234,56" and "12,5" are numbers. True for a
+ *     semicolon-separated file — Excel in Brazil and most of Europe writes
+ *     ";" precisely because "," is the decimal mark. Without it a Brazilian
+ *     export came out as a sheet of text that SUM() could not add.
+ *   - `dayFirst`: "15/03/2026" is a date. True on the Portuguese pages; on
+ *     English ones "03/04/2026" could be either month, so it stays text.
+ *
  * @param {string} raw
+ * @param {{decimalComma?: boolean, dayFirst?: boolean}} [opts]
  * @returns {{t:'s'|'n'|'d'|'b', v:string|number|boolean}}
  */
-export function coerceValue(raw) {
+export function coerceValue(raw, opts = {}) {
   const s = String(raw);
   const trimmed = s.trim();
 
   if (trimmed === '') return { t: 's', v: '' };
+
+  if (opts.dayFirst) {
+    const dmy = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(trimmed);
+    if (dmy) {
+      const d = +dmy[1], m = +dmy[2], y = +dmy[3];
+      if (m >= 1 && m <= 12 && d >= 1 && d <= 31) return { t: 'd', v: isoDateToSerial(y, m, d) };
+    }
+  }
+
+  if (opts.decimalComma) {
+    // 1.234,56 · 1.234 · 12,5 · -0,75 — but never a leading-zero code (0044),
+    // and never a value that would lose digits in a double.
+    const bc = /^([+-]?)(\d{1,3}(?:\.\d{3})+|\d+)(?:,(\d+))?$/.exec(trimmed);
+    if (bc && (bc[3] !== undefined || bc[2].includes('.'))) {
+      const intPart = bc[2].replace(/\./g, '');
+      if (!/^0\d/.test(intPart) && (intPart + (bc[3] || '')).replace(/^0+/, '').length <= 15) {
+        const n = Number(bc[1] + intPart + (bc[3] !== undefined ? '.' + bc[3] : ''));
+        if (Number.isFinite(n)) return { t: 'n', v: n };
+      }
+    }
+  }
 
   // Dates, date-only and unambiguous. Anything else stays text rather than
   // being guessed at.
@@ -1348,9 +1381,9 @@ function bytesContainUtf16(bytes, ascii, limit) {
  */
 export function diagnoseSpreadsheet(bytes, fileName = '') {
   if (!bytes || bytes.length === 0) {
-    return 'This file is empty (0 bytes). If it lives in OneDrive or another '
+    return tr('This file is empty (0 bytes). If it lives in OneDrive or another '
          + 'sync folder, it may still be online-only — open it once so it '
-         + 'downloads, then try again.';
+         + 'downloads, then try again.');
   }
   if (bytes.length < 64) {
     /* Only binary. A 30-byte CSV is a perfectly ordinary file, and telling its
@@ -1363,9 +1396,9 @@ export function diagnoseSpreadsheet(bytes, fileName = '') {
       if (b === 9 || b === 10 || b === 13 || (b >= 32 && b < 127)) printable++;
     }
     if (printable / bytes.length < 0.85) {
-      return 'This file is only ' + bytes.length + ' bytes and is not readable '
+      return tr('This file is only {0} bytes and is not readable '
            + 'text, so it cannot be a workbook. It was most likely truncated '
-           + 'while being copied or downloaded.';
+           + 'while being copied or downloaded.', bytes.length);
     }
     return null;
   }
@@ -1378,15 +1411,15 @@ export function diagnoseSpreadsheet(bytes, fileName = '') {
               && bytes[4] === 0xA1 && bytes[5] === 0xB1 && bytes[6] === 0x1A && bytes[7] === 0xE1;
   if (isOle2) {
     if (bytesContainUtf16(bytes, 'EncryptedPackage', 1 << 16)) {
-      return 'This workbook is password-protected, so its contents are '
+      return tr('This workbook is password-protected, so its contents are '
            + 'encrypted and cannot be read here. Open it in Excel, save a copy '
            + 'without a password (File → Info → Protect Workbook → Encrypt '
-           + 'with Password, then clear it), and convert that copy.';
+           + 'with Password, then clear it), and convert that copy.');
     }
-    return 'This is an Excel 97-2003 workbook (.xls) in an older format'
-         + (ext === 'xlsx' ? ', despite the .xlsx name' : '')
-         + '. Open it in Excel or LibreOffice and use Save As → Excel Workbook '
-         + '(.xlsx), then convert that file.';
+    return tr('This is an Excel 97-2003 workbook (.xls) in an older format{0}. '
+         + 'Open it in Excel or LibreOffice and use Save As → Excel Workbook '
+         + '(.xlsx), then convert that file.',
+         ext === 'xlsx' ? tr(', despite the .xlsx name') : '');
   }
 
   /* ZIP — every modern Office format is one, so the question is which. */
@@ -1395,25 +1428,25 @@ export function diagnoseSpreadsheet(bytes, fileName = '') {
     const head = 1 << 18;   // member names live near the front
     if (bytesContain(bytes, 'xl/workbook.xml', head)) return null;   // really is a workbook
     if (bytesContain(bytes, 'word/document.xml', head)) {
-      return 'This is a Word document (.docx), not a spreadsheet. Try the '
-           + 'Word to PDF tool instead.';
+      return tr('This is a Word document (.docx), not a spreadsheet. Try the '
+           + 'Word to PDF tool instead.');
     }
     if (bytesContain(bytes, 'ppt/presentation.xml', head)) {
-      return 'This is a PowerPoint file (.pptx), not a spreadsheet. Try the '
-           + 'PowerPoint to PDF tool instead.';
+      return tr('This is a PowerPoint file (.pptx), not a spreadsheet. Try the '
+           + 'PowerPoint to PDF tool instead.');
     }
     if (bytesContain(bytes, 'opendocument.spreadsheet', head)) {
-      return 'This is an OpenDocument spreadsheet (.ods). Open it in Excel or '
-           + 'LibreOffice and save as .xlsx, then convert that file.';
+      return tr('This is an OpenDocument spreadsheet (.ods). Open it in Excel or '
+           + 'LibreOffice and save as .xlsx, then convert that file.');
     }
-    return 'This file is a ZIP archive but does not contain a workbook inside '
+    return tr('This file is a ZIP archive but does not contain a workbook inside '
          + 'it. If it is a folder of spreadsheets, extract it first and convert '
-         + 'one file at a time.';
+         + 'one file at a time.');
   }
 
   /* A PDF renamed to .xlsx is a surprisingly common mix-up. */
   if (bytesContain(bytes, '%PDF-', 8)) {
-    return 'This is a PDF, not a spreadsheet. Try the PDF to Excel tool instead.';
+    return tr('This is a PDF, not a spreadsheet. Try the PDF to Excel tool instead.');
   }
 
   return null;

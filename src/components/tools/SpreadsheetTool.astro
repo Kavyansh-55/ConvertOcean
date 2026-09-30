@@ -118,7 +118,7 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
 
 <script>
   import {
-    parseCsv, coerceValue, recordsToRows, pickRecords,
+    parseCsv, sniffDelimiter, coerceValue, recordsToRows, pickRecords,
     pickXmlRecords, xmlElementToObject, rowsToCsv,
   } from '../../scripts/tabular.js';
 
@@ -218,8 +218,8 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
     /* A CSV field becomes a typed value, except when the output is JSON: a
        date there should stay the ISO string the user wrote, not the Excel
        serial that only means something inside a spreadsheet. */
-    function valueFor(raw, forJson) {
-      const c = coerceValue(raw);
+    function valueFor(raw, forJson, opts) {
+      const c = coerceValue(raw, opts);
       if (c.t === 'd' && forJson) return String(raw).trim();
       return c.v;
     }
@@ -227,6 +227,13 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
     /** Header row + data rows from a parsed CSV, with a parallel type grid. */
     function csvToGrid(text, forJson) {
       const parsed = parseCsv(text);
+      /* A semicolon file uses the comma as its decimal mark (Excel in Brazil
+         and most of Europe), and on the Portuguese pages 15/03/2026 is a
+         date. See coerceValue in scripts/tabular.js. */
+      const opts = {
+        decimalComma: sniffDelimiter(String(text).replace(/^\uFEFF/, '')) === ';',
+        dayFirst: document.documentElement.lang === 'pt',
+      };
       if (!parsed.length) return { rows: [], types: [] };
 
       const header = parsed[0].map((h, i) => (String(h).trim() || 'column' + (i + 1)));
@@ -239,8 +246,8 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
         const trow = [];
         for (let c = 0; c < header.length; c++) {
           const raw = src[c] === undefined ? '' : src[c];
-          const coerced = coerceValue(raw);
-          row.push(valueFor(raw, forJson));
+          const coerced = coerceValue(raw, opts);
+          row.push(valueFor(raw, forJson, opts));
           trow.push(coerced.t);
         }
         rows.push(row);
@@ -268,9 +275,14 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
       const ws = window.XLSX.utils.aoa_to_sheet(grid.rows);
       for (let r = 1; r < grid.types.length; r++) {
         for (let c = 0; c < grid.types[r].length; c++) {
-          if (grid.types[r][c] !== 'd') continue;
           const ref = window.XLSX.utils.encode_cell({ r, c });
-          if (ws[ref]) { ws[ref].t = 'n'; ws[ref].z = 'yyyy-mm-dd'; }
+          const cell = ws[ref];
+          if (!cell) continue;
+          if (grid.types[r][c] === 'd') { cell.t = 'n'; cell.z = 'yyyy-mm-dd'; continue; }
+          /* A long whole number — a CNPJ, an EAN barcode, an account number —
+             is shown by Excel's General format as 1,23457E+13. Format it as a
+             plain integer so every digit stays visible. */
+          if (cell.t === 'n' && Number.isInteger(cell.v) && Math.abs(cell.v) >= 1e11) cell.z = '0';
         }
       }
       return ws;
@@ -289,8 +301,12 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
       return { rows, types: rows.map((r) => r.map(() => 's')), note: picked.source };
     }
 
-    /** Rows from an XML document, using its repeating element as the record. */
-    function xmlToGrid(text) {
+    /** Rows from an XML document, using its repeating element as the record.
+        With `typed`, text that is plainly a number, date or boolean becomes
+        one, by the same rules as a CSV — so an NF-e's <vProd>1234.56</vProd>
+        arrives in Excel as a number SUM() can add, while a code with a
+        leading zero stays text. */
+    function xmlToGrid(text, typed) {
       const doc = parseXmlStrict(text);
       const picked = pickXmlRecords(doc.documentElement);
       const records = picked.elements.map((el) => {
@@ -298,7 +314,15 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
         return (obj && typeof obj === 'object') ? obj : { value: obj };
       });
       const rows = recordsToRows(records);
-      return { rows, types: rows.map((r) => r.map(() => 's')), note: '<' + picked.name + '> × ' + picked.elements.length };
+      if (!typed) return { rows, types: rows.map((r) => r.map(() => 's')), note: '<' + picked.name + '> × ' + picked.elements.length };
+      const types = [rows[0].map(() => 's')];
+      const out = [rows[0]];
+      for (let r = 1; r < rows.length; r++) {
+        const c = rows[r].map((v) => (typeof v === 'string' ? coerceValue(v) : { t: 's', v }));
+        out.push(c.map((x) => x.v));
+        types.push(c.map((x) => x.t));
+      }
+      return { rows: out, types, note: '<' + picked.name + '> × ' + picked.elements.length };
     }
 
     async function handleFile(file) {
@@ -308,7 +332,7 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
       if (tooLarge) { showError(tooLarge); return; }
       hideError();
       originalName = file.name;
-      showProgress(20, 'Reading file content…');
+      showProgress(20, __t('Reading file content…'));
 
       try {
         if (slug === 'csv-to-json') {
@@ -342,7 +366,7 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
           showPreview(resultData);
 
         } else if (slug === 'xml-to-xlsx') {
-          const grid = xmlToGrid(await readTextUtf8(file));
+          const grid = xmlToGrid(await readTextUtf8(file), true);
           resultData = sheetToWorkbook(gridToSheet(grid));
           showPreview(previewGrid(grid.rows));
 
@@ -382,13 +406,12 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
     function errorFor(slug, err) {
       const from = String(slug).split('-to-')[0].toUpperCase();
       if (err && /JSON/i.test(err.message) && from === 'JSON') {
-        return 'That file is not valid JSON. Check it in the JSON Formatter first, then try again.';
+        return __t('That file is not valid JSON. Check it in the JSON Formatter first, then try again.');
       }
       if (err && /Invalid XML/i.test(err.message)) {
-        return 'That file is not valid XML — it may be truncated or contain an unescaped & or < character.';
+        return __t('That file is not valid XML — it may be truncated or contain an unescaped & or < character.');
       }
-      return 'Could not read that ' + from + ' file. If it opens correctly elsewhere, try re-saving it as ' +
-             from + ' and converting again.';
+      return __tf('Could not read that {0} file. If it opens correctly elsewhere, try re-saving it as {0} and converting again.', from);
     }
 
     // DOMParser does not throw on malformed XML — it returns a document
@@ -424,7 +447,7 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
       if (emptyContainer) {
         showError(window.coNothingToConvert
           ? window.coNothingToConvert('file')
-          : 'This file has nothing in it to convert.');
+          : __t('This file has nothing in it to convert.'));
         return;
       }
 

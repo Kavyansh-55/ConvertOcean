@@ -150,6 +150,29 @@ export const dataRecipes = [
     ].concat(csvIntegrity(t));
   }),
   toXlsx('csv-to-xlsx', 'torture.csv', 'CSV → XLSX', (all) => csvIntegrity(all)),
+  /* A Brazilian export used to arrive as a sheet of text: "1.234,56" and
+     "15/03/2026" were not recognised, so SUM() returned zero. */
+  {
+    ...toXlsx('csv-to-xlsx', 'torture-br.csv', 'CSV (Brazil, ;) → XLSX on /pt/', () => []),
+    path: '/pt/csv-para-xlsx/',
+    outName: 'csv-to-xlsx-br.xlsx',
+    async checks({ out }) {
+      const cells = (out.sheets[0] || { cells: [] }).cells;
+      const at = (ref) => cells.find((c) => c.ref === ref) || {};
+      const num = (ref, v) => at(ref).type === 'n' && Math.abs(+at(ref).value - v) < 1e-9;
+      return [
+        ok('opens', 'Output is a valid workbook', cells.length > 0, `${cells.length} cells`, 'blocker'),
+        ok('comma', '"1.234,56" and "-89,90" become the numbers 1234.56 and -89.9',
+           num('C2', 1234.56) && num('C3', -89.9), `C2=${at('C2').type}:${at('C2').value} C3=${at('C3').type}:${at('C3').value}`, 'major'),
+        ok('date', '"15/03/2026" becomes a real date on the Portuguese page',
+           at('A2').type === 'n' && +at('A2').value === 46096, `A2=${at('A2').type}:${at('A2').value}`, 'major'),
+        ok('code', 'A leading-zero code stays text', at('F2').value === '0044' && at('F2').type !== 'n',
+           `F2=${at('F2').type}:${at('F2').value}`, 'major'),
+        ok('cnpj', 'An unformatted CNPJ keeps every digit', num('E2', 12345678000190), `E2=${at('E2').value}`, 'major'),
+        ok('accents', 'Accented header and text intact', cells.some((c) => c.value === 'Descrição') && cells.some((c) => c.value === 'Açúcar cristal'), '', 'major'),
+      ];
+    },
+  },
 
   /* ------------------------------------------------------------ JSON in */
   toText('json-to-csv', 'torture.json', 'JSON → CSV', (out) => {
@@ -175,6 +198,28 @@ export const dataRecipes = [
   }),
   toText('xml-to-csv', 'torture.xml', 'XML → CSV', (out) => xmlIntegrity(out)),
   toXlsx('xml-to-xlsx', 'torture.xml', 'XML → XLSX', (all) => xmlIntegrity(all)),
+  /* The page promised typed cells and wrote every value as text: an NF-e's
+     <vProd> could not be summed. */
+  {
+    ...toXlsx('xml-to-xlsx', 'torture-nfe.xml', 'XML (NF-e) → XLSX, typed cells', () => []),
+    outName: 'xml-to-xlsx-nfe.xlsx',
+    async checks({ out }) {
+      const cells = (out.sheets[0] || { cells: [] }).cells;
+      const header = cells.filter((c) => /1$/.test(c.ref) && !/\d\d/.test(c.ref));
+      const col = (name) => (header.find((c) => c.value === name) || {}).ref?.replace(/\d+$/, '');
+      const at = (name, row) => cells.find((c) => c.ref === col(name) + row) || {};
+      return [
+        ok('rows', 'Both <det> items become rows', !!col('prod.vProd') && at('prod.vProd', 3).value != null,
+           header.map((c) => c.value).join(', '), 'blocker'),
+        ok('number', '<vProd>1234.56</vProd> is a number cell',
+           at('prod.vProd', 2).type === 'n' && +at('prod.vProd', 2).value === 1234.56,
+           `${at('prod.vProd', 2).type}:${at('prod.vProd', 2).value}`, 'major'),
+        ok('code', 'A leading-zero product code stays text',
+           at('prod.cProd', 2).value === '0012' && at('prod.cProd', 2).type !== 'n', `${at('prod.cProd', 2).type}:${at('prod.cProd', 2).value}`, 'major'),
+        ok('text', 'Accented descriptions intact', at('prod.xProd', 3).value === 'Açúcar cristal', String(at('prod.xProd', 3).value), 'major'),
+      ];
+    },
+  },
 
   /* ------------------------------------------------------------ XLSX in */
   toText('xlsx-to-csv', 'torture.xlsx', 'XLSX → CSV', (out) => {

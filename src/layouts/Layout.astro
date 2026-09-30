@@ -12,6 +12,8 @@ const SITE = 'https://convertocean.com';
 const {
   title, description, lang = 'en', toolName, category, categorySlug,
   isTool = false, faqList = [], article = null,
+  /** Tool component name; picks which runtime strings this page ships. */
+  runtimeScope = undefined,
   /**
    * Colour of the band the floating nav pill sits on: 'lime' | 'cobalt' |
    * 'maroon' | 'paper' | 'bone'. DESIGN.md is explicit that the pill must
@@ -38,7 +40,7 @@ const {
 /* Handed to the tool components' inline scripts, which set some labels at
    runtime and cannot call t(). Null on English, so that build ships nothing.
    Declared after the props destructure — `lang` does not exist before it. */
-const uiDict = dictionaryFor(lang);
+const uiDict = dictionaryFor(lang, runtimeScope);
 
 const canonicalPath = normalizePath(Astro.url.pathname);
 const canonicalURL = `${SITE}${canonicalPath}`;
@@ -461,6 +463,13 @@ const relLink = (target: string) => {
   /* Identity when no dictionary is present, so English behaves exactly as
      before and a missing key degrades to the English string. */
   window.__t = function (s) { return (uiDict && uiDict[s]) || s; };
+  /* A message with values in it: the English template is the key, and {0},
+     {1}… are filled after lookup. Same rules as src/scripts/i18n-runtime.js. */
+  window.__tf = function (s) {
+    var out = window.__t(s);
+    for (var i = 1; i < arguments.length; i++) out = out.split('{' + (i - 1) + '}').join(String(arguments[i]));
+    return out;
+  };
 </script>
   <a href="#main-content" class="skip-link">{t('Skip to main content', lang)}</a>
 

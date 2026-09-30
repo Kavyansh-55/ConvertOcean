@@ -25,7 +25,7 @@ const description =
   'Converta PDF, Word, Excel, PowerPoint, imagens e dados direto no navegador. Os arquivos não saem do seu computador.';
 const headline = 'Conversor de Arquivos';
 const subtitle =
-  'Converta planilhas e dados entre formatos direto no navegador — e escolha abaixo um dos conversores dedicados para PDF, Word e imagens. Sem cadastro e sem limite.';
+  'Converta planilhas e dados entre formatos direto no navegador — e escolha abaixo um dos conversores dedicados para PDF, Word e imagens. Sem cadastro e sem limite de uso.';
 
 const tools = getTools(lang);
 
@@ -82,7 +82,7 @@ const faqList = [
 ];
 ---
 
-<Layout band="lime" title={title} description={description} lang={lang} category="Conversor de Arquivos" categorySlug="file-converter" faqList={faqList}>
+<Layout band="lime" title={title} description={description} lang={lang} category="Conversor de Arquivos" categorySlug="file-converter" runtimeScope="UniversalFileConverter" faqList={faqList}>
   <style>
     .pillar-intro {
       max-width: 800px;

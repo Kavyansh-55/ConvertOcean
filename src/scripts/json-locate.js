@@ -20,6 +20,8 @@
  * so the native engine stays the source of truth and this can only add detail.
  */
 
+import { tr } from './i18n-runtime.js';
+
 const WS = ' \t\n\r';
 
 /** Thrown internally; carries the offset the scan stopped at. */
@@ -48,7 +50,7 @@ export function locateJsonError(src) {
   };
 
   const atEnd = (expected) =>
-    fail('The document ends early — ' + expected + ' was expected', n);
+    fail(tr('The document ends early — {0} was expected', tr(expected)), n);
 
   function scanString() {
     // assumes src[i] === '"'
@@ -64,22 +66,22 @@ export function locateJsonError(src) {
         if (esc === 'u') {
           const hex = src.substr(i + 2, 4);
           if (!/^[0-9a-fA-F]{4}$/.test(hex)) {
-            fail('A \\u escape needs exactly four hex digits', i);
+            fail(tr('A \\u escape needs exactly four hex digits'), i);
           }
           i += 6;
           continue;
         }
-        fail('\\' + esc + ' is not a valid JSON escape — valid ones are \\" \\\\ \\/ \\b \\f \\n \\r \\t and \\uXXXX', i);
+        fail(tr('{0} is not a valid JSON escape — valid ones are {1}', '\\' + esc, '\\" \\\\ \\/ \\b \\f \\n \\r \\t \\uXXXX'), i);
       }
       if (c === '\n' || c === '\r') {
-        fail('This string is never closed — a JSON string cannot span lines, use \\n inside it instead', open);
+        fail(tr('This string is never closed — a JSON string cannot span lines, use \\n inside it instead'), open);
       }
       if (c < ' ') {
-        fail('Raw control characters must be escaped inside a JSON string', i);
+        fail(tr('Raw control characters must be escaped inside a JSON string'), i);
       }
       i++;
     }
-    fail('This string is never closed — the document ends first', open);
+    fail(tr('This string is never closed — the document ends first'), open);
   }
 
   function scanNumber() {
@@ -88,27 +90,27 @@ export function locateJsonError(src) {
     if (src[i] === '0') {
       i++;
       if (src[i] >= '0' && src[i] <= '9') {
-        fail('Numbers cannot have a leading zero — write ' + src.slice(start).match(/^-?0+(\d*)/)[1] + ' or quote it as a string to keep it', start);
+        fail(tr('Numbers cannot have a leading zero — write {0} or quote it as a string to keep it', src.slice(start).match(/^-?0+(\d*)/)[1]), start);
       }
     } else if (src[i] >= '1' && src[i] <= '9') {
       while (src[i] >= '0' && src[i] <= '9') i++;
     } else {
-      fail('Expected a digit here', i);
+      fail(tr('Expected a digit here'), i);
     }
     if (src[i] === '.') {
       i++;
-      if (!(src[i] >= '0' && src[i] <= '9')) fail('A decimal point must be followed by at least one digit', i);
+      if (!(src[i] >= '0' && src[i] <= '9')) fail(tr('A decimal point must be followed by at least one digit'), i);
       while (src[i] >= '0' && src[i] <= '9') i++;
     }
     if (src[i] === 'e' || src[i] === 'E') {
       i++;
       if (src[i] === '+' || src[i] === '-') i++;
-      if (!(src[i] >= '0' && src[i] <= '9')) fail('The exponent needs at least one digit', i);
+      if (!(src[i] >= '0' && src[i] <= '9')) fail(tr('The exponent needs at least one digit'), i);
       while (src[i] >= '0' && src[i] <= '9') i++;
     }
     // 0x1F, 1_000, 1.2.3 all land here
     if (i < n && /[0-9a-zA-Z_.]/.test(src[i])) {
-      fail('"' + src.slice(start, i + 1) + '" is not a valid JSON number', i);
+      fail(tr('"{0}" is not a valid JSON number', src.slice(start, i + 1)), i);
     }
   }
 
@@ -126,25 +128,25 @@ export function locateJsonError(src) {
     const c = src[i];
     const rest = src.slice(i);
 
-    if (c === "'") return fail("JSON strings must use double quotes, not single quotes");
+    if (c === "'") return fail(tr("JSON strings must use double quotes, not single quotes"));
     if (c === '‘' || c === '’' || c === '“' || c === '”') {
-      return fail('These are curly “smart quotes” (often pasted from a word processor) — JSON needs straight double quotes');
+      return fail(tr('These are curly “smart quotes” (often pasted from a word processor) — JSON needs straight double quotes'));
     }
-    if (c === '<') return fail('This is not JSON — it starts with a tag, which usually means an HTML error page was returned instead of a JSON response');
-    if (c === '/' && (src[i + 1] === '/' || src[i + 1] === '*')) return fail('JSON does not allow comments');
-    if (/^NaN/.test(rest)) return fail('NaN is not a valid JSON value — use null, or quote it as a string');
-    if (/^-?Infinity/.test(rest)) return fail('Infinity is not a valid JSON value — use null, or quote it as a string');
-    if (/^undefined/.test(rest)) return fail('undefined is not a valid JSON value — use null, or omit the key');
-    if (/^(True|False)\b/.test(rest)) return fail('JSON booleans are lowercase — write ' + rest.slice(0, 5).toLowerCase().replace(/[^a-z]/g, ''));
-    if (/^None\b/.test(rest)) return fail("Python's None is not valid JSON — use null");
-    if (/^(TRUE|FALSE|NULL)\b/.test(rest)) return fail('JSON keywords are lowercase — write ' + rest.match(/^(TRUE|FALSE|NULL)/)[1].toLowerCase());
-    if (/^[+]/.test(rest)) return fail('JSON numbers cannot start with a plus sign');
-    if (/^\./.test(rest)) return fail('A JSON number needs a digit before the decimal point — write 0.5, not .5');
+    if (c === '<') return fail(tr('This is not JSON — it starts with a tag, which usually means an HTML error page was returned instead of a JSON response'));
+    if (c === '/' && (src[i + 1] === '/' || src[i + 1] === '*')) return fail(tr('JSON does not allow comments'));
+    if (/^NaN/.test(rest)) return fail(tr('NaN is not a valid JSON value — use null, or quote it as a string'));
+    if (/^-?Infinity/.test(rest)) return fail(tr('Infinity is not a valid JSON value — use null, or quote it as a string'));
+    if (/^undefined/.test(rest)) return fail(tr('undefined is not a valid JSON value — use null, or omit the key'));
+    if (/^(True|False)\b/.test(rest)) return fail(tr('JSON booleans are lowercase — write {0}', rest.slice(0, 5).toLowerCase().replace(/[^a-z]/g, '')));
+    if (/^None\b/.test(rest)) return fail(tr("Python's None is not valid JSON — use null"));
+    if (/^(TRUE|FALSE|NULL)\b/.test(rest)) return fail(tr('JSON keywords are lowercase — write {0}', rest.match(/^(TRUE|FALSE|NULL)/)[1].toLowerCase()));
+    if (/^[+]/.test(rest)) return fail(tr('JSON numbers cannot start with a plus sign'));
+    if (/^\./.test(rest)) return fail(tr('A JSON number needs a digit before the decimal point — write 0.5, not .5'));
     if (/^[A-Za-z_$]/.test(rest)) {
       const word = rest.match(/^[A-Za-z_$][A-Za-z0-9_$]*/)[0];
-      return fail('"' + word + '" is not a valid JSON value — text must be wrapped in double quotes');
+      return fail(tr('"{0}" is not a valid JSON value — text must be wrapped in double quotes', word));
     }
-    return fail('Unexpected character "' + c + '" where a value was expected');
+    return fail(tr('Unexpected character "{0}" where a value was expected', c));
   }
 
   function scanValue() {
@@ -165,37 +167,37 @@ export function locateJsonError(src) {
     const open = i;
     i++; // {
     skipWs();
-    if (i >= n) fail('This object is never closed — the document ends first', open);
+    if (i >= n) fail(tr('This object is never closed — the document ends first'), open);
     if (src[i] === '}') { i++; return; }
     for (;;) {
       skipWs();
-      if (i >= n) fail('This object is never closed — the document ends first', open);
+      if (i >= n) fail(tr('This object is never closed — the document ends first'), open);
       if (src[i] === '}') {
-        fail('Trailing comma — JSON does not allow a comma after the last property', i - 1 >= 0 ? src.lastIndexOf(',', i) : i);
+        fail(tr('Trailing comma — JSON does not allow a comma after the last property'), i - 1 >= 0 ? src.lastIndexOf(',', i) : i);
       }
       if (src[i] !== '"') {
         if (/[A-Za-z_$]/.test(src[i])) {
           const word = src.slice(i).match(/^[A-Za-z_$][A-Za-z0-9_$]*/)[0];
-          fail('Property names must be in double quotes — write "' + word + '"');
+          fail(tr('Property names must be in double quotes — write "{0}"', word));
         }
-        if (src[i] === "'") fail('Property names must use double quotes, not single quotes');
+        if (src[i] === "'") fail(tr('Property names must use double quotes, not single quotes'));
         badValue();
       }
       scanString();
       skipWs();
-      if (i >= n) fail('This object is never closed — the document ends first', open);
+      if (i >= n) fail(tr('This object is never closed — the document ends first'), open);
       if (src[i] !== ':') {
-        if (commentHere()) fail('JSON does not allow comments');
-        fail('Expected a colon after the property name');
+        if (commentHere()) fail(tr('JSON does not allow comments'));
+        fail(tr('Expected a colon after the property name'));
       }
       i++;
       scanValue();
       skipWs();
-      if (i >= n) fail('This object is never closed — the document ends first', open);
+      if (i >= n) fail(tr('This object is never closed — the document ends first'), open);
       if (src[i] === ',') { i++; continue; }
       if (src[i] === '}') { i++; return; }
-      if (commentHere()) fail('JSON does not allow comments');
-      fail('Expected a comma before the next property, or a closing brace');
+      if (commentHere()) fail(tr('JSON does not allow comments'));
+      fail(tr('Expected a comma before the next property, or a closing brace'));
     }
   }
 
@@ -203,36 +205,36 @@ export function locateJsonError(src) {
     const open = i;
     i++; // [
     skipWs();
-    if (i >= n) fail('This array is never closed — the document ends first', open);
+    if (i >= n) fail(tr('This array is never closed — the document ends first'), open);
     if (src[i] === ']') { i++; return; }
     for (;;) {
       skipWs();
       if (i < n && src[i] === ']') {
-        fail('Trailing comma — JSON does not allow a comma after the last item', src.lastIndexOf(',', i));
+        fail(tr('Trailing comma — JSON does not allow a comma after the last item'), src.lastIndexOf(',', i));
       }
       scanValue();
       skipWs();
-      if (i >= n) fail('This array is never closed — the document ends first', open);
+      if (i >= n) fail(tr('This array is never closed — the document ends first'), open);
       if (src[i] === ',') { i++; continue; }
       if (src[i] === ']') { i++; return; }
-      if (commentHere()) fail('JSON does not allow comments');
-      fail('Expected a comma before the next item, or a closing bracket');
+      if (commentHere()) fail(tr('JSON does not allow comments'));
+      fail(tr('Expected a comma before the next item, or a closing bracket'));
     }
   }
 
   try {
     if (src.charCodeAt(0) === 0xfeff) {
-      return describe(src, 0, 'The file starts with an invisible byte-order mark (BOM). Strip it, or save the file as UTF-8 without BOM');
+      return describe(src, 0, tr('The file starts with an invisible byte-order mark (BOM). Strip it, or save the file as UTF-8 without BOM'));
     }
     skipWs();
-    if (i >= n) return describe(src, 0, 'The document is empty');
+    if (i >= n) return describe(src, 0, tr('The document is empty'));
     scanValue();
     skipWs();
     if (i < n) {
       if (src[i] === '/' && (src[i + 1] === '/' || src[i + 1] === '*')) {
-        return describe(src, i, 'JSON does not allow comments');
+        return describe(src, i, tr('JSON does not allow comments'));
       }
-      return describe(src, i, 'Extra content after the end of the JSON value — a document must contain exactly one top-level value');
+      return describe(src, i, tr('Extra content after the end of the JSON value — a document must contain exactly one top-level value'));
     }
     return null; // scan found nothing; stay quiet rather than guess
   } catch (e) {

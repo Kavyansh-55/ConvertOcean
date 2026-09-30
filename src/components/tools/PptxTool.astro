@@ -157,25 +157,25 @@ let targetFormat = "PDF";
     const ext = file.name.split('.').pop().toLowerCase();
 
     if (ext === 'ppt') {
-      showErr('Legacy .ppt format is not supported. Please open in PowerPoint or LibreOffice and save as .pptx.');
+      showErr(__t('Legacy .ppt format is not supported. Please open in PowerPoint or LibreOffice and save as .pptx.'));
       return;
     }
     if (ext !== 'pptx') {
-      showErr('Please choose a .pptx PowerPoint file.');
+      showErr(__t('Please choose a .pptx PowerPoint file.'));
       return;
     }
 
-    showProg(3, 'Opening archive…');
+    showProg(3, __t('Opening archive…'));
     try {
       const buf = await file.arrayBuffer();
       const zip = await JSZip.loadAsync(buf);
 
       /* ── 1. Theme colors ── */
-      showProg(8, 'Reading theme colors…');
+      showProg(8, __t('Reading theme colors…'));
       const theme = await parseTheme(zip);
 
       /* ── 2. Slide master (background, sp defaults) ── */
-      showProg(12, 'Reading slide master…');
+      showProg(12, __t('Reading slide master…'));
       const master = await parseMaster(zip, theme);
 
       /* ── 3. Slide dimensions ── */
@@ -192,7 +192,7 @@ let targetFormat = "PDF";
       });
       slides.sort((a, b) => a.idx - b.idx);
 
-      if (!slides.length) { showErr('No slides found in this file.'); hideProg(); return; }
+      if (!slides.length) { showErr(__t('No slides found in this file.')); hideProg(); return; }
 
       slideCanvases = [];
       slideSources = [];
@@ -201,7 +201,7 @@ let targetFormat = "PDF";
 
       /* ── 5. Render each slide ── */
       for (let si = 0; si < slides.length; si++) {
-        showProg(15 + Math.round((si / slides.length) * 80), `Rendering slide ${si + 1} of ${slides.length}…`);
+        showProg(15 + Math.round((si / slides.length) * 80), __tf('Rendering slide {0} of {1}…', si + 1, slides.length));
         const entry    = slides[si];
         const fileName = entry.fobj.name.split('/').pop();
 
@@ -265,7 +265,7 @@ let targetFormat = "PDF";
       hideProg();
 
     } catch (err) {
-      showErr('Failed to process file: ' + (err && err.message ? err.message : String(err)));
+      showErr(__tf('Failed to process file: {0}', (err && err.message ? err.message : String(err))));
       hideProg();
     }
   }
@@ -1307,11 +1307,11 @@ let targetFormat = "PDF";
   btnDownload.addEventListener('click', async () => {
     if (!slideCanvases.length) return;
     if (!window.jspdf || !window.jspdf.jsPDF) {
-      showErr('PDF library not loaded. Please reload the page.');
+      showErr(__t('PDF library not loaded. Please reload the page.'));
       return;
     }
     try {
-      showProg(10, 'Building PDF…');
+      showProg(10, __t('Building PDF…'));
       const { jsPDF } = window.jspdf;
 
       const first   = slideCanvases[0];
@@ -1333,7 +1333,7 @@ let targetFormat = "PDF";
 
       let doc = null;
       for (let i = 0; i < slideCanvases.length; i++) {
-        showProg(10 + Math.round((i / slideCanvases.length) * 85), `Rendering slide ${i + 1} of ${slideCanvases.length}…`);
+        showProg(10 + Math.round((i / slideCanvases.length) * 85), __tf('Rendering slide {0} of {1}…', i + 1, slideCanvases.length));
 
         let canvas = slideCanvases[i];
         let temporary = false;
@@ -1398,10 +1398,10 @@ let targetFormat = "PDF";
       /* Shared helper rather than jsPDF save() — see ImageToPdf. */
       window.downloadBlob(doc.output('blob'),
         originalName.replace(/\.[^/.]+$/, '') + '.pdf', 'application/pdf');
-      showProg(100, 'Done!');
+      showProg(100, __t('Done!'));
       setTimeout(hideProg, 900);
     } catch (err) {
-      showErr('PDF export failed: ' + (err && err.message ? err.message : String(err)));
+      showErr(__tf('PDF export failed: {0}', (err && err.message ? err.message : String(err))));
       hideProg();
     }
   });

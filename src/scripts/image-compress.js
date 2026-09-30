@@ -24,6 +24,8 @@
  * arrive here as points, and everything after that is the same.
  */
 
+import { tr } from './i18n-runtime.js';
+
 /** 72 points to the inch — the unit both PDF and OOXML reduce to. */
 export const POINTS_PER_INCH = 72;
 
@@ -147,7 +149,7 @@ export function planResample(img, settings) {
   if (effDpi === null) {
     /* Not placed anywhere we could measure — an unused resource, or a part we
        could not parse. Leaving it alone is the safe failure. */
-    return { skip: true, base, reason: 'not displayed anywhere we could measure' };
+    return { skip: true, base, reason: tr('not displayed anywhere we could measure') };
   }
 
   const targetDpi = Math.max(DPI_FLOOR, settings.dpi);
@@ -158,7 +160,7 @@ export function planResample(img, settings) {
      left completely alone, and a lossy one gets a single quality-only attempt
      that has to clear a higher bar. */
   if (qualityOnly && !lossy) {
-    return { skip: true, base, reason: 'already at the target resolution, and lossless' };
+    return { skip: true, base, reason: tr('already at the target resolution, and lossless') };
   }
 
   let outW = Math.max(MIN_EDGE_PX, Math.round(width * scale));
@@ -193,10 +195,10 @@ export function judgeCandidate(plan, candidateBytes) {
     return {
       accept: false,
       reason: candidateBytes >= original
-        ? 'already smaller than any re-encoding of it'
+        ? tr('already smaller than any re-encoding of it')
         : (plan.looksGraphic
-          ? 'a lossless graphic that compresses better than any JPEG of it'
-          : 'the saving was too small to be worth re-encoding'),
+          ? tr('a lossless graphic that compresses better than any JPEG of it')
+          : tr('the saving was too small to be worth re-encoding')),
     };
   }
   return { accept: true };

@@ -366,11 +366,11 @@ const sample = isPt ? {
       <div class="form-card-title">{t('Receipt Settings', lang)}</div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label" for="rcptNo">Receipt Number</label>
+          <label class="form-label" for="rcptNo">{t('Receipt Number', lang)}</label>
           <input type="text" id="rcptNo" class="form-input" value="REC-2026-001" />
         </div>
         <div class="form-group">
-          <label class="form-label" for="rcptDate">Receipt Date</label>
+          <label class="form-label" for="rcptDate">{t('Receipt Date', lang)}</label>
           <input type="date" id="rcptDate" class="form-input" />
         </div>
       </div>
@@ -378,21 +378,21 @@ const sample = isPt ? {
         <div class="form-group">
           <label class="form-label" for="rcptCurrency">{t('Currency', lang)}</label>
           <select id="rcptCurrency" class="select-input">
-            <option value="$" selected={!isPt}>$ &ndash; US Dollar (USD)</option>
-            <option value="R$" selected={isPt}>R$ &ndash; Real Brasileiro (BRL)</option>
-            <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
-            <option value="&pound;">&pound; &ndash; British Pound (GBP)</option>
-            <option value="&#8377;">&#8377; &ndash; Indian Rupee (INR)</option>
-            <option value="&yen;">&yen; &ndash; Japanese Yen (JPY)</option>
-            <option value="&yen;">&yen; &ndash; Chinese Yuan (CNY)</option>
-            <option value="C$">C$ &ndash; Canadian Dollar (CAD)</option>
-            <option value="A$">A$ &ndash; Australian Dollar (AUD)</option>
-            <option value="CHF">CHF &ndash; Swiss Franc</option>
-            <option value="AED">AED &ndash; UAE Dirham</option>
-            <option value="SGD">SGD &ndash; Singapore Dollar</option>
-            <option value="R">R &ndash; South African Rand</option>
-            <option value="zł">zł &ndash; Polish Złoty (PLN)</option>
-            <option value="₩">₩ &ndash; South Korean Won (KRW)</option>
+            <option value="$" selected={!isPt}>{t('$ – US Dollar (USD)', lang)}</option>
+            <option value="R$" selected={isPt}>{t('R$ – Real Brasileiro (BRL)', lang)}</option>
+            <option value="&euro;">{t('€ – Euro (EUR)', lang)}</option>
+            <option value="&pound;">{t('£ – British Pound (GBP)', lang)}</option>
+            <option value="&#8377;">{t('₹ – Indian Rupee (INR)', lang)}</option>
+            <option value="&yen;">{t('¥ – Japanese Yen (JPY)', lang)}</option>
+            <option value="&yen;">{t('¥ – Chinese Yuan (CNY)', lang)}</option>
+            <option value="C$">{t('C$ – Canadian Dollar (CAD)', lang)}</option>
+            <option value="A$">{t('A$ – Australian Dollar (AUD)', lang)}</option>
+            <option value="CHF">{t('CHF – Swiss Franc', lang)}</option>
+            <option value="AED">{t('AED – UAE Dirham', lang)}</option>
+            <option value="SGD">{t('SGD – Singapore Dollar', lang)}</option>
+            <option value="R">{t('R – South African Rand', lang)}</option>
+            <option value="zł">{t('zł – Polish Złoty (PLN)', lang)}</option>
+            <option value="₩">{t('₩ – South Korean Won (KRW)', lang)}</option>
           </select>
         </div>
         <div class="form-group">
@@ -484,7 +484,7 @@ const sample = isPt ? {
     <div class="form-card">
       <div class="form-card-title">{t('Notes', lang)}</div>
       <div class="form-group">
-        <label class="form-label" for="rcptNotes">Receipt Notes</label>
+        <label class="form-label" for="rcptNotes">{t('Receipt Notes', lang)}</label>
         <textarea id="rcptNotes" class="textarea-input">{sample.Notes}</textarea>
         <script type="application/json" id="rcptSample" set:html={JSON.stringify(sample)}></script>
       </div>
@@ -501,7 +501,7 @@ const sample = isPt ? {
       <div class="receipt-pdf-container" id="receiptPdfContainer">
         <div class="receipt-pdf-header">
           <div>
-            <div class="pdf-brand-title" id="rcptPdfVendorTitle">Kavya J. Studio</div>
+            <div class="pdf-brand-title" id="rcptPdfVendorTitle">{sample.VendorName}</div>
             <div class="pdf-meta-text" id="rcptPdfVendorSub">{t('Payment Receipt', lang)}</div>
           </div>
           <div>
@@ -509,7 +509,7 @@ const sample = isPt ? {
             <div class="pdf-meta-text" style="text-align: right;">
               {t('No:', lang)} <strong id="rcptPdfNo">REC-2026-001</strong><br />
               {t('Date:', lang)} <span id="rcptPdfDate">--/--/----</span><br />
-              Method: <span id="rcptPdfMethod" class="payment-badge">{t('Credit Card', lang)}</span>
+              {t('Method:', lang)} <span id="rcptPdfMethod" class="payment-badge">{t('Credit Card', lang)}</span>
             </div>
           </div>
         </div>
@@ -587,18 +587,18 @@ const sample = isPt ? {
       PayMethod: "Credit Card",
       TaxModel: "GST",
       TaxRate: 0.18,
-      VendorName: "Kavya J. Studio",
-      VendorAddress: "12 Developer Lane, Indiranagar\nBengaluru, KA 560038\nhello@kavyaj.studio",
+      /* Every text field below is overwritten by the locale's sample on the
+         next line; these are only the shape. They used to hold an Indian
+         sample that no page shows any more. */
+      VendorName: "",
+      VendorAddress: "",
       VendorTaxId: "",
-      ClientName: "Galactic Group Ltd.",
-      ClientAddress: "45 Cloud Towers, Tech City\nMumbai, MH 400001\nbilling@galactic.com",
+      ClientName: "",
+      ClientAddress: "",
       ClientTaxId: "",
-      Notes: "Thank you for your payment.\nThis receipt confirms payment has been received in full.",
-      CustomTaxLabel: "Tax",
-      LineItems: [
-        { desc: "Website Development Services", qty: 1, rate: 3500.00 },
-        { desc: "SEO Optimization Package", qty: 2, rate: 750.00 }
-      ]
+      Notes: "",
+      CustomTaxLabel: "",
+      LineItems: []
     };
     /* The locale's sample, rendered by the component (see #rcptSample). */
     Object.assign(rcptData, JSON.parse(document.getElementById('rcptSample').textContent));

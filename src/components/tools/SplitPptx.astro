@@ -66,7 +66,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
   <div class="progress-bar-container">
     <div id="progressBarFill" class="progress-bar-fill"></div>
   </div>
-  <div id="progressLabel" class="progress-label">Processing presentation…</div>
+  <div id="progressLabel" class="progress-label">{t('Processing presentation…', lang)}</div>
 </div>
 
 <!-- Upload Card -->
@@ -92,9 +92,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     </div>
 
     <div id="customRangesGroup" style="display: none; flex-direction: column; gap: 4px;">
-      <span class="input-label">Slide Ranges:</span>
-      <input type="text" id="slideRanges" class="text-input" placeholder="e.g. 1-2, 3-5, 6" style="max-width: 350px;" />
-      <span style="font-size: 11.5px; color: var(--colors-body);">Use comma-separated indices or ranges (e.g. "1-2, 4, 5-7").</span>
+      <span class="input-label">{t('Slide Ranges:', lang)}</span>
+      <input type="text" id="slideRanges" class="text-input" placeholder={t('e.g. 1-2, 3-5, 6', lang)} style="max-width: 350px;" />
+      <span style="font-size: 11.5px; color: var(--colors-body);">{t('Use comma-separated indices or ranges (e.g. "1-2, 4, 5-7").', lang)}</span>
     </div>
   </div>
 
@@ -198,11 +198,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const extension = file.name.split('.').pop().toLowerCase();
 
       if (extension !== 'pptx') {
-        showError("Invalid file format. Please choose a .pptx PowerPoint presentation.");
+        showError(__t("Invalid file format. Please choose a .pptx PowerPoint presentation."));
         return;
       }
 
-      showProgress(25, "Reading PowerPoint archive structure…");
+      showProgress(25, __t("Reading PowerPoint archive structure…"));
       const reader = new FileReader();
 
       reader.onload = async function(e) {
@@ -242,8 +242,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           }
 
           docDetails.innerHTML = `
-            <strong>Presentation Details:</strong><br/>
-            Total Slides: ${slides.length}
+            ${__tf('<strong>Presentation Details:</strong><br/>Total Slides: {0}', slides.length)}
           `;
 
           fileNameDisplay.textContent = file.name;
@@ -251,7 +250,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           dropZone.style.display = 'none';
           hideProgress();
         } catch(err) {
-          showError("Failed to parse PowerPoint presentation structure. " + err.message);
+          showError(__tf('Failed to parse PowerPoint presentation structure. {0}', err.message));
           hideProgress();
         }
       };
@@ -259,9 +258,14 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       reader.readAsArrayBuffer(file);
     }
 
+    /* Each comma-separated part becomes its own presentation. A part that
+       names a slide the deck does not have is collected in `invalid` and
+       reported: it used to be dropped without a word, so "1-5, 15-25" on a
+       20-slide deck quietly produced only the first file. */
     function parseRanges(rangeStr, maxSlides) {
       const parts = rangeStr.split(',');
       const segments = [];
+      const invalid = [];
       for (let part of parts) {
         part = part.trim();
         if (!part) continue;
@@ -269,7 +273,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         if (dashMatch) {
           const start = parseInt(dashMatch[1]);
           const end = parseInt(dashMatch[2]);
-          if (start > 0 && start <= maxSlides && end > 0 && end <= maxSlides) {
+          if (!(start > 0 && start <= maxSlides && end > 0 && end <= maxSlides)) {
+            invalid.push(part);
+          } else {
             const keep = [];
             const s = Math.min(start, end);
             const e = Math.max(start, end);
@@ -284,21 +290,23 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             }
           }
         } else {
-          const num = parseInt(part);
+          const num = /^\d+$/.test(part) ? parseInt(part) : NaN;
           if (!isNaN(num) && num > 0 && num <= maxSlides) {
             segments.push({
               name: `${num}`,
               indices: [num]
             });
+          } else {
+            invalid.push(part);
           }
         }
       }
-      return segments;
+      return { segments, invalid };
     }
 
     btnSplit.addEventListener('click', async () => {
       if (!slides || slides.length === 0) return;
-      showProgress(15, "Splitting presentation…");
+      showProgress(15, __t("Splitting presentation…"));
       hideError();
 
       try {
@@ -315,26 +323,28 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         } else if (mode === 'ranges') {
           const val = slideRanges.value.trim();
           if (!val) {
-            showError("Please specify slide ranges.");
+            showError(__t("Please specify slide ranges."));
             hideProgress();
             return;
           }
-          segments = parseRanges(val, slides.length);
-          if (segments.length === 0) {
-            showError("Invalid slide ranges specified. Make sure indices are between 1 and " + slides.length);
+          const parsed = parseRanges(val, slides.length);
+          if (parsed.invalid.length || parsed.segments.length === 0) {
+            showError(__tf('This presentation has slides 1 to {0}, so this part cannot be used: {1}. Use numbers and ranges such as 1-5, 8, 11-13.',
+              slides.length, parsed.invalid.join(', ') || val));
             hideProgress();
             return;
           }
+          segments = parsed.segments;
         }
 
         if (segments.length === 0) {
-          showError("No segments found to split.");
+          showError(__t("No segments found to split."));
           hideProgress();
           return;
         }
 
         if (segments.length === 1 && mode === 'every' && slides.length === 1) {
-          showError("This presentation only contains 1 slide and cannot be split.");
+          showError(__t("This presentation only contains 1 slide and cannot be split."));
           hideProgress();
           return;
         }
@@ -346,7 +356,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         const baseName = originalName.replace(/\.[^/.]+$/, "");
 
         for (let idx = 0; idx < segments.length; idx++) {
-          showProgress(15 + Math.round((idx / segments.length) * 75), `Compiling segment ${idx + 1} of ${segments.length}…`);
+          showProgress(15 + Math.round((idx / segments.length) * 75), __tf('Compiling segment {0} of {1}…', idx + 1, segments.length));
           const segment = segments[idx];
           
           const keepIndices = segment.indices;
@@ -453,18 +463,18 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         // If there's only 1 output segment, download it directly without zipping!
         const filesInZip = Object.keys(zipOutput.files);
         if (filesInZip.length === 1) {
-          showProgress(90, "Preparing presentation download…");
+          showProgress(90, __t("Preparing presentation download…"));
           const singleFileName = filesInZip[0];
           const singleBlob = await zipOutput.file(singleFileName).async("blob");
           window.downloadBlob(singleBlob, singleFileName, "application/vnd.openxmlformats-officedocument.presentationml.presentation");
         } else {
-          showProgress(90, "Creating final split ZIP archive…");
+          showProgress(90, __t("Creating final split ZIP archive…"));
           const zipBlob = await zipOutput.generateAsync({ type: "blob" });
           const downloadName = baseName + "_split.zip";
           window.downloadBlob(zipBlob, downloadName, "application/zip");
         }
       } catch(err) {
-        showError("Failed to partition presentation slides. " + err.message);
+        showError(__tf('Failed to partition presentation slides. {0}', err.message));
       }
       hideProgress();
     });

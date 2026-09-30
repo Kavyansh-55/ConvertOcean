@@ -228,7 +228,7 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
       <div class="cof-target-row">
         <input type="number" id="cofTargetMB" class="form-input cof-target-input"
                min="0.1" step="0.1" value="10" aria-describedby="cofTargetNote" />
-        <select id="cofTargetUnit" class="form-input cof-target-unit" aria-label="Units">
+        <select id="cofTargetUnit" class="form-input cof-target-unit" aria-label={t('Units', lang)}>
           <option value="MB" selected>MB</option>
           <option value="KB">KB</option>
         </select>
@@ -309,8 +309,8 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
         b.className = 'cof-preset';
         b.setAttribute('aria-pressed', String(key === preset));
         b.innerHTML = '<span class="cof-preset-name"></span><span class="cof-preset-note"></span>';
-        b.querySelector('.cof-preset-name').textContent = p.label;
-        b.querySelector('.cof-preset-note').textContent = p.note;
+        b.querySelector('.cof-preset-name').textContent = __t(p.label);
+        b.querySelector('.cof-preset-note').textContent = __t(p.note);
         b.addEventListener('click', function () {
           if (busy) return;
           preset = key;
@@ -333,13 +333,12 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
         /* Saying nothing, or quietly handing back a file over the limit, is
            the failure mode that matters here: the reader asked for a number
            and would only discover the miss when the upload was rejected. */
-        msg = 'Could not reach ' + fmt(report.targetBytes) + '. The smallest this file '
-            + 'can get without wrecking it is ' + fmt(report.newBytes) + '. '
+        msg = __tf('Could not reach {0}. The smallest this file can get without wrecking it is {1}. '
             + 'The remaining size is not in oversized images — see below for what was already '
-            + 'as small as it could be.';
+            + 'as small as it could be.', fmt(report.targetBytes), fmt(report.newBytes));
       } else if (report.targetBytes && report.targetMet) {
-        msg = fmt(report.newBytes) + ' — under your ' + fmt(report.targetBytes) + ' limit, '
-            + 'at the gentlest setting that fits.';
+        msg = __tf('{0} — under your {1} limit, at the gentlest setting that fits.',
+            fmt(report.newBytes), fmt(report.targetBytes));
       } else if (saved > 0) {
         /* "From 2 of 5 images" is the whole story in a deck and a misleading
            fraction of it in a workbook, where the bytes usually come out of
@@ -347,27 +346,26 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
         const st = report.structure;
         if (st && (st.rowsDropped || st.cellsDropped || st.calcChainDropped)) {
           const bits = [];
-          if (st.rowsDropped) bits.push(st.rowsDropped.toLocaleString() + ' empty formatted row'
-            + (st.rowsDropped === 1 ? '' : 's'));
-          if (st.cellsDropped) bits.push(st.cellsDropped.toLocaleString() + ' empty cell'
-            + (st.cellsDropped === 1 ? '' : 's'));
-          if (report.imagesShrunk) bits.push(report.imagesShrunk + ' image'
-            + (report.imagesShrunk === 1 ? '' : 's'));
+          if (st.rowsDropped) bits.push(__tf(st.rowsDropped === 1 ? '{0} empty formatted row' : '{0} empty formatted rows',
+            st.rowsDropped.toLocaleString()));
+          if (st.cellsDropped) bits.push(__tf(st.cellsDropped === 1 ? '{0} empty cell' : '{0} empty cells',
+            st.cellsDropped.toLocaleString()));
+          if (report.imagesShrunk) bits.push(__tf(report.imagesShrunk === 1 ? '{0} image' : '{0} images',
+            report.imagesShrunk));
           /* "a and b and c" reads like a bug. One list, one "and". */
           const list = bits.length > 1
-            ? bits.slice(0, -1).join(', ') + ' and ' + bits[bits.length - 1]
+            ? bits.slice(0, -1).join(', ') + __t(' and ') + bits[bits.length - 1]
             : bits[0];
-          msg = fmt(saved) + ' smaller — ' + pct + '% off, from ' + list + '.';
+          msg = __tf('{0} smaller — {1}% off, from {2}.', fmt(saved), pct, list);
         } else {
-          msg = fmt(saved) + ' smaller — ' + pct + '% off, from '
-            + report.imagesShrunk + ' of ' + report.imagesFound + ' image'
-            + (report.imagesFound === 1 ? '' : 's') + '.';
+          msg = __tf(report.imagesFound === 1 ? '{0} smaller — {1}% off, from {2} of {3} image.' : '{0} smaller — {1}% off, from {2} of {3} images.',
+            fmt(saved), pct, report.imagesShrunk, report.imagesFound);
         }
       } else {
         /* Saying "compressed" when nothing was saved is the thing that makes a
            tool untrustworthy. The panel below says which image and why. */
-        msg = 'This file is already about as small as it gets — nothing here '
-            + 'could be reduced without making it worse.';
+        msg = __t('This file is already about as small as it gets — nothing here '
+            + 'could be reduced without making it worse.');
       }
       savingEl.textContent = msg;
       liveEl.textContent = msg;
@@ -382,7 +380,7 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
         const result = img.action === 'shrunk'
           ? '<span class="cof-tag cof-tag-shrunk">' + img.newWidth + '×' + img.newHeight
             + ' · ' + fmt(img.newBytes) + '</span>'
-          : '<span class="cof-tag">kept</span>';
+          : '<span class="cof-tag">' + __t('kept') + '</span>';
         tr.innerHTML = '<td></td><td></td><td></td><td>' + result + '</td><td></td>';
         tr.children[0].textContent = img.name;
         tr.children[1].textContent = img.width + '×' + img.height + ' · ' + fmt(img.bytes);
@@ -395,26 +393,28 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
         if (st) {
           const lines = [];
           if (st.rowsDropped) {
-            lines.push('Removed ' + st.rowsDropped.toLocaleString() + ' row'
-              + (st.rowsDropped === 1 ? '' : 's') + ' past the end of your data that carried '
-              + 'formatting and nothing else.');
+            lines.push(__tf(st.rowsDropped === 1
+              ? 'Removed {0} row past the end of your data that carried formatting and nothing else.'
+              : 'Removed {0} rows past the end of your data that carried formatting and nothing else.',
+              st.rowsDropped.toLocaleString()));
           }
           if (st.cellsDropped) {
-            lines.push('Removed ' + st.cellsDropped.toLocaleString() + ' empty formatted cell'
-              + (st.cellsDropped === 1 ? '' : 's') + ' to the right of your data.');
+            lines.push(__tf(st.cellsDropped === 1
+              ? 'Removed {0} empty formatted cell to the right of your data.'
+              : 'Removed {0} empty formatted cells to the right of your data.',
+              st.cellsDropped.toLocaleString()));
           }
           if (st.dimensionsFixed) {
-            lines.push('Corrected the used range on ' + st.dimensionsFixed + ' sheet'
-              + (st.dimensionsFixed === 1 ? '' : 's') + ', so Ctrl+End lands on your data '
-              + 'instead of a million rows away.');
+            lines.push(__tf(st.dimensionsFixed === 1
+              ? 'Corrected the used range on {0} sheet, so Ctrl+End lands on your data instead of a million rows away.'
+              : 'Corrected the used range on {0} sheets, so Ctrl+End lands on your data instead of a million rows away.',
+              st.dimensionsFixed));
           }
           if (st.calcChainDropped) {
-            lines.push('Removed the formula calculation cache, which Excel rebuilds when it '
-              + 'opens the file.');
+            lines.push(__t('Removed the formula calculation cache, which Excel rebuilds when it opens the file.'));
           }
           if (!lines.length) {
-            lines.push('No empty formatted rows or cells to remove — the size of this workbook '
-              + 'is in its data, not in its formatting.');
+            lines.push(__t('No empty formatted rows or cells to remove — the size of this workbook is in its data, not in its formatting.'));
           }
           structureEl.textContent = lines.join(' ');
           structureEl.style.display = 'block';
@@ -460,8 +460,8 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
         downloadBtn.disabled = false;
       } catch (err) {
         showError(window.coMessageForError
-          ? window.coMessageForError(err, 'This file could not be read as a ' + kindLabel + '.')
-          : 'This file could not be read as a ' + kindLabel + '. If it opens correctly in Office, please report it.');
+          ? window.coMessageForError(err, __tf('This file could not be read as a {0}.', __t(kindLabel)))
+          : __tf('This file could not be read as a {0}. If it opens correctly in Office, please report it.', __t(kindLabel)));
         console.error(err);
       } finally {
         hideProgress();
@@ -477,8 +477,7 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
       }
       const ext = '.' + (file.name.split('.').pop() || '').toLowerCase();
       if (ext !== accept) {
-        showError('This tool takes ' + accept + ' files. Rename or re-save your file as '
-          + accept + ' in Office and try again.');
+        showError(__tf('This tool takes {0} files. Rename or re-save your file as {0} in Office and try again.', accept));
         return;
       }
       hideError();
@@ -493,7 +492,7 @@ const kindLabel = isExcel ? 'Excel workbook' : isWord ? 'Word document' : 'Power
     document.getElementById('cofFit').addEventListener('click', function () {
       const n = parseFloat(document.getElementById('cofTargetMB').value);
       if (!isFinite(n) || n <= 0) {
-        showError('Enter a size greater than zero.');
+        showError(__t('Enter a size greater than zero.'));
         return;
       }
       const unit = document.getElementById('cofTargetUnit').value;

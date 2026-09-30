@@ -18,11 +18,13 @@
  * and the wording, so twenty tools cannot drift into twenty phrasings.
  */
 
+import { tr } from './i18n-runtime.js';
+
 export const MB = 1024 * 1024;
 
 /** "4.2 MB", "812 KB" — the size as a reader would describe it. */
 export function formatSize(bytes) {
-  if (!Number.isFinite(bytes) || bytes < 0) return 'unknown size';
+  if (!Number.isFinite(bytes) || bytes < 0) return tr('unknown size');
   if (bytes < 1024) return bytes + ' bytes';
   if (bytes < MB) return (bytes / 1024).toFixed(0) + ' KB';
   return (bytes / MB).toFixed(bytes < 10 * MB ? 1 : 0) + ' MB';
@@ -39,12 +41,12 @@ export function fileTooLarge(file, limitMb) {
   if (!file || typeof file.size !== 'number' || !Number.isFinite(limitMb)) return null;
   if (file.size <= limitMb * MB) return null;
 
-  const name = file.name ? '"' + file.name + '"' : 'That file';
-  return name + ' is ' + formatSize(file.size) + ', over this tool’s '
-       + limitMb + 'MB limit. Everything here runs inside your browser tab, so a '
-       + 'file larger than that would use more memory than the tab can hold and '
-       + 'would freeze rather than convert. Nothing was sent anywhere — try a '
-       + 'smaller file, or split it first.';
+  const name = file.name ? '"' + file.name + '"' : tr('That file');
+  return tr('{0} is {1}, over this tool’s {2}MB limit. Everything here runs inside '
+       + 'your browser tab, so a file larger than that would use more memory than '
+       + 'the tab can hold and would freeze rather than convert. Nothing was sent '
+       + 'anywhere — try a smaller file, or split it first.',
+       name, formatSize(file.size), limitMb);
 }
 
 /**
@@ -90,8 +92,10 @@ export function anyFileTooLarge(files, limitMb) {
  * @returns {string}
  */
 export function nothingToConvert(what = 'file') {
-  return 'This ' + what + ' opened correctly but has nothing in it to convert. '
+  // The Portuguese template does not use {0}: the noun would need gender
+  // agreement, and "o arquivo" is true of every case.
+  return tr('This {0} opened correctly but has nothing in it to convert. '
        + 'If you expected content, check you picked the right file — an empty '
        + 'one is often a partly-finished download or a template saved before '
-       + 'anything was added.';
+       + 'anything was added.', what);
 }

@@ -358,54 +358,54 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
 
       const extension = (file.name.split('.').pop() || '').toLowerCase();
       if (['ofx', 'qfx', 'qbo'].indexOf(extension) === -1) {
-        showError('That is a .' + extension + ' file. This converter reads OFX, QFX and QBO statements — the file your bank offers as "Download for Quicken / QuickBooks / Money". A PDF or CSV statement is a different format.');
+        showError(__tf('That is a .{0} file. This converter reads OFX, QFX and QBO statements — the file your bank offers as "Download for Quicken / QuickBooks / Money". A PDF or CSV statement is a different format.', extension));
         return;
       }
       if (file.size > MAX_BYTES) {
-        showError('That file is ' + (file.size / 1048576).toFixed(1) + 'MB, over the 25MB limit. Statement files are normally well under 1MB — download a shorter date range if your bank produced something unusually large.');
+        showError(__tf('That file is {0}MB, over the 25MB limit. Statement files are normally well under 1MB — download a shorter date range if your bank produced something unusually large.', (file.size / 1048576).toFixed(1)));
         return;
       }
       if (file.size === 0) {
-        showError('That file is empty (0 bytes). If it is stored in OneDrive, iCloud or Google Drive, it may still be a placeholder — open its folder and let it download fully, then try again.');
+        showError(__t('That file is empty (0 bytes). If it is stored in OneDrive, iCloud or Google Drive, it may still be a placeholder — open its folder and let it download fully, then try again.'));
         return;
       }
 
       showProgress(25, __t('Reading statement…'));
       const reader = new FileReader();
       reader.onerror = function() {
-        showError('The file could not be read from disk. If it is synced by OneDrive, iCloud or Google Drive, make sure it has finished downloading to this device.');
+        showError(__t('The file could not be read from disk. If it is synced by OneDrive, iCloud or Google Drive, make sure it has finished downloading to this device.'));
       };
       reader.onload = function(e) {
         let result;
         try {
-          showProgress(60, 'Parsing transactions…');
+          showProgress(60, __t('Parsing transactions…'));
           result = parseOfx(decodeBytes(e.target.result));
         } catch (err) {
-          showError('This file could not be parsed. If it opens as readable text in Notepad and starts with OFXHEADER or <OFX>, please report it through the contact page — a real sample is what makes a parser bug fixable.');
+          showError(__t('This file could not be parsed. If it opens as readable text in Notepad and starts with OFXHEADER or <OFX>, please report it through the contact page — a real sample is what makes a parser bug fixable.'));
           return;
         }
 
         if (!result.ok) {
-          showError('This does not look like an OFX/QFX/QBO statement — no <OFX> section was found. Files named .qbo that are really PDFs or CSVs are the usual cause; open it in Notepad to check. Your bank’s download page may call it "Web Connect".');
+          showError(__t('This does not look like an OFX/QFX/QBO statement — no <OFX> section was found. Files named .qbo that are really PDFs or CSVs are the usual cause; open it in Notepad to check. Your bank’s download page may call it "Web Connect".'));
           return;
         }
 
         // Never hand back an empty file and call it a success.
         if (result.transactionCount === 0) {
           if (result.unsupportedInvestmentCount > 0) {
-            showError('This is a brokerage statement containing ' + result.unsupportedInvestmentCount + ' securities trade' + (result.unsupportedInvestmentCount === 1 ? '' : 's') + ' and no cash transactions. Trades carry units, unit price and a security ID, which do not fit a bank-statement row — this converter handles bank, credit-card and cash activity.');
+            showError(__tf(result.unsupportedInvestmentCount === 1 ? 'This is a brokerage statement containing {0} securities trade and no cash transactions. Trades carry units, unit price and a security ID, which do not fit a bank-statement row — this converter handles bank, credit-card and cash activity.' : 'This is a brokerage statement containing {0} securities trades and no cash transactions. Trades carry units, unit price and a security ID, which do not fit a bank-statement row — this converter handles bank, credit-card and cash activity.', result.unsupportedInvestmentCount));
           } else if (result.accounts.length === 0) {
-            showError('No account statement was found in this file. It parsed correctly but contains no bank or credit-card section — some banks emit a profile or signon-only file when a download fails.');
+            showError(__t('No account statement was found in this file. It parsed correctly but contains no bank or credit-card section — some banks emit a profile or signon-only file when a download fails.'));
           } else {
             const w = result.warnings.length ? ' ' + result.warnings[0] : '';
-            showError('This statement contains no transactions for the period it covers.' + w + ' Try downloading a wider date range from your bank.');
+            showError(__t('This statement contains no transactions for the period it covers.') + w + ' ' + __t('Try downloading a wider date range from your bank.'));
           }
           return;
         }
 
         parsed = result;
         render();
-        showProgress(100, 'Done');
+        showProgress(100, __t('Done'));
         setTimeout(hideProgress, 150);
       };
       reader.readAsArrayBuffer(file);
@@ -436,7 +436,7 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
         box.className = value.length > 14 ? 'bft-stat bft-stat--wide' : 'bft-stat';
         const l = document.createElement('div');
         l.className = 'bft-stat-label';
-        l.textContent = label;
+        l.textContent = __t(label);
         const v = document.createElement('div');
         v.className = 'bft-stat-value';
         v.textContent = value;
@@ -446,14 +446,15 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
 
       const notes = parsed.warnings.slice();
       if (parsed.unsupportedInvestmentCount > 0) {
-        notes.push(parsed.unsupportedInvestmentCount + ' securities trade' +
-          (parsed.unsupportedInvestmentCount === 1 ? ' was' : 's were') +
-          ' found and left out: a trade carries units, unit price and a security ID, which a bank-statement row cannot represent. Cash transactions in the same file are included.');
+        notes.push(__tf(parsed.unsupportedInvestmentCount === 1
+          ? '{0} securities trade was found and left out: a trade carries units, unit price and a security ID, which a bank-statement row cannot represent. Cash transactions in the same file are included.'
+          : '{0} securities trades were found and left out: a trade carries units, unit price and a security ID, which a bank-statement row cannot represent. Cash transactions in the same file are included.',
+          parsed.unsupportedInvestmentCount));
       }
       if (notes.length) {
         warningsEl.replaceChildren();
         const intro = document.createElement('strong');
-        intro.textContent = 'Worth knowing about this file';
+        intro.textContent = __t('Worth knowing about this file');
         const list = document.createElement('ul');
         for (const n of notes) {
           const li = document.createElement('li');
@@ -485,7 +486,12 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
     }
 
     function renderPreview() {
-      const { columns, rows } = buildRows(parsed, options);
+      const { columns: keys, rows } = buildRows(parsed, options);
+      /* Column names are identifiers inside ofx-parse ("Account" is looked up
+         by name), so they are translated here, where they are shown and
+         written — the Portuguese layout buttons promise "Data, descrição,
+         valor", and the file has to say the same. */
+      const columns = keys.map((c) => __t(c));
 
       const table = document.createElement('table');
       const thead = document.createElement('thead');
@@ -517,10 +523,10 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
 
       const hidden = rows.length - Math.min(rows.length, PREVIEW_ROWS);
       noteEl.textContent = hidden > 0
-        ? 'Showing the first ' + PREVIEW_ROWS + ' of ' + rows.length + ' rows. Account numbers are masked in this preview only — the downloaded file keeps them in full.'
-        : 'Showing all ' + rows.length + ' rows. Account numbers are masked in this preview only — the downloaded file keeps them in full.';
+        ? __tf('Showing the first {0} of {1} rows. Account numbers are masked in this preview only — the downloaded file keeps them in full.', PREVIEW_ROWS, rows.length)
+        : __tf('Showing all {0} rows. Account numbers are masked in this preview only — the downloaded file keeps them in full.', rows.length);
 
-      btnDownload.textContent = options.output === 'xlsx' ? 'Download Excel' : __t('Download CSV');
+      btnDownload.textContent = options.output === 'xlsx' ? __t('Download Excel') : __t('Download CSV');
     }
 
     document.querySelectorAll('.bft-tab').forEach(tab => {
@@ -599,13 +605,13 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
 
       sheet['!ref'] = window.XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: lastRow, c: lastCol } });
       sheet['!cols'] = columns.map(col => ({
-        wch: col === __t('Description') || col === 'Memo' ? 34 : Math.max(12, col.length + 2)
+        wch: col === __t('Description') || col === __t('Memo') ? 34 : Math.max(12, col.length + 2)
       }));
 
       const wb = window.XLSX.utils.book_new();
-      window.XLSX.utils.book_append_sheet(wb, sheet, 'Transactions');
+      window.XLSX.utils.book_append_sheet(wb, sheet, __t('Transactions'));
 
-      const summaryRows = [['Account', 'Type', __t('Currency'), 'Period start', 'Period end', 'Ledger balance', 'Transactions']];
+      const summaryRows = [['Account', 'Type', 'Currency', 'Period start', 'Period end', 'Ledger balance', 'Transactions'].map((c) => __t(c))];
       for (const a of parsed.accounts) {
         summaryRows.push([
           a.accountId, a.accountType || a.kind, a.currency,
@@ -615,27 +621,28 @@ const others = ['OFX', 'QFX', 'QBO'].filter(f => f !== primary);
           a.transactions.length
         ]);
       }
-      window.XLSX.utils.book_append_sheet(wb, window.XLSX.utils.aoa_to_sheet(summaryRows), 'Summary');
+      window.XLSX.utils.book_append_sheet(wb, window.XLSX.utils.aoa_to_sheet(summaryRows), __t('Summary'));
       return wb;
     }
 
     btnDownload.addEventListener('click', async () => {
       if (!parsed) return;
-      const { columns, rows } = buildRows(parsed, options);
+      const { columns: keys, rows } = buildRows(parsed, options);
+      const columns = keys.map((c) => __t(c));
       const base = originalName.replace(/\.[^/.]+$/, '') || 'statement';
 
       if (options.output === 'xlsx') {
         try {
-          showProgress(40, window.XLSX ? 'Building workbook…' : 'Loading the Excel writer (first time only)…');
+          showProgress(40, window.XLSX ? __t('Building workbook…') : __t('Loading the Excel writer (first time only)…'));
           await loadXlsx();
-          showProgress(80, 'Building workbook…');
+          showProgress(80, __t('Building workbook…'));
           const wb = buildWorkbook(columns, rows);
           const out = window.XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
           const blob = new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
           window.downloadBlob(blob, base + '.xlsx', blob.type);
           hideProgress();
         } catch (err) {
-          showError('The Excel writer could not be loaded. Check your connection and try again, or download CSV instead — CSV needs no extra download and opens in Excel just as well.');
+          showError(__t('The Excel writer could not be loaded. Check your connection and try again, or download CSV instead — CSV needs no extra download and opens in Excel just as well.'));
         }
         return;
       }

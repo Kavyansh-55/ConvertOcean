@@ -176,7 +176,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
   async function handleFile(file) {
     hideError();
     if (!/\.pdf$/i.test(file.name)) {
-      showError('Invalid file format. Please choose a .pdf document.');
+      showError(__t('Invalid file format. Please choose a .pdf document.'));
       return;
     }
     const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 25);
@@ -186,7 +186,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     }
     originalName = file.name;
     rasterized = false;
-    showProgress(5, 'Loading PDF data structure…');
+    showProgress(5, __t('Loading PDF data structure…'));
     try {
       const data = new Uint8Array(await file.arrayBuffer());
       pdfDoc = await window.pdfjsLib.getDocument({ data, isEvalSupported: false }).promise;
@@ -194,7 +194,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const pages = [];
 
       for (let i = 1; i <= pdfDoc.numPages; i++) {
-        showProgress(Math.round(5 + (i / pdfDoc.numPages) * 90), `Reading page ${i} of ${pdfDoc.numPages}…`);
+        showProgress(Math.round(5 + (i / pdfDoc.numPages) * 90), __tf('Reading page {0} of {1}…', i, pdfDoc.numPages));
         const page = await pdfDoc.getPage(i);
         // getOperatorList loads the page's fonts into commonObjs (where the
         // real font names, and therefore bold/italic, come from) and gives us
@@ -239,23 +239,22 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       // drawings, so there is genuinely nothing to extract.
       if (!fullText.replace(/\s/g, '') && !hasFigures) {
         showError(
-          'This PDF has no selectable text — it looks like a scan or a photo, ' +
-          'so there is nothing to extract. Read it with OCR instead:',
-          { label: 'Open Image to Text (OCR)', href: '/image-to-text/' }
+          __t('This PDF has no selectable text — it looks like a scan or a photo, so there is nothing to extract. Read it with OCR instead:'),
+          { label: __t('Open Image to Text (OCR)'), href: __t('/image-to-text/') }
         );
         hideProgress();
         return;
       }
 
       extractedPages = pages;
-      const figNote = hasFigures ? '\n\n[diagrams and figures will be included as images in the Word file]' : '';
-      textPreview.textContent = fullText.substring(0, 1200) + (fullText.length > 1200 ? '\n…[truncated preview]' : '') + figNote;
+      const figNote = hasFigures ? '\n\n[' + __t('diagrams and figures will be included as images in the Word file') + ']' : '';
+      textPreview.textContent = fullText.substring(0, 1200) + (fullText.length > 1200 ? '\n…[' + __t('truncated preview') + ']' : '') + figNote;
       textPreview.style.display = 'block';
       fileNameDisplay.textContent = file.name;
       actionControls.style.display = 'flex';
       dropZone.style.display = 'none';
     } catch (err) {
-      showError('Failed to parse PDF pages.');
+      showError(__t('Failed to parse PDF pages.'));
     }
     hideProgress();
   }
@@ -269,14 +268,14 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         const figurePages = extractedPages.filter((p) => p.regions && p.regions.length);
         for (let k = 0; k < figurePages.length; k++) {
           const rec = figurePages[k];
-          showProgress(Math.round(10 + (k / figurePages.length) * 70), `Rendering diagrams (${k + 1} of ${figurePages.length})…`);
+          showProgress(Math.round(10 + (k / figurePages.length) * 70), __tf('Rendering diagrams ({0} of {1})…', k + 1, figurePages.length));
           const page = await pdfDoc.getPage(rec.pageNumber);
           await rasterizeRegions(page, rec, 2.5);
         }
         rasterized = true;
       }
 
-      showProgress(85, 'Building Word document…');
+      showProgress(85, __t('Building Word document…'));
       // Real WordprocessingML package: styled runs, indents, tab stops,
       // detected tables and embedded figure images — not plain text in an
       // HTML file renamed .doc.
@@ -296,7 +295,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       );
     } catch (err) {
-      showError('Failed to build the Word document.');
+      showError(__t('Failed to build the Word document.'));
     }
     hideProgress();
   });

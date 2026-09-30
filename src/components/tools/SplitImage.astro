@@ -74,7 +74,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     <div id="previewCard" class="preview-wrapper" style="display: none;">
       <div style="position: relative; display: inline-block;">
-        <img id="previewImage" class="preview-img" alt="Split Preview" />
+        <img id="previewImage" class="preview-img" alt={t('Split Preview', lang)} />
         <div id="gridOverlayContainer" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></div>
       </div>
     </div>
@@ -216,12 +216,12 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       if (tooLarge) { showError(tooLarge); return; }
       hideError();
       if (!file.type.startsWith('image/')) {
-        showError("Invalid format. Please choose an image file.");
+        showError(__t("Invalid format. Please choose an image file."));
         return;
       }
 
       originalName = file.name;
-      showProgress(30, "Loading image preview…");
+      showProgress(30, __t("Loading image preview…"));
 
       const reader = new FileReader();
       reader.onload = function(event) {
@@ -302,7 +302,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       hideError();
       if (!currentImgSrc) return;
 
-      showProgress(10, "Extracting dimensions…");
+      showProgress(10, __t("Extracting dimensions…"));
       
       const mode = splitMode.value;
       let rows = 1, cols = 1;
@@ -323,15 +323,24 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
         const fullW = img.naturalWidth || img.width;
         const fullH = img.naturalHeight || img.height;
-        const tileW = fullW / cols;
-        const tileH = fullH / rows;
+        /* Tile edges on whole pixels, rounded from the exact fraction, so a
+           1000px image in 3 columns gives 333/334/333 and every pixel lands in
+           exactly one tile. A fractional canvas width is truncated, which used
+           to drop the last pixel column of every tile. */
+        const edgeX = (c) => Math.round((c * fullW) / cols);
+        const edgeY = (r) => Math.round((r * fullH) / rows);
 
-        showProgress(25, "Slicing image grids…");
+        showProgress(25, __t("Slicing image grids…"));
         
         const zip = new JSZip();
         const baseName = originalName.replace(/\.[^/.]+$/, "");
-        const ext = originalName.split('.').pop().toLowerCase();
-        const format = ext === 'png' ? 'image/png' : 'image/jpeg';
+        /* JPG stays JPG. PNG and WebP become PNG: a WebP may be transparent,
+           and a JPEG tile would turn that black. The extension follows the
+           bytes — WebP tiles used to be JPEG data saved under a .webp name. */
+        const srcExt = originalName.split('.').pop().toLowerCase();
+        const isJpeg = srcExt === 'jpg' || srcExt === 'jpeg';
+        const format = isJpeg ? 'image/jpeg' : 'image/png';
+        const ext = isJpeg ? srcExt : 'png';
         
         let counter = 0;
         const totalTiles = rows * cols;
@@ -339,17 +348,18 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         for (let r = 0; r < rows; r++) {
           for (let c = 0; c < cols; c++) {
             counter++;
-            showProgress(25 + Math.round((counter / totalTiles) * 55), `Processing tile ${counter} of ${totalTiles}...`);
+            showProgress(25 + Math.round((counter / totalTiles) * 55), __tf('Processing tile {0} of {1}…', counter, totalTiles));
             
+            const x0 = edgeX(c), x1 = edgeX(c + 1);
+            const y0 = edgeY(r), y1 = edgeY(r + 1);
             let canvas = document.createElement('canvas');
-            canvas.width = tileW;
-            canvas.height = tileH;
-            
+            canvas.width = x1 - x0;
+            canvas.height = y1 - y0;
+
             let ctx = canvas.getContext('2d');
-            ctx.drawImage(img, c * tileW, r * tileH, tileW, tileH, 0, 0, tileW, tileH);
-            
-            // Get raw data url
-            const tileDataUrl = canvas.toDataURL(format);
+            ctx.drawImage(img, x0, y0, x1 - x0, y1 - y0, 0, 0, x1 - x0, y1 - y0);
+
+            const tileDataUrl = canvas.toDataURL(format, 0.92);
             const rawBase64 = tileDataUrl.split(',')[1];
             
             const tileFilename = `${baseName}_row${r+1}_col${c+1}.${ext}`;
@@ -357,7 +367,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           }
         }
 
-        showProgress(85, "Zipping tiles archive…");
+        showProgress(85, __t("Zipping tiles archive…"));
         const content = await zip.generateAsync({ type: 'blob' });
         
         const link = document.createElement('a');
@@ -368,7 +378,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         
         hideProgress();
       } catch (err) {
-        showError("Failed to slice image client-side: " + err.message);
+        showError(__tf('Failed to slice the image: {0}', err.message));
         hideProgress();
       }
     });

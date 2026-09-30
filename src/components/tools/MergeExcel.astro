@@ -203,13 +203,13 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const tooLarge = window.coAnyFileTooLarge && window.coAnyFileTooLarge(files, 25);
       if (tooLarge) { showError(tooLarge); return; }
       hideError();
-      showProgress(10, "Reading spreadsheet files…");
+      showProgress(10, __t("Reading spreadsheet files…"));
       
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const ext = file.name.split('.').pop().toLowerCase();
         if (!['xlsx', 'xls', 'csv'].includes(ext)) {
-          showError(`Skipped "${file.name}": Unsupported format. Only Excel & CSV are supported.`);
+          showError(__tf('Skipped "{0}": Unsupported format. Only Excel & CSV are supported.', file.name));
           continue;
         }
 
@@ -222,9 +222,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
              while looking, in the list, exactly like a file that did. */
           const hasAnyData = workbook.SheetNames.some((n) => workbook.Sheets[n] && workbook.Sheets[n]['!ref']);
           if (!hasAnyData) {
-            showError(`Skipped "${file.name}": ` + (window.coNothingToConvert
+            showError(__tf('Skipped "{0}": {1}', file.name, window.coNothingToConvert
               ? window.coNothingToConvert('workbook')
-              : 'it has nothing in it to merge.'));
+              : __t('it has nothing in it to merge.')));
             continue;
           }
 
@@ -236,7 +236,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             sheets: workbook.SheetNames
           });
         } catch(err) {
-          showError(`Failed to parse "${file.name}".`);
+          showError(__tf('Failed to parse "{0}".', file.name));
         }
       }
       
@@ -284,12 +284,12 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         item.innerHTML = `
           <div class="file-item-info">
             <span class="file-item-name">${file.name}</span>
-            <span class="file-item-meta">${(file.size / 1024).toFixed(1)} KB • ${file.sheets.length} worksheet(s) (${file.sheets.join(', ')})</span>
+            <span class="file-item-meta">${(file.size / 1024).toFixed(1)} KB • ${__tf(file.sheets.length === 1 ? '{0} worksheet' : '{0} worksheets', file.sheets.length)} (${file.sheets.join(', ')})</span>
           </div>
           <div class="file-item-actions">
-            <button class="icon-btn" onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
-            <button class="icon-btn" onclick="moveItem(${index}, 1)" ${index === mergeQueue.length - 1 ? 'disabled' : ''}>▼</button>
-            <button class="icon-btn danger" aria-label="Remove ${file.name}" onclick="removeItem('${file.id}')">✕</button>
+            <button class="icon-btn" aria-label="${__t('Move up')}" title="${__t('Move up')}" onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+            <button class="icon-btn" aria-label="${__t('Move down')}" title="${__t('Move down')}" onclick="moveItem(${index}, 1)" ${index === mergeQueue.length - 1 ? 'disabled' : ''}>▼</button>
+            <button class="icon-btn danger" aria-label="${__tf('Remove {0}', file.name)}" onclick="removeItem('${file.id}')">✕</button>
           </div>
         `;
         fileItemsList.appendChild(item);
@@ -301,10 +301,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     window.mergeSpreadsheets = async function() {
       if (mergeQueue.length < 2) {
-        showError("Please add at least 2 spreadsheet files to merge.");
+        showError(__t("Please add at least 2 spreadsheet files to merge."));
         return;
       }
-      showProgress(30, "Merging worksheets client-side…");
+      showProgress(30, __t("Merging worksheets client-side…"));
       try {
         let outBytes = null;
 
@@ -358,7 +358,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           outBytes = XLSX.write(outWorkbook, { bookType: 'xlsx', type: 'array' });
         }
 
-        showProgress(70, "Compiling merged XLSX workbook…");
+        showProgress(70, __t("Compiling merged XLSX workbook…"));
         let outputName = mergeOutputName.value.trim() || 'merged_spreadsheet.xlsx';
         if (!outputName.toLowerCase().endsWith('.xlsx')) outputName += '.xlsx';
 
@@ -373,7 +373,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       } catch (err) {
-        showError("Failed to merge spreadsheets. Ensure none of the sheets are corrupted.");
+        showError(__t("Failed to merge spreadsheets. Ensure none of the sheets are corrupted."));
       }
       hideProgress();
     };

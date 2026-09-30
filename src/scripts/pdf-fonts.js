@@ -27,6 +27,8 @@
  * document never leaves the browser.
  */
 
+import { tr } from './i18n-runtime.js';
+
 const CDN = 'https://cdn.jsdelivr.net/gh/googlefonts/noto-fonts@main/hinted/ttf/';
 
 /**
@@ -218,7 +220,7 @@ export async function prepareFonts(doc, text, onProgress) {
   for (const key of needed) {
     const font = FONTS[key];
     try {
-      if (onProgress) onProgress(`Loading ${font.label} font…`);
+      if (onProgress) onProgress(tr('Loading {0} font…', tr(font.label)));
       const b64 = await loadFont(key);
       doc.addFileToVFS(font.file, b64);
       doc.addFont(font.file, font.id, 'normal');
@@ -425,7 +427,7 @@ export async function registerPdfmakeFonts(pdfMake, families, onProgress) {
     const spec = PDFMAKE_SUBSTITUTES[family];
     if (!spec) continue;
     try {
-      if (onProgress) onProgress('Loading ' + spec.label + ' font…');
+      if (onProgress) onProgress(tr('Loading {0} font…', tr(spec.label)));
       for (const [name, url] of Object.entries(spec.files)) {
         pdfMake.vfs[name] = await fetchBase64(url);
       }

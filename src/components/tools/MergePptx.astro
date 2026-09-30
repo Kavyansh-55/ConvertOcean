@@ -183,7 +183,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       if (tooLarge) { showError(tooLarge); return; }
       hideError();
       let processed = 0;
-      showProgress(10, "Loading presentations…");
+      showProgress(10, __t("Loading presentations…"));
 
       /* Each file keeps its selection slot; the batch joins the list in the
          order chosen, not the order the reads finished. See MergePdf and
@@ -201,7 +201,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       files.forEach((f, i) => {
         const ext = f.name.split('.').pop().toLowerCase();
         if (ext !== 'pptx') {
-          showError(`Skipped "${f.name}": Unsupported format. Only .pptx is supported.`);
+          showError(__tf('Skipped "{0}": Unsupported format. Only .pptx is supported.', f.name));
           finish();
           return;
         }
@@ -224,7 +224,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
               slides: slidesCount
             };
           } catch(err) {
-            showError("Failed to parse " + f.name);
+            showError(__tf('Failed to parse "{0}".', f.name));
           }
           finish();
         };
@@ -248,9 +248,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         div.innerHTML = `
           <span>${file.name} (${file.slides} slides)</span>
           <div style="display: flex; gap: 4px;">
-            <button class="icon-btn" onclick="window.moveFile(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
-            <button class="icon-btn" onclick="window.moveFile(${index}, 1)" ${index === mergeFiles.length - 1 ? 'disabled' : ''}>▼</button>
-            <button class="icon-btn danger" aria-label="Remove ${file.name}" onclick="window.removeMergeFile(${index})">✕</button>
+            <button class="icon-btn" aria-label="${__t('Move up')}" title="${__t('Move up')}" onclick="window.moveFile(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+            <button class="icon-btn" aria-label="${__t('Move down')}" title="${__t('Move down')}" onclick="window.moveFile(${index}, 1)" ${index === mergeFiles.length - 1 ? 'disabled' : ''}>▼</button>
+            <button class="icon-btn danger" aria-label="${__tf('Remove {0}', file.name)}" onclick="window.removeMergeFile(${index})">✕</button>
           </div>
         `;
         fileItemsList.appendChild(div);
@@ -276,10 +276,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     btnMerge.addEventListener('click', async () => {
       if (mergeFiles.length < 2) {
-        showError("Please add at least 2 PowerPoint presentations.");
+        showError(__t("Please add at least 2 PowerPoint presentations."));
         return;
       }
-      showProgress(20, "Loading base PowerPoint structure…");
+      showProgress(20, __t("Loading base PowerPoint structure…"));
       try {
         // Load presentation 1 as base
         const baseZip = await JSZip.loadAsync(mergeFiles[0].bytes);
@@ -384,7 +384,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
         // Loop through subsequent presentation packages and copy slide layouts/relationships
         for (let i = 1; i < mergeFiles.length; i++) {
-          showProgress(20 + Math.round((i / mergeFiles.length) * 60), `Combining slides from file ${i + 1}…`);
+          showProgress(20 + Math.round((i / mergeFiles.length) * 60), __tf('Combining slides from file {0}…', i + 1));
           const zip = await JSZip.loadAsync(mergeFiles[i].bytes);
           
           const pXmlText = await zip.file("ppt/presentation.xml").async("string");
@@ -509,7 +509,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           }
         }
 
-        showProgress(85, "Serializing presentation outputs…");
+        showProgress(85, __t("Serializing presentation outputs…"));
         const finalPresXmlText = serializer.serializeToString(presDoc);
         const finalPresRelsText = serializer.serializeToString(relsDoc);
 
@@ -523,7 +523,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
         window.downloadBlob(outBlob, name, "application/vnd.openxmlformats-officedocument.presentationml.presentation");
       } catch(err) {
-        showError("Failed to merge PowerPoint presentations. Please verify your presentations are valid .pptx files.");
+        showError(__t("Failed to merge PowerPoint presentations. Please verify your presentations are valid .pptx files."));
       }
       hideProgress();
     });

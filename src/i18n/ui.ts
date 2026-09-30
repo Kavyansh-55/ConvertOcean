@@ -24,6 +24,8 @@
  * data, so the two can drift; the test checks them against each other.
  */
 import type { Locale } from './config';
+import { ptRuntime } from './ui-runtime-pt';
+import { runtimeScopes } from './ui-runtime-scopes';
 
 const pt: Record<string, string> = {
   // ---- Navigation ------------------------------------------------------
@@ -72,8 +74,10 @@ const pt: Record<string, string> = {
   'Traditional sites upload files to external servers. ConvertOcean processes your data 100% locally. Perfect for corporate records and private papers.':
     'Os sites tradicionais mandam o arquivo para servidores externos. O ConvertOcean processa tudo 100% no seu aparelho — ideal para documentos da empresa e papéis pessoais.',
   'Browser-Powered Processing': 'Processamento no navegador',
-  'By eliminating network upload/download queues, conversions run at client-side machine speeds. It continues working even when offline.':
-    'Sem fila de envio e download, a conversão roda na velocidade do seu próprio aparelho — e continua funcionando mesmo sem internet.',
+  'With no upload or download queue, conversions run at the speed of your own device, and once a tool has loaded most conversions keep working offline.':
+    'Sem fila de envio e download, a conversão roda na velocidade do seu próprio aparelho — e, depois que a ferramenta carrega, a maioria das conversões continua funcionando sem internet.',
+  'Use every tool as often as you like, with no account, no sign-up and no newsletter. Each tool states its file-size limit, and your files never leave your device.':
+    'Use cada ferramenta quantas vezes quiser, sem conta, sem cadastro e sem newsletter. Cada ferramenta informa o seu limite de tamanho, e os seus arquivos nunca saem do seu dispositivo.',
   'Free & No Accounts': 'Gratuito e sem cadastro',
   'Related File Utilities': 'Ferramentas relacionadas',
   'Related Guides & Resources.': 'Guias e materiais relacionados.',
@@ -193,6 +197,14 @@ const pt: Record<string, string> = {
   'JSON (Max 15MB)': 'JSON (máx. 15 MB)',
   'XLSX or XLS (Max 25MB)': 'XLSX ou XLS (máx. 25 MB)',
   'CSV (Max 25MB)': 'CSV (máx. 25 MB)',
+  // SpreadsheetTool passes these through t(uploadLabel) — a variable, which
+  // ui-strings.test cannot see; verify-pt-parity found them on 2026-09-29.
+  'XML (Max 15MB)': 'XML (máx. 15 MB)',
+  'XLSX (Max 25MB)': 'XLSX (máx. 25 MB)',
+  'XLS (Max 25MB)': 'XLS (máx. 25 MB)',
+  'Word document (.docx) (Max 15MB)': 'Documento do Word (.docx) (máx. 15 MB)',
+  'TXT, MD, LOG, CSV, XML (Max 20MB)': 'TXT, MD, LOG, CSV, XML (máx. 20 MB)',
+  'TXT (Max 15MB)': 'TXT (máx. 15 MB)',
 
   // ---- Merge TXT separator options
   'Single Newline (\\n)': 'Uma quebra de linha (\\n)',
@@ -600,9 +612,101 @@ const pt: Record<string, string> = {
   'Drop your PowerPoint file here, or click to choose one': 'Arraste o arquivo do PowerPoint aqui, ou clique para escolher',
   'Drop your Word file here, or click to choose one': 'Arraste o arquivo do Word aqui, ou clique para escolher',
   'Drop your PDF here, or click to choose one': 'Arraste o PDF aqui, ou clique para escolher',
+  // ---- Bare template labels, wrapped 2026-09-29 (scripts/i18n/bare-template-text.mjs) ----
+  '— sales tax, VAT & GST': '— imposto sobre vendas, IVA e GST',
+  '$ – US Dollar (USD)': '$ – Dólar americano (USD)',
+  '£ – British Pound (GBP)': '£ – Libra esterlina (GBP)',
+  '¥ – Chinese Yuan (CNY)': '¥ – Yuan chinês (CNY)',
+  '¥ – Japanese Yen (JPY)': '¥ – Iene japonês (JPY)',
+  '₩ – South Korean Won (KRW)': '₩ – Won sul-coreano (KRW)',
+  '€ – Euro (EUR)': '€ – Euro (EUR)',
+  '₹ – Indian Rupee (INR)': '₹ – Rúpia indiana (INR)',
+  '200 units': '200 unidades',
+  '25% increase': 'aumento de 25%',
+  'A$ – Australian Dollar (AUD)': 'A$ – Dólar australiano (AUD)',
+  'AED – UAE Dirham': 'AED – Dirham dos Emirados',
+  'AED – UAE Dirham (AED)': 'AED – Dirham dos Emirados (AED)',
+  'Break-Even Revenue = Break-Even Units × Price = 200 × $39.00 = $7,800.00': 'Receita no ponto de equilíbrio = Unidades × Preço = 200 × $39.00 = $7,800.00',
+  'Break-Even Units = Fixed Costs ÷ Contribution Margin = $5,000.00 ÷ $25.00 = 200 units': 'Unidades no ponto de equilíbrio = Custos fixos ÷ Margem de contribuição = $5,000.00 ÷ $25.00 = 200 unidades',
+  'C$ – Canadian Dollar (CAD)': 'C$ – Dólar canadense (CAD)',
+  'CHF – Swiss Franc': 'CHF – Franco suíço',
+  'CHF – Swiss Franc (CHF)': 'CHF – Franco suíço (CHF)',
+  'Component': 'Componente',
+  'Contribution 64%': 'Contribuição 64%',
+  'Contribution Margin = Price − Variable Cost = $39.00 − $14.00 = $25.00': 'Margem de contribuição = Preço − Custo variável = $39.00 − $14.00 = $25.00',
+  'Converted Preview': 'Prévia convertida',
+  'Copy text': 'Copiar texto',
+  'Cost 60%': 'Custo 60%',
+  'e.g. --- FILE SEPARATOR ---': 'ex.: --- SEPARADOR DE ARQUIVO ---',
+  'e.g. --- SECTION ---': 'ex.: --- SEÇÃO ---',
+  'e.g. 1-2, 3-5, 6': 'ex.: 1-2, 3-5, 6',
+  'e.g. 1-5, 8, 11-13': 'ex.: 1-5, 8, 11-13',
+  'Form Photo 200×230': 'Foto de formulário 200×230',
+  'Gross Profit': 'Lucro bruto',
+  'JPEG (.jpeg) — same format, .jpeg extension': 'JPEG (.jpeg) — mesmo formato, extensão .jpeg',
+  'Limit:': 'Limite:',
+  'Lines': 'Linhas',
+  'Lines per segment': 'Linhas por parte',
+  'Margin = (Profit ÷ Revenue) × 100 = (40 ÷ 100) × 100 = 40.00%': 'Margem = (Lucro ÷ Receita) × 100 = (40 ÷ 100) × 100 = 40.00%',
+  'Markup': 'Markup',
+  'Markup = (Profit ÷ Cost) × 100 = (40 ÷ 60) × 100 = 66.67%': 'Markup = (Lucro ÷ Custo) × 100 = (40 ÷ 60) × 100 = 66.67%',
+  'Method:': 'Forma:',
+  'Minify': 'Minificar',
+  'Paste your JSON here… e.g. {"name":"ConvertOcean","private":true}': 'Cole o seu JSON aqui… ex.: {"nome":"ConvertOcean","privado":true}',
+  'No Spaces': 'Sem espaços',
+  'None': 'Nenhum',
+  'OCR Preview': 'Prévia do OCR',
+  'Paragraphs': 'Parágrafos',
+  'Paragraphs per Document:': 'Parágrafos por documento:',
+  'Percentage Change': 'Variação percentual',
+  'Pre-Tax Price ($)': 'Preço sem imposto ($)',
+  'Preview of the photo you selected': 'Prévia da foto escolhida',
+  'Processing presentation…': 'Processando a apresentação…',
+  'Profit = Revenue − Cost = $100.00 − $60.00 = $40.00': 'Lucro = Receita − Custo = $100.00 − $60.00 = $40.00',
+  'Profit 40%': 'Lucro 40%',
+  'Profit Margin': 'Margem de lucro',
+  'R – South African Rand': 'R – Rand sul-africano',
+  'R – South African Rand (ZAR)': 'R – Rand sul-africano (ZAR)',
+  'R$ – Real Brasileiro (BRL)': 'R$ – Real brasileiro (BRL)',
+  'Reading time': 'Tempo de leitura',
+  'Receipt Date': 'Data do recibo',
+  'Receipt Notes': 'Observações do recibo',
+  'Receipt Number': 'Número do recibo',
+  'Remove Sales Tax': 'Retirar o imposto',
+  'Resized image preview': 'Prévia da imagem redimensionada',
+  'Revenue': 'Receita',
+  'Revenue & Margin → Cost': 'Receita e margem → Custo',
+  'Revenue / Selling Price ($)': 'Receita / Preço de venda ($)',
+  'Selling Price / Revenue ($)': 'Preço de venda / Receita ($)',
+  'Sentences': 'Frases',
+  'SGD – Singapore Dollar': 'SGD – Dólar de Singapura',
+  'SGD – Singapore Dollar (SGD)': 'SGD – Dólar de Singapura (SGD)',
+  'Signature 140×60': 'Assinatura 140×60',
+  'Slide Ranges:': 'Intervalos de slides:',
+  'Speaking time': 'Tempo de fala',
+  'Split Preview': 'Prévia da divisão',
+  'Subtract': 'Subtrair',
+  'Tax (7.53%)': 'Imposto (7.53%)',
+  'Tax Amount': 'Valor do imposto',
+  'Tax Amount = Price × (Rate ÷ 100) = $100.00 × 0.0753 = $7.53': 'Valor do imposto = Preço × (Alíquota ÷ 100) = $100.00 × 0.0753 = $7.53',
+  'Tax Calculation Results': 'Resultado do cálculo',
+  'Tax Rate': 'Alíquota',
+  'Time Estimates': 'Estimativas de tempo',
+  'to': 'para',
+  'Top Keywords': 'Palavras mais frequentes',
+  'Total = Price + Tax = $100.00 + $7.53 = $107.53': 'Total = Preço + Imposto = $100.00 + $7.53 = $107.53',
+  'Total Price (Tax Inclusive) ($)': 'Preço total (com imposto) ($)',
+  'Units': 'Unidades',
+  'Use comma-separated indices or ranges (e.g. "1-2, 4, 5-7").': 'Use números ou intervalos separados por vírgula (ex.: "1-2, 4, 5-7"). Cada parte vira uma apresentação própria.',
+  'Variable 36%': 'Variável 36%',
+  'WebP (.webp) — modern, very small': 'WebP (.webp) — moderno, bem pequeno',
+  'Words': 'Palavras',
+  'zł – Polish Złoty (PLN)': 'zł – Zloty polonês (PLN)',
 };
 
-const dictionaries: Record<string, Record<string, string>> = { pt };
+/* ptRuntime holds the strings scripts build after load (errors, progress,
+   results); merged here so t() and the browser dictionary see one table. */
+const dictionaries: Record<string, Record<string, string>> = { pt: { ...pt, ...ptRuntime } };
 
 /**
  * Translate an interface string. Returns the English original when the locale
@@ -632,7 +736,7 @@ export function knownStrings(): string[] {
  * Layout publishes this as `window.__t`, and those scripts call it. English
  * returns null so the English build ships no dictionary at all.
  */
-export function dictionaryFor(lang: Locale): Record<string, string> | null {
+export function dictionaryFor(lang: Locale, scope?: string): Record<string, string> | null {
   if (lang === 'en') return null;
   const dict = dictionaries[lang];
   if (!dict) return null;
@@ -641,6 +745,13 @@ export function dictionaryFor(lang: Locale): Record<string, string> | null {
      for a mobile-heavy audience, to serve about thirty labels. */
   const out: Record<string, string> = {};
   for (const k of RUNTIME_KEYS) if (dict[k]) out[k] = dict[k];
+  /* A tool page also gets the strings its own component and modules can show
+     (errors, progress, results) plus those every tool page shares — and only
+     those: all of them together would add 16–19 KB compressed to every page. */
+  if (scope) {
+    for (const k of runtimeScopes.shared) if (dict[k]) out[k] = dict[k];
+    for (const k of runtimeScopes[scope] || []) if (dict[k]) out[k] = dict[k];
+  }
   return out;
 }
 

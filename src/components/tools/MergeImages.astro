@@ -222,11 +222,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       hideError();
       const imageFiles = files.filter(f => f.type.startsWith('image/'));
       if (imageFiles.length === 0) {
-        showError("Please select valid image files (PNG, JPG, WebP, SVG).");
+        showError(__t("Please select valid image files (PNG, JPG, WebP, SVG)."));
         return;
       }
 
-      showProgress(10, "Reading selected images…");
+      showProgress(10, __t("Reading selected images…"));
 
       /* Each image keeps its selection slot, so the stitch follows the order
          the images were chosen, not the order their reads finished. See
@@ -235,7 +235,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const slots = new Array(imageFiles.length);
       const finish = () => {
         readCount++;
-        showProgress(10 + Math.round((readCount / imageFiles.length) * 80), `Reading images (${readCount}/${imageFiles.length})…`);
+        showProgress(10 + Math.round((readCount / imageFiles.length) * 80), __tf('Reading images ({0}/{1})…', readCount, imageFiles.length));
         if (readCount < imageFiles.length) return;
         uploadedFiles.push(...slots.filter(Boolean));
         hideProgress();
@@ -278,9 +278,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             <span class="image-size">${(file.size / 1024).toFixed(1)} KB</span>
           </div>
           <div class="image-actions">
-            <button class="action-btn" onclick="window.moveImageUp('${file.id}')" title="Move Up" ${index === 0 ? 'disabled' : ''}>▲</button>
-            <button class="action-btn" onclick="window.moveImageDown('${file.id}')" title="Move Down" ${index === uploadedFiles.length - 1 ? 'disabled' : ''}>▼</button>
-            <button class="action-btn action-btn-danger" onclick="window.deleteImage('${file.id}')" title="Remove">✕</button>
+            <button class="action-btn" onclick="window.moveImageUp('${file.id}')" aria-label="${__t('Move up')}" title="${__t('Move up')}" ${index === 0 ? 'disabled' : ''}>▲</button>
+            <button class="action-btn" onclick="window.moveImageDown('${file.id}')" aria-label="${__t('Move down')}" title="${__t('Move down')}" ${index === uploadedFiles.length - 1 ? 'disabled' : ''}>▼</button>
+            <button class="action-btn action-btn-danger" onclick="window.deleteImage('${file.id}')" aria-label="${__tf('Remove {0}', file.name)}" title="${__t('Remove')}">✕</button>
           </div>
         `;
         imagesList.appendChild(item);
@@ -327,7 +327,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       if (uploadedFiles.length === 0) return;
 
       const mode = mergeMode.value;
-      showProgress(15, "Initializing merger…");
+      showProgress(15, __t("Initializing merger…"));
 
       if (mode === 'pdf') {
         try {
@@ -335,7 +335,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           let doc = null;
 
           for (let i = 0; i < uploadedFiles.length; i++) {
-            showProgress(20 + Math.round((i / uploadedFiles.length) * 70), `Adding page ${i + 1} of ${uploadedFiles.length}...`);
+            showProgress(20 + Math.round((i / uploadedFiles.length) * 70), __tf('Adding page {0} of {1}…', i + 1, uploadedFiles.length));
             const file = uploadedFiles[i];
 
             // Resolve image dimensions
@@ -387,12 +387,12 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             doc.addImage(data, format, dx, dy, imgWidth, imgHeight, undefined, 'FAST');
           }
 
-          showProgress(95, "Compiling PDF download…");
+          showProgress(95, __t("Compiling PDF download…"));
           /* Shared helper rather than jsPDF save() — see ImageToPdf. */
           window.downloadBlob(doc.output('blob'), 'merged-images.pdf', 'application/pdf');
           hideProgress();
         } catch (err) {
-          showError("PDF compilation failed: " + err.message);
+          showError(__tf('PDF compilation failed: {0}', err.message));
           hideProgress();
         }
       } else {
@@ -442,7 +442,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             });
           }
 
-          showProgress(90, "Stitching images canvas…");
+          showProgress(90, __t("Stitching images canvas…"));
           const link = document.createElement('a');
           link.download = 'stitched-image.png';
           link.href = canvas.toDataURL('image/png');
@@ -450,7 +450,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           link.click();
           hideProgress();
         } catch (err) {
-          showError("Image stitching failed: " + err.message);
+          showError(__tf('Image stitching failed: {0}', err.message));
           hideProgress();
         }
       }

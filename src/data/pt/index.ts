@@ -167,12 +167,12 @@ const ptToolsSeed: PtTool[] = [
     description: 'Reduza o tamanho de um PDF direto no navegador, sem que o arquivo saia do seu computador. Ideal para deixar documentos dentro do limite de 2 MB dos editais de concurso.',
     headline: 'Comprimir PDF.',
     subtitle: 'Reduza o tamanho do seu PDF sem que ele saia do seu computador — e sem marca d’água, cadastro ou limite diário.',
-    quickAnswer: 'Para comprimir um PDF, arraste o documento para a ferramenta acima e escolha o nível de compressão. Tudo acontece dentro do seu navegador: o arquivo não sai do seu computador e não é copiado para nenhum servidor. É a forma mais rápida de deixar documentos digitalizados abaixo do limite de 2 MB exigido pela maioria dos editais de concurso público.',
+    quickAnswer: 'Para comprimir um PDF, arraste o documento para a ferramenta acima: ele é reduzido na hora, e você pode trocar o nível (Leve, Recomendado, Forte) ou usar Definir um tamanho para informar um limite em KB. Tudo acontece dentro do seu navegador: o arquivo não sai do seu computador e não é copiado para nenhum servidor. É a forma mais rápida de deixar documentos digitalizados abaixo do limite de 2 MB exigido pela maioria dos editais de concurso público.',
     category: 'Ferramentas PDF',
     faqs: [
       {
         question: 'como comprimir pdf',
-        answer: 'Arraste o documento para a ferramenta no topo da página e escolha o nível de compressão. O tamanho final aparece antes de você baixar, então dá para testar um nível mais leve se o resultado ficar aquém do esperado. Não há cadastro, marca d’água nem limite diário.'
+        answer: 'Arraste o documento para a ferramenta no topo da página: ele é reduzido na hora no nível Recomendado, e você pode trocar para Leve ou Forte. O tamanho final aparece antes de você baixar. Se há um limite a cumprir, use Definir um tamanho e informe o valor em KB. Não há cadastro, marca d’água nem limite diário.'
       },
       {
         question: 'o que é comprimir pdf',
@@ -184,7 +184,7 @@ const ptToolsSeed: PtTool[] = [
       },
       {
         question: 'como diminuir mb de pdf',
-        answer: 'A redução depende do tipo de documento. Um PDF digitalizado de 8 MB costuma cair para algo entre 500 KB e 1,5 MB na compressão mais forte. Um PDF gerado pelo Word, que já é quase todo texto, pode cair apenas 10 ou 20%. Se um arquivo de texto já está pequeno e ainda assim precisa encolher, o caminho normalmente é remover páginas, não comprimir mais.'
+        answer: 'A redução depende do tipo de documento. PDFs digitalizados e cheios de fotos costumam cair de 40% a 70%, porque as imagens estão guardadas em resolução maior do que a página exibe. Um PDF gerado pelo Word, que já é quase todo texto, pode mal encolher. A ferramenta mostra os números reais de antes e depois, em vez de prometer uma porcentagem. Se um arquivo de texto já está pequeno e ainda assim precisa encolher, o caminho normalmente é remover páginas, não comprimir mais.'
       },
       {
         question: 'como comprimir pdf sem perder qualidade',
@@ -192,7 +192,7 @@ const ptToolsSeed: PtTool[] = [
       },
       {
         question: 'como compactar arquivos em pdf',
-        answer: 'A compressão trabalha um documento por vez. Se você precisa reduzir vários, pode ser mais eficiente juntá-los primeiro em <a href="/pt/juntar-pdf/">juntar PDF</a> e comprimir o arquivo único: comprimir um documento só costuma render mais do que comprimir vários separadamente, porque elementos repetidos entre eles são aproveitados uma vez.'
+        answer: 'A compressão trabalha um documento por vez. Se o destino aceita um único anexo, junte os arquivos antes em <a href="/pt/juntar-pdf/">juntar PDF</a> e comprima o resultado; a redução é a mesma que você teria comprimindo cada um, mas assim você confere o tamanho final de uma vez.'
       },
       {
         question: 'como compactar arquivos pdf',
@@ -208,7 +208,7 @@ const ptToolsSeed: PtTool[] = [
       },
       {
         question: 'como comprimir um arquivo pdf muito grande',
-        answer: 'Arquivos muito grandes funcionam, mas o limite é a memória do seu próprio dispositivo, já que o processamento é local. Um PDF de centenas de megabytes pode deixar o navegador lento ou travar em um aparelho modesto. Nesse caso, divida o documento antes em <a href="/pt/dividir-pdf/">dividir PDF</a>, comprima cada parte e junte de novo se necessário.'
+        answer: 'A ferramenta aceita PDFs de até 25 MB, porque o processamento acontece na memória do seu próprio navegador. Se o arquivo é maior, divida-o antes em <a href="/pt/dividir-pdf/">dividir PDF</a>, comprima cada parte e junte de novo se necessário.'
       },
       {
         question: 'como compactar pdf no iphone',
@@ -216,7 +216,7 @@ const ptToolsSeed: PtTool[] = [
       },
       {
         question: 'Como deixar meu PDF abaixo de 2 MB para o concurso?',
-        answer: 'Escolha a compressão mais forte e confira o tamanho final antes de baixar. Documentos digitalizados costumam cair bastante — um RG ou diploma escaneado de 8 MB normalmente fica entre 500 KB e 1,5 MB. Se ainda passar do limite, digitalize novamente em 200 dpi e em preto e branco antes de comprimir.'
+        answer: 'Escolha Definir um tamanho, informe 2048 KB (ou o limite que o edital pedir) e clique em Caber neste tamanho: a ferramenta procura o ajuste mais suave que ainda fica abaixo dele. Se o limite não for alcançável sem deixar as páginas ilegíveis, ela avisa e mostra o menor tamanho possível. Nesse caso, digitalize de novo em 200 dpi e em preto e branco antes de comprimir.'
       },
       {
         question: 'O documento continua legível para a banca?',
@@ -266,7 +266,7 @@ const ptToolsSeed: PtTool[] = [
       },
       {
         question: 'como juntar arquivos pdf',
-        answer: 'A ferramenta aceita arquivos PDF. Não há limite fixo de quantidade nem de páginas: o que limita é a memória do seu próprio dispositivo, já que o processamento é local. Em um computador comum, dezenas de documentos são reunidos sem problema; arquivos muito grandes somados podem deixar o navegador lento antes de terminar.'
+        answer: 'A ferramenta aceita arquivos PDF de até 25 MB cada. Não há limite de quantidade de arquivos nem de páginas; como o processamento é local, o que pesa é a memória do seu próprio dispositivo. Em um computador comum, dezenas de documentos são reunidos sem problema; arquivos muito grandes somados podem deixar o navegador lento antes de terminar.'
       },
       {
         question: 'como juntar fotos em pdf',
@@ -286,7 +286,7 @@ const ptToolsSeed: PtTool[] = [
       },
       {
         question: 'como mesclar pdf',
-        answer: 'Adicione os arquivos na ordem certa e baixe. Vale lembrar que mesclar não reduz tamanho: o PDF final tem aproximadamente a soma dos originais. Se houver limite de tamanho no destino, passe o resultado pelo <a href="/pt/comprimir-pdf/">comprimir PDF</a> depois de mesclar — comprimir um arquivo só rende mais do que comprimir vários separados.'
+        answer: 'Adicione os arquivos na ordem certa e baixe. Vale lembrar que mesclar não reduz tamanho: o PDF final tem aproximadamente a soma dos originais. Se houver limite de tamanho no destino, passe o resultado pelo <a href="/pt/comprimir-pdf/">comprimir PDF</a> depois de mesclar e use Definir um tamanho para chegar ao limite.'
       },
       {
         question: 'o que é mesclar pdf',
@@ -432,7 +432,7 @@ export const ptToolsBatch1: PtTool[] = [
       },
       {
         question: 'como passar de pdf para word',
-        answer: 'Tabelas com bordas visíveis costumam ser reconhecidas e viram tabelas de verdade no Word, com linhas e colunas editáveis. Tabelas sem bordas, alinhadas apenas por espaçamento, são mais difíceis de detectar e podem sair como parágrafos separados. Confira as tabelas antes de enviar o documento para alguém.'
+        answer: 'As tabelas são reconhecidas pelo alinhamento do texto em colunas, não pelas linhas de borda, e viram tabelas de verdade no Word, com linhas e colunas editáveis. Tabelas com colunas bem espaçadas saem melhor; células com texto em várias linhas ou células mescladas podem sair como parágrafos separados. Confira as tabelas antes de enviar o documento para alguém.'
       },
       {
         question: 'como mudar pdf para word',
@@ -520,7 +520,7 @@ export const ptToolsBatch1: PtTool[] = [
     faqs: [
       {
         question: 'como converter excel para pdf',
-        answer: 'Arraste a planilha para a ferramenta no topo da página e baixe o PDF. Cada aba vira uma tabela com bordas, começando em uma página própria com o nome da aba como título. Por padrão todas as abas são incluídas, mas dá para converter apenas a que você está visualizando.'
+        answer: 'Arraste a planilha para a ferramenta no topo da página e baixe o PDF. Cada aba vira uma tabela com bordas, começando em uma página própria com o nome da aba como título. Por padrão todas as abas são incluídas — inclusive as ocultas —, mas dá para desmarcar "Incluir todas as abas" e converter apenas a que você está visualizando.'
       },
       {
         question: 'como transformar excel em pdf',
@@ -607,7 +607,7 @@ const ptToolsBatch2: PtTool[] = [
       },
       {
         question: 'como converter de pdf para excel',
-        answer: 'Tabelas com bordas visíveis e colunas bem separadas são as que saem melhor. Tabelas cujas colunas são alinhadas apenas por espaços, relatórios com várias tabelas na mesma página e células mescladas são mais difíceis de interpretar e podem exigir um ajuste manual depois. Confira os totais antes de usar os dados.'
+        answer: 'O conversor usa a posição de cada trecho de texto na página, não as linhas de borda, então tabelas com colunas bem separadas são as que saem melhor. Células com texto em várias linhas, relatórios com várias tabelas na mesma página e células mescladas são mais difíceis de interpretar e podem exigir um ajuste manual depois. Confira os totais antes de usar os dados.'
       },
       {
         question: 'como transferir pdf para excel',
@@ -695,7 +695,7 @@ const ptToolsBatch2: PtTool[] = [
     faqs: [
       {
         question: 'como converter arquivo word para txt',
-        answer: 'Arraste o arquivo .docx para a ferramenta no topo da página e baixe o .txt. O resultado contém apenas o texto do documento, na ordem original, pronto para abrir em qualquer editor ou processar em um script.'
+        answer: 'Arraste o arquivo .docx para a ferramenta no topo da página e baixe o .txt. O resultado contém o texto do corpo do documento — parágrafos, listas e o texto das tabelas —, na ordem original. Cabeçalhos, rodapés, notas de rodapé e comentários ficam em partes separadas do .docx e não entram.'
       },
       {
         question: 'como converter documento word para txt',
@@ -850,7 +850,7 @@ const ptToolsBatch3: PtTool[] = [
       },
       {
         question: 'O que acontece com as outras abas da planilha?',
-        answer: 'O formato CSV guarda uma única tabela — não existe conceito de abas dentro de um .csv. Por isso a primeira aba é exportada. Se você precisa de outra, mova-a para a primeira posição no Excel antes de converter, ou converta uma vez por aba.'
+        answer: 'O formato CSV guarda uma única tabela — não existe conceito de abas dentro de um .csv. Por isso a primeira aba é exportada, mesmo que esteja oculta. Se você precisa de outra, mova-a para a primeira posição no Excel antes de converter, ou use o <a href="/pt/dividir-arquivo-excel/">dividir arquivo Excel</a> com saída em CSV para ter cada aba em um arquivo.'
       },
       {
         question: 'Valores com vírgula dentro estragam o arquivo?',
@@ -902,7 +902,7 @@ const ptToolsBatch3: PtTool[] = [
       },
       {
         question: 'Números e datas viram texto na planilha?',
-        answer: 'Os valores são gravados em células com o tipo apropriado sempre que possível, e não como texto puro, então dá para somar, ordenar e filtrar sem converter nada depois. Vale conferir colunas de datas, cujo formato de origem no CSV pode ser ambíguo.'
+        answer: 'Números viram números: em um CSV separado por ponto e vírgula, como o que o Excel brasileiro gera, "1.234,56" vira 1234,56, e datas no formato dd/mm/aaaa viram datas de verdade. Códigos com zero à esquerda, como 0044, continuam como texto para não perder o zero, e um CNPJ sem pontuação continua com todos os dígitos visíveis.'
       },
       {
         question: 'O arquivo é copiado para algum servidor?',
@@ -942,7 +942,7 @@ const ptToolsBatch3: PtTool[] = [
       },
       {
         question: 'Os números viram number ou string no JSON?',
-        answer: 'O CSV não carrega informação de tipo: para o arquivo, tudo é texto. Se o seu consumidor exige tipos específicos, converta-os depois de carregar o JSON, ou valide o resultado antes de usar em produção.'
+        answer: 'Valores que são claramente números viram number no JSON, e true/false viram booleanos; o resto fica como string. Códigos com zero à esquerda, como 0044, e números longos demais para caber sem perda continuam string, e datas ficam como o texto que estava no CSV. Em um CSV separado por ponto e vírgula, "12,5" é lido como 12.5.'
       },
       {
         question: 'Dá para usar com dados confidenciais?',
@@ -978,11 +978,11 @@ const ptToolsBatch3: PtTool[] = [
     faqs: [
       {
         question: 'como converter json para csv',
-        answer: 'Cole ou selecione um array de objetos JSON na ferramenta acima e baixe o .csv. As chaves viram os cabeçalhos das colunas, cada objeto vira uma linha, e o arquivo abre direto em Excel, Google Sheets ou qualquer script.'
+        answer: 'Selecione um arquivo .json com um array de objetos na ferramenta acima e baixe o .csv. As chaves viram os cabeçalhos das colunas, cada objeto vira uma linha, e o arquivo abre direto em Excel, Google Sheets ou qualquer script.'
       },
       {
         question: 'O que acontece com objetos aninhados?',
-        answer: 'O CSV é plano por natureza — não existe hierarquia dentro de uma célula. Estruturas aninhadas precisam ser achatadas para caber em colunas, o que significa que um JSON profundamente aninhado nem sempre tem uma representação tabular fiel. Arrays de objetos simples, o formato típico de uma resposta de API, convertem sem perda.'
+        answer: 'O CSV é plano por natureza, então a ferramenta achata o aninhamento em colunas com ponto: {"cliente": {"nome": "Ana"}} vira a coluna cliente.nome, e um array interno vira colunas numeradas (itens.0, itens.1). Arrays de objetos simples, o formato típico de uma resposta de API, convertem sem perda.'
       },
       {
         question: 'E se os objetos tiverem chaves diferentes entre si?',
@@ -1030,7 +1030,7 @@ const ptToolsBatch3: PtTool[] = [
       },
       {
         question: 'Os atributos XML são preservados?',
-        answer: 'Sim. Atributos e conteúdo de texto são ambos representados na estrutura JSON resultante — uma distinção que existe em XML e não em JSON, e que por isso precisa de uma convenção explícita para não se perder.'
+        answer: 'Sim. Os atributos viram chaves comuns do objeto do elemento, ao lado dos elementos filhos, sem prefixo. Um elemento com atributos e texto guarda o texto na chave "#text". Se um atributo e um elemento filho tiverem o mesmo nome, o valor do filho prevalece — vale conferir arquivos em que isso pode acontecer.'
       },
       {
         question: 'O arquivo é copiado para algum servidor?',
@@ -1069,7 +1069,7 @@ const ptToolsBatch3: PtTool[] = [
       },
       {
         question: 'E se o JSON tiver objetos aninhados?',
-        answer: 'Uma planilha é uma grade plana, sem hierarquia dentro da célula. Arrays de objetos simples — o formato típico de uma resposta de API — convertem diretamente. Estruturas profundamente aninhadas precisam ser achatadas antes, porque não existe representação tabular fiel para elas.'
+        answer: 'Uma planilha é uma grade plana, então a ferramenta achata o aninhamento sozinha, em colunas com ponto: {"cliente": {"nome": "Ana"}} vira a coluna cliente.nome, e um array interno vira colunas numeradas. Arrays de objetos simples — o formato típico de uma resposta de API — convertem diretamente.'
       },
       {
         question: 'Os dados são copiados para algum servidor?',
@@ -1267,12 +1267,12 @@ const ptToolsBatch4: PtTool[] = [
     description: 'Converter imagens PNG em WebP direto no navegador: 25–35% menores com qualidade equivalente e transparência preservada.',
     headline: 'PNG para WebP.',
     subtitle: 'Reduza o peso das imagens do seu site mantendo a transparência — processado no seu próprio dispositivo.',
-    quickAnswer: 'Para converter PNG para WebP, selecione a imagem na ferramenta acima e baixe um WebP normalmente 25–35% menor com qualidade equivalente, com a transparência preservada. O WebP é suportado por todos os navegadores modernos e acelera o carregamento das páginas, o que faz dele a melhor escolha para imagens na web. A conversão roda inteiramente no seu dispositivo.',
+    quickAnswer: 'Para converter PNG para WebP, selecione a imagem na ferramenta acima e baixe um WebP bem menor com qualidade visual equivalente — nos nossos testes, de metade a um sexto do tamanho do PNG —, com a transparência preservada. O WebP é suportado por todos os navegadores modernos e acelera o carregamento das páginas, o que faz dele a melhor escolha para imagens na web. A conversão roda inteiramente no seu dispositivo.',
     category: 'Ferramentas de Imagem',
     faqs: [
       {
         question: 'Quanto menor fica o arquivo?',
-        answer: 'Normalmente entre 25% e 35% menor com qualidade equivalente, embora o ganho varie com o conteúdo da imagem. Fotografias e gráficos complexos costumam render mais; imagens muito simples, com poucas cores, já eram bem comprimidas em PNG e ganham menos.'
+        answer: 'Nos nossos testes, entre 50% e 83% menor: capturas de tela caíram para cerca de metade, e uma foto salva em PNG para um sexto. O WebP é gerado com 92% de qualidade, então a diferença não é visível em uso normal. Imagens muito simples, com poucas cores, já eram bem comprimidas em PNG e ganham menos.'
       },
       {
         question: 'A transparência é mantida?',
@@ -2332,12 +2332,12 @@ const ptToolsBatch10: PtTool[] = [
     description: 'Converta imagens JPG em WebP direto no navegador: 25–35% menores com qualidade equivalente, para acelerar o carregamento do site.',
     headline: 'JPG para WebP.',
     subtitle: 'Reduza o peso das imagens do seu site mantendo a qualidade — processado no seu próprio dispositivo.',
-    quickAnswer: 'Para converter JPG para WebP, selecione a imagem .jpg na ferramenta acima e baixe um WebP normalmente 25–35% menor com qualidade equivalente. Todos os navegadores modernos exibem WebP, o que faz dele a escolha melhor para imagens na web e para páginas que carregam mais rápido. A conversão acontece inteiramente no seu dispositivo.',
+    quickAnswer: 'Para converter JPG para WebP, selecione a imagem .jpg na ferramenta acima e baixe um WebP geralmente menor com qualidade visual equivalente — nos nossos testes, de 5% a 45% menor, dependendo de quanto o JPG já estava comprimido. Todos os navegadores modernos exibem WebP, o que faz dele a escolha melhor para imagens na web e para páginas que carregam mais rápido. A conversão acontece inteiramente no seu dispositivo.',
     category: 'Ferramentas de Imagem',
     faqs: [
       {
         question: 'Quanto menor fica a imagem?',
-        answer: 'Normalmente entre 25% e 35% menor com qualidade equivalente, variando com o conteúdo da foto. Fotografias detalhadas rendem mais; imagens simples, com poucas cores, ganham menos porque o JPG já as comprimia bem.'
+        answer: 'Depende de quanto o JPG já estava comprimido. Nos nossos testes, a redução foi de 5% a 45%: uma foto de celular salva em alta qualidade encolheu só 5%, e imagens mais simples chegaram perto da metade. O WebP é gerado com 92% de qualidade.'
       },
       {
         question: 'Vale a pena converter fotos que já estão em JPG?',
@@ -2384,7 +2384,7 @@ const ptToolsBatch10: PtTool[] = [
       },
       {
         question: 'Todas as abas são incluídas?',
-        answer: 'Sim, cada aba começa em uma página própria com o nome dela como título. O conversor lê o intervalo utilizado da planilha, não a área de impressão configurada no Excel, e colunas ocultas continuam aparecendo. Para excluir algo, apague as linhas e colunas antes de converter.'
+        answer: 'Sim, inclusive as abas ocultas, e cada uma começa em uma página própria com o nome dela como título. O conversor lê o intervalo utilizado da planilha, não a área de impressão configurada no Excel, e colunas ocultas continuam aparecendo. Para excluir algo, apague as linhas e colunas antes de converter.'
       },
       {
         question: 'A planilha é copiada para algum servidor?',
@@ -2466,7 +2466,7 @@ const ptToolsBatch10: PtTool[] = [
       },
       {
         question: 'E as outras abas da planilha?',
-        answer: 'O CSV guarda uma única tabela, então apenas a primeira aba é exportada. Se você precisa de outra, mova-a para a primeira posição no Excel antes de converter, ou converta uma vez por aba.'
+        answer: 'O CSV guarda uma única tabela, então apenas a primeira aba é exportada, mesmo que esteja oculta. Se você precisa de outra, mova-a para a primeira posição no Excel antes de converter, ou use o <a href="/pt/dividir-arquivo-excel/">dividir arquivo Excel</a> com saída em CSV para ter cada aba em um arquivo.'
       },
       {
         question: 'O arquivo é copiado para algum servidor?',
@@ -2501,7 +2501,7 @@ const ptToolsBatch10: PtTool[] = [
       },
       {
         question: 'E se o XML tiver muitos níveis aninhados?',
-        answer: 'Uma tabela é plana e o XML é hierárquico, então estruturas profundamente aninhadas não têm tradução direta: só o nível repetido principal e seus campos filhos entram como linhas e colunas. XMLs de exportação de sistemas costumam ter exatamente essa forma e convertem bem; documentos muito hierárquicos precisam de um tratamento anterior.'
+        answer: 'O maior grupo de elementos repetidos vira as linhas, e o aninhamento dentro de cada um é achatado em colunas com ponto, como endereco.cidade, até 12 níveis. Um elemento que se repete dentro de um mesmo registro vira colunas numeradas (tag.0, tag.1). XMLs de exportação de sistemas convertem bem; documentos muito hierárquicos geram muitas colunas.'
       },
       {
         question: 'O que acontece se o XML estiver quebrado?',
@@ -2540,11 +2540,11 @@ const ptToolsBatch10: PtTool[] = [
       },
       {
         question: 'As células saem com tipo?',
-        answer: 'Números são gravados como números, não como texto, então somar, ordenar e criar tabelas dinâmicas funciona imediatamente. Vale conferir colunas de data, cujo formato de origem no XML pode ser ambíguo.'
+        answer: 'Sim. Valores que são claramente números — como o <vProd>1234.56</vProd> de uma NF-e — são gravados como números, então somar, ordenar e criar tabelas dinâmicas funciona imediatamente. Datas no formato AAAA-MM-DD viram datas, e códigos com zero à esquerda, como o cProd 0012, continuam texto.'
       },
       {
         question: 'E se o XML for muito aninhado?',
-        answer: 'Uma planilha é plana. O nível que se repete vira as linhas e seus campos filhos viram as colunas; hierarquias mais profundas não têm representação direta e precisam ser achatadas antes.'
+        answer: 'Uma planilha é plana. O nível que se repete vira as linhas, e o aninhamento dentro de cada registro é achatado em colunas com ponto, como prod.vProd, até 12 níveis.'
       },
       {
         question: 'O arquivo é copiado para algum servidor?',
@@ -2579,11 +2579,11 @@ const ptToolsBatch10: PtTool[] = [
       },
       {
         question: 'Por que não converter para CSV e depois para JSON?',
-        answer: 'Porque o CSV perde a informação de tipo e introduz os problemas de separador e codificação no meio do caminho. Ir direto da planilha para JSON elimina uma etapa em que as coisas costumam quebrar.'
+        answer: 'Porque o CSV introduz os problemas de separador e codificação no meio do caminho. Ir direto da planilha para JSON elimina essa etapa. Vale saber que os valores saem como o texto que o Excel exibe — "R$ 1.234,56" chega como essa string, e uma data como "15/03/2026" —, não como número.'
       },
       {
         question: 'E as outras abas?',
-        answer: 'A primeira aba é convertida. Se você precisa de outra, mova-a para a primeira posição no Excel antes de converter.'
+        answer: 'A primeira aba é convertida, mesmo que esteja oculta. Se você precisa de outra, mova-a para a primeira posição no Excel antes de converter.'
       },
       {
         question: 'A planilha é copiada para algum servidor?',
@@ -2622,7 +2622,7 @@ const ptToolsBatch10: PtTool[] = [
       },
       {
         question: 'Os tipos são preservados?',
-        answer: 'Números vêm como números sempre que a planilha os armazena assim. Datas merecem conferência: em planilhas antigas o formato de data é frequentemente ambíguo, e vale validar o resultado antes de usar em produção.'
+        answer: 'Os valores saem como o texto que o Excel exibe na célula: um número formatado como moeda chega como "R$ 1.234,56" e uma data como "15/03/2026", em strings. Se você precisa de números puros, converta essas colunas depois de carregar o JSON.'
       },
       {
         question: 'A planilha é copiada para algum servidor?',
@@ -2832,12 +2832,12 @@ const ptToolsBatch11: PtTool[] = [
     description: 'Divida uma imagem em partes iguais, grade, tiras ou colunas direto no navegador — para carrossel do Instagram ou para imprimir em várias folhas.',
     headline: 'Dividir Imagem.',
     subtitle: 'Corte uma imagem em grade, tiras ou colunas — cada parte baixa em resolução total, sem que a foto saia do seu dispositivo.',
-    quickAnswer: 'Para dividir uma imagem, selecione um PNG, JPG ou WebP na ferramenta acima e escolha o corte: uma grade de linhas e colunas, fatias horizontais iguais ou fatias verticais iguais. Cada pedaço é baixado como uma imagem separada, em resolução total — o que atende carrosséis de redes sociais, folhas de sprites e digitalizações grandes. O corte acontece no seu dispositivo.',
+    quickAnswer: 'Para dividir uma imagem, selecione um PNG, JPG ou WebP na ferramenta acima e escolha o corte: uma grade de linhas e colunas, fatias horizontais iguais ou fatias verticais iguais. Os pedaços são entregues em um ZIP, cada um como imagem separada em resolução total — o que atende carrosséis de redes sociais, folhas de sprites e digitalizações grandes. Um PNG ou WebP vira partes em PNG, sem perdas; um JPG vira partes em JPG. O corte acontece no seu dispositivo.',
     category: 'Ferramentas de Imagem',
     faqs: [
       {
         question: 'como dividir uma imagem em 4 partes',
-        answer: 'Escolha a grade de 2 linhas por 2 colunas e baixe. Cada uma das quatro partes sai como um arquivo separado, em resolução total — sem redução de qualidade em relação ao original.'
+        answer: 'Escolha a grade de 2 linhas por 2 colunas e baixe. As quatro partes saem em um ZIP, cada uma como arquivo separado em resolução total. A partir de PNG ou WebP as partes são PNG, sem perdas; a partir de JPG elas são recodificadas em JPG com 92% de qualidade.'
       },
       {
         question: 'como dividir imagem em 4 partes',
@@ -2904,7 +2904,7 @@ const ptToolsBatch11: PtTool[] = [
       },
       {
         question: 'como juntar 2 fotos em 1',
-        answer: 'Adicione as duas, escolha a direção e baixe. A ordem em que aparecem na tela é a ordem na imagem final, e ela segue a sequência em que as fotos foram escolhidas — adicione primeiro a que deve vir primeiro.'
+        answer: 'Adicione as duas, escolha a direção e baixe. A ordem em que aparecem na tela é a ordem na imagem final. Elas entram na sequência em que foram escolhidas, e os botões ▲ e ▼ ao lado de cada foto mudam a posição dela.'
       },
       {
         question: 'como juntar varias fotos em uma só',
@@ -2916,7 +2916,7 @@ const ptToolsBatch11: PtTool[] = [
       },
       {
         question: 'como unir duas imagens',
-        answer: 'São aceitos PNG, JPG, WebP e SVG, inclusive misturados na mesma montagem. A imagem final sai no formato adequado ao conteúdo, preservando transparência quando as origens a tinham.'
+        answer: 'São aceitos PNG, JPG, WebP e SVG, inclusive misturados na mesma montagem. A imagem costurada sai sempre em PNG, o que preserva a transparência quando as origens a tinham. Na saída em PDF, as imagens ficam sobre páginas brancas.'
       },
       {
         question: 'As fotos são copiadas para algum servidor?',
@@ -3006,7 +3006,7 @@ const ptToolsBatch11: PtTool[] = [
       },
       {
         question: 'Posso escolher entre .xlsx e .csv na saída?',
-        answer: 'Sim. O .xlsx mantém tipos e formatação; o .csv é o que a maioria dos sistemas de importação espera. A escolha depende de para onde os arquivos vão.'
+        answer: 'Sim. Ao extrair abas de um .xlsx com saída em .xlsx, cada arquivo é uma cópia da pasta original só com a aba escolhida, então cores, bordas, larguras de coluna e painéis congelados se mantêm. Ao partir por linhas, ou com saída em .csv, vão só os valores. O .csv é o que a maioria dos sistemas de importação espera.'
       },
       {
         question: 'A planilha é copiada para algum servidor?',
@@ -3362,12 +3362,12 @@ const ptToolsBatch12: PtTool[] = [
     description: 'Juntar arquivos Word em um só direto no navegador: vários .docx viram um documento único, com as imagens de todos os arquivos preservadas.',
     headline: 'Juntar Documentos Word.',
     subtitle: 'Una vários .docx em um único documento — com as imagens de cada arquivo preservadas.',
-    quickAnswer: 'Para juntar documentos Word, adicione dois ou mais arquivos .docx na ferramenta acima e baixe um documento único combinado. As imagens embutidas em cada arquivo de origem são transportadas e religadas corretamente, que é justamente onde a maioria dos unificadores em navegador falha. Um limite declarado: estilos e formatação podem variar quando os documentos usam definições diferentes.',
+    quickAnswer: 'Para juntar documentos Word, adicione dois ou mais arquivos .docx na ferramenta acima e baixe um documento único combinado. As imagens embutidas em cada arquivo de origem são transportadas e religadas corretamente, que é justamente onde a maioria dos unificadores em navegador falha. Um limite declarado: o documento final usa os estilos, as margens e a orientação do primeiro arquivo.',
     category: 'Ferramentas de Documentos',
     faqs: [
       {
         question: 'como juntar arquivos word em um só',
-        answer: 'Selecione todos os .docx na ferramenta acima e baixe o documento único. Cada arquivo começa em uma página nova, na ordem em que foi escolhido — a lista não é reordenável, então adicione um por vez se a sequência importar. Tabelas, imagens e o texto de cada arquivo entram inteiros.'
+        answer: 'Selecione todos os .docx na ferramenta acima e baixe o documento único. Cada arquivo começa em uma página nova, na ordem da lista; use os botões ▲ e ▼ ao lado de cada arquivo para mudar a posição dele antes de baixar. Tabelas, imagens e o texto de cada arquivo entram inteiros.'
       },
       {
         question: 'como juntar documentos no word',
@@ -3379,11 +3379,11 @@ const ptToolsBatch12: PtTool[] = [
       },
       {
         question: 'como juntar varios documentos word em um só',
-        answer: 'O procedimento é o mesmo com qualquer quantidade. Adicione os arquivos na ordem certa antes de gerar: a lista não é reordenável, e mudar a sequência depois significa refazer a união. Para relatórios montados por várias pessoas, conferir a sequência costuma ser mais importante que a união em si.'
+        answer: 'O procedimento é o mesmo com qualquer quantidade. Confira a ordem antes de gerar: os botões ▲ e ▼ ao lado de cada arquivo mudam a posição dele na lista, e o documento final segue essa sequência. Para relatórios montados por várias pessoas, conferir a sequência costuma ser mais importante que a união em si.'
       },
       {
         question: 'A formatação é preservada?',
-        answer: 'O conteúdo e as imagens sim. Estilos podem variar quando os documentos de origem definem o mesmo nome de estilo de maneiras diferentes — dois arquivos com um "Título 1" configurado de formas distintas vão brigar por essa definição no documento final. Vale uma passada de revisão nos títulos depois de unir.'
+        answer: 'O conteúdo, as imagens e a formatação aplicada diretamente ao texto sim. As definições de estilo não são mescladas: o documento final usa os estilos do primeiro arquivo, então um "Título 1" de outro documento assume a aparência do primeiro. Margens e orientação também seguem o primeiro arquivo. Vale uma passada de revisão depois de unir.'
       },
       {
         question: 'Os documentos são copiados para algum servidor?',
@@ -3417,7 +3417,7 @@ const ptToolsBatch12: PtTool[] = [
     faqs: [
       {
         question: 'como separar documentos word',
-        answer: 'Selecione o .docx e escolha o critério de quebra. Por Título 1, cada seção vira um arquivo próprio, nomeado pelo título — ideal para transformar um relatório longo em capítulos separados. Por número de parágrafos, quando o documento não tem estrutura de títulos.'
+        answer: 'Selecione o .docx e escolha o critério de quebra. Por Título 1, cada seção vira um arquivo próprio, numerado em sequência (parte 1, parte 2…) e entregue em um ZIP — ideal para transformar um relatório longo em capítulos separados. Por número de parágrafos, quando o documento não tem estrutura de títulos.'
       },
       {
         question: 'Por que dividir por Título 1 funciona melhor?',
@@ -3498,7 +3498,7 @@ const ptToolsBatch12: PtTool[] = [
     description: 'Divida um arquivo de texto por número de linhas, por tamanho em KB ou a cada delimitador, direto no navegador.',
     headline: 'Dividir Arquivo TXT.',
     subtitle: 'Parta um arquivo de texto por linhas, por tamanho ou a cada delimitador que você definir.',
-    quickAnswer: 'Para dividir um arquivo de texto, selecione seu .txt, .md, .csv ou .log na ferramenta acima e escolha como parti-lo: a cada N linhas, a cada N kilobytes, ou em cada ocorrência de um delimitador que você definir. Cada parte é baixada como arquivo próprio. É a forma prática de quebrar um arquivo grande demais para abrir ou para enviar.',
+    quickAnswer: 'Para dividir um arquivo de texto, selecione seu .txt, .md, .csv ou .log na ferramenta acima e escolha como parti-lo: a cada N linhas, a cada N kilobytes, ou em cada ocorrência de um delimitador que você definir. As partes são entregues juntas em um ZIP, cada uma como arquivo próprio. É a forma prática de quebrar um arquivo grande demais para abrir ou para enviar.',
     category: 'Ferramentas de Documentos',
     faqs: [
       {
@@ -3511,7 +3511,7 @@ const ptToolsBatch12: PtTool[] = [
       },
       {
         question: 'Serve para arquivos de log grandes?',
-        answer: 'Sim, é um dos usos principais. Um log de várias centenas de megabytes trava a maioria dos editores; partido em blocos, cada parte abre normalmente. Como o processamento é local, o limite prático é a memória do seu aparelho.'
+        answer: 'Sim, é um dos usos principais. Um log grande trava muitos editores; partido em blocos, cada parte abre normalmente. A ferramenta aceita arquivos de até 20 MB, porque o processamento acontece na memória do seu navegador.'
       },
       {
         question: 'O arquivo é copiado para algum servidor?',
@@ -3542,11 +3542,11 @@ const ptToolsBatch12: PtTool[] = [
     faqs: [
       {
         question: 'Os layouts e temas são preservados?',
-        answer: 'Os slides são copiados junto com os layouts de origem, então cada um mantém sua estrutura. Quando as apresentações usam temas diferentes, o resultado fica visivelmente misto — o que é fiel ao conteúdo, mas pode exigir uma padronização depois se o objetivo for um deck uniforme.'
+        answer: 'Os slides são copiados junto com os seus layouts, mas todos os layouts passam a usar o slide mestre da primeira apresentação. Slides de uma apresentação com tema diferente podem assumir o fundo, as cores ou as fontes do mestre da primeira — confira depois de juntar.'
       },
       {
         question: 'Posso definir a ordem dos slides?',
-        answer: 'Os slides entram na ordem dos arquivos adicionados, e dentro de cada arquivo na ordem original. Adicione os arquivos na sequência certa antes de gerar; reordenar slides individualmente é trabalho para o PowerPoint depois.'
+        answer: 'Os slides entram na ordem dos arquivos da lista, e dentro de cada arquivo na ordem original. A ordem dos arquivos você muda com os botões ▲ e ▼ antes de gerar; reordenar slides individualmente é trabalho para o PowerPoint depois.'
       },
       {
         question: 'Arquivos .ppt antigos funcionam?',
@@ -3581,7 +3581,7 @@ const ptToolsBatch12: PtTool[] = [
     faqs: [
       {
         question: 'Como extrair só alguns slides?',
-        answer: 'Informe os intervalos no formato 1-5, 8, 11-13 — números soltos e faixas podem ser misturados. O resultado é uma apresentação contendo apenas esses slides, na ordem indicada.'
+        answer: 'Informe os intervalos no formato 1-5, 8, 11-13 — números soltos e faixas podem ser misturados. Cada parte separada por vírgula vira uma apresentação própria: 1-5, 8, 11-13 gera três arquivos, entregues em um ZIP. Se uma parte citar um slide que não existe, a ferramenta avisa em vez de ignorá-la.'
       },
       {
         question: 'A qualidade das imagens e vídeos cai?',

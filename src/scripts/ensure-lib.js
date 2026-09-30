@@ -20,6 +20,8 @@
  * the file.
  */
 
+import { tr } from './i18n-runtime.js';
+
 /**
  * Every library the tools load, with a fallback on a *different* host.
  *
@@ -191,10 +193,11 @@ export class LibraryUnavailableError extends Error {
  * mention their file, because their file is not the problem.
  */
 export function libraryUnavailableMessage(what) {
-  return 'The ' + what + ' could not be loaded, so this file cannot be '
+  return tr('The {0} could not be loaded, so this file cannot be '
        + 'processed right now — this is a loading problem on our side, not a '
        + 'problem with your file. Check your connection, and if you use an ad '
-       + 'or script blocker allow this site, then reload the page and try again.';
+       + 'or script blocker allow this site, then reload the page and try again.',
+       tr(what));
 }
 
 /** The message for a caught error, whatever kind it turns out to be. */

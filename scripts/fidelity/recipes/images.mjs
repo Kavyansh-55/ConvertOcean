@@ -279,11 +279,43 @@ export const imageRecipes = [
            parsed.every((p) => p.format !== 'unknown' && p.width > 0),
            parsed.map((p) => `${p.format} ${p.width}×${p.height}`).join(', '), 'blocker'),
         ok('area', 'Tiles reassemble to the source area (no pixels lost)',
-           Math.abs(areaSum - IMG_W * IMG_H) <= IMG_W * IMG_H * 0.02,
+           areaSum === IMG_W * IMG_H,
            `tiles cover ${areaSum}px² vs source ${IMG_W * IMG_H}px²`, 'major'),
         ok('alpha', 'Transparency survives the split',
            parsed.some((p) => p.hasAlpha),
            parsed.some((p) => p.hasAlpha) ? '' : 'all tiles opaque', 'minor'),
+      ];
+    },
+  },
+  {
+    /* The shapes the 2×2 PNG above could never reach. 240×160 does not divide
+       by 7 or 3, so a fractional tile size was truncated and lost pixel
+       columns (the area check above used to allow 2%). And a WebP input was
+       encoded as JPEG but named .webp, with its transparency turned black. */
+    slug: 'split-image',
+    title: 'Split image (WebP, 3×7 uneven grid)',
+    fixture: 'torture.webp',
+    ready: '#previewCard',
+    pre: [{ setValue: '#numRows', value: '3' }, { setValue: '#numCols', value: '7' }],
+    download: '#btnSplit',
+    outName: 'split-image-webp.zip',
+    kind: 'zip',
+    async checks({ out, readImage }) {
+      const imgs = out.entries.filter((e) => /\.(png|jpe?g|webp)$/i.test(e.name));
+      const parsed = imgs.map((e) => ({ name: e.name, ...readImage(e.bytes) }));
+      const areaSum = parsed.reduce((n, p) => n + p.width * p.height, 0);
+      const mislabelled = parsed.filter((p) => {
+        const ext = p.name.split('.').pop().toLowerCase();
+        return !(ext === p.format || (ext === 'jpg' && p.format === 'jpeg'));
+      });
+      return [
+        ok('count', '3×7 grid yields 21 tiles', imgs.length === 21, `${imgs.length} tiles`, 'blocker'),
+        ok('area', 'Every source pixel lands in exactly one tile', areaSum === IMG_W * IMG_H,
+           `tiles cover ${areaSum}px² vs source ${IMG_W * IMG_H}px²`, 'major'),
+        ok('ext', 'Each tile\'s extension matches its actual format', mislabelled.length === 0,
+           mislabelled.slice(0, 3).map((p) => `${p.name} is ${p.format}`).join(', '), 'major'),
+        ok('alpha', 'A transparent WebP keeps its transparency in the tiles',
+           parsed.some((p) => p.hasAlpha), parsed.map((p) => p.format)[0] || '', 'major'),
       ];
     },
   },

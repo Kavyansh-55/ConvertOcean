@@ -151,16 +151,16 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
   <!-- Card 3: Percentage Change -->
   <div class="pct-card">
-    <div class="pct-card-title"><span class="pct-num">3</span> Percentage Change</div>
+    <div class="pct-card-title"><span class="pct-num">3</span> {t('Percentage Change', lang)}</div>
     <div class="pct-desc">{t('Calculate % increase or decrease from X to Y.', lang)}</div>
     <div class="pct-inputs">
       <span>{t('From', lang)}</span>
       <input type="number" id="pct3X" value="80" step="any" />
-      <span>to</span>
+      <span>{t('to', lang)}</span>
       <input type="number" id="pct3Y" value="100" step="any" />
     </div>
     <div class="pct-result-box">
-      <div class="pct-result-number" id="pct3Res">25% increase</div>
+      <div class="pct-result-number" id="pct3Res">{t('25% increase', lang)}</div>
       <div class="pct-formula-text" id="pct3Formula">= ((100 − 80) ÷ 80) × 100 = 25%</div>
     </div>
   </div>
@@ -172,7 +172,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div class="pct-inputs">
       <select id="pct4Op" class="select-input" style="width:90px; height:40px; font-size:13px;">
         <option value="add">{t('Add', lang)}</option>
-        <option value="sub">Subtract</option>
+        <option value="sub">{t('Subtract', lang)}</option>
       </select>
       <input type="number" id="pct4X" value="20" step="any" />
       <span>{t('% to/from', lang)}</span>

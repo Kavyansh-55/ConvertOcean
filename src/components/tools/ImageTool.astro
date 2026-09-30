@@ -97,7 +97,7 @@ if (slug === 'png-to-jpg') {
 </div>
 
 <div id="previewBox" class="img-preview-box" style="display: none;">
-  <img id="imgPreview" class="img-preview" alt="Converted Preview" />
+  <img id="imgPreview" class="img-preview" alt={t('Converted Preview', lang)} />
 </div>
 
 <div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
@@ -185,48 +185,48 @@ if (slug === 'png-to-jpg') {
 
       // Simple verification
       if (slug === 'png-to-jpg' && extension !== 'png') {
-        showError("Invalid file type. Please choose a PNG file.");
+        showError(__t("Invalid file type. Please choose a PNG file."));
         return;
       }
       if (slug === 'jpg-to-png' && !['jpg', 'jpeg'].includes(extension)) {
-        showError("Invalid file type. Please choose a JPG or JPEG file.");
+        showError(__t("Invalid file type. Please choose a JPG or JPEG file."));
         return;
       }
       if (slug === 'png-to-webp' && extension !== 'png') {
-        showError("Invalid file type. Please choose a PNG file.");
+        showError(__t("Invalid file type. Please choose a PNG file."));
         return;
       }
       if (slug === 'webp-to-png' && extension !== 'webp') {
-        showError("Invalid file type. Please choose a WebP file.");
+        showError(__t("Invalid file type. Please choose a WebP file."));
         return;
       }
       if (slug === 'jpg-to-webp' && !['jpg', 'jpeg'].includes(extension)) {
-        showError("Invalid file type. Please choose a JPG or JPEG file.");
+        showError(__t("Invalid file type. Please choose a JPG or JPEG file."));
         return;
       }
       if (slug === 'webp-to-jpg' && extension !== 'webp') {
-        showError("Invalid file type. Please choose a WebP file.");
+        showError(__t("Invalid file type. Please choose a WebP file."));
         return;
       }
       if (['svg-to-png', 'svg-to-jpg', 'svg-to-webp'].includes(slug) && extension !== 'svg') {
-        showError("Invalid file type. Please choose an SVG file.");
+        showError(__t("Invalid file type. Please choose an SVG file."));
         return;
       }
       if (['jpg-to-jpeg', 'jpeg-to-jpg'].includes(slug) && !['jpg', 'jpeg'].includes(extension)) {
-        showError("Invalid file type. Please choose a JPG or JPEG file.");
+        showError(__t("Invalid file type. Please choose a JPG or JPEG file."));
         return;
       }
       if (['avif-to-jpg', 'avif-to-png'].includes(slug) && extension !== 'avif') {
-        showError("Invalid file type. Please choose an AVIF file.");
+        showError(__t("Invalid file type. Please choose an AVIF file."));
         return;
       }
 
-      showProgress(30, "Loading image bytes…");
+      showProgress(30, __t("Loading image bytes…"));
       const isAvif = ['avif-to-jpg', 'avif-to-png'].includes(slug);
       const img = new Image();
       img.onload = function() {
           if (isAvif) URL.revokeObjectURL(img.src);
-          showProgress(70, "Rendering and converting format…");
+          showProgress(70, __t("Rendering and converting format…"));
 
           let mimeType = 'image/png';
           if (['png-to-jpg', 'webp-to-jpg', 'svg-to-jpg', 'jpeg-to-jpg', 'jpg-to-jpeg', 'avif-to-jpg'].includes(slug)) {
@@ -249,7 +249,7 @@ if (slug === 'png-to-jpg') {
             const maxSide = Math.max(w, h);
             if (maxSide > 4096) { const s = 4096 / maxSide; w = Math.round(w * s); h = Math.round(h * s); }
           }
-          if (!w || !h) { showError("Could not read the image dimensions."); hideProgress(); return; }
+          if (!w || !h) { showError(__t("Could not read the image dimensions.")); hideProgress(); return; }
 
           const canvas = document.createElement('canvas');
           canvas.width = w;
@@ -267,7 +267,7 @@ if (slug === 'png-to-jpg') {
           ctx.drawImage(img, 0, 0, w, h);
 
           canvas.toBlob(blob => {
-            if (!blob) { showError("This format could not be encoded in your browser."); hideProgress(); return; }
+            if (!blob) { showError(__t("This format could not be encoded in your browser.")); hideProgress(); return; }
             outBlob = blob;
             imgPreview.src = URL.createObjectURL(blob);
             previewBox.style.display = 'flex';
@@ -280,9 +280,9 @@ if (slug === 'png-to-jpg') {
       img.onerror = function() {
         if (img.src) URL.revokeObjectURL(img.src);
         if (isAvif) {
-          showError("Your browser could not decode this AVIF file. AVIF needs Chrome/Edge 85+, Firefox 93+, or Safari 16.4+ — on an older browser, try updating it first. If your browser is current, the file itself may be damaged.");
+          showError(__t("Your browser could not decode this AVIF file. AVIF needs Chrome/Edge 85+, Firefox 93+, or Safari 16.4+ — on an older browser, try updating it first. If your browser is current, the file itself may be damaged."));
         } else {
-          showError("Failed to parse image data.");
+          showError(__t("Failed to parse image data."));
         }
         hideProgress();
       };

@@ -24,13 +24,20 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const UI = readFileSync('src/i18n/ui.ts', 'utf8');
+/* Runtime strings (errors, progress, results) live in their own file since
+   2026-09-29, and each tool page ships the ones its component uses — see
+   runtime-strings.test.mjs, which checks that per page. */
+const UI_RUNTIME = readFileSync('src/i18n/ui-runtime-pt.ts', 'utf8');
+const SCOPES = readFileSync('src/i18n/ui-runtime-scopes.ts', 'utf8');
 
-/** Keys of the pt dictionary, unescaped. */
+/** Keys of the pt dictionaries, unescaped. */
 const known = new Set(
-  [...UI.matchAll(/^\s+'((?:[^'\\]|\\.)*)':\s*'/gm)].map(m =>
+  [...(UI + '\n' + UI_RUNTIME).matchAll(/^\s+'((?:[^'\\]|\\.)*)':\s*'/gm)].map(m =>
     m[1].replace(/\\'/g, "'").replace(/\\\\/g, '\\')
   )
 );
+/** Keys a tool page ships through its runtime scope. */
+const scoped = new Set([...SCOPES.matchAll(/^\s+("(?:[^"\\]|\\.)*"),$/gm)].map(m => JSON.parse(m[1])));
 
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {
@@ -87,7 +94,7 @@ test('every runtime string is in RUNTIME_KEYS, so it is actually shipped', () =>
   const shipped = new Set(
     [...block.matchAll(/'((?:[^'\\]|\\.)*)'/g)].map(m => m[1].replace(/\\'/g, "'"))
   );
-  const unshipped = [...runtimeCalls()].filter(k => !shipped.has(k));
+  const unshipped = [...runtimeCalls()].filter(k => !shipped.has(k) && !scoped.has(k));
   assert.deepStrictEqual(
     unshipped, [],
     `called at runtime but not shipped to the browser (add to RUNTIME_KEYS):\n${unshipped.join('\n')}`

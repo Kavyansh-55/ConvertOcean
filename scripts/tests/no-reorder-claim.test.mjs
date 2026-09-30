@@ -39,8 +39,14 @@ const BANNED = [
   'adjust the layout sequence', 'rearrange the order',
 ];
 
-/* Lines that use the words while saying the control does NOT exist. */
+/* Lines that use the words while saying the control does NOT exist — or
+   describing the ▲/▼ buttons that DO exist. Correction 2026-09-30: Merge
+   Excel, Merge Images, Merge PowerPoint, Merge Text and Merge Word have move
+   up/down buttons; only Merge PDF and Image to PDF have no reorder control at
+   all. No tool has drag-and-drop. The header above overstated it, and copy
+   written from it told Merge Word users they could not reorder. */
 const ALLOWED = [
+  '▲ and ▼', '▲ e ▼',
   'There is no drag-to-reorder',        // en guide, saying the control does not exist
   'Não existe arrastar para reordenar',
   'a lista não é reordenável',

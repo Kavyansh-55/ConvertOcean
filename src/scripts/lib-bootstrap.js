@@ -18,6 +18,7 @@
  * or loses a library needs no change here.
  */
 import { LIB_SOURCES, ensureLib, libPresent } from './ensure-lib.js';
+import { tr } from './i18n-runtime.js';
 
 /**
  * Which library is this script tag?
@@ -108,7 +109,7 @@ function holdControls(doc) {
   notice.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);'
     + 'z-index:9999;padding:10px 18px;border-radius:999px;font:500 14px/1.4 system-ui,sans-serif;'
     + 'background:#1f2937;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.25);max-width:90vw;';
-  notice.textContent = 'Finishing loading the tools…';
+  notice.textContent = tr('Finishing loading the tools…');
   (doc.body || doc.documentElement).appendChild(notice);
 
   return (failedKeys) => {
@@ -120,8 +121,8 @@ function holdControls(doc) {
     /* Leave the notice up when the repair did not work. The controls go back
        on regardless — a tool whose other paths still function (CSV, on a page
        whose spreadsheet engine is gone) must not be locked out. */
-    notice.textContent = 'Some tools could not finish loading. Check your connection '
-      + 'or an ad blocker, then reload.';
+    notice.textContent = tr('Some tools could not finish loading. Check your connection '
+      + 'or an ad blocker, then reload.');
     notice.style.background = '#7f1d1d';
   };
 }

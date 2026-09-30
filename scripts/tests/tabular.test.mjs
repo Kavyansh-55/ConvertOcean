@@ -283,6 +283,43 @@ test('a summable column really does sum', () => {
   assert.equal(total, 21648.5, 'must match the fixture total on the page');
 });
 
+/* ------------------------------------- Brazilian / European conventions */
+
+test('decimal comma: a semicolon file\'s numbers become numbers', () => {
+  const o = { decimalComma: true };
+  assert.deepEqual(coerceValue('1.234,56', o), { t: 'n', v: 1234.56 });
+  assert.deepEqual(coerceValue('12,5', o), { t: 'n', v: 12.5 });
+  assert.deepEqual(coerceValue('-0,75', o), { t: 'n', v: -0.75 });
+  assert.deepEqual(coerceValue('1.500', o), { t: 'n', v: 1500 });
+  assert.deepEqual(coerceValue('2.345.678,90', o), { t: 'n', v: 2345678.9 });
+  assert.deepEqual(coerceValue('1440', o), { t: 'n', v: 1440 });
+});
+
+test('decimal comma keeps the rules that protect codes and precision', () => {
+  const o = { decimalComma: true };
+  assert.equal(coerceValue('0044123456', o).t, 's');       // leading zero is information
+  assert.equal(coerceValue('012,5', o).t, 's');
+  assert.equal(coerceValue('1.23', o).t, 'n');              // not grouped: plain decimal point
+  assert.equal(coerceValue('12.345.678.901.234.567,1', o).t, 's'); // > 15 digits
+  assert.equal(coerceValue('R$ 1.234,56', o).t, 's');       // currency text is not guessed at
+});
+
+test('without the option, comma decimals stay text exactly as before', () => {
+  assert.equal(coerceValue('1.234,56').t, 's');
+  assert.equal(coerceValue('12,5').t, 's');
+  assert.equal(coerceValue('1,440').t, 's');
+});
+
+test('day-first dates only when asked', () => {
+  assert.deepEqual(coerceValue('15/03/2026', { dayFirst: true }),
+    { t: 'd', v: isoDateToSerial(2026, 3, 15) });
+  assert.deepEqual(coerceValue('1/2/2026', { dayFirst: true }),
+    { t: 'd', v: isoDateToSerial(2026, 2, 1) });
+  assert.equal(coerceValue('32/01/2026', { dayFirst: true }).t, 's');
+  assert.equal(coerceValue('15/13/2026', { dayFirst: true }).t, 's');
+  assert.equal(coerceValue('15/03/2026').t, 's'); // English pages: ambiguous, left alone
+});
+
 /* --------------------------------------------------------------- runner */
 
 let failed = 0;

@@ -183,7 +183,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
   <div class="split-range-bar">
     <div class="split-range-field">
       <label class="input-label" for="pageRanges">{t('Pages to extract', lang)}</label>
-      <input type="text" id="pageRanges" class="form-input" placeholder="e.g. 1-5, 8, 11-13" autocomplete="off" />
+      <input type="text" id="pageRanges" class="form-input" placeholder={t('e.g. 1-5, 8, 11-13', lang)} autocomplete="off" />
       <span class="split-range-hint" id="pageRangeHint">{t('Type page numbers or ranges — or click the pages below.', lang)}</span>
     </div>
     <div class="split-range-actions">
@@ -283,7 +283,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 25);
       if (tooLarge) { showError(tooLarge); return; }
       hideError();
-      showProgress(10, "Loading PDF pages…");
+      showProgress(10, __t("Loading PDF pages…"));
       const reader = new FileReader();
       reader.onload = async function(e) {
         try {
@@ -307,7 +307,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           pagesGrid.innerHTML = '';
           
           for(let i = 1; i <= pdf.numPages; i++) {
-            showProgress(Math.round(10 + (i / pdf.numPages) * 90), `Loading preview ${i} of ${pdf.numPages}…`);
+            showProgress(Math.round(10 + (i / pdf.numPages) * 90), __tf('Loading preview {0} of {1}…', i, pdf.numPages));
             const page = await pdf.getPage(i);
             const viewport = page.getViewport({ scale: 0.2 });
             const canvas = document.createElement('canvas');
@@ -338,7 +338,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           splitWorkspace.style.display = 'block';
           dropZone.style.display = 'none';
         } catch(err) {
-          showError("Failed to parse PDF structure.");
+          showError(__t("Failed to parse PDF structure."));
         }
         hideProgress();
       };
@@ -441,7 +441,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const total = (splitFile && splitFile.count) || 0;
       const parsed = parsePageRanges(pageRanges.value, total);
       if (parsed === null) {
-        updateSelectionHint('Use numbers and ranges within 1–' + total + ', e.g. "1-5, 8".', true);
+        updateSelectionHint(__tf('Use numbers and ranges within 1–{0}, e.g. "1-5, 8".', total), true);
         return;
       }
       applySelection(parsed);
@@ -491,10 +491,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       pagesGrid.classList.toggle('inactive', whole);
       pagesGrid.toggleAttribute('inert', whole);
       btnExtract.textContent = mode === 'one' ? __t('Extract Selected Pages')
-        : mode === 'each' ? 'Extract Pages as Separate Files'
-        : 'Split into Parts';
+        : mode === 'each' ? __t('Extract Pages as Separate Files')
+        : __t('Split into Parts');
       splitModeNote.textContent = whole
-        ? 'Every page is included — the selection above is not used in this mode.'
+        ? __t('Every page is included — the selection above is not used in this mode.')
         : '';
     }
     modeRadios.forEach((r) => r.addEventListener('change', syncMode));
@@ -589,10 +589,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const mode = currentMode();
       const needsSelection = mode === 'one' || mode === 'each';
       if (needsSelection && selectedPages.size === 0) {
-        showError("Please select at least 1 page.");
+        showError(__t("Please select at least 1 page."));
         return;
       }
-      showProgress(20, "Extracting PDF pages…");
+      showProgress(20, __t("Extracting PDF pages…"));
       try {
         if (!splitFile || !splitFile.bytes || !splitFile.bytes.byteLength) {
           throw new Error('PDF data unavailable — reload the page and add the file again.');
@@ -616,25 +616,24 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           for (let i = 0; i < picked.length; i++) {
             const n = picked[i];
             entries.push([base + '_page_' + String(n).padStart(pad, '0') + '.pdf', await buildPart(doc, [n])]);
-            showProgress(20 + Math.round(70 * (i + 1) / picked.length), 'Writing page ' + n + '…');
+            showProgress(20 + Math.round(70 * (i + 1) / picked.length), __tf('Writing page {0}…', n));
           }
-          showProgress(95, 'Packing ' + entries.length + ' files…');
+          showProgress(95, __tf('Packing {0} files…', entries.length));
           await zipAndDownload(entries, base + '_pages.zip');
 
         } else if (mode === 'parts') {
           const want = Math.max(2, Math.min(100, parseInt(partCount.value, 10) || 2));
           if (want > total) {
-            throw new Error('This PDF has ' + total + ' page' + (total === 1 ? '' : 's') +
-              ', so it cannot be split into ' + want + ' parts.');
+            throw new Error(__tf(total === 1 ? 'This PDF has {0} page, so it cannot be split into {1} parts.' : 'This PDF has {0} pages, so it cannot be split into {1} parts.', total, want));
           }
           const groups = equalParts(total, want);
           const entries = [];
           const pad = String(groups.length).length;
           for (let i = 0; i < groups.length; i++) {
             entries.push([base + '_part_' + String(i + 1).padStart(pad, '0') + '.pdf', await buildPart(doc, groups[i])]);
-            showProgress(20 + Math.round(70 * (i + 1) / groups.length), 'Writing part ' + (i + 1) + ' of ' + groups.length + '…');
+            showProgress(20 + Math.round(70 * (i + 1) / groups.length), __tf('Writing part {0} of {1}…', i + 1, groups.length));
           }
-          showProgress(95, 'Packing ' + entries.length + ' files…');
+          showProgress(95, __tf('Packing {0} files…', entries.length));
           await zipAndDownload(entries, base + '_parts.zip');
 
         } else {
@@ -642,25 +641,25 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           if (!(mb > 0)) throw new Error('Enter a size in MB, for example 2.');
           const budget = Math.round(mb * 1024 * 1024);
           const sized = await sizedParts(doc, total, budget,
-            (frac) => showProgress(20 + Math.round(50 * frac), 'Measuring pages…'));
+            (frac) => showProgress(20 + Math.round(50 * frac), __t('Measuring pages…')));
           const entries = [];
           const pad = String(sized.groups.length).length;
           sized.groups.forEach((g, i) => {
             entries.push([base + '_part_' + String(i + 1).padStart(pad, '0') + '.pdf', g.bytes]);
           });
-          showProgress(95, 'Packing ' + entries.length + ' files…');
+          showProgress(95, __tf('Packing {0} files…', entries.length));
           await zipAndDownload(entries, base + '_parts.zip');
           if (sized.oversize.length) {
-            showError('Split into ' + sized.groups.length + ' parts, but page' +
-              (sized.oversize.length === 1 ? ' ' : 's ') + sized.oversize.join(', ') +
-              ' is larger than ' + mb + ' MB on its own, so that part is over the limit. ' +
-              'Compressing the PDF first will bring it down.');
+            showError(__tf(sized.oversize.length === 1
+              ? 'Split into {0} parts, but page {1} is larger than {2} MB on its own, so that part is over the limit. Compressing the PDF first will bring it down.'
+              : 'Split into {0} parts, but pages {1} are larger than {2} MB on their own, so those parts are over the limit. Compressing the PDF first will bring them down.',
+              sized.groups.length, sized.oversize.join(', '), mb));
           }
         }
       } catch(err) {
         // Say what actually went wrong. The bare message hid a detached
         // buffer for as long as this bug existed.
-        showError("Failed to extract pages: " + (err && err.message ? err.message : 'unknown error'));
+        showError(__tf('Failed to extract pages: {0}', (err && err.message ? err.message : __t('unknown error'))));
       }
       hideProgress();
     });

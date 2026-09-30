@@ -450,7 +450,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 25);
       if (tooLarge) { showError(tooLarge); return; }
       if (!/\.pdf$/i.test(file.name)) {
-        showError('That is not a PDF. This tool compresses PDF files — for photos, the Image Resizer handles pixel sizes and KB limits.');
+        showError(__t('That is not a PDF. This tool compresses PDF files — for photos, the Image Resizer handles pixel sizes and KB limits.'));
         return;
       }
       hideError();
@@ -467,7 +467,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         await run('balanced');
       } catch (err) {
         hideProgress();
-        showError('That PDF could not be opened. If it is password-protected, remove the password first — nothing was sent anywhere.');
+        showError(__t('That PDF could not be opened. If it is password-protected, remove the password first — nothing was sent anywhere.'));
       }
     }
 
@@ -515,7 +515,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         paint();
       } catch (err) {
         hideProgress();
-        showError('This PDF could not be compressed. It may use an encoding this tool does not handle, or be damaged. Nothing was sent anywhere and your file is unchanged.');
+        showError(__t('This PDF could not be compressed. It may use an encoding this tool does not handle, or be damaged. Nothing was sent anywhere and your file is unchanged.'));
       }
     }
 
@@ -551,10 +551,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       if (r.noGain || saved <= 0) {
         elAfter.textContent = fmt(before);
         elBefore.style.display = 'none';
-        elSaving.innerHTML = '<strong>Already as small as it goes.</strong> Nothing here could be reduced without damaging the document, so your original is what downloads — unchanged.';
+        elSaving.innerHTML = __t('<strong>Already as small as it goes.</strong> Nothing here could be reduced without damaging the document, so your original is what downloads — unchanged.');
       } else if (r.noImages) {
         elBefore.style.display = '';
-        elSaving.innerHTML = '<strong>' + pct + '% smaller.</strong> This PDF has no images in it, so the saving came from tidying the file structure. Text-only PDFs are already efficient — there is no large win hiding in one.';
+        elSaving.innerHTML = __tf('<strong>{0}% smaller.</strong> This PDF has no images in it, so the saving came from tidying the file structure. Text-only PDFs are already efficient — there is no large win hiding in one.', pct);
       } else if (nothingShrunk(r)) {
         /* The case the bug report landed on: a text document with a logo. The
            logo is an image, so the "no images" line above does not fire, but
@@ -563,20 +563,20 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
            at all. Three identical numbers with no explanation reads as a
            broken tool, which is exactly how it was reported. */
         elBefore.style.display = '';
-        elSaving.innerHTML = '<strong>' + pct + '% smaller.</strong> '
+        elSaving.innerHTML = __tf('<strong>{0}% smaller.</strong> '
           + 'No image in this PDF is stored larger than it is displayed, so the '
           + '<em>how hard to compress</em> settings make no difference to this file — '
           + 'all three produce the same result. The saving came from tidying the file '
-          + 'structure instead. Nearly all of this document is text and fonts.';
+          + 'structure instead. Nearly all of this document is text and fonts.', pct);
       } else {
         elBefore.style.display = '';
-        elSaving.innerHTML = '<strong>' + pct + '% smaller</strong> — ' + fmt(saved) + ' saved. Text, links and form fields are untouched.';
+        elSaving.innerHTML = __tf('<strong>{0}% smaller</strong> — {1} saved. Text, links and form fields are untouched.', pct, fmt(saved));
       }
 
       if (r.targetBytes) {
         targetNote.textContent = r.targetMet
-          ? 'Fits under ' + fmt(r.targetBytes) + ' at the gentlest setting that got there (' + r.settings.dpi + ' DPI).'
-          : 'Could not reach ' + fmt(r.targetBytes) + '. ' + fmt(after) + ' is the smallest this document goes before the pages stop being readable — that is a limit of what is in the file, not of the tool.';
+          ? __tf('Fits under {0} at the gentlest setting that got there ({1} DPI).', fmt(r.targetBytes), r.settings.dpi)
+          : __tf('Could not reach {0}. {1} is the smallest this document goes before the pages stop being readable — that is a limit of what is in the file, not of the tool.', fmt(r.targetBytes), fmt(after));
       }
 
       const sizeSlot = presetRow.querySelector('[data-size-for="' + current.key + '"]');
@@ -597,9 +597,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       /* Say the outcome out loud. `textContent` of the hero would read as a
          run-on of two sizes, so this is phrased for listening. */
       live.textContent = (r.noGain || saved <= 0)
-        ? 'Already as small as it goes. Your original is ready to download, unchanged.'
-        : 'Compressed from ' + fmt(before) + ' to ' + fmt(after) + ', ' + pct +
-          ' percent smaller. Ready to download.';
+        ? __t('Already as small as it goes. Your original is ready to download, unchanged.')
+        : __tf('Compressed from {0} to {1}, {2} percent smaller. Ready to download.', fmt(before), fmt(after), pct);
       renderDetails(r);
 
       /* Open it only when an image really changed — that is the only case
@@ -622,18 +621,22 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const kept = r.images.filter((i) => i.action === 'kept').length;
       const skipped = r.images.filter((i) => i.action === 'skipped').length;
 
+      /* Singular and plural are separate templates rather than an "s" glued
+         on, so each language can agree its own nouns and verbs. */
+      const left = kept + skipped;
       untouched.innerHTML =
-        'Text, fonts, vector graphics, links, form fields and bookmarks were not modified — only image data was. ' +
-        'Of <strong>' + r.images.length + '</strong> image' + (r.images.length === 1 ? '' : 's') + ' in this document, ' +
-        '<strong>' + shrunk + '</strong> ' + (shrunk === 1 ? 'was' : 'were') + ' re-encoded and ' +
-        '<strong>' + (kept + skipped) + '</strong> ' + (kept + skipped === 1 ? 'was' : 'were') + ' left exactly as ' +
-        (kept + skipped === 1 ? 'it was' : 'they were') + '.';
+        __t('Text, fonts, vector graphics, links, form fields and bookmarks were not modified — only image data was.') + ' ' +
+        __tf(r.images.length === 1 ? 'Of <strong>{0}</strong> image in this document, ' : 'Of <strong>{0}</strong> images in this document, ', r.images.length) +
+        __tf(shrunk === 1 ? '<strong>{0}</strong> was re-encoded and ' : '<strong>{0}</strong> were re-encoded and ', shrunk) +
+        __tf(left === 1 ? '<strong>{0}</strong> was left exactly as it was.' : '<strong>{0}</strong> were left exactly as they were.', left);
 
       imgRows.innerHTML = '';
       for (const im of r.images) {
         const tr = document.createElement('tr');
-        const dpi = im.effectiveDpi === null ? '—'
-          : (im.effectiveDpi === Infinity ? 'not visible' : im.effectiveDpi + ' DPI');
+        // == null: an image that is never drawn arrives with no effectiveDpi at
+        // all, and `undefined + ' DPI'` printed "undefined DPI" in the table.
+        const dpi = im.effectiveDpi == null ? '—'
+          : (im.effectiveDpi === Infinity ? __t('not visible') : im.effectiveDpi + ' DPI');
         const size = im.action === 'shrunk'
           ? fmt(im.bytes) + ' → ' + fmt(im.newBytes)
           : fmt(im.bytes);
@@ -641,8 +644,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           ? im.width + '×' + im.height + ' → ' + im.newWidth + '×' + im.newHeight
           : im.width + '×' + im.height;
         const tag = im.action === 'shrunk'
-          ? '<span class="cmp-tag cmp-tag-shrunk">re-encoded</span>'
-          : '<span class="cmp-tag">left alone</span>';
+          ? '<span class="cmp-tag cmp-tag-shrunk">' + __t('re-encoded') + '</span>'
+          : '<span class="cmp-tag">' + __t('left alone') + '</span>';
 
         tr.innerHTML =
           '<td>' + dims + '</td>' +
@@ -676,7 +679,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     async function renderCompareNow() {
       if (!job || !current) return;
       const token = ++renderToken;
-      pageLabel.textContent = 'Page ' + pageNo + ' of ' + job.pageCount;
+      pageLabel.textContent = __tf('Page {0} of {1}', pageNo, job.pageCount);
 
       /* Both sides are rendered at the same viewport so the comparison is of
          the image data and nothing else. Width is capped at what the stage can

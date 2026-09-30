@@ -21,6 +21,8 @@
  * report the date the file states.
  */
 
+import { tr } from './i18n-runtime.js';
+
 /**
  * Container tags. Anything not listed here is treated as a leaf, which is what
  * lets `<CHECKNUM>` with an empty value close itself when the next tag opens
@@ -392,10 +394,10 @@ export function parseOfx(text) {
 
     for (const trn of account.transactions) {
       if (trn.amount === null) {
-        warnings.push('A transaction in ' + account.label + ' had an unreadable amount (' + (trn.amountRaw || 'empty') + ') and was kept with a blank amount.');
+        warnings.push(tr('A transaction in {0} had an unreadable amount ({1}) and was kept with a blank amount.', account.label, trn.amountRaw || tr('empty')));
       }
       if (!trn.datePosted) {
-        warnings.push('A transaction in ' + account.label + ' had no readable posted date.');
+        warnings.push(tr('A transaction in {0} had no readable posted date.', account.label));
       }
     }
 
@@ -415,7 +417,7 @@ export function parseOfx(text) {
     const code = status ? childValue(status, 'CODE') : '';
     const message = status ? childValue(status, 'MESSAGE') : '';
     if (code && code !== '0') {
-      warnings.push('The file reports an error from the bank (status code ' + code + (message ? ': ' + message : '') + ').');
+      warnings.push(tr('The file reports an error from the bank (status code {0}).', code + (message ? ': ' + message : '')));
     }
   }
 

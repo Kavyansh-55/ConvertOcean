@@ -17,7 +17,8 @@
  *
  *   node scripts/fidelity/_live.mjs
  */
-const ORIGIN = 'https://convertocean.com';
+// Overridable so new checks can be proven against a local build before deploy.
+const ORIGIN = process.env.CO_ORIGIN || 'https://convertocean.com';
 const bust = () => '?v=' + Date.now() + Math.random().toString(36).slice(2);
 
 async function get(path) {
@@ -799,6 +800,52 @@ async function stylesheetsFor(path) {
       '/excel-converter/ says formulas are read, not evaluated');
   const pt = (await get('/pt/conversor-excel/')).body;
   say(!/calcula as fórmulas|fórmulas são calculadas no navegador/.test(pt), '/pt/conversor-excel/ says the same in Portuguese');
+}
+
+/* ------------------------------------------------- 2026-09-29 tool FAQs, runtime Portuguese, offline PDF
+   The browser-level proofs are `npm run offline` and verify-pt-parity.mjs
+   against CO_ORIGIN=https://convertocean.com; these pin what is served. */
+{
+  /* FAQ answers that promised controls the tools do not have. */
+  const png = (await get('/png-to-jpg/')).body;
+  say(!/adjust the quality slider/.test(png) && /always encoded at 92% quality/.test(png), '/png-to-jpg/ FAQ no longer promises a quality slider');
+  const mp = (await get('/merge-pdf/')).body;
+  say(!/copies document outlines, links, and bookmark/.test(mp) && !/arrange them in the order you need/.test(mp),
+      '/merge-pdf/ no longer claims bookmarks survive or a reorder control');
+  const jx = (await get('/json-to-xlsx/')).body;
+  say(!/named 'Sheet1' by default/.test(jx) && /named “Data”/.test(jx), "/json-to-xlsx/ names the sheet it really writes (Data)");
+  const st = (await get('/sales-tax-calculator/')).body;
+  say(!/US Average \(7\.12%\)/.test(st) && /7\.53%/.test(st), '/sales-tax-calculator/ states the real US average preset');
+  const pc = (await get('/percentage-calculator/')).body;
+  say(!/no advertisements/.test(pc), '/percentage-calculator/ no longer says "no advertisements"');
+  const tool = (await get('/split-pdf/')).body;
+  say(!/Enjoy unlimited file sizes/.test(tool), 'tool template no longer claims unlimited file sizes and no ad trackers');
+
+  /* Offline PDF tools: the worker is fetched at page load. */
+  {
+    const refs = [...tool.matchAll(/\/_astro\/([^"']+\.js)/g)].map((m) => m[1]);
+    let js = '';
+    for (const r of refs.slice(0, 16)) {
+      js += (await get('/_astro/' + r)).body;
+      for (const dep of js.matchAll(/from"\.\/([^"]+\.js)"/g)) if (!js.includes('pdfjs-dist@3.4.120/build/pdf.worker')) js += (await get('/_astro/' + dep[1])).body;
+      if (/pdfjs-dist@3\.4\.120\/build\/pdf\.worker\.min\.js/.test(js)) break;
+    }
+    say(/pdfjs-dist@3\.4\.120\/build\/pdf\.worker\.min\.js/.test(js), '/split-pdf/ bundle preloads the pdf.js worker (offline after load)');
+  }
+
+  /* Runtime Portuguese: each tool page ships its own translated messages. */
+  const cpt = (await get('/pt/comprimir-pdf/')).body;
+  say(/Já está no menor tamanho possível/.test(cpt) && /Página \{0\} de \{1\}/.test(cpt),
+      '/pt/comprimir-pdf/ ships its Portuguese result messages');
+  say(/Use cada ferramenta quantas vezes quiser/.test(cpt), '/pt/ tool template "no account" card is Portuguese');
+  const exif = (await get('/pt/ver-exif/')).body;
+  say(/Marca da câmera/.test(exif) && /Girada 90° no sentido horário/.test(exif), '/pt/ver-exif/ ships Portuguese EXIF tag names');
+  const home = (await get('/pt/')).body;
+  say(!/Marca da câmera/.test(home), '/pt/ homepage does not carry tool-only strings (per-page scope)');
+  const merge = (await get('/pt/juntar-pdf/')).body;
+  say(!/arrastar uma das miniaturas|ordene e baixe/.test(merge), '/pt/juntar-pdf/ no longer describes a drag-to-reorder control');
+  const csv = (await get('/pt/csv-para-xlsx/')).body;
+  say(/1\.234,56/.test(csv) && /dd\/mm\/aaaa/.test(csv), '/pt/csv-para-xlsx/ FAQ describes Brazilian number and date handling');
 }
 
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');

@@ -166,7 +166,8 @@ async function runRecipe(browser, recipe) {
   await page.setViewport({ width: 1440, height: 1000 });
 
   const started = Date.now();
-  const url = `${ORIGIN}/${recipe.slug}/`;
+  // `path` lets a recipe run on a localised page, e.g. /pt/csv-para-xlsx/.
+  const url = ORIGIN + (recipe.path || `/${recipe.slug}/`);
   await page.goto(url, { waitUntil: 'networkidle2', timeout: 60_000 });
 
   if (recipe.typeInto) {

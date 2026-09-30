@@ -162,8 +162,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div id="rzDimFields">
       <div class="resizer-panel-title" style="border: none; padding: 0;">{t('Common Form Presets', lang)}</div>
       <div class="preset-chips" style="margin-bottom: var(--spacing-sm);">
-        <button class="preset-chip" data-w="200" data-h="230">Form Photo 200×230</button>
-        <button class="preset-chip" data-w="140" data-h="60">Signature 140×60</button>
+        <button class="preset-chip" data-w="200" data-h="230">{t('Form Photo 200×230', lang)}</button>
+        <button class="preset-chip" data-w="140" data-h="60">{t('Signature 140×60', lang)}</button>
         <button class="preset-chip" data-w="1280" data-h="720">HD 1280×720</button>
         <button class="preset-chip" data-w="1920" data-h="1080">Full HD 1920×1080</button>
       </div>
@@ -201,9 +201,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <label class="form-label" for="rzFormat">{t('Output Format', lang)}</label>
       <select id="rzFormat" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink); width: 100%;">
         <option value="jpg" selected>JPG (.jpg) — {t('smallest, best for forms', lang)}</option>
-        <option value="jpeg">JPEG (.jpeg) — same format, .jpeg extension</option>
+        <option value="jpeg">{t('JPEG (.jpeg) — same format, .jpeg extension', lang)}</option>
         <option value="png">PNG (.png) — {t('lossless, larger files', lang)}</option>
-        <option value="webp">WebP (.webp) — modern, very small</option>
+        <option value="webp">{t('WebP (.webp) — modern, very small', lang)}</option>
       </select>
     </div>
 
@@ -218,7 +218,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
   <div class="resizer-panel">
     <div class="resizer-panel-title">{t('Preview & Result', lang)}</div>
     <div class="img-preview-box">
-      <img id="rzPreview" class="img-preview" alt="Resized image preview" />
+      <img id="rzPreview" class="img-preview" alt={t('Resized image preview', lang)} />
     </div>
     <div class="result-summary" id="rzSummary">{t('Choose an image to begin.', lang)}</div>
     <div class="button-group">
@@ -272,15 +272,15 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       hideError();
       const ext = file.name.split('.').pop().toLowerCase();
       if (!['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
-        showError('Please choose a JPG, JPEG, PNG, or WebP image.');
+        showError(__t('Please choose a JPG, JPEG, PNG, or WebP image.'));
         return;
       }
       if (file.size > 15 * 1024 * 1024) {
-        showError('File exceeds the 15MB limit.');
+        showError(__t('File exceeds the 15MB limit.'));
         return;
       }
       srcName = file.name; srcBytes = file.size;
-      showProgress(40, 'Reading image…');
+      showProgress(40, __t('Reading image…'));
       const reader = new FileReader();
       reader.onload = e => {
         const img = new Image();
@@ -302,12 +302,12 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           $('rzFormat').value = sourceFormat;
           $('rzQualityGroup').style.display = sourceFormat === 'png' ? 'none' : 'block';
           $('rzPreview').src = e.target.result;
-          $('rzSummary').innerHTML = `<strong>Original:</strong> ${srcW}×${srcH} px · ${fmtKB(srcBytes)}<br/>Choose settings and click <strong>Resize Image</strong>.`;
+          $('rzSummary').innerHTML = __tf('<strong>Original:</strong> {0}×{1} px · {2}<br/>Choose settings and click <strong>{3}</strong>.', srcW, srcH, fmtKB(srcBytes), __t('Resize Image'));
           dropZone.style.display = 'none';
           $('rzWorkspace').style.display = 'grid';
           hideProgress();
         };
-        img.onerror = () => { showError('Failed to parse image data.'); hideProgress(); };
+        img.onerror = () => { showError(__t('Failed to parse image data.')); hideProgress(); };
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
@@ -428,10 +428,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           const w = parseInt($('rzWidth').value) || 0;
           const h = parseInt($('rzHeight').value) || 0;
           if (w < 1 || h < 1 || w > 10000 || h > 10000) {
-            showError('Enter a width and height between 1 and 10000 pixels.');
+            showError(__t('Enter a width and height between 1 and 10000 pixels.'));
             return;
           }
-          showProgress(60, 'Resizing image…');
+          showProgress(60, __t('Resizing image…'));
           const canvas = drawToCanvas(w, h, mime);
           const q = parseInt($('rzQuality').value) / 100;
           outBlob = await toBlobAsync(canvas, mime, fmt === 'png' ? undefined : q);
@@ -439,26 +439,26 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         } else {
           const targetKB = parseFloat($('rzTargetKB').value) || 0;
           if (targetKB < 2) {
-            showError('Enter a target size of at least 2 KB.');
+            showError(__t('Enter a target size of at least 2 KB.'));
             return;
           }
-          showProgress(60, 'Compressing to ' + targetKB + ' KB…');
+          showProgress(60, __tf('Compressing to {0} KB…', targetKB));
           const res = await compressToTarget(targetKB * 1024, mime);
           outBlob = res.blob; outW = res.w; outH = res.h;
           window.__rzAlreadyFits = !!res.alreadyFits;
         }
 
-        if (!outBlob) { showError('Compression failed — try a different output format.'); return; }
+        if (!outBlob) { showError(__t('Compression failed — try a different output format.')); return; }
         $('rzPreview').src = URL.createObjectURL(outBlob);
         let sizeNote = '';
         if (mode === 'filesize') {
           const targetB = (parseFloat($('rzTargetKB').value) || 0) * 1024;
           if (outBlob.size > targetB) {
-            sizeNote = '<br/><span class="result-highlight">Smallest achievable for this image.</span>';
+            sizeNote = '<br/><span class="result-highlight">' + __t('Smallest achievable for this image.') + '</span>';
           } else if (window.__rzAlreadyFits) {
-            sizeNote = '<br/>Already under your ' + $('rzTargetKB').value + ' KB limit at <strong>maximum quality</strong> — the target is an upper limit, so smaller is better, not a problem.';
+            sizeNote = '<br/>' + __tf('Already under your {0} KB limit at <strong>maximum quality</strong> — the target is an upper limit, so smaller is better, not a problem.', $('rzTargetKB').value);
           } else {
-            sizeNote = '<br/>Fits under your ' + $('rzTargetKB').value + ' KB limit at the highest quality that fits.';
+            sizeNote = '<br/>' + __tf('Fits under your {0} KB limit at the highest quality that fits.', $('rzTargetKB').value);
           }
         }
         $('rzSummary').innerHTML =
@@ -466,7 +466,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           `<strong>Result:</strong> <span class="result-highlight">${outW}×${outH} px · ${fmtKB(outBlob.size)}</span>${sizeNote}`;
         $('rzDownload').disabled = false;
       } catch (err) {
-        showError('Something went wrong while processing: ' + (err && err.message ? err.message : err));
+        showError(__tf('Something went wrong while processing: {0}', (err && err.message ? err.message : err)));
       } finally {
         hideProgress();
       }

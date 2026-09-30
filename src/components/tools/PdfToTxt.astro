@@ -141,7 +141,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       if (tooLarge) { showError(tooLarge); return; }
       hideError();
       originalName = file.name;
-      showProgress(10, "Loading PDF data structure…");
+      showProgress(10, __t("Loading PDF data structure…"));
       try {
         const reader = new FileReader();
         reader.onload = async function(e) {
@@ -154,7 +154,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             let extractedChars = 0;
 
             for (let i = 1; i <= pdf.numPages; i++) {
-              showProgress(Math.round(10 + (i / pdf.numPages) * 85), `Reading page ${i} of ${pdf.numPages}…`);
+              showProgress(Math.round(10 + (i / pdf.numPages) * 85), __tf('Reading page {0} of {1}…', i, pdf.numPages));
               const page = await pdf.getPage(i);
               const textContent = await page.getTextContent();
               // Positioned fragments, not lines. Rebuild the line structure
@@ -169,9 +169,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             // a file containing only page headings.
             if (extractedChars === 0) {
               showError(
-                'This PDF has no selectable text — it looks like a scan or a photo, ' +
-                'so there is nothing to extract. Read it with OCR instead:',
-                { label: 'Open Image to Text (OCR)', href: '/image-to-text/' }
+                __t('This PDF has no selectable text — it looks like a scan or a photo, so there is nothing to extract. Read it with OCR instead:'),
+                { label: __t('Open Image to Text (OCR)'), href: __t('/image-to-text/') }
               );
               hideProgress();
               return;
@@ -184,17 +183,17 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             actionControls.style.display = 'flex';
             dropZone.style.display = 'none';
           } catch(err) {
-            showError("Failed to parse PDF pages.");
+            showError(__t("Failed to parse PDF pages."));
           }
           hideProgress();
         };
         reader.onerror = function() {
-          showError("Failed to read PDF file.");
+          showError(__t("Failed to read PDF file."));
           hideProgress();
         };
         reader.readAsArrayBuffer(file);
       } catch(err) {
-        showError("Initialization error.");
+        showError(__t("Initialization error."));
         hideProgress();
       }
     }

@@ -204,7 +204,7 @@ const isRemover = slug === 'exif-remover';
 <div id="resultPanel" class="panel-card" style="display: none; margin-top: var(--spacing-md);">
   <div class="xf-layout">
     <div class="xf-thumb-box">
-      <img id="xfThumb" class="xf-thumb" alt="Preview of the photo you selected" />
+      <img id="xfThumb" class="xf-thumb" alt={t('Preview of the photo you selected', lang)} />
       <div class="xf-filename" id="xfFilename"></div>
     </div>
 
@@ -321,36 +321,36 @@ const isRemover = slug === 'exif-remover';
 
       if (['jpg', 'jpeg', 'png', 'webp'].indexOf(extension) === -1) {
         if (extension === 'heic' || extension === 'heif') {
-          showError('HEIC photos are not supported here yet — their metadata sits in a different container format. Convert the photo first with the HEIC to JPG tool, then run the JPG through this one.');
+          showError(__t('HEIC photos are not supported here yet — their metadata sits in a different container format. Convert the photo first with the HEIC to JPG tool, then run the JPG through this one.'));
         } else {
-          showError('That is a .' + extension + ' file. This tool reads JPG, PNG and WebP images.');
+          showError(__tf('That is a .{0} file. This tool reads JPG, PNG and WebP images.', extension));
         }
         return;
       }
       if (file.size > MAX_BYTES) {
-        showError('That file is ' + (file.size / 1048576).toFixed(1) + 'MB, over the 25MB limit.');
+        showError(__tf('That file is {0}MB, over the 25MB limit.', (file.size / 1048576).toFixed(1)));
         return;
       }
       if (file.size === 0) {
-        showError('That file is empty (0 bytes). If it is synced by OneDrive, iCloud or Google Drive, it may still be a placeholder — open its folder and let it download fully first.');
+        showError(__t('That file is empty (0 bytes). If it is synced by OneDrive, iCloud or Google Drive, it may still be a placeholder — open its folder and let it download fully first.'));
         return;
       }
 
       showProgress(30, __t('Reading photo…'));
       const reader = new FileReader();
-      reader.onerror = () => showError('The file could not be read from disk. If it is synced by a cloud drive, make sure it has finished downloading to this device.');
+      reader.onerror = () => showError(__t('The file could not be read from disk. If it is synced by a cloud drive, make sure it has finished downloading to this device.'));
       reader.onload = e => {
         try {
-          showProgress(70, 'Reading metadata…');
+          showProgress(70, __t('Reading metadata…'));
           bytes = new Uint8Array(e.target.result);
           meta = readImageMetadata(bytes);
         } catch (err) {
-          showError('This image could not be read. If it opens normally in a photo viewer, please report it through the contact page — a real sample is what makes a parser bug fixable.');
+          showError(__t('This image could not be read. If it opens normally in a photo viewer, please report it through the contact page — a real sample is what makes a parser bug fixable.'));
           return;
         }
 
         if (!meta.ok) {
-          showError('This does not look like a JPG, PNG or WebP image. The file extension may not match its real contents — check by opening it in a photo viewer.');
+          showError(__t('This does not look like a JPG, PNG or WebP image. The file extension may not match its real contents — check by opening it in a photo viewer.'));
           return;
         }
 
@@ -360,7 +360,7 @@ const isRemover = slug === 'exif-remover';
         filenameEl.textContent = file.name + ' · ' + formatBytes(file.size);
 
         render();
-        showProgress(100, 'Done');
+        showProgress(100, __t('Done'));
         setTimeout(hideProgress, 150);
       };
       reader.readAsArrayBuffer(file);
@@ -370,10 +370,10 @@ const isRemover = slug === 'exif-remover';
       const s = summarizeMetadata(meta);
 
       const stats = [
-        ['Format', (meta.format || '').toUpperCase()],
-        ['Metadata found', String(s.tagCount) + (s.tagCount === 1 ? ' tag' : ' tags')],
-        ['Identifying', String(s.sensitiveCount)],
-        ['Metadata size', formatBytes(s.metadataBytes) + (s.percentOfFile ? ' (' + s.percentOfFile + '%)' : '')]
+        [__t('Format'), (meta.format || '').toUpperCase()],
+        [__t('Metadata found'), __tf(s.tagCount === 1 ? '{0} tag' : '{0} tags', s.tagCount)],
+        [__t('Identifying'), String(s.sensitiveCount)],
+        [__t('Metadata size'), formatBytes(s.metadataBytes) + (s.percentOfFile ? ' (' + s.percentOfFile + '%)' : '')]
       ];
       statsEl.replaceChildren();
       for (const [label, value] of stats) {
@@ -394,7 +394,7 @@ const isRemover = slug === 'exif-remover';
         gpsEl.replaceChildren();
         const title = document.createElement('div');
         title.className = 'xf-gps-title';
-        title.textContent = 'This photo records where it was taken';
+        title.textContent = __t('This photo records where it was taken');
         const coords = document.createElement('div');
         coords.className = 'xf-gps-coords';
         coords.textContent = meta.gps.latitude + ', ' + meta.gps.longitude;
@@ -410,11 +410,11 @@ const isRemover = slug === 'exif-remover';
           encodeURIComponent(meta.gps.latitude) + '/' + encodeURIComponent(meta.gps.longitude);
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
-        link.textContent = 'Open in OpenStreetMap';
+        link.textContent = __t('Open in OpenStreetMap');
         note.append(
-          document.createTextNode('No map is loaded on this page, because fetching one would send these coordinates to another server. '),
+          document.createTextNode(__t('No map is loaded on this page, because fetching one would send these coordinates to another server.') + ' '),
           link,
-          document.createTextNode(' opens them there deliberately, if you want to see the spot.')
+          document.createTextNode(' ' + __t('opens them there deliberately, if you want to see the spot.'))
         );
         gpsEl.append(title, coords, note);
         gpsEl.style.display = 'block';
@@ -424,7 +424,7 @@ const isRemover = slug === 'exif-remover';
 
       // "Already clean" state — an honest, useful answer in its own right.
       if (meta.tags.length === 0 && meta.items.filter(i => i.removable).length === 0) {
-        cleanEl.textContent = 'No metadata found. This image carries no EXIF, XMP or comment data — there is nothing here to remove. Photos posted through most social networks come back like this, because the platform stripped it on upload.';
+        cleanEl.textContent = __t('No metadata found. This image carries no EXIF, XMP or comment data — there is nothing here to remove. Photos posted through most social networks come back like this, because the platform stripped it on upload.');
         cleanEl.style.display = 'block';
       } else {
         cleanEl.style.display = 'none';
@@ -443,7 +443,7 @@ const isRemover = slug === 'exif-remover';
       const headRow = document.createElement('tr');
       for (const col of ['Group', 'Tag', 'Value']) {
         const th = document.createElement('th');
-        th.textContent = col;
+        th.textContent = __t(col);
         headRow.appendChild(th);
       }
       thead.appendChild(headRow);
@@ -454,7 +454,7 @@ const isRemover = slug === 'exif-remover';
         const tr = document.createElement('tr');
         const td = document.createElement('td');
         td.colSpan = 3;
-        td.textContent = 'No readable metadata tags in this image.';
+        td.textContent = __t('No readable metadata tags in this image.');
         tr.appendChild(td);
         tbody.appendChild(tr);
       }
@@ -463,13 +463,15 @@ const isRemover = slug === 'exif-remover';
         if (tag.sensitive) tr.className = 'xf-sensitive';
         const group = document.createElement('td');
         group.className = 'xf-group-label';
-        group.textContent = tag.ifd;
+        group.textContent = __t(tag.ifd);
         const name = document.createElement('td');
         name.className = 'xf-name';
-        name.textContent = tag.name;
+        name.textContent = __t(tag.name);
         const value = document.createElement('td');
         value.className = 'xf-value';
-        value.textContent = tag.value;
+        /* Enumerated values ("Rotated 90° clockwise") are dictionary keys;
+           free text and numbers are not, and pass through unchanged. */
+        value.textContent = String(tag.value).replace(/^(.*?)( \(\d+\))?$/, (m, text, code) => __t(text) + (code || ''));
         tr.append(group, name, value);
         tbody.appendChild(tr);
       }
@@ -482,8 +484,8 @@ const isRemover = slug === 'exif-remover';
       toggleBtn.setAttribute('aria-expanded', tableOpen ? 'true' : 'false');
       const count = meta ? meta.tags.length : 0;
       toggleBtn.textContent = tableOpen
-        ? 'Hide the full metadata table'
-        : 'Show all ' + count + ' metadata ' + (count === 1 ? 'tag' : 'tags');
+        ? __t('Hide the full metadata table')
+        : __tf(count === 1 ? 'Show all {0} metadata tag' : 'Show all {0} metadata tags', count);
     }
 
     toggleBtn.addEventListener('click', () => { tableOpen = !tableOpen; applyToggle(); });
@@ -497,11 +499,11 @@ const isRemover = slug === 'exif-remover';
           keepColourProfile: optIcc.checked
         });
       } catch (err) {
-        showError('Removing the metadata failed unexpectedly. Please report this file through the contact page.');
+        showError(__t('Removing the metadata failed unexpectedly. Please report this file through the contact page.'));
         return;
       }
       if (!result.ok) {
-        showError('This image format could not be rewritten. JPG, PNG and WebP are supported.');
+        showError(__t('This image format could not be rewritten. JPG, PNG and WebP are supported.'));
         return;
       }
 
@@ -514,9 +516,9 @@ const isRemover = slug === 'exif-remover';
 
       const removedNames = result.removed.map(r => r.name);
       resultEl.textContent = removedNames.length
-        ? 'Removed ' + removedNames.join(', ').toLowerCase() + ' — ' +
-          formatBytes(result.removedBytes) + ' smaller. The image itself is untouched.'
-        : 'Nothing to remove — this image had no metadata. The copy you downloaded is identical.';
+        ? __tf('Removed {0} — {1} smaller. The image itself is untouched.',
+            removedNames.map((n) => n.replace(/^(.*?)( \(.*\))?$/, (m, name, tail) => __t(name) + (tail || ''))).join(', ').toLowerCase(), formatBytes(result.removedBytes))
+        : __t('Nothing to remove — this image had no metadata. The copy you downloaded is identical.');
     });
 
     btnClear.addEventListener('click', () => {

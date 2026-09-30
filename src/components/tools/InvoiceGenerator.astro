@@ -405,21 +405,21 @@ const sample = isPt ? {
         <div class="form-group">
           <label class="form-label" for="invCurrency">{t('Currency', lang)}</label>
           <select id="invCurrency" class="select-input">
-            <option value="$" selected={!isPt}>$ &ndash; US Dollar (USD)</option>
-            <option value="R$" selected={isPt}>R$ &ndash; Real Brasileiro (BRL)</option>
-            <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
-            <option value="&pound;">&pound; &ndash; British Pound (GBP)</option>
-            <option value="&#8377;">&#8377; &ndash; Indian Rupee (INR)</option>
-            <option value="&yen;">&yen; &ndash; Japanese Yen (JPY)</option>
-            <option value="&yen;">&yen; &ndash; Chinese Yuan (CNY)</option>
-            <option value="C$">C$ &ndash; Canadian Dollar (CAD)</option>
-            <option value="A$">A$ &ndash; Australian Dollar (AUD)</option>
-            <option value="CHF">CHF &ndash; Swiss Franc</option>
-            <option value="AED">AED &ndash; UAE Dirham</option>
-            <option value="SGD">SGD &ndash; Singapore Dollar</option>
-            <option value="R">R &ndash; South African Rand</option>
-            <option value="zł">zł &ndash; Polish Złoty (PLN)</option>
-            <option value="₩">₩ &ndash; South Korean Won (KRW)</option>
+            <option value="$" selected={!isPt}>{t('$ – US Dollar (USD)', lang)}</option>
+            <option value="R$" selected={isPt}>{t('R$ – Real Brasileiro (BRL)', lang)}</option>
+            <option value="&euro;">{t('€ – Euro (EUR)', lang)}</option>
+            <option value="&pound;">{t('£ – British Pound (GBP)', lang)}</option>
+            <option value="&#8377;">{t('₹ – Indian Rupee (INR)', lang)}</option>
+            <option value="&yen;">{t('¥ – Japanese Yen (JPY)', lang)}</option>
+            <option value="&yen;">{t('¥ – Chinese Yuan (CNY)', lang)}</option>
+            <option value="C$">{t('C$ – Canadian Dollar (CAD)', lang)}</option>
+            <option value="A$">{t('A$ – Australian Dollar (AUD)', lang)}</option>
+            <option value="CHF">{t('CHF – Swiss Franc', lang)}</option>
+            <option value="AED">{t('AED – UAE Dirham', lang)}</option>
+            <option value="SGD">{t('SGD – Singapore Dollar', lang)}</option>
+            <option value="R">{t('R – South African Rand', lang)}</option>
+            <option value="zł">{t('zł – Polish Złoty (PLN)', lang)}</option>
+            <option value="₩">{t('₩ – South Korean Won (KRW)', lang)}</option>
           </select>
         </div>
         <div class="form-group">
@@ -510,7 +510,7 @@ const sample = isPt ? {
         <!-- Header -->
         <div class="invoice-pdf-header">
           <div>
-            <div class="pdf-brand-title" id="pdfVendorTitle">Kavya J. Studio</div>
+            <div class="pdf-brand-title" id="pdfVendorTitle">{sample.VendorName}</div>
             <div class="pdf-meta-text" id="pdfVendorSub">{t('Vendor Billing Profile', lang)}</div>
           </div>
           <div>
@@ -600,18 +600,18 @@ const sample = isPt ? {
       DueDate: "",
       TaxModel: "GST", 
       TaxRate: 0.18,
-      VendorName: "Kavya J. Studio",
-      VendorAddress: "12 Developer Lane, Indiranagar\nBengaluru, KA 560038\nhello@kavyaj.studio",
+      /* Every text field below is overwritten by the locale's sample on the
+         next line; these are only the shape. They used to hold an Indian
+         sample (HDFC, Bengaluru) that no page shows any more. */
+      VendorName: "",
+      VendorAddress: "",
       VendorTaxId: "",
-      ClientName: "Galactic Group Ltd.",
-      ClientAddress: "45 Cloud Towers, Tech City\nMumbai, MH 400001\nbilling@galactic.com",
+      ClientName: "",
+      ClientAddress: "",
       ClientTaxId: "",
-      Terms: "Bank: HDFC Bank | A/C: 9876543210\nIFSC: HDFC0000123\nPayment is due within 15 days of invoice date.",
-      CustomTaxLabel: "Tax",
-      LineItems: [
-        { desc: "Advanced Multi-page Web UI Scaffolding", qty: 1, rate: 2500.00 },
-        { desc: "Client-side Performance Optimization Suite", qty: 4, rate: 350.00 }
-      ]
+      Terms: "",
+      CustomTaxLabel: "",
+      LineItems: []
     };
     /* The locale's sample, rendered by the component (see #invSample). */
     Object.assign(invoiceData, JSON.parse(document.getElementById('invSample').textContent));
@@ -743,16 +743,16 @@ const sample = isPt ? {
         tr.className = 'item-edit-row';
         tr.innerHTML = `
           <td>
-            <input type="text" class="form-input" aria-label="Item ${index + 1} description" value="${item.desc}" oninput="window.updateLineItem(${index}, 'desc', this.value)">
+            <input type="text" class="form-input" aria-label="${__tf('Item {0} description', index + 1)}" value="${item.desc}" oninput="window.updateLineItem(${index}, 'desc', this.value)">
           </td>
           <td>
-            <input type="number" class="form-input" style="padding: 0 6px; text-align: center;" aria-label="Item ${index + 1} quantity" inputmode="numeric" value="${item.qty}" min="1" oninput="window.updateLineItem(${index}, 'qty', this.value)">
+            <input type="number" class="form-input" style="padding: 0 6px; text-align: center;" aria-label="${__tf('Item {0} quantity', index + 1)}" inputmode="numeric" value="${item.qty}" min="1" oninput="window.updateLineItem(${index}, 'qty', this.value)">
           </td>
           <td>
-            <input type="number" class="form-input" aria-label="Item ${index + 1} unit price" inputmode="decimal" value="${item.rate}" min="0" step="0.01" oninput="window.updateLineItem(${index}, 'rate', this.value)">
+            <input type="number" class="form-input" aria-label="${__tf('Item {0} unit price', index + 1)}" inputmode="decimal" value="${item.rate}" min="0" step="0.01" oninput="window.updateLineItem(${index}, 'rate', this.value)">
           </td>
           <td>
-            <button type="button" class="item-delete-btn" aria-label="Remove item ${index + 1}" onclick="window.deleteLineItem(${index})">×</button>
+            <button type="button" class="item-delete-btn" aria-label="${__tf('Remove item {0}', index + 1)}" onclick="window.deleteLineItem(${index})">×</button>
           </td>
         `;
         itemEditRows.appendChild(tr);

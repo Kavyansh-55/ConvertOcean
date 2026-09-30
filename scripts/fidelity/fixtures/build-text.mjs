@@ -183,8 +183,32 @@ NEWFILEUID:NONE
 </OFX>
 `;
 
+/* ------------------------------------------------- Brazilian exports */
+
+/* What Excel in Brazil writes when you "Salvar como CSV": semicolons, because
+   the comma is the decimal mark; dd/mm/aaaa dates; thousands with a dot. A
+   leading-zero product code and an unformatted CNPJ ride along — the first
+   must stay text, the second must stay a number with every digit visible. */
+const csvBr = [
+  'Data;Descrição;Valor;Quantidade;CNPJ;Código',
+  '15/03/2026;Café especial;1.234,56;3;12345678000190;0044',
+  '02/04/2026;Açúcar cristal;-89,90;12;98765432000110;0012',
+].join('\r\n') + '\r\n';
+
+/* The shape of an NF-e: repeating <det> items whose values use a decimal
+   POINT (the XML schema requires it), a leading-zero product code, a 13-digit
+   EAN and accented descriptions. */
+const nfe = `<?xml version="1.0" encoding="UTF-8"?>
+<NFe><infNFe Id="NFe35260312345678000190550010000001231000001230">
+  <det nItem="1"><prod><cProd>0012</cProd><cEAN>7891234567895</cEAN><xProd>Café especial</xProd><qCom>3.0000</qCom><vUnCom>411.52</vUnCom><vProd>1234.56</vProd></prod></det>
+  <det nItem="2"><prod><cProd>0044</cProd><cEAN>7890000000017</cEAN><xProd>Açúcar cristal</xProd><qCom>12.0000</qCom><vUnCom>7.49</vUnCom><vProd>89.90</vProd></prod></det>
+</infNFe></NFe>
+`;
+
 /* --------------------------------------------------------------- emit */
 
+console.log(write('torture-br.csv', csvBr));
+console.log(write('torture-nfe.xml', nfe));
 console.log(write('torture.csv', csv));
 console.log(write('torture.json', json));
 console.log(write('torture.xml', xml));

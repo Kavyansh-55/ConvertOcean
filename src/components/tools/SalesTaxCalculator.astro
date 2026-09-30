@@ -181,10 +181,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div class="tax-panel-title">{t('Calculation Mode', lang)}</div>
     <div class="tax-mode-tabs">
       <button class="tax-mode-tab active" aria-pressed="true" id="taxTabAdd">{t('Add Sales Tax', lang)}</button>
-      <button class="tax-mode-tab" aria-pressed="false" id="taxTabRemove">Remove Sales Tax</button>
+      <button class="tax-mode-tab" aria-pressed="false" id="taxTabRemove">{t('Remove Sales Tax', lang)}</button>
     </div>
 
-    <div class="tax-panel-title">{t('Country / Region', lang)} <span style="text-transform: none; font-weight: 400;">&mdash; sales tax, VAT &amp; GST</span></div>
+    <div class="tax-panel-title">{t('Country / Region', lang)} <span style="text-transform: none; font-weight: 400;">{t('— sales tax, VAT & GST', lang)}</span></div>
     <div class="preset-grid" id="taxPresetGrid">
       <button class="preset-btn active" data-rate={US_AVERAGE_COMBINED.toFixed(2)}>US Avg {US_AVERAGE_COMBINED.toFixed(2)}%</button>
       <button class="preset-btn" data-rate="20">UK VAT 20%</button>
@@ -218,27 +218,27 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
       <label class="form-label" for="taxCurrency" style="font-size: 13px; font-weight: 500;">{t('Currency', lang)}</label>
       <select id="taxCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink);">
-        <option value="$" selected>$ &ndash; US Dollar (USD)</option>
-        <option value="&euro;">&euro; &ndash; Euro (EUR)</option>
-        <option value="&pound;">&pound; &ndash; British Pound (GBP)</option>
-        <option value="&#8377;">&#8377; &ndash; Indian Rupee (INR)</option>
-        <option value="&yen;">&yen; &ndash; Japanese Yen (JPY)</option>
-        <option value="&yen;">&yen; &ndash; Chinese Yuan (CNY)</option>
-        <option value="C$">C$ &ndash; Canadian Dollar (CAD)</option>
-        <option value="A$">A$ &ndash; Australian Dollar (AUD)</option>
-        <option value="CHF">CHF &ndash; Swiss Franc (CHF)</option>
-        <option value="AED">AED &ndash; UAE Dirham (AED)</option>
-        <option value="SGD">SGD &ndash; Singapore Dollar (SGD)</option>
-        <option value="R">R &ndash; South African Rand (ZAR)</option>
-        <option value="zł">zł &ndash; Polish Złoty (PLN)</option>
-        <option value="₩">₩ &ndash; South Korean Won (KRW)</option>
+        <option value="$" selected>{t('$ – US Dollar (USD)', lang)}</option>
+        <option value="&euro;">{t('€ – Euro (EUR)', lang)}</option>
+        <option value="&pound;">{t('£ – British Pound (GBP)', lang)}</option>
+        <option value="&#8377;">{t('₹ – Indian Rupee (INR)', lang)}</option>
+        <option value="&yen;">{t('¥ – Japanese Yen (JPY)', lang)}</option>
+        <option value="&yen;">{t('¥ – Chinese Yuan (CNY)', lang)}</option>
+        <option value="C$">{t('C$ – Canadian Dollar (CAD)', lang)}</option>
+        <option value="A$">{t('A$ – Australian Dollar (AUD)', lang)}</option>
+        <option value="CHF">{t('CHF – Swiss Franc (CHF)', lang)}</option>
+        <option value="AED">{t('AED – UAE Dirham (AED)', lang)}</option>
+        <option value="SGD">{t('SGD – Singapore Dollar (SGD)', lang)}</option>
+        <option value="R">{t('R – South African Rand (ZAR)', lang)}</option>
+        <option value="zł">{t('zł – Polish Złoty (PLN)', lang)}</option>
+        <option value="₩">{t('₩ – South Korean Won (KRW)', lang)}</option>
       </select>
     </div>
 
     <div class="tax-panel-title">{t('Enter Values', lang)}</div>
     <div id="taxFieldsAdd">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
-        <label class="form-label" for="taxPrice1" id="taxLblPrice1">Pre-Tax Price ($)</label>
+        <label class="form-label" for="taxPrice1" id="taxLblPrice1">{t('Pre-Tax Price ($)', lang)}</label>
         <input type="number" id="taxPrice1" class="form-input" value="100" min="0" step="0.01" />
       </div>
       <div class="form-group">
@@ -249,7 +249,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     <div id="taxFieldsRemove" style="display:none;">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
-        <label class="form-label" for="taxTotal2" id="taxLblTotal2">Total Price (Tax Inclusive) ($)</label>
+        <label class="form-label" for="taxTotal2" id="taxLblTotal2">{t('Total Price (Tax Inclusive) ($)', lang)}</label>
         <input type="number" id="taxTotal2" class="form-input" value="107.53" min="0" step="0.01" />
       </div>
       <div class="form-group">
@@ -262,23 +262,23 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
   </div>
 
   <div class="tax-panel">
-    <div class="tax-panel-title">Tax Calculation Results</div>
+    <div class="tax-panel-title">{t('Tax Calculation Results', lang)}</div>
 
     <div class="tax-result-card">
       <div class="tax-result-row">
-        <span class="tax-result-label" id="taxResGrandLabel">Total (Tax Inclusive)</span>
+        <span class="tax-result-label" id="taxResGrandLabel">{t('Total (Tax Inclusive)', lang)}</span>
         <span class="tax-result-value grand" id="taxResGrand">$107.53</span>
       </div>
       <div class="tax-result-row">
-        <span class="tax-result-label">Tax Amount</span>
+        <span class="tax-result-label">{t('Tax Amount', lang)}</span>
         <span class="tax-result-value" id="taxResTax">$7.53</span>
       </div>
       <div class="tax-result-row">
-        <span class="tax-result-label" id="taxResBaseLabel">Pre-Tax Price</span>
+        <span class="tax-result-label" id="taxResBaseLabel">{t('Pre-Tax Price', lang)}</span>
         <span class="tax-result-value" id="taxResBase">$100.00</span>
       </div>
       <div class="tax-result-row">
-        <span class="tax-result-label">Tax Rate</span>
+        <span class="tax-result-label">{t('Tax Rate', lang)}</span>
         <span class="tax-result-value" id="taxResRate">7.53%</span>
       </div>
     </div>
@@ -288,22 +288,22 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       <table>
         <thead>
           <tr>
-            <th>Component</th>
+            <th>{t('Component', lang)}</th>
             <th>{t('Amount', lang)}</th>
           </tr>
         </thead>
         <tbody id="taxBreakdownBody">
           <tr><td>{t('Base Price', lang)}</td><td>$100.00</td></tr>
-          <tr><td>Tax (7.53%)</td><td>$7.53</td></tr>
-          <tr><td style="font-weight:600; color: var(--colors-ink);">Total</td><td style="font-weight:600; color: var(--colors-ink);">$107.53</td></tr>
+          <tr><td>{t('Tax (7.53%)', lang)}</td><td>$7.53</td></tr>
+          <tr><td style="font-weight:600; color: var(--colors-ink);">{t('Total', lang)}</td><td style="font-weight:600; color: var(--colors-ink);">$107.53</td></tr>
         </tbody>
       </table>
     </div>
 
     <div class="tax-panel-title" style="margin-top: var(--spacing-sm);">{t('Formula Used', lang)}</div>
     <div class="formula-box" id="taxFormula">
-      Tax Amount = Price × (Rate ÷ 100) = $100.00 × 0.0753 = $7.53<br/>
-      Total = Price + Tax = $100.00 + $7.53 = $107.53
+      {t('Tax Amount = Price × (Rate ÷ 100) = $100.00 × 0.0753 = $7.53', lang)}<br/>
+      {t('Total = Price + Tax = $100.00 + $7.53 = $107.53', lang)}
     </div>
   </div>
 </div>
@@ -346,8 +346,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     function setCurrency(sym) {
       currSym = sym;
       $('taxCurrency').value = sym;
-      $('taxLblPrice1').textContent = `Pre-Tax Price (${sym})`;
-      $('taxLblTotal2').textContent = `Total Price (Tax Inclusive) (${sym})`;
+      $('taxLblPrice1').textContent = __tf('Pre-Tax Price ({0})', sym);
+      $('taxLblTotal2').textContent = __tf('Total Price (Tax Inclusive) ({0})', sym);
     }
 
     // The note names a state, so it must stop naming one the moment the rate
@@ -370,7 +370,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       $('taxRate2').value = rate;
       setCurrency('$');
       document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-      stateNote.innerHTML = `<strong>${opt.dataset.state}: ${rate.toFixed(2)}%</strong> — state rate plus the <em>average</em> local rate. Local rates vary by address, so use this to estimate and confirm the exact rate with the state revenue department before filing. <a href="/guides/us-sales-tax-by-state/">Full rate table for all 50 states</a>.`;
+      stateNote.innerHTML = __tf('<strong>{0}: {1}%</strong> — state rate plus the <em>average</em> local rate. Local rates vary by address, so use this to estimate and confirm the exact rate with the state revenue department before filing. <a href="/guides/us-sales-tax-by-state/">Full rate table for all 50 states</a>.', opt.dataset.state, rate.toFixed(2));
       calculate();
     });
 
@@ -427,17 +427,23 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         rate = parseFloat($('taxRate1').value) || 0;
         tax = base * (rate / 100);
         total = base + tax;
-        $('taxResGrandLabel').textContent = 'Total (Tax Inclusive)';
-        $('taxResBaseLabel').textContent = 'Pre-Tax Price';
-        $('taxFormula').innerHTML = `Tax Amount = Price × (Rate ÷ 100) = ${fmt(base)} × ${(rate/100).toFixed(4)} = ${fmt(tax)}<br/>Total = Price + Tax = ${fmt(base)} + ${fmt(tax)} = ${fmt(total)}`;
+        $('taxResGrandLabel').textContent = __t('Total (Tax Inclusive)');
+        $('taxResBaseLabel').textContent = __t('Pre-Tax Price');
+        $('taxFormula').innerHTML = [
+          __tf('Tax Amount = Price × (Rate ÷ 100) = {0} × {1} = {2}', fmt(base), (rate/100).toFixed(4), fmt(tax)),
+          __tf('Total = Price + Tax = {0} + {1} = {2}', fmt(base), fmt(tax), fmt(total)),
+        ].join('<br/>');
       } else {
         total = parseFloat($('taxTotal2').value) || 0;
         rate = parseFloat($('taxRate2').value) || 0;
         base = total / (1 + rate / 100);
         tax = total - base;
-        $('taxResGrandLabel').textContent = 'Total (Original)';
-        $('taxResBaseLabel').textContent = 'Pre-Tax Price (Extracted)';
-        $('taxFormula').innerHTML = `Pre-Tax Price = Total ÷ (1 + Rate/100) = ${fmt(total)} ÷ ${(1 + rate/100).toFixed(4)} = ${fmt(base)}<br/>Tax Amount = Total − Pre-Tax = ${fmt(total)} − ${fmt(base)} = ${fmt(tax)}`;
+        $('taxResGrandLabel').textContent = __t('Total (Original)');
+        $('taxResBaseLabel').textContent = __t('Pre-Tax Price (Extracted)');
+        $('taxFormula').innerHTML = [
+          __tf('Pre-Tax Price = Total ÷ (1 + Rate/100) = {0} ÷ {1} = {2}', fmt(total), (1 + rate/100).toFixed(4), fmt(base)),
+          __tf('Tax Amount = Total − Pre-Tax = {0} − {1} = {2}', fmt(total), fmt(base), fmt(tax)),
+        ].join('<br/>');
       }
 
       $('taxResGrand').textContent = fmt(total);
@@ -446,9 +452,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       $('taxResRate').textContent = rate.toFixed(2) + '%';
 
       $('taxBreakdownBody').innerHTML = `
-        <tr><td>Base Price</td><td>${fmt(base)}</td></tr>
-        <tr><td>Tax (${rate.toFixed(2)}%)</td><td>${fmt(tax)}</td></tr>
-        <tr><td style="font-weight:600; color: var(--colors-ink);">Total</td><td style="font-weight:600; color: var(--colors-ink);">${fmt(total)}</td></tr>
+        <tr><td>${__t('Base Price')}</td><td>${fmt(base)}</td></tr>
+        <tr><td>${__tf('Tax ({0}%)', rate.toFixed(2))}</td><td>${fmt(tax)}</td></tr>
+        <tr><td style="font-weight:600; color: var(--colors-ink);">${__t('Total')}</td><td style="font-weight:600; color: var(--colors-ink);">${fmt(total)}</td></tr>
       `;
     }
 

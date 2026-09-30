@@ -129,7 +129,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     <div class="form-group" id="customSepGroup" style="display: none;">
       <label class="form-label" for="customSeparator">{t('Custom Separator Text', lang)}</label>
-      <input type="text" class="form-input" id="customSeparator" placeholder="e.g. --- FILE SEPARATOR ---" />
+      <input type="text" class="form-input" id="customSeparator" placeholder={t('e.g. --- FILE SEPARATOR ---', lang)} />
     </div>
 
     <div class="form-group">
@@ -233,11 +233,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       );
 
       if (textFiles.length === 0) {
-        showError("Please choose valid text files (.txt, .md, .log, .csv, etc.).");
+        showError(__t("Please choose valid text files (.txt, .md, .log, .csv, etc.)."));
         return;
       }
 
-      showProgress(15, "Reading text files…");
+      showProgress(15, __t("Reading text files…"));
       
       /* Each file keeps its selection slot; the batch joins the list in the
          order chosen, not the order the reads finished — a large file chosen
@@ -247,7 +247,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const slots = new Array(textFiles.length);
       const finish = () => {
         readCount++;
-        showProgress(15 + Math.round((readCount / textFiles.length) * 75), `Reading files (${readCount}/${textFiles.length})…`);
+        showProgress(15 + Math.round((readCount / textFiles.length) * 75), __tf('Reading files ({0}/{1})…', readCount, textFiles.length));
         if (readCount < textFiles.length) return;
         uploadedTexts.push(...slots.filter(Boolean));
         hideProgress();
@@ -260,9 +260,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
              contributes nothing but a separator to the merged result. Saying
              so beats letting the reader wonder why the output is short. */
           if (!String(event.target.result || '').trim()) {
-            showError(`Skipped "${file.name}": ` + (window.coNothingToConvert
+            showError(__tf('Skipped "{0}": {1}', file.name, window.coNothingToConvert
               ? window.coNothingToConvert('text file')
-              : 'it has nothing in it to merge.'));
+              : __t('it has nothing in it to merge.')));
           } else {
             slots[i] = {
               id: Date.now() + Math.random().toString(36).substr(2, 5),
@@ -298,9 +298,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             <span class="file-size">${(file.size / 1024).toFixed(1)} KB</span>
           </div>
           <div class="file-actions">
-            <button class="action-btn" onclick="window.moveFileUp('${file.id}')" title="Move Up" ${index === 0 ? 'disabled' : ''}>▲</button>
-            <button class="action-btn" onclick="window.moveFileDown('${file.id}')" title="Move Down" ${index === uploadedTexts.length - 1 ? 'disabled' : ''}>▼</button>
-            <button class="action-btn action-btn-danger" onclick="window.deleteFile('${file.id}')" title="Remove">✕</button>
+            <button class="action-btn" onclick="window.moveFileUp('${file.id}')" aria-label="${__t('Move up')}" title="${__t('Move up')}" ${index === 0 ? 'disabled' : ''}>▲</button>
+            <button class="action-btn" onclick="window.moveFileDown('${file.id}')" aria-label="${__t('Move down')}" title="${__t('Move down')}" ${index === uploadedTexts.length - 1 ? 'disabled' : ''}>▼</button>
+            <button class="action-btn action-btn-danger" onclick="window.deleteFile('${file.id}')" aria-label="${__tf('Remove {0}', file.name)}" title="${__t('Remove')}">✕</button>
           </div>
         `;
         filesList.appendChild(item);
@@ -346,7 +346,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       hideError();
       if (uploadedTexts.length === 0) return;
 
-      showProgress(30, "Merging contents…");
+      showProgress(30, __t("Merging contents…"));
       
       let sep = '\n';
       const sepVal = separatorType.value;
@@ -369,7 +369,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         compiledParts.push(content);
       });
 
-      showProgress(75, "Compiling merged file…");
+      showProgress(75, __t("Compiling merged file…"));
       
       const mergedText = compiledParts.join(sep);
       const blob = new Blob([mergedText], { type: 'text/plain;charset=utf-8' });

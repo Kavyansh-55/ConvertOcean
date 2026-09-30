@@ -60,7 +60,7 @@ if (slug === 'docx-to-txt') {
 <div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
   <div class="upload-icon"><CategoryIcon icon="📝" width="40" height="40" /></div>
   <div class="upload-text-primary">{t('Drag and drop file here, or click to browse', lang)}</div>
-  <div class="upload-text-secondary">{uploadLabel}</div>
+  <div class="upload-text-secondary">{t(uploadLabel, lang)}</div>
   <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
   <input type="file" id="fileInput" class="file-input" accept={acceptMime} />
 </div>
@@ -231,11 +231,11 @@ if (slug === 'docx-to-txt') {
       originalName = file.name;
 
       if (!/\.docx$/i.test(file.name)) {
-        showError('That is not a .docx file. Word 97-2003 .doc is a different format — open it in Word or LibreOffice and save as .docx first.');
+        showError(__t('That is not a .docx file. Word 97-2003 .doc is a different format — open it in Word or LibreOffice and save as .docx first.'));
         return;
       }
 
-      showProgress(25, 'Reading Word document…');
+      showProgress(25, __t('Reading Word document…'));
       try {
         docBytes = await file.arrayBuffer();
         const parts = await readDocxParts(docBytes);
@@ -256,7 +256,7 @@ if (slug === 'docx-to-txt') {
         if (!plainText.trim()) {
           showError(window.coNothingToConvert
             ? window.coNothingToConvert('document')
-            : 'This document has nothing in it to convert.');
+            : __t('This document has nothing in it to convert.'));
           hideProgress();
           return;
         }
@@ -266,7 +266,7 @@ if (slug === 'docx-to-txt') {
         actionControls.style.display = 'flex';
         dropZone.style.display = 'none';
       } catch (err) {
-        showError('Could not read that Word document. If it opens correctly in Word, try re-saving it as .docx and converting again.');
+        showError(__t('Could not read that Word document. If it opens correctly in Word, try re-saving it as .docx and converting again.'));
       }
       hideProgress();
     }
@@ -293,7 +293,7 @@ if (slug === 'docx-to-txt') {
 
       if (!docBytes) return;
       const pdfName = originalName.replace(/\.[^/.]+$/, '') + '.pdf';
-      showProgress(40, 'Rendering PDF…');
+      showProgress(40, __t('Rendering PDF…'));
 
       try {
         const parts = await readDocxParts(docBytes);
@@ -310,11 +310,11 @@ if (slug === 'docx-to-txt') {
         }));
 
         if (fontState.failed.length) {
-          showError('Could not load the ' + fontState.failed.join(' and ') +
-            ' substitute font, so those passages use the default face. The rest of the document is unaffected.');
+          showError(__tf('Could not load the {0} substitute font, so those passages use the default face. The rest of the document is unaffected.',
+            fontState.failed.map(__t).join(__t(' and '))));
         }
 
-        showProgress(75, 'Building pages…');
+        showProgress(75, __t('Building pages…'));
 
         /* pdfmake can fail asynchronously — it swallows the error inside its
            layout pass and simply never calls back — so a bare getBlob has a
@@ -326,7 +326,7 @@ if (slug === 'docx-to-txt') {
             rasterFallback(pdfName)
               .then(() => hideProgress())
               .catch(() => {
-                showError('This document took too long to lay out as a PDF. Try splitting it into fewer pages, or use Word → TXT if you only need the text.');
+                showError(__t('This document took too long to lay out as a PDF. Try splitting it into fewer pages, or use Word → TXT if you only need the text.'));
                 hideProgress();
               });
           });
@@ -343,7 +343,7 @@ if (slug === 'docx-to-txt') {
         rasterFallback(pdfName)
           .then(() => hideProgress())
           .catch(() => {
-            showError('This document could not be rendered as a PDF. Try Word → TXT if you only need the text, or re-save the file from Word and try again.');
+            showError(__t('This document could not be rendered as a PDF. Try Word → TXT if you only need the text, or re-save the file from Word and try again.'));
             hideProgress();
           });
       }

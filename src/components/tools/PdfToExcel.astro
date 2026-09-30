@@ -140,7 +140,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
   async function handleFile(file) {
     hideError();
     if (!/\.pdf$/i.test(file.name)) {
-      showError('Invalid file format. Please choose a .pdf document.');
+      showError(__t('Invalid file format. Please choose a .pdf document.'));
       return;
     }
     const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 25);
@@ -149,14 +149,14 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       return;
     }
     originalName = file.name;
-    showProgress(10, 'Reading PDF data structure…');
+    showProgress(10, __t('Reading PDF data structure…'));
     try {
       const data = new Uint8Array(await file.arrayBuffer());
       const pdf = await window.pdfjsLib.getDocument({ data, isEvalSupported: false }).promise;
       parsedRows = [];
 
       for (let i = 1; i <= pdf.numPages; i++) {
-        showProgress(Math.round(10 + (i / pdf.numPages) * 85), `Aligning columns on page ${i} of ${pdf.numPages}…`);
+        showProgress(Math.round(10 + (i / pdf.numPages) * 85), __tf('Aligning columns on page {0} of {1}…', i, pdf.numPages));
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
         // Rebuild real lines and cells (fragments merged, columns aligned to
@@ -171,9 +171,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const hasData = parsedRows.some((r) => r.some((c) => c && c.trim()));
       if (!hasData) {
         showError(
-          'This PDF has no selectable text — it looks like a scan or a photo, ' +
-          'so there are no rows to extract. Read it with OCR instead:',
-          { label: 'Open Image to Text (OCR)', href: '/image-to-text/' }
+          __t('This PDF has no selectable text — it looks like a scan or a photo, so there are no rows to extract. Read it with OCR instead:'),
+          { label: __t('Open Image to Text (OCR)'), href: __t('/image-to-text/') }
         );
         parsedRows = [];
         hideProgress();
@@ -187,7 +186,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       actionControls.style.display = 'flex';
       dropZone.style.display = 'none';
     } catch (err) {
-      showError('Failed to extract rows from the PDF.');
+      showError(__t('Failed to extract rows from the PDF.'));
     }
     hideProgress();
   }
@@ -205,7 +204,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
   btnDownload.addEventListener('click', () => {
     if (!parsedRows.length) return;
-    showProgress(50, 'Compiling Excel workbook…');
+    showProgress(50, __t('Compiling Excel workbook…'));
     try {
       /* Type the cells before writing them.
          Every value arrives from the page as a string, and writing them
@@ -236,7 +235,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       window.downloadBlob(blob, originalName.replace(/\.[^/.]+$/, '') + '.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     } catch (err) {
-      showError('Excel compilation failed.');
+      showError(__t('Excel compilation failed.'));
     }
     hideProgress();
   });

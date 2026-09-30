@@ -1192,7 +1192,7 @@ export const seoContentMap: Record<string, SEOData> = {
     faqs: [
       { question: "What formats can I merge together?", answer: "You can upload and merge JPG, PNG, WebP, and SVG files together." },
       { question: "Will transparency be kept in the combined image?", answer: "Yes. A stitched image is always saved as PNG, so transparent areas stay transparent. In the PDF output, images are placed on white pages." },
-      { question: "Can I rearrange the order of the images?", answer: "No. There is no drag-to-reorder: the images are used in the order you add them. To change the order, remove an image with ✕ and add it again, which puts it at the end." }
+      { question: "Can I rearrange the order of the images?", answer: "Yes. Each image in the list has ▲ and ▼ buttons that move it one place up or down; the merged image or PDF follows the order shown. There is no drag-and-drop, so use the arrows." }
     ]
   },
   'split-image': {

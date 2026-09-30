@@ -40,6 +40,8 @@
  * Everything runs on the reader's own machine. Nothing is sent anywhere.
  */
 
+import { tr } from './i18n-runtime.js';
+
 /* --------------------------------------------------------------- geometry */
 
 /** Identity transform. PDF matrices are [a b c d e f]. */
@@ -218,7 +220,7 @@ export async function compressPdf(bytes, options, lib, hooks) {
   const { PDFDocument, PDFName, PDFRawStream, decodePDFRawStream } = lib;
 
   const originalSize = bytes.length;
-  on.progress(2, 'Reading the document…');
+  on.progress(2, tr('Reading the document…'));
 
   const doc = await PDFDocument.load(bytes, {
     ignoreEncryption: true,
@@ -228,7 +230,7 @@ export async function compressPdf(bytes, options, lib, hooks) {
 
   /* --- 1. how big is every image actually drawn ------------------------- */
 
-  on.progress(8, 'Measuring how each image is used…');
+  on.progress(8, tr('Measuring how each image is used…'));
   const drawn = measureDrawnSizes(doc, lib);
 
   /* --- 2. find the images and decide what each one deserves ------------- */
@@ -266,7 +268,7 @@ export async function compressPdf(bytes, options, lib, hooks) {
   for (let i = 0; i < candidates.length; i++) {
     const { ref, obj } = candidates[i];
     on.progress(10 + Math.round((i / candidates.length) * 20),
-      `Examining image ${i + 1} of ${candidates.length}…`);
+      tr('Examining image {0} of {1}…', i + 1, candidates.length));
     await on.yield();
 
     const info = describeImage(obj, ref, drawn, lib);
@@ -303,10 +305,10 @@ export async function compressPdf(bytes, options, lib, hooks) {
     try {
       bmp = await decodeToBitmap(entry.obj, entry.info, lib, decodePDFRawStream);
     } catch (err) {
-      entry.failed = 'could not be decoded in this browser';
+      entry.failed = tr('could not be decoded in this browser');
       return null;
     }
-    if (!bmp) { entry.failed = 'unsupported image encoding'; return null; }
+    if (!bmp) { entry.failed = tr('unsupported image encoding'); return null; }
 
     const px = bmp.width * bmp.height;
     if (heldPixels + px <= PIXEL_BUDGET) {
@@ -344,7 +346,7 @@ export async function compressPdf(bytes, options, lib, hooks) {
   };
 
   let settings = { dpi: opts.dpi, quality: opts.quality };
-  let results = await encodeOnce(settings, 'Re-encoding images…', 48);
+  let results = await encodeOnce(settings, tr('Re-encoding images…'), 48);
 
   if (opts.targetBytes) {
     const search = await searchForTarget({
@@ -361,13 +363,13 @@ export async function compressPdf(bytes, options, lib, hooks) {
 
   /* --- 5. apply, and record what happened to each image ---------------- */
 
-  on.progress(86, 'Putting the images back…');
+  on.progress(86, tr('Putting the images back…'));
   applyAll(results, lib, ctx);
   for (const r of results) report.images.push(r.summary);
 
   /* --- 6. rewrite ------------------------------------------------------- */
 
-  on.progress(92, 'Rewriting the document…');
+  on.progress(92, tr('Rewriting the document…'));
   const out = await doc.save({ useObjectStreams: true, addDefaultPage: false });
   report.compressedSize = out.length;
 
@@ -549,20 +551,20 @@ function describeImage(obj, ref, drawn, lib) {
   const summary = { width, height, filter, bytes: obj.contents.length };
 
   if (isMask || bpc === 1) {
-    return { skip: 'a 1-bit stencil mask — already the smallest it can be', summary };
+    return { skip: tr('a 1-bit stencil mask — already the smallest it can be'), summary };
   }
   if (bpc !== 8) {
-    return { skip: `${bpc}-bit colour, which re-encoding would not improve`, summary };
+    return { skip: tr('{0}-bit colour, which re-encoding would not improve', bpc), summary };
   }
   if (filter === 'JPXDecode') {
-    return { skip: 'JPEG 2000, which browsers cannot re-encode', summary };
+    return { skip: tr('JPEG 2000, which browsers cannot re-encode'), summary };
   }
   if (filter === 'JBIG2Decode' || filter === 'CCITTFaxDecode') {
-    return { skip: 'a bilevel fax-encoded scan, already smaller than any JPEG of it', summary };
+    return { skip: tr('a bilevel fax-encoded scan, already smaller than any JPEG of it'), summary };
   }
   const comps = componentsFor(d, lib);
   if (filter !== 'DCTDecode' && comps === null) {
-    return { skip: 'an indexed or uncommon colour space', summary };
+    return { skip: tr('an indexed or uncommon colour space'), summary };
   }
 
   return { skip: null, summary, width, height, filter, bpc, comps, placed };
@@ -688,9 +690,9 @@ async function searchForTarget({ doc, decoded, targetBytes, encodeOnce, applyAll
     const settings = dialToSettings(t);
     passes++;
     on.progress(48 + Math.round((i / MAX_PASSES) * 34),
-      `Fitting to your target — attempt ${passes}…`);
+      tr('Fitting to your target — attempt {0}…', passes));
 
-    const results = await encodeOnce(settings, `Fitting to your target — attempt ${passes}…`, 48);
+    const results = await encodeOnce(settings, tr('Fitting to your target — attempt {0}…', passes), 48);
 
     /* Measure by saving a throwaway copy: the only honest size is the size of
        a real save, since object streams and structure are part of the total. */

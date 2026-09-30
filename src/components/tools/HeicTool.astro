@@ -55,7 +55,7 @@ const targetFormat = slug === 'heic-to-png' ? 'PNG' : 'JPG';
 </div>
 
 <div id="previewBox" class="img-preview-box" style="display: none;">
-  <img id="imgPreview" class="img-preview" alt="Converted Preview" />
+  <img id="imgPreview" class="img-preview" alt={t('Converted Preview', lang)} />
 </div>
 
 <div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center;">
@@ -209,31 +209,31 @@ const targetFormat = slug === 'heic-to-png' ? 'PNG' : 'JPG';
       const extension = file.name.split('.').pop().toLowerCase();
 
       if (!['heic', 'heif'].includes(extension)) {
-        showError("Invalid file type. Please choose a HEIC or HEIF file.");
+        showError(__t("Invalid file type. Please choose a HEIC or HEIF file."));
         return;
       }
 
       try {
-        showProgress(20, window.heic2any ? "Decoding HEIC…" : "Loading HEIC decoder (first file only)…");
+        showProgress(20, window.heic2any ? __t("Decoding HEIC…") : __t("Loading HEIC decoder (first file only)…"));
         try {
           await loadDecoder();
         } catch (e) {
-          showError("Could not load the HEIC decoder. Check your internet connection and try again — the first conversion needs a one-time ~1MB download. Your photo itself is never uploaded.");
+          showError(__t("Could not load the HEIC decoder. Check your internet connection and try again — the first conversion needs a one-time ~1MB download. Your photo itself is never uploaded."));
           hideProgress();
           return;
         }
 
-        showProgress(60, "Decoding HEIC and converting…");
+        showProgress(60, __t("Decoding HEIC and converting…"));
         let result;
         try {
           result = await window.heic2any({ blob: file, toType: outMime, quality: 0.92 });
         } catch (e) {
           // heic2any rejects browser-readable images (a JPG renamed .heic).
-          showProgress(80, "Not a HEIC container — trying direct conversion…");
+          showProgress(80, __t("Not a HEIC container — trying direct conversion…"));
           try {
             result = await tryNativeFallback(file);
           } catch (e2) {
-            showError("This file could not be decoded. It does not appear to be a valid HEIC/HEIF photo — if it came from an iPhone, try re-exporting or re-transferring it, and make sure the transfer completed fully.");
+            showError(__t("This file could not be decoded. It does not appear to be a valid HEIC/HEIF photo — if it came from an iPhone, try re-exporting or re-transferring it, and make sure the transfer completed fully."));
             hideProgress();
             return;
           }
@@ -243,7 +243,7 @@ const targetFormat = slug === 'heic-to-png' ? 'PNG' : 'JPG';
         const blob = Array.isArray(result) ? result[0] : result;
         finish(blob, file.name);
       } catch (e) {
-        showError("Conversion failed unexpectedly. Please try the file again.");
+        showError(__t("Conversion failed unexpectedly. Please try the file again."));
         hideProgress();
       }
     }

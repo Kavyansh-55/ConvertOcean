@@ -325,7 +325,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     function handleFileSelect(file) {
       hideError();
       if (file.size > MAX_FILE_SIZE_BYTES) {
-        showError(`${__t('File is too large')} (${(file.size / (1024 * 1024)).toFixed(2)} MB). ${__t('Max supported is 25MB.')}`);
+        showError(__t('File is too large') + ' (' + (file.size / (1024 * 1024)).toFixed(2) + ' MB). ' + __t('Max supported is 25MB.'));
         return;
       }
 

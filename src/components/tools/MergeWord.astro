@@ -183,7 +183,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       if (tooLarge) { showError(tooLarge); return; }
       hideError();
       let processed = 0;
-      showProgress(10, "Loading Word documents…");
+      showProgress(10, __t("Loading Word documents…"));
 
       /* Each file keeps its selection slot; the batch joins the list in the
          order chosen, not the order the reads finished. See MergePdf and
@@ -201,7 +201,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       files.forEach((f, i) => {
         const ext = f.name.split('.').pop().toLowerCase();
         if (ext !== 'docx') {
-          showError(`Skipped "${f.name}": Unsupported format. Only .docx is supported.`);
+          showError(__tf('Skipped "{0}": Unsupported format. Only .docx is supported.', f.name));
           finish();
           return;
         }
@@ -227,9 +227,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
             } catch { /* unreadable here is the merge's problem, not this check's */ }
 
             if (!hasContent) {
-              showError(`Skipped "${f.name}": ` + (window.coNothingToConvert
+              showError(__tf('Skipped "{0}": {1}', f.name, window.coNothingToConvert
                 ? window.coNothingToConvert('document')
-                : 'it has nothing in it to merge.'));
+                : __t('it has nothing in it to merge.')));
             } else {
               slots[i] = {
                 name: f.name,
@@ -237,7 +237,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
               };
             }
           } catch(err) {
-            showError("Failed to parse " + f.name);
+            showError(__tf('Failed to parse "{0}".', f.name));
           }
           finish();
         };
@@ -261,9 +261,9 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         div.innerHTML = `
           <span>${file.name}</span>
           <div style="display: flex; gap: 4px;">
-            <button class="icon-btn" onclick="window.moveFile(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
-            <button class="icon-btn" onclick="window.moveFile(${index}, 1)" ${index === mergeFiles.length - 1 ? 'disabled' : ''}>▼</button>
-            <button class="icon-btn danger" aria-label="Remove ${file.name}" onclick="window.removeMergeFile(${index})">✕</button>
+            <button class="icon-btn" aria-label="${__t('Move up')}" title="${__t('Move up')}" onclick="window.moveFile(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+            <button class="icon-btn" aria-label="${__t('Move down')}" title="${__t('Move down')}" onclick="window.moveFile(${index}, 1)" ${index === mergeFiles.length - 1 ? 'disabled' : ''}>▼</button>
+            <button class="icon-btn danger" aria-label="${__tf('Remove {0}', file.name)}" onclick="window.removeMergeFile(${index})">✕</button>
           </div>
         `;
         fileItemsList.appendChild(div);
@@ -309,10 +309,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     btnMerge.addEventListener('click', async () => {
       if (mergeFiles.length < 2) {
-        showError("Please add at least 2 Word files.");
+        showError(__t("Please add at least 2 Word files."));
         return;
       }
-      showProgress(20, "Loading base document ZIP structure…");
+      showProgress(20, __t("Loading base document ZIP structure…"));
       try {
         const parser = new DOMParser();
         const serializer = new XMLSerializer();
@@ -383,7 +383,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         };
 
         for (let i = 1; i < mergeFiles.length; i++) {
-          showProgress(20 + Math.round((i / mergeFiles.length) * 55), `Merging document ${i + 1} of ${mergeFiles.length}…`);
+          showProgress(20 + Math.round((i / mergeFiles.length) * 55), __tf('Merging document {0} of {1}…', i + 1, mergeFiles.length));
           const zip = await JSZip.loadAsync(mergeFiles[i].bytes);
           const xmlDoc = parser.parseFromString(await zip.file("word/document.xml").async("string"), "text/xml");
           const body = xmlDoc.getElementsByTagName("w:body")[0];
@@ -468,7 +468,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         };
         uniquifyIds(firstBody);
 
-        showProgress(88, "Saving merged Word archive…");
+        showProgress(88, __t("Saving merged Word archive…"));
         firstZip.file("word/document.xml", serializer.serializeToString(firstDoc));
         firstZip.file("word/_rels/document.xml.rels", serializer.serializeToString(baseRelsDoc));
         firstZip.file("[Content_Types].xml", serializer.serializeToString(ctDoc));
@@ -479,7 +479,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
         window.downloadBlob(outBytes, name, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
       } catch(err) {
-        showError("Failed to merge Word documents. Please ensure none of the files are corrupted.");
+        showError(__t("Failed to merge Word documents. Please ensure none of the files are corrupted."));
       }
       hideProgress();
     });

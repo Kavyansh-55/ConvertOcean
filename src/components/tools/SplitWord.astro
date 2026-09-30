@@ -92,7 +92,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     </div>
 
     <div id="paragraphCountGroup" style="display: none; flex-direction: column; gap: 4px;">
-      <span class="input-label">Paragraphs per Document:</span>
+      <span class="input-label">{t('Paragraphs per Document:', lang)}</span>
       <input type="number" id="paragraphsPerDoc" class="number-input" value="10" min="1" style="max-width: 120px;" />
     </div>
   </div>
@@ -196,11 +196,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       const extension = file.name.split('.').pop().toLowerCase();
 
       if (extension !== 'docx') {
-        showError("Invalid file format. Please choose a .docx Word document.");
+        showError(__t("Invalid file format. Please choose a .docx Word document."));
         return;
       }
 
-      showProgress(25, "Reading Word document archive…");
+      showProgress(25, __t("Reading Word document archive…"));
       const reader = new FileReader();
 
       reader.onload = async function(e) {
@@ -229,14 +229,13 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           if (paragraphsCount === 0 && tablesCount === 0) {
             showError(window.coNothingToConvert
               ? window.coNothingToConvert('document')
-              : 'This document has nothing in it to split.');
+              : __t('This document has nothing in it to split.'));
             hideProgress();
             return;
           }
 
           docDetails.innerHTML = `
-            <strong>File Details:</strong><br/>
-            Total Elements: ${bodyChildren.length} (Paragraphs: ${paragraphsCount}, Tables: ${tablesCount})
+            ${__tf('<strong>File Details:</strong><br/>Total Elements: {0} (Paragraphs: {1}, Tables: {2})', bodyChildren.length, paragraphsCount, tablesCount)}
           `;
 
           fileNameDisplay.textContent = file.name;
@@ -244,7 +243,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           dropZone.style.display = 'none';
           hideProgress();
         } catch(err) {
-          showError("Failed to parse Word document archive structure.");
+          showError(__t("Failed to parse Word document archive structure."));
           hideProgress();
         }
       };
@@ -254,7 +253,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     btnSplit.addEventListener('click', async () => {
       if (!bodyChildren || bodyChildren.length === 0) return;
-      showProgress(15, "Splitting Word document…");
+      showProgress(15, __t("Splitting Word document…"));
       hideError();
 
       try {
@@ -302,13 +301,13 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         }
 
         if (chunks.length === 0) {
-          showError("No segments found to split.");
+          showError(__t("No segments found to split."));
           hideProgress();
           return;
         }
 
         if (chunks.length === 1) {
-          showError("File cannot be split into multiple parts using the current settings. Adjust settings or try a different mode.");
+          showError(__t("File cannot be split into multiple parts using the current settings. Adjust settings or try a different mode."));
           hideProgress();
           return;
         }
@@ -317,7 +316,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         const serializer = new XMLSerializer();
 
         for (let idx = 0; idx < chunks.length; idx++) {
-          showProgress(15 + Math.round((idx / chunks.length) * 75), `Compiling segment ${idx + 1} of ${chunks.length}…`);
+          showProgress(15 + Math.round((idx / chunks.length) * 75), __tf('Compiling segment {0} of {1}…', idx + 1, chunks.length));
           const chunk = chunks[idx];
           
           // Clone the original XML doc
@@ -349,12 +348,12 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
           zipOutput.file(`${baseName}_part_${idx + 1}.docx`, fileBlob);
         }
 
-        showProgress(90, "Creating final split ZIP archive…");
+        showProgress(90, __t("Creating final split ZIP archive…"));
         const zipBlob = await zipOutput.generateAsync({ type: "blob" });
         const downloadName = originalName.replace(/\.[^/.]+$/, "") + "_split.zip";
         window.downloadBlob(zipBlob, downloadName, "application/zip");
       } catch(err) {
-        showError("Failed to partition document elements.");
+        showError(__t("Failed to partition document elements."));
       }
       hideProgress();
     });
