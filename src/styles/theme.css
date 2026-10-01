@@ -2370,13 +2370,6 @@ footer {
   }
 }
 
-/* --- Step grids in tool pages go single column --- */
-@media (max-width: 480px) {
-  .steps-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
-
 /* --- Info grid (how it works sections) --- */
 @media (max-width: 600px) {
   .info-grid {

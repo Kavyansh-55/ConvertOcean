@@ -754,9 +754,11 @@ async function stylesheetsFor(path) {
   const tool = (await get('/pt/comprimir-pdf/')).body;
   say(!/Disconnect your device from the internet/.test(tool) && /Desconecte o aparelho da internet/.test(tool),
       '/pt/ footer "100% local" sentence is Portuguese');
-  say(!/Pick your target conversion configuration/.test(tool) && /Escolha o formato de saída/.test(tool),
-      '/pt/ tool template "how it works" step 2 is Portuguese');
-  say(!/Traditional sites upload files to external servers/.test(tool), '/pt/ tool feature cards are Portuguese');
+  // The generic four-step "how it works" and "why choose" cards were removed
+  // from every tool page (2026-10-01): identical on 69 pages, they were the
+  // site's largest block of repeated copy. Neither locale should serve them.
+  say(!/Escolha o formato de saída|Por que usar o ConvertOcean\?/.test(tool),
+      '/pt/ tool page no longer carries the generic step + "why choose" cards');
   say(/<div class="content-card">/.test(tool), '/pt/ tool article sits in its content card');
   const home = (await get('/pt/')).body;
   say(!/pedir, com<a|Imagem para PDF<\/a>,uma/.test(home), '/pt/ homepage has its spaces back ("com Juntar PDF")');

@@ -34,9 +34,10 @@ export default defineConfig({
      mechanisms for the same signal, not a pair that both have to be present,
      so one correct source beats two that disagree. The /pt/ URLs themselves
      are still listed here — that part needs no configuration. */
-  integrations: [sitemap({
-      changefreq: 'weekly',
-      priority: 0.7,
-      lastmod: new Date()
-    })]
+  /* No lastmod, changefreq or priority. `lastmod: new Date()` stamped every
+     URL with the build time, so each deploy told Google all ~200 pages had
+     changed that day — and Google stops trusting a lastmod that is always
+     "today". changefreq and priority it ignores outright. Omitting a field is
+     honest; a wrong one teaches the crawler to discount the whole sitemap. */
+  integrations: [sitemap()]
 });
