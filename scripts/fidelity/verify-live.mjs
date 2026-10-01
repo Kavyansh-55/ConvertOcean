@@ -364,11 +364,14 @@ async function stylesheetsFor(path) {
      import. */
   for (const slug of ['merge-pdf', 'merge-word', 'merge-excel', 'merge-pptx']) {
     const { status, body } = await get('/' + slug + '/');
-    let found = status === 200 && body.includes('aria-label="Remove ');
+    /* Since 2026-09-30 the label is built with __tf('Remove {0}', …) so the
+       Portuguese page reads "Remover …"; accept either form. */
+    const named = (t) => t.includes('aria-label="Remove ') || t.includes("__tf('Remove {0}'") || /Remove \{0\}/.test(t);
+    let found = status === 200 && named(body);
     if (!found && status === 200) {
       for (const src of [...body.matchAll(/src="(\/_astro\/Merge[^"]+\.js)"/g)].map((m) => m[1])) {
         const chunk = await get(src);
-        if (chunk.body.includes('aria-label="Remove ')) { found = true; break; }
+        if (named(chunk.body)) { found = true; break; }
       }
     }
     say(found, `/${slug}/ names its remove-file button for a screen reader`
@@ -521,7 +524,9 @@ async function stylesheetsFor(path) {
   /* Built into the file list at runtime, so it ships in the page. */
   const { body } = await get('/image-to-pdf/');
   say(body.includes('min-width: 44px'), '/image-to-pdf/ remove button is a real tap target');
-  say(body.includes('aria-label="Remove '), 'and it has a name a screen reader can read');
+  say(body.includes('aria-label="Remove ') || body.includes("__tf('Remove {0}'"), 'and it has a name a screen reader can read');
+  const ptMerge = (await get('/pt/juntar-pdf/')).body;
+  say(ptMerge.includes("__tf('Remove {0}'") && ptMerge.includes('Remover {0}'), '/pt/juntar-pdf/ names the remove button in Portuguese');
 }
 
 /* The link surface, which is hand-maintained and was already wrong once:
