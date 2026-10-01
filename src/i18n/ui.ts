@@ -50,35 +50,6 @@ const pt: Record<string, string> = {
 
   // ---- Tool page furniture --------------------------------------------
   'Quick Answer': 'Resposta rápida',
-  'How It Works': 'Como funciona',
-  'Four simple steps to process your files securely client-side:':
-    'Quatro passos simples para processar seus arquivos com segurança, no seu próprio dispositivo:',
-  'Choose File': 'Escolha o arquivo',
-  'Drag and drop or browse files directly from your storage. Files reside only in temporary browser memory.':
-    'Arraste e solte, ou escolha o arquivo no seu dispositivo. Ele fica apenas na memória temporária do navegador.',
-  'Select Output': 'Escolha a saída',
-  'Pick your target conversion configuration or adjust quality/compression sliders according to your preference.':
-    'Escolha o formato de saída ou ajuste a qualidade e o nível de compressão como preferir.',
-  'Pick your target conversion configuration or adjust quality/compression sliders according to your needs.':
-    'Defina o formato de destino ou ajuste a qualidade e a compressão conforme a sua necessidade.',
-  'Convert Locally': 'Converta localmente',
-  'Download Instantly': 'Baixe na hora',
-  'Instantly download your output file. Memory cache is purged automatically when you close the tab.':
-    'Baixe o arquivo final na hora. A memória do navegador é limpa automaticamente quando você fecha a aba.',
-  'All compilers and processors compile files locally in browser sandbox memory. No servers are used.':
-    'Todo o processamento acontece na memória do navegador, no seu dispositivo. Nenhum servidor é usado.',
-  'Traditional sites upload files to external servers. ConvertOcean processes your data 100% locally.':
-    'Sites tradicionais copiam os arquivos para servidores externos. O ConvertOcean processa os seus dados 100% localmente.',
-  'Why Choose ConvertOcean?': 'Por que usar o ConvertOcean?',
-  'Files Stay On Your Device': 'Os arquivos ficam no seu dispositivo',
-  'Traditional sites upload files to external servers. ConvertOcean processes your data 100% locally. Perfect for corporate records and private papers.':
-    'Os sites tradicionais mandam o arquivo para servidores externos. O ConvertOcean processa tudo 100% no seu aparelho — ideal para documentos da empresa e papéis pessoais.',
-  'Browser-Powered Processing': 'Processamento no navegador',
-  'With no upload or download queue, conversions run at the speed of your own device, and once a tool has loaded most conversions keep working offline.':
-    'Sem fila de envio e download, a conversão roda na velocidade do seu próprio aparelho — e, depois que a ferramenta carrega, a maioria das conversões continua funcionando sem internet.',
-  'Use every tool as often as you like, with no account, no sign-up and no newsletter. Each tool states its file-size limit, and your files never leave your device.':
-    'Use cada ferramenta quantas vezes quiser, sem conta, sem cadastro e sem newsletter. Cada ferramenta informa o seu limite de tamanho, e os seus arquivos nunca saem do seu dispositivo.',
-  'Free & No Accounts': 'Gratuito e sem cadastro',
   'Related File Utilities': 'Ferramentas relacionadas',
   'Related Guides & Resources.': 'Guias e materiais relacionados.',
   'Guide': 'Guia',

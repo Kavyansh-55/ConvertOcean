@@ -3,8 +3,8 @@ import Layout from '../layouts/Layout.astro';
 
 const { lang = 'en' } = Astro.props;
 
-const title = "About ConvertOcean | Browser-Based Secure File Utility Platform";
-const description = "Discover the technology and mission behind ConvertOcean: a client-side, offline-first file conversion toolset prioritizing user privacy and absolute data safety.";
+const title = "About ConvertOcean | Who Builds It and How It's Tested";
+const description = "Who builds ConvertOcean, how every converter is tested before it ships, what the tools cannot do yet, and how to check the no-upload claim yourself.";
 
 const aboutSchema = {
   "@context": "https://schema.org",
@@ -86,131 +86,90 @@ const aboutSchema = {
       color: var(--colors-body);
       line-height: 1.6;
     }
-    .tech-badge-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--spacing-xs);
-      margin: var(--spacing-md) 0;
-    }
-    .tech-badge {
-      background-color: var(--colors-canvas-soft-2);
-      border: 1px solid var(--colors-hairline);
-      padding: 6px 12px;
-      border-radius: var(--rounded-sm);
-      font-size: 12.5px;
-      font-family: var(--font-sans);
-      color: var(--colors-body);
-    }
   </style>
 
   <main id="main-content" tabindex="-1" class="app-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl); position: relative; z-index: 1;">
     <div class="about-container">
       <div class="page-header">
         <h1 class="page-title">About ConvertOcean.</h1>
-        <p class="about-lead">We are building the next generation of web utility tools—powered entirely by your local browser sandbox, keeping your documents and images completely secure.</p>
+        <p class="about-lead">ConvertOcean is a set of file converters, PDF tools and business calculators that run inside your browser tab. The code that reads and converts your file runs on your own device, so the file is never sent to a server.</p>
       </div>
 
       <div class="about-section">
-        <h2 class="about-section-title">Our Mission</h2>
+        <h2 class="about-section-title">Why it exists</h2>
         <p class="about-text">
-          Most online tools operate by forcing users to upload their documents, spreadsheets, and private photos to remote cloud servers. This exposes sensitive company databases, client reports, billing addresses, and personal identities to data breaches, advertising trackers, and model-training indexing.
+          Most online converters work the same way: your file is copied to their server, converted there, and deleted later, often "after an hour". That is fine for a meme. It is a real risk for a payslip, a signed contract, a bank statement or a passport scan, and you have no way to check what actually happened to the copy.
         </p>
         <p class="about-text">
-          ConvertOcean was founded to prove that web utility programs can be both powerful and private. By leveraging modern client-side capabilities, we run all file conversion, compilation, and formatting operations locally on your hardware. Your files never leave your computer.
-        </p>
-      </div>
-
-      <div class="about-section">
-        <h2 class="about-section-title">Core Principles</h2>
-        <div class="values-grid">
-          <div class="value-card">
-            <h3 class="value-title">Privacy First</h3>
-            <p class="value-text">
-              Your files are processed on your device and never uploaded — no server storage, ever. Ads and anonymous analytics keep the site free; neither one ever sees your files.
-            </p>
-          </div>
-          <div class="value-card">
-            <h3 class="value-title">High Performance</h3>
-            <p class="value-text">
-              By running files locally, we bypass network upload bottlenecks. Conversions start instantly, even for large formats.
-            </p>
-          </div>
-          <div class="value-card">
-            <h3 class="value-title">Offline Capability</h3>
-            <p class="value-text">
-              Once loaded in your browser, ConvertOcean runs without an internet connection. Seamless tool usage anywhere.
-            </p>
-          </div>
-          <div class="value-card">
-            <h3 class="value-title">Open &amp; Free</h3>
-            <p class="value-text">
-              No subscription walls, conversion caps, or mandatory email signups. High-fidelity tools accessible to everyone.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="about-section">
-        <h2 class="about-section-title">Our Technology Stack</h2>
-        <p class="about-text">
-          To achieve secure client-side execution, we rely on a compilation of state-of-the-art web browser technologies:
-        </p>
-        <div class="tech-badge-container">
-          <span class="tech-badge">Astro Framework</span>
-          <span class="tech-badge">WebAssembly (WASM)</span>
-          <span class="tech-badge">SheetJS (XLSX/CSV)</span>
-          <span class="tech-badge">pdf.js / pdf-lib</span>
-          <span class="tech-badge">Tesseract.js OCR</span>
-          <span class="tech-badge">HTML5 File API</span>
-        </div>
-        <p class="about-text" style="margin-top: var(--spacing-sm);">
-          These compiled libraries are cached inside your browser sandbox tab memory. When you choose a tool, the browser runs the library dynamically using your local CPU, producing high-fidelity outputs in seconds.
+          Browsers can now do most of that work themselves: read a Word file, draw a PDF, decode an iPhone photo. ConvertOcean started in June 2026 to find out how far that goes. Where a browser can do the job well, the tool is here. Where it cannot, the page says so instead of quietly sending your file somewhere else.
         </p>
       </div>
 
       <div class="about-section">
-        <h2 class="about-section-title">Who Builds ConvertOcean</h2>
+        <h2 class="about-section-title">Who builds it</h2>
         <p class="about-text">
-          ConvertOcean is an independent project — designed, developed, and maintained by a small indie team rather than a large corporation. That independence is deliberate: because we do not answer to advertisers or data brokers, we have no incentive to collect your files, track your behavior, or lock features behind subscriptions. Every tool on this site exists because we needed it ourselves and wanted a version that respected the user.
+          ConvertOcean is built and maintained by an independent developer, not a company. There is no investor and no paid tier. The site is paid for by ads and uses anonymous analytics, and neither of them ever sees your files.
         </p>
         <p class="about-text">
-          The same people who write the conversion engines also answer support questions. If you find a bug, spot an incorrect result, or want a new tool, you can reach us directly through the <a href="/contact/" style="color: var(--colors-link);">contact page</a> — reports go straight to the developers who can fix them.
+          All of the code is public on <a href="https://github.com/Kavyansh-55/ConvertOcean" style="color: var(--colors-link);" rel="noopener">GitHub</a> under the MIT licence, so every claim on this page can be checked against the code that runs. Bug reports go to the <a href="/contact/" style="color: var(--colors-link);">contact page</a> or to <a href="https://github.com/Kavyansh-55/ConvertOcean/issues" style="color: var(--colors-link);" rel="noopener">GitHub Issues</a>, and the person who reads them is the person who fixes them.
         </p>
       </div>
 
       <div class="about-section">
-        <h2 class="about-section-title">How We Test and Verify Our Tools</h2>
+        <h2 class="about-section-title">Check the privacy claim yourself</h2>
         <p class="about-text">
-          Accuracy matters as much as privacy. Before a converter or calculator ships, it goes through a consistent verification process:
+          You do not have to take this on trust. On any tool page, open your browser's developer tools, go to the <strong>Network</strong> tab, and convert a file. No request carries your file: the only traffic is the page's own scripts, analytics and ads.
+        </p>
+        <p class="about-text">
+          For a stronger test, load a tool page, switch your computer to airplane mode, and convert anyway. It still works, because the conversion never needed the internet.
+        </p>
+      </div>
+
+      <div class="about-section">
+        <h2 class="about-section-title">How the tools are tested</h2>
+        <p class="about-text">
+          Every converter is checked by opening the real tool page in a real browser and feeding it deliberately awkward files: Word documents with section breaks and tables, phone photos stored sideways with a rotation flag, spreadsheets with hidden columns, and PDFs in scripts other than English. The output is then read back and compared with what it should contain.
         </p>
         <div class="values-grid">
           <div class="value-card">
-            <h3 class="value-title">Standard formulas only</h3>
+            <h3 class="value-title">300+ conversion checks</h3>
             <p class="value-text">
-              Our business calculators — like the <a href="/profit-margin-calculator/" style="color: var(--colors-link);">Profit Margin Calculator</a> and <a href="/sales-tax-calculator/" style="color: var(--colors-link);">Sales Tax Calculator</a> — use the standard accounting and mathematical definitions, and each tool page shows its exact formulas so you can verify every result by hand.
+              All of them have to pass before a converter change goes live. After each release, a separate set of checks runs against the live site to confirm it serves what was tested.
             </p>
           </div>
           <div class="value-card">
-            <h3 class="value-title">Reference-checked outputs</h3>
+            <h3 class="value-title">More than file output</h3>
             <p class="value-text">
-              File converters are tested against reference files: we convert known documents, spreadsheets, and images and compare the output against expected results before and after every significant update.
+              Separate test suites cover layouts at four phone and tablet widths, Apple's Safari engine, offline use, very large files, and what happens when a script library fails to load.
             </p>
           </div>
           <div class="value-card">
-            <h3 class="value-title">Proven open-source engines</h3>
+            <h3 class="value-title">Calculators shown in full</h3>
             <p class="value-text">
-              We build on widely audited open-source libraries (pdf.js, pdf-lib, SheetJS, Tesseract) used by thousands of production applications, rather than unproven custom parsers.
+              The <a href="/profit-margin-calculator/" style="color: var(--colors-link);">profit margin</a>, <a href="/break-even-calculator/" style="color: var(--colors-link);">break-even</a> and <a href="/sales-tax-calculator/" style="color: var(--colors-link);">sales tax</a> calculators use the standard formulas and print them on the page, so any result can be checked by hand.
             </p>
           </div>
           <div class="value-card">
-            <h3 class="value-title">Dated reviews &amp; corrections</h3>
+            <h3 class="value-title">Reports come first</h3>
             <p class="value-text">
-              Calculator pages carry a last-reviewed note, and tax-rate presets are periodically checked. If a user reports an inaccuracy, verifying and correcting it takes priority over shipping anything new.
+              When someone reports a wrong result, fixing it takes priority over building anything new, and a test is added so the same mistake cannot come back unnoticed.
             </p>
           </div>
         </div>
+      </div>
+
+      <div class="about-section">
+        <h2 class="about-section-title">What the tools can't do yet</h2>
         <p class="about-text">
-          One honest caveat: our calculators are informational tools, not professional advice. They are built to be mathematically correct, but decisions about pricing, taxes, or filings should always be confirmed with a qualified accountant or your local tax authority.
+          Working only inside the browser has limits. These are the ones you are most likely to meet:
+        </p>
+        <ul class="about-text" style="padding-left: 1.2em;">
+          <li><strong>Old Office formats.</strong> Legacy .doc and .ppt files (Office 97–2003) cannot be read in a browser. Open the file in Word, PowerPoint or LibreOffice, save it as .docx or .pptx, then convert.</li>
+          <li><strong>Some writing systems in PDFs.</strong> Text, CSV and Excel to PDF cannot yet draw Chinese, Japanese, Korean, Arabic, Hebrew, Thai or some Indian scripts. When a file contains them, the tool tells you rather than producing blank boxes.</li>
+          <li><strong>Excel print settings.</strong> <a href="/excel-to-pdf/" style="color: var(--colors-link);">Excel to PDF</a> prints the cells that hold data. It ignores a print area you set in Excel, and hidden columns still print.</li>
+        </ul>
+        <p class="about-text">
+          The calculators are informational tools, not professional advice. They are built to be mathematically correct, but check pricing, tax and filing decisions with an accountant or your local tax authority.
         </p>
       </div>
     </div>
