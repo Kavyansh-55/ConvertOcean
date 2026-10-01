@@ -132,7 +132,7 @@ export const guides: GuideData[] = [
     readTime: '4 min read',
     publishDate: 'June 20, 2026',
     relatedTools: ['merge-pdf', 'split-pdf'],
-    relatedGuides: ['pdf-to-word-without-losing-formatting', 'excel-to-pdf'],
+    relatedGuides: ['pdf-to-word-without-losing-formatting', 'excel-to-pdf', 'why-is-my-pdf-so-big'],
     intro: 'Combining separate PDF pages, business reports, or tax forms into a single unified file is a common administrative chore. Discover how to merge your documents quickly and securely without uploading them to external servers.',
     contentHtml: `
       <h2>Why Merging PDFs Locally is Essential for Security</h2>
@@ -797,7 +797,7 @@ export const guides: GuideData[] = [
     readTime: '6 min read',
     publishDate: 'July 18, 2026',
     relatedTools: ['xlsx-to-csv', 'csv-to-xlsx', 'xls-to-csv', 'xls-to-pdf', 'merge-excel', 'split-excel'],
-    relatedGuides: ['excel-to-pdf', 'csv-to-json'],
+    relatedGuides: ['excel-to-pdf', 'csv-to-json', 'why-is-my-excel-file-so-big'],
     intro: 'Three file extensions cover almost every spreadsheet on earth, and each one makes a different trade between capability, compatibility, and simplicity. Knowing which to use — and when to convert — prevents the classic data disasters: mangled dates, vanished leading zeros, and workbooks nobody can open.',
     contentHtml: `
       <h2>What Each Format Actually Is</h2>
@@ -958,7 +958,7 @@ export const guides: GuideData[] = [
     readTime: '5 min read',
     publishDate: 'July 18, 2026',
     relatedTools: ['image-to-pdf', 'merge-pdf', 'split-pdf', 'image-to-text', 'image-resizer', 'merge-images'],
-    relatedGuides: ['merge-multiple-pdf-files', 'how-ocr-works'],
+    relatedGuides: ['merge-multiple-pdf-files', 'how-ocr-works', 'why-is-my-pdf-so-big'],
     intro: 'The phone camera has replaced the scanner, but portals and inboxes still expect documents — one PDF, pages in order, reasonable file size. This guide covers the full workflow: photographing pages so they stay readable, combining them into a single PDF, keeping the size sensible, and knowing when you need OCR instead.',
     contentHtml: `
       <h2>Step 1: Photograph Pages Like a Scanner Would</h2>
@@ -1434,6 +1434,161 @@ fs.writeFileSync('people.json', JSON.stringify(out, null, 2));</code></pre>
       { question: 'Does removing EXIF data reduce image quality?', answer: 'It should not, and with a tool that edits the container rather than the picture it does not at all — the compressed image data can be copied across byte for byte. Quality is only lost by tools that redraw the photo onto a canvas and re-export it, which produces a new lossy file every time.' },
       { question: 'Will my photo appear rotated after removing EXIF?', answer: 'It will if the tool strips the orientation flag, which is the usual cause of photos suddenly appearing sideways. Keeping that single field preserves correct display and gives nothing away, since it records how the camera was held rather than anything about you or where you were.' },
       { question: 'Can I see metadata without uploading my photo anywhere?', answer: 'Yes. A browser can read the file locally, and desktop tools like exiftool or your operating system\'s file properties never touch the network. This matters more than for most tasks: uploading a photo in order to discover whether it reveals your address means handing that address to whoever runs the server.' }
+    ]
+  },
+  {
+    slug: 'why-is-my-excel-file-so-big',
+    title: 'Why Is My Excel File So Big? We Measured It | ConvertOcean',
+    description: 'We rebuilt bloated workbooks and measured each fix. Empty but formatted cells were 97% of the size, and "maximum compression" made one file 46% bigger.',
+    h1: 'Why Is My Excel File So Big? What We Measured.',
+    readTime: '6 min read',
+    publishDate: 'October 1, 2026',
+    relatedTools: ['compress-excel', 'xlsx-to-csv', 'split-excel', 'excel-to-pdf'],
+    relatedGuides: ['xlsx-vs-xls-vs-csv', 'excel-to-pdf', 'why-is-my-pdf-so-big'],
+    intro: 'A workbook with a few hundred rows of data should be a few dozen kilobytes. When yours is several megabytes, something other than your data is taking up the space. We built the common kinds of bloated workbook, measured what each fix actually saves, and found one cause that dwarfs the rest, plus one popular fix that made a file bigger.',
+    contentHtml: `
+      <h2>The Short Answer: Cells You Never Typed In</h2>
+      <p>Excel saves every cell it considers part of the sheet, and it decides that by the <strong>used range</strong>: the rectangle from A1 to the last cell that has ever held a value <em>or a format</em>. Select a whole column and add a border, a fill colour or a number format, and every one of its 1,048,576 rows can become "used". The cells are empty, but each one is still written into the file with its formatting attached.</p>
+      <p>You can see your sheet's used range in two seconds. Click any cell and press <strong>Ctrl+End</strong>. Excel jumps to the last cell it thinks is in use. If your data ends at row 500 and Ctrl+End lands on row 40,000, you have found your problem.</p>
+
+      <h2>What We Measured</h2>
+      <p>Rather than repeat the usual list of tips, we built the kinds of workbook people actually complain about and measured every fix against each one. The files were generated by a script, so they are clean, repeatable archetypes rather than real customer files, and the exact numbers will differ on yours. The proportions are the point.</p>
+      <div style="overflow-x: auto; margin: var(--spacing-lg) 0;">
+        <table style="width: 100%; border-collapse: collapse; border: 1px solid var(--colors-hairline); font-size: 14px; text-align: left;">
+          <thead>
+            <tr style="background-color: var(--colors-canvas-soft-2);">
+              <th style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Workbook</th>
+              <th style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">As saved</th>
+              <th style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Best fix</th>
+              <th style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">After</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">500 rows of data, nothing unusual</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">20.7 KB</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">None needed</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">20.3 KB (2% off)</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">The same 500 rows, plus 40,000 empty rows with formatting</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">684.4 KB</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Remove the empty formatted rows</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);"><strong>20.3 KB (97% off)</strong></td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">20,000 rows of formulas</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">738.1 KB</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">Drop the calculation chain</td>
+              <td style="padding: 10px; border-bottom: 1px solid var(--colors-hairline);">667.0 KB (10% off)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The second row is the "my spreadsheet is huge and has hardly any data" file. Almost all of its size is cells nobody typed into, and once they are gone it is the same size as the ordinary workbook above it. Nothing else we tried came close.</p>
+
+      <h2>The Fix That Made a File Bigger</h2>
+      <p>A common suggestion is to re-save the file with "maximum compression". An .xlsx file is a ZIP archive of XML files, so that sounds reasonable. We tested it: re-compressing every part of the bloated workbook at the highest ZIP setting took it from 684.4 KB to <strong>996.1 KB, 46% larger</strong> than before.</p>
+      <p>That is not a rule that maximum compression always loses. ZIP compression levels trade speed for size on typical data, and a higher level is simply not guaranteed to produce a smaller file for every kind of content. The lesson is narrower and more useful: a compression setting is not a fix until you have measured the result. And it would never have addressed the real problem anyway, because compressing 40,000 empty rows more tightly still leaves 40,000 empty rows in the file.</p>
+
+      <h2>Cause Two: The Calculation Chain</h2>
+      <p>Workbooks full of formulas carry a part called the calculation chain, Excel's record of the order it last calculated your cells in. On our 20,000-formula workbook it was worth about 10% of the file. Excel rebuilds it automatically the next time the workbook calculates, so removing it costs nothing except a moment's recalculation. It is worth having, but it is a tenth of the size of the used-range problem, not a replacement for fixing it.</p>
+
+      <h2>Cause Three: Pictures, If There Are Any</h2>
+      <p>Images pasted straight from a phone are often stored at far higher resolution than the cell they sit in. Shrinking those to the size they are displayed at saves real space, the same way it does in a <a href="/guides/why-is-my-pdf-so-big/">bloated PDF</a>. But it only helps a workbook that has pictures in it. On a sheet of plain data, image compression found nothing to do, which is why tools that only compress images report "no savings" on most oversized spreadsheets.</p>
+
+      <h2>Other Causes We Did Not Measure</h2>
+      <p>These are real and worth checking, but our test files did not include them, so we cannot put numbers on them:</p>
+      <ul>
+        <li><strong>Pivot table caches.</strong> A pivot table can keep its own copy of the source data inside the file. In PivotTable Options, on the Data tab, the setting is "Save source data with file".</li>
+        <li><strong>Hidden or forgotten sheets</strong> that still hold an old import or a pasted export.</li>
+        <li><strong>Thousands of unused cell styles</strong>, usually inherited by copying sheets between workbooks.</li>
+      </ul>
+
+      <h2>How to Fix It in Excel</h2>
+      <ol>
+        <li>Press Ctrl+End to find the last cell Excel thinks is in use.</li>
+        <li>Select the first empty row below your data, press <strong>Ctrl+Shift+Down</strong> to extend the selection to the bottom of the sheet, then right-click and choose <strong>Delete</strong>. Do the same for empty columns to the right with Ctrl+Shift+Right.</li>
+        <li>Save, close and reopen the file. Excel only recalculates the used range on reopening, so Ctrl+End will not move until you do.</li>
+        <li>In Microsoft 365, <strong>Review → Check Performance</strong> finds cells that are empty but formatted and offers to clear them, sheet by sheet or all at once.</li>
+      </ol>
+      <p>Deleting the rows matters. Pressing Delete on the keyboard clears the contents but leaves the formatting, so the cells stay "used".</p>
+
+      <h2>Or Do It in Your Browser</h2>
+      <p>The <a href="/compress-excel/">Compress Excel</a> tool does all three fixes at once: it removes empty formatted rows and columns after your data, drops the calculation chain, and shrinks oversized pictures. On our test workbook that took 465.2 KB down to 48.1 KB with all 1,000 formulas intact. It only removes <em>trailing</em> emptiness: blank rows in the middle of your data and a cell holding a single space are kept, because those are content. One honest trade: a formatted empty row might be formatting you set up for data you have not entered yet, so the trim is a switch on the page and you can turn it off. The workbook never leaves your device.</p>
+      <p>If you only need the data and not the formatting, <a href="/xlsx-to-csv/">XLSX to CSV</a> gives you the smallest possible file. And if one sheet is the heavy one, <a href="/split-excel/">Split Excel</a> separates it from the rest.</p>
+
+      <h2>Check Our Numbers</h2>
+      <p>The script that built these workbooks and measured each fix is public in the site's <a href="https://github.com/Kavyansh-55/ConvertOcean/blob/main/scripts/research/xlsx-bloat.mjs" rel="noopener">GitHub repository</a>. Run <code>node scripts/research/xlsx-bloat.mjs</code> and it rebuilds every file above and prints the same table.</p>
+    `,
+    faqs: [
+      { question: 'Why is my Excel file so big when it has very little data?', answer: 'Usually because Excel is saving thousands of empty cells that carry formatting. Formatting a whole column, or pasting data that brought formatting with it, makes those cells part of the used range. Press Ctrl+End to see where Excel thinks your sheet ends. In our tests, removing empty formatted rows cut a 684 KB file to 20 KB.' },
+      { question: 'What does Ctrl+End show in Excel?', answer: 'It jumps to the last cell in the used range: the bottom-right corner of everything Excel considers in use. If it lands far below or to the right of your real data, the cells in between are empty but formatted, and they are being saved in the file.' },
+      { question: 'Does saving with maximum compression make an Excel file smaller?', answer: 'Not reliably. In our test, re-compressing a bloated workbook at the highest ZIP level made it 46% larger. Higher compression levels are not guaranteed to produce smaller output, and they do not remove the empty formatted cells that usually cause the size.' },
+      { question: 'Is it safe to delete the calculation chain (calcChain.xml)?', answer: 'Yes. It only records the order Excel last calculated the cells in, and Excel rebuilds it the next time the workbook calculates. On a formula-heavy test workbook it was about 10% of the file size.' },
+      { question: 'Does compressing an Excel file delete my data?', answer: 'It should not. The Compress Excel tool only removes empty rows and columns after your data, never blank rows inside it, and keeps every value and formula. The one thing it can remove is formatting on empty cells, and that step is a switch you can turn off.' }
+    ]
+  },
+  {
+    slug: 'why-is-my-pdf-so-big',
+    title: 'Why Is My PDF So Big? And How to Shrink It | ConvertOcean',
+    description: 'Most big PDFs hold images stored at far higher resolution than the page shows. The DPI math, how to check your file, and what compression must not do.',
+    h1: 'Why Is My PDF So Big? It Is Usually One Number.',
+    readTime: '6 min read',
+    publishDate: 'October 1, 2026',
+    relatedTools: ['compress-pdf', 'image-to-pdf', 'merge-pdf', 'split-pdf', 'image-resizer'],
+    relatedGuides: ['photos-to-pdf-scanning', 'merge-multiple-pdf-files', 'why-is-my-excel-file-so-big'],
+    intro: 'Text is tiny. A hundred pages of plain text fits comfortably in a few hundred kilobytes. When a PDF is several megabytes, the space is almost always going to images, and specifically to images stored with far more pixels than the page will ever display. Here is the arithmetic, how to check your own file, and what a good compressor should and should not do about it.',
+    contentHtml: `
+      <h2>The Number That Matters: Pixels per Inch on the Page</h2>
+      <p>An image in a PDF has a fixed number of pixels, and the page draws it at a fixed size. Divide one by the other and you get its effective resolution in dots per inch (DPI). That number decides most of the file size.</p>
+      <p>Take an ordinary 12-megapixel phone photo, 4,032 pixels wide, and place it across the width of an A4 page (8.27 inches). It is being stored at <strong>about 488 DPI</strong>. On US Letter (8.5 inches) it is about 474 DPI.</p>
+      <p>Compare that with what the page actually needs:</p>
+      <ul>
+        <li><strong>Reading on a screen or sending by email:</strong> around 150 DPI looks sharp.</li>
+        <li><strong>Office printing:</strong> 200 to 300 DPI.</li>
+      </ul>
+      <p>At 150 DPI, the same photo only needs about 1,240 pixels across instead of 4,032. Because an image has two dimensions, that is roughly <strong>9.5% of the pixels</strong>: about 90% of the photo's data is detail no screen will ever show. Put twenty such photos into a PDF and you have a very large file that looks exactly like a small one.</p>
+
+      <h2>Scans Are the Same Problem, Page by Page</h2>
+      <p>A scanner set to 300 DPI in colour turns every A4 page into an image of about 2,480 × 3,508 pixels, nearly 8.7 megapixels per page. A scanned PDF is nothing but those images, one per page, so a 20-page scan holds over 170 megapixels. For a document that will be read on screen, 150 to 200 DPI in greyscale is usually plenty, and it is far smaller.</p>
+      <p>To tell whether your PDF is a scan, try to select a sentence. If you can highlight words, the text is real text. If the whole page selects as one block, or nothing selects at all, every page is a picture.</p>
+
+      <h2>What Does Not Usually Make a PDF Big</h2>
+      <ul>
+        <li><strong>Text.</strong> Even long documents are small when the text is real text.</li>
+        <li><strong>Simple graphics.</strong> Charts and diagrams with flat colours compress extremely well. In our tests, a flat-colour graphic stored at the same high resolution as a scan was already smaller than any re-encoding could make it, so the right move was to leave it alone.</li>
+        <li><strong>Fonts</strong>, mostly. Embedded fonts add some weight, and fonts for Chinese, Japanese or Korean add a lot, but in ordinary documents they are rarely the main cause.</li>
+      </ul>
+      <p>This is why compressing a text-only PDF often does almost nothing. There is nothing oversized in it to shrink, and an honest compressor should say so rather than claim a saving.</p>
+
+      <h2>What We Measured</h2>
+      <p>Our <a href="/compress-pdf/">Compress PDF</a> tool is tested on purpose-built PDFs that contain each kind of content above. They are test files rather than real documents, so treat these as illustrations of the behaviour rather than a promise for your file:</p>
+      <ul>
+        <li>A scanned image stored at 245 DPI went from 557,199 bytes to 80,351 bytes, <strong>86% smaller</strong>, when brought down to screen resolution.</li>
+        <li>A flat-colour graphic at the same resolution, and a one-bit mask, were left untouched, byte for byte, because re-encoding would have made them bigger or worse.</li>
+        <li>On an image-heavy test PDF, the three strengths produced 285 KB (Light, 220 DPI), 165 KB (Recommended, 150 DPI) and 90 KB (Strong, 110 DPI).</li>
+        <li>Asked to reach an impossible 8 KB, it reported that it could not and gave the smallest it reached, 53.7 KB, instead of producing a file that hits the number but cannot be read.</li>
+      </ul>
+
+      <h2>What a Compressor Must Not Do</h2>
+      <p>The easiest way to make any PDF small is to turn every page into a single low-resolution picture. Some tools do exactly that, and the size they report looks impressive. The cost is that your text stops being text: you can no longer select it, search it or copy it, a screen reader cannot read it, and small print goes soft. After compressing a PDF anywhere, open the result and try to select a sentence. If you cannot, the compressor rasterised your document.</p>
+      <p>A good compressor changes only the images that are stored larger than they are shown, leaves text, fonts, links and form fields exactly as they were, and never makes any part of the file bigger.</p>
+
+      <h2>How to Shrink a PDF</h2>
+      <ol>
+        <li><strong>Fix it at the source if you can.</strong> In Word, File → Options → Advanced has an "Image Size and Quality" section where you can set the default resolution for pictures in that document before you export. When scanning, choose 150 to 200 DPI and greyscale for text documents.</li>
+        <li><strong>Resize photos before they go in.</strong> If you are building a PDF from phone photos, the <a href="/image-resizer/">Image Resizer</a> brings them down to a sensible size first, and <a href="/image-to-pdf/">Image to PDF</a> assembles them.</li>
+        <li><strong>Compress the finished file.</strong> <a href="/compress-pdf/">Compress PDF</a> brings oversized images down to the resolution you choose, or to a target size such as an email or form limit, and lists every image it left alone with the reason. It runs in your browser, so the document never leaves your device.</li>
+        <li><strong>Send less.</strong> If only some pages are needed, <a href="/split-pdf/">Split PDF</a> extracts them.</li>
+      </ol>
+    `,
+    faqs: [
+      { question: 'Why is my PDF so large when it is only a few pages?', answer: 'Almost always because it contains images stored at far higher resolution than the page displays them. A 12-megapixel phone photo across an A4 page is stored at about 488 DPI, while 150 DPI looks sharp on screen. Scanned pages are images too, so a scanned PDF is large for the same reason.' },
+      { question: 'What DPI should a PDF be for email?', answer: 'Around 150 DPI is a good default for reading on screen and sending by email. Use 200 to 300 DPI if the document will be printed. Higher than that adds file size without visible benefit.' },
+      { question: 'Will compressing a PDF make the text blurry?', answer: 'It should not. Text in a normal PDF is stored as text, not as an image, and a good compressor leaves it untouched. If text becomes blurry or stops being selectable after compression, the tool turned your pages into pictures.' },
+      { question: 'Why did compressing my PDF not make it smaller?', answer: 'Usually because there is nothing oversized in it. Text-only PDFs and documents whose images are already at a sensible resolution have little to remove. A compressor that still reports a big saving on such a file may have degraded it.' },
+      { question: 'How can I tell if my PDF is a scan?', answer: 'Try to select a sentence. If individual words highlight, the text is real text. If the whole page selects as one block or nothing selects, each page is an image, and the file size comes from those images.' }
     ]
   }
 ];
