@@ -491,7 +491,7 @@ export const coveredInBodyCopy: { term: string; page: string }[] = [
  * demand for a tool we do not have is a product signal, not a keyword problem,
  * so it is kept here rather than discarded.
  *
- * Do NOT answer these on /pt/ppt-para-pdf/ or /pt/powerpoint-para-pdf/. A page
+ * Do NOT answer these on /pt/powerpoint-para-pdf/ (which absorbed /pt/ppt-para-pdf/). A page
  * that ranks for "como converter pdf para powerpoint" and then cannot do it
  * earns a bounce and teaches Google the page does not satisfy the query.
  */
@@ -715,23 +715,6 @@ export const pageKeywords: PageKeywords[] = [
     ]
   },
   {
-    slug: 'ppt-para-pdf',
-    en: 'ppt-to-pdf',
-    primary: 'ppt para pdf',
-    phrase: [
-      { term: 'ppt para pdf', kd: 'Easy', volume: '>1000' },
-      { term: 'converter ppt para pdf', kd: 'Easy', volume: '>100' },
-      { term: 'conversor de ppt para pdf', kd: 'Easy', volume: '>100' },
-      { term: 'de ppt para pdf', kd: 'Easy', volume: '<100' },
-      { term: 'converter de ppt para pdf', kd: 'Easy', volume: '<100' },
-      { term: 'passar ppt para pdf', kd: 'Easy', volume: '<100' },
-      { term: 'conversor ppt para pdf', kd: 'Easy', volume: '<100' }
-    ],
-    questions: [
-      { term: 'como converter ppt para pdf', kd: 'n/a', volume: '<100' }
-    ]
-  },
-  {
     slug: 'powerpoint-para-pdf',
     en: 'pptx-to-pdf',
     primary: 'powerpoint para pdf',
@@ -741,10 +724,20 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'conversor de powerpoint para pdf', kd: 'Easy', volume: '>100' },
       { term: 'converter de powerpoint para pdf', kd: 'Easy', volume: '>100' },
       { term: 'de powerpoint para pdf', kd: 'Easy', volume: '>100' },
-      { term: 'passar powerpoint para pdf', kd: 'Easy', volume: '>100' }
+      { term: 'passar powerpoint para pdf', kd: 'Easy', volume: '>100' },
+      // merged from /pt/ppt-para-pdf/ (301 here since 2026-10-01)
+      { term: 'ppt para pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'converter ppt para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'conversor de ppt para pdf', kd: 'Easy', volume: '>100' },
+      { term: 'de ppt para pdf', kd: 'Easy', volume: '<100' },
+      { term: 'converter de ppt para pdf', kd: 'Easy', volume: '<100' },
+      { term: 'passar ppt para pdf', kd: 'Easy', volume: '<100' },
+      { term: 'conversor ppt para pdf', kd: 'Easy', volume: '<100' }
     ],
     questions: [
-      { term: 'como converter powerpoint para pdf', kd: 'n/a', volume: '<100' }
+      { term: 'como converter powerpoint para pdf', kd: 'n/a', volume: '<100' },
+      // merged from /pt/ppt-para-pdf/ (301 here since 2026-10-01)
+      { term: 'como converter ppt para pdf', kd: 'n/a', volume: '<100' }
     ]
   },
 
@@ -1847,17 +1840,8 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'conversor jpeg para jpg', kd: 'Easy', volume: '>100' },
       { term: 'converter imagem jpeg para jpg', kd: 'Easy', volume: '>100' },
       { term: 'transformar jpeg para jpg', kd: 'Easy', volume: '<100' },
-      { term: 'converter foto jpeg para jpg', kd: 'Easy', volume: '<100' }
-    ],
-    questions: [
-      { term: 'como converter jpeg para jpg', kd: 'Easy', volume: '<100' },
-      { term: 'qual a diferença de jpeg para jpg', kd: 'n/a', volume: '<100' },
-      { term: 'como mudar de jpeg para jpg', kd: 'n/a', volume: '<100' }
-    ]
-  },
-  {
-    slug: 'jpg-para-jpeg', en: 'jpg-to-jpeg', primary: 'jpg para jpeg',
-    phrase: [
+      { term: 'converter foto jpeg para jpg', kd: 'Easy', volume: '<100' },
+      // merged from /pt/jpg-para-jpeg/ (301 here since 2026-10-01)
       { term: 'jpg para jpeg', kd: 'Easy', volume: '>1000' },
       { term: 'converter jpg para jpeg', kd: 'Easy', volume: '>100' },
       { term: 'conversor de jpg para jpeg', kd: 'Easy', volume: '<100' },
@@ -1866,6 +1850,10 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'diferença de jpg para jpeg', kd: 'Easy', volume: '<100' }
     ],
     questions: [
+      { term: 'como converter jpeg para jpg', kd: 'Easy', volume: '<100' },
+      { term: 'qual a diferença de jpeg para jpg', kd: 'n/a', volume: '<100' },
+      { term: 'como mudar de jpeg para jpg', kd: 'n/a', volume: '<100' },
+      // merged from /pt/jpg-para-jpeg/ (301 here since 2026-10-01)
       { term: 'qual a diferença de jpg para jpeg', kd: 'Easy', volume: '<100' },
       { term: 'como converter jpg para jpeg', kd: 'n/a', volume: '<100' }
     ]

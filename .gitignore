@@ -38,3 +38,6 @@ testing/
 # Unrelated nested git repos that live in this folder (never part of the site)
 test-repo/
 galactic-group/
+
+# Local Cloudflare runtime state from `wrangler dev`
+.wrangler/

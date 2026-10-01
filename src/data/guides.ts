@@ -728,7 +728,7 @@ export const guides: GuideData[] = [
     h1: 'How to Resize a Photo and Signature for Online Forms.',
     readTime: '6 min read',
     publishDate: 'July 18, 2026',
-    relatedTools: ['image-resizer', 'jpg-to-jpeg', 'jpeg-to-jpg', 'png-to-jpg', 'image-to-pdf', 'heic-to-jpg'],
+    relatedTools: ['image-resizer', 'jpeg-to-jpg', 'png-to-jpg', 'image-to-pdf', 'heic-to-jpg'],
     relatedGuides: ['png-vs-jpg'],
     intro: 'Exam portals, job applications, and government forms reject millions of photo uploads a day for the same three reasons: wrong pixel dimensions, file too large, or wrong file extension. This guide walks through the exact fix for each — from taking a usable photo to hitting a 20 KB limit without destroying quality.',
     contentHtml: `
@@ -755,7 +755,7 @@ export const guides: GuideData[] = [
       </ul>
 
       <h2>Step 4: Get the Extension Right</h2>
-      <p>Strict validators sometimes whitelist one literal spelling — accepting <code>.jpeg</code> but rejecting <code>.jpg</code>, or the reverse. The formats are identical; only the extension differs. Our <a href="/jpg-to-jpeg/">JPG to JPEG</a> and <a href="/jpeg-to-jpg/">JPEG to JPG</a> tools produce a cleanly re-encoded file with the exact extension the form demands. If your source is a PNG screenshot or scan, convert it with <a href="/png-to-jpg/">PNG to JPG</a> first — JPG compresses photos far smaller.</p>
+      <p>Strict validators sometimes whitelist one literal spelling — accepting <code>.jpeg</code> but rejecting <code>.jpg</code>, or the reverse. The formats are identical; only the extension differs. Our <a href="/jpeg-to-jpg/">JPEG to JPG</a> tool works in both directions and produces a cleanly re-encoded file with the exact extension the form demands. If your source is a PNG screenshot or scan, convert it with <a href="/png-to-jpg/">PNG to JPG</a> first — JPG compresses photos far smaller.</p>
 
       <h2>Troubleshooting Rejections</h2>
       <ul>

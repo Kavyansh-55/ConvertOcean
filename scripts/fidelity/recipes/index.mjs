@@ -24,7 +24,6 @@ export const recipes = [
  * honest about its own reach.
  */
 export const uncovered = [
-  { slug: 'ppt-to-pdf', why: 'rejects legacy .ppt by design; that refusal is asserted by npm run generators' },
   { slug: 'image-to-text', why: 'OCR is non-deterministic — covered with a word-recall tolerance by npm run generators' },
   { slug: 'invoice-generator', why: 'form-driven, no input file — covered by npm run generators (totals and names)' },
   { slug: 'receipt-generator', why: 'form-driven — covered by npm run generators' },

@@ -43,8 +43,8 @@ const pt: Record<string, string> = {
   'Invoices, receipts & calculators': 'Faturas, recibos e calculadoras',
   'All Tools Sitemap': 'Mapa de todas as ferramentas',
   'Skip to main content': 'Ir para o conteúdo principal',
-  'ConvertOcean — convert files, upload nothing. 69 free tools that run inside your browser tab.':
-    'ConvertOcean — converta arquivos sem enviar nada. 69 ferramentas gratuitas que funcionam dentro da aba do navegador.',
+  'ConvertOcean — convert files, upload nothing. 67 free tools that run inside your browser tab.':
+    'ConvertOcean — converta arquivos sem enviar nada. 67 ferramentas gratuitas que funcionam dentro da aba do navegador.',
   'Toggle dark mode': 'Alternar modo escuro',
   'Open navigation menu': 'Abrir menu de navegação',
 

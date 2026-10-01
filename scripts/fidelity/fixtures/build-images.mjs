@@ -113,6 +113,9 @@ const withMeta = withExif(plainJpeg);
 if (!hasExif(withMeta)) throw new Error('EXIF segment did not survive its own writer');
 
 writeFileSync(join(OUT, 'torture.jpg'), withMeta);
+// Same bytes under the long spelling: /jpeg-to-jpg/ chooses its output
+// extension from the input's, so each direction needs its own input name.
+writeFileSync(join(OUT, 'torture.jpeg'), withMeta);
 writeFileSync(join(OUT, 'torture.webp'), Buffer.from(encoded.webp.b64, 'base64'));
 
 console.log(`torture.jpg    ${withMeta.length} bytes  (${plainJpeg.length} raw + EXIF: orientation, GPS, camera)`);
