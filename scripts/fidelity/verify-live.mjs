@@ -844,7 +844,6 @@ async function stylesheetsFor(path) {
   const cpt = (await get('/pt/comprimir-pdf/')).body;
   say(/Já está no menor tamanho possível/.test(cpt) && /Página \{0\} de \{1\}/.test(cpt),
       '/pt/comprimir-pdf/ ships its Portuguese result messages');
-  say(/Use cada ferramenta quantas vezes quiser/.test(cpt), '/pt/ tool template "no account" card is Portuguese');
   const exif = (await get('/pt/ver-exif/')).body;
   say(/Marca da câmera/.test(exif) && /Girada 90° no sentido horário/.test(exif), '/pt/ver-exif/ ships Portuguese EXIF tag names');
   const home = (await get('/pt/')).body;
@@ -853,6 +852,24 @@ async function stylesheetsFor(path) {
   say(!/arrastar uma das miniaturas|ordene e baixe/.test(merge), '/pt/juntar-pdf/ no longer describes a drag-to-reorder control');
   const csv = (await get('/pt/csv-para-xlsx/')).body;
   say(/1\.234,56/.test(csv) && /dd\/mm\/aaaa/.test(csv), '/pt/csv-para-xlsx/ FAQ describes Brazilian number and date handling');
+}
+
+/* ------------------------- 2026-10-01: sitewide boilerplate + sitemap */
+{
+  /* The generic step and "why choose" cards were identical on 69 tool pages.
+     Their headings are the marker; the article and FAQ must still be there,
+     so a page that lost everything would not pass as "boilerplate removed". */
+  for (const path of ['/merge-pdf/', '/xml-to-csv/', '/jpg-to-jpeg/']) {
+    const b = (await get(path)).body;
+    say(!/Why Choose ConvertOcean\?|Four simple steps to process/.test(b) && /content-card/.test(b) && /Frequently Asked Questions/.test(b),
+        `${path} serves its article and FAQs without the generic step/"why choose" cards`);
+  }
+  const ab = (await get('/about/')).body;
+  say(/Check the privacy claim yourself/.test(ab) && /What the tools can.t do yet/.test(ab) && !/next generation of web utility tools/.test(ab),
+      '/about/ serves the rewritten page');
+  const sm = (await get('/sitemap.xml')).body;
+  const locs = (sm.match(/<loc>/g) || []).length;
+  say(locs >= 190 && !/<lastmod>/.test(sm), `sitemap.xml lists ${locs} URLs with no build-time lastmod`);
 }
 
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
