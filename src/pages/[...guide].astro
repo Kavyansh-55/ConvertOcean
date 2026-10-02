@@ -46,7 +46,14 @@ if (!guide) {
    mergeGuide has already filtered relatedTools and relatedGuides down to what
    exists in this locale, so an untranslated neighbour drops out rather than
    dead-ending. */
-const recommendedTools = getTools(lang).filter(t => guide.relatedTools.includes(t.slug));
+/* In the guide's own order, so its first related tool is the one it is about.
+   Only that one is shown above the article: five cards there pushed the first
+   paragraph a full phone screen down, each opening "Secure client-side … tool."
+   The rest are listed after the article, where a reader who finished it can
+   act on it. */
+const toolBySlug = new Map(getTools(lang).map(t => [t.slug, t]));
+const recommendedTools = guide.relatedTools.map(s => toolBySlug.get(s)).filter(Boolean);
+const [primaryTool, ...moreTools] = recommendedTools;
 const relatedGuides = getGuides(lang).filter(g => guide.relatedGuides.includes(g.slug));
 
 const relLink = (target: string) => localeHref(target, lang);
@@ -231,6 +238,47 @@ const articleData = {
     .tool-callout-btn:hover {
       background-color: #000000;
       transform: translateY(-1px);
+    }
+
+    .guide-tools {
+      margin-top: var(--spacing-2xl);
+      padding-top: var(--spacing-lg);
+      border-top: 1px solid var(--colors-hairline);
+    }
+    .guide-tools-title {
+      font-size: 15px;
+      font-weight: var(--fw-bold);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-sm);
+    }
+    .guide-tools-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+    }
+    .guide-tools-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 var(--spacing-md);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-pill);
+      background-color: var(--colors-canvas);
+      color: var(--colors-ink);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+    .guide-tools-link:hover {
+      border-color: var(--colors-hairline-strong);
+    }
+    .guide-tools-link:focus-visible {
+      outline: 2px solid var(--colors-link);
+      outline-offset: 2px;
     }
 
     /* Guide Rich Text Content Body */
@@ -475,14 +523,14 @@ const articleData = {
       <p class="guide-intro">{guide.intro}</p>
     </article>
 
-    <!-- Relevant ConvertOcean Tool Recommendation Card -->
-    {recommendedTools.map(tool => (
+    <!-- The one tool this guide is about -->
+    {primaryTool && [primaryTool].map(tool => (
       <div class="tool-callout-card">
         <div class="tool-callout-icon">
           <CategoryIcon icon={tool.icon} width="24" height="24" />
         </div>
         <div class="tool-callout-info">
-          <p class="tool-callout-title">Secure client-side {tool.name} tool.</p>
+          <p class="tool-callout-title">{tool.name}</p>
           <p class="tool-callout-desc">{tool.description}</p>
         </div>
         <a href={`${localeRoot}/${tool.slug}/`} class="tool-callout-btn">
@@ -496,6 +544,17 @@ const articleData = {
 
     <!-- Guide Content Section -->
     <section class="guide-body" set:html={guide.contentHtml} />
+
+    {moreTools.length > 0 && (
+      <nav class="guide-tools" aria-label={t('Tools mentioned in this guide', lang)}>
+        <h2 class="guide-tools-title">{t('Tools mentioned in this guide', lang)}</h2>
+        <ul class="guide-tools-list">
+          {moreTools.map(tool => (
+            <li><a href={`${localeRoot}/${tool.slug}/`} class="guide-tools-link">{tool.name}</a></li>
+          ))}
+        </ul>
+      </nav>
+    )}
 
     <!-- FAQ Accordion section -->
     {guide.faqs && guide.faqs.length > 0 && (
@@ -528,7 +587,7 @@ const articleData = {
           {relatedGuides.map(rg => (
             <a href={`${localeRoot}/${guidesBase(lang)}/${rg.slug}/`} class="related-guide-card">
               <span class="related-guide-tag">{t('Guide', lang)}</span>
-              <h3 class="related-guide-name">{rg.title.split(' - ')[0]}</h3>
+              <h3 class="related-guide-name">{rg.title.split(' | ')[0].split(' - ')[0]}</h3>
               <p class="related-guide-desc">{rg.description.substring(0, 100)}…</p>
               <span class="related-guide-action">
                 {t('Read Guide', lang)}

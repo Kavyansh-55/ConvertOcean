@@ -277,7 +277,20 @@ const relLink = (target: string) => {
   <!-- Pre-render theme code to prevent flashing -->
   <script is:inline>
     (function() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
+      /* Follow the visitor's system setting unless they have pressed the
+         toggle. This used to default to light, so a reader in dark mode got a
+         dark browser bar (the theme-color metas below follow the system)
+         around a bright page and lime hero — reported as "a flash to the
+         eyes". Until 2026-10-02 every visit also SAVED 'light', so a stored
+         'light' is not evidence of a choice; 'theme-set' marks real ones,
+         and a stored 'dark' was only ever written by the toggle. */
+      var savedTheme;
+      try {
+        var stored = localStorage.getItem('theme');
+        var chosen = localStorage.getItem('theme-set') === '1' || stored === 'dark';
+        savedTheme = chosen && stored ? stored
+          : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      } catch (e) { savedTheme = 'light'; }
       document.documentElement.setAttribute('data-theme', savedTheme);
       // Enable scroll-reveal ONLY when JS is active, IntersectionObserver
       // is supported, and the user has not requested reduced motion.

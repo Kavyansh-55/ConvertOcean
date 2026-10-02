@@ -51,6 +51,7 @@ const pt: Record<string, string> = {
   // ---- Tool page furniture --------------------------------------------
   'Quick Answer': 'Resposta rápida',
   'Related File Utilities': 'Ferramentas relacionadas',
+  'Tools mentioned in this guide': 'Ferramentas citadas neste guia',
   'Related Guides & Resources.': 'Guias e materiais relacionados.',
   'Guide': 'Guia',
   'Frequently Asked Questions': 'Perguntas frequentes',
