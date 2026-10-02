@@ -115,10 +115,13 @@ Do not reintroduce `box-shadow` for depth.
 
 ## Dark mode
 
-`[data-theme="dark"]` on `<html>`, set by an inline script in `Layout.astro`
-from `localStorage.getItem('theme')`, defaulting to **light**. `prefers-color-scheme`
-alone does not switch this site — a screenshot or test must set the stored
-value.
+`[data-theme="dark"]` on `<html>`, set by an inline script in `Layout.astro`.
+It **follows `prefers-color-scheme`** unless the visitor has pressed the toggle
+(`theme-set` = `1` in localStorage, or a stored `theme` of `dark`, which only
+the toggle ever wrote). Until 2026-10-02 it defaulted to light and saved that
+on every visit, so dark-mode readers met a bright page inside a dark browser
+bar. A screenshot or test should set `data-theme` directly, or emulate the
+colour scheme.
 
 Every band variant has a dark counterpart. Two traps have cost live bugs:
 

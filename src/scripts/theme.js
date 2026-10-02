@@ -15,9 +15,17 @@ function initTheme() {
   const themeToggle = document.getElementById('themeToggle');
   const themeToggleIcon = document.getElementById('themeToggleIcon');
 
-  function updateThemeUI(theme) {
+  /* Only an explicit toggle is remembered. Writing on every load (as this
+     did until 2026-10-02) pinned each first-time visitor to light for good,
+     whatever their system said — see the bootstrap script in Layout.astro. */
+  function updateThemeUI(theme, remember) {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+    if (remember) {
+      try {
+        localStorage.setItem('theme', theme);
+        localStorage.setItem('theme-set', '1');
+      } catch (e) {}
+    }
     if (!themeToggleIcon) return;
 
     if (theme === 'dark') {
@@ -27,14 +35,13 @@ function initTheme() {
     }
   }
 
-  // Load initial theme
-  const currentTheme = localStorage.getItem('theme') || 'light';
-  updateThemeUI(currentTheme);
+  // The bootstrap script in Layout.astro has already chosen; just draw the icon.
+  updateThemeUI(document.documentElement.getAttribute('data-theme') || 'light', false);
 
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {
       const nextTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      updateThemeUI(nextTheme);
+      updateThemeUI(nextTheme, true);
     });
   }
 }

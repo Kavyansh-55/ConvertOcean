@@ -899,5 +899,20 @@ async function stylesheetsFor(path) {
   say(!/ppt-to-pdf|jpg-to-jpeg|ppt-para-pdf|jpg-para-jpeg/.test(smx), 'sitemap.xml no longer lists the retired URLs');
 }
 
+/* ------------- 2026-10-02: theme follows the system; one guide callout */
+{
+  /* The behaviour itself is driven in a browser by `npm run theme-default`;
+     this only confirms production serves the bootstrap that implements it. */
+  const home = (await get('/')).body;
+  say(/prefers-color-scheme: dark\)'\)\.matches/.test(home) && /theme-set/.test(home) && !/getItem\('theme'\) \|\| 'light'/.test(home),
+      'homepage bootstrap follows the system colour scheme, not a hard light default');
+  const g = (await get('/guides/why-is-my-pdf-so-big/')).body;
+  const callouts = (g.match(/class="tool-callout-card/g) || []).length;
+  say(callouts === 1 && !/Secure client-side/.test(g) && /class="guide-tools"/.test(g),
+      `guide shows one tool callout above the article and the rest after it (${callouts} callout)`);
+  const gi = (await get('/guides/')).body;
+  say(!/\| ConvertOcean<\/h2>/.test(gi), '/guides/ card titles no longer end in "| ConvertOcean"');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
