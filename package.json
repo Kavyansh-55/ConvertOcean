@@ -27,6 +27,7 @@
     "generators": "node scripts/fidelity/verify-generators.mjs",
     "themes": "node scripts/fidelity/verify-themes.mjs",
     "theme-default": "node scripts/fidelity/verify-theme-default.mjs",
+    "search": "node scripts/fidelity/verify-search.mjs",
     "webkit": "node scripts/fidelity/verify-webkit.mjs",
     "compress": "node scripts/fidelity/verify-compress.mjs",
     "compress:office": "node scripts/fidelity/verify-compress-office.mjs",

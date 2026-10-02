@@ -26,6 +26,7 @@
 import Layout from '../../layouts/Layout.astro';
 import CategoryCard from '../../components/CategoryCard.astro';
 import CategoryIcon from '../../components/CategoryIcon.astro';
+import ToolSearch from '../../components/ToolSearch.astro';
 import { getTools, getCategories } from '../../i18n/content';
 import type { Locale } from '../../i18n/config';
 
@@ -72,7 +73,7 @@ const faqList = [
   },
   {
     q: 'Existe limite de tamanho de arquivo?',
-    a: 'Não impomos um limite artificial. O que limita é a memória do seu próprio dispositivo, já que o processamento é local — em um computador comum, arquivos de dezenas de megabytes são processados sem problema.'
+    a: 'Sim. Cada ferramenta informa o seu limite, que fica entre 15 e 25 MB por arquivo, conforme a ferramenta. O motivo é que todo o processamento acontece na memória do seu próprio dispositivo: o limite evita que a aba do navegador trave com um arquivo grande demais.'
   }
 ];
 ---
@@ -89,6 +90,7 @@ const faqList = [
             direto no navegador. Os seus arquivos não saem do seu computador — e o
             código é aberto para você conferir.
           </p>
+          <ToolSearch lang={lang} />
           <div class="hero-actions">
             <a href="/pt/ferramentas-pdf/" class="button button-primary">Ferramentas de PDF</a>
             <a href="/pt/ferramentas-de-imagem/" class="button button-secondary">Ferramentas de imagem</a>

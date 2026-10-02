@@ -1,0 +1,286 @@
+---
+/**
+ * Tool search for the locale homepages, set in the hero.
+ *
+ * It used to be authored on the English homepage and moved into the shared
+ * nav bar by a parse-time script. The bar stops growing at 1280px, and its
+ * brand, links and right-hand group take ~1,076px of that, so the field got
+ * 85px at best and 0px at 1121px: "Se /" on every desktop (reported
+ * 2026-10-02). The Portuguese homepage never had one. In the hero it gets a
+ * real width, the same on both locales, and the header stays the header.
+ *
+ * Styles are global with a `tool-search` prefix: the result rows are built
+ * by script, and scoped styles never reach runtime-built elements.
+ */
+import { getTools } from '../i18n/content';
+import { t } from '../i18n/ui';
+import type { Locale } from '../i18n/config';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+
+const prefix = lang === 'en' ? '' : `/${lang}`;
+const tools = getTools(lang).map(tool => ({
+  name: tool.name,
+  href: `${prefix}/${tool.slug}/`,
+  icon: tool.icon,
+  desc: tool.description,
+  // English slug words help a Portuguese reader who types "pdf to word".
+  keys: `${tool.slug.replace(/-/g, ' ')} ${(tool.enSlug ?? '').replace(/-/g, ' ')}`,
+}));
+const placeholder = lang === 'en'
+  ? `Search ${tools.length} tools…`
+  : `Buscar entre ${tools.length} ferramentas…`;
+---
+
+<div class="tool-search" id="searchContainer" data-tools={JSON.stringify(tools)}>
+  <div class="tool-search-field">
+    <span class="tool-search-icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    </span>
+    <input
+      type="search"
+      id="searchInput"
+      name="q"
+      class="tool-search-input"
+      placeholder={placeholder}
+      aria-label={t('Search all tools', lang)}
+      role="combobox"
+      aria-expanded="false"
+      aria-controls="searchResults"
+      aria-autocomplete="list"
+      autocomplete="off"
+      spellcheck="false"
+      enterkeyhint="go"
+    />
+    <kbd class="tool-search-kbd" aria-hidden="true">/</kbd>
+  </div>
+  <div id="searchResults" class="tool-search-panel" hidden role="listbox" aria-label={t('Tool search results', lang)}></div>
+  <p class="tool-search-empty" id="searchEmpty" role="status" aria-live="polite" hidden>{t('No tool matches that. Try a format, like “PDF” or “JPG”.', lang)}</p>
+</div>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const box = document.getElementById('searchContainer');
+    const input = document.getElementById('searchInput');
+    const panel = document.getElementById('searchResults');
+    const empty = document.getElementById('searchEmpty');
+    if (!box || !input || !panel || !empty) return;
+
+    const tools = JSON.parse(box.getAttribute('data-tools') || '[]');
+    // Accent-insensitive, so "conversao" finds "Conversão".
+    const fold = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const indexed = tools.map((tool) => ({ tool, text: fold(tool.name + ' ' + tool.keys + ' ' + tool.desc), name: fold(tool.name) }));
+    let selected = -1;
+
+    function close() {
+      panel.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
+    }
+
+    function render(matches) {
+      panel.textContent = '';
+      matches.forEach((tool, i) => {
+        const a = document.createElement('a');
+        a.href = tool.href;
+        a.className = 'tool-search-item';
+        a.id = 'searchResult-' + i;
+        a.setAttribute('role', 'option');
+        a.setAttribute('aria-selected', 'false');
+        const name = document.createElement('span');
+        name.className = 'tool-search-name';
+        name.textContent = tool.name;
+        const desc = document.createElement('span');
+        desc.className = 'tool-search-desc';
+        desc.textContent = tool.desc;
+        a.append(name, desc);
+        panel.appendChild(a);
+      });
+      panel.hidden = matches.length === 0;
+      input.setAttribute('aria-expanded', String(matches.length > 0));
+    }
+
+    function search() {
+      const words = fold(input.value).split(/\s+/).filter(Boolean);
+      selected = -1;
+      input.removeAttribute('aria-activedescendant');
+      if (!words.length) { close(); empty.hidden = true; return; }
+      // Every word must appear somewhere ("pdf word" finds PDF to Word).
+      // Rank: name has the words in the order typed (so "pdf word" puts
+      // PDF to Word above Word to PDF), then name has them all, then any
+      // match by slug or blurb. Ties keep the catalogue order.
+      const score = (e) => {
+        let at = 0;
+        const inOrder = words.every((w) => { const i = e.name.indexOf(w, at); if (i < 0) return false; at = i + w.length; return true; });
+        return inOrder ? 2 : (words.every((w) => e.name.includes(w)) ? 1 : 0);
+      };
+      const hits = indexed
+        .filter((e) => words.every((w) => e.text.includes(w)))
+        .map((e, i) => ({ e, i, s: score(e) }))
+        .sort((a, b) => b.s - a.s || a.i - b.i)
+        .slice(0, 6)
+        .map((x) => x.e.tool);
+      render(hits);
+      empty.hidden = hits.length > 0;
+    }
+
+    function highlight(items) {
+      items.forEach((el, i) => {
+        const on = i === selected;
+        el.classList.toggle('is-selected', on);
+        el.setAttribute('aria-selected', String(on));
+        if (on) { el.scrollIntoView({ block: 'nearest' }); input.setAttribute('aria-activedescendant', el.id); }
+      });
+    }
+
+    input.addEventListener('input', search);
+    input.addEventListener('focus', () => { if (input.value.trim()) search(); });
+    input.addEventListener('keydown', (e) => {
+      const items = panel.querySelectorAll('.tool-search-item');
+      if (e.key === 'Escape') { close(); empty.hidden = true; input.blur(); return; }
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); selected = (selected + 1) % items.length; highlight(items); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); selected = (selected - 1 + items.length) % items.length; highlight(items); }
+      else if (e.key === 'Enter') { e.preventDefault(); items[Math.max(selected, 0)].click(); }
+    });
+    document.addEventListener('click', (e) => { if (!box.contains(e.target)) close(); });
+
+    // The homepage's WebSite schema advertises /?q=… as the site search
+    // (Layout.astro), so honour it: arrive with the query typed and the
+    // results open. Nothing read ?q= before, so that link did nothing.
+    const q = new URLSearchParams(location.search).get('q');
+    if (q && !/^\{.*\}$/.test(q)) { input.value = q; search(); }
+
+    // "/" and Ctrl/Cmd+K jump here — but never while the reader is typing
+    // somewhere else, where "/" is just a character.
+    document.addEventListener('keydown', (e) => {
+      const el = document.activeElement;
+      const typing = el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable);
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); input.focus(); }
+      else if (e.key === '/' && !typing) { e.preventDefault(); input.focus(); }
+    });
+  });
+</script>
+
+<style is:global>
+  .tool-search {
+    position: relative;
+    width: 100%;
+    max-width: 34rem;
+    margin: var(--spacing-lg) 0 var(--spacing-md);
+  }
+
+  .tool-search-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: var(--colors-surface);
+    border: 1px solid var(--colors-hairline-strong);
+    border-radius: var(--rounded-pill);
+    transition: border-color 160ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* The field carries the focus ring for the whole control, concentric
+     with its pill shape; theme.css's input ring would square it off. */
+  .tool-search-field:focus-within {
+    outline: 3px solid var(--colors-accent);
+    outline-offset: 2px;
+  }
+  .tool-search-input:focus,
+  .tool-search-input:focus-visible { outline: none; }
+
+  .tool-search-icon {
+    position: absolute;
+    left: 18px;
+    display: flex;
+    color: var(--colors-mute);
+    pointer-events: none;
+  }
+
+  .tool-search-input {
+    width: 100%;
+    min-width: 0;
+    min-height: 52px;
+    padding: 0 48px 0 46px;
+    border: none;
+    background: transparent;
+    color: var(--colors-ink);
+    font-family: inherit;
+    font-size: 16px; /* 16px stops iOS zooming the page on focus */
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .tool-search-input::placeholder { color: var(--colors-mute); opacity: 1; }
+  .tool-search-input::-webkit-search-cancel-button { display: none; }
+
+  .tool-search-kbd {
+    position: absolute;
+    right: 16px;
+    padding: 1px 7px;
+    border: 1px solid var(--colors-hairline);
+    border-radius: var(--rounded-sm);
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--colors-mute);
+    pointer-events: none;
+    transition: opacity 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tool-search-field:focus-within .tool-search-kbd { opacity: 0; }
+
+  .tool-search-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    max-height: min(380px, 60vh);
+    overflow-y: auto;
+    padding: var(--spacing-xxs);
+    background-color: var(--colors-surface);
+    border: 1px solid var(--colors-hairline-strong);
+    border-radius: var(--rounded-lg);
+  }
+  .tool-search-panel[hidden] { display: none; }
+
+  .tool-search-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 44px;
+    justify-content: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--rounded-sm);
+    text-decoration: none;
+    color: var(--colors-ink);
+  }
+  .tool-search-item:hover,
+  .tool-search-item.is-selected { background-color: var(--colors-accent-wash); }
+  .tool-search-item:focus-visible { outline: 2px solid var(--colors-accent); outline-offset: -2px; }
+
+  .tool-search-name {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-bold);
+    color: var(--colors-ink);
+  }
+  .tool-search-desc {
+    font-size: var(--fs-small);
+    color: var(--colors-mute);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tool-search-empty {
+    margin: var(--spacing-xs) 0 0 var(--spacing-md);
+    font-size: var(--fs-small);
+    color: var(--colors-body);
+  }
+
+  @media (max-width: 640px) {
+    .tool-search-kbd { display: none; }
+    .tool-search-input { padding-right: var(--spacing-md); }
+  }
+</style>

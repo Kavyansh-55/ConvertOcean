@@ -914,5 +914,19 @@ async function stylesheetsFor(path) {
   say(!/\| ConvertOcean<\/h2>/.test(gi), '/guides/ card titles no longer end in "| ConvertOcean"');
 }
 
+/* ------------- 2026-10-02: tool search in both homepage heroes */
+{
+  /* Behaviour (widths, matching, keyboard, the 1121-1260px header band) is
+     driven in a browser by `npm run search`; this confirms what is served. */
+  const en = (await get('/')).body;
+  const pt = (await get('/pt/')).body;
+  say(/id="searchInput"[^>]*name="q"/.test(en) && /placeholder="Search \d+ tools…"/.test(en) && !/bar\.insertBefore\(box, right\)/.test(en),
+      'homepage serves the hero search, not the nav-bar portal');
+  say(/id="searchInput"/.test(pt) && /placeholder="Buscar entre \d+ ferramentas…"/.test(pt) && /\/pt\/juntar-pdf\//.test(pt.match(/data-tools="[^"]*"/)?.[0] || ''),
+      '/pt/ serves a Portuguese tool search with /pt/ links');
+  say(/Cada ferramenta informa o seu limite/.test(pt) && !/Não impomos um limite artificial/.test(pt),
+      '/pt/ FAQ states the real per-tool size limit');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
