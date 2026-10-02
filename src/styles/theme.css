@@ -679,9 +679,10 @@ select:focus-visible,
   background-color: var(--p-ink);
 }
 
-/* Phones: the pill becomes two rows rather than crushing the search field
-   to a 40px stub between the wordmark and the menu button. Still a
-   lozenge, just a taller one. */
+/* Phones: the pill may wrap to two rows rather than crush its contents.
+   (It used to hold the homepage search field; that moved into the hero
+   on 2026-10-02 — see ToolSearch.astro — so the wrap is now a fallback for
+   the narrowest phones rather than the normal layout.) Still a lozenge. */
 @media (max-width: 760px) {
   .nav-shell { padding-inline: var(--spacing-sm); }
   .nav-bar {
@@ -689,12 +690,6 @@ select:focus-visible,
     row-gap: var(--spacing-xs);
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--rounded-card-lg);
-  }
-  .nav-bar .nav-search {
-    order: 3;
-    flex-basis: 100%;
-    max-width: none;
-    margin: 0;
   }
 }
 
@@ -718,7 +713,7 @@ select:focus-visible,
 
 /* Above the point where the links would start to crowd, take the wider
    step — the bar has the room, and DESIGN.md asks for a generous rhythm. */
-@media (min-width: 1120px) {
+@media (min-width: 1260px) {
   .nav-brand {
     margin-inline-end: var(--spacing-lg);
   }
@@ -1039,8 +1034,15 @@ select:focus-visible,
    952px. The result was horizontal overflow on every page between 1000px
    and 1070px — iPad landscape and small laptops could drag the whole page
    sideways. 1120px hands over to the mobile menu while there is still
-   room to spare. */
-@media (max-width: 1120px) {
+   room to spare.
+
+   Raised to 1259px on 2026-10-02: 1120 was measured on the English
+   homepage only. The Portuguese labels ("Conversor de Arquivos",
+   "Ferramentas de Imagem") need ~1,240px, so /pt/ overflowed by 118px at
+   1121 and still by 79px at 1160, pushing the theme toggle off-screen;
+   English tool pages overflowed by 28px at 1121. Every locale's widest
+   bar fits from 1260. `npm run search` sweeps this band. */
+@media (max-width: 1259px) {
   .nav-links {
     display: none;
   }

@@ -21,7 +21,7 @@
  * business in the repo.
  */
 import puppeteer from 'puppeteer-core';
-import { browserProfile } from '../testing-paths.mjs';
+import { browserProfile, NO_TRACKING } from '../testing-paths.mjs';
 import { existsSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { spawn } from 'node:child_process';
@@ -103,7 +103,7 @@ for (const [, name, header] of CASES) {
 const server = await ensureServer();
 const browser = await puppeteer.launch({
   executablePath: browserPath(), headless: 'new',
-  args: ['--no-sandbox', '--disable-dev-shm-usage'],
+  args: [NO_TRACKING, '--no-sandbox', '--disable-dev-shm-usage'],
   /* Ours, so puppeteer never deletes it — see browserProfile(). */
   userDataDir: browserProfile('limits'),
 });

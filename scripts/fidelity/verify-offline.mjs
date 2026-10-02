@@ -61,7 +61,7 @@ for (const [path, doneSel] of CASES) {
   const profile = mkdtempSync(join(tmpdir(), 'co-offline-'));
   const browser = await puppeteer.launch({
     executablePath: browserPath(), headless: 'new',
-    args: ['--no-sandbox', '--disable-dev-shm-usage'],
+    args: [TESTING_PATHS.NO_TRACKING, '--no-sandbox', '--disable-dev-shm-usage'],
     userDataDir: profile,
   });
   try {

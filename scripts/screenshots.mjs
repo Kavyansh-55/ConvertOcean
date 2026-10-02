@@ -23,7 +23,7 @@ import { existsSync, mkdirSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { browserProfile } from './testing-paths.mjs';
+import { browserProfile, NO_TRACKING } from './testing-paths.mjs';
 
 const LOCAL = process.argv.includes('--local');
 const ORIGIN = LOCAL ? 'http://localhost:4321' : 'https://convertocean.com';
@@ -69,7 +69,7 @@ mkdirSync(OUT, { recursive: true });
 const server = await ensureServer();
 const browser = await puppeteer.launch({
   executablePath: browserPath(), headless: 'new',
-  args: ['--no-sandbox', '--disable-dev-shm-usage'],
+  args: [NO_TRACKING, '--no-sandbox', '--disable-dev-shm-usage'],
   userDataDir: browserProfile('screenshots'),
 });
 

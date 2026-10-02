@@ -77,7 +77,7 @@ mkdirSync(DL, { recursive: true });
 const server = await ensureServer();
 const browser = await puppeteer.launch({
   executablePath: browserPath(), headless: 'new',
-  args: ['--no-sandbox', '--disable-dev-shm-usage'],
+  args: [TESTING_PATHS.NO_TRACKING, '--no-sandbox', '--disable-dev-shm-usage'],
   /* Ours, so puppeteer never deletes it — see browserProfile(). */
   userDataDir: browserProfile('generators'),
 });

@@ -385,7 +385,7 @@ const SYM = { pass: '  PASS', fail: '  FAIL', err: '  ERR ' };
   const browser = await puppeteer.launch({
     executablePath: browserPath(),
     headless: HEADFUL ? false : 'new',
-    args: ['--no-sandbox', '--disable-dev-shm-usage'],
+    args: [TESTING_PATHS.NO_TRACKING, '--no-sandbox', '--disable-dev-shm-usage'],
   /* Ours, so puppeteer never deletes it — see browserProfile(). */
   userDataDir: browserProfile('fidelity'),
 });
