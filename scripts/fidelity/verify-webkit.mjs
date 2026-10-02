@@ -74,6 +74,7 @@ try {
 
   for (const [path, fixture, button, why] of CONVERSIONS) {
     const context = await browser.newContext({ acceptDownloads: true });
+    await context.route(TESTING_PATHS.TRACKING_URL, (r) => r.abort());  // never count as a visitor or an ad view
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e).slice(0, 90)));
@@ -132,6 +133,7 @@ try {
   console.log('\n  engine-level behaviour\n');
   {
     const context = await browser.newContext();
+    await context.route(TESTING_PATHS.TRACKING_URL, (r) => r.abort());  // never count as a visitor or an ad view
     const page = await context.newPage();
     await page.goto(ORIGIN + '/excel-to-pdf/', { waitUntil: 'networkidle', timeout: 60000 });
 
@@ -168,6 +170,7 @@ try {
   /* --- the library recovery has to work here too ------------------------- */
   {
     const context = await browser.newContext();
+    await context.route(TESTING_PATHS.TRACKING_URL, (r) => r.abort());  // never count as a visitor or an ad view
     const page = await context.newPage();
     let firstHost = null;
     await page.route('**/xlsx.full.min.js', (route) => {

@@ -165,7 +165,7 @@ const browser = await puppeteer.launch({
   executablePath: ['C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe', process.env.CHROME_PATH].filter(Boolean).find(existsSync),
   /* A fresh profile per run: a crashed earlier run can leave a persistent
      profile locked, and the launch then hangs without a word. */
-  headless: 'new', args: ['--no-sandbox', '--disable-dev-shm-usage'], userDataDir: mkdtempSync(join(tmpdir(), 'co-parity-')),
+  headless: 'new', args: [TESTING_PATHS.NO_TRACKING, '--no-sandbox', '--disable-dev-shm-usage'], userDataDir: mkdtempSync(join(tmpdir(), 'co-parity-')),
 });
 console.log(`comparing ${todo.length} tools, EN vs PT, normal and wrong-file paths…`);
 

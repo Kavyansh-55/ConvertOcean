@@ -68,7 +68,7 @@ async function ensureServer() {
 
 const server = await ensureServer();
 const browser = await puppeteer.launch({
-  executablePath: browserPath(), headless: 'new', args: ['--no-sandbox'],
+  executablePath: browserPath(), headless: 'new', args: [TESTING_PATHS.NO_TRACKING, '--no-sandbox'],
   /* Ours, so puppeteer never deletes it — see browserProfile(). */
   userDataDir: browserProfile('compress'),
 });

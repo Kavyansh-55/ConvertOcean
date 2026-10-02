@@ -20,7 +20,7 @@
  */
 import puppeteer from 'puppeteer-core';
 import { existsSync } from 'node:fs';
-import { browserProfile } from '../testing-paths.mjs';
+import { browserProfile, NO_TRACKING } from '../testing-paths.mjs';
 
 const ORIGIN = process.env.CO_ORIGIN || 'http://localhost:4321';
 const EDGE = [
@@ -41,7 +41,7 @@ const say = (ok, msg, detail = '') => {
 
 const browser = await puppeteer.launch({
   executablePath: browserPath(), headless: 'new',
-  args: ['--no-sandbox'], userDataDir: browserProfile('image-resize'),
+  args: [NO_TRACKING, '--no-sandbox'], userDataDir: browserProfile('image-resize'),
 });
 const page = await browser.newPage();
 await page.goto(`${ORIGIN}/image-resizer/`, { waitUntil: 'networkidle0', timeout: 60000 });

@@ -14,10 +14,10 @@
  */
 import puppeteer from 'puppeteer-core';
 import { existsSync } from 'node:fs';
-import { browserProfile } from '../testing-paths.mjs';
+import { browserProfile, NO_TRACKING } from '../testing-paths.mjs';
 const exe = ['C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe','C:/Program Files/Microsoft/Edge/Application/msedge.exe'].find(existsSync);
 const O = process.env.CO_ORIGIN || 'http://localhost:4321';
-const b = await puppeteer.launch({ executablePath: exe, headless: 'new', userDataDir: browserProfile('theme-default') });
+const b = await puppeteer.launch({ args: [NO_TRACKING], executablePath: exe, headless: 'new', userDataDir: browserProfile('theme-default') });
 let bad = 0; const say = (ok, m) => { if (!ok) bad++; console.log((ok ? 'OK   ' : 'FAIL ') + m); };
 async function visit(scheme, seed) {
   const ctx = await b.createBrowserContext();   // fresh storage per case

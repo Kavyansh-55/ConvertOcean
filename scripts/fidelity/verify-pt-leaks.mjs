@@ -17,7 +17,7 @@
  *   CO_ORIGIN=https://convertocean.com npm run pt-leaks
  */
 import puppeteer from 'puppeteer-core';
-import { browserProfile } from '../testing-paths.mjs';
+import { browserProfile, NO_TRACKING } from '../testing-paths.mjs';
 
 const O = process.env.CO_ORIGIN || 'http://localhost:4321';
 const EN = new Set(('the and your you to of for with this that is are it in on from or be can will file files ' +
@@ -33,7 +33,7 @@ if (urls.length < 80) { console.log(`only ${urls.length} /pt/ URLs in the sitema
 
 const b = await puppeteer.launch({
   executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
-  headless: 'new', args: ['--no-sandbox'], userDataDir: browserProfile('pt-leaks'),
+  headless: 'new', args: [NO_TRACKING, '--no-sandbox'], userDataDir: browserProfile('pt-leaks'),
 });
 const hits = new Map(); // line -> [pages]
 try {

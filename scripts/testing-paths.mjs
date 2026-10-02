@@ -95,3 +95,27 @@ export function ensureTestingDirs() {
   mkdirSync(FIXTURES, { recursive: true });
   mkdirSync(OUT, { recursive: true });
 }
+
+/**
+ * Test browsers must never reach analytics or ads.
+ *
+ * Most suites can run against production (CO_ORIGIN), and each fresh browser
+ * context is a brand-new "user" to Google Analytics. Found 2026-10-02: GA
+ * showed 147 users and 233 key events in 30 days against 2 Search clicks, and
+ * its spikes (6-7 Sep, 11-13 Sep) are the days whole suites were verified
+ * against production — fidelity runs fire real file_converted events. Worse,
+ * once AdSense serves ads, automated page loads requesting them are invalid
+ * traffic, which is an account-level risk.
+ *
+ * Blocked in the browser, not on the site: the site must keep serving the
+ * AdSense and GA tags in its HTML to everyone, Google's own crawlers included.
+ * `~NOTFOUND` makes the host fail DNS, so nothing is ever sent.
+ */
+const TRACKING_HOSTS = [
+  'www.googletagmanager.com', '*.google-analytics.com', 'google-analytics.com',
+  'pagead2.googlesyndication.com', '*.googlesyndication.com', '*.doubleclick.net',
+  '*.adtrafficquality.google', 'adservice.google.com', 'static.cloudflareinsights.com',
+];
+export const NO_TRACKING = '--host-resolver-rules=' + TRACKING_HOSTS.map((h) => `MAP ${h} ~NOTFOUND`).join(', ');
+/** The same set as a URL pattern, for engines without Chromium flags (WebKit). */
+export const TRACKING_URL = /googletagmanager|google-analytics|googlesyndication|doubleclick|adtrafficquality|adservice\.google|cloudflareinsights/;
