@@ -6,7 +6,7 @@ import {
   salesTaxCalculatorContent,
   breakEvenCalculatorContent
 } from './business-content';
-import { seoContentMap, imageResizerContent, jpgToJpegContent, jpegToJpgContent, compressPdfContent, compressPowerpointContent, compressWordContent, compressExcelContent } from './seo-content';
+import { seoContentMap, imageResizerContent, jpegToJpgContent, compressPdfContent, compressPowerpointContent, compressWordContent, compressExcelContent } from './seo-content';
 
 export interface ToolData {
   slug: string;
@@ -781,7 +781,7 @@ const rawTools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes, after the first conversion — the HEIC decoder is fetched once and cached, and your photos are always processed locally.' }
     ],
-    relatedTools: ['heic-to-png', 'avif-to-jpg', 'image-resizer', 'jpg-to-jpeg']
+    relatedTools: ['heic-to-png', 'avif-to-jpg', 'image-resizer', 'jpeg-to-jpg']
   },
   {
     slug: 'heic-to-png',
@@ -988,7 +988,7 @@ const rawTools: ToolData[] = [
     description: 'Convert modern PowerPoint (.pptx) files to PDF in your browser. Slides render with their real layout, theme and background — nothing is uploaded.',
     headline: 'PowerPoint to PDF.',
     subtitle: 'Render slides with their real layout and theme, then compile them to PDF locally.',
-    quickAnswer: 'To convert PowerPoint to PDF, select a .pptx file above and download a PDF that keeps each slide\'s real layout, theme, colours, text, and tables — one slide per page. It is ideal for sharing decks that look identical on any device without PowerPoint. Legacy .ppt must be re-saved as .pptx first. Everything runs in your browser.',
+    quickAnswer: 'To convert PowerPoint (PPT) to PDF, select a .pptx file above and download a PDF that keeps each slide\'s real layout, theme, colours, text, and tables — one slide per page. It is ideal for sharing decks that look identical on any device without PowerPoint. Legacy .ppt must be re-saved as .pptx first. Everything runs in your browser.',
     icon: '📊',
     category: 'Document Tools',
     categorySlug: 'document-tools',
@@ -996,24 +996,7 @@ const rawTools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
       { question: 'Does it work offline?', answer: 'Yes. The PowerPoint zip structure is parsed directly inside the browser memory.' }
     ],
-    relatedTools: ['ppt-to-pdf', 'word-to-pdf', 'txt-to-pdf']
-  },
-  {
-    slug: 'ppt-to-pdf',
-    name: 'PPT to PDF (Legacy)',
-    title: 'Convert PPT to PDF Online - 100% Private | ConvertOcean',
-    description: 'Got an old .ppt file? Re-save it as .pptx first (we show you how), then render it to PDF locally — no uploads, no signup, nothing leaves your device.',
-    headline: 'PPT to PDF.',
-    subtitle: 'Legacy .ppt needs a one-step re-save to .pptx — then slides render to PDF on your device.',
-    quickAnswer: 'To convert a PowerPoint to PDF, add your file above and download a PDF with one slide per page, rendered with its theme colours, fonts, backgrounds, and tables intact. Note that the legacy binary .ppt format cannot be read in a browser at all — open it in PowerPoint or LibreOffice and save it as .pptx first, then convert. Rendering happens entirely on your device.',
-    icon: '🗄️',
-    category: 'Document Tools',
-    categorySlug: 'document-tools',
-    faqs: [
-      { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. All data parsing, calculations, and rendering occur entirely in your local browser sandbox memory, and files are automatically removed when you close the tab.' },
-      { question: 'Can I convert legacy .ppt files directly?', answer: 'Not directly — .ppt is a closed binary format that browsers cannot read. The one-step fix: open the file in PowerPoint (or the free LibreOffice Impress), choose File → Save As and pick .pptx, then select that .pptx here. Conversion still happens entirely on your device — nothing is sent to us at any point.' }
-    ],
-    relatedTools: ['pptx-to-pdf', 'word-to-pdf', 'txt-to-pdf']
+    relatedTools: ['compress-powerpoint', 'merge-pptx', 'word-to-pdf', 'merge-pdf']
   },
   {
     slug: 'pdf-to-excel',
@@ -1185,7 +1168,7 @@ const rawTools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. The presentations are parsed and slide configurations merged directly inside your browser sandbox.' },
       { question: 'Does it work offline?', answer: 'Yes. Once loaded, the PPTX merger runs 100% offline.' }
     ],
-    relatedTools: ['split-pptx', 'pptx-to-pdf', 'ppt-to-pdf']
+    relatedTools: ['split-pptx', 'pptx-to-pdf', 'compress-powerpoint']
   },
   {
     slug: 'split-pptx',
@@ -1202,7 +1185,7 @@ const rawTools: ToolData[] = [
       { question: 'Do files get uploaded to a server?', answer: 'No uploads are performed. The slide structures are parsed and split client-side in browser memory.' },
       { question: 'Can I split the file into single slides?', answer: 'Yes. The splitter can output every single slide as its own PPTX file and package them into a single ZIP download.' }
     ],
-    relatedTools: ['merge-pptx', 'pptx-to-pdf', 'ppt-to-pdf']
+    relatedTools: ['merge-pptx', 'pptx-to-pdf', 'compress-powerpoint']
   },
   {
     slug: 'word-counter',
@@ -1285,49 +1268,29 @@ const rawTools: ToolData[] = [
       { question: 'image compressor for discord', answer: "Switch to Compress to File Size and enter a target in KB — Discord's free upload ceiling is 10 MB, so anything up to about 10,000 KB goes through. The image is re-encoded in your browser until it lands under the number you set, and the final size is shown before you download, so you are not guessing. Screenshots pasted straight from a phone are usually the ones that need this." },
       { question: 'how to use an online image resizer', answer: 'Choose the image, then pick one of the two modes. Resize by Dimensions sets an exact width and height in pixels, with Lock ratio on by default so the photo is not stretched. Compress to File Size works the other way round: you name a target in KB and the tool finds the quality that fits it. One image at a time, and it never leaves your browser.' }
     ],
-    relatedTools: ['jpg-to-jpeg', 'png-to-jpg', 'image-to-pdf', 'merge-images'],
+    relatedTools: ['jpeg-to-jpg', 'png-to-jpg', 'image-to-pdf', 'merge-images'],
     content: imageResizerContent
-  },
-  {
-    slug: 'jpg-to-jpeg',
-    name: 'JPG to JPEG',
-    title: 'Convert JPG to JPEG - Free & Private | ConvertOcean',
-    description: 'Convert JPG to JPEG in your browser — same image format, different extension. Get a clean .jpeg file for upload forms that demand it. No uploads, 100% private.',
-    headline: 'JPG to JPEG.',
-    subtitle: 'Re-encode a .jpg file to a clean, standards-compliant .jpeg — for upload forms and software that insist on the .jpeg extension.',
-    quickAnswer: 'JPG and JPEG are the same image format — only the file extension differs. To convert JPG to JPEG, select your .jpg above and download the re-encoded .jpeg file. This satisfies upload forms that strictly whitelist the .jpeg extension, and the re-encoding also strips camera EXIF metadata for privacy.',
-    icon: '🖼️',
-    category: 'Image Tools',
-    categorySlug: 'image-tools',
-    faqs: [
-      { question: 'Is there any difference between JPG and JPEG?', answer: 'No. Both extensions denote the identical JPEG image standard. The .jpg spelling exists because old DOS/Windows systems allowed only three-letter extensions. Quality, compression, and compatibility are exactly the same.' },
-      { question: 'Why does an upload form reject my .jpg but ask for .jpeg?', answer: 'Strict upload validators whitelist literal extension strings. If the developer configured "accept .jpeg only", a valid photo named photo.jpg is rejected purely because of its filename. Re-saving it with the .jpeg extension satisfies the check.' },
-      { question: 'Can I just rename the file from .jpg to .jpeg?', answer: 'Usually yes — the format is identical, so a rename is technically valid. This tool additionally re-encodes the image, which passes validators that inspect file contents and strips camera metadata (location, device info) as a privacy bonus.' },
-      { question: 'Does converting JPG to JPEG lose quality?', answer: 'The re-encode runs at 92% quality, which is visually indistinguishable for photos. If you only need the extension changed with zero re-encoding, renaming the file achieves that — but then metadata is kept and structural quirks are not repaired.' },
-      { question: 'Is my photo uploaded anywhere?', answer: 'No. The file is decoded and re-encoded on an HTML5 canvas inside your browser tab. Nothing is transmitted, logged, or stored — and the tool works offline once loaded.' }
-    ],
-    relatedTools: ['jpeg-to-jpg', 'image-resizer', 'png-to-jpg', 'jpg-to-png'],
-    content: jpgToJpegContent
   },
   {
     slug: 'jpeg-to-jpg',
     name: 'JPEG to JPG',
-    title: 'Convert JPEG to JPG - Free & Private | ConvertOcean',
-    description: 'Convert JPEG to JPG instantly in your browser. Re-encode and rename to the .jpg extension for picky software and upload forms. 100% private, no uploads.',
+    title: 'Convert JPEG to JPG (and JPG to JPEG) - Free & Private | ConvertOcean',
+    description: 'Convert JPEG to JPG, or JPG to JPEG, in your browser. Same image format, the other extension, for upload forms that insist on one. Nothing leaves your device.',
     headline: 'JPEG to JPG.',
-    subtitle: 'Re-encode a .jpeg file to a clean .jpg — for upload whitelists, older software, and asset pipelines standardized on the three-letter extension.',
-    quickAnswer: 'JPEG and JPG are one and the same format — .jpg is just the old three-letter DOS spelling of .jpeg. To convert JPEG to JPG, select your .jpeg above and download the re-encoded .jpg file, ready for upload forms and older software that only accept the .jpg extension.',
+    subtitle: 'Choose a .jpeg to get a .jpg, or a .jpg to get a .jpeg — for upload forms and software that only accept one spelling.',
+    quickAnswer: 'JPEG and JPG are the same image format; only the file extension differs. To convert JPEG to JPG, select your .jpeg above and download the .jpg. It also works the other way: select a .jpg and you get a .jpeg. The image is re-encoded at 92% quality, which also strips camera EXIF data, and everything runs in your browser.',
     icon: '🖼️',
     category: 'Image Tools',
     categorySlug: 'image-tools',
     faqs: [
-      { question: 'Why do both .jpeg and .jpg exist for the same format?', answer: 'Early MS-DOS and Windows limited extensions to three characters, so .jpeg was truncated to .jpg on PCs while Mac and Unix kept the full spelling. The limit is long gone, but both spellings survived — .jpg is now the more common one.' },
-      { question: 'Will converting JPEG to JPG change my image quality or size?', answer: 'Visually no — the re-encode runs at 92% quality, indistinguishable for photographs. File size may shift slightly because the image is re-compressed and camera metadata is removed in the process.' },
-      { question: 'When do I actually need a .jpg extension instead of .jpeg?', answer: 'Three common cases: upload forms that whitelist only ".jpg", older Windows software hard-coded for three-letter extensions, and asset pipelines or scripts using *.jpg patterns that silently miss .jpeg files.' },
-      { question: 'Does this tool remove metadata from my photo?', answer: 'Yes, as a side effect of re-encoding through the browser canvas: EXIF data such as GPS location and camera model is stripped. For images headed to public uploads, that is usually a privacy improvement.' },
-      { question: 'Is the conversion done on my device?', answer: 'Yes — decoding and re-encoding happen entirely in your browser sandbox memory. No image data leaves your machine, no account is needed, and the tool functions offline after the page loads.' }
+      { question: 'Is there any difference between JPG and JPEG?', answer: 'No. Both extensions denote the identical JPEG image standard. The .jpg spelling exists because old DOS and Windows systems allowed only three-letter extensions. Quality, compression and compatibility are exactly the same.' },
+      { question: 'Can this convert JPG to JPEG as well?', answer: 'Yes. The output always takes the spelling your file does not have: a .jpeg comes back as .jpg, and a .jpg comes back as .jpeg. The download button names the extension before you save.' },
+      { question: 'Can I just rename the file instead?', answer: 'Usually yes, because the format is identical. This tool also re-encodes the image, which passes validators that inspect file contents and strips camera metadata such as GPS location. If you want the metadata kept, renaming is the better choice.' },
+      { question: 'Will converting change my image quality or size?', answer: 'Visually no. The re-encode runs at 92% quality, indistinguishable for photographs. The file size may shift slightly because the image is re-compressed and the metadata is removed.' },
+      { question: 'When do I actually need one spelling over the other?', answer: 'Three common cases: upload forms that whitelist only ".jpg" or only ".jpeg", older Windows software hard-coded for three-letter extensions, and scripts using patterns like *.jpg that silently miss .jpeg files.' },
+      { question: 'Is the conversion done on my device?', answer: 'Yes. Decoding and re-encoding happen entirely in your browser tab. No image data leaves your machine, no account is needed, and the tool works offline once the page has loaded.' }
     ],
-    relatedTools: ['jpg-to-jpeg', 'image-resizer', 'webp-to-jpg', 'png-to-jpg'],
+    relatedTools: ['image-resizer', 'png-to-jpg', 'webp-to-jpg', 'jpg-to-png'],
     content: jpegToJpgContent
   }
 ];

@@ -302,7 +302,8 @@ try {
   /* ------------------------------------------------- legacy .ppt refusal */
   {
     const page = await browser.newPage();
-    await page.goto(ORIGIN + '/ppt-to-pdf/', { waitUntil: 'networkidle2', timeout: 45000 });
+    /* /ppt-to-pdf/ 301s here since 2026-10-01; the refusal lives in PptxTool. */
+    await page.goto(ORIGIN + '/pptx-to-pdf/', { waitUntil: 'networkidle2', timeout: 45000 });
     await new Promise((r) => setTimeout(r, 600));
 
     /* A real legacy PowerPoint is an OLE2 container, like the .xls fixture.

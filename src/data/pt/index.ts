@@ -568,11 +568,10 @@ export const ptToolsBatch1: PtTool[] = [
  *
  * Same verbatim rule as batch 1. Two things shaped this batch specifically:
  *
- * - `/pt/ppt-para-pdf/` fronts the LEGACY tool, which cannot read a binary .ppt
- *   in a browser at all. The term has >1000 volume, so people will arrive
- *   expecting a conversion. The page says so in the first answer and sends them
- *   to /pt/powerpoint-para-pdf/ — a page that ranks and then fails silently is
- *   worse than one that ranks and redirects honestly.
+ * - `/pt/ppt-para-pdf/` was merged into /pt/powerpoint-para-pdf/ on 2026-10-01
+ *   (301 in public/_redirects): it was the same converter at a second URL, and
+ *   a binary .ppt still cannot be read in a browser at all. Its researched
+ *   question now sits on the surviving page, which explains the .pptx re-save.
  *
  * - Eight PDF→PowerPoint questions were researched and are NOT answered here,
  *   because no such tool exists. They live in `noToolYet` in ./keywords.ts.
@@ -742,6 +741,10 @@ const ptToolsBatch2: PtTool[] = [
         answer: 'Arraste o arquivo .pptx para a ferramenta no topo da página e baixe o PDF. Cada slide vira uma página, com as cores do tema, as fontes, o plano de fundo e as tabelas preservados. Não é preciso ter o PowerPoint instalado.'
       },
       {
+        question: 'como converter ppt para pdf',
+        answer: 'Se o seu arquivo é .pptx, arraste-o para a ferramenta e baixe o PDF. Se é um .ppt antigo, é preciso um passo a mais: abra no PowerPoint ou no LibreOffice e salve como .pptx primeiro. O formato .ppt é binário e fechado, e nenhum navegador consegue lê-lo — nem aqui, nem em qualquer outro conversor que funcione no navegador.'
+      },
+      {
         question: 'O PDF fica igual à apresentação original?',
         answer: 'O layout, o tema, as cores, o texto e as tabelas são mantidos, um slide por página. O que não sobrevive são os elementos que dependem de tempo: animações, transições e vídeos incorporados viram o estado final do slide, porque um PDF é um documento estático.'
       },
@@ -768,52 +771,9 @@ const ptToolsBatch2: PtTool[] = [
 
       <h2>Arquivos .ppt antigos</h2>
       <p>O formato binário .ppt não pode ser lido dentro de um navegador. Abra o arquivo no PowerPoint ou no LibreOffice, salve como .pptx e converta em seguida — é um passo só, e depois dele tudo funciona normalmente.</p>
+      <p>Para saber se o arquivo é .ppt ou .pptx, veja a extensão no nome. No PowerPoint, use Arquivo, Salvar como, e escolha "Apresentação do PowerPoint (*.pptx)"; no LibreOffice Impress, Arquivo, Salvar como, "PowerPoint 2007-365 (.pptx)".</p>
     `
   },
-  {
-    en: 'ppt-to-pdf',
-    slug: 'ppt-para-pdf',
-    name: 'PPT para PDF',
-    title: 'Converter PPT para PDF Online Grátis — 100% Privado | ConvertOcean',
-    description: 'Converter apresentações PPT para PDF direto no navegador. Arquivos .ppt antigos precisam de um passo extra — a página explica qual.',
-    headline: 'PPT para PDF.',
-    subtitle: 'O formato .ppt antigo precisa de um passo a mais antes de virar PDF — e depois dele os slides são convertidos no seu próprio dispositivo.',
-    quickAnswer: 'Para converter PPT para PDF, adicione o arquivo na ferramenta acima e baixe um PDF com um slide por página, com as cores do tema, as fontes, o plano de fundo e as tabelas preservados. Atenção ao formato: o .ppt binário antigo não pode ser lido dentro de um navegador — abra-o no PowerPoint ou no LibreOffice, salve como .pptx e converta em seguida. Tudo roda no seu dispositivo.',
-    category: 'Ferramentas de Documentos',
-    faqs: [
-      {
-        question: 'como converter ppt para pdf',
-        answer: 'Se o seu arquivo é .pptx, arraste-o para a ferramenta e baixe o PDF. Se é um .ppt antigo, é preciso um passo a mais: abra no PowerPoint ou no LibreOffice e salve como .pptx primeiro. O formato .ppt é binário e fechado, e nenhum navegador consegue lê-lo — nem aqui, nem em qualquer outro conversor que funcione no seu dispositivo.'
-      },
-      {
-        question: 'Como sei se meu arquivo é .ppt ou .pptx?',
-        answer: 'Veja a extensão no nome do arquivo. Terminando em .pptx, ele foi salvo pelo PowerPoint 2007 ou posterior e funciona direto. Terminando em .ppt, é o formato antigo e precisa ser salvo novamente. No Windows, se as extensões estiverem ocultas, ative "Extensões de nomes de arquivos" na aba Exibir do Explorador.'
-      },
-      {
-        question: 'Como salvar um .ppt como .pptx?',
-        answer: 'Abra a apresentação no PowerPoint, vá em Arquivo, Salvar como, e escolha "Apresentação do PowerPoint (*.pptx)" na lista de formatos. No LibreOffice Impress, use Arquivo, Salvar como, e selecione "PowerPoint 2007-365 (.pptx)". Depois disso a conversão para PDF funciona normalmente.'
-      },
-      {
-        question: 'O resultado é igual ao da conversão de .pptx?',
-        answer: 'Sim — depois do re-salvamento é exatamente o mesmo motor de conversão: um slide por página, com o layout, o tema, as cores e as tabelas preservados. O passo extra serve apenas para traduzir o arquivo antigo para um formato que o navegador consegue abrir.'
-      },
-      {
-        question: 'O arquivo é copiado para algum servidor?',
-        answer: 'Não. A conversão acontece no seu navegador, no seu dispositivo, e nada é copiado para nenhum servidor — inclusive o passo de re-salvar, que você faz no seu próprio computador, sem que o arquivo passe por nós em momento algum.'
-      }
-    ],
-    content: `
-      <h2>PPT e PPTX não são o mesmo formato</h2>
-      <p>É a distinção que decide se um <strong>conversor de ppt para pdf</strong> vai funcionar. O .pptx, usado pelo PowerPoint desde 2007, é um pacote aberto que um navegador consegue abrir e interpretar. O .ppt é o formato binário anterior, fechado e sem especificação pública utilizável no navegador — nenhuma ferramenta que rode no seu próprio dispositivo consegue lê-lo diretamente.</p>
-      <p>Dizemos isso de forma direta porque a alternativa seria aceitar o arquivo e falhar depois, ou copiá-lo para um servidor para converter lá — que é exatamente o que este site não faz.</p>
-
-      <h2>O passo a mais, uma vez só</h2>
-      <p>Abra a apresentação no PowerPoint ou no LibreOffice Impress e salve como .pptx. Leva alguns segundos, acontece no seu computador e não envolve nenhum serviço externo. A partir daí, <strong>passar ppt para pdf</strong> funciona como qualquer outra conversão daqui: um slide por página, com o tema e o layout reais.</p>
-
-      <h2>Depois do re-salvamento</h2>
-      <p>O motor é o mesmo da página de <a href="/pt/powerpoint-para-pdf/">PowerPoint para PDF</a>: cores do tema, fontes, plano de fundo e tabelas preservados, um slide por página, tudo processado dentro do navegador. Animações e transições não sobrevivem, porque o PDF é estático.</p>
-    `
-  }
 ];
 
 /**
@@ -3273,10 +3233,10 @@ const ptToolsBatch12: PtTool[] = [
     slug: 'jpeg-para-jpg',
     name: 'JPEG para JPG',
     title: 'Converter JPEG para JPG Online Grátis — 100% Privado | ConvertOcean',
-    description: 'Converta arquivos .jpeg em .jpg direto no navegador, para formulários e programas que só aceitam a extensão de três letras.',
+    description: 'Converta .jpeg em .jpg, ou .jpg em .jpeg, direto no navegador — para formulários e programas que só aceitam uma das grafias.',
     headline: 'JPEG para JPG.',
-    subtitle: 'Mesma imagem, extensão que os formulários aceitam — reencodada no seu próprio navegador.',
-    quickAnswer: 'JPEG e JPG são exatamente o mesmo formato — .jpg é apenas a grafia antiga de três letras herdada do DOS. Para converter JPEG para JPG, selecione o arquivo .jpeg na ferramenta acima e baixe o .jpg reencodado, pronto para formulários de envio e programas antigos que só aceitam a extensão de três letras. Tudo acontece no seu navegador.',
+    subtitle: 'Escolha um .jpeg e receba um .jpg, ou um .jpg e receba um .jpeg — reencodado no seu próprio navegador.',
+    quickAnswer: 'JPEG e JPG são exatamente o mesmo formato — .jpg é apenas a grafia antiga de três letras herdada do DOS. Para converter JPEG para JPG, selecione o arquivo .jpeg na ferramenta acima e baixe o .jpg reencodado, pronto para formulários de envio e programas antigos que só aceitam a extensão de três letras. Tudo acontece no seu navegador. Funciona também no sentido contrário: selecione um .jpg e você recebe um .jpeg.',
     category: 'Ferramentas de Imagem',
     faqs: [
       {
@@ -3290,6 +3250,14 @@ const ptToolsBatch12: PtTool[] = [
       {
         question: 'como mudar de jpeg para jpg',
         answer: 'Renomear o arquivo funciona em muitos casos, já que o conteúdo é idêntico — mas não em todos. Alguns formulários e sistemas verificam a assinatura interna ou recusam arquivos cuja origem não bate, e aí a renomeação falha. A reencodagem resolve de forma definitiva.'
+      },
+      {
+        question: 'qual a diferença de jpg para jpeg',
+        answer: 'Nenhuma diferença de conteúdo, compressão ou qualidade — é o mesmo formato com dois nomes. A grafia curta nasceu do limite de três caracteres do MS-DOS. Quando um sistema aceita um e recusa o outro, está conferindo apenas o nome do arquivo.'
+      },
+      {
+        question: 'como converter jpg para jpeg',
+        answer: 'Nesta mesma ferramenta: arraste o .jpg e baixe o .jpeg. A extensão de saída é sempre a que o seu arquivo não tem, e o botão de download mostra qual é antes de salvar.'
       },
       {
         question: 'A qualidade muda?',
@@ -3309,49 +3277,6 @@ const ptToolsBatch12: PtTool[] = [
 
       <h2>Renomear às vezes basta, às vezes não</h2>
       <p>Como o conteúdo é o mesmo, trocar a extensão manualmente costuma funcionar. Costuma. Sistemas que verificam a assinatura interna do arquivo, ou que recusam arquivos com histórico inconsistente, continuam recusando. A reencodagem elimina a dúvida — e, de quebra, remove os metadados EXIF, o que é desejável antes de um envio público.</p>
-    `
-  },
-  {
-    en: 'jpg-to-jpeg',
-    slug: 'jpg-para-jpeg',
-    name: 'JPG para JPEG',
-    title: 'Converter JPG para JPEG Online Grátis — 100% Privado | ConvertOcean',
-    description: 'Converta arquivos .jpg em .jpeg direto no navegador, para formulários que exigem estritamente a extensão de quatro letras.',
-    headline: 'JPG para JPEG.',
-    subtitle: 'Mesma imagem, a extensão de quatro letras que alguns formulários exigem.',
-    quickAnswer: 'JPG e JPEG são o mesmo formato de imagem — apenas a extensão difere. Para converter JPG para JPEG, selecione o arquivo .jpg na ferramenta acima e baixe o .jpeg reencodado. Isso atende formulários de envio que aceitam estritamente a extensão .jpeg, e a reencodagem também remove os metadados EXIF da foto. Tudo acontece no seu navegador.',
-    category: 'Ferramentas de Imagem',
-    faqs: [
-      {
-        question: 'qual a diferença de jpg para jpeg',
-        answer: 'Nenhuma diferença de conteúdo, compressão ou qualidade — é o mesmo formato com dois nomes. A grafia curta nasceu do limite de três caracteres do MS-DOS. Quando um sistema aceita um e recusa o outro, é uma regra de validação de nome, não uma diferença técnica entre os arquivos.'
-      },
-      {
-        question: 'como converter jpg para jpeg',
-        answer: 'Arraste o .jpg para a ferramenta e baixe o .jpeg. A reencodagem é real, o que importa para os sistemas que conferem mais do que o nome do arquivo.'
-      },
-      {
-        question: 'Por que um formulário exigiria .jpeg?',
-        answer: 'Porque alguém escreveu a lista de extensões aceitas e incluiu apenas essa grafia. É arbitrário, e é justamente por isso que existe a conversão nos dois sentidos — o oposto está em <a href="/pt/jpeg-para-jpg/">JPEG para JPG</a>.'
-      },
-      {
-        question: 'A conversão remove os dados da foto?',
-        answer: 'Sim, como efeito da reencodagem os metadados EXIF são descartados, incluindo coordenadas de GPS e modelo do aparelho. Se o objetivo é especificamente limpar esses dados sem reencodar, o <a href="/pt/remover-exif/">removedor de EXIF</a> faz isso sem perda alguma de qualidade.'
-      },
-      {
-        question: 'A imagem é copiada para algum servidor?',
-        answer: 'Não. A conversão acontece no seu navegador, no seu dispositivo.'
-      }
-    ],
-    content: `
-      <h2>Um problema de nome, não de formato</h2>
-      <p>JPG e JPEG são idênticos por dentro. Quando um formulário aceita um e recusa o outro, está aplicando uma lista de extensões escrita por alguém — não detectando qualquer diferença real na imagem.</p>
-
-      <h2>A conversão existe nos dois sentidos</h2>
-      <p>Porque as listas arbitrárias vão nas duas direções. Esta página resolve quem precisa de <em>.jpeg</em>; <a href="/pt/jpeg-para-jpg/">JPEG para JPG</a> resolve o contrário.</p>
-
-      <h2>O efeito colateral útil</h2>
-      <p>A reencodagem descarta os metadados EXIF — localização, modelo do aparelho, data. Para uma foto que vai a um envio público isso costuma ser desejável. Se a limpeza for o objetivo principal e você não quiser reencodar, o <a href="/pt/remover-exif/">removedor de EXIF</a> faz o trabalho sem tocar nos pixels.</p>
     `
   },
   {
@@ -3565,7 +3490,7 @@ const ptToolsBatch12: PtTool[] = [
       <p>Adicione os arquivos na sequência certa antes de gerar. Reordenar slides individualmente depois é trabalho para o PowerPoint.</p>
 
       <h2>.ppt precisa de um passo antes</h2>
-      <p>O formato binário antigo não é legível no navegador: salve como .pptx primeiro. É o mesmo passo descrito em <a href="/pt/ppt-para-pdf/">PPT para PDF</a>.</p>
+      <p>O formato binário antigo não é legível no navegador: salve como .pptx primeiro. É o mesmo passo descrito em <a href="/pt/powerpoint-para-pdf/">PowerPoint para PDF</a>.</p>
     `
   },
   {

@@ -424,6 +424,8 @@ const SYM = { pass: '  PASS', fail: '  FAIL', err: '  ERR ' };
         /* Byte counts, which no parsed view of the output carries. A
            compression recipe's primary assertion is a size comparison. */
         bytes: run.bytes,
+        // The saved filename, for tools whose output extension is the result.
+        downloadName: run.downloadName,
         srcBytes: srcBytesOf(recipe),
         // Recipes that unpack a zip need the inspectors for what is inside it.
         readXlsx: inspect.readXlsx,

@@ -1039,8 +1039,8 @@ export const seoContentMap: Record<string, SEOData> = {
     ]
   },
   'pptx-to-pdf': {
-    title: 'Convert PowerPoint to PDF Online - Export Slides | ConvertOcean',
-    description: 'Convert PowerPoint presentations (.pptx) to PDF sheets offline in your browser. Standard landscape scaling with no slides cut off.',
+    title: 'Convert PowerPoint (PPT) to PDF Online | ConvertOcean',
+    description: 'Convert PowerPoint slides to PDF in your browser, one slide per page with the theme and layout kept. Old .ppt file? Re-save it as .pptx first, shown below.',
     content: `
 <div class="content-card">
   <h2>Converting PowerPoint Slides to PDF Documents.</h2>
@@ -1059,43 +1059,17 @@ export const seoContentMap: Record<string, SEOData> = {
     <li><strong>Conference submissions</strong> where organizers require PDF uploads.</li>
     <li><strong>Archives</strong> of finished presentations viewable years later without PowerPoint.</li>
   </ul>
-  <p>Slides are parsed and compiled entirely in your browser — unreleased strategy decks never leave your machine. Working with an old-format .ppt file from the 2003 era? See <a href="/ppt-to-pdf/">PPT to PDF</a>. Afterward, combine the deck PDF with supporting documents into one package using <a href="/merge-pdf/">Merge PDF</a>.</p>
+  <h3>Old .ppt Files from PowerPoint 97–2003.</h3>
+  <p>Most people who search "PPT to PDF" have a modern .pptx and can drop it straight in. A true legacy .ppt is different: it is an OLE compound binary, not the ZIP-based package every browser-based converter (this one included) opens, so no tool that runs in a browser can read it directly, whatever its marketing says. Drop one here and you get a clear message instead of a broken file. The fix takes a few seconds: open the deck in PowerPoint or the free LibreOffice Impress, choose File → Save As, pick .pptx, and convert that file here.</p>
+
+  <p>Slides are parsed and compiled entirely in your browser — unreleased strategy decks never leave your machine. Afterward, combine the deck PDF with supporting documents into one package using <a href="/merge-pdf/">Merge PDF</a>.</p>
 </div>
     `,
     faqs: [
       { question: "Are my slide dimensions and proportions preserved?", answer: "Yes. Standard slide ratios (16:9 widescreen or 4:3 standard) are converted to matching landscape PDF dimensions." },
       { question: "Will slide transition animations work in the PDF?", answer: "No, PDF is a static document format. Slide transitions and interactive triggers are disabled." },
-      { question: "Is my presentation uploaded to a third party?", answer: "No, all slide text, images, and coordinates are compiled locally on your device." }
-    ]
-  },
-  'ppt-to-pdf': {
-    title: 'Convert PPT to PDF Online - slide deck conversion | ConvertOcean',
-    description: 'Turn a PowerPoint deck into PDF locally in your browser. Legacy .ppt needs a one-step re-save to .pptx first — we show you exactly how.',
-    content: `
-<div class="content-card">
-  <h2>Converting PowerPoint slide decks to PDF.</h2>
-  <p>Legacy PPT slides are binary formats that are hard to open on mobile devices. Converting PPT presentations to PDF layouts makes slide decks accessible on any screen, preserving visual shapes.</p>
-
-  <h3>The Old-Deck Rescue Problem.</h3>
-  <p>The .ppt extension marks the pre-2007 binary era of PowerPoint — a completely different container from modern XML-based .pptx. These files accumulate in company archives, old training folders, and inherited hard drives, and they get harder to open every year: current mobile apps and web viewers often refuse them, and even desktop PowerPoint renders some legacy layouts imperfectly. Converting the deck to PDF turns an aging, software-dependent file into a document that will still open unchanged a decade from now. Not sure which format you have? Check the extension: .ppt is the pre-2007 binary format this page covers, while .pptx is the modern XML container with its own converter.</p>
-
-  <h3>Getting the Best Result from a Legacy File.</h3>
-  <p>Be aware of one hard limit before you start: a true legacy .ppt file cannot be read in a browser at all. It is an OLE compound binary, not the ZIP-based container every modern converter (ours included) opens — so no browser-based tool can convert it directly, whatever the marketing says. Drop a .ppt here and you will get a clear message telling you exactly this. The fix is a one-step re-save: open the .ppt in PowerPoint (or LibreOffice Impress, which reads legacy formats well), choose File → Save As and pick .pptx, then run that through <a href="/pptx-to-pdf/">PPTX to PDF</a> — the modern format preserves far more detail through conversion.</p>
-
-  <h3>Why Archive as PDF Rather Than Keep .ppt.</h3>
-  <ul>
-    <li><strong>Future-proofing:</strong> PDF is an ISO archival standard; the binary PPT format has been retired for nearly two decades.</li>
-    <li><strong>Access:</strong> anyone can read the material — no PowerPoint license, no version roulette.</li>
-    <li><strong>Consolidation:</strong> convert a training series and bind it into one reference document with <a href="/merge-pdf/">Merge PDF</a>.</li>
-  </ul>
-  <p>Everything is parsed locally in your browser, so internal company archives stay internal. Old decks often travel with old Word files too — <a href="/word-to-pdf/">Word to PDF</a> handles those the same way.</p>
-</div>
-    `,
-    faqs: [
+      { question: "Is my presentation uploaded to a third party?", answer: "No, all slide text, images, and coordinates are compiled locally on your device." },
       { question: "How does the tool handle legacy .ppt files?", answer: "It tells you the truth rather than producing a broken file: .ppt is an OLE compound binary that browsers cannot open, so selecting one shows a message asking you to re-save it as .pptx first. Open it in PowerPoint or the free LibreOffice Impress, use File → Save As and choose .pptx, then select that file here. Conversion still runs entirely on your device." },
-      { question: "Will embedded videos play in the PDF?", answer: "No, PDF files represent static print pages. Video controls and audio clips are discarded." },
-      { question: "Can I run this converter without an internet connection?", answer: "Yes. The libraries it needs load with the page, so once the page has loaded the conversion itself works without a connection." }
-    ,
       { question: "how to save ppt as pdf", answer: "In PowerPoint, use File then Save As (or Export) and choose PDF. If PowerPoint is not installed, or the deck is confidential, select the .pptx above instead and the PDF is built in your browser, so the file never leaves your device. Each slide becomes one page, and the slide's text is laid invisibly over the rendered image, so the PDF stays selectable, searchable and readable by a screen reader rather than being a stack of flat pictures." },
       { question: "how to convert ppt to pdf", answer: "Select your .pptx above and download the PDF — one page per slide, in the deck's own proportions. Note this converter needs the modern .pptx format; a legacy .ppt has to be opened in PowerPoint or LibreOffice and re-saved as .pptx first. Speaker notes are carried across into the PDF's invisible text layer, so they stay searchable and copyable without printing over the slide. Embedded video cannot play inside a PDF, so a video slide exports as its poster frame." },
       { question: "how to print ppt to pdf without white border", answer: "The white bands appear when a 16:9 deck is printed onto a fixed A4 page — the slide keeps its shape and the leftover paper shows as margin. This converter sizes each PDF page to the deck's own aspect ratio and draws the slide across the whole of it, corner to corner, so there is no border to remove. If you have already got a bordered PDF from PowerPoint, re-export from the .pptx here rather than trying to crop the result." }
@@ -1480,43 +1454,30 @@ export const imageResizerContent = `
     <li><strong>Crop before resizing</strong> when a form wants a specific ratio like 200×230 — resizing a 4:3 photo to a portrait box will squash it, so crop to the shape first.</li>
     <li><strong>Transparent sources going to JPG</strong> are flattened onto white automatically, which is what forms expect.</li>
   </ul>
-  <p>Once resized, forms sometimes also dictate the extension spelling — <a href="/jpg-to-jpeg/">JPG to JPEG</a> handles that in one click. Batch several resized images into one document with <a href="/image-to-pdf/">Image to PDF</a>, convert graphics with <a href="/png-to-jpg/">PNG to JPG</a>, or read the full format trade-offs in the <a href="/guides/png-vs-jpg/">PNG vs JPG guide</a>.</p>
-</div>
-`;
-
-export const jpgToJpegContent = `
-<div class="content-card">
-  <h2>JPG to JPEG: Same Format, Different Extension — Here Is the Truth.</h2>
-  <p>JPG and JPEG are <strong>the exact same image format</strong> — the JPEG standard (Joint Photographic Experts Group), written with two different file extensions. There is no quality difference, no size difference, and no technical conversion happening between them. What actually differs is the label on the file — and unfortunately, some upload forms and older systems check that label strictly.</p>
-
-  <h3>Why a Form Might Demand ".jpeg" Specifically.</h3>
-  <p>Poorly configured upload validators whitelist literal extension strings. If a developer wrote the rule as "accept only .jpeg", a perfectly valid photo named <code>photo.jpg</code> gets rejected — not because of what the file is, but because of what it is called. Application portals, CMS platforms, and legacy enterprise software are the usual offenders. Arguing with the form is not an option; giving it the filename it wants takes two seconds.</p>
-
-  <h3>What This Tool Actually Does.</h3>
-  <p>Honesty first: simply renaming <code>photo.jpg</code> to <code>photo.jpeg</code> is technically valid, and for many forms that is enough. This tool goes one step further — it decodes your image and re-encodes it as a fresh, standards-compliant JPEG with the .jpeg extension. That matters in two cases: validators that inspect the file's internal structure (not just the name), and situations where you want the camera metadata (location, device details) stripped — re-encoding through the browser canvas removes EXIF data as a side effect, which is usually desirable for uploads.</p>
-
-  <h3>Before You Upload.</h3>
-  <p>Extension problems and size problems travel together — the same picky forms usually enforce a KB limit too. If the portal wants your .jpeg under 20 KB or at exact dimensions, run it through the <a href="/image-resizer/">Image Resizer</a> first. Need the opposite rename? Use <a href="/jpeg-to-jpg/">JPEG to JPG</a>. Converting from a different format entirely? <a href="/png-to-jpg/">PNG to JPG</a> handles graphics and screenshots. Everything processes locally in your browser — your photos are never uploaded to us or anyone else.</p>
+  <p>Once resized, forms sometimes also dictate the extension spelling — <a href="/jpeg-to-jpg/">JPEG to JPG</a> switches between the two spellings in one click. Batch several resized images into one document with <a href="/image-to-pdf/">Image to PDF</a>, convert graphics with <a href="/png-to-jpg/">PNG to JPG</a>, or read the full format trade-offs in the <a href="/guides/png-vs-jpg/">PNG vs JPG guide</a>.</p>
 </div>
 `;
 
 export const jpegToJpgContent = `
 <div class="content-card">
-  <h2>JPEG to JPG — and Why Two Spellings of One Format Exist at All.</h2>
-  <p>The .jpeg and .jpg extensions point to the identical format. The split is a fossil from early computing: MS-DOS and Windows 3.x limited file extensions to <strong>three characters</strong>, so ".jpeg" — the standard's real name — was truncated to ".jpg" on PCs, while Mac and Unix systems kept the full spelling. The three-letter limit died decades ago, but the .jpg habit stuck; today it is the more common spelling, and some software still expects it exclusively.</p>
+  <h2>JPEG and JPG Are One Format with Two Spellings.</h2>
+  <p>The .jpeg and .jpg extensions point to the identical image format, the JPEG standard. There is no quality difference and no size difference between them. The split is a fossil from early computing: MS-DOS and Windows 3.x allowed only <strong>three-character</strong> file extensions, so ".jpeg" was cut to ".jpg" on PCs, while Mac and Unix systems kept the full spelling. The limit disappeared decades ago, but both spellings survived, and .jpg is now the more common one.</p>
 
-  <h3>When You Actually Need the .jpg Spelling.</h3>
+  <h3>Which Way This Page Converts.</h3>
+  <p>It works in both directions, decided by the file you choose. Choose a <code>.jpeg</code> and you get a <code>.jpg</code> back; choose a <code>.jpg</code> and you get a <code>.jpeg</code>. The download button shows which one you are about to save before you click it.</p>
+
+  <h3>When the Spelling Actually Matters.</h3>
   <ul>
-    <li><strong>Upload whitelists</strong> that accept ".jpg" but reject ".jpeg" — the mirror image of the problem on our <a href="/jpg-to-jpeg/">JPG to JPEG</a> page, and just as arbitrary.</li>
-    <li><strong>Older Windows software and scripts</strong> hard-coded around three-letter extensions.</li>
-    <li><strong>Asset pipeline consistency:</strong> mixed .jpeg/.jpg files break naive build scripts and pattern matches (<code>*.jpg</code> misses half your images) — normalizing to one spelling prevents silent gaps.</li>
+    <li><strong>Upload forms with a strict whitelist.</strong> If a developer configured "accept .jpg only" (or ".jpeg only"), a perfectly valid photo is rejected for its name alone. Application portals, CMS platforms and older enterprise software are the usual offenders.</li>
+    <li><strong>Older Windows software and scripts</strong> written around three-letter extensions.</li>
+    <li><strong>Mixed folders in a build pipeline.</strong> A pattern such as <code>*.jpg</code> silently skips every <code>.jpeg</code>, so normalising to one spelling prevents gaps nobody notices.</li>
   </ul>
 
   <h3>What Happens to Your Image.</h3>
-  <p>The tool decodes your .jpeg and re-encodes it as a clean baseline JPEG saved with the .jpg extension. Pixels and visible quality carry straight through at high fidelity; camera EXIF metadata (GPS location, device model) is stripped in the process — a privacy bonus when the image is headed for a public upload. A plain rename would also work in most cases, but the re-encode guarantees the file passes validators that inspect content as well as name.</p>
+  <p>Honestly, renaming the file is enough for most forms. This tool goes one step further: it decodes the image and re-encodes it as a fresh JPEG at 92% quality, which is visually indistinguishable for photographs. That helps in two cases. Some validators inspect the file's contents as well as its name. And re-encoding through the browser canvas removes camera EXIF data such as GPS location and device model, which is usually what you want before a public upload. If you need the metadata kept, rename the file instead.</p>
 
-  <h3>Related Fixes.</h3>
-  <p>If the destination also enforces dimensions or a KB cap — exam portals and job forms usually do — the <a href="/image-resizer/">Image Resizer</a> handles pixel sizes and exact file-size targets in the same client-side way. Downloaded a modern .webp image that some software refuses? <a href="/webp-to-jpg/">WebP to JPG</a> produces the universally accepted format. All processing runs in your browser sandbox: no uploads, no accounts, works offline once loaded.</p>
+  <h3>Before You Upload.</h3>
+  <p>The same picky forms usually enforce a size limit too. If the portal wants the photo under a set number of KB or at exact pixel dimensions, run it through the <a href="/image-resizer/">Image Resizer</a> next. Converting from a different format entirely? <a href="/png-to-jpg/">PNG to JPG</a> handles screenshots and graphics, and <a href="/webp-to-jpg/">WebP to JPG</a> fixes the modern format some software refuses. Everything runs in your browser, so the photo never leaves your device.</p>
 </div>
 `;
 

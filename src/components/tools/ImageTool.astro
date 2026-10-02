@@ -33,10 +33,10 @@ if (slug === 'png-to-jpg') {
 } else if (slug === 'svg-to-webp') {
   acceptMime = "image/svg+xml";
   targetFormat = "WEBP";
-} else if (slug === 'jpg-to-jpeg') {
-  acceptMime = "image/jpeg,image/jpg";
-  targetFormat = "JPEG";
 } else if (slug === 'jpeg-to-jpg') {
+  /* One page for both directions (jpg-to-jpeg 301s here): the output takes
+     whichever spelling the input does not have. The label is set again once
+     a file is chosen. */
   acceptMime = "image/jpeg,image/jpg";
   targetFormat = "JPG";
 } else if (slug === 'avif-to-jpg') {
@@ -126,6 +126,7 @@ if (slug === 'png-to-jpg') {
 
     let outBlob = null;
     let originalName = '';
+    let outExt = targetFormat.toLowerCase();
 
     // Drag and drop setup
     ['dragenter', 'dragover'].forEach(eventName => {
@@ -212,9 +213,15 @@ if (slug === 'png-to-jpg') {
         showError(__t("Invalid file type. Please choose an SVG file."));
         return;
       }
-      if (['jpg-to-jpeg', 'jpeg-to-jpg'].includes(slug) && !['jpg', 'jpeg'].includes(extension)) {
+      if (slug === 'jpeg-to-jpg' && !['jpg', 'jpeg'].includes(extension)) {
         showError(__t("Invalid file type. Please choose a JPG or JPEG file."));
         return;
+      }
+      /* A .jpeg comes out as .jpg and a .jpg as .jpeg — the only thing anyone
+         using this page wants. The button keeps its translated prefix. */
+      if (slug === 'jpeg-to-jpg') {
+        outExt = extension === 'jpg' ? 'jpeg' : 'jpg';
+        btnDownload.textContent = btnDownload.textContent.replace(/JPE?G\s*$/, outExt.toUpperCase());
       }
       if (['avif-to-jpg', 'avif-to-png'].includes(slug) && extension !== 'avif') {
         showError(__t("Invalid file type. Please choose an AVIF file."));
@@ -229,7 +236,7 @@ if (slug === 'png-to-jpg') {
           showProgress(70, __t("Rendering and converting format…"));
 
           let mimeType = 'image/png';
-          if (['png-to-jpg', 'webp-to-jpg', 'svg-to-jpg', 'jpeg-to-jpg', 'jpg-to-jpeg', 'avif-to-jpg'].includes(slug)) {
+          if (['png-to-jpg', 'webp-to-jpg', 'svg-to-jpg', 'jpeg-to-jpg', 'avif-to-jpg'].includes(slug)) {
             mimeType = 'image/jpeg';
           } else if (['png-to-webp', 'jpg-to-webp', 'svg-to-webp'].includes(slug)) {
             mimeType = 'image/webp';
@@ -299,9 +306,7 @@ if (slug === 'png-to-jpg') {
     }
 
     btnDownload.addEventListener('click', () => {
-      let ext = targetFormat.toLowerCase();
-      if (ext === 'jpg') ext = 'jpg';
-      const outName = originalName.replace(/\.[^/.]+$/, "") + '.' + ext;
+      const outName = originalName.replace(/\.[^/.]+$/, "") + '.' + outExt;
       window.downloadBlob(outBlob, outName, outBlob.type);
     });
 

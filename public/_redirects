@@ -80,3 +80,15 @@
 /image-optimizer.html /image-tools/ 301
 /ocr-extractor.html /image-to-text/ 301
 /video-to-gif.html /image-tools/ 301
+
+# 2026-10-01: one converter, one URL. Each pair was the same tool at two
+# addresses — the duplicate-page pattern Google treats as low value. The
+# surviving page answers both queries (researched PT questions moved with it).
+/ppt-to-pdf /pptx-to-pdf/ 301
+/ppt-to-pdf/ /pptx-to-pdf/ 301
+/jpg-to-jpeg /jpeg-to-jpg/ 301
+/jpg-to-jpeg/ /jpeg-to-jpg/ 301
+/pt/ppt-para-pdf /pt/powerpoint-para-pdf/ 301
+/pt/ppt-para-pdf/ /pt/powerpoint-para-pdf/ 301
+/pt/jpg-para-jpeg /pt/jpeg-para-jpg/ 301
+/pt/jpg-para-jpeg/ /pt/jpeg-para-jpg/ 301

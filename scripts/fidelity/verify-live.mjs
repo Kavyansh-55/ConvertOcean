@@ -561,9 +561,9 @@ async function stylesheetsFor(path) {
     ['/pdf-to-excel/',   'how to copy a table from pdf to excel'],
     ['/pdf-to-excel/',   'convert bank statement pdf to excel'],
     ['/pdf-to-excel/',   'how to export pdf to excel'],
-    ['/ppt-to-pdf/',     'how to save ppt as pdf'],
-    ['/ppt-to-pdf/',     'how to convert ppt to pdf'],
-    ['/ppt-to-pdf/',     'how to print ppt to pdf without white border'],
+    ['/pptx-to-pdf/',    'how to save ppt as pdf'],
+    ['/pptx-to-pdf/',    'how to convert ppt to pdf'],
+    ['/pptx-to-pdf/',    'how to print ppt to pdf without white border'],
     ['/image-resizer/',  'image compressor for discord'],
     ['/image-resizer/',  'how to use an online image resizer'],
   ];
@@ -578,9 +578,9 @@ async function stylesheetsFor(path) {
   say(x.includes('scales every column down together'),
       'excel-to-pdf: and says what the converter actually does instead');
 
-  const pt = (await get('/ppt-to-pdf/')).body;
+  const pt = (await get('/pptx-to-pdf/')).body;
   say(!pt.includes('Speaker notes are not included'),
-      'ppt-to-pdf: the false speaker-notes claim is gone');
+      'pptx-to-pdf: the false speaker-notes claim is gone');
 
   const pw = (await get('/pdf-to-word/')).body;
   say(/<title>[^<]*Convert PDF to Word Free/.test(pw),
@@ -668,8 +668,9 @@ async function stylesheetsFor(path) {
 
   const sm = (await get('/sitemap.xml')).body;
   const ptLocs = (sm.match(/<loc>[^<]*\/pt\/[^<]*<\/loc>/g) || []).length;
-  /* >= rather than ===: later batches add /pt/ URLs; the latest batch asserts the exact count. */
-  say(ptLocs >= 86, `sitemap.xml lists all 86 launch Portuguese URLs (found ${ptLocs})`);
+  /* 86 at launch; 84 tool/static pages since the 2026-10-01 merge retired
+     /pt/ppt-para-pdf/ and /pt/jpg-para-jpeg/. The latest batch asserts the exact count. */
+  say(ptLocs >= 84, `sitemap.xml lists the launch Portuguese URLs less the two merged (found ${ptLocs})`);
 }
 
 /* ------------------------------------------------- 2026-09-27 batch 13
@@ -740,8 +741,8 @@ async function stylesheetsFor(path) {
 
   const sm = (await get('/sitemap.xml')).body;
   const ptLocs = (sm.match(/<loc>[^<]*\/pt\/[^<]*<\/loc>/g) || []).length;
-  say(ptLocs === 87 && sm.includes('/pt/guias/escanear-documento/'),
-      `sitemap.xml lists 87 Portuguese URLs including the guide (found ${ptLocs})`);
+  say(ptLocs === 85 && sm.includes('/pt/guias/escanear-documento/'),
+      `sitemap.xml lists 85 Portuguese URLs including the guide (found ${ptLocs}; 87 before two were merged 2026-10-01)`);
 }
 
 /* ------------------------------------------------- 2026-09-27 PT parity fixes
@@ -859,7 +860,7 @@ async function stylesheetsFor(path) {
   /* The generic step and "why choose" cards were identical on 69 tool pages.
      Their headings are the marker; the article and FAQ must still be there,
      so a page that lost everything would not pass as "boilerplate removed". */
-  for (const path of ['/merge-pdf/', '/xml-to-csv/', '/jpg-to-jpeg/']) {
+  for (const path of ['/merge-pdf/', '/xml-to-csv/', '/jpeg-to-jpg/']) {
     const b = (await get(path)).body;
     say(!/Why Choose ConvertOcean\?|Four simple steps to process/.test(b) && /content-card/.test(b) && /Frequently Asked Questions/.test(b),
         `${path} serves its article and FAQs without the generic step/"why choose" cards`);
@@ -870,6 +871,32 @@ async function stylesheetsFor(path) {
   const sm = (await get('/sitemap.xml')).body;
   const locs = (sm.match(/<loc>/g) || []).length;
   say(locs >= 190 && !/<lastmod>/.test(sm), `sitemap.xml lists ${locs} URLs with no build-time lastmod`);
+}
+
+/* ---------------------- 2026-10-01: duplicate converter URLs merged */
+{
+  /* Read the redirect itself (manual), not the page fetch() lands on — a
+     followed 301 and a page still served at the old URL look the same. */
+  const hop = async (path) => {
+    const r = await fetch(ORIGIN + path, { redirect: 'manual', signal: AbortSignal.timeout(25000) });
+    const loc = r.headers.get('location') || '';
+    return { status: r.status, to: loc.startsWith('http') ? new URL(loc).pathname : loc };
+  };
+  for (const [from, to] of [['/ppt-to-pdf/', '/pptx-to-pdf/'], ['/jpg-to-jpeg/', '/jpeg-to-jpg/'],
+                            ['/pt/ppt-para-pdf/', '/pt/powerpoint-para-pdf/'], ['/pt/jpg-para-jpeg/', '/pt/jpeg-para-jpg/']]) {
+    const h = await hop(from);
+    say(h.status === 301 && h.to === to, `${from} 301s to ${to} (got ${h.status} → ${h.to || 'nothing'})`);
+  }
+  const jp = (await get('/jpeg-to-jpg/')).body;
+  say(/Can this convert JPG to JPEG as well\?/.test(jp) && /outExt = extension === 'jpg' \? 'jpeg' : 'jpg'/.test(jp),
+      '/jpeg-to-jpg/ serves both directions (FAQ + extension switch)');
+  const ptj = (await get('/pt/jpeg-para-jpg/')).body;
+  say(ptj.includes('como converter jpg para jpeg') && ptj.includes('qual a diferença de jpg para jpeg'),
+      "/pt/jpeg-para-jpg/ carries the merged page's researched questions verbatim");
+  const ptp = (await get('/pt/powerpoint-para-pdf/')).body;
+  say(ptp.includes('como converter ppt para pdf'), '/pt/powerpoint-para-pdf/ carries "como converter ppt para pdf" verbatim');
+  const smx = (await get('/sitemap.xml')).body;
+  say(!/ppt-to-pdf|jpg-to-jpeg|ppt-para-pdf|jpg-para-jpeg/.test(smx), 'sitemap.xml no longer lists the retired URLs');
 }
 
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');

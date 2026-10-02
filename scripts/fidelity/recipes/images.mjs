@@ -125,17 +125,24 @@ export const imageRecipes = [
   conversion('webp-to-png', 'torture.webp', 'png'),
   conversion('webp-to-jpg', 'torture.webp', 'jpeg'),
 
-  /* jpg-to-jpeg and jpeg-to-jpg are a rename, not a conversion. Re-encoding
-     here would lose quality for no reason, so the extra check is that the
-     bytes came through roughly intact. */
-  {
-    ...conversion('jpg-to-jpeg', 'torture.jpg', 'jpeg', { sourceHasExif: true }),
-    title: 'JPG → JPEG (rename only)',
-  },
-  {
-    ...conversion('jpeg-to-jpg', 'torture.jpg', 'jpeg', { sourceHasExif: true }),
-    title: 'JPEG → JPG (rename only)',
-  },
+  /* /jpeg-to-jpg/ serves both directions (jpg-to-jpeg 301s to it): the
+     output takes the spelling the input lacks. The image checks are the
+     standard ones; the extra one is the saved filename, which is the whole
+     point of the page and was never asserted before. */
+  ...[['torture.jpg', 'jpeg', 'JPG → JPEG (same page, .jpg in)'],
+      ['torture.jpeg', 'jpg', 'JPEG → JPG (same page, .jpeg in)']].map(([fixture, want, title]) => {
+    const base = conversion('jpeg-to-jpg', fixture, 'jpeg', { sourceHasExif: true });
+    return {
+      ...base,
+      title,
+      outName: `jpeg-to-jpg-from-${fixture.split('.').pop()}.${want}`,
+      async checks(ctx) {
+        const got = (ctx.downloadName || '').split('.').pop();
+        return [...await base.checks(ctx),
+          ok('ext', `Saves as .${want}`, got === want, `downloaded "${ctx.downloadName}"`, 'blocker')];
+      },
+    };
+  }),
 
   /* ---- vector → raster ------------------------------------------------ */
   conversion('svg-to-png', 'torture.svg', 'png', { sourceHasAlpha: true }),
