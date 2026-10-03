@@ -118,7 +118,10 @@ export const excluded: { term: string; why: string }[] = [
   { term: 'pisahkan word i love', why: 'brand-navigational (iLovePDF), <100' },
   { term: 'pisahkan word i love word', why: 'brand-navigational, <100' },
   { term: 'i love pdf pisahkan word', why: 'brand-navigational (iLovePDF), <100' },
-  { term: 'ai penghitung kata', why: 'wants an AI tool, <100' }
+  { term: 'ai penghitung kata', why: 'wants an AI tool, <100' },
+
+  { term: 'aspose products ubah ukuran gambar', why: 'brand-navigational (Aspose), <100' },
+  { term: 'ai pengubah ukuran gambar', why: 'wants an AI tool, <100' }
 ];
 
 /* The query asks for something the tool does not do. */
@@ -185,7 +188,14 @@ export const intentMismatch: { term: string; kd: string; volume: string; wants: 
     wants: 'a split at page boundaries. A .docx has no fixed pages — Word lays them out when it displays the file — so Pisahkan Word splits by Heading 1 or by paragraph count (SplitWord.astro has exactly those two modes). Per page: Word ke PDF, then Pisahkan PDF per halaman. Said on the page, not claimed.' },
   { term: 'pisahkan word to pdf', kd: 'n/a', volume: '<100', wants: 'a PDF result — Word ke PDF, then Pisahkan PDF.' },
   { term: 'gabungkan ppt ke pdf', kd: 'Easy', volume: '<100', wants: 'decks into one PDF — convert each, then Gabungkan PDF.' },
-  { term: 'gabungkan ppt dan pdf', kd: 'Easy', volume: '<100', wants: 'mixing formats — no tool.' }
+  { term: 'gabungkan ppt dan pdf', kd: 'Easy', volume: '<100', wants: 'mixing formats — no tool.' },
+
+  { term: 'cara memasukkan gambar ke pdf', kd: 'Easy', volume: '<100', wants: 'inserting an image into an existing PDF — PDF editing, no tool. (Two steps work: Gambar ke PDF, then Gabungkan PDF.)' },
+  { term: 'cara memasukan gambar ke pdf', kd: 'n/a', volume: '<100', wants: 'as above (spelling variant).' },
+  { term: 'cara menyimpan gambar dari pdf ke galeri hp', kd: 'Easy', volume: '<100', wants: 'images extracted from a PDF — no tool.' },
+  { term: 'cara ubah ukuran gambar di word', kd: 'Easy', volume: '<100', wants: 'resizing a picture inside a Word document — a Word feature.' },
+  { term: 'pengubah ukuran gambar untuk windows', kd: 'n/a', volume: '<100', wants: 'desktop software.' },
+  { term: 'software pengubah ukuran gambar', kd: 'n/a', volume: '<100', wants: 'desktop software.' }
 ];
 
 /* A real query, filed under a different page than the export put it. */
@@ -808,23 +818,18 @@ export const pageKeywords: PageKeywords[] = [
     ]
   },
   {
-    /* `gabungkan gambar ke pdf` (>1000) is a real target here: Merge Images
-       outputs a PDF. It overlaps Gambar ke PDF — the two pages must answer
-       different jobs (combine into one picture or one PDF here; photos/scans
-       into a document there), or they compete for one query. */
+    /* Owns "photos into ONE PICTURE" (stitched). The "...ke pdf" variants
+       moved to gambar-ke-pdf once that page was researched, so the two pages
+       do not compete for one query. */
     slug: 'gabungkan-gambar',
     en: 'merge-images',
     primary: 'gabungkan gambar',
     phrase: [
       { term: 'gabungkan gambar', kd: 'Easy', volume: '>1000' },
-      { term: 'gabungkan gambar ke pdf', kd: 'Medium', volume: '>1000' },
-      { term: 'gabungkan gambar jadi pdf', kd: 'Medium', volume: '>100' },
       { term: 'gabungkan gambar online', kd: 'Easy', volume: '>100' },
       { term: 'gabungkan gambar jadi satu', kd: 'n/a', volume: '>100' },
-      { term: 'gabungkan gambar menjadi pdf', kd: 'Medium', volume: '>100' },
       { term: 'gabungkan gambar jpg', kd: 'Easy', volume: '>100' },
-      { term: 'gabungkan gambar jadi 1', kd: 'Easy', volume: '>100' },
-      { term: 'gabungkan gambar jadi 1 pdf', kd: 'n/a', volume: '<100' }
+      { term: 'gabungkan gambar jadi 1', kd: 'Easy', volume: '>100' }
     ],
     questions: [
       { term: 'cara gabungkan gambar', kd: 'n/a', volume: '<100' }
@@ -930,6 +935,95 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'cara hitung jumlah kata di word', kd: 'n/a', volume: '<100' },
       { term: 'cara hitung jumlah kata di google docs', kd: 'n/a', volume: '<100' },
       { term: 'hitung jumlah kata di word', kd: 'n/a', volume: '<100' }
+    ]
+  },
+
+  {
+    slug: 'gambar-ke-pdf',
+    en: 'image-to-pdf',
+    primary: 'gambar ke pdf',
+    phrase: [
+      { term: 'gambar ke pdf', kd: 'Hard', volume: '>10,000' },
+      { term: 'ubah gambar ke pdf', kd: 'Hard', volume: '>10,000' },
+      { term: 'gabung gambar ke pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'gambar ke pdf gratis', kd: 'Hard', volume: '>1000' },
+      { term: 'convert gambar ke pdf', kd: 'Hard', volume: '>1000' },
+      { term: 'konversi gambar ke pdf', kd: 'Hard', volume: '>1000' },
+      { term: 'mengubah gambar ke pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'gabungkan gambar ke pdf', kd: 'Medium', volume: '>1000' },
+      { term: 'scan gambar ke pdf', kd: 'Medium', volume: '>1000' },
+      { term: 'gabungkan gambar jadi pdf', kd: 'Medium', volume: '>100' },
+      { term: 'gabungkan gambar menjadi pdf', kd: 'Medium', volume: '>100' },
+      { term: 'gabungkan gambar jadi 1 pdf', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara mengubah gambar ke pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'cara ubah gambar ke pdf', kd: 'Medium', volume: '>100' },
+      { term: 'cara merubah gambar ke pdf', kd: 'Medium', volume: '>100' },
+      { term: 'cara menjadikan gambar ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'cara buat gambar ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'cara membuat gambar ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'cara jadikan gambar ke pdf', kd: 'Easy', volume: '<100' },
+      { term: 'cara gambar ke pdf', kd: 'Medium', volume: '<100' }
+    ]
+  },
+  {
+    /* "ubah ukuran gambar" (>1000, Easy) is the researched seed. Autocomplete
+       for `resize foto` and `kompres foto` (not researched for volume) ends in
+       "200kb", "1 mb", "3x4", "4x6" — the same form-upload job, so those words
+       appear in body copy, but only researched terms are tracked here. */
+    slug: 'ubah-ukuran-gambar',
+    en: 'image-resizer',
+    primary: 'ubah ukuran gambar',
+    phrase: [
+      { term: 'ubah ukuran gambar', kd: 'Easy', volume: '>1000' },
+      { term: 'ubah ukuran gambar online', kd: 'Hard', volume: '>100' },
+      /* Pixels are what the tool sets; cm is answered with the conversion
+         (cm × DPI ÷ 2.54), e.g. pas foto 3×4 cm at 300 DPI = 354 × 472 px. */
+      { term: 'ubah ukuran gambar cm', kd: 'n/a', volume: '>100' },
+      { term: 'ubah ukuran gambar jadi 1 mb', kd: 'n/a', volume: '<100' },
+      { term: 'ubah ukuran gambar menjadi 200 kb', kd: 'n/a', volume: '<100' },
+      { term: 'ubah ukuran gambar jpg', kd: 'n/a', volume: '<100' },
+      { term: 'ubah ukuran gambar 4x6', kd: 'n/a', volume: '<100' },
+      { term: 'ubah ukuran gambar png', kd: 'Easy', volume: '<100' },
+      { term: 'ubah ukuran gambar menjadi 1 mb', kd: 'n/a', volume: '<100' },
+      { term: 'pengubah ukuran gambar', kd: 'Hard', volume: '<100' },
+      { term: 'aplikasi pengubah ukuran gambar', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara ubah ukuran gambar', kd: 'Hard', volume: '<100' }
+    ]
+  },
+  {
+    /* The tool converts both ways (the output takes the spelling the input
+       lacks), so the JPG-to-JPEG questions belong here too. */
+    slug: 'jpeg-ke-jpg',
+    en: 'jpeg-to-jpg',
+    primary: 'jpeg ke jpg',
+    phrase: [
+      { term: 'ubah jpeg ke jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'jpeg ke jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'konversi jpeg ke jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'convert jpeg ke jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'mengubah jpeg ke jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'ubah foto jpeg ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'kompres jpeg ke jpg', kd: 'Medium', volume: '>100' },
+      { term: 'merubah jpeg ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'ubah file jpeg ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'ubah format jpeg ke jpg', kd: 'Easy', volume: '>100' }
+    ],
+    questions: [
+      { term: 'cara mengubah jpeg ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'cara ubah jpeg ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'cara merubah jpeg ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'cara ubah jpg ke jpeg', kd: 'Easy', volume: '<100' },
+      { term: 'cara ubah foto jpeg ke jpg', kd: 'Easy', volume: '<100' },
+      { term: 'cara mengubah jpg ke jpeg', kd: 'Easy', volume: '<100' },
+      { term: 'cara mengubah jpg ke jpeg di hp', kd: 'Easy', volume: '<100' },
+      { term: 'cara merubah jpg ke jpeg', kd: 'Easy', volume: '<100' },
+      { term: 'cara ganti jpeg ke jpg', kd: 'n/a', volume: '<100' },
+      { term: 'cara mengubah foto jpg ke jpeg', kd: 'Easy', volume: '<100' },
+      { term: 'cara mengubah file jpeg ke jpg', kd: 'n/a', volume: '<100' }
     ]
   }
 ];
