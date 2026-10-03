@@ -77,7 +77,17 @@ export const noDemand: { en: string; seen: string }[] = [
   { en: 'break-even-calculator', seen: '`hitung titik impas`: 5 keywords, all <100. Indonesians say BEP — re-research `cara menghitung bep` / `rumus bep` before deciding' },
 
   { en: 'csv-to-pdf', seen: '22 keywords, all <100 (`ubah csv ke pdf`, `csv ke pdf`…); its questions are PDF-to-CSV, the other direction' },
-  { en: 'sales-tax-calculator', seen: '`kalkulator/hitung pajak penjualan` returns only property and gold sale tax (rumah, tanah, emas), all <100 — a different tax this calculator does not model. Re-research as PPN (`kalkulator ppn`, `cara menghitung ppn`) and verify current PPN rules from DJP before building' }
+  { en: 'sales-tax-calculator', seen: '`kalkulator/hitung pajak penjualan` returns only property and gold sale tax (rumah, tanah, emas), all <100 — a different tax this calculator does not model. Re-research as PPN (`kalkulator ppn`, `cara menghitung ppn`) and verify current PPN rules from DJP before building' },
+
+  { en: 'xls-to-json', seen: 'no keyword ideas (screenshot labelled XLSX ke JSON)' },
+  { en: 'xls-to-csv', seen: '21 keywords, all <100 (`xls ke csv`, `ubah xls ke csv`…)' },
+  { en: 'avif-to-png', seen: '6 keywords, all <100' },
+  { en: 'svg-to-png', seen: '14 keywords, all <100' },
+  { en: 'svg-to-jpg', seen: '13 keywords, all <100' },
+  { en: 'svg-to-webp', seen: 'no keyword ideas' },
+  { en: 'exif-viewer', seen: 'no keyword ideas for `penampil exif`' },
+  { en: 'exif-remover', seen: 'no keyword ideas for `penghapus exif`' },
+  { en: 'docx-to-txt', seen: '9 keywords for `word ke txt`, all <100' }
 ];
 
 /* Recorded, not targeted. A competitor's brand inside the query. */
@@ -136,16 +146,12 @@ export const belongsElsewhere: { term: string; kd: string; volume: string; page:
   { term: 'cara ubah pdf ke excel', kd: 'Easy', volume: '>100', page: 'pdf-to-excel' },
   { term: 'cara merubah file pdf ke excel', kd: 'Easy', volume: '>100', page: 'pdf-to-excel' },
   /* "kompres X ke Y" again names a conversion. */
-  { term: 'kompres pdf ke word', kd: 'Easy', volume: '>10,000', page: 'pdf-to-word' },
   { term: 'kompres ppt ke pdf', kd: 'Easy', volume: '>100', page: 'pptx-to-pdf' },
   { term: 'kompres powerpoint ke pdf', kd: 'Easy', volume: '<100', page: 'pptx-to-pdf' },
   { term: 'kompres powerpoint to pdf', kd: 'n/a', volume: '<100', page: 'pptx-to-pdf' },
   { term: 'cara gabungkan jpg ke pdf', kd: 'n/a', volume: '<100', page: 'image-to-pdf' },
 
   { term: 'kompres excel to pdf', kd: 'Easy', volume: '<100', page: 'excel-to-pdf' },
-  { term: 'kompres word ke pdf', kd: 'Easy', volume: '>10,000', page: 'word-to-pdf' },
-  { term: 'kompres word to pdf', kd: 'Easy', volume: '>1000', page: 'word-to-pdf' },
-  { term: 'kompres word ke pdf gratis', kd: 'Easy', volume: '>100', page: 'word-to-pdf' },
   { term: 'cara kompres word ke pdf', kd: 'Easy', volume: '<100', page: 'word-to-pdf' },
   { term: 'cara kompres file word ke pdf', kd: 'n/a', volume: '<100', page: 'word-to-pdf' },
   { term: 'cara kompres pdf ke word', kd: 'Medium', volume: '<100', page: 'pdf-to-word' },
@@ -520,6 +526,164 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'mengubah file xls ke pdf', kd: 'n/a', volume: '<100' }
     ],
     questions: []
+  },
+
+  {
+    slug: 'jpg-ke-webp',
+    en: 'jpg-to-webp',
+    primary: 'jpg ke webp',
+    phrase: [
+      { term: 'ubah jpg ke webp', kd: 'n/a', volume: '>100' },
+      { term: 'jpg ke webp', kd: 'Easy', volume: '>100' },
+      { term: 'konversi jpg ke webp', kd: 'n/a', volume: '<100' },
+      { term: 'convert jpg ke webp', kd: 'n/a', volume: '<100' },
+      { term: 'kompres jpg ke webp', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara merubah format jpg ke webp', kd: 'n/a', volume: '<100' },
+      { term: 'cara merubah jpg ke webp', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    /* The `JPG ke WebP` question export was entirely WebP-to-JPG queries;
+       they are filed here, on the page that does that job. */
+    slug: 'webp-ke-jpg',
+    en: 'webp-to-jpg',
+    primary: 'webp ke jpg',
+    phrase: [
+      { term: 'ubah webp ke jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'webp ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'konversi webp ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'convert webp ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'ubah file webp ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'mengubah webp ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'merubah webp ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'ubah format webp ke jpg', kd: 'Easy', volume: '<100' },
+      { term: 'ubah foto webp ke jpg', kd: 'Easy', volume: '<100' },
+      { term: 'ubah gambar webp ke jpg', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara ubah webp ke jpg', kd: 'Easy', volume: '<100' },
+      { term: 'cara merubah webp ke jpg', kd: 'Easy', volume: '<100' },
+      { term: 'cara merubah file webp ke jpg', kd: 'Easy', volume: '<100' },
+      { term: 'cara ubah file webp ke jpg', kd: 'n/a', volume: '<100' },
+      { term: 'cara mengubah file webp ke jpg', kd: 'Easy', volume: '<100' },
+      { term: 'cara mengubah format webp ke jpg', kd: 'Easy', volume: '<100' },
+      { term: 'cara merubah format webp ke jpg', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'heic-ke-jpg',
+    en: 'heic-to-jpg',
+    primary: 'heic ke jpg',
+    phrase: [
+      { term: 'ubah heic ke jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'heic ke jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'konversi heic ke jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'convert heic ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'ubah foto heic ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'ubah file heic ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'ubah format heic ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'mengubah heic ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'merubah heic ke jpg', kd: 'Easy', volume: '>100' }
+    ],
+    questions: [
+      { term: 'cara ubah heic ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'cara mengubah heic ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'cara mengubah file heic ke jpg', kd: 'Easy', volume: '<100' },
+      { term: 'cara mengubah foto heic ke jpg', kd: 'Easy', volume: '<100' },
+      { term: 'cara mengubah format heic ke jpg', kd: 'Easy', volume: '<100' },
+      { term: 'cara ubah format heic ke jpg', kd: 'n/a', volume: '<100' },
+      { term: 'cara mengubah format heic ke jpg di android', kd: 'Easy', volume: '<100' },
+      { term: 'cara ubah file heic ke jpg', kd: 'Easy', volume: '<100' },
+      { term: 'cara ubah heic ke jpg di laptop', kd: 'n/a', volume: '<100' },
+      /* Answered with the iPhone's own setting (Camera › Formats › Most
+         Compatible), which is true and needs no tool. */
+      { term: 'cara mengubah heic ke jpg di iphone', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'heic-ke-png',
+    en: 'heic-to-png',
+    primary: 'heic ke png',
+    phrase: [
+      { term: 'ubah heic ke png', kd: 'Easy', volume: '>100' },
+      { term: 'heic ke png', kd: 'Easy', volume: '>100' },
+      { term: 'ubah file heic ke png', kd: 'n/a', volume: '<100' },
+      { term: 'konversi heic ke png', kd: 'Easy', volume: '<100' },
+      { term: 'ubah foto heic ke png', kd: 'n/a', volume: '<100' },
+      { term: 'ubah format heic ke png', kd: 'Easy', volume: '<100' },
+      { term: 'convert heic ke png', kd: 'Easy', volume: '<100' },
+      { term: 'mengubah heic ke png', kd: 'Easy', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'avif-ke-jpg',
+    en: 'avif-to-jpg',
+    primary: 'avif ke jpg',
+    phrase: [
+      { term: 'ubah avif ke jpg', kd: 'Easy', volume: '>100' },
+      { term: 'avif ke jpg', kd: 'n/a', volume: '>100' },
+      { term: 'konversi avif ke jpg', kd: 'n/a', volume: '>100' },
+      { term: 'ubah file avif ke jpg', kd: 'n/a', volume: '<100' },
+      { term: 'convert avif ke jpg', kd: 'n/a', volume: '<100' },
+      { term: 'mengubah avif ke jpg', kd: 'n/a', volume: '<100' },
+      { term: 'merubah avif ke jpg', kd: 'n/a', volume: '<100' },
+      { term: 'ubah format avif ke jpg', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    slug: 'word-ke-pdf',
+    en: 'word-to-pdf',
+    primary: 'word ke pdf',
+    phrase: [
+      { term: 'ubah word ke pdf', kd: 'Easy', volume: '>100K' },
+      { term: 'word ke pdf', kd: 'Easy', volume: '>100K' },
+      { term: 'konversi word ke pdf', kd: 'Easy', volume: '>10,000' },
+      { term: 'convert word ke pdf', kd: 'Easy', volume: '>10,000' },
+      /* Convert-and-fit (autocomplete: "500 kb", "200kb", "1 mb"). */
+      { term: 'kompres word ke pdf', kd: 'Easy', volume: '>10,000' },
+      { term: 'mengubah word ke pdf', kd: 'Easy', volume: '>10,000' },
+      { term: 'merubah word ke pdf', kd: 'Easy', volume: '>10,000' },
+      { term: 'ubah file word ke pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'word ke pdf online', kd: 'Easy', volume: '>1000' },
+      { term: 'kompres word to pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'kompres word ke pdf gratis', kd: 'Easy', volume: '>100' }
+    ],
+    questions: [
+      { term: 'cara mengubah word ke pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'cara ubah word ke pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'cara merubah word ke pdf', kd: 'Easy', volume: '>1000' }
+    ]
+  },
+  {
+    slug: 'pdf-ke-word',
+    en: 'pdf-to-word',
+    primary: 'pdf ke word',
+    phrase: [
+      { term: 'ubah pdf ke word', kd: 'Easy', volume: '>100K' },
+      { term: 'pdf ke word', kd: 'Easy', volume: '>100K' },
+      { term: 'konversi pdf ke word', kd: 'Medium', volume: '>100K' },
+      { term: 'convert pdf ke word', kd: 'Easy', volume: '>10,000' },
+      { term: 'merubah pdf ke word', kd: 'Easy', volume: '>10,000' },
+      { term: 'mengubah pdf ke word', kd: 'Easy', volume: '>10,000' },
+      /* "kompres" here names the conversion, as everywhere in this export. */
+      { term: 'kompres pdf ke word', kd: 'Easy', volume: '>10,000' },
+      { term: 'pdf ke word gratis', kd: 'Easy', volume: '>10,000' },
+      { term: 'pdf ke word online', kd: 'Easy', volume: '>10,000' }
+    ],
+    questions: [
+      { term: 'cara mengubah pdf ke word', kd: 'Easy', volume: '>10,000' },
+      { term: 'cara merubah pdf ke word', kd: 'Easy', volume: '>1000' },
+      { term: 'cara ubah pdf ke word', kd: 'Easy', volume: '>1000' },
+      { term: 'cara mengubah pdf ke word di laptop', kd: 'Easy', volume: '>1000' },
+      { term: 'cara convert pdf ke word', kd: 'Easy', volume: '>1000' },
+      { term: 'cara merubah file pdf ke word', kd: 'Easy', volume: '>1000' },
+      { term: 'cara mengubah file pdf ke word', kd: 'Medium', volume: '>1000' },
+      { term: 'cara pdf ke word', kd: 'n/a', volume: '>1000' }
+    ]
   }
 ];
 
