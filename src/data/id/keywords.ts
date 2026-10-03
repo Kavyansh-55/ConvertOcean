@@ -87,7 +87,11 @@ export const noDemand: { en: string; seen: string }[] = [
   { en: 'svg-to-webp', seen: 'no keyword ideas' },
   { en: 'exif-viewer', seen: 'no keyword ideas for `penampil exif`' },
   { en: 'exif-remover', seen: 'no keyword ideas for `penghapus exif`' },
-  { en: 'docx-to-txt', seen: '9 keywords for `word ke txt`, all <100' }
+  { en: 'docx-to-txt', seen: '9 keywords for `word ke txt`, all <100' },
+
+  { en: 'split-excel', seen: '`pisahkan excel` family: 3 keywords + 1 question, all <100' },
+  { en: 'merge-txt', seen: '`gabungkan teks` returns only Excel/Canva formula queries (`rumus gabungkan teks di excel`), all <100' },
+  { en: 'split-txt', seen: 'not researched separately; `gabungkan teks` showed no file-level demand' }
 ];
 
 /* Recorded, not targeted. A competitor's brand inside the query. */
@@ -100,7 +104,11 @@ export const excluded: { term: string; why: string }[] = [
   { term: 'cara kompres ppt canva', why: 'a how-to inside Canva, <100' },
   { term: 'cara kompres file powerpoint 2010', why: 'a how-to inside PowerPoint 2010, <100' },
 
-  { term: 'cara kompres file word 2010', why: 'a how-to inside Word 2010, <100' }
+  { term: 'cara kompres file word 2010', why: 'a how-to inside Word 2010, <100' },
+
+  { term: 'gabungkan gambar ai', why: 'wants an AI image tool, <100' },
+  { term: 'ai pisahkan gambar', why: 'wants an AI tool, <100' },
+  { term: 'cara gabungkan teks di canva', why: 'a how-to inside Canva, <100' }
 ];
 
 /* The query asks for something the tool does not do. */
@@ -135,19 +143,32 @@ export const intentMismatch: { term: string; kd: string; volume: string; wants: 
   { term: 'cara hitung pajak penjualan emas', kd: 'n/a', volume: '<100', wants: 'tax on selling gold.' },
   { term: 'cara hitung pajak penjualan tanah', kd: 'n/a', volume: '<100', wants: 'land sale tax.' },
   { term: 'cara merubah pdf ke csv pajak', kd: 'Easy', volume: '<100', wants: 'PDF to CSV (tax-office data) — the opposite of CSV to PDF; no tool.' },
-  { term: 'bagaimana merubah file pdf ke csv', kd: 'n/a', volume: '<100', wants: 'PDF to CSV — no tool.' }
+  { term: 'bagaimana merubah file pdf ke csv', kd: 'n/a', volume: '<100', wants: 'PDF to CSV — no tool.' },
+
+  { term: 'cara mengubah pdf ke ppt', kd: 'Easy', volume: '>100', wants: 'PDF to PowerPoint — no tool (also missing in Portuguese).' },
+  { term: 'cara ubah pdf ke ppt', kd: 'Easy', volume: '>100', wants: 'PDF to PowerPoint — no tool.' },
+  { term: 'cara merubah pdf ke ppt', kd: 'Easy', volume: '>100', wants: 'PDF to PowerPoint — no tool.' },
+  { term: 'cara mengubah pdf ke ppt di laptop', kd: 'Easy', volume: '<100', wants: 'PDF to PowerPoint — no tool.' },
+  { term: 'cara mengubah file pdf ke ppt', kd: 'Easy', volume: '<100', wants: 'PDF to PowerPoint — no tool.' },
+  { term: 'cara konversi pdf ke ppt', kd: 'Easy', volume: '<100', wants: 'PDF to PowerPoint — no tool.' },
+  { term: 'cara convert pdf ke ppt', kd: 'Easy', volume: '<100', wants: 'PDF to PowerPoint — no tool.' },
+  { term: 'cara mengubah pdf ke powerpoint', kd: 'Easy', volume: '<100', wants: 'PDF to PowerPoint — no tool.' },
+  { term: 'cara merubah pdf ke powerpoint', kd: 'Easy', volume: '<100', wants: 'PDF to PowerPoint — no tool.' },
+  { term: 'cara memasukkan pdf ke powerpoint', kd: 'n/a', volume: '<100', wants: 'inserting a PDF into a slide — a PowerPoint how-to.' },
+  { term: 'gabung ppt ke pdf', kd: 'Easy', volume: '>100',
+    wants: 'several decks (autocomplete: "gabung word dan ppt ke pdf") in one PDF. Two honest steps — convert each, then Gabungkan PDF — carried in body copy, not claimed as one step.' },
+  { term: 'cara gabungkan kolom di excel', kd: 'Easy', volume: '<100', wants: 'merging columns inside a sheet — an Excel feature (& or CONCAT), not a file merge.' },
+  { term: 'cara gabungkan 2 kolom excel', kd: 'n/a', volume: '<100', wants: 'merging columns — an Excel feature.' },
+  { term: 'gabungkan excel ke pdf', kd: 'Medium', volume: '<100', wants: 'several workbooks in one PDF — convert, then Gabungkan PDF.' },
+  { term: 'gabungkan excel dan pdf', kd: 'n/a', volume: '<100', wants: 'mixing formats in one file — no tool.' },
+  { term: 'gabungkan excel dan word', kd: 'n/a', volume: '<100', wants: 'mixing formats in one file — no tool.' },
+  { term: 'pisahkan gambar pdf', kd: 'n/a', volume: '<100', wants: 'images pulled out of a PDF — no tool.' },
+  { term: 'pisahkan gambar di pdf', kd: 'n/a', volume: '<100', wants: 'images pulled out of a PDF — no tool.' }
 ];
 
 /* A real query, filed under a different page than the export put it. */
 export const belongsElsewhere: { term: string; kd: string; volume: string; page: string }[] = [
-  { term: 'cara convert pdf ke excel', kd: 'Easy', volume: '>100', page: 'pdf-to-excel' },
-  { term: 'cara merubah pdf ke excel', kd: 'Easy', volume: '>100', page: 'pdf-to-excel' },
-  { term: 'cara mengubah pdf ke excel', kd: 'Easy', volume: '>100', page: 'pdf-to-excel' },
-  { term: 'cara ubah pdf ke excel', kd: 'Easy', volume: '>100', page: 'pdf-to-excel' },
-  { term: 'cara merubah file pdf ke excel', kd: 'Easy', volume: '>100', page: 'pdf-to-excel' },
   /* "kompres X ke Y" again names a conversion. */
-  { term: 'kompres ppt ke pdf', kd: 'Easy', volume: '>100', page: 'pptx-to-pdf' },
-  { term: 'kompres powerpoint ke pdf', kd: 'Easy', volume: '<100', page: 'pptx-to-pdf' },
   { term: 'kompres powerpoint to pdf', kd: 'n/a', volume: '<100', page: 'pptx-to-pdf' },
   { term: 'cara gabungkan jpg ke pdf', kd: 'n/a', volume: '<100', page: 'image-to-pdf' },
 
@@ -683,6 +704,123 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'cara merubah file pdf ke word', kd: 'Easy', volume: '>1000' },
       { term: 'cara mengubah file pdf ke word', kd: 'Medium', volume: '>1000' },
       { term: 'cara pdf ke word', kd: 'n/a', volume: '>1000' }
+    ]
+  },
+
+  {
+    /* "ppt" is what Indonesians call any PowerPoint, so the page is built on
+       `ppt ke pdf` (>1000 ×4) — and must say plainly that a real legacy .ppt
+       file has to be re-saved as .pptx first, because only .pptx is read. */
+    slug: 'ppt-ke-pdf',
+    en: 'pptx-to-pdf',
+    primary: 'ppt ke pdf',
+    phrase: [
+      { term: 'konversi ppt ke pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'ppt ke pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'ubah ppt ke pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'convert ppt ke pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'kompres ppt ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'mengubah ppt ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'merubah ppt ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'ppt ke pdf gratis', kd: 'Easy', volume: '>100' },
+      { term: 'ubah powerpoint ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'powerpoint ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'konversi powerpoint ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'mengubah powerpoint ke pdf', kd: 'Easy', volume: '<100' },
+      { term: 'kompres powerpoint ke pdf', kd: 'Easy', volume: '<100' },
+      { term: 'convert powerpoint ke pdf', kd: 'Easy', volume: '<100' },
+      { term: 'powerpoint ke pdf gratis', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara mengubah ppt ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'cara ubah ppt ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'cara merubah ppt ke pdf', kd: 'Easy', volume: '<100' },
+      { term: 'cara convert powerpoint ke pdf', kd: 'n/a', volume: '<100' },
+      { term: 'cara mengubah powerpoint ke pdf', kd: 'Easy', volume: '<100' },
+      { term: 'cara merubah powerpoint ke pdf', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'pdf-ke-excel',
+    en: 'pdf-to-excel',
+    primary: 'pdf ke excel',
+    phrase: [
+      { term: 'ubah pdf ke excel', kd: 'Medium', volume: '>10,000' },
+      { term: 'pdf ke excel', kd: 'Easy', volume: '>10,000' },
+      { term: 'konversi pdf ke excel', kd: 'Medium', volume: '>10,000' },
+      { term: 'convert pdf ke excel', kd: 'Easy', volume: '>1000' },
+      { term: 'merubah pdf ke excel', kd: 'Easy', volume: '>1000' },
+      { term: 'mengubah pdf ke excel', kd: 'Easy', volume: '>1000' },
+      /* "kompres" names the conversion again. */
+      { term: 'kompres pdf ke excel', kd: 'Easy', volume: '>1000' },
+      { term: 'ubah file pdf ke excel', kd: 'n/a', volume: '>100' }
+    ],
+    questions: [
+      { term: 'cara convert pdf ke excel', kd: 'Easy', volume: '>100' },
+      { term: 'cara merubah pdf ke excel', kd: 'Easy', volume: '>100' },
+      { term: 'cara mengubah pdf ke excel', kd: 'Easy', volume: '>100' },
+      { term: 'cara ubah pdf ke excel', kd: 'Easy', volume: '>100' },
+      { term: 'cara merubah file pdf ke excel', kd: 'Easy', volume: '>100' }
+    ]
+  },
+  {
+    slug: 'gabungkan-excel',
+    en: 'merge-excel',
+    primary: 'gabungkan excel',
+    phrase: [
+      { term: 'gabungkan excel', kd: 'Easy', volume: '>100' },
+      { term: 'gabungkan excel jadi satu', kd: 'n/a', volume: '<100' },
+      { term: 'gabungkan excel ke excel', kd: 'n/a', volume: '<100' },
+      { term: 'gabungkan excel jadi 1', kd: 'n/a', volume: '<100' },
+      { term: 'gabungkan excel online', kd: 'Easy', volume: '<100' },
+      { term: 'gabungkan excel dalam satu file', kd: 'n/a', volume: '<100' },
+      { term: 'gabungkan csv', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara gabungkan file excel', kd: 'n/a', volume: '<100' },
+      { term: 'cara gabungkan excel jadi satu', kd: 'n/a', volume: '<100' },
+      /* Answered truthfully: sheets from several files land in one
+         workbook as separate sheets; rows are not stacked into one sheet. */
+      { term: 'cara gabungkan sheet excel', kd: 'Easy', volume: '<100' },
+      { term: 'cara gabungkan sheet di excel', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    /* `gabungkan gambar ke pdf` (>1000) is a real target here: Merge Images
+       outputs a PDF. It overlaps Gambar ke PDF — the two pages must answer
+       different jobs (combine into one picture or one PDF here; photos/scans
+       into a document there), or they compete for one query. */
+    slug: 'gabungkan-gambar',
+    en: 'merge-images',
+    primary: 'gabungkan gambar',
+    phrase: [
+      { term: 'gabungkan gambar', kd: 'Easy', volume: '>1000' },
+      { term: 'gabungkan gambar ke pdf', kd: 'Medium', volume: '>1000' },
+      { term: 'gabungkan gambar jadi pdf', kd: 'Medium', volume: '>100' },
+      { term: 'gabungkan gambar online', kd: 'Easy', volume: '>100' },
+      { term: 'gabungkan gambar jadi satu', kd: 'n/a', volume: '>100' },
+      { term: 'gabungkan gambar menjadi pdf', kd: 'Medium', volume: '>100' },
+      { term: 'gabungkan gambar jpg', kd: 'Easy', volume: '>100' },
+      { term: 'gabungkan gambar jadi 1', kd: 'Easy', volume: '>100' },
+      { term: 'gabungkan gambar jadi 1 pdf', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara gabungkan gambar', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'pisahkan-gambar',
+    en: 'split-image',
+    primary: 'pisahkan gambar',
+    phrase: [
+      { term: 'pisahkan gambar', kd: 'n/a', volume: '>100' },
+      { term: 'pisahkan gambar jpg', kd: 'n/a', volume: '<100' },
+      { term: 'pisahkan gambar online', kd: 'n/a', volume: '<100' },
+      { term: 'pisahkan gambar png', kd: 'n/a', volume: '<100' },
+      { term: 'pisahkan gambar menjadi beberapa bagian', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara pisahkan gambar', kd: 'n/a', volume: '<100' }
     ]
   }
 ];
