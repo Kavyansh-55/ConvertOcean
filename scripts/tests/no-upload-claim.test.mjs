@@ -40,6 +40,13 @@ const BANNED = [
   'upload a file to',
   'your uploaded file',
   'the uploaded file',
+  // The merge and OCR guides opened their how-to with "Step 1: Upload…" —
+  // an instruction, so none of the phrases above matched it.
+  'step 1: upload',
+  'step 2: upload',
+  '<h3>upload',
+  'upload multiple files',
+  'upload scan',
   // Portuguese: the /pt/ locale can make the same slip in its own words.
   'ao fazer upload',
   'faça upload',
