@@ -20,15 +20,16 @@
 
 import { tools, type ToolData } from '../data/tools';
 import { guides, type GuideData } from '../data/guides';
-import { DEFAULT_LOCALE, LOCALES, LOCALE_CODES, normalizePath, type Locale } from './config';
+import { DEFAULT_LOCALE, LOCALES, LOCALE_CODES, PREFIXED_LOCALES, normalizePath, guidesBase, type Locale } from './config';
 import { ptTools, ptGuides, ptCategories, ptStaticPages } from '../data/pt';
+import { idTools, idGuides, idCategories, idStaticPages } from '../data/id';
 
 /**
  * A translated tool page. Fields absent here fall back to the English tool, so
  * an overlay never has to restate `icon`, `categorySlug` or `relatedTools` —
  * those are structural, not linguistic.
  */
-export interface PtTool {
+export interface LocaleTool {
   /** English slug this localises. Must match a slug in `tools`. */
   en: string;
   /** Portuguese URL slug, keyword-led rather than transliterated. */
@@ -44,7 +45,7 @@ export interface PtTool {
   content?: string;
 }
 
-export interface PtGuide {
+export interface LocaleGuide {
   en: string;
   slug: string;
   title: string;
@@ -66,7 +67,7 @@ export interface PtGuide {
 }
 
 /** Category pages are structural, so a translation is just the strings. */
-export interface PtCategory {
+export interface LocaleCategory {
   en: string;
   slug: string;
   name: string;
@@ -81,42 +82,91 @@ export interface PtCategory {
 }
 
 /** About, privacy, terms and the like: path pairs plus their copy blocks. */
-export interface PtStaticPage {
+export interface LocaleStaticPage {
   en: string;
   slug: string;
   title: string;
   description: string;
 }
 
+/* The Portuguese names predate the second locale; kept so existing imports read. */
+export type PtTool = LocaleTool;
+export type PtGuide = LocaleGuide;
+export type PtCategory = LocaleCategory;
+export type PtStaticPage = LocaleStaticPage;
+
+/** A prefixed locale's content. English is the base, so it has none. */
+type PrefixedLocale = Exclude<Locale, typeof DEFAULT_LOCALE>;
+interface LocaleContent {
+  tools: LocaleTool[];
+  guides: LocaleGuide[];
+  categories: LocaleCategory[];
+  staticPages: LocaleStaticPage[];
+}
+
+const CONTENT: Record<PrefixedLocale, LocaleContent> = {
+  pt: { tools: ptTools, guides: ptGuides, categories: ptCategories, staticPages: ptStaticPages },
+  id: { tools: idTools, guides: idGuides, categories: idCategories, staticPages: idStaticPages }
+};
+
+/** The overlays for a locale, by English slug. */
+const toolByEn = new Map<Locale, Map<string, LocaleTool>>();
+const guideByEn = new Map<Locale, Map<string, LocaleGuide>>();
+for (const code of PREFIXED_LOCALES as PrefixedLocale[]) {
+  toolByEn.set(code, new Map(CONTENT[code].tools.map(t => [t.en, t])));
+  guideByEn.set(code, new Map(CONTENT[code].guides.map(g => [g.en, g])));
+}
+
+/**
+ * Whether a locale is served at all. A locale whose content is still empty
+ * builds no pages, registers no paths and advertises no hreflang — so it can
+ * sit in the registry while its pages are being written.
+ */
+export function isServed(lang: Locale): boolean {
+  return lang === DEFAULT_LOCALE || CONTENT[lang as PrefixedLocale].tools.length > 0;
+}
+
+/** Every locale that builds pages, default first. */
+export const SERVED_LOCALES: Locale[] = LOCALE_CODES.filter(isServed);
+
 // ---------------------------------------------------------------------------
 // Merged content accessors
 // ---------------------------------------------------------------------------
 
-const ptToolByEn = new Map(ptTools.map(t => [t.en, t]));
-const ptGuideByEn = new Map(ptGuides.map(g => [g.en, g]));
+/** The localised tools of a locale, as authored. Used by the route files. */
+export function localeTools(lang: Locale): LocaleTool[] {
+  return lang === DEFAULT_LOCALE ? [] : CONTENT[lang as PrefixedLocale].tools;
+}
+
+/** The localised guides of a locale, as authored. Used by the route files. */
+export function localeGuides(lang: Locale): LocaleGuide[] {
+  return lang === DEFAULT_LOCALE ? [] : CONTENT[lang as PrefixedLocale].guides;
+}
 
 /**
- * The tool list for a locale. Portuguese returns only the tools that have been
- * localised — a half-translated page is worse than no page, and an untranslated
- * one under `/pt/` is the thin-content pattern that got the previous locale
- * folders removed.
+ * The tool list for a locale. A prefixed locale returns only the tools that
+ * have been localised — a half-translated page is worse than no page, and an
+ * untranslated one under a prefix is the thin-content pattern that got the
+ * previous locale folders removed.
  */
 export function getTools(lang: Locale): ToolData[] {
   if (lang === DEFAULT_LOCALE) return tools;
+  const byEn = toolByEn.get(lang)!;
   return tools
-    .filter(t => ptToolByEn.has(t.slug))
-    .map(t => mergeTool(t, ptToolByEn.get(t.slug)!));
+    .filter(t => byEn.has(t.slug))
+    .map(t => mergeTool(t, byEn.get(t.slug)!, lang));
 }
 
 export function getTool(slug: string, lang: Locale): ToolData | undefined {
   if (lang === DEFAULT_LOCALE) return tools.find(t => t.slug === slug);
-  const overlay = ptTools.find(t => t.slug === slug);
+  const overlay = localeTools(lang).find(t => t.slug === slug);
   if (!overlay) return undefined;
   const base = tools.find(t => t.slug === overlay.en);
-  return base ? mergeTool(base, overlay) : undefined;
+  return base ? mergeTool(base, overlay, lang) : undefined;
 }
 
-function mergeTool(base: ToolData, overlay: PtTool): ToolData {
+function mergeTool(base: ToolData, overlay: LocaleTool, lang: Locale): ToolData {
+  const byEn = toolByEn.get(lang)!;
   return {
     ...base,
     slug: overlay.slug,
@@ -130,30 +180,33 @@ function mergeTool(base: ToolData, overlay: PtTool): ToolData {
     category: overlay.category,
     faqs: overlay.faqs,
     content: overlay.content ?? undefined,
-    // relatedTools are English slugs; translate them through the map so the
-    // Portuguese page never links back into the English site.
+    // relatedTools are English slugs; translate them through the map so a
+    // localised page never links back into the English site.
     relatedTools: base.relatedTools
-      .filter(s => ptToolByEn.has(s))
-      .map(s => ptToolByEn.get(s)!.slug)
+      .filter(s => byEn.has(s))
+      .map(s => byEn.get(s)!.slug)
   };
 }
 
 export function getGuides(lang: Locale): GuideData[] {
   if (lang === DEFAULT_LOCALE) return guides;
+  const byEn = guideByEn.get(lang)!;
   return guides
-    .filter(g => ptGuideByEn.has(g.slug))
-    .map(g => mergeGuide(g, ptGuideByEn.get(g.slug)!));
+    .filter(g => byEn.has(g.slug))
+    .map(g => mergeGuide(g, byEn.get(g.slug)!, lang));
 }
 
 export function getGuide(slug: string, lang: Locale): GuideData | undefined {
   if (lang === DEFAULT_LOCALE) return guides.find(g => g.slug === slug);
-  const overlay = ptGuides.find(g => g.slug === slug);
+  const overlay = localeGuides(lang).find(g => g.slug === slug);
   if (!overlay) return undefined;
   const base = guides.find(g => g.slug === overlay.en);
-  return base ? mergeGuide(base, overlay) : undefined;
+  return base ? mergeGuide(base, overlay, lang) : undefined;
 }
 
-function mergeGuide(base: GuideData, overlay: PtGuide): GuideData {
+function mergeGuide(base: GuideData, overlay: LocaleGuide, lang: Locale): GuideData {
+  const tByEn = toolByEn.get(lang)!;
+  const gByEn = guideByEn.get(lang)!;
   return {
     ...base,
     slug: overlay.slug,
@@ -166,33 +219,42 @@ function mergeGuide(base: GuideData, overlay: PtGuide): GuideData {
     contentHtml: overlay.contentHtml,
     faqs: overlay.faqs,
     relatedTools: base.relatedTools
-      .filter(s => ptToolByEn.has(s))
-      .map(s => ptToolByEn.get(s)!.slug),
+      .filter(s => tByEn.has(s))
+      .map(s => tByEn.get(s)!.slug),
     relatedGuides: base.relatedGuides
-      .filter(s => ptGuideByEn.has(s))
-      .map(s => ptGuideByEn.get(s)!.slug)
+      .filter(s => gByEn.has(s))
+      .map(s => gByEn.get(s)!.slug)
   };
 }
 
-export function getCategory(slug: string, lang: Locale): PtCategory | undefined {
-  if (lang === DEFAULT_LOCALE) return undefined;
-  return ptCategories.find(c => c.slug === slug);
-}
-
 /**
- * Portuguese categories that actually contain a localised tool.
+ * A locale's categories that actually contain a localised tool.
  *
  * A category page listing nothing is a thin page, and an hreflang link to one
  * that was never built is a dangling link that voids the cluster — the exact
- * failure `scripts/tests/i18n.test.mjs` caught on the first run of this locale.
+ * failure `scripts/tests/i18n.test.mjs` caught on the first run of Portuguese.
  * Categories therefore appear as translations are added, not before.
  */
-export const activePtCategories: PtCategory[] = ptCategories.filter(c =>
-  tools.some(t => t.categorySlug === c.en && ptToolByEn.has(t.slug))
+function activeCategoriesOf(lang: PrefixedLocale): LocaleCategory[] {
+  const byEn = toolByEn.get(lang)!;
+  return CONTENT[lang].categories.filter(c =>
+    tools.some(t => t.categorySlug === c.en && byEn.has(t.slug))
+  );
+}
+const ACTIVE_CATEGORIES = new Map<Locale, LocaleCategory[]>(
+  (PREFIXED_LOCALES as PrefixedLocale[]).map(code => [code, activeCategoriesOf(code)])
 );
 
-export function getCategories(lang: Locale): PtCategory[] {
-  return lang === DEFAULT_LOCALE ? [] : activePtCategories;
+/** Portuguese active categories; kept for existing imports. */
+export const activePtCategories: LocaleCategory[] = ACTIVE_CATEGORIES.get('pt')!;
+
+export function getCategories(lang: Locale): LocaleCategory[] {
+  return lang === DEFAULT_LOCALE ? [] : ACTIVE_CATEGORIES.get(lang)!;
+}
+
+export function getCategory(slug: string, lang: Locale): LocaleCategory | undefined {
+  if (lang === DEFAULT_LOCALE) return undefined;
+  return CONTENT[lang as PrefixedLocale].categories.find(c => c.slug === slug);
 }
 
 // ---------------------------------------------------------------------------
@@ -212,18 +274,23 @@ function link(enPath: string, lang: Locale, translatedPath: string) {
   pathGraph.set(key, entry);
 }
 
-/* The locale root. Registered explicitly because the homepage has no slug to
-   derive from — and without it every "Início", logo and footer-brand link on
-   all 75 Portuguese pages resolved to the English homepage. */
-link('/', 'pt', '/pt/');
-/* The guides index. Its section name is translated too — /guides/ becomes
-   /pt/guias/ — so it cannot be derived by prefixing. */
-link('/guides/', 'pt', '/pt/guias/');
+for (const code of PREFIXED_LOCALES as PrefixedLocale[]) {
+  if (!isServed(code)) continue;
+  const c = CONTENT[code];
+  const root = `/${LOCALES[code].prefix}`;
+  /* The locale root. Registered explicitly because the homepage has no slug to
+     derive from — and without it every "Início", logo and footer-brand link on
+     all 75 Portuguese pages once resolved to the English homepage. */
+  link('/', code, `${root}/`);
+  /* The guides index. Its section name is translated too — /guides/ becomes
+     /pt/guias/ — so it cannot be derived by prefixing. */
+  link('/guides/', code, `${root}/${guidesBase(code)}/`);
 
-for (const t of ptTools) link(`/${t.en}/`, 'pt', `/pt/${t.slug}/`);
-for (const g of ptGuides) link(`/guides/${g.en}/`, 'pt', `/pt/guias/${g.slug}/`);
-for (const c of activePtCategories) link(`/${c.en}/`, 'pt', `/pt/${c.slug}/`);
-for (const p of ptStaticPages) link(`/${p.en}/`, 'pt', `/pt/${p.slug}/`);
+  for (const t of c.tools) link(`/${t.en}/`, code, `${root}/${t.slug}/`);
+  for (const g of c.guides) link(`/guides/${g.en}/`, code, `${root}/${guidesBase(code)}/${g.slug}/`);
+  for (const cat of ACTIVE_CATEGORIES.get(code)!) link(`/${cat.en}/`, code, `${root}/${cat.slug}/`);
+  for (const p of c.staticPages) link(`/${p.en}/`, code, `${root}/${p.slug}/`);
+}
 
 /** Reverse index: any translated path back to its English path. */
 const enPathByTranslated = new Map<string, string>();
@@ -264,7 +331,7 @@ export function alternatesForPath(pathname: string, site = 'https://convertocean
     if (path) links.push({ lang: LOCALES[code].hreflang, href: `${site}${path}` });
   }
   // x-default points at the English page: it is the fallback for any language
-  // we have not translated, which is every language but Portuguese.
+  // we have not translated.
   if (variants[DEFAULT_LOCALE]) {
     links.push({ lang: 'x-default', href: `${site}${variants[DEFAULT_LOCALE]}` });
   }

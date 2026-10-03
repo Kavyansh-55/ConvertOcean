@@ -25,6 +25,7 @@
  */
 import type { Locale } from './config';
 import { ptRuntime } from './ui-runtime-pt';
+import { idUi, idRuntime } from './ui-id';
 import { runtimeScopes } from './ui-runtime-scopes';
 
 const pt: Record<string, string> = {
@@ -681,7 +682,10 @@ const pt: Record<string, string> = {
 
 /* ptRuntime holds the strings scripts build after load (errors, progress,
    results); merged here so t() and the browser dictionary see one table. */
-const dictionaries: Record<string, Record<string, string>> = { pt: { ...pt, ...ptRuntime } };
+const dictionaries: Record<string, Record<string, string>> = {
+  pt: { ...pt, ...ptRuntime },
+  id: { ...idUi, ...idRuntime }
+};
 
 /**
  * Translate an interface string. Returns the English original when the locale
