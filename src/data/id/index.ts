@@ -1150,6 +1150,335 @@ export const idTools: LocaleTool[] = [
       <h2>Ganti nama kadang cukup, kadang tidak</h2>
       <p>Karena isinya sama, mengganti ekstensi manual sering berhasil. Sering — tidak selalu. Sistem yang memeriksa tanda tangan internal file tetap menolak. <strong>Konversi jpeg ke jpg</strong> dengan pengodean ulang menghilangkan keraguan itu — dan sekaligus menghapus metadata EXIF, yang baik sebelum foto diunggah ke tempat umum.</p>
     `
+  },
+  {
+    en: 'pptx-to-pdf',
+    slug: 'ppt-ke-pdf',
+    name: 'PPT ke PDF',
+    title: 'Ubah PPT ke PDF Online Gratis — PowerPoint ke PDF | ConvertOcean',
+    description: 'Konversi PPT (PowerPoint .pptx) ke PDF langsung di browser, satu slide per halaman, dengan tema dan layout tetap. Tanpa upload.',
+    headline: 'PPT ke PDF.',
+    subtitle: 'Ubah presentasi PowerPoint menjadi PDF dengan layout dan tema aslinya, satu slide per halaman — tanpa file keluar dari perangkat Anda.',
+    quickAnswer: 'Untuk mengubah PPT ke PDF, pilih file .pptx di alat di atas lalu unduh PDF yang mempertahankan layout, tema, warna, teks, dan tabel setiap slide — satu slide per halaman. Inilah cara membagikan presentasi agar tampil sama di perangkat mana pun, bahkan tanpa PowerPoint. File .ppt format lama harus disimpan sebagai .pptx dulu. Semua berjalan di browser Anda.',
+    category: 'Alat Dokumen',
+    faqs: [
+      {
+        question: 'cara mengubah ppt ke pdf',
+        answer: 'Seret file .pptx ke alat di bagian atas halaman, lalu unduh PDF-nya. Setiap slide menjadi satu halaman, dengan warna tema, font, latar, dan tabel tetap. Tidak perlu PowerPoint terpasang.'
+      },
+      {
+        question: 'cara ubah ppt ke pdf',
+        answer: 'Jika file Anda .pptx, seret ke alat dan unduh PDF-nya. Jika masih .ppt format lama (sebelum 2007), ada satu langkah tambahan: buka di PowerPoint atau LibreOffice dan simpan sebagai .pptx dulu. Format .ppt bersifat biner dan tertutup, dan tidak ada browser yang bisa membacanya — di sini maupun di konverter berbasis browser lain.'
+      },
+      {
+        question: 'cara mengubah powerpoint ke pdf',
+        answer: 'Caranya sama: "ppt" dan "powerpoint" di sini berarti hal yang sama. Untuk tahu apakah file Anda .ppt atau .pptx, lihat ekstensinya. Di PowerPoint, pilih File › Save As › "PowerPoint Presentation (*.pptx)"; di LibreOffice Impress, File › Save As › "PowerPoint 2007-365 (.pptx)".'
+      },
+      {
+        question: 'Apakah PDF-nya sama persis dengan presentasi?',
+        answer: 'Layout, tema, warna, teks, dan tabel dipertahankan, satu slide per halaman. Yang tidak ikut adalah elemen yang bergantung waktu: animasi, transisi, dan video menjadi keadaan akhir slide, karena PDF adalah dokumen statis.'
+      },
+      {
+        question: 'Bagaimana menggabungkan beberapa PPT menjadi satu PDF?',
+        answer: 'Ada dua cara yang jujur. Gabungkan presentasinya dulu dengan <a href="/id/gabungkan-ppt/">Gabungkan PPT</a>, lalu ubah hasilnya ke PDF di sini. Atau ubah setiap presentasi ke PDF, lalu satukan dengan <a href="/id/gabungkan-pdf/">Gabungkan PDF</a> — cara kedua mempertahankan tema masing-masing presentasi.'
+      },
+      {
+        question: 'Apakah catatan pembicara ikut masuk?',
+        answer: 'Catatan dimasukkan ke lapisan teks tak terlihat di PDF — tidak tercetak di atas slide, tetapi bisa ditemukan lewat pencarian di dalam file. Jika presentasi akan dibagikan, perlu diketahui bahwa isi catatan ikut terbawa.'
+      },
+      {
+        question: 'Apakah presentasi saya dikirim ke server?',
+        answer: 'Tidak. Slide dibaca dan digambar oleh browser Anda sendiri, di perangkat Anda, dan file tidak disalin ke server mana pun.'
+      }
+    ],
+    content: `
+      <h2>Ubah PPT ke PDF dengan tema tetap terjaga</h2>
+      <p>Yang mencari cara <strong>ppt ke pdf</strong> biasanya ingin menyelesaikan satu masalah: presentasi terbuka berbeda di komputer penerima. Font yang tidak ada, versi PowerPoint yang berbeda, dan layar yang lain mengubah hasilnya. <strong>Konversi ppt ke pdf</strong> membekukan tampilannya: setiap slide menjadi satu halaman, dan halaman itu sama di mana pun.</p>
+      <p>Di sini slide digambar dengan layout dan tema sungguhan — warna, font, latar, dan tabel — bukan tangkapan layar. <strong>Ubah powerpoint ke pdf</strong> dan <strong>convert ppt ke pdf</strong> adalah pekerjaan yang sama.</p>
+
+      <h2>Kompres ppt ke pdf</h2>
+      <p>Pencarian <strong>kompres ppt ke pdf</strong> biasanya berarti mengubah presentasi ke PDF yang lebih ringan. PDF hasil konversi umumnya jauh lebih kecil dari .pptx yang penuh foto; jika masih di atas batas, lanjutkan ke <a href="/id/kompres-pdf/">Kompres PDF</a> dengan ukuran target. Jika yang Anda butuhkan tetap file PowerPoint, gunakan <a href="/id/kompres-ppt/">Kompres PPT</a>.</p>
+
+      <h2>Yang tidak ikut dalam konversi</h2>
+      <p>Animasi, transisi, dan video tidak bertahan, karena PDF statis: yang tersisa adalah keadaan akhir setiap slide. Jika presentasi bergantung pada elemen yang muncul berurutan, pisahkan ke slide berbeda sebelum konversi.</p>
+
+      <h2>File .ppt format lama</h2>
+      <p>Format biner .ppt tidak bisa dibaca di browser. Buka file di PowerPoint atau LibreOffice, simpan sebagai .pptx, lalu konversi — satu langkah saja, dan setelah itu semuanya berjalan normal.</p>
+    `
+  },
+  {
+    en: 'merge-excel',
+    slug: 'gabungkan-excel',
+    name: 'Gabungkan Excel',
+    title: 'Gabungkan Excel Online Gratis — Jadi Satu File | ConvertOcean',
+    description: 'Gabungkan beberapa file Excel atau CSV jadi satu workbook langsung di browser, dengan setiap sheet diberi nama sesuai file asalnya.',
+    headline: 'Gabungkan Excel.',
+    subtitle: 'Satukan beberapa spreadsheet menjadi satu workbook, dengan setiap sheet diberi nama sesuai file asalnya.',
+    quickAnswer: 'Untuk gabungkan Excel, tambahkan dua file .xlsx, .xls, atau .csv atau lebih ke alat di atas lalu unduh satu workbook berisi semua sheet asalnya. Setiap sheet diberi nama file_sheet — dipotong di batas 31 karakter Excel dan diberi nomor jika masih bentrok — jadi asal setiap sheet selalu jelas. Semuanya terjadi di browser Anda.',
+    category: 'Konverter Excel',
+    faqs: [
+      {
+        question: 'cara gabungkan file excel',
+        answer: 'Tambahkan semua file sekaligus lalu unduh workbook gabungannya. Setiap sheet dari setiap file masuk sebagai sheet tersendiri, dinamai sesuai asalnya — mencegah masalah klasik berakhir dengan lima sheet bernama "Sheet1". Urutan file bisa diubah dengan tombol ▲ dan ▼ sebelum digabung.'
+      },
+      {
+        question: 'cara gabungkan excel jadi satu',
+        answer: 'Hasilnya satu file .xlsx. Jika semua file asalnya .xlsx, isian warna, font, garis tepi, format angka, dan lebar kolom ikut dipertahankan. File .csv dan .xls lama juga diterima, masing-masing menjadi sheet bernama sesuai file.'
+      },
+      {
+        question: 'cara gabungkan sheet excel',
+        answer: 'Perlu dibedakan: di sini sheet-sheet dikumpulkan berdampingan dalam satu workbook, bukan ditumpuk baris demi baris menjadi satu tabel. Jika tujuannya menumpuk data beberapa sheet ke dalam satu tabel, itu konsolidasi — di Excel dilakukan dengan Power Query atau salin-tempel manual.'
+      },
+      {
+        question: 'cara gabungkan sheet di excel',
+        answer: 'Di dalam Excel sendiri, caranya klik kanan tab sheet › Move or Copy, lalu pilih workbook tujuan — satu sheet setiap kali. Untuk banyak file, cara itu melelahkan; di sini semua file ditambahkan sekaligus dan sheet-nya terkumpul dalam satu langkah.'
+      },
+      {
+        question: 'Apakah file saya dikirim ke server?',
+        answer: 'Tidak. Pembacaan dan penyusunan terjadi di browser Anda, di perangkat Anda sendiri.'
+      }
+    ],
+    content: `
+      <h2>Sheet terkumpul, asal tetap jelas</h2>
+      <p>Masalah menggabungkan spreadsheet secara manual bukan usahanya — tetapi kehilangan jejak. Lima file yang disalin ke satu workbook meninggalkan lima sheet bernama "Sheet1", "Sheet1 (2)", dan seterusnya. Saat <strong>gabungkan excel</strong> di sini, setiap sheet dinamai <em>file_sheet</em>, dipotong di batas 31 karakter Excel dan diberi nomor jika masih bentrok.</p>
+
+      <h2>Menggabungkan bukan konsolidasi</h2>
+      <p>Perbedaannya penting, karena pencarian sering mencampurnya. <strong>Gabungkan excel jadi satu</strong> di sini berarti menaruh semua sheet dalam satu workbook — <strong>gabungkan excel dalam satu file</strong>. Menumpuk data beberapa sheet menjadi satu tabel adalah konsolidasi, pekerjaan lain yang di Excel dilakukan dengan Power Query. Begitu pula menggabungkan kolom di dalam satu sheet: itu fitur Excel (rumus & atau CONCAT), bukan penggabungan file.</p>
+
+      <h2>CSV juga bisa</h2>
+      <p>File .csv diterima bersama .xlsx dan .xls — <strong>gabungkan csv</strong> — masing-masing menjadi sheet yang dinamai sesuai asalnya. Semua diproses di dalam browser, tanpa disalin ke server mana pun.</p>
+    `
+  },
+  {
+    en: 'merge-images',
+    slug: 'gabungkan-gambar',
+    name: 'Gabungkan Gambar',
+    title: 'Gabungkan Gambar Jadi Satu Online Gratis | ConvertOcean',
+    description: 'Gabungkan dua atau lebih gambar jadi satu, vertikal atau horizontal, langsung di browser. Foto tidak keluar dari perangkat Anda.',
+    headline: 'Gabungkan Gambar.',
+    subtitle: 'Satukan beberapa foto menjadi satu gambar — vertikal atau horizontal, tanpa foto keluar dari perangkat Anda.',
+    quickAnswer: 'Untuk gabungkan gambar jadi satu, tambahkan gambar ke alat di atas dan pilih hasilnya: satu gambar yang disambung vertikal atau horizontal, atau PDF berisi satu gambar per halaman. PNG, JPG, WebP, dan SVG diterima, dan gambar dengan lebar berbeda disejajarkan, bukan ditarik. Semuanya disusun di browser Anda dan foto tidak keluar dari perangkat.',
+    category: 'Alat Gambar',
+    faqs: [
+      {
+        question: 'cara gabungkan gambar',
+        answer: 'Tambahkan gambar-gambarnya, lalu pilih sambung vertikal (ditumpuk atas-bawah) atau horizontal (berdampingan). Hasilnya satu gambar. Jika lebar fotonya berbeda, gambar disejajarkan, bukan ditarik — tidak ada yang berubah bentuk. Urutan di layar adalah urutan di gambar akhir, dan tombol ▲ dan ▼ di samping setiap foto mengubah posisinya.'
+      },
+      {
+        question: 'Vertikal atau horizontal?',
+        answer: 'Tergantung bentuk fotonya: foto potret biasanya lebih bagus berdampingan, foto lanskap lebih bagus ditumpuk. Coba keduanya — penyusunan langsung dan tidak ada batas percobaan. Dengan banyak foto, sambungan vertikal menjadi strip yang sangat panjang; untuk itu PDF lebih praktis.'
+      },
+      {
+        question: 'Format apa yang dihasilkan?',
+        answer: 'Gambar yang disambung selalu keluar sebagai PNG, yang mempertahankan transparansi jika gambar asalnya punya. PNG, JPG, WebP, dan SVG boleh dicampur dalam satu susunan. Pada hasil PDF, gambar ditaruh di atas halaman putih.'
+      },
+      {
+        question: 'Bagaimana kalau saya perlu satu file PDF dari banyak foto?',
+        answer: 'Jika tujuannya satu lampiran berisi banyak foto — misalnya dokumen hasil foto untuk portal — <a href="/id/gambar-ke-pdf/">Gambar ke PDF</a> adalah alat yang tepat: satu foto per halaman, dengan pilihan ukuran halaman. Halaman ini untuk menyatukan foto menjadi satu gambar.'
+      },
+      {
+        question: 'Apakah foto saya dikirim ke server?',
+        answer: 'Tidak. Penyusunan terjadi di browser Anda, di perangkat Anda sendiri. Foto membawa metadata seperti lokasi dan model HP, dan tidak ada yang disalin ke server mana pun.'
+      }
+    ],
+    content: `
+      <h2>Satu gambar, bukan album</h2>
+      <p>Halaman ini untuk <strong>gabungkan gambar jadi satu</strong>: dua foto atau lebih disambung menjadi satu file, berdampingan atau ditumpuk. Itulah yang dibutuhkan untuk foto sebelum-sesudah, perbandingan, atau susunan sederhana — <strong>gabungkan gambar jadi 1</strong>, termasuk <strong>gabungkan gambar jpg</strong>.</p>
+      <p>Jika tujuannya lain — mengumpulkan beberapa foto dalam satu lampiran untuk dikirim — gunakan <a href="/id/gambar-ke-pdf/">Gambar ke PDF</a>, yang menaruh satu foto per halaman. Kedua pekerjaan berbeda, dan sebaiknya pilih yang tepat.</p>
+
+      <h2>Lebar berbeda tidak membuat gambar penyok</h2>
+      <p>Saat menggabungkan gambar berukuran berbeda, gambar disejajarkan, bukan ditarik sampai sama. Itulah bedanya susunan yang rapi dengan dua foto yang terdistorsi.</p>
+
+      <h2>Tanpa aplikasi, tanpa server</h2>
+      <p><strong>Gabungkan gambar online</strong> di sini tidak perlu instalasi apa pun: berjalan di browser HP sama seperti di komputer, dan foto tidak disalin ke mana pun.</p>
+    `
+  },
+  {
+    en: 'split-image',
+    slug: 'pisahkan-gambar',
+    name: 'Pisahkan Gambar',
+    title: 'Pisahkan Gambar Jadi Beberapa Bagian — Online Gratis | ConvertOcean',
+    description: 'Pisahkan gambar menjadi beberapa bagian — kisi, potongan horizontal, atau vertikal — langsung di browser, untuk carousel Instagram atau cetak di beberapa kertas.',
+    headline: 'Pisahkan Gambar.',
+    subtitle: 'Potong gambar menjadi kisi, strip, atau kolom — setiap bagian diunduh dalam resolusi penuh, tanpa foto keluar dari perangkat Anda.',
+    quickAnswer: 'Untuk pisahkan gambar, pilih file PNG, JPG, atau WebP di alat di atas dan tentukan potongannya: kisi baris dan kolom, potongan horizontal sama rata, atau potongan vertikal sama rata. Potongan dikirim dalam ZIP, masing-masing sebagai gambar terpisah dalam resolusi penuh — cocok untuk carousel media sosial dan cetak di beberapa kertas. PNG atau WebP menghasilkan potongan PNG tanpa kehilangan kualitas; JPG menghasilkan potongan JPG. Pemotongan terjadi di perangkat Anda.',
+    category: 'Alat Gambar',
+    faqs: [
+      {
+        question: 'cara pisahkan gambar',
+        answer: 'Pilih gambar, lalu pilih jenis potongan: kisi (misalnya 2 baris × 2 kolom untuk 4 bagian), potongan horizontal, atau potongan vertikal. Unduh ZIP-nya — setiap bagian adalah file terpisah dalam resolusi penuh.'
+      },
+      {
+        question: 'Bagaimana memisahkan gambar menjadi 4 bagian?',
+        answer: 'Pilih kisi 2 baris × 2 kolom. Keempat bagian keluar dalam ZIP. Untuk gambar panorama, potongan vertikal (4 kolom) sering lebih masuk akal daripada kisi.'
+      },
+      {
+        question: 'Bisa untuk carousel Instagram?',
+        answer: 'Ya, ini salah satu kegunaan utamanya. Untuk carousel, pakai potongan vertikal: gambar lebar yang dibagi menjadi kolom sama rata menghasilkan bingkai berurutan, siap diunggah. Setiap bagian dalam resolusi penuh, jadi tidak ada kehilangan kualitas.'
+      },
+      {
+        question: 'Bagaimana mencetak gambar di beberapa kertas A4?',
+        answer: 'Pilih kisi sesuai jumlah kertas — 2×2 untuk empat, 3×3 untuk sembilan — lalu cetak setiap file di satu halaman. Perlu diketahui: alat ini memotong sama rata dan tidak mengenal ukuran kertas, jadi tidak menambah margin tumpang-tindih untuk ditempel dan tidak mengimbangi area yang tidak terjangkau printer. Sisakan sedikit tepi aman pada gambar asli sebelum memotong.'
+      },
+      {
+        question: 'Bisakah memisahkan gambar dari file PDF?',
+        answer: 'Tidak. Alat ini memotong satu gambar menjadi beberapa bagian; mengeluarkan gambar dari dalam PDF adalah pekerjaan lain yang belum tersedia di sini.'
+      },
+      {
+        question: 'Apakah gambar saya dikirim ke server?',
+        answer: 'Tidak. Pemotongan terjadi di browser Anda, di perangkat Anda sendiri, dan baik gambar asli maupun potongannya tidak disalin ke server mana pun.'
+      }
+    ],
+    content: `
+      <h2>Tiga cara memotong</h2>
+      <p>Kisi baris dan kolom, potongan horizontal, atau potongan vertikal. Saat <strong>pisahkan gambar menjadi beberapa bagian</strong>, setiap potongan diunduh sebagai file sendiri dalam resolusi penuh — tidak ada yang diperkecil. Bisa untuk <strong>pisahkan gambar jpg</strong> maupun <strong>pisahkan gambar png</strong>.</p>
+
+      <h2>Carousel: pakai potongan vertikal</h2>
+      <p>Gambar lebar yang dipotong menjadi kolom sama rata menjadi urutan bingkai carousel. Karena setiap bagian dalam resolusi penuh, tidak ada kualitas yang hilang saat diunggah.</p>
+
+      <h2>Mencetak di beberapa kertas: yang dilakukan dan yang tidak</h2>
+      <p>Pilih kisi sesuai jumlah kertas dan cetak setiap file di satu halaman. Terus terang: alat ini memotong sama rata dan <em>tidak</em> mengenal ukuran kertas — tidak menambah margin tumpang-tindih untuk ditempel. Hal lain adalah resolusi: gambar yang disebar ke empat kertas tercetak dengan kira-kira setengah ketajaman per kertas, jadi mulailah dari file terbesar yang Anda punya.</p>
+
+      <h2>Tidak ada yang keluar dari perangkat Anda</h2>
+      <p><strong>Pisahkan gambar online</strong> di sini dikerjakan oleh browser Anda. Baik gambar asli maupun potongannya tidak disalin ke server mana pun.</p>
+    `
+  },
+  {
+    en: 'merge-word',
+    slug: 'gabungkan-word',
+    name: 'Gabungkan Word',
+    title: 'Gabungkan Word Online Gratis — Jadi Satu File | ConvertOcean',
+    description: 'Gabungkan file Word jadi satu langsung di browser: beberapa .docx menjadi satu dokumen, dengan gambar dari semua file tetap terjaga.',
+    headline: 'Gabungkan Word.',
+    subtitle: 'Satukan beberapa .docx menjadi satu dokumen — dengan gambar dari setiap file tetap terjaga.',
+    quickAnswer: 'Untuk gabungkan Word, tambahkan dua file .docx atau lebih ke alat di atas lalu unduh satu dokumen gabungan. Gambar di setiap file asal dibawa dan dihubungkan ulang dengan benar — justru bagian yang sering gagal di penggabung berbasis browser. Satu batasan yang kami nyatakan: dokumen akhir memakai gaya, margin, dan orientasi dari file pertama.',
+    category: 'Alat Dokumen',
+    faqs: [
+      {
+        question: 'cara gabungkan file word',
+        answer: 'Pilih semua file .docx di alat di atas lalu unduh dokumen tunggalnya. Setiap file mulai di halaman baru, sesuai urutan daftar; pakai tombol ▲ dan ▼ di samping setiap file untuk mengubah posisinya sebelum mengunduh. Tabel, gambar, dan teks setiap file masuk utuh.'
+      },
+      {
+        question: 'cara gabungkan file word jadi satu',
+        answer: 'Hasilnya satu file .docx yang tetap bisa diedit. Isi, gambar, dan format yang diterapkan langsung ke teks ikut terbawa. Definisi gaya tidak digabung: dokumen akhir memakai gaya file pertama, jadi "Heading 1" dari dokumen lain mengikuti tampilan dokumen pertama. Margin dan orientasi juga mengikuti file pertama.'
+      },
+      {
+        question: 'cara gabungkan file word yang terpisah',
+        answer: 'Di dalam Word sendiri, caranya tab Insert › panah di samping Object › Text from File, yang menyisipkan isi dokumen lain di posisi kursor. Bisa, tetapi satu file setiap kali dan mudah kehilangan posisi. Di sini semua file ditambahkan sekaligus dan hasil gabungannya langsung diunduh.'
+      },
+      {
+        question: 'cara gabungkan 2 file word',
+        answer: 'Tambahkan kedua file dan pastikan urutannya sebelum mengunduh; dokumen akhir mengikuti urutan di layar. Isi masing-masing masuk lengkap, termasuk gambar.'
+      },
+      {
+        question: 'Bagaimana menggabungkan file Word menjadi PDF?',
+        answer: 'Hasil di sini adalah .docx. Jika yang diminta PDF, gabungkan dulu, lalu ubah dokumen tunggalnya dengan <a href="/id/word-ke-pdf/">Word ke PDF</a> — dengan begitu nomor halaman dan pergantian halaman sudah berurutan.'
+      },
+      {
+        question: 'Apakah dokumen saya dikirim ke server?',
+        answer: 'Tidak. Penggabungan terjadi di browser Anda, di perangkat Anda sendiri, dan file tidak disalin ke server mana pun.'
+      }
+    ],
+    content: `
+      <h2>Gambar adalah bagian yang sulit</h2>
+      <p>Menggabungkan teks itu mudah; menggabungkan dokumen bergambar tidak. Di dalam .docx setiap gambar adalah file terpisah yang dirujuk dengan sebuah ID, dan dua dokumen sering memakai ID yang sama untuk gambar yang berbeda. Penggabung yang mengabaikan ini menghasilkan file dengan foto tertukar atau hilang. Saat <strong>gabungkan word</strong> di sini, rujukannya ditulis ulang agar setiap gambar tetap menunjuk ke gambar yang benar.</p>
+
+      <h2>Batasan yang jujur: gaya</h2>
+      <p>Saat <strong>gabungkan word dan word</strong>, isinya terbawa utuh, tetapi gayanya bisa berbeda. Jika dua dokumen mendefinisikan "Heading 1" secara berbeda, gaya file pertama yang berlaku. Periksa judul-judul sebentar setelah digabung.</p>
+
+      <h2>Gabungkan word online, tanpa instalasi</h2>
+      <p>Cara bawaan Word — Insert › Object › Text from File — satu file setiap kali. Untuk dua dokumen masih wajar; untuk delapan, tidak. <strong>Gabungkan word online</strong> di sini menerima semua sekaligus, dan dokumen tidak disalin ke server mana pun.</p>
+    `
+  },
+  {
+    en: 'split-word',
+    slug: 'pisahkan-word',
+    name: 'Pisahkan Word',
+    title: 'Pisahkan Word Online Gratis — Per Bab atau Paragraf | ConvertOcean',
+    description: 'Pisahkan dokumen Word (.docx) menjadi beberapa file, di setiap Heading 1 atau setiap sejumlah paragraf, langsung di browser.',
+    headline: 'Pisahkan Word.',
+    subtitle: 'Potong file .docx di setiap Heading 1 atau setiap sejumlah paragraf — tanpa file keluar dari perangkat Anda.',
+    quickAnswer: 'Untuk pisahkan Word, pilih file .docx di alat di atas dan tentukan titik potongnya: di setiap Heading 1, atau setiap sejumlah paragraf tertentu. Pemisahan per Heading 1 paling berguna untuk bab, bagian, dan laporan, karena mengikuti struktur yang sudah dinyatakan dokumen itu sendiri. Semuanya terjadi di browser Anda.',
+    category: 'Alat Dokumen',
+    faqs: [
+      {
+        question: 'cara pisahkan file word',
+        answer: 'Pilih file .docx dan tentukan cara memotongnya. Per Heading 1, setiap bagian menjadi file sendiri, diberi nomor berurutan (bagian 1, bagian 2…) dan dikirim dalam ZIP — ideal untuk memecah laporan panjang atau skripsi per bab. Per jumlah paragraf, jika dokumen tidak punya struktur judul.'
+      },
+      {
+        question: 'Bisakah memisahkan Word per halaman?',
+        answer: 'Tidak secara langsung, dan ini alasannya: file .docx tidak menyimpan halaman tetap — Word menyusun halaman saat menampilkan dokumen, dan hasilnya berubah tergantung font dan printer. Jadi alat ini memotong per Heading 1 atau per jumlah paragraf. Jika Anda benar-benar butuh per halaman, ubah dulu dengan <a href="/id/word-ke-pdf/">Word ke PDF</a>, lalu gunakan <a href="/id/pisahkan-pdf/">Pisahkan PDF</a> per halaman.'
+      },
+      {
+        question: 'Kenapa memisahkan per Heading 1 lebih baik?',
+        answer: 'Karena memakai struktur yang sudah dibuat penulisnya, bukan menebak. Dokumen yang diformat dengan baik menandai setiap bab dengan gaya Heading 1, dan pemisahan mengikuti titik-titik itu persis. Jika judul hanya ditebalkan manual tanpa gaya Heading, cara ini tidak menemukan titik potongnya — dan di situlah pemisahan per paragraf menjadi alternatif.'
+      },
+      {
+        question: 'Apakah gambar dan format ikut?',
+        answer: 'Setiap bagian mempertahankan isi dan format bagiannya, termasuk gambar. Periksa file pertama yang dihasilkan sebelum membagikan yang lain.'
+      },
+      {
+        question: 'Apakah dokumen saya dikirim ke server?',
+        answer: 'Tidak. Pemisahan terjadi di browser Anda, di perangkat Anda sendiri.'
+      }
+    ],
+    content: `
+      <h2>Memisahkan menurut struktur, bukan tebakan</h2>
+      <p>Pemisahan per Heading 1 memanfaatkan penanda yang sudah ada di dokumen: setiap bagian yang dinyatakan menjadi satu file. Itulah yang membuat <strong>pisahkan word per bab</strong> praktis — skripsi seratus halaman menjadi bab-bab terpisah, atau manual dipecah per topik. <strong>Pisahkan word menjadi beberapa file</strong> tanpa menyalin-tempel manual.</p>
+
+      <h2>Jika judulnya tidak ada</h2>
+      <p>Dokumen yang diformat manual — tebal dan besar alih-alih gaya Heading — tidak punya penanda untuk diikuti. Di situ pemisahan per jumlah paragraf menjadi jalan keluar: kurang rapi, tetapi berfungsi di file mana pun.</p>
+
+      <h2>Pisahkan word online, tanpa server</h2>
+      <p>Laporan, kontrak, dan karya ilmiah adalah yang biasanya dipisah. <strong>Pisahkan word online</strong> di sini dikerjakan browser Anda, dan tidak ada yang disalin ke server mana pun.</p>
+    `
+  },
+  {
+    en: 'merge-pptx',
+    slug: 'gabungkan-ppt',
+    name: 'Gabungkan PPT',
+    title: 'Gabungkan PPT Online Gratis — Jadi Satu Presentasi | ConvertOcean',
+    description: 'Gabungkan beberapa presentasi PowerPoint (.pptx) jadi satu file langsung di browser, dengan slide sesuai urutan dan layout ikut terbawa.',
+    headline: 'Gabungkan PPT.',
+    subtitle: 'Satukan beberapa presentasi .pptx menjadi satu, dengan slide sesuai urutan dan layoutnya ikut terbawa.',
+    quickAnswer: 'Untuk gabungkan PPT, tambahkan dua file .pptx atau lebih ke alat di atas lalu unduh satu presentasi gabungan, dengan slide dari setiap file disalin berurutan bersama layoutnya. Semua layout memakai slide master presentasi pertama, jadi presentasi bertema berbeda bisa ikut tampilan yang pertama. File .ppt lama tidak diterima — simpan sebagai .pptx dulu. Semuanya terjadi di browser Anda.',
+    category: 'Alat Dokumen',
+    faqs: [
+      {
+        question: 'cara gabungkan ppt jadi satu',
+        answer: 'Tambahkan semua file .pptx ke alat di atas, atur urutannya dengan tombol ▲ dan ▼, lalu unduh presentasi gabungannya. Slide masuk sesuai urutan file di daftar, dan di dalam setiap file sesuai urutan aslinya.'
+      },
+      {
+        question: 'cara gabungkan ppt',
+        answer: 'Hasilnya satu file .pptx yang tetap bisa diedit di PowerPoint. Mengurutkan ulang slide satu per satu adalah pekerjaan PowerPoint setelahnya; di sini yang diatur adalah urutan file.'
+      },
+      {
+        question: 'Apakah layout dan tema tetap?',
+        answer: 'Slide disalin bersama layoutnya, tetapi semua layout memakai slide master dari presentasi pertama. Slide dari presentasi bertema lain bisa ikut latar, warna, atau font master yang pertama — periksa setelah digabung.'
+      },
+      {
+        question: 'Apakah file .ppt lama bisa?',
+        answer: 'Tidak. Format biner .ppt tidak bisa dibaca di browser. Buka di PowerPoint atau LibreOffice, simpan sebagai .pptx, lalu gabungkan.'
+      },
+      {
+        question: 'Bagaimana menggabungkan PPT menjadi satu PDF?',
+        answer: 'Gabungkan di sini, lalu ubah hasilnya dengan <a href="/id/ppt-ke-pdf/">PPT ke PDF</a>. Jika setiap presentasi harus mempertahankan temanya sendiri, ubah masing-masing ke PDF dulu, lalu satukan dengan <a href="/id/gabungkan-pdf/">Gabungkan PDF</a>.'
+      },
+      {
+        question: 'Apakah presentasi saya dikirim ke server?',
+        answer: 'Tidak. Penggabungan terjadi di browser Anda, di perangkat Anda sendiri. Materi kuliah dan presentasi internal tidak keluar dari perangkat Anda.'
+      }
+    ],
+    content: `
+      <h2>Gabungkan ppt jadi satu presentasi</h2>
+      <p>Tugas kelompok, materi rapat dari beberapa divisi, atau slide dari beberapa pembicara sering berakhir sebagai beberapa file terpisah. <strong>Gabungkan ppt</strong> di sini menyatukannya menjadi satu .pptx — <strong>gabungkan ppt ke ppt</strong>, tanpa konversi — dengan setiap slide disalin bersama layoutnya.</p>
+
+      <h2>Satu batasan: slide master</h2>
+      <p>Semua slide memakai slide master dari presentasi pertama. Presentasi dengan tema berbeda bisa berubah tampilan latar, warna, atau font-nya. Jika setiap bagian harus mempertahankan temanya, ubah masing-masing ke PDF lalu gabungkan PDF-nya. Bagi yang mencari <strong>gabungkan powerpoint</strong>, ini alat yang sama.</p>
+
+      <h2>Urutannya adalah urutan file</h2>
+      <p>Atur urutan file dengan ▲ dan ▼ sebelum digabung. Mengurutkan slide satu per satu setelahnya adalah pekerjaan PowerPoint. File .ppt lama perlu disimpan sebagai .pptx dulu, sama seperti di <a href="/id/ppt-ke-pdf/">PPT ke PDF</a>.</p>
+    `
   }
 ];
 
