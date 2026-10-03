@@ -17,9 +17,12 @@
  * expresses as a small negative adjustment.
  *
  * UPDATING (roughly every January + July, when Tax Foundation republishes):
- * replace the rows and bump AS_OF / SOURCE_URL together. The consistency check
- * at the bottom of this file runs at build time and will fail the build on a
- * transposed digit.
+ * replace the rows, US_AVERAGE_COMBINED and CHANGE_NOTE, and bump AS_OF /
+ * SOURCE_TITLE / SOURCE_URL together. That is the whole job: the guide's
+ * title, H1, prose figures and FAQs are all read from here (see guides.ts).
+ * The build fails on a transposed digit (check at the bottom of this file) and
+ * on a ranking change that would falsify a sentence (check in guides.ts). Then
+ * update the "7.53%" average asserted in scripts/fidelity/verify-live.mjs.
  */
 
 export interface StateSalesTax {
@@ -44,6 +47,16 @@ export const SOURCE_URL = 'https://taxfoundation.org/data/all/state/2026-sales-t
 
 /** Population-weighted national average combined rate, percent. */
 export const US_AVERAGE_COMBINED = 7.53;
+
+/** The year these rates describe. The guide's title, H1 and FAQ wording follow it. */
+export const DATA_YEAR = AS_OF.slice(-4);
+
+/**
+ * One sentence on what moved since the previous edition, quoted in the guide.
+ * It is the only prose about this dataset that cannot be computed, so rewrite
+ * it from the Tax Foundation report on every update.
+ */
+export const CHANGE_NOTE = 'Between January and July 2026 no state changed its statewide rate; the movement in the table comes entirely from local rate changes.';
 
 export const stateSalesTaxRates: StateSalesTax[] = [
   { state: 'Alabama',        abbr: 'AL', stateRate: 4.00, avgLocal: 5.46, maxLocal: 8.00, combined: 9.46,  combinedRank: 5 },
@@ -102,7 +115,20 @@ export const stateSalesTaxRates: StateSalesTax[] = [
 /** The five states with no statewide sales tax. Alaska is the one that still allows local rates. */
 export const NO_STATEWIDE_TAX = ['Alaska', 'Delaware', 'Montana', 'New Hampshire', 'Oregon'];
 
-const pct = (n: number) => `${n.toFixed(2)}%`;
+/** Percent with two decimals and a true minus sign — the table's own format. */
+export const pct = (n: number) => `${n < 0 ? '−' : ''}${Math.abs(n).toFixed(2)}%`;
+
+/** One state's row. Throws on a misspelt name so guide prose can't silently lose a figure. */
+export function rate(state: string): StateSalesTax {
+  const row = stateSalesTaxRates.find(r => r.state === state);
+  if (!row) throw new Error(`us-sales-tax-rates: no row for "${state}"`);
+  return row;
+}
+
+/** The 50 ranked states, highest combined rate first (D.C. is unranked). */
+export const byCombinedRank = stateSalesTaxRates
+  .filter(r => r.combinedRank !== null)
+  .sort((a, b) => (a.combinedRank as number) - (b.combinedRank as number));
 
 /**
  * Renders the full rate table as HTML for the guide body.

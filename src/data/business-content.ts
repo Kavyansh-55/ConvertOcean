@@ -49,11 +49,11 @@ export const invoiceGeneratorContent = `
   </p>
   <blockquote>
     <strong>Invoice No:</strong> CO-2026-001<br/>
-    <strong>From:</strong> Kavya J. Studio (hello@kavyaj.studio)<br/>
-    <strong>To:</strong> Galactic Group Ltd. (billing@galactic.com)<br/>
-    <strong>Line Item 1:</strong> Web Scaffolding & Design Integration (Qty: 1, Rate: $2,500.00)<br/>
-    <strong>Line Item 2:</strong> Performance Auditing (Qty: 4 hours, Rate: $350.00)<br/>
-    <strong>Subtotal:</strong> $3,900.00 | <strong>GST (18%):</strong> $702.00 | <strong>Grand Total:</strong> $4,602.00
+    <strong>From:</strong> Brightline Design Co. (billing@brightline.example)<br/>
+    <strong>To:</strong> Harbor & Pine LLC (accounts@harborpine.example)<br/>
+    <strong>Line Item 1:</strong> Website design and build, 5 pages (Qty: 1, Rate: $2,500.00)<br/>
+    <strong>Line Item 2:</strong> Performance optimization (Qty: 4 hours, Rate: $350.00)<br/>
+    <strong>Subtotal:</strong> $3,900.00 | <strong>Tax:</strong> none (design services are untaxed in many US states) | <strong>Grand Total:</strong> $3,900.00
   </blockquote>
 
   <h3>Related Professional Business Utilities.</h3>
@@ -116,11 +116,11 @@ export const receiptGeneratorContent = `
   </p>
   <blockquote>
     <strong>Receipt No:</strong> REC-2026-001<br/>
-    <strong>Received By:</strong> Kavya J. Studio (hello@kavyaj.studio)<br/>
-    <strong>Received From:</strong> Galactic Group Ltd. (billing@galactic.com)<br/>
+    <strong>Received By:</strong> Brightline Design Co. (hello@brightline.example)<br/>
+    <strong>Received From:</strong> Harbor & Pine LLC (accounts@harborpine.example)<br/>
     <strong>Payment Method:</strong> Credit Card (Paid in Full)<br/>
     <strong>Purchased Item:</strong> Website Development Services (Qty: 1, Rate: $3,500.00)<br/>
-    <strong>Subtotal:</strong> $3,500.00 | <strong>VAT (15%):</strong> $525.00 | <strong>Total Paid:</strong> $4,025.00
+    <strong>Subtotal:</strong> $3,500.00 | <strong>Tax:</strong> none | <strong>Total Paid:</strong> $3,500.00
   </blockquote>
 
   <h3>Related Financial and Estimator Tools.</h3>

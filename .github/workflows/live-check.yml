@@ -1,0 +1,32 @@
+# Weekly check that convertocean.com still serves what this repo says.
+#
+# Runs scripts/fidelity/verify-live.mjs (plain fetch requests, no browser,
+# no npm install) against production. A failed run makes GitHub email the
+# repo owner, so a broken deploy, an expired domain or a Cloudflare change is
+# noticed even when nobody is working on the site.
+#
+# GitHub disables scheduled workflows in public repos after 60 days without
+# repository activity and emails a warning first. Re-enable it from the
+# Actions tab (Live site check → Enable workflow); see MAINTENANCE.md.
+
+name: Live site check
+
+on:
+  schedule:
+    - cron: '30 6 * * 1'   # Mondays 06:30 UTC (12:00 IST)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Verify production
+        run: node scripts/fidelity/verify-live.mjs

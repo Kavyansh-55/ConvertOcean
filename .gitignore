@@ -41,3 +41,10 @@ galactic-group/
 
 # Local Cloudflare runtime state from `wrangler dev`
 .wrangler/
+
+# Internal plan + deploy log (AdSense, traffic, launch strategy) and third-party
+# agent skills: kept locally, not published. Restore skills with the skills CLI.
+SEO-ROADMAP.md
+.agents/
+.claude/
+skills-lock.json

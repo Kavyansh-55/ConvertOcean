@@ -4,8 +4,26 @@ import {
   SOURCE_NAME,
   SOURCE_TITLE,
   SOURCE_URL,
-  US_AVERAGE_COMBINED
+  US_AVERAGE_COMBINED,
+  DATA_YEAR,
+  CHANGE_NOTE,
+  pct,
+  rate,
+  byCombinedRank
 } from './us-sales-tax-rates';
+
+/* The sales-tax guide states rates in prose and FAQs, and those figures are
+   read from the same rows as the table, so a data refresh cannot leave the
+   text contradicting it. Two sentences rest on rankings rather than figures;
+   if a refresh makes them false the build stops here instead of publishing. */
+const CO = rate('Colorado'), LA = rate('Louisiana'), AK = rate('Alaska'), CA = rate('California');
+if (byCombinedRank[0].state !== 'Louisiana') {
+  throw new Error(`us-sales-tax-by-state guide: ${byCombinedRank[0].state} now has the highest combined rate — rewrite the "Louisiana ... highest combined rate" sentence.`);
+}
+if (Math.max(...byCombinedRank.map(r => r.stateRate)) !== CA.stateRate) {
+  throw new Error('us-sales-tax-by-state guide: California no longer has the highest statewide rate — rewrite the highest-rate FAQ.');
+}
+const TOP_FIVE = byCombinedRank.slice(0, 5);
 
 export interface GuideData {
   slug: string;
@@ -50,34 +68,34 @@ export const guides: GuideData[] = [
       <p>Scanned documents need a different pipeline: run them through <a href="/image-to-text/">Image to Text OCR</a> first, which recognizes the characters optically, then paste the recognized text into Word and reformat. Expect to redo the layout — OCR recovers <em>words</em>, not design. (Curious how that works? See our guide on <a href="/guides/how-ocr-works/">how OCR extracts text from images</a>.) Mixed PDFs exist too: a contract with typed pages plus a scanned signature page will convert cleanly except for that one page.</p>
 
       <h2>Step-by-Step: Converting PDF to Word on ConvertOcean</h2>
-      <p>ConvertOcean performs conversion 100% locally in your browser memory sandbox using WebAssembly layout mapping. Here is how to convert your files privately without losing structure:</p>
+      <p>ConvertOcean's converter runs entirely in your browser. It reads the PDF with pdf.js (Mozilla's PDF engine, the one built into Firefox), keeps the position, font, size and colour of every piece of text, and rebuilds a real Word document from them. Here is what happens:</p>
       <div class="content-card">
         <h3 style="margin-top: 0;">Step 1: Select Your File</h3>
         <p>Go to the <a href="/pdf-to-word/">PDF to Word Converter</a> tool. Drag and drop your target PDF file into the secure local drop zone. The file remains entirely on your device.</p>
         
-        <h3>Step 2: Parse Layout Coordinates</h3>
-        <p>The parser begins analyzing text positions, font families, and bounding grids to group letters into words, words into sentences, and tabular regions into database-ready tables. This calculation runs client-side.</p>
-        
-        <h3>Step 3: Compile Flow Nodes</h3>
-        <p>The layout flow engine builds a structured DOCX file, wrapping paragraphs together and nesting tabular areas into proper tables instead of plain text spans.</p>
+        <h3>Step 2: Text Is Regrouped Into Paragraphs and Tables</h3>
+        <p>Fragments that sit on the same line are joined, and lines are rejoined into paragraphs with their indents, centering, bold, italics and font sizes. Where consecutive lines share columns of empty space running straight down the page, the converter writes a real Word table; where it is not confident, it uses tab stops instead, because a false table mangles ordinary prose worse than tabs mangle a table.</p>
+
+        <h3>Step 3: Figures Come Along as Images</h3>
+        <p>Diagrams, charts and logos are drawn as images and placed in the document. If the PDF has no text at all — a scan or a photo — the tool tells you so and points you to OCR, rather than handing you an empty Word file.</p>
         
         <h3>Step 4: Download and Edit</h3>
         <p>Click the download button to save the editable DOCX directly. Open it in Microsoft Word or Google Docs to begin modifications.</p>
       </div>
 
-      <h2>Best Practices for Perfect Conversion</h2>
+      <h2>Best Practices for a Clean Conversion</h2>
       <p>To achieve high layout fidelity, make sure your source document matches these characteristics:</p>
       <ul>
         <li><strong>Ensure Text is Selectable:</strong> If you cannot select or copy text in your source PDF, the file is a scanned image. Use our <a href="/image-to-text/">Image to Text OCR</a> first to extract text.</li>
-        <li><strong>Use Standard System Fonts:</strong> PDFs built with standard fonts like Arial, Calibri, or Helvetica translate without substituting layouts.</li>
+        <li><strong>Use Standard System Fonts:</strong> PDFs built with fonts Word already has, like Arial, Calibri or Times New Roman, keep their spacing; an unusual font gets swapped for a lookalike, which moves line breaks.</li>
         <li><strong>Limit Nested Overlays:</strong> Remove excessive background graphics or overlapping watermarks in the original application before printing to PDF.</li>
       </ul>
 
       <h2>Common Mistakes to Avoid</h2>
       <blockquote>
-        <strong>Warning: Never upload sensitive records to unknown online converters.</strong> Many cloud utilities copy your text data to external databases, exposing personal identification information (PII) or confidential financial formulas. ConvertOcean operates 100% locally, ensuring complete privacy.
+        <strong>Think before sending sensitive records to an online converter.</strong> A server-based converter receives a full copy of your file, and what happens to it next depends on that service's retention policy. ConvertOcean converts in your browser, so the file never leaves your device.
       </blockquote>
-      <p>Another common error is converting a heavily modified PDF multiple times. Every conversion adds rounding discrepancies to coordinate placements. Always use the original source file whenever possible.</p>
+      <p>Another common error is converting a document that has already made the round trip (PDF to Word to PDF to Word). Each pass is an approximation of the one before, so the errors stack. Start from the original file whenever you can.</p>
 
       <h2>After Converting: A Five-Minute Cleanup Checklist in Word</h2>
       <p>Even a good conversion benefits from a quick pass in Word before you start editing. This checklist catches the classic artifacts:</p>
@@ -104,7 +122,7 @@ export const guides: GuideData[] = [
     faqs: [
       {
         question: 'Why do my converted PDF tables look broken in Word?',
-        answer: 'This happens because PDFs do not have structural table tags; they only place text at specific coordinates. Standard converters translate columns to plain text separated by tabs. ConvertOcean groups bounding box alignments to reconstruct a proper table.'
+        answer: 'Most PDFs have no table structure inside them, only text placed at coordinates, so a converter has to infer the table from the layout. ConvertOcean looks for columns of empty space running down consecutive lines and writes a real Word table where it finds them. Where the evidence is weak it uses tab stops instead, which is why a table with irregular spacing can still arrive as tab-aligned text.'
       },
       {
         question: 'Can I convert a scanned PDF containing image-only pages to Word?',
@@ -112,7 +130,7 @@ export const guides: GuideData[] = [
       },
       {
         question: 'Is my data secure when converting documents on this site?',
-        answer: 'Yes. ConvertOcean processes all document formatting, text parsing, and DOCX compiling locally in your browser memory sandbox. Your files are never uploaded to any remote server or third-party database.'
+        answer: 'Yes. ConvertOcean reads the PDF and builds the DOCX in your browser, so the file never leaves your device.'
       },
       {
         question: 'Can I convert a password-protected PDF to Word?',
@@ -142,49 +160,49 @@ export const guides: GuideData[] = [
       <p>PDF documents are structured files with tables of references pointing to page trees, graphics, and embedded font blocks. Merging multiple PDFs involves more than stitching bytes; the merging software must:</p>
       <ul>
         <li><strong>Resolve Page Trees:</strong> Append the pages to the master reference table in the correct sequence.</li>
-        <li><strong>Consolidate Resources:</strong> Merge embedded fonts and image dictionaries to prevent duplicate data bloat.</li>
-        <li><strong>Maintain Interactive Elements:</strong> Re-map form fields, links, and navigation bookmarks so they point to the correct targets in the new combined file.</li>
+        <li><strong>Carry Resources Along:</strong> Copy each page's fonts and images with it, so the page renders exactly as it did in its original file.</li>
+        <li><strong>Decide What Happens to Document-Level Features:</strong> Bookmarks, form fields and links that jump between pages belong to the original file as a whole, not to a single page, so a merge has to rebuild them or drop them.</li>
       </ul>
 
       <h2>Step-by-Step: Merging PDFs on ConvertOcean</h2>
-      <p>ConvertOcean utilizes the local JavaScript library pdf-lib to merge documents directly on your device. Follow these steps:</p>
+      <p>ConvertOcean merges with pdf-lib, a JavaScript PDF library, directly in your browser. Follow these steps:</p>
       <div class="content-card">
-        <h3 style="margin-top: 0;">Step 1: Upload Multiple Files</h3>
-        <p>Open the <a href="/merge-pdf/">Merge PDF</a> utility. Drop all the PDF documents you want to combine. You can add files incrementally.</p>
-        
-        <h3>Step 2: Rearrange Pages</h3>
-        <p>Sort or order the documents using the drag handle grid interface. Ensure the sequence flows correctly (e.g., Cover Page followed by Content chapters).</p>
-        
-        <h3>Step 3: Process the Stream</h3>
-        <p>Click "Merge PDF." The local WebAssembly compiler merges page directories and references. The process takes less than a second.</p>
-        
+        <h3 style="margin-top: 0;">Step 1: Add Your Files in Order</h3>
+        <p>Open the <a href="/merge-pdf/">Merge PDF</a> tool and choose or drop your PDFs, up to 25 MB each. You can add more in several goes. The files join in the order you add them, so add the cover page first.</p>
+
+        <h3>Step 2: Check the Order</h3>
+        <p>The list shows the sequence the merged file will have. To move a file, remove it with its ✕ button and add it again: it goes to the end of the list.</p>
+
+        <h3>Step 3: Merge</h3>
+        <p>Click "Merge PDF". Every page of every file is copied into one new document, in list order. Small files finish almost instantly; a stack of large scans takes a few seconds.</p>
+
         <h3>Step 4: Download Your File</h3>
-        <p>Save the combined PDF locally. The sandbox memory is cleared once you download or close the tab.</p>
+        <p>Save the combined PDF. Nothing was sent anywhere, so there is no copy on a server to delete afterwards.</p>
       </div>
 
       <h2>Common Mistakes When Merging PDFs</h2>
       <ul>
         <li><strong>Merging Password-Protected Documents:</strong> Merging engines cannot parse encrypted documents. Decrypt or remove password protections before combining.</li>
         <li><strong>Ignoring File Size:</strong> Stitching dozens of high-resolution image PDFs creates a huge combined file. Compress your images before merging to keep the output file manageable.</li>
-        <li><strong>Losing Interactive Forms:</strong> Merging documents with identical form field names can cause values to duplicate. Rename fields or flatten forms if you notice fields mirroring each other.</li>
+        <li><strong>Expecting Bookmarks and Forms to Survive:</strong> The merged file has no bookmarks panel, links that jumped to another page of the original no longer work, and fillable form fields may not stay fillable. Web links come through. If a form matters, fill it in and print it to PDF (flatten it) before merging.</li>
       </ul>
 
       <h2>Best Practices for Document Compilation</h2>
-      <p>To compile clean documents, normalize page sizes and orientations beforehand. Merging a landscape slide deck with portrait letter reports can result in inconsistent display viewports. If necessary, convert pages to a uniform orientation using local layout tools.</p>
+      <p>Every page keeps its own size and orientation, so a landscape slide deck merged with portrait letters stays mixed: correct, but awkward to scroll and to print. If a uniform look matters, export the source documents at the same page size before merging.</p>
       <p>The reverse workflow is just as common: pulling a signed page out of a contract, or extracting a single chapter from a long report before merging it elsewhere. Our <a href="/split-pdf/">Split PDF</a> tool extracts selected pages or ranges into standalone files using the same client-side engine, so nothing is uploaded in either direction.</p>
     `,
     faqs: [
       {
         question: 'Is there a limit to how many PDF files I can merge at once?',
-        answer: 'Since ConvertOcean merges files locally in your browser memory sandbox, there is no arbitrary file count limit. The boundaries are determined by your device\'s hardware capability and system RAM.'
+        answer: 'There is no limit on the number of files. Each file can be up to 25 MB, and because the merge runs in your browser, the practical ceiling for the total is your device\'s memory: a phone handles less than a laptop.'
       },
       {
         question: 'Do my private documents remain secure during the merge?',
-        answer: 'Absolutely. The merging process runs completely client-side. No files, metadata, or document contents are transmitted over the network or uploaded to our servers.'
+        answer: 'Yes. The merge runs in your browser, so no file, page or piece of metadata is sent over the network.'
       },
       {
         question: 'Will merging files preserve internal links and bookmarks?',
-        answer: 'Yes. Our local layout parser copies document outlines, page indexes, and link definitions, updating their pointers to fit the combined file structure.'
+        answer: 'Partly. Web links drawn on the pages come through with them. The bookmarks panel does not: the merged PDF has no bookmarks, and links that jumped to another page of an original file stop working. If you need bookmarks, add them to the merged file in a PDF editor afterwards.'
       }
     ]
   },
@@ -242,18 +260,18 @@ export const guides: GuideData[] = [
       </div>
 
       <h2>Transparency and Alpha Channels</h2>
-      <p>If your layout requires a logo or illustration to sit transparently over a colored background, <strong>you must use PNG</strong>. PNG supports alpha transparency, allowing the background colors to show through. Saving a transparent logo as a JPG will automatically fill the transparent areas with a solid color, usually white, breaking your page design.</p>
+      <p>If your layout requires a logo or illustration to sit transparently over a colored background, <strong>JPG is out</strong>: you need a format with an alpha channel. PNG is the most widely supported one; WebP and AVIF support transparency too. Saving a transparent logo as a JPG will automatically fill the transparent areas with a solid color, usually white, breaking your page design.</p>
 
       <h2>When to Convert Image Formats</h2>
       <p>Understanding when to convert formats can improve web loading times and storage management:</p>
       <ul>
-        <li><strong>Convert PNG to JPG:</strong> If you take screenshots of photographic contents or save detailed photos as PNG, the file sizes will be massive. Convert them to JPG using our <a href="/png-to-jpg/">PNG to JPG Converter</a> to reduce storage up to 80% without noticeable quality loss.</li>
-        <li><strong>Convert JPG to PNG:</strong> If you need to edit an image containing clean typography, logos, or solid color fields, convert it to PNG using our <a href="/jpg-to-png/">JPG to PNG Converter</a> to prevent text blurring during layout adjustments.</li>
+        <li><strong>Convert PNG to JPG:</strong> If you take screenshots of photographic contents or save detailed photos as PNG, the file sizes will be massive. Converting them with our <a href="/png-to-jpg/">PNG to JPG Converter</a> at high quality typically shrinks the file to a fraction of its size, because lossless compression is a poor fit for photographic detail.</li>
+        <li><strong>Convert JPG to PNG:</strong> If you need to edit an image containing clean typography, logos, or solid color fields, convert it to PNG using our <a href="/jpg-to-png/">JPG to PNG Converter</a> so that repeated edits and saves stop adding new compression artifacts. It will not remove the ones already there.</li>
       </ul>
 
       <h2>Best Practices for Image Optimization</h2>
       <blockquote>
-        <strong>Tip: WebP is a next-generation replacement.</strong> WebP combines the best features of both formats, offering transparency support and file sizes 25-30% smaller than JPG. Consider converting your images to WebP for production web environments.
+        <strong>Tip: WebP is a next-generation replacement.</strong> WebP supports both lossy and lossless compression plus transparency, and Google's own comparison study found lossy WebP files 25–34% smaller than JPGs of equivalent quality. Consider converting your images to WebP for production web environments.
       </blockquote>
     `,
     faqs: [
@@ -408,26 +426,27 @@ export const guides: GuideData[] = [
       <p>The engine parses the page structure to isolate text regions from illustrations. It groups text into distinct columns, paragraphs, lines, and individual word blocks.</p>
 
       <h3>3. Character Recognition</h3>
-      <p>To identify individual characters, OCR engines use two main techniques:</p>
+      <p>Older OCR engines recognised one character at a time, in two ways:</p>
       <ul>
-        <li><strong>Matrix Matching:</strong> The engine compares a character shape against a database of built-in glyph templates. This works well for standard fonts but struggles with handwriting or distorted scans.</li>
-        <li><strong>Feature Detection:</strong> The engine breaks a character down into key geometric strokes (e.g., vertical lines, loops, intersections). For example, an uppercase "H" is identified by two parallel vertical lines joined by a horizontal bar. This is highly robust across different fonts.</li>
+        <li><strong>Matrix Matching:</strong> comparing each character's shape against stored templates of known glyphs. This works for standard fonts but fails on unfamiliar ones and on distorted scans.</li>
+        <li><strong>Feature Detection:</strong> breaking a character into strokes, loops and intersections. An uppercase "H" is two vertical lines joined by a horizontal bar, whatever the font.</li>
       </ul>
+      <p>Tesseract 4 and later, the version ConvertOcean runs, works differently: a neural network (an LSTM) reads a whole line of text at once, the way you read a word rather than spelling it out. That is why it copes far better with unusual fonts and with letters that touch.</p>
 
       <h3>4. Post-Processing & Dictionary Checks</h3>
-      <p>After recognizing characters, the engine matches words against a local dictionary to fix scanning errors (e.g., correcting "c0nvert" to "convert").</p>
+      <p>A language model then weighs the likely readings against the language's vocabulary, so an ambiguous "c0nvert" is more likely to come out as "convert". It is a tie-breaker, not a spell-checker: a clearly read but misspelled word stays as it was printed.</p>
 
       <h2>Step-by-Step: Extracting Text on ConvertOcean</h2>
-      <p>ConvertOcean uses WebAssembly to run the OCR engine directly inside your browser window. Here is how it works:</p>
+      <p>ConvertOcean runs Tesseract.js, a WebAssembly build of the Tesseract engine, directly in your browser. Here is how it works:</p>
       <div class="content-card">
-        <h3 style="margin-top: 0;">Step 1: Upload Scan or Screenshot</h3>
-        <p>Go to the <a href="/image-to-text/">Image to Text OCR</a> tool and select your file. The file loads in sandboxed memory.</p>
-        
-        <h3>Step 2: Recognize Characters Locally</h3>
-        <p>The WebAssembly library processes pixel arrays using your local device CPU. No pixel data is sent to external APIs.</p>
-        
+        <h3 style="margin-top: 0;">Step 1: Choose a Scan or Screenshot</h3>
+        <p>Go to the <a href="/image-to-text/">Image to Text OCR</a> tool and choose an image, up to 15 MB. It is opened by your browser and stays on your device.</p>
+
+        <h3>Step 2: Recognition Runs on Your Device</h3>
+        <p>The first run downloads the engine and its language data, which takes a moment; recognition then uses your own processor. The image is never sent to an OCR service.</p>
+
         <h3>Step 3: Review and Copy</h3>
-        <p>The extracted text displays in a secure edit field. Copy or download the output immediately. Your data remains completely private.</p>
+        <p>The recognised text appears in a text box. Read it through before using it — OCR is never perfect — then copy or download it.</p>
       </div>
 
       <h2>Factors That Affect OCR Accuracy</h2>
@@ -997,9 +1016,9 @@ export const guides: GuideData[] = [
   },
   {
     slug: 'us-sales-tax-by-state',
-    title: 'Sales Tax by State 2026 (All 50 States) | ConvertOcean',
-    description: 'Sales tax rates for all 50 states and DC as of July 1, 2026: state rate, average local rate, and combined rate — plus how to find your exact local rate.',
-    h1: 'Sales Tax by State: 2026 Rates for All 50 States.',
+    title: `Sales Tax by State ${DATA_YEAR} (All 50 States) | ConvertOcean`,
+    description: `Sales tax rates for all 50 states and DC as of ${AS_OF}: state rate, average local rate, and combined rate — plus how to find your exact local rate.`,
+    h1: `Sales Tax by State: ${DATA_YEAR} Rates for All 50 States.`,
     readTime: '8 min read',
     publishDate: 'July 27, 2026',
     relatedTools: ['sales-tax-calculator', 'invoice-generator', 'receipt-generator', 'profit-margin-calculator', 'percentage-calculator'],
@@ -1008,27 +1027,27 @@ export const guides: GuideData[] = [
     contentHtml: `
       <h2>A US Sales Tax Rate Is Two Numbers Added Together</h2>
       <p>Every rate on this page is built from two parts. The <strong>state rate</strong> is set by the legislature and applies everywhere in the state. The <strong>local rate</strong> is levied by counties, cities, and special-purpose districts — transit authorities, stadium districts, tourism zones — and it varies from one side of a street to the other. What a shopper pays at the register is the sum of the two, which is why the same product can cost more in one suburb than in the town next door.</p>
-      <p>That structure explains most of what looks strange in the table below. Colorado has one of the lowest state rates in the country at 2.90%, yet its combined rate is 7.89% — local governments there do nearly all the taxing. Louisiana's state rate is a middling 5.00%, but its local rates average 5.13% on top, giving it the highest combined rate in the nation. Meanwhile, states like Connecticut, Kentucky, Maine, Maryland, Massachusetts, and Michigan allow no local sales tax at all, so their combined rate is simply the state rate and is the same at every address.</p>
+      <p>That structure explains most of what looks strange in the table below. Colorado has one of the lowest state rates in the country at ${pct(CO.stateRate)}, yet its combined rate is ${pct(CO.combined)} — local governments there do nearly all the taxing. Louisiana's state rate is a middling ${pct(LA.stateRate)}, but its local rates average ${pct(LA.avgLocal)} on top, giving it the highest combined rate in the nation. Meanwhile, states like Connecticut, Kentucky, Maine, Maryland, Massachusetts, and Michigan allow no local sales tax at all, so their combined rate is simply the state rate and is the same at every address.</p>
 
       <h2>Sales Tax Rates by State (${AS_OF})</h2>
       <p>Rates below are from the ${SOURCE_NAME}'s <a href="${SOURCE_URL}" rel="nofollow noopener" target="_blank">${SOURCE_TITLE}</a>. "Avg. local" is a population-weighted average of the local rates in force across the state, and "Combined" is the state rate plus that average. Rank orders all 50 states by combined rate, 1 being the highest; D.C. is listed but not ranked among the states.</p>
       ${renderRateTableHtml()}
-      <p>Nationally, the population-weighted average combined rate is <strong>${US_AVERAGE_COMBINED.toFixed(2)}%</strong>. Between January and July 2026 no state changed its statewide rate; the movement in the table comes entirely from local rate changes.</p>
+      <p>Nationally, the population-weighted average combined rate is <strong>${pct(US_AVERAGE_COMBINED)}</strong>. ${CHANGE_NOTE}</p>
 
       <h2>What the "Average Local" Column Does Not Tell You</h2>
       <p>This is the most important caveat on the page, and the one most rate tables leave out. The average local rate is a <em>statistical summary of an entire state</em>, weighted by population. It is the right number for comparing states, forecasting, or estimating a budget. It is the wrong number for an invoice.</p>
-      <p>Nobody actually pays the average. A buyer in a Chicago collar county pays a different rate than a buyer in downstate Illinois, and both differ from the 8.98% Illinois average. If you are charging tax on a real transaction, you need the rate for that specific delivery address — not a state average, and not a ZIP-code lookup either. ZIP codes are postal routing shapes drawn by the USPS; they cross city, county, and district boundaries freely, so a single ZIP can contain two or three different tax rates. Rate services and state revenue departments resolve this with full street addresses and geocoding for exactly that reason.</p>
+      <p>Nobody actually pays the average. A buyer in a Chicago collar county pays a different rate than a buyer in downstate Illinois, and both differ from the ${pct(rate('Illinois').combined)} Illinois average. If you are charging tax on a real transaction, you need the rate for that specific delivery address — not a state average, and not a ZIP-code lookup either. ZIP codes are postal routing shapes drawn by the USPS; they cross city, county, and district boundaries freely, so a single ZIP can contain two or three different tax rates. Rate services and state revenue departments resolve this with full street addresses and geocoding for exactly that reason.</p>
       <blockquote>
         <strong>Rule of thumb</strong>
         Use the combined average to estimate, compare, or model. Use an address-level lookup from the state's revenue department to bill, collect, or file.
       </blockquote>
 
       <h2>The Five States With No Statewide Sales Tax</h2>
-      <p>Alaska, Delaware, Montana, New Hampshire, and Oregon levy no statewide sales tax. Four of them are genuinely tax-free at the register — but <strong>Alaska is not</strong>, and the distinction trips up sellers constantly. Alaska has no state-level tax while permitting its boroughs and municipalities to levy their own, which average 1.82% statewide and reach 7.85% in the highest-taxing localities. An Alaska shipment is not automatically exempt; it depends on the destination.</p>
+      <p>Alaska, Delaware, Montana, New Hampshire, and Oregon levy no statewide sales tax. Four of them are genuinely tax-free at the register — but <strong>Alaska is not</strong>, and the distinction trips up sellers constantly. Alaska has no state-level tax while permitting its boroughs and municipalities to levy their own, which average ${pct(AK.avgLocal)} statewide and reach ${pct(AK.maxLocal)} in the highest-taxing localities. An Alaska shipment is not automatically exempt; it depends on the destination.</p>
       <p>Delaware, Montana, New Hampshire, and Oregon do have narrower excise or lodging taxes on specific goods and services, so "no sales tax" means no general sales tax on retail goods, not the complete absence of consumption taxes.</p>
 
       <h2>New Jersey's Negative Local Rate</h2>
-      <p>New Jersey shows an average local rate of −0.02%, which looks like an error and is not. Qualifying sellers inside New Jersey's <strong>Urban Enterprise Zones</strong> collect sales tax at half the statewide rate — 3.3125% instead of 6.625% — a policy intended to help retailers near the border compete with sales-tax-free Delaware. Because those discounted zones pull the population-weighted statewide average slightly <em>below</em> the state rate, the local adjustment comes out negative. It is a real feature of the tax code showing up honestly in the arithmetic.</p>
+      <p>New Jersey shows an average local rate of ${pct(rate('New Jersey').avgLocal)}, which looks like an error and is not. Qualifying sellers inside New Jersey's <strong>Urban Enterprise Zones</strong> collect sales tax at half the statewide rate — 3.3125% instead of 6.625% — a policy intended to help retailers near the border compete with sales-tax-free Delaware. Because those discounted zones pull the population-weighted statewide average slightly <em>below</em> the state rate, the local adjustment comes out negative. It is a real feature of the tax code showing up honestly in the arithmetic.</p>
 
       <h2>Which Rate Applies: Destination vs. Origin</h2>
       <p>Once you know rates vary by address, the next question is <em>whose</em> address. Most states use <strong>destination sourcing</strong>: the applicable rate is the one where the customer takes delivery. Ship a desk from Reno to Las Vegas and you charge the Las Vegas rate. A minority of states apply <strong>origin sourcing</strong> to sales that stay inside the state, charging the rate at the seller's location instead — Texas is the most commonly cited example — and a few use hybrid rules that treat in-state and interstate sales differently.</p>
@@ -1057,20 +1076,20 @@ export const guides: GuideData[] = [
     `,
     faqs: [
       {
-        question: 'Which state has the highest sales tax in 2026?',
-        answer: 'Louisiana has the highest average combined state and local sales tax rate at 10.13%, followed by Tennessee (9.61%), Washington (9.57%), Arkansas (9.48%), and Alabama (9.46%). California has the highest statewide rate at 7.25%, but its lower average local rates put its combined rate at 9.03%.'
+        question: `Which state has the highest sales tax in ${DATA_YEAR}?`,
+        answer: `${TOP_FIVE[0].state} has the highest average combined state and local sales tax rate at ${pct(TOP_FIVE[0].combined)}, followed by ${TOP_FIVE.slice(1, 4).map(r => `${r.state} (${pct(r.combined)})`).join(', ')}, and ${TOP_FIVE[4].state} (${pct(TOP_FIVE[4].combined)}). California has the highest statewide rate at ${pct(CA.stateRate)}, but its lower average local rates put its combined rate at ${pct(CA.combined)}.`
       },
       {
         question: 'Which states have no sales tax?',
-        answer: 'Alaska, Delaware, Montana, New Hampshire, and Oregon have no statewide sales tax. Alaska is the exception worth knowing: it allows local governments to levy their own sales taxes, which average 1.82% and reach 7.85% in some localities, so purchases there are not automatically tax-free.'
+        answer: `Alaska, Delaware, Montana, New Hampshire, and Oregon have no statewide sales tax. Alaska is the exception worth knowing: it allows local governments to levy their own sales taxes, which average ${pct(AK.avgLocal)} and reach ${pct(AK.maxLocal)} in some localities, so purchases there are not automatically tax-free.`
       },
       {
         question: 'What is the average sales tax rate in the US?',
-        answer: 'The population-weighted average combined state and local sales tax rate is 7.53% as of July 1, 2026. That is a national average for comparison — it is not the rate at any particular address, and it should not be used to bill a customer.'
+        answer: `The population-weighted average combined state and local sales tax rate is ${pct(US_AVERAGE_COMBINED)} as of ${AS_OF}. That is a national average for comparison — it is not the rate at any particular address, and it should not be used to bill a customer.`
       },
       {
         question: 'Why is the sales tax rate different in two towns in the same state?',
-        answer: 'Because counties, cities, and special districts levy their own rates on top of the state rate. Colorado, for example, has a 2.90% state rate but local rates that push the combined rate to 7.89% on average and as high as 12% in some jurisdictions. Only states that prohibit local sales taxes have a single rate everywhere.'
+        answer: `Because counties, cities, and special districts levy their own rates on top of the state rate. Colorado, for example, has a ${pct(CO.stateRate)} state rate but local rates that push the combined rate to ${pct(CO.combined)} on average and as high as ${pct(CO.stateRate + CO.maxLocal)} in some jurisdictions. Only states that prohibit local sales taxes have a single rate everywhere.`
       },
       {
         question: 'Can I use a ZIP code to look up a sales tax rate?',
@@ -1086,7 +1105,7 @@ export const guides: GuideData[] = [
       },
       {
         question: 'How current are these rates?',
-        answer: 'They reflect state and average local rates as of July 1, 2026, from the Tax Foundation\'s midyear 2026 dataset. Local rates commonly change on January 1, April 1, July 1, and October 1, so verify with the state revenue department before relying on a figure for a filing.'
+        answer: `They reflect state and average local rates as of ${AS_OF}, from the ${SOURCE_NAME}'s “${SOURCE_TITLE}” report. Local rates commonly change on January 1, April 1, July 1, and October 1, so verify with the state revenue department before relying on a figure for a filing.`
       }
     ]
   },

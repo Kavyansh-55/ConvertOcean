@@ -928,5 +928,40 @@ async function stylesheetsFor(path) {
       '/pt/ FAQ states the real per-tool size limit');
 }
 
+/* -------------------------------------- pause-readiness (2026-10-03) */
+{
+  /* The page prose under both generators carried a real-looking person and a
+     real company domain (galactic.com) after the tools' own samples had moved
+     to fictional .example ones. */
+  const inv = (await get('/invoice-generator/')).body;
+  const rcpt = (await get('/receipt-generator/')).body;
+  say(![inv, rcpt].some(b => /Kavya J\. Studio|galactic\.com|kavyaj\.studio/.test(b)) &&
+      /Harbor (?:&amp;|&) Pine LLC \(accounts@harborpine\.example\)/.test(inv + rcpt),
+      'invoice + receipt article samples are fictional .example businesses');
+  /* The sales-tax guide's prose and FAQs are now read from the rate rows; the
+     rendered figures must still be the dataset's. */
+  const st = (await get('/guides/us-sales-tax-by-state/')).body;
+  say(/<title>Sales Tax by State \d{4} \(All 50 States\)/.test(st) &&
+      /Louisiana has the highest average combined state and local sales tax rate at \d+\.\d\d%/.test(st) &&
+      /Tax Foundation's “State and Local Sales Tax Rates/.test(st),
+      'sales-tax guide renders its year, ranking FAQ and source from the data file');
+
+  /* The four oldest guides described tools that do not exist: a drag-to-reorder
+     grid on Merge PDF, bookmarks that survive a merge (measured: they do not),
+     "WebAssembly layout mapping" in a pdf.js converter, template-matching OCR
+     in an LSTM engine — and two told the reader to "Upload". */
+  const mg = (await get('/guides/merge-multiple-pdf-files/')).body;
+  say(!/drag handle grid|copies document outlines|WebAssembly compiler|Step 1: Upload/.test(mg) &&
+      /Partly\. Web links drawn on the pages come through/.test(mg),
+      'merge guide: no reorder grid, honest bookmarks answer, no "Upload" step');
+  const pw = (await get('/guides/pdf-to-word-without-losing-formatting/')).body;
+  say(!/WebAssembly layout mapping|Compile Flow Nodes/.test(pw) && /pdf\.js \(Mozilla/.test(pw),
+      'pdf-to-word guide describes the real pdf.js converter');
+  const ocr = (await get('/guides/how-ocr-works/')).body;
+  say(!/Step 1: Upload/.test(ocr) && /an LSTM/.test(ocr), 'OCR guide: LSTM recognition, no "Upload" step');
+  const pj = (await get('/guides/png-vs-jpg/')).body;
+  say(!/up to 80%|25-30% smaller/.test(pj) && /25–34% smaller/.test(pj), 'png-vs-jpg guide cites Google’s WebP figure');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
