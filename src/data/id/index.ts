@@ -1274,7 +1274,7 @@ export const idTools: LocaleTool[] = [
       },
       {
         question: 'Bagaimana kalau saya perlu satu file PDF dari banyak foto?',
-        answer: 'Jika tujuannya satu lampiran berisi banyak foto — misalnya dokumen hasil foto untuk portal — <a href="/id/gambar-ke-pdf/">Gambar ke PDF</a> adalah alat yang tepat: satu foto per halaman, dengan pilihan ukuran halaman. Halaman ini untuk menyatukan foto menjadi satu gambar.'
+        answer: 'Jika tujuannya satu lampiran berisi banyak foto — misalnya dokumen hasil foto untuk portal — <a href="/id/gambar-ke-pdf/">Gambar ke PDF</a> adalah alat yang tepat: satu foto per halaman A4. Halaman ini untuk menyatukan foto menjadi satu gambar.'
       },
       {
         question: 'Apakah foto saya dikirim ke server?',
@@ -1478,6 +1478,227 @@ export const idTools: LocaleTool[] = [
 
       <h2>Urutannya adalah urutan file</h2>
       <p>Atur urutan file dengan ▲ dan ▼ sebelum digabung. Mengurutkan slide satu per satu setelahnya adalah pekerjaan PowerPoint. File .ppt lama perlu disimpan sebagai .pptx dulu, sama seperti di <a href="/id/ppt-ke-pdf/">PPT ke PDF</a>.</p>
+    `
+  },
+  {
+    en: 'image-to-pdf',
+    slug: 'gambar-ke-pdf',
+    name: 'Gambar ke PDF',
+    title: 'Gambar ke PDF Online Gratis — Ubah Foto Jadi PDF | ConvertOcean',
+    description: 'Ubah gambar ke PDF langsung di browser: JPG, PNG, dan WebP menjadi PDF dengan satu gambar per halaman, di laptop maupun HP. Gambar tidak keluar dari perangkat.',
+    headline: 'Gambar ke PDF.',
+    subtitle: 'Ubah foto dan dokumen yang difoto menjadi satu PDF — satu gambar per halaman, tanpa ada yang keluar dari perangkat Anda.',
+    quickAnswer: 'Untuk mengubah gambar ke PDF, pilih satu atau beberapa file JPG, PNG, atau WebP di alat di atas lalu unduh PDF-nya. Setiap gambar menjadi satu halaman A4 tegak, diperkecil agar muat tanpa ditarik, sesuai urutan Anda memilih file. Konversi terjadi di dalam browser dan gambar tidak keluar dari perangkat Anda — cara biasa mengubah foto dokumen menjadi lampiran yang diterima portal yang hanya menerima PDF.',
+    category: 'Alat PDF',
+    faqs: [
+      {
+        question: 'cara mengubah gambar ke pdf',
+        answer: 'Pilih gambar di alat di bagian atas halaman lalu unduh PDF-nya. Tanpa daftar akun, tanpa watermark, tanpa instalasi. Setiap gambar menempati satu halaman A4 tegak, di tengah dan diperkecil sampai muat dalam margin; gambar yang lebih kecil dari halaman tidak diperbesar, agar tidak buram.'
+      },
+      {
+        question: 'cara membuat gambar ke pdf',
+        answer: 'Format yang diterima: JPG, JPEG, PNG, dan WebP. Foto iPhone berformat HEIC perlu diubah ke JPG dulu — gunakan <a href="/id/heic-ke-jpg/">HEIC ke JPG</a> lalu kembali ke sini. Tangkapan layar PNG langsung bisa dan teksnya tetap tajam.'
+      },
+      {
+        question: 'cara menjadikan gambar ke pdf',
+        answer: 'Ketika portal tujuan hanya menerima PDF — pendaftaran CPNS, beasiswa, kampus, atau HRD — inilah langkah yang kurang. Isinya tidak berubah: gambar ditaruh di dalam halaman PDF dengan resolusi yang sama. Jika fotonya tidak terbaca, PDF-nya juga tidak; periksa fotonya dulu.'
+      },
+      {
+        question: 'Bagaimana menggabungkan beberapa gambar ke dalam satu PDF?',
+        answer: 'Pilih beberapa gambar sekaligus: semuanya masuk ke PDF yang sama, satu per halaman, sesuai urutan dipilih. Daftar tidak bisa digeser — jika ada yang salah tempat, hapus dengan ✕ lalu tambahkan lagi, dan gambar itu masuk ke akhir. Jika urutannya penting, cara paling aman adalah menambahkan satu gambar setiap kali.'
+      },
+      {
+        question: 'Bagaimana dengan foto KTP depan dan belakang?',
+        answer: 'Tambahkan foto depan dulu, lalu foto belakang: PDF keluar dengan dua halaman, sesuai urutan itu. Jika portal meminta depan dan belakang dalam satu halaman, caranya lain — gunakan <a href="/id/gabungkan-gambar/">Gabungkan Gambar</a> untuk menyusun satu gambar, lalu ubah gambar itu ke PDF di sini.'
+      },
+      {
+        question: 'cara buat gambar ke pdf',
+        answer: 'Di HP: buka halaman ini di browser, ketuk area pilih file, pilih foto dari galeri, lalu unduh PDF-nya — tanpa aplikasi. Untuk dokumen, foto dari depan dengan cahaya cukup dan tanpa bayangan di atas kertas; portal menolak gambar yang tidak terbaca, dan tidak ada konversi yang bisa mengembalikan yang tidak tertangkap foto.'
+      },
+      {
+        question: 'Apakah PDF-nya jadi terlalu besar?',
+        answer: 'Bisa, karena foto HP berukuran besar dan masuk ke PDF dengan resolusi aslinya. Jika portal punya batas — misalnya 1 MB atau 500 KB — jalankan hasilnya lewat <a href="/id/kompres-pdf/">Kompres PDF</a> dengan ukuran target, atau perkecil fotonya dulu dengan <a href="/id/ubah-ukuran-gambar/">Ubah Ukuran Gambar</a>.'
+      },
+      {
+        question: 'Apakah foto saya dikirim ke server?',
+        answer: 'Tidak. PDF disusun oleh browser Anda, di perangkat Anda sendiri. Foto dokumen pribadi tidak disalin ke mana pun dan kami tidak punya akses ke sana.'
+      }
+    ],
+    content: `
+      <h2>Gambar ke PDF, satu halaman per gambar</h2>
+      <p>Setiap file yang dipilih menjadi satu halaman A4 tegak dengan margin, dan gambar diperkecil sampai muat — tidak pernah diperbesar, karena memperbesar hanya membuatnya buram. Inilah format yang diharapkan portal ketika meminta dokumen "dalam PDF". <strong>Ubah gambar ke pdf</strong>, <strong>convert gambar ke pdf</strong>, dan <strong>scan gambar ke pdf</strong> dari foto HP semuanya dikerjakan di sini.</p>
+
+      <h2>Gabung gambar ke pdf: urutannya adalah urutan memilih</h2>
+      <p>Saat <strong>gabung gambar ke pdf</strong> atau <strong>gabungkan gambar jadi pdf</strong>, halaman mengikuti urutan file ditambahkan, bahkan ketika foto besar dan kecil dipilih bersamaan. Tidak ada seret-untuk-mengurutkan: untuk membetulkan posisi, hapus gambar lalu tambahkan lagi, dan ia masuk ke akhir daftar.</p>
+
+      <h2>Setelah konversi: ukuran dan penggabungan</h2>
+      <p>Jika PDF melebihi batas portal, <a href="/id/kompres-pdf/">kompres PDF-nya</a>. Jika perlu disatukan dengan dokumen lain yang sudah PDF, gunakan <a href="/id/gabungkan-pdf/">Gabungkan PDF</a>. Kedua langkah itu tidak mengirim file ke mana pun — <strong>gambar ke pdf gratis</strong>, tanpa upload.</p>
+    `
+  },
+  {
+    en: 'image-resizer',
+    slug: 'ubah-ukuran-gambar',
+    name: 'Ubah Ukuran Gambar',
+    title: 'Ubah Ukuran Gambar Online — Piksel atau KB (200 KB) | ConvertOcean',
+    description: 'Ubah ukuran gambar dalam piksel atau perkecil sampai ukuran file tertentu seperti 200 KB atau 1 MB, langsung di browser. Foto tidak keluar dari perangkat.',
+    headline: 'Ubah Ukuran Gambar.',
+    subtitle: 'Tentukan ukuran tepat dalam piksel, atau ukuran file target dalam KB — dan lihat hasilnya sebelum mengunduh.',
+    quickAnswer: 'Untuk ubah ukuran gambar, tentukan dimensi tepat dalam piksel — misalnya 354×472 untuk pas foto 3×4 cm pada 300 dpi — atau isi ukuran file target, seperti 200 KB. Alat ini mengodekan ulang gambar di browser Anda sendiri dan menampilkan ukuran akhirnya sebelum diunduh, jadi Anda bisa memastikan sudah di bawah batas portal. Foto tidak keluar dari perangkat Anda.',
+    category: 'Alat Gambar',
+    faqs: [
+      {
+        question: 'cara ubah ukuran gambar',
+        answer: 'Ada dua cara, dan keduanya menyelesaikan masalah berbeda. Per dimensi, ketika tujuan meminta ukuran tepat dalam piksel — pas foto, banner, tanda tangan hasil scan. Per ukuran file, ketika formulir menolak apa pun di atas sejumlah KB. Mencampur keduanya adalah penyebab paling umum mencoba berkali-kali tanpa berhasil. Rasio dikunci secara bawaan agar gambar tidak tertarik.'
+      },
+      {
+        question: 'Bagaimana ubah ukuran gambar dalam cm?',
+        answer: 'Alat ini bekerja dalam piksel, jadi ubah cm ke piksel dulu: piksel = cm × dpi ÷ 2,54. Pada 300 dpi (standar cetak), pas foto 3×4 cm = 354×472 px dan 4×6 cm = 472×709 px — keduanya ada sebagai tombol siap pakai di alat ini. Jika portal menyebut ukuran dalam piksel, pakai angka portal itu langsung.'
+      },
+      {
+        question: 'Bagaimana memperkecil gambar menjadi 200 KB atau 1 MB?',
+        answer: 'Gunakan mode "Kompres ke Ukuran File" dan isi 200 KB (atau 1024 KB untuk 1 MB). Alat mencari kualitas tertinggi yang masih di bawah batas, lalu menampilkan ukuran akhirnya sebelum Anda mengunduh. Jika gambar sudah di bawah batas pada kualitas maksimum, alat memberi tahu — target adalah batas atas, jadi lebih kecil itu baik.'
+      },
+      {
+        question: 'Apakah kualitasnya turun?',
+        answer: 'Memperkecil gambar mempertahankan kualitas dengan baik; memperbesar tidak. Saat diperkecil, piksel digabung dan hasilnya biasanya tetap tajam. Saat diperbesar, alat harus menciptakan piksel yang tidak ada, dan hasilnya buram — jadi selalu mulai dari file terbesar yang Anda punya.'
+      },
+      {
+        question: 'Format apa yang bisa dihasilkan?',
+        answer: 'JPG, JPEG, PNG, atau WebP. Untuk formulir pendaftaran, JPG biasanya paling aman dan paling kecil. Jika gambar asalnya PNG transparan dan hasilnya JPG, area transparan diratakan ke putih — yang justru diharapkan untuk pas foto.'
+      },
+      {
+        question: 'Apakah foto saya dikirim ke server?',
+        answer: 'Tidak. Pengubahan ukuran terjadi di browser Anda, di perangkat Anda sendiri, dan gambar tidak disalin ke server mana pun.'
+      }
+    ],
+    content: `
+      <h2>Per dimensi atau per ukuran file</h2>
+      <p>Keduanya masalah berbeda, dan mencampurnya membuat orang mencoba berkali-kali. <strong>Ubah ukuran gambar</strong> dalam piksel menyelesaikan kasus ketika tujuan meminta ukuran tepat. Mengisi target KB menyelesaikan kasus ketika formulir menolak file di atas berat tertentu, berapa pun dimensinya — <strong>ubah ukuran gambar menjadi 200 kb</strong> atau <strong>ubah ukuran gambar jadi 1 mb</strong>.</p>
+      <p>Alat ini melakukan keduanya — <strong>ubah ukuran gambar online</strong>, untuk <strong>ubah ukuran gambar jpg</strong> maupun <strong>ubah ukuran gambar png</strong> — dan menampilkan hasilnya sebelum diunduh.</p>
+
+      <h2>Ubah ukuran gambar cm, 3×4, dan 4×6</h2>
+      <p>Ukuran dalam sentimeter hanya bermakna bersama kepadatan cetaknya. Rumusnya: piksel = cm × dpi ÷ 2,54. Pada 300 dpi, pas foto 3×4 cm menjadi 354×472 piksel dan <strong>ubah ukuran gambar 4x6</strong> menjadi 472×709 piksel — keduanya tersedia sebagai tombol di alat. Menetapkan ukuran cm pada gambar beresolusi rendah tidak membuatnya layak cetak.</p>
+
+      <h2>Memperkecil aman, memperbesar tidak</h2>
+      <p>Memperkecil menggabungkan piksel dan biasanya tetap tajam. Memperbesar kebalikannya: alat harus menciptakan informasi yang tidak ada di file, dan hasilnya buram. Mulailah selalu dari file asli terbesar.</p>
+
+      <h2>Untuk portal pendaftaran</h2>
+      <p>Portal seperti pendaftaran CPNS, beasiswa, dan kampus biasanya meminta pas foto dan tanda tangan dalam batas KB tertentu. Kedua mode alat ini menanganinya, dan foto tidak keluar dari perangkat Anda.</p>
+    `
+  },
+  {
+    en: 'percentage-calculator',
+    slug: 'kalkulator-persentase',
+    name: 'Kalkulator Persentase',
+    title: 'Kalkulator Persentase — Cara Hitung Persentase Online | ConvertOcean',
+    description: 'Hitung persentase dari suatu nilai, kenaikan, diskon, dan selisih dua nilai, dengan rumus ditampilkan di samping setiap hasil.',
+    headline: 'Kalkulator Persentase.',
+    subtitle: 'Persentase dari nilai, kenaikan, diskon, dan selisih — dengan rumus ditampilkan di samping setiap hasil.',
+    quickAnswer: 'Untuk menghitung persentase dari suatu nilai, kalikan nilai dengan persentasenya lalu bagi 100: 15% dari 200 adalah (200 × 15) ÷ 100 = 30. Kalkulator di atas juga menghitung kenaikan, penurunan, selisih persentase antara dua nilai, serta menambah atau mengurangi persentase, dengan rumus lengkap di setiap hasil agar Anda bisa memeriksa perhitungannya.',
+    category: 'Alat Bisnis',
+    faqs: [
+      {
+        question: 'cara hitung persentase',
+        answer: 'Kalikan nilai dengan persentase lalu bagi 100. Untuk 15% dari 200: (200 × 15) ÷ 100 = 30. Jalan pintasnya: 10% dari 200 adalah 20, jadi 15% adalah 20 ditambah setengahnya, yaitu 30. Untuk mencari X adalah berapa persen dari Y, bagi X dengan Y lalu kali 100: 40 ÷ 200 × 100 = 20%.'
+      },
+      {
+        question: 'cara hitung persentase kenaikan',
+        answer: 'Bagi selisihnya dengan nilai awal lalu kali 100: dari Rp80.000 ke Rp100.000, kenaikannya (100.000 − 80.000) ÷ 80.000 × 100 = 25%. Kesalahan umum adalah membagi dengan nilai akhir, yang memberi 20%. Penyebutnya selalu nilai awal.'
+      },
+      {
+        question: 'cara hitung persentase kenaikan harga',
+        answer: 'Sama dengan rumus kenaikan: (harga baru − harga lama) ÷ harga lama × 100. Harga naik dari Rp12.000 ke Rp15.000 berarti naik 3.000 ÷ 12.000 = 25%. Perhatikan bahwa naik 25% lalu turun 25% tidak kembali ke harga semula: Rp15.000 turun 25% menjadi Rp11.250.'
+      },
+      {
+        question: 'cara hitung persentase kenaikan gaji',
+        answer: 'Gaji Rp5.000.000 naik menjadi Rp5.400.000: (5.400.000 − 5.000.000) ÷ 5.000.000 × 100 = 8%. Untuk menghitung gaji baru dari persentase kenaikan, kalikan gaji lama dengan (1 + persen ÷ 100): Rp5.000.000 × 1,08 = Rp5.400.000.'
+      },
+      {
+        question: 'cara hitung persentase diskon',
+        answer: 'Untuk harga yang dibayar, kalikan harga dengan (100 − diskon) ÷ 100: Rp250.000 diskon 30% menjadi 250.000 × 0,70 = Rp175.000. Untuk mencari besar diskon yang diberikan, bagi selisihnya dengan harga awal: dari Rp250.000 ke Rp175.000 adalah 75.000 ÷ 250.000 = 30%. Diskon bertingkat tidak dijumlahkan: 20% lalu 10% bukan 30%, melainkan 28%.'
+      },
+      {
+        question: 'cara hitung persentase keuntungan',
+        answer: 'Bagi keuntungan dengan dasar yang Anda pilih, lalu kali 100 — dan dasarnya menentukan jawabannya. Terhadap harga modal (markup): beli Rp60.000 jual Rp100.000, untungnya 40.000 ÷ 60.000 = 66,67%. Terhadap harga jual (margin): 40.000 ÷ 100.000 = 40%. Keduanya benar, tetapi bukan hal yang sama.'
+      },
+      {
+        question: 'cara hitung persentase kehadiran siswa',
+        answer: 'Bagi jumlah hari hadir dengan jumlah hari efektif, lalu kali 100. Siswa hadir 92 dari 100 hari efektif: 92 ÷ 100 × 100 = 92%. Untuk kehadiran satu kelas dalam sehari, bagi jumlah siswa yang hadir dengan jumlah seluruh siswa: 30 dari 32 siswa = 93,75%.'
+      },
+      {
+        question: 'cara hitung persentase dari total',
+        answer: 'Bagi bagian dengan total, lalu kali 100. Dari total penjualan Rp20.000.000, produk A menyumbang Rp5.000.000: 5.000.000 ÷ 20.000.000 × 100 = 25%. Jumlah persentase semua bagian harus 100% — cara cepat memeriksa perhitungan.'
+      },
+      {
+        question: 'cara hitung persentase di excel',
+        answer: 'Dengan nilai di A1, ketik =A1*15% atau =A1*0,15 — keduanya sama. Untuk perubahan persentase antara A1 (awal) dan B1 (akhir), pakai =(B1-A1)/A1 lalu format sel sebagai persen. Jika hasilnya tampil 0,25 alih-alih 25%, itu hanya soal format: terapkan format Percentage pada sel. Di Excel berbahasa Indonesia, pemisah argumen biasanya titik koma.'
+      },
+      {
+        question: 'cara menghitung persentase di kalkulator',
+        answer: 'Di kalkulator biasa, tombol % sudah membagi dengan 100. Untuk 15% dari 200, tekan 200 × 15 %. Untuk menambah 15%, tekan 200 + 15 % dan hasilnya 230. Untuk mengurangi, 200 − 15 % menghasilkan 170. Urutannya berbeda antar model, jadi coba dulu dengan hitungan yang hasilnya sudah Anda ketahui.'
+      }
+    ],
+    content: `
+      <h2>Rumus hitung persentase, dan kesalahan yang hampir semua orang lakukan</h2>
+      <p>Menghitung persentase dari suatu nilai itu langsung: nilai × persen ÷ 100. Yang menjebak adalah <strong>perubahan</strong> persentase, karena bergantung pada angka mana yang menjadi penyebut — itulah inti dari <strong>rumus hitung persentase</strong> apa pun.</p>
+      <p>Dari Rp80.000 ke Rp100.000 ada kenaikan 25% — selisih 20.000 atas dasar 80.000. Tetapi dari Rp100.000 ke Rp80.000 penurunannya 20%, bukan 25%, karena dasarnya sekarang 100.000. Itulah sebabnya diskon bertingkat tidak pernah dijumlahkan.</p>
+
+      <h2>Hitung persentase kenaikan, keuntungan, dan diskon</h2>
+      <p>Untuk <strong>hitung persentase kenaikan</strong>, penyebutnya nilai awal. Untuk <strong>hitung persentase keuntungan</strong>, penyebutnya menentukan nama hasilnya: terhadap harga jual disebut margin, terhadap modal disebut markup. <a href="/profit-margin-calculator/">Profit Margin Calculator</a> (dalam bahasa Inggris) membahasnya lebih rinci.</p>
+
+      <h2>Tombol % bukan angka</h2>
+      <p>Inilah sumber kebingungan saat memakai kalkulator. Tombol % mengubah apa yang ada sebelumnya, bukan menambahkan nilai. Karena itu 200 + 15 % menghasilkan 230: kalkulator membacanya sebagai "tambahkan 15% dari 200", bukan "tambah 15".</p>
+
+      <h2>Rumusnya selalu terlihat</h2>
+      <p><strong>Kalkulator persentase</strong> ini menampilkan setiap hasil bersama perhitungannya, agar Anda bisa memeriksa, bukan sekadar percaya. Dan seperti di seluruh situs ini, perhitungan terjadi di browser — <strong>hitung persentase online</strong> tanpa ada angka yang disalin ke server.</p>
+    `
+  },
+  {
+    en: 'word-counter',
+    slug: 'penghitung-kata',
+    name: 'Penghitung Kata',
+    title: 'Penghitung Kata Online — Hitung Jumlah Kata & Karakter | ConvertOcean',
+    description: 'Hitung jumlah kata, karakter dengan dan tanpa spasi, waktu baca, dan kata yang sering muncul sambil mengetik. Teks tidak keluar dari browser Anda.',
+    headline: 'Hitung Jumlah Kata.',
+    subtitle: 'Kata, karakter, waktu baca, dan frekuensi kata — diperbarui saat Anda menulis.',
+    quickAnswer: 'Untuk hitung jumlah kata, tempel atau ketik teks di alat di atas dan lihat langsung jumlah kata, jumlah karakter dengan dan tanpa spasi, perkiraan waktu baca dan waktu bicara, serta kata yang paling sering muncul. Berguna untuk esai, tugas kuliah, abstrak skripsi, dan unggahan dengan batas karakter. Teks tidak keluar dari browser Anda.',
+    category: 'Alat Developer',
+    faqs: [
+      {
+        question: 'cara hitung jumlah kata',
+        answer: 'Tempel atau ketik teks di kotak di atas: jumlah kata, karakter, kalimat, dan paragraf diperbarui saat Anda menulis. Tidak perlu menekan tombol apa pun. Teks bahasa Indonesia dihitung sama seperti bahasa lain — kata dipisahkan oleh spasi.'
+      },
+      {
+        question: 'cara hitung jumlah kata di word',
+        answer: 'Di Microsoft Word, jumlah kata tampil di status bar, pojok kiri bawah jendela — jika tidak terlihat, klik kanan status bar dan centang "Word Count". Untuk rincian lengkap dengan karakter dan paragraf, buka tab Review lalu klik Word Count. Di sini Anda mendapat hal yang sama ditambah karakter tanpa spasi, waktu baca, dan frekuensi kata, tanpa membuka Word.'
+      },
+      {
+        question: 'cara hitung jumlah kata di google docs',
+        answer: 'Di Google Docs, buka menu Tools › Word count, atau tekan Ctrl+Shift+C (Cmd+Shift+C di Mac). Centang "Display word count while typing" agar jumlahnya tampil terus di pojok bawah. Hasilnya bisa sedikit berbeda dari penghitung lain karena cara memperlakukan tanda hubung dan angka.'
+      },
+      {
+        question: 'Apakah karakter dengan dan tanpa spasi dihitung?',
+        answer: 'Ya, kedua angka tampil terpisah — dan perbedaannya penting. Batas esai beasiswa dan lomba biasanya menghitung kata atau karakter dengan spasi; kolom sistem dan meta description sering tanpa spasi. Memakai angka yang salah membuat teks ditolak hanya karena beberapa karakter.'
+      },
+      {
+        question: 'Apakah teks yang saya tempel tersimpan?',
+        answer: 'Tidak. Penghitungan terjadi di browser Anda saat mengetik, dan tidak ada yang disalin ke server atau disimpan. Ini lebih penting dari kelihatannya untuk alat teks: esai, naskah yang belum terbit, dan draf kontrak melewati alat ini.'
+      },
+      {
+        question: 'Bagaimana waktu baca dihitung?',
+        answer: 'Dari kecepatan baca rata-rata yang diterapkan pada jumlah kata. Ini perkiraan yang berguna untuk merencanakan artikel atau presentasi, bukan ukuran pasti — kecepatan nyata sangat bergantung pada kepadatan teks dan pembacanya.'
+      }
+    ],
+    content: `
+      <h2>Lebih dari sekadar jumlah kata</h2>
+      <p><strong>Penghitung kata</strong> yang berguna harus memisahkan karakter dengan dan tanpa spasi, karena batas di dunia nyata memakai keduanya. Esai beasiswa, abstrak skripsi, dan caption media sosial punya aturan berbeda. Perbedaan inilah yang membuat teks yang tampaknya sudah di bawah batas tetap ditolak.</p>
+      <p><strong>Hitung jumlah kata online</strong> di sini berjalan langsung saat Anda mengetik — termasuk untuk <strong>hitung jumlah kata teks bahasa indonesia</strong>, karena kata dihitung dari spasi, bukan dari kamus.</p>
+
+      <h2>Kata yang paling sering muncul</h2>
+      <p>Daftar frekuensi kata menunjukkan istilah mana yang berulang dan seberapa sering. Bagi penulis web, ini menggantikan membaca keras-keras untuk menangkap pengulangan yang tidak disengaja.</p>
+
+      <h2>Penghitung kata di Word dan Google Docs</h2>
+      <p>Di Word, jumlahnya ada di status bar kiri bawah, dan rinciannya di tab Review › Word Count. Di Google Docs, Tools › Word count. Di sini penghitungannya langsung, dengan karakter tanpa spasi, waktu baca, dan frekuensi kata, tanpa perlu membuka dokumen — <strong>alat penghitung kata</strong> yang tidak menyimpan apa pun.</p>
     `
   }
 ];

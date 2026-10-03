@@ -47,6 +47,9 @@ const pt: Record<string, string> = {
   'ConvertOcean — convert files, upload nothing. 67 free tools that run inside your browser tab.':
     'ConvertOcean — converta arquivos sem enviar nada. 67 ferramentas gratuitas que funcionam dentro da aba do navegador.',
   'Toggle dark mode': 'Alternar modo escuro',
+  /* Image resizer presets shown on Indonesian pages only. */
+  'Photo 3×4 cm (300 dpi)': 'Foto 3×4 cm (300 dpi)',
+  'Photo 4×6 cm (300 dpi)': 'Foto 4×6 cm (300 dpi)',
   'Open navigation menu': 'Abrir menu de navegação',
 
   // ---- Tool page furniture --------------------------------------------

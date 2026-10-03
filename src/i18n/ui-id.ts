@@ -10,6 +10,8 @@
  * words Indonesians use as-is stay English: file, PDF, Word, Excel, online.
  */
 export const idUi: Record<string, string> = {
+  "Photo 3×4 cm (300 dpi)": "Pas Foto 3×4 cm (300 dpi)",
+  "Photo 4×6 cm (300 dpi)": "Pas Foto 4×6 cm (300 dpi)",
   "Home": "Beranda",
   "File Converter": "Konverter File",
   "PDF & Merge": "PDF & Gabungkan",
