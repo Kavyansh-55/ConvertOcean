@@ -69,7 +69,12 @@ export const noDemand: { en: string; seen: string }[] = [
   { en: 'xlsx-to-json', seen: 'no keyword ideas (earlier spreadsheet)' },
   { en: 'xml-to-csv', seen: 'no keyword ideas (earlier spreadsheet)' },
   { en: 'xml-to-xlsx', seen: 'no keyword ideas (earlier spreadsheet)' },
-  { en: 'pdf-to-txt', seen: '10 keywords, all <100 (`pdf ke txt`, `ubah pdf ke txt`…)' }
+  { en: 'pdf-to-txt', seen: '10 keywords, all <100 (`pdf ke txt`, `ubah pdf ke txt`…)' },
+
+  { en: 'invoice-generator', seen: '`pembuat faktur` family: 7 keywords, all <100, and `aplikasi pembuat faktur pajak` is regulated. Re-research as `contoh invoice` / `template invoice` / `format invoice` before deciding' },
+  { en: 'receipt-generator', seen: '`buat tanda terima` family: 9 keywords, all <100. "tanda terima" is a delivery acknowledgment; re-research as `kwitansi` (`contoh kwitansi`, `kwitansi pembayaran`) before deciding' },
+  { en: 'profit-margin-calculator', seen: '`hitung margin laba`: 3 keywords, all <100. Re-research `rumus margin keuntungan` / `cara menghitung margin` before deciding' },
+  { en: 'break-even-calculator', seen: '`hitung titik impas`: 5 keywords, all <100. Indonesians say BEP — re-research `cara menghitung bep` / `rumus bep` before deciding' }
 ];
 
 /* Recorded, not targeted. A competitor's brand inside the query. */
@@ -80,7 +85,9 @@ export const excluded: { term: string; why: string }[] = [
   { term: 'pisahkan pdf i love pdf', why: 'brand-navigational (iLovePDF), >100' },
   { term: 'cara kompres pdf di nitro', why: 'a how-to for Nitro PDF desktop software, >100' },
   { term: 'cara kompres ppt canva', why: 'a how-to inside Canva, <100' },
-  { term: 'cara kompres file powerpoint 2010', why: 'a how-to inside PowerPoint 2010, <100' }
+  { term: 'cara kompres file powerpoint 2010', why: 'a how-to inside PowerPoint 2010, <100' },
+
+  { term: 'cara kompres file word 2010', why: 'a how-to inside Word 2010, <100' }
 ];
 
 /* The query asks for something the tool does not do. */
@@ -104,7 +111,11 @@ export const intentMismatch: { term: string; kd: string; volume: string; wants: 
   { term: 'kompres powerpoint ke word', kd: 'n/a', volume: '<100',
     wants: 'PowerPoint to Word — no tool.' },
   { term: 'kompres powerpoint ke jpg', kd: 'n/a', volume: '<100',
-    wants: 'slides as images — no tool.' }
+    wants: 'slides as images — no tool.' },
+
+  { term: 'kompres excel ke word', kd: 'Easy', volume: '>100', wants: 'Excel to Word — no tool.' },
+  { term: 'kompres word ke jpg', kd: 'Easy', volume: '>100', wants: 'Word pages as images — no tool.' },
+  { term: 'kalkulator persentase lemak tubuh', kd: 'Easy', volume: '<100', wants: 'a body-fat calculator, not a percentage calculator.' }
 ];
 
 /* A real query, filed under a different page than the export put it. */
@@ -119,7 +130,16 @@ export const belongsElsewhere: { term: string; kd: string; volume: string; page:
   { term: 'kompres ppt ke pdf', kd: 'Easy', volume: '>100', page: 'pptx-to-pdf' },
   { term: 'kompres powerpoint ke pdf', kd: 'Easy', volume: '<100', page: 'pptx-to-pdf' },
   { term: 'kompres powerpoint to pdf', kd: 'n/a', volume: '<100', page: 'pptx-to-pdf' },
-  { term: 'cara gabungkan jpg ke pdf', kd: 'n/a', volume: '<100', page: 'image-to-pdf' }
+  { term: 'cara gabungkan jpg ke pdf', kd: 'n/a', volume: '<100', page: 'image-to-pdf' },
+
+  { term: 'kompres excel to pdf', kd: 'Easy', volume: '<100', page: 'excel-to-pdf' },
+  { term: 'kompres word ke pdf', kd: 'Easy', volume: '>10,000', page: 'word-to-pdf' },
+  { term: 'kompres word to pdf', kd: 'Easy', volume: '>1000', page: 'word-to-pdf' },
+  { term: 'kompres word ke pdf gratis', kd: 'Easy', volume: '>100', page: 'word-to-pdf' },
+  { term: 'cara kompres word ke pdf', kd: 'Easy', volume: '<100', page: 'word-to-pdf' },
+  { term: 'cara kompres file word ke pdf', kd: 'n/a', volume: '<100', page: 'word-to-pdf' },
+  { term: 'cara kompres pdf ke word', kd: 'Medium', volume: '<100', page: 'pdf-to-word' },
+  { term: 'cara kompres file pdf ke word', kd: 'Easy', volume: '<100', page: 'pdf-to-word' }
 ];
 
 export const pageKeywords: PageKeywords[] = [
@@ -380,6 +400,97 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'kompres ppt sesuai ukuran yang diinginkan', kd: 'n/a', volume: '<100' },
       { term: 'cara kompres powerpoint', kd: 'Easy', volume: '<100' },
       { term: 'cara kompres powerpoint online', kd: 'n/a', volume: '<100' }
+    ]
+  },
+
+  {
+    slug: 'kompres-excel',
+    en: 'compress-excel',
+    primary: 'kompres excel',
+    phrase: [
+      { term: 'kompres excel', kd: 'Easy', volume: '>1000' },
+      { term: 'kompres excel 10 mb', kd: 'n/a', volume: '>100' },
+      { term: 'kompres excel online', kd: 'Easy', volume: '>100' },
+      { term: 'kompres excel ke ukuran kecil', kd: 'n/a', volume: '>100' },
+      { term: 'kompres excel lebih kecil', kd: 'Easy', volume: '>100' },
+      { term: 'kompres excel 2 mb', kd: 'n/a', volume: '>100' },
+      { term: 'kompres excel ke excel', kd: 'Easy', volume: '>100' },
+      { term: 'kompres excel jadi kecil', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara kompres file excel', kd: 'Easy', volume: '>100' },
+      { term: 'cara kompres excel', kd: 'Easy', volume: '<100' },
+      { term: 'cara kompres file excel menjadi kecil', kd: 'n/a', volume: '<100' },
+      { term: 'cara kompres excel ke ukuran kecil', kd: 'n/a', volume: '<100' },
+      /* Answered truthfully: the image pass re-encodes oversized pictures,
+         but most of a big workbook's size is the empty formatted range. */
+      { term: 'cara kompres foto di excel', kd: 'n/a', volume: '<100' },
+      { term: 'cara kompres file excel yang terlalu besar', kd: 'n/a', volume: '<100' },
+      { term: 'cara kompres file excel yang besar', kd: 'n/a', volume: '<100' },
+      { term: 'cara kompres data excel', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'kompres-word',
+    en: 'compress-word',
+    primary: 'kompres word',
+    phrase: [
+      { term: 'kompres word', kd: 'Easy', volume: '>10,000' },
+      { term: 'kompres word 1 mb', kd: 'Easy', volume: '>100' },
+      { term: 'kompres word ukuran kecil online', kd: 'Easy', volume: '>100' },
+      { term: 'kompres word 10 mb', kd: 'Easy', volume: '>100' },
+      { term: 'kompres word ke word', kd: 'Easy', volume: '>100' },
+      { term: 'kompres word online', kd: 'Easy', volume: '>100' },
+      { term: 'kompres word 2 mb', kd: 'n/a', volume: '>100' }
+    ],
+    questions: [
+      { term: 'cara kompres file word', kd: 'Easy', volume: '>100' },
+      { term: 'cara kompres word', kd: 'Easy', volume: '>100' },
+      { term: 'cara kompres word jadi kecil', kd: 'n/a', volume: '<100' },
+      { term: 'cara kompres file word di hp', kd: 'n/a', volume: '<100' },
+      { term: 'cara kompres file word menjadi kecil', kd: 'n/a', volume: '<100' },
+      { term: 'cara kompres foto di word', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    /* Two seeds were researched: "kalkulator persentase" (the tool's name,
+       >1000) and "hitung persentase" (the task, >1000, 130 ideas). The task
+       set is the larger one — the lesson from Portuguese `modelo de recibo`. */
+    slug: 'kalkulator-persentase',
+    en: 'percentage-calculator',
+    primary: 'kalkulator persentase',
+    phrase: [
+      { term: 'kalkulator persentase', kd: 'Easy', volume: '>1000' },
+      { term: 'hitung persentase', kd: 'Medium', volume: '>1000' },
+      { term: 'hitung persentase online', kd: 'Easy', volume: '>100' },
+      { term: 'rumus hitung persentase', kd: 'Easy', volume: '>100' },
+      { term: 'hitung persentase kenaikan', kd: 'Easy', volume: '>100' },
+      { term: 'hitung persentase keuntungan', kd: 'Easy', volume: '<100' },
+      { term: 'kalkulator persentase kenaikan', kd: 'Easy', volume: '<100' },
+      { term: 'kalkulator persentase online', kd: 'Easy', volume: '<100' },
+      { term: 'kalkulator persentase keuntungan', kd: 'n/a', volume: '<100' },
+      { term: 'kalkulator persentase penurunan', kd: 'n/a', volume: '<100' },
+      { term: 'kalkulator persentase diskon', kd: 'n/a', volume: '<100' },
+      { term: 'kalkulator persentase harga', kd: 'n/a', volume: '<100' },
+      { term: 'kalkulator persentase untung', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara hitung persentase', kd: 'Easy', volume: '>1000' },
+      /* Answered with the Excel formula itself — a true answer, and the
+         calculator is the check on it. */
+      { term: 'cara hitung persentase di excel', kd: 'Easy', volume: '>100' },
+      { term: 'cara hitung persentase keuntungan', kd: 'Easy', volume: '>100' },
+      { term: 'cara hitung persentase kenaikan', kd: 'Easy', volume: '>100' },
+      { term: 'cara hitung persentase kenaikan harga', kd: 'Easy', volume: '>100' },
+      { term: 'cara hitung persentase kehadiran', kd: 'Easy', volume: '<100' },
+      { term: 'cara hitung kenaikan persentase', kd: 'Easy', volume: '<100' },
+      { term: 'cara hitung persentase diskon', kd: 'Easy', volume: '<100' },
+      { term: 'cara hitung persentase dari total', kd: 'Easy', volume: '<100' },
+      { term: 'cara hitung persentase kehadiran siswa', kd: 'Easy', volume: '<100' },
+      { term: 'cara hitung persentase kenaikan gaji', kd: 'n/a', volume: '<100' },
+      { term: 'cara menghitung persentase di kalkulator', kd: 'Easy', volume: '<100' },
+      { term: 'cara mencari persentase di kalkulator', kd: 'n/a', volume: '<100' },
+      { term: 'cara menghitung persentase dengan kalkulator', kd: 'n/a', volume: '<100' }
     ]
   }
 ];
