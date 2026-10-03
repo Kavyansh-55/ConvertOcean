@@ -4,8 +4,26 @@ import {
   SOURCE_NAME,
   SOURCE_TITLE,
   SOURCE_URL,
-  US_AVERAGE_COMBINED
+  US_AVERAGE_COMBINED,
+  DATA_YEAR,
+  CHANGE_NOTE,
+  pct,
+  rate,
+  byCombinedRank
 } from './us-sales-tax-rates';
+
+/* The sales-tax guide states rates in prose and FAQs, and those figures are
+   read from the same rows as the table, so a data refresh cannot leave the
+   text contradicting it. Two sentences rest on rankings rather than figures;
+   if a refresh makes them false the build stops here instead of publishing. */
+const CO = rate('Colorado'), LA = rate('Louisiana'), AK = rate('Alaska'), CA = rate('California');
+if (byCombinedRank[0].state !== 'Louisiana') {
+  throw new Error(`us-sales-tax-by-state guide: ${byCombinedRank[0].state} now has the highest combined rate — rewrite the "Louisiana ... highest combined rate" sentence.`);
+}
+if (Math.max(...byCombinedRank.map(r => r.stateRate)) !== CA.stateRate) {
+  throw new Error('us-sales-tax-by-state guide: California no longer has the highest statewide rate — rewrite the highest-rate FAQ.');
+}
+const TOP_FIVE = byCombinedRank.slice(0, 5);
 
 export interface GuideData {
   slug: string;
@@ -997,9 +1015,9 @@ export const guides: GuideData[] = [
   },
   {
     slug: 'us-sales-tax-by-state',
-    title: 'Sales Tax by State 2026 (All 50 States) | ConvertOcean',
-    description: 'Sales tax rates for all 50 states and DC as of July 1, 2026: state rate, average local rate, and combined rate — plus how to find your exact local rate.',
-    h1: 'Sales Tax by State: 2026 Rates for All 50 States.',
+    title: `Sales Tax by State ${DATA_YEAR} (All 50 States) | ConvertOcean`,
+    description: `Sales tax rates for all 50 states and DC as of ${AS_OF}: state rate, average local rate, and combined rate — plus how to find your exact local rate.`,
+    h1: `Sales Tax by State: ${DATA_YEAR} Rates for All 50 States.`,
     readTime: '8 min read',
     publishDate: 'July 27, 2026',
     relatedTools: ['sales-tax-calculator', 'invoice-generator', 'receipt-generator', 'profit-margin-calculator', 'percentage-calculator'],
@@ -1008,27 +1026,27 @@ export const guides: GuideData[] = [
     contentHtml: `
       <h2>A US Sales Tax Rate Is Two Numbers Added Together</h2>
       <p>Every rate on this page is built from two parts. The <strong>state rate</strong> is set by the legislature and applies everywhere in the state. The <strong>local rate</strong> is levied by counties, cities, and special-purpose districts — transit authorities, stadium districts, tourism zones — and it varies from one side of a street to the other. What a shopper pays at the register is the sum of the two, which is why the same product can cost more in one suburb than in the town next door.</p>
-      <p>That structure explains most of what looks strange in the table below. Colorado has one of the lowest state rates in the country at 2.90%, yet its combined rate is 7.89% — local governments there do nearly all the taxing. Louisiana's state rate is a middling 5.00%, but its local rates average 5.13% on top, giving it the highest combined rate in the nation. Meanwhile, states like Connecticut, Kentucky, Maine, Maryland, Massachusetts, and Michigan allow no local sales tax at all, so their combined rate is simply the state rate and is the same at every address.</p>
+      <p>That structure explains most of what looks strange in the table below. Colorado has one of the lowest state rates in the country at ${pct(CO.stateRate)}, yet its combined rate is ${pct(CO.combined)} — local governments there do nearly all the taxing. Louisiana's state rate is a middling ${pct(LA.stateRate)}, but its local rates average ${pct(LA.avgLocal)} on top, giving it the highest combined rate in the nation. Meanwhile, states like Connecticut, Kentucky, Maine, Maryland, Massachusetts, and Michigan allow no local sales tax at all, so their combined rate is simply the state rate and is the same at every address.</p>
 
       <h2>Sales Tax Rates by State (${AS_OF})</h2>
       <p>Rates below are from the ${SOURCE_NAME}'s <a href="${SOURCE_URL}" rel="nofollow noopener" target="_blank">${SOURCE_TITLE}</a>. "Avg. local" is a population-weighted average of the local rates in force across the state, and "Combined" is the state rate plus that average. Rank orders all 50 states by combined rate, 1 being the highest; D.C. is listed but not ranked among the states.</p>
       ${renderRateTableHtml()}
-      <p>Nationally, the population-weighted average combined rate is <strong>${US_AVERAGE_COMBINED.toFixed(2)}%</strong>. Between January and July 2026 no state changed its statewide rate; the movement in the table comes entirely from local rate changes.</p>
+      <p>Nationally, the population-weighted average combined rate is <strong>${pct(US_AVERAGE_COMBINED)}</strong>. ${CHANGE_NOTE}</p>
 
       <h2>What the "Average Local" Column Does Not Tell You</h2>
       <p>This is the most important caveat on the page, and the one most rate tables leave out. The average local rate is a <em>statistical summary of an entire state</em>, weighted by population. It is the right number for comparing states, forecasting, or estimating a budget. It is the wrong number for an invoice.</p>
-      <p>Nobody actually pays the average. A buyer in a Chicago collar county pays a different rate than a buyer in downstate Illinois, and both differ from the 8.98% Illinois average. If you are charging tax on a real transaction, you need the rate for that specific delivery address — not a state average, and not a ZIP-code lookup either. ZIP codes are postal routing shapes drawn by the USPS; they cross city, county, and district boundaries freely, so a single ZIP can contain two or three different tax rates. Rate services and state revenue departments resolve this with full street addresses and geocoding for exactly that reason.</p>
+      <p>Nobody actually pays the average. A buyer in a Chicago collar county pays a different rate than a buyer in downstate Illinois, and both differ from the ${pct(rate('Illinois').combined)} Illinois average. If you are charging tax on a real transaction, you need the rate for that specific delivery address — not a state average, and not a ZIP-code lookup either. ZIP codes are postal routing shapes drawn by the USPS; they cross city, county, and district boundaries freely, so a single ZIP can contain two or three different tax rates. Rate services and state revenue departments resolve this with full street addresses and geocoding for exactly that reason.</p>
       <blockquote>
         <strong>Rule of thumb</strong>
         Use the combined average to estimate, compare, or model. Use an address-level lookup from the state's revenue department to bill, collect, or file.
       </blockquote>
 
       <h2>The Five States With No Statewide Sales Tax</h2>
-      <p>Alaska, Delaware, Montana, New Hampshire, and Oregon levy no statewide sales tax. Four of them are genuinely tax-free at the register — but <strong>Alaska is not</strong>, and the distinction trips up sellers constantly. Alaska has no state-level tax while permitting its boroughs and municipalities to levy their own, which average 1.82% statewide and reach 7.85% in the highest-taxing localities. An Alaska shipment is not automatically exempt; it depends on the destination.</p>
+      <p>Alaska, Delaware, Montana, New Hampshire, and Oregon levy no statewide sales tax. Four of them are genuinely tax-free at the register — but <strong>Alaska is not</strong>, and the distinction trips up sellers constantly. Alaska has no state-level tax while permitting its boroughs and municipalities to levy their own, which average ${pct(AK.avgLocal)} statewide and reach ${pct(AK.maxLocal)} in the highest-taxing localities. An Alaska shipment is not automatically exempt; it depends on the destination.</p>
       <p>Delaware, Montana, New Hampshire, and Oregon do have narrower excise or lodging taxes on specific goods and services, so "no sales tax" means no general sales tax on retail goods, not the complete absence of consumption taxes.</p>
 
       <h2>New Jersey's Negative Local Rate</h2>
-      <p>New Jersey shows an average local rate of −0.02%, which looks like an error and is not. Qualifying sellers inside New Jersey's <strong>Urban Enterprise Zones</strong> collect sales tax at half the statewide rate — 3.3125% instead of 6.625% — a policy intended to help retailers near the border compete with sales-tax-free Delaware. Because those discounted zones pull the population-weighted statewide average slightly <em>below</em> the state rate, the local adjustment comes out negative. It is a real feature of the tax code showing up honestly in the arithmetic.</p>
+      <p>New Jersey shows an average local rate of ${pct(rate('New Jersey').avgLocal)}, which looks like an error and is not. Qualifying sellers inside New Jersey's <strong>Urban Enterprise Zones</strong> collect sales tax at half the statewide rate — 3.3125% instead of 6.625% — a policy intended to help retailers near the border compete with sales-tax-free Delaware. Because those discounted zones pull the population-weighted statewide average slightly <em>below</em> the state rate, the local adjustment comes out negative. It is a real feature of the tax code showing up honestly in the arithmetic.</p>
 
       <h2>Which Rate Applies: Destination vs. Origin</h2>
       <p>Once you know rates vary by address, the next question is <em>whose</em> address. Most states use <strong>destination sourcing</strong>: the applicable rate is the one where the customer takes delivery. Ship a desk from Reno to Las Vegas and you charge the Las Vegas rate. A minority of states apply <strong>origin sourcing</strong> to sales that stay inside the state, charging the rate at the seller's location instead — Texas is the most commonly cited example — and a few use hybrid rules that treat in-state and interstate sales differently.</p>
@@ -1057,20 +1075,20 @@ export const guides: GuideData[] = [
     `,
     faqs: [
       {
-        question: 'Which state has the highest sales tax in 2026?',
-        answer: 'Louisiana has the highest average combined state and local sales tax rate at 10.13%, followed by Tennessee (9.61%), Washington (9.57%), Arkansas (9.48%), and Alabama (9.46%). California has the highest statewide rate at 7.25%, but its lower average local rates put its combined rate at 9.03%.'
+        question: `Which state has the highest sales tax in ${DATA_YEAR}?`,
+        answer: `${TOP_FIVE[0].state} has the highest average combined state and local sales tax rate at ${pct(TOP_FIVE[0].combined)}, followed by ${TOP_FIVE.slice(1, 4).map(r => `${r.state} (${pct(r.combined)})`).join(', ')}, and ${TOP_FIVE[4].state} (${pct(TOP_FIVE[4].combined)}). California has the highest statewide rate at ${pct(CA.stateRate)}, but its lower average local rates put its combined rate at ${pct(CA.combined)}.`
       },
       {
         question: 'Which states have no sales tax?',
-        answer: 'Alaska, Delaware, Montana, New Hampshire, and Oregon have no statewide sales tax. Alaska is the exception worth knowing: it allows local governments to levy their own sales taxes, which average 1.82% and reach 7.85% in some localities, so purchases there are not automatically tax-free.'
+        answer: `Alaska, Delaware, Montana, New Hampshire, and Oregon have no statewide sales tax. Alaska is the exception worth knowing: it allows local governments to levy their own sales taxes, which average ${pct(AK.avgLocal)} and reach ${pct(AK.maxLocal)} in some localities, so purchases there are not automatically tax-free.`
       },
       {
         question: 'What is the average sales tax rate in the US?',
-        answer: 'The population-weighted average combined state and local sales tax rate is 7.53% as of July 1, 2026. That is a national average for comparison — it is not the rate at any particular address, and it should not be used to bill a customer.'
+        answer: `The population-weighted average combined state and local sales tax rate is ${pct(US_AVERAGE_COMBINED)} as of ${AS_OF}. That is a national average for comparison — it is not the rate at any particular address, and it should not be used to bill a customer.`
       },
       {
         question: 'Why is the sales tax rate different in two towns in the same state?',
-        answer: 'Because counties, cities, and special districts levy their own rates on top of the state rate. Colorado, for example, has a 2.90% state rate but local rates that push the combined rate to 7.89% on average and as high as 12% in some jurisdictions. Only states that prohibit local sales taxes have a single rate everywhere.'
+        answer: `Because counties, cities, and special districts levy their own rates on top of the state rate. Colorado, for example, has a ${pct(CO.stateRate)} state rate but local rates that push the combined rate to ${pct(CO.combined)} on average and as high as ${pct(CO.stateRate + CO.maxLocal)} in some jurisdictions. Only states that prohibit local sales taxes have a single rate everywhere.`
       },
       {
         question: 'Can I use a ZIP code to look up a sales tax rate?',
@@ -1086,7 +1104,7 @@ export const guides: GuideData[] = [
       },
       {
         question: 'How current are these rates?',
-        answer: 'They reflect state and average local rates as of July 1, 2026, from the Tax Foundation\'s midyear 2026 dataset. Local rates commonly change on January 1, April 1, July 1, and October 1, so verify with the state revenue department before relying on a figure for a filing.'
+        answer: `They reflect state and average local rates as of ${AS_OF}, from the ${SOURCE_NAME}'s “${SOURCE_TITLE}” report. Local rates commonly change on January 1, April 1, July 1, and October 1, so verify with the state revenue department before relying on a figure for a filing.`
       }
     ]
   },
