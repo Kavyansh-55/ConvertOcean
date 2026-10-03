@@ -617,6 +617,266 @@ export const idTools: LocaleTool[] = [
       <h2>Dokumen tidak keluar dari perangkat Anda</h2>
       <p>Penggabungan dilakukan oleh browser Anda sendiri. Dokumen pribadi tidak disalin ke server mana pun — dan kode situs ini terbuka, jadi klaim ini bisa diperiksa, bukan sekadar dipercaya.</p>
     `
+  },
+  {
+    en: 'split-pdf',
+    slug: 'pisahkan-pdf',
+    name: 'Pisahkan PDF',
+    title: 'Pisahkan PDF Online Gratis — Per Halaman | ConvertOcean',
+    description: 'Pisahkan PDF per halaman, ambil halaman tertentu, atau bagi menjadi beberapa bagian langsung di browser. File tidak keluar dari perangkat Anda.',
+    headline: 'Pisahkan PDF.',
+    subtitle: 'Ambil halaman yang Anda perlukan, pisahkan setiap halaman, bagi menjadi bagian sama besar, atau batasi tiap bagian dengan ukuran — tanpa file keluar dari perangkat Anda.',
+    quickAnswer: 'Untuk pisahkan PDF, pilih file di alat di atas lalu tentukan hasilnya: satu PDF berisi halaman yang Anda pilih, file terpisah untuk setiap halaman (dalam ZIP), seluruh dokumen dibagi menjadi beberapa bagian sama besar, atau bagian-bagian di bawah ukuran tertentu dalam MB. Thumbnail memudahkan memilih halaman dengan sekali klik. Semua terjadi di browser Anda dan file tidak keluar dari perangkat.',
+    category: 'Alat PDF',
+    faqs: [
+      {
+        question: 'cara pisahkan pdf',
+        answer: 'Seret PDF ke alat di bagian atas halaman, lalu pilih salah satu dari empat hasil: satu PDF berisi halaman yang ditandai; file terpisah untuk setiap halaman, dikirim dalam ZIP; dokumen dibagi menjadi sejumlah bagian sama besar; atau bagian-bagian yang tidak melebihi batas MB yang Anda tentukan.'
+      },
+      {
+        question: 'cara pisahkan halaman pdf',
+        answer: 'Klik thumbnail halaman yang Anda inginkan, atau ketik nomornya seperti "1-5, 8". Halaman tidak harus berurutan: menandai halaman 1, 4, dan 9 menghasilkan satu PDF berisi ketiganya, dalam urutan dokumen asli. Cocok untuk mengambil halaman bertanda tangan dari kontrak panjang.'
+      },
+      {
+        question: 'cara pisahkan pdf per halaman',
+        answer: 'Pilih "PDF terpisah untuk setiap halaman". Setiap halaman yang dipilih menjadi file sendiri, dan semuanya dikirim bersama dalam satu ZIP — jadi Anda tidak perlu mengunduh satu per satu.'
+      },
+      {
+        question: 'cara pisahkan pdf yang tergabung',
+        answer: 'Ketika beberapa dokumen di-scan menjadi satu file — KTP, KK, dan ijazah berurutan — tandai halaman masing-masing dokumen lalu unduh terpisah, atau pakai opsi satu file per halaman lalu susun ulang yang diperlukan dengan <a href="/id/gabungkan-pdf/">Gabungkan PDF</a>.'
+      },
+      {
+        question: 'cara pisahkan file pdf',
+        answer: 'Jika tujuannya agar setiap bagian muat di batas ukuran portal, pilih "Seluruh PDF dalam bagian di bawah" lalu isi batasnya dalam MB: alat menghitung di mana harus memotong. File asli tidak diubah — alat ini selalu membuat dokumen baru.'
+      },
+      {
+        question: 'Apakah alat ini bisa membuka PDF yang dikunci kata sandi?',
+        answer: 'Tidak. Alat ini membagi dokumen menjadi bagian atau halaman; tidak menghapus kata sandi. Perlindungan PDF ada karena suatu alasan, dan situs yang dibangun di atas privasi dokumen Anda tidak masuk akal jika menawarkan sebaliknya.'
+      },
+      {
+        question: 'Apakah dokumen saya dikirim ke server?',
+        answer: 'Tidak. Pemisahan dilakukan oleh browser Anda, di perangkat Anda sendiri. Kontrak dan dokumen pribadi — persis jenis file yang paling sering perlu dipisah — tidak disalin ke server mana pun.'
+      }
+    ],
+    content: `
+      <h2>Empat cara pisahkan PDF, Anda yang memilih</h2>
+      <p>Alat ini tidak memaksakan satu cara. Anda bisa mengambil halaman yang ditandai di thumbnail; membuat satu file per halaman dalam ZIP — <strong>pisahkan pdf per halaman</strong>; membagi dokumen menjadi beberapa bagian sama besar; atau — yang paling sulit ditemukan di tempat lain — membagi berdasarkan ukuran, dengan batas MB agar setiap bagian muat di portal.</p>
+      <p>Gratis, tanpa daftar akun, tanpa batas harian: <strong>pisahkan pdf online</strong> dan <strong>pisahkan pdf gratis</strong> di sini berarti alat lengkapnya.</p>
+
+      <h2>Halaman tidak harus berurutan</h2>
+      <p>Saat memilih <strong>pisahkan pdf halaman</strong>, menandai 1, 4, dan 9 menghasilkan satu PDF berisi ketiganya, dalam urutan asli. Ini menyelesaikan kasus seperti mengambil surat kuasa dari dalam berkas atau memisahkan halaman bertanda tangan.</p>
+
+      <h2>Memisahkan PDF yang tergabung</h2>
+      <p>Hasil scan sering menjadikan semua dokumen satu file. Untuk <strong>pisahkan pdf yang tergabung</strong>, tandai halaman tiap dokumen dan unduh masing-masing, atau pecah per halaman lalu satukan kembali yang perlu dengan <a href="/id/gabungkan-pdf/">Gabungkan PDF</a>. Jika file masih terlalu besar, lanjutkan ke <a href="/id/kompres-pdf/">Kompres PDF</a>.</p>
+
+      <h2>Dokumen tidak keluar dari perangkat Anda</h2>
+      <p>Pemisahan terjadi di browser, di perangkat Anda sendiri. Kontrak, berkas, dan dokumen pribadi tidak disalin ke server mana pun.</p>
+    `
+  },
+  {
+    en: 'image-to-text',
+    slug: 'gambar-ke-teks',
+    name: 'Gambar ke Teks',
+    title: 'Gambar ke Teks Online Gratis — OCR Tanpa Upload | ConvertOcean',
+    description: 'Ubah gambar ke teks dengan OCR langsung di browser: foto, tangkapan layar, dan hasil scan menjadi teks yang bisa disalin. Gambar tidak keluar dari perangkat.',
+    headline: 'Gambar ke Teks.',
+    subtitle: 'Ambil teks dari foto, tangkapan layar, dan dokumen hasil scan — pengenalan teks berjalan di perangkat Anda sendiri.',
+    quickAnswer: 'Untuk mengubah gambar ke teks, pilih file JPG, PNG, atau WebP di alat di atas: mesin OCR mengenali teks tercetak dan menghasilkan teks yang bisa diedit dan disalin, di dalam browser Anda. Gambar yang tajam dan beresolusi baik dengan teks tercetak memberi hasil paling akurat; tulisan tangan jauh kurang andal. Tidak ada gambar yang keluar dari perangkat Anda.',
+    category: 'Alat Gambar',
+    faqs: [
+      {
+        question: 'cara mengubah gambar ke teks',
+        answer: 'Pilih foto atau tangkapan layar di alat di atas dan tunggu pengenalan selesai — teks muncul siap disalin, diedit, atau diunduh sebagai .txt. Penggunaan pertama mengunduh mesin pengenalan dan data bahasanya, jadi butuh beberapa saat; setelah itu prosesnya memakai prosesor perangkat Anda sendiri. Tanpa aplikasi, dan gambar tidak dikirim ke mana pun.'
+      },
+      {
+        question: 'cara menyalin teks dari gambar ke word',
+        answer: 'Word tidak bisa membaca teks dari gambar yang ditempel — gambar tetap gambar. Caranya: ambil teksnya di sini, klik Salin, lalu tempel ke Word, sebaiknya dengan "Keep Text Only", karena format visual gambar tidak dibangun ulang. Setelah itu terapkan gaya di Word.'
+      },
+      {
+        question: 'cara mengubah gambar teks ke word',
+        answer: 'Hasilnya sudah berupa teks yang bisa diedit, bukan gambar: bisa disalin, diperbaiki, ditempel ke Word, dan dicari isinya. Yang tidak ikut kembali adalah tampilan visualnya — huruf tebal, jenis font, kolom, dan tabel tidak terbaca oleh OCR. OCR mengembalikan kata-katanya, bukan desain halamannya.'
+      },
+      {
+        question: 'Seberapa akurat hasilnya?',
+        answer: 'Akurasi hampir sepenuhnya ditentukan oleh gambar asalnya. Teks tercetak yang tajam, lurus, dan kontras dikenali dengan sangat baik. Yang mengganggu: foto goyang, cahaya tidak rata, bayangan di atas kertas, teks terlalu kecil, atau difoto miring. Jika hasilnya buruk, foto ulang halamannya dari depan dengan cahaya cukup — biasanya lebih cepat daripada memperbaiki teksnya.'
+      },
+      {
+        question: 'Apakah bisa membaca tulisan tangan?',
+        answer: 'Jauh kurang andal. Huruf cetak tulisan tangan hasilnya lumayan; tulisan sambung biasanya penuh kesalahan. Untuk tulisan tangan, siapkan waktu untuk memeriksa hasilnya secara manual.'
+      },
+      {
+        question: 'Apakah gambar saya dikirim ke server?',
+        answer: 'Tidak. Pengenalan teks terjadi di memori browser Anda, di perangkat Anda sendiri. Ini sangat penting di sini: gambar yang diproses OCR biasanya dokumen, struk, kontrak, dan kwitansi — dan foto masih membawa metadata seperti lokasi dan model HP.'
+      }
+    ],
+    content: `
+      <h2>Apa yang dilakukan OCR — dan apa yang tidak</h2>
+      <p>Untuk mengubah <strong>gambar ke teks</strong>, alat ini harus membaca huruf yang tergambar di piksel. Mesin pengenalan karakter optis (OCR) memeriksa piksel, mengenali bentuk huruf, dan mengembalikan karakternya — itulah yang memungkinkan <strong>salin gambar ke teks</strong> tanpa mengetik ulang. Alat ini menjalankan Tesseract, mesin OCR sumber terbuka, langsung di browser Anda.</p>
+      <p>Yang dikembalikan adalah kata-katanya. <strong>Konversi gambar ke teks</strong> tidak membangun ulang huruf tebal, jenis font, kolom, atau tabel — informasi visual itu tidak terbaca, dan hasilnya teks polos yang siap diedit.</p>
+
+      <h2>Kualitas foto menentukan hasil</h2>
+      <p>Inilah faktor terbesar, jauh di atas pengaturan apa pun. Saat <strong>scan gambar ke teks</strong>, teks tercetak yang tajam, menghadap lurus, dan kontras dikenali dengan akurasi tinggi. Foto goyang, bayangan melintasi halaman, teks kecil, atau foto miring menurunkan akurasi dengan cepat.</p>
+
+      <h2>Tanpa aplikasi, tanpa instalasi, tanpa server</h2>
+      <p>Alat <strong>gambar ke teks gratis</strong> yang berjalan di browser tidak perlu dipasang di HP maupun komputer. Dan yang terpenting, gambar tidak perlu dikirim ke mana pun: pengenalan terjadi di perangkat Anda. Struk, kontrak, dan dokumen hasil scan tidak disalin ke server mana pun.</p>
+    `
+  },
+  {
+    en: 'pdf-to-word',
+    slug: 'pdf-ke-word',
+    name: 'PDF ke Word',
+    title: 'Ubah PDF ke Word Online Gratis — Tanpa Upload | ConvertOcean',
+    description: 'Konversi PDF ke Word (.docx) yang bisa diedit langsung di browser, tanpa daftar dan tanpa watermark. File tidak keluar dari perangkat Anda.',
+    headline: 'PDF ke Word.',
+    subtitle: 'Ubah PDF menjadi dokumen Word yang bisa diedit — judul, tabel, dan gambar dibangun ulang, tanpa file keluar dari perangkat Anda.',
+    quickAnswer: 'Untuk mengubah PDF ke Word, pilih file di alat di atas lalu unduh dokumen .docx yang bisa diedit. Judul, huruf tebal, miring, ukuran huruf, indentasi, dan tabel yang terdeteksi dibangun ulang sebagai format asli Word, dan gambar serta logo masuk sebagai gambar. Semuanya terjadi di dalam browser Anda: file tidak keluar dari perangkat dan tidak disalin ke server mana pun.',
+    category: 'Alat Dokumen',
+    faqs: [
+      {
+        question: 'cara mengubah pdf ke word',
+        answer: 'Seret PDF ke alat di bagian atas halaman, tunggu konversi selesai, lalu unduh file .docx-nya. Tanpa daftar akun, tanpa antrean, tanpa batas harian. Dokumen terbuka normal di Word, LibreOffice, dan Google Docs, langsung bisa diedit.'
+      },
+      {
+        question: 'cara mengubah pdf ke word di laptop',
+        answer: 'Buka halaman ini di browser laptop — Chrome, Edge, atau Firefox — seret PDF ke alat, lalu unduh .docx-nya. Tidak ada program yang perlu dipasang, dan tidak perlu Microsoft Word untuk melakukan konversinya.'
+      },
+      {
+        question: 'cara mengubah file pdf ke word',
+        answer: 'Sebelum konversi, lakukan tes sepuluh detik: buka PDF dan coba pilih satu kalimat dengan kursor. Jika teksnya tersorot, PDF itu digital dan bisa dibangun ulang. Jika kursor hanya menggambar kotak, halamannya adalah gambar hasil scan — alat ini akan memberi tahu hal itu dan mengarahkan Anda ke <a href="/id/gambar-ke-teks/">Gambar ke Teks (OCR)</a>.'
+      },
+      {
+        question: 'cara convert pdf ke word',
+        answer: 'Yang dibangun ulang sebagai format Word sungguhan: judul, huruf tebal, miring, ukuran huruf, indentasi paragraf, dan tabel. Yang bisa bergeser: PDF menyimpan posisi tetap sedangkan Word memakai teks yang mengalir, jadi margin dan pergantian baris bisa sedikit bergeser pada tata letak berkolom. Dokumen berisi teks biasa hasilnya hampir sama persis.'
+      },
+      {
+        question: 'Bagaimana dengan tabel dan gambar?',
+        answer: 'Tabel dikenali dari kolom-kolom ruang kosong yang sejajar di beberapa baris, dan ditulis sebagai tabel Word sungguhan. Jika buktinya lemah, alat memakai tab stop — itulah sebabnya tabel dengan jarak tidak rata bisa muncul sebagai teks rata tab. Diagram, grafik, dan logo dimasukkan sebagai gambar: bisa dipindah dan diubah ukurannya, tetapi isi grafiknya tidak bisa diedit.'
+      },
+      {
+        question: 'Apakah benar-benar gratis?',
+        answer: 'Ya, tanpa syarat: tanpa daftar akun, tanpa watermark di dokumen, tanpa batas jumlah file per hari, dan tanpa versi berbayar yang menyembunyikan fitur. Kode situs ini terbuka, dan repositori publiknya menunjukkan persis apa yang dijalankan browser.'
+      },
+      {
+        question: 'Apakah PDF saya dikirim ke server?',
+        answer: 'Tidak. Konversi berjalan sepenuhnya di perangkat Anda, di memori browser. PDF tidak disalin ke server kami atau pihak ketiga, dan kami tidak bisa membacanya — penting ketika dokumennya kontrak, slip gaji, atau hasil pemeriksaan medis.'
+      }
+    ],
+    content: `
+      <h2>Ubah PDF ke Word tanpa merusak format</h2>
+      <p>Banyak orang mencari cara <strong>ubah pdf ke word</strong> yang tidak merusak tata letak karena alasan sederhana: kedua format menggambarkan halaman dengan cara yang berlawanan. PDF menempatkan setiap huruf di koordinat tetap, seperti gambar. Word memakai teks yang mengalir dan menyesuaikan diri dengan margin dan ukuran halaman. <strong>Konversi pdf ke word</strong> berarti menerjemahkan di antara dua model itu.</p>
+      <p>Alat ini membaca PDF dengan pdf.js — mesin PDF dari Mozilla, yang juga dipakai Firefox — dan membangun ulang judul, huruf tebal, miring, ukuran huruf, indentasi, dan tabel sebagai format asli Word, bukan menumpuk teks dalam satu kotak. Gambar dan logo masuk sebagai gambar di posisi aslinya.</p>
+
+      <h2>PDF digital dan PDF hasil scan tidak sama</h2>
+      <p>Inilah pemeriksaan yang mencegah sebagian besar kekecewaan saat <strong>convert pdf ke word</strong>. Buka file dan coba pilih satu kalimat. Jika tersorot, hurufnya benar-benar ada dan konversi berhasil. Jika kursor hanya menggambar kotak, halamannya adalah foto: bagi file itu, "teks"-nya hanyalah piksel. Dokumen hasil scan butuh OCR terlebih dulu, dan hasilnya mengembalikan kata-kata, bukan desainnya.</p>
+
+      <h2>Kompres pdf ke word</h2>
+      <p>Pencarian <strong>kompres pdf ke word</strong> biasanya berarti hal yang sama: mengubah PDF menjadi Word. Itulah yang dilakukan halaman ini. Jika yang Anda perlukan justru PDF yang lebih kecil, gunakan <a href="/id/kompres-pdf/">Kompres PDF</a>.</p>
+
+      <h2>Kenapa konversi terjadi di browser Anda</h2>
+      <p>Sebagian besar konverter online menyalin dokumen Anda ke server, mengonversinya di sana, lalu mengembalikan hasilnya. Di sini langkah itu tidak ada: <strong>pdf ke word gratis</strong> dan <strong>pdf ke word online</strong> yang diproses di memori browser Anda sendiri, tanpa file keluar dari perangkat.</p>
+    `
+  },
+  {
+    en: 'word-to-pdf',
+    slug: 'word-ke-pdf',
+    name: 'Word ke PDF',
+    title: 'Ubah Word ke PDF Online Gratis — Tanpa Upload | ConvertOcean',
+    description: 'Konversi Word (.docx) ke PDF langsung di browser, dengan teks yang bisa dipilih dan tanpa watermark. File tidak keluar dari perangkat Anda.',
+    headline: 'Word ke PDF.',
+    subtitle: 'Ubah dokumen .docx menjadi PDF dengan teks yang bisa dipilih dan pergantian halaman yang rapi — tanpa file keluar dari perangkat Anda.',
+    quickAnswer: 'Untuk mengubah Word ke PDF, seret file .docx ke alat di atas lalu unduh PDF-nya. Judul, huruf tebal, miring, daftar, dan tabel dipertahankan, dan hasilnya PDF vektor sungguhan: teks tetap bisa dipilih dan dicari, dan halaman berganti tanpa memotong baris di tengah. Konversi berjalan di browser Anda dan file tidak keluar dari perangkat.',
+    category: 'Alat Dokumen',
+    faqs: [
+      {
+        question: 'cara mengubah word ke pdf',
+        answer: 'Seret file .docx ke alat di bagian atas halaman, lalu unduh PDF-nya. Tidak perlu memasang apa pun atau membuat akun, dan PDF tanpa watermark. Hasilnya terbuka di pembaca PDF mana pun, termasuk di HP.'
+      },
+      {
+        question: 'cara ubah word ke pdf',
+        answer: 'PDF yang dihasilkan berupa vektor, bukan gambar halaman: teks tetap bisa dipilih, dicari, dan tajam di zoom berapa pun. Ini penting ketika dokumen akan dibaca di layar, diproses sistem, atau dilampirkan ke portal yang meminta teks bisa dicari.'
+      },
+      {
+        question: 'cara merubah word ke pdf',
+        answer: 'Judul, huruf tebal, miring, daftar bernomor dan berbutir, serta tabel dipertahankan, dan pergantian halaman dihitung agar tidak memotong baris. Teks digambar dengan font pengganti yang disematkan di PDF — Roboto untuk font tanpa kait, Noto Serif untuk font berkait, dan Noto Mono untuk monospace — jadi pergantian baris bisa sedikit berbeda dari Word. Periksa halaman pertama sebelum mengirim dokumen.'
+      },
+      {
+        question: 'Bagaimana kalau PDF-nya harus di bawah 500 KB atau 1 MB?',
+        answer: 'Inilah maksud banyak pencarian "kompres word ke pdf": mengubah dokumen sekaligus memenuhi batas ukuran portal. Ubah Word ke PDF di sini; PDF dari dokumen teks biasanya sudah kecil. Jika masih di atas batas — biasanya karena foto di dalamnya — buka <a href="/id/kompres-pdf/">Kompres PDF</a> dan isi ukuran target, misalnya 500 KB.'
+      },
+      {
+        question: 'Apa bedanya .doc dan .docx di sini?',
+        answer: 'Alat ini bekerja dengan .docx, format Word sejak 2007. File .doc lama harus dibuka di Word atau LibreOffice lalu disimpan ulang sebagai .docx sebelum dikonversi. Itu keterbatasan format lama yang biner dan tertutup, bukan keterbatasan alatnya.'
+      },
+      {
+        question: 'Apakah dokumen saya dikirim ke server?',
+        answer: 'Tidak. Konversi terjadi di dalam browser, di perangkat Anda sendiri, dan file tidak disalin ke server mana pun. CV, surat lamaran, skripsi, dan kontrak tetap bersama Anda dari awal sampai akhir.'
+      }
+    ],
+    content: `
+      <h2>Ubah Word ke PDF dengan teks yang tetap bisa dipilih</h2>
+      <p>Yang mencari cara <strong>ubah word ke pdf</strong> biasanya ingin dua hal: dokumen tampil sama di komputer mana pun, dan tidak bisa berubah tanpa sengaja. PDF menyelesaikan keduanya — tetapi hanya jika konversinya menghasilkan PDF sungguhan, bukan gambar setiap halaman.</p>
+      <p>Itulah bedanya file yang bisa dicari dan disalin dengan file yang hanya foto dari teks Anda. Di sini hasil <strong>konversi word ke pdf</strong> selalu vektor: judul, huruf tebal, miring, daftar, dan tabel tetap elemen nyata, dengan teks yang bisa dipilih.</p>
+
+      <h2>Kompres word ke pdf untuk batas ukuran portal</h2>
+      <p>Autocomplete Google untuk <strong>kompres word ke pdf</strong> berakhir dengan "500 kb", "200kb", dan "1 mb": orang perlu PDF yang muat di batas portal. Lakukan dalam dua langkah yang jujur — <strong>convert word ke pdf</strong> di sini, lalu jika masih terlalu besar, <a href="/id/kompres-pdf/">Kompres PDF</a> dengan ukuran target.</p>
+
+      <h2>Saat font berubah — dan cara mencegahnya</h2>
+      <p>Saat <strong>mengubah word ke pdf</strong>, font yang hanya terpasang di komputer Anda bisa diganti font setara, yang sedikit menggeser jarak. Dokumen dengan font umum Office jarang mengalami ini. Jika tata letak sangat penting — CV satu halaman, misalnya — periksa hasilnya sebelum mengirim.</p>
+
+      <h2>Tanpa daftar, tanpa watermark, tanpa server</h2>
+      <p><strong>Word ke pdf online</strong> di sini gratis, tidak meminta akun, dan tidak menulis watermark. Dan berbeda dari konverter online yang paling dikenal, dokumen Anda tidak disalin ke server: prosesnya dilakukan browser Anda sendiri.</p>
+    `
+  },
+  {
+    en: 'pdf-to-excel',
+    slug: 'pdf-ke-excel',
+    name: 'PDF ke Excel',
+    title: 'Ubah PDF ke Excel Online Gratis — Tanpa Upload | ConvertOcean',
+    description: 'Konversi tabel PDF ke spreadsheet Excel (.xlsx) langsung di browser, dengan baris dan kolom yang sejajar. File tidak keluar dari perangkat Anda.',
+    headline: 'PDF ke Excel.',
+    subtitle: 'Ambil tabel dari PDF ke spreadsheet dengan baris dan kolom yang sejajar — tanpa file keluar dari perangkat Anda.',
+    quickAnswer: 'Untuk mengubah PDF ke Excel, pilih file di alat di atas lalu unduh spreadsheet .xlsx. Tabel dibangun ulang sel demi sel: nilai yang lebih dari satu kata tetap utuh dan semua baris disejajarkan ke kolom yang sama, bukan setiap potongan teks di sel sendiri. PDF digital paling baik; PDF hasil scan perlu OCR terlebih dulu. Semuanya berjalan di browser Anda dan file tidak keluar dari perangkat.',
+    category: 'Konverter Excel',
+    faqs: [
+      {
+        question: 'cara mengubah pdf ke excel',
+        answer: 'Seret PDF ke alat di bagian atas halaman lalu unduh file .xlsx-nya. Setiap tabel yang terdeteksi menjadi baris dan kolom di spreadsheet, siap diurutkan, difilter, dan dipakai dalam rumus. Tanpa daftar akun dan tanpa instalasi.'
+      },
+      {
+        question: 'cara convert pdf ke excel',
+        answer: 'Sebelum konversi, pastikan PDF-nya digital: buka file dan coba pilih satu kalimat. Jika tersorot, konversi berhasil. Jika kursor hanya menggambar kotak, halamannya gambar hasil scan dan tidak ada teks yang bisa diambil — alat akan memberi tahu dan mengarahkan ke <a href="/id/gambar-ke-teks/">Gambar ke Teks (OCR)</a>.'
+      },
+      {
+        question: 'cara merubah pdf ke excel',
+        answer: 'Konversi mempertahankan struktur tabel, bukan tampilannya. Garis, warna latar, dan font PDF tidak ikut — yang kembali adalah nilainya, di posisi baris dan kolom yang benar. Itulah yang membuat angkanya bisa dipakai menghitung, bukan sekadar dilihat.'
+      },
+      {
+        question: 'cara ubah pdf ke excel',
+        answer: 'Alat ini memakai posisi setiap potongan teks di halaman, bukan garis tabel, jadi tabel dengan kolom yang berjarak jelas hasilnya paling baik. Sel berisi teks beberapa baris, laporan dengan beberapa tabel di satu halaman, dan sel yang digabung lebih sulit dibaca dan bisa perlu dirapikan manual. Periksa totalnya sebelum memakai datanya.'
+      },
+      {
+        question: 'cara merubah file pdf ke excel',
+        answer: 'Nilai yang lebih dari satu kata tetap utuh di satu sel — "Pendapatan kotor kumulatif" tidak dipecah menjadi tiga sel. Inilah kesalahan paling umum konverter yang menganggap setiap potongan teks sebagai kolom sendiri, dan biasanya membuat spreadsheet hasilnya tidak terpakai.'
+      },
+      {
+        question: 'Apakah PDF saya dikirim ke server?',
+        answer: 'Tidak. Konversi terjadi sepenuhnya di browser Anda dan PDF tidak disalin ke server mana pun. Ini sangat penting di sini: rekening koran, laporan keuangan, dan daftar pelanggan adalah PDF yang paling sering ingin dijadikan spreadsheet.'
+      }
+    ],
+    content: `
+      <h2>Ubah PDF ke Excel tanpa kehilangan kesejajaran kolom</h2>
+      <p>Masalah hampir semua alat <strong>konversi pdf ke excel</strong> adalah PDF tidak menyimpan tabel. Yang disimpan adalah huruf di koordinat tertentu. Kisi yang Anda lihat hanya kesan visual: bagi file itu, tidak ada baris maupun kolom. Mengubah <strong>pdf ke excel</strong> berarti menyimpulkan struktur itu dari posisi teks.</p>
+      <p>Karena itulah banyak konversi mengembalikan semuanya dalam satu kolom, atau memecah satu nilai menjadi tiga sel. Di sini tabel dibangun ulang sel demi sel: nilai beberapa kata tetap utuh dan semua baris disejajarkan ke kolom yang sama.</p>
+
+      <h2>PDF mana yang berhasil</h2>
+      <p>PDF yang dibuat secara digital — diekspor dari Excel, aplikasi akuntansi, atau internet banking — paling cocok untuk <strong>convert pdf ke excel</strong>, karena hurufnya benar-benar ada. PDF hasil scan adalah foto halaman: tidak ada teks yang bisa diambil, dan jalannya lewat OCR dulu. Tesnya sepuluh detik: coba pilih satu kalimat di file.</p>
+
+      <h2>Kompres pdf ke excel</h2>
+      <p>Pencarian <strong>kompres pdf ke excel</strong> berarti mengubah PDF menjadi Excel — itulah halaman ini. Untuk arah sebaliknya, gunakan <a href="/id/excel-ke-pdf/">Excel ke PDF</a>.</p>
+
+      <h2>Rekening koran dan laporan tidak perlu keluar dari perangkat</h2>
+      <p>PDF yang paling ingin dijadikan spreadsheet justru yang paling tidak boleh beredar: rekening koran, slip gaji, laporan penjualan. Alat ini memproses file di dalam browser, di perangkat Anda sendiri, dan dokumen tidak disalin ke server mana pun.</p>
+    `
   }
 ];
 
