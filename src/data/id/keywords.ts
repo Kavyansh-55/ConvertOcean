@@ -74,7 +74,10 @@ export const noDemand: { en: string; seen: string }[] = [
   { en: 'invoice-generator', seen: '`pembuat faktur` family: 7 keywords, all <100, and `aplikasi pembuat faktur pajak` is regulated. Re-research as `contoh invoice` / `template invoice` / `format invoice` before deciding' },
   { en: 'receipt-generator', seen: '`buat tanda terima` family: 9 keywords, all <100. "tanda terima" is a delivery acknowledgment; re-research as `kwitansi` (`contoh kwitansi`, `kwitansi pembayaran`) before deciding' },
   { en: 'profit-margin-calculator', seen: '`hitung margin laba`: 3 keywords, all <100. Re-research `rumus margin keuntungan` / `cara menghitung margin` before deciding' },
-  { en: 'break-even-calculator', seen: '`hitung titik impas`: 5 keywords, all <100. Indonesians say BEP — re-research `cara menghitung bep` / `rumus bep` before deciding' }
+  { en: 'break-even-calculator', seen: '`hitung titik impas`: 5 keywords, all <100. Indonesians say BEP — re-research `cara menghitung bep` / `rumus bep` before deciding' },
+
+  { en: 'csv-to-pdf', seen: '22 keywords, all <100 (`ubah csv ke pdf`, `csv ke pdf`…); its questions are PDF-to-CSV, the other direction' },
+  { en: 'sales-tax-calculator', seen: '`kalkulator/hitung pajak penjualan` returns only property and gold sale tax (rumah, tanah, emas), all <100 — a different tax this calculator does not model. Re-research as PPN (`kalkulator ppn`, `cara menghitung ppn`) and verify current PPN rules from DJP before building' }
 ];
 
 /* Recorded, not targeted. A competitor's brand inside the query. */
@@ -115,7 +118,14 @@ export const intentMismatch: { term: string; kd: string; volume: string; wants: 
 
   { term: 'kompres excel ke word', kd: 'Easy', volume: '>100', wants: 'Excel to Word — no tool.' },
   { term: 'kompres word ke jpg', kd: 'Easy', volume: '>100', wants: 'Word pages as images — no tool.' },
-  { term: 'kalkulator persentase lemak tubuh', kd: 'Easy', volume: '<100', wants: 'a body-fat calculator, not a percentage calculator.' }
+  { term: 'kalkulator persentase lemak tubuh', kd: 'Easy', volume: '<100', wants: 'a body-fat calculator, not a percentage calculator.' },
+
+  { term: 'kalkulator pajak penjualan rumah', kd: 'n/a', volume: '<100', wants: 'tax on selling a house (PPh final + BPHTB), not sales tax/PPN.' },
+  { term: 'cara hitung pajak penjualan rumah', kd: 'Easy', volume: '<100', wants: 'property sale tax.' },
+  { term: 'cara hitung pajak penjualan emas', kd: 'n/a', volume: '<100', wants: 'tax on selling gold.' },
+  { term: 'cara hitung pajak penjualan tanah', kd: 'n/a', volume: '<100', wants: 'land sale tax.' },
+  { term: 'cara merubah pdf ke csv pajak', kd: 'Easy', volume: '<100', wants: 'PDF to CSV (tax-office data) — the opposite of CSV to PDF; no tool.' },
+  { term: 'bagaimana merubah file pdf ke csv', kd: 'n/a', volume: '<100', wants: 'PDF to CSV — no tool.' }
 ];
 
 /* A real query, filed under a different page than the export put it. */
@@ -492,6 +502,24 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'cara mencari persentase di kalkulator', kd: 'n/a', volume: '<100' },
       { term: 'cara menghitung persentase dengan kalkulator', kd: 'n/a', volume: '<100' }
     ]
+  },
+
+  {
+    slug: 'xls-ke-pdf',
+    en: 'xls-to-pdf',
+    primary: 'xls ke pdf',
+    phrase: [
+      { term: 'ubah xls ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'konversi xls ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'xls ke pdf', kd: 'Easy', volume: '>100' },
+      { term: 'kompres xls ke pdf', kd: 'n/a', volume: '<100' },
+      { term: 'convert xls ke pdf', kd: 'n/a', volume: '<100' },
+      { term: 'mengubah xls ke pdf', kd: 'Easy', volume: '<100' },
+      { term: 'merubah xls ke pdf', kd: 'Easy', volume: '<100' },
+      { term: 'ubah file xls ke pdf', kd: 'n/a', volume: '<100' },
+      { term: 'mengubah file xls ke pdf', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
   }
 ];
 
