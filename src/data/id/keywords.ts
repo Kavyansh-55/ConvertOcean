@@ -68,18 +68,43 @@ export const noDemand: { en: string; seen: string }[] = [
   { en: 'qbo-to-csv', seen: 'no keyword ideas (earlier spreadsheet)' },
   { en: 'xlsx-to-json', seen: 'no keyword ideas (earlier spreadsheet)' },
   { en: 'xml-to-csv', seen: 'no keyword ideas (earlier spreadsheet)' },
-  { en: 'xml-to-xlsx', seen: 'no keyword ideas (earlier spreadsheet)' }
+  { en: 'xml-to-xlsx', seen: 'no keyword ideas (earlier spreadsheet)' },
+  { en: 'pdf-to-txt', seen: '10 keywords, all <100 (`pdf ke txt`, `ubah pdf ke txt`…)' }
 ];
 
 /* Recorded, not targeted. A competitor's brand inside the query. */
 export const excluded: { term: string; why: string }[] = [
-  { term: 'convertio xlsx ke csv', why: 'brand-navigational (Convertio)' }
+  { term: 'convertio xlsx ke csv', why: 'brand-navigational (Convertio)' },
+  { term: 'i love pdf gabungkan pdf', why: 'brand-navigational (iLovePDF), >1000' },
+  { term: 'i love pdf pisahkan pdf', why: 'brand-navigational (iLovePDF), >100' },
+  { term: 'pisahkan pdf i love pdf', why: 'brand-navigational (iLovePDF), >100' },
+  { term: 'cara kompres pdf di nitro', why: 'a how-to for Nitro PDF desktop software, >100' },
+  { term: 'cara kompres ppt canva', why: 'a how-to inside Canva, <100' },
+  { term: 'cara kompres file powerpoint 2010', why: 'a how-to inside PowerPoint 2010, <100' }
 ];
 
 /* The query asks for something the tool does not do. */
 export const intentMismatch: { term: string; kd: string; volume: string; wants: string }[] = [
   { term: 'ubah jpg ke png transparan online', kd: 'Easy', volume: '>100',
-    wants: 'background removal. Saving a JPG as PNG keeps every pixel, background included — it cannot make anything transparent. The JPG-to-PNG page says so plainly instead of targeting this.' }
+    wants: 'background removal. Saving a JPG as PNG keeps every pixel, background included — it cannot make anything transparent. The JPG-to-PNG page says so plainly instead of targeting this.' },
+  { term: 'gambar ke teks ai', kd: 'n/a', volume: '>100',
+    wants: 'an AI tool. The OCR here is Tesseract, a recognition engine; calling it AI to catch the query would be the overclaim this site removes elsewhere.' },
+  { term: 'translate gambar ke teks', kd: 'Easy', volume: '>100',
+    wants: 'translation (Google Lens style). The tool reads the text; it does not translate it.' },
+  { term: 'gabungkan pdf dan jpg', kd: 'Easy', volume: '>1000',
+    wants: 'one merge of PDFs and photos together. Merge PDF takes PDFs only — answered in body copy as two honest steps (Gambar ke PDF first, then merge), not targeted as a one-step claim.' },
+  { term: 'gabungkan pdf dan foto', kd: 'Easy', volume: '>1000',
+    wants: 'same as `gabungkan pdf dan jpg`.' },
+  { term: 'cara gabungkan pdf ke word', kd: 'Easy', volume: '<100',
+    wants: 'a merged Word file. Nothing here merges into Word from PDF.' },
+  { term: 'pisahkan pdf ke jpg', kd: 'n/a', volume: '>100',
+    wants: 'PDF pages as JPG images. There is no PDF-to-JPG tool yet (also missing in Portuguese research).' },
+  { term: 'kompres pdf ke jpg', kd: 'Easy', volume: '>1000',
+    wants: 'PDF to JPG — no tool yet.' },
+  { term: 'kompres powerpoint ke word', kd: 'n/a', volume: '<100',
+    wants: 'PowerPoint to Word — no tool.' },
+  { term: 'kompres powerpoint ke jpg', kd: 'n/a', volume: '<100',
+    wants: 'slides as images — no tool.' }
 ];
 
 /* A real query, filed under a different page than the export put it. */
@@ -88,7 +113,13 @@ export const belongsElsewhere: { term: string; kd: string; volume: string; page:
   { term: 'cara merubah pdf ke excel', kd: 'Easy', volume: '>100', page: 'pdf-to-excel' },
   { term: 'cara mengubah pdf ke excel', kd: 'Easy', volume: '>100', page: 'pdf-to-excel' },
   { term: 'cara ubah pdf ke excel', kd: 'Easy', volume: '>100', page: 'pdf-to-excel' },
-  { term: 'cara merubah file pdf ke excel', kd: 'Easy', volume: '>100', page: 'pdf-to-excel' }
+  { term: 'cara merubah file pdf ke excel', kd: 'Easy', volume: '>100', page: 'pdf-to-excel' },
+  /* "kompres X ke Y" again names a conversion. */
+  { term: 'kompres pdf ke word', kd: 'Easy', volume: '>10,000', page: 'pdf-to-word' },
+  { term: 'kompres ppt ke pdf', kd: 'Easy', volume: '>100', page: 'pptx-to-pdf' },
+  { term: 'kompres powerpoint ke pdf', kd: 'Easy', volume: '<100', page: 'pptx-to-pdf' },
+  { term: 'kompres powerpoint to pdf', kd: 'n/a', volume: '<100', page: 'pptx-to-pdf' },
+  { term: 'cara gabungkan jpg ke pdf', kd: 'n/a', volume: '<100', page: 'image-to-pdf' }
 ];
 
 export const pageKeywords: PageKeywords[] = [
@@ -214,6 +245,141 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'cara merubah file txt ke pdf', kd: 'n/a', volume: '<100' },
       { term: 'cara merubah txt ke pdf', kd: 'n/a', volume: '<100' },
       { term: 'cara ubah file txt ke pdf', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'gambar-ke-teks',
+    en: 'image-to-text',
+    primary: 'gambar ke teks',
+    phrase: [
+      { term: 'gambar ke teks', kd: 'Easy', volume: '>1000' },
+      { term: 'ubah gambar ke teks', kd: 'Hard', volume: '>100' },
+      { term: 'konversi gambar ke teks', kd: 'Easy', volume: '>100' },
+      { term: 'salin gambar ke teks', kd: 'Easy', volume: '>100' },
+      { term: 'convert gambar ke teks', kd: 'Hard', volume: '>100' },
+      { term: 'scan gambar ke teks', kd: 'Easy', volume: '>100' },
+      { term: 'gambar ke teks gratis', kd: 'n/a', volume: '>100' },
+      { term: 'dari gambar ke teks', kd: 'n/a', volume: '>100' },
+      { term: 'mengubah gambar ke teks', kd: 'n/a', volume: '>100' }
+    ],
+    questions: [
+      { term: 'cara mengubah gambar ke teks', kd: 'Easy', volume: '<100' },
+      /* Answered truthfully: recognise here, copy, paste into Word. */
+      { term: 'cara menyalin teks dari gambar ke word', kd: 'Easy', volume: '<100' },
+      { term: 'cara mengubah gambar teks ke word', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'gabungkan-pdf',
+    en: 'merge-pdf',
+    primary: 'gabungkan pdf',
+    phrase: [
+      { term: 'gabungkan pdf', kd: 'Easy', volume: '>100K' },
+      { term: 'gabungkan pdf online', kd: 'Easy', volume: '>10,000' },
+      { term: 'gabungkan pdf jadi satu', kd: 'Easy', volume: '>1000' },
+      { term: 'gabungkan pdf jadi 1', kd: 'Easy', volume: '>1000' },
+      { term: 'gabungkan pdf dan pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'gabungkan pdf ke pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'gabungkan pdf jadi 1 file', kd: 'n/a', volume: '>100' }
+    ],
+    questions: [
+      { term: 'cara gabungkan pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'cara gabungkan file pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'cara gabungkan pdf jadi satu', kd: 'Easy', volume: '>100' },
+      { term: 'cara gabungkan pdf jadi 1 file', kd: 'n/a', volume: '>100' },
+      { term: 'cara gabungkan 2 pdf', kd: 'Easy', volume: '<100' },
+      { term: 'cara gabungkan 2 pdf jadi 1', kd: 'Easy', volume: '<100' },
+      { term: 'cara gabungkan pdf jadi satu file', kd: 'Easy', volume: '<100' },
+      { term: 'cara gabungkan 2 file pdf', kd: 'Easy', volume: '<100' },
+      { term: 'cara gabungkan file pdf jadi satu', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'pisahkan-pdf',
+    en: 'split-pdf',
+    primary: 'pisahkan pdf',
+    phrase: [
+      { term: 'pisahkan pdf', kd: 'Easy', volume: '>100K' },
+      { term: 'pisahkan pdf online', kd: 'Easy', volume: '>1000' },
+      { term: 'pisahkan pdf per halaman', kd: 'Easy', volume: '>1000' },
+      { term: 'pisahkan pdf gratis', kd: 'Easy', volume: '>100' },
+      { term: 'pisahkan pdf secara online', kd: 'n/a', volume: '>100' },
+      { term: 'pisahkan pdf free', kd: 'n/a', volume: '>100' },
+      { term: 'pisahkan pdf halaman', kd: 'n/a', volume: '>100' }
+    ],
+    questions: [
+      { term: 'cara pisahkan pdf', kd: 'Easy', volume: '>100' },
+      { term: 'cara pisahkan halaman pdf', kd: 'Easy', volume: '>100' },
+      { term: 'cara pisahkan file pdf', kd: 'Easy', volume: '>100' },
+      { term: 'cara pisahkan pdf per halaman', kd: 'n/a', volume: '<100' },
+      { term: 'pisahkan file pdf yang tergabung', kd: 'n/a', volume: '<100' },
+      { term: 'cara pisahkan pdf yang tergabung', kd: 'n/a', volume: '<100' },
+      { term: 'pisahkan file pdf yang digabungkan', kd: 'n/a', volume: '<100' },
+      { term: 'pisahkan pdf yang tergabung', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'kompres-pdf',
+    en: 'compress-pdf',
+    primary: 'kompres pdf',
+    phrase: [
+      { term: 'kompres pdf', kd: 'Easy', volume: '>1M' },
+      /* Size targets: the page's "fit to this size" mode is the answer. */
+      { term: 'kompres pdf 1 mb', kd: 'Easy', volume: '>10,000' },
+      { term: 'kompres pdf 200kb', kd: 'Easy', volume: '>10,000' },
+      { term: 'kompres pdf 500kb', kd: 'Easy', volume: '>10,000' },
+      { term: 'kompres pdf online', kd: 'Easy', volume: '>10,000' },
+      { term: 'kompres pdf 2 mb', kd: 'Easy', volume: '>10,000' },
+      { term: 'kompres pdf 100kb', kd: 'Easy', volume: '>1000' },
+      { term: 'kompres pdf 300 kb', kd: 'n/a', volume: '>1000' }
+    ],
+    questions: [
+      { term: 'cara kompres pdf', kd: 'Easy', volume: '>10,000' },
+      { term: 'kompres pdf sesuai ukuran yang diinginkan', kd: 'Easy', volume: '>1000' },
+      { term: 'cara kompres file pdf', kd: 'Easy', volume: '>1000' },
+      { term: 'cara kompres pdf jadi 1 mb', kd: 'Easy', volume: '>100' },
+      { term: 'cara kompres ukuran pdf', kd: 'Easy', volume: '>100' },
+      { term: 'cara kompres file pdf di hp', kd: 'Easy', volume: '>100' },
+      { term: 'kompres pdf sesuai ukuran yang diinginkan gratis', kd: 'Easy', volume: '<100' },
+      { term: 'cara kompres pdf di laptop', kd: 'Easy', volume: '<100' },
+      { term: 'cara kompres pdf di hp', kd: 'Easy', volume: '<100' },
+      { term: 'cara kompres pdf jadi 2 mb', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    /* "kompres ppt" (>10,000) is how Indonesians name it; "kompres
+       powerpoint" (>100) is the minority spelling, carried in body copy. */
+    slug: 'kompres-ppt',
+    en: 'compress-powerpoint',
+    primary: 'kompres ppt',
+    phrase: [
+      { term: 'kompres ppt', kd: 'Easy', volume: '>10,000' },
+      { term: 'kompres ppt gratis', kd: 'Easy', volume: '>100' },
+      { term: 'kompres ppt jadi 1 mb', kd: 'Easy', volume: '>100' },
+      { term: 'kompres ppt online', kd: 'Easy', volume: '>100' },
+      { term: 'kompres ppt ke ppt', kd: 'Easy', volume: '>100' },
+      { term: 'kompres ppt jadi 10 mb', kd: 'n/a', volume: '>100' },
+      { term: 'kompres ppt jadi 5 mb', kd: 'n/a', volume: '>100' },
+      { term: 'kompres ppt jadi 2 mb', kd: 'n/a', volume: '>100' },
+      { term: 'kompres ppt 1 mb', kd: 'Easy', volume: '>100' },
+      { term: 'kompres powerpoint', kd: 'Easy', volume: '>100' },
+      { term: 'kompres powerpoint online', kd: 'n/a', volume: '<100' },
+      { term: 'kompres powerpoint gratis', kd: 'n/a', volume: '<100' },
+      { term: 'kompres powerpoint ke powerpoint', kd: 'n/a', volume: '<100' },
+      { term: 'kompres powerpoint 10 mb', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara kompres ppt', kd: 'Easy', volume: '>100' },
+      { term: 'cara kompres file ppt', kd: 'Easy', volume: '<100' },
+      { term: 'cara kompres ppt jadi kecil', kd: 'n/a', volume: '<100' },
+      /* Answered truthfully: images are recompressed; embedded video is
+         left as it is (ooxml-compress.js only touches PNG/JPEG media). */
+      { term: 'cara kompres ppt yang ada videonya', kd: 'n/a', volume: '<100' },
+      { term: 'cara kompres ppt di hp', kd: 'Easy', volume: '<100' },
+      { term: 'cara kompres ppt di laptop', kd: 'Easy', volume: '<100' },
+      { term: 'kompres ppt sesuai ukuran yang diinginkan', kd: 'n/a', volume: '<100' },
+      { term: 'cara kompres powerpoint', kd: 'Easy', volume: '<100' },
+      { term: 'cara kompres powerpoint online', kd: 'n/a', volume: '<100' }
     ]
   }
 ];
