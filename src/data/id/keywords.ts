@@ -182,7 +182,7 @@ export const intentMismatch: { term: string; kd: string; volume: string; wants: 
   { term: 'cara gabungkan pdf ke word', kd: 'Easy', volume: '<100', wants: 'PDF into Word — PDF ke Word, then Gabungkan Word.' },
   { term: 'cara gabungkan file pdf ke word', kd: 'n/a', volume: '<100', wants: 'as above.' },
   { term: 'pisahkan word per halaman', kd: 'n/a', volume: '<100',
-    wants: 'a split at page boundaries. A .docx has no fixed pages — Word lays them out when it displays the file — so Pisahkan Word splits by heading, paragraph count or equal parts. Per page: Word ke PDF, then Pisahkan PDF per halaman. Said on the page, not claimed.' },
+    wants: 'a split at page boundaries. A .docx has no fixed pages — Word lays them out when it displays the file — so Pisahkan Word splits by Heading 1 or by paragraph count (SplitWord.astro has exactly those two modes). Per page: Word ke PDF, then Pisahkan PDF per halaman. Said on the page, not claimed.' },
   { term: 'pisahkan word to pdf', kd: 'n/a', volume: '<100', wants: 'a PDF result — Word ke PDF, then Pisahkan PDF.' },
   { term: 'gabungkan ppt ke pdf', kd: 'Easy', volume: '<100', wants: 'decks into one PDF — convert each, then Gabungkan PDF.' },
   { term: 'gabungkan ppt dan pdf', kd: 'Easy', volume: '<100', wants: 'mixing formats — no tool.' }
