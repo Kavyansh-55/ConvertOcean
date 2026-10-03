@@ -91,7 +91,10 @@ export const noDemand: { en: string; seen: string }[] = [
 
   { en: 'split-excel', seen: '`pisahkan excel` family: 3 keywords + 1 question, all <100' },
   { en: 'merge-txt', seen: '`gabungkan teks` returns only Excel/Canva formula queries (`rumus gabungkan teks di excel`), all <100' },
-  { en: 'split-txt', seen: 'not researched separately; `gabungkan teks` showed no file-level demand' }
+  { en: 'split-txt', seen: '`pisahkan teks` returns only Excel formula queries (`rumus pisahkan teks di excel`), all <100' },
+
+  { en: 'split-pptx', seen: '`pisahkan ppt`: 2 keywords, both <100; `gabungkan powerpoint` likewise' },
+  { en: 'json-formatter', seen: 'no keyword ideas for `pemformat json` — developers search it in English' }
 ];
 
 /* Recorded, not targeted. A competitor's brand inside the query. */
@@ -108,7 +111,14 @@ export const excluded: { term: string; why: string }[] = [
 
   { term: 'gabungkan gambar ai', why: 'wants an AI image tool, <100' },
   { term: 'ai pisahkan gambar', why: 'wants an AI tool, <100' },
-  { term: 'cara gabungkan teks di canva', why: 'a how-to inside Canva, <100' }
+  { term: 'cara gabungkan teks di canva', why: 'a how-to inside Canva, <100' },
+
+  { term: 'i love pdf gabungkan word', why: 'brand-navigational (iLovePDF), <100' },
+  { term: 'pisahkan word i love pdf', why: 'brand-navigational (iLovePDF), <100' },
+  { term: 'pisahkan word i love', why: 'brand-navigational (iLovePDF), <100' },
+  { term: 'pisahkan word i love word', why: 'brand-navigational, <100' },
+  { term: 'i love pdf pisahkan word', why: 'brand-navigational (iLovePDF), <100' },
+  { term: 'ai penghitung kata', why: 'wants an AI tool, <100' }
 ];
 
 /* The query asks for something the tool does not do. */
@@ -163,7 +173,19 @@ export const intentMismatch: { term: string; kd: string; volume: string; wants: 
   { term: 'gabungkan excel dan pdf', kd: 'n/a', volume: '<100', wants: 'mixing formats in one file — no tool.' },
   { term: 'gabungkan excel dan word', kd: 'n/a', volume: '<100', wants: 'mixing formats in one file — no tool.' },
   { term: 'pisahkan gambar pdf', kd: 'n/a', volume: '<100', wants: 'images pulled out of a PDF — no tool.' },
-  { term: 'pisahkan gambar di pdf', kd: 'n/a', volume: '<100', wants: 'images pulled out of a PDF — no tool.' }
+  { term: 'pisahkan gambar di pdf', kd: 'n/a', volume: '<100', wants: 'images pulled out of a PDF — no tool.' },
+
+  { term: 'gabungkan word ke pdf', kd: 'Easy', volume: '>100', wants: 'several Word files as one PDF — Word ke PDF each, then Gabungkan PDF; carried in body copy as two steps.' },
+  { term: 'gabungkan word dan pdf', kd: 'Easy', volume: '>100', wants: 'mixing Word and PDF in one file — convert the Word file first, then Gabungkan PDF.' },
+  { term: 'cara gabungkan tabel di word', kd: 'Easy', volume: '<100', wants: 'merging tables inside one document — a Word feature.' },
+  { term: 'cara gabungkan kolom di word', kd: 'n/a', volume: '<100', wants: 'merging columns/cells — a Word feature.' },
+  { term: 'cara gabungkan pdf ke word', kd: 'Easy', volume: '<100', wants: 'PDF into Word — PDF ke Word, then Gabungkan Word.' },
+  { term: 'cara gabungkan file pdf ke word', kd: 'n/a', volume: '<100', wants: 'as above.' },
+  { term: 'pisahkan word per halaman', kd: 'n/a', volume: '<100',
+    wants: 'a split at page boundaries. A .docx has no fixed pages — Word lays them out when it displays the file — so Pisahkan Word splits by heading, paragraph count or equal parts. Per page: Word ke PDF, then Pisahkan PDF per halaman. Said on the page, not claimed.' },
+  { term: 'pisahkan word to pdf', kd: 'n/a', volume: '<100', wants: 'a PDF result — Word ke PDF, then Pisahkan PDF.' },
+  { term: 'gabungkan ppt ke pdf', kd: 'Easy', volume: '<100', wants: 'decks into one PDF — convert each, then Gabungkan PDF.' },
+  { term: 'gabungkan ppt dan pdf', kd: 'Easy', volume: '<100', wants: 'mixing formats — no tool.' }
 ];
 
 /* A real query, filed under a different page than the export put it. */
@@ -821,6 +843,93 @@ export const pageKeywords: PageKeywords[] = [
     ],
     questions: [
       { term: 'cara pisahkan gambar', kd: 'n/a', volume: '<100' }
+    ]
+  },
+
+  {
+    slug: 'gabungkan-word',
+    en: 'merge-word',
+    primary: 'gabungkan word',
+    phrase: [
+      { term: 'gabungkan word', kd: 'Easy', volume: '>1000' },
+      { term: 'gabungkan word dan word', kd: 'Easy', volume: '>100' },
+      { term: 'gabungkan word ke word', kd: 'Easy', volume: '>100' },
+      { term: 'gabungkan word online', kd: 'Easy', volume: '>100' },
+      { term: 'gabungkan word dengan word', kd: 'Easy', volume: '>100' },
+      { term: 'gabungkan word to word', kd: 'Easy', volume: '<100' },
+      { term: 'gabungkan word gratis', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara gabungkan file word', kd: 'Easy', volume: '<100' },
+      { term: 'cara gabungkan word', kd: 'Easy', volume: '<100' },
+      { term: 'cara gabungkan file word jadi satu', kd: 'Easy', volume: '<100' },
+      { term: 'cara gabungkan file word yang terpisah', kd: 'n/a', volume: '<100' },
+      { term: 'cara gabungkan word yang terpisah', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'pisahkan-word',
+    en: 'split-word',
+    primary: 'pisahkan word',
+    phrase: [
+      { term: 'pisahkan word', kd: 'Easy', volume: '>1000' },
+      { term: 'pisahkan word online', kd: 'Easy', volume: '>100' },
+      /* The Heading 1 mode is exactly this. */
+      { term: 'pisahkan word per bab', kd: 'n/a', volume: '<100' },
+      { term: 'pisahkan word menjadi beberapa file', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara pisahkan file word', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    /* "gabungkan ppt" (>100) over "gabungkan powerpoint" (<100), as with
+       `kompres ppt` and `ppt ke pdf`. */
+    slug: 'gabungkan-ppt',
+    en: 'merge-pptx',
+    primary: 'gabungkan ppt',
+    phrase: [
+      { term: 'gabungkan ppt', kd: 'Medium', volume: '>100' },
+      { term: 'gabungkan ppt jadi satu', kd: 'Easy', volume: '>100' },
+      { term: 'gabungkan ppt ke ppt', kd: 'n/a', volume: '<100' },
+      { term: 'gabungkan ppt online', kd: 'Easy', volume: '<100' },
+      { term: 'gabungkan powerpoint', kd: 'Easy', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara gabungkan ppt jadi satu', kd: 'Easy', volume: '<100' },
+      { term: 'cara gabungkan ppt', kd: 'Easy', volume: '<100' },
+      { term: 'cara gabungkan powerpoint', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    /* Two seeds: the tool's name `penghitung kata` (>10,000, Hard) and the
+       task `hitung jumlah kata` (>1000, Easy). The slug takes the bigger
+       exact term; the winnable task term leads the H1 and the questions. */
+    slug: 'penghitung-kata',
+    en: 'word-counter',
+    primary: 'penghitung kata',
+    phrase: [
+      { term: 'penghitung kata', kd: 'Hard', volume: '>10,000' },
+      { term: 'hitung jumlah kata', kd: 'Easy', volume: '>1000' },
+      { term: 'penghitung kata online', kd: 'Hard', volume: '>100' },
+      { term: 'web penghitung kata', kd: 'Hard', volume: '>100' },
+      { term: 'penghitung kata teks', kd: 'n/a', volume: '>100' },
+      { term: 'aplikasi penghitung kata', kd: 'Hard', volume: '>100' },
+      { term: 'hitung jumlah kata online', kd: 'Hard', volume: '>100' },
+      { term: 'website penghitung kata', kd: 'Hard', volume: '<100' },
+      { term: 'alat penghitung kata', kd: 'Easy', volume: '<100' },
+      { term: 'penghitung kata word', kd: 'Hard', volume: '<100' },
+      { term: 'penghitung kata dalam kalimat', kd: 'n/a', volume: '<100' },
+      { term: 'web hitung jumlah kata', kd: 'n/a', volume: '<100' },
+      { term: 'hitung jumlah kata teks bahasa indonesia', kd: 'n/a', volume: '<100' },
+      { term: 'aplikasi hitung jumlah kata', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara hitung jumlah kata', kd: 'n/a', volume: '<100' },
+      /* Answered with the apps' own counters — true, and no tool needed. */
+      { term: 'cara hitung jumlah kata di word', kd: 'n/a', volume: '<100' },
+      { term: 'cara hitung jumlah kata di google docs', kd: 'n/a', volume: '<100' },
+      { term: 'hitung jumlah kata di word', kd: 'n/a', volume: '<100' }
     ]
   }
 ];
