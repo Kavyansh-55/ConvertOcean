@@ -928,5 +928,24 @@ async function stylesheetsFor(path) {
       '/pt/ FAQ states the real per-tool size limit');
 }
 
+/* -------------------------------------- pause-readiness (2026-10-03) */
+{
+  /* The page prose under both generators carried a real-looking person and a
+     real company domain (galactic.com) after the tools' own samples had moved
+     to fictional .example ones. */
+  const inv = (await get('/invoice-generator/')).body;
+  const rcpt = (await get('/receipt-generator/')).body;
+  say(![inv, rcpt].some(b => /Kavya J\. Studio|galactic\.com|kavyaj\.studio/.test(b)) &&
+      /Harbor (?:&amp;|&) Pine LLC \(accounts@harborpine\.example\)/.test(inv + rcpt),
+      'invoice + receipt article samples are fictional .example businesses');
+  /* The sales-tax guide's prose and FAQs are now read from the rate rows; the
+     rendered figures must still be the dataset's. */
+  const st = (await get('/guides/us-sales-tax-by-state/')).body;
+  say(/<title>Sales Tax by State \d{4} \(All 50 States\)/.test(st) &&
+      /Louisiana has the highest average combined state and local sales tax rate at \d+\.\d\d%/.test(st) &&
+      /Tax Foundation's “State and Local Sales Tax Rates/.test(st),
+      'sales-tax guide renders its year, ranking FAQ and source from the data file');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
