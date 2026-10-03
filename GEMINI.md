@@ -76,4 +76,5 @@ carried a font dropped in the Satoshi migration.
   deploy" is the full sequence including live verification and a dated entry
   in `SEO-ROADMAP.md`.
 
-`SEO-ROADMAP.md` is the living plan and the log of every deploy.
+`SEO-ROADMAP.md` is the living plan and the log of every deploy. It is kept
+locally and deliberately not published; a fresh clone will not have it.
