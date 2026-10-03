@@ -22,7 +22,7 @@ import { tools, type ToolData } from '../data/tools';
 import { guides, type GuideData } from '../data/guides';
 import { DEFAULT_LOCALE, LOCALES, LOCALE_CODES, PREFIXED_LOCALES, normalizePath, guidesBase, type Locale } from './config';
 import { ptTools, ptGuides, ptCategories, ptStaticPages } from '../data/pt';
-import { idTools, idGuides, idCategories, idStaticPages } from '../data/id';
+import { idTools, idGuides, idCategories, idStaticPages, ID_READY } from '../data/id';
 
 /**
  * A translated tool page. Fields absent here fall back to the English tool, so
@@ -106,7 +106,11 @@ interface LocaleContent {
 
 const CONTENT: Record<PrefixedLocale, LocaleContent> = {
   pt: { tools: ptTools, guides: ptGuides, categories: ptCategories, staticPages: ptStaticPages },
-  id: { tools: idTools, guides: idGuides, categories: idCategories, staticPages: idStaticPages }
+  /* Content is written ahead of launch; ID_READY holds it back until /id/ has
+     its homepage and static pages, so nothing links to an unbuilt page. */
+  id: ID_READY
+    ? { tools: idTools, guides: idGuides, categories: idCategories, staticPages: idStaticPages }
+    : { tools: [], guides: [], categories: [], staticPages: [] }
 };
 
 /** The overlays for a locale, by English slug. */
