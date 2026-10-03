@@ -147,7 +147,7 @@ export const idTools: LocaleTool[] = [
       },
       {
         question: 'Bagaimana kalau JPG-nya harus di bawah 200 KB?',
-        answer: 'Itulah maksud pencarian "kompres png ke jpg": mengubah format sekaligus memenuhi batas ukuran formulir. Untuk itu gunakan <a href="/image-resizer/">Image Resizer</a> dalam mode ukuran file: isi batasnya, misalnya 200 KB, pilih JPG sebagai format hasil, dan alat akan mencari kualitas tertinggi yang masih muat.'
+        answer: 'Itulah maksud pencarian "kompres png ke jpg": mengubah format sekaligus memenuhi batas ukuran formulir. Untuk itu gunakan <a href="/id/ubah-ukuran-gambar/">Ubah Ukuran Gambar</a> dalam mode ukuran file: isi batasnya, misalnya 200 KB, pilih JPG sebagai format hasil, dan alat akan mencari kualitas tertinggi yang masih muat.'
       },
       {
         question: 'Apa yang terjadi dengan latar transparan?',
@@ -876,6 +876,279 @@ export const idTools: LocaleTool[] = [
 
       <h2>Rekening koran dan laporan tidak perlu keluar dari perangkat</h2>
       <p>PDF yang paling ingin dijadikan spreadsheet justru yang paling tidak boleh beredar: rekening koran, slip gaji, laporan penjualan. Alat ini memproses file di dalam browser, di perangkat Anda sendiri, dan dokumen tidak disalin ke server mana pun.</p>
+    `
+  },
+  {
+    en: 'jpg-to-webp',
+    slug: 'jpg-ke-webp',
+    name: 'JPG ke WebP',
+    title: 'Ubah JPG ke WebP Online Gratis — Tanpa Upload | ConvertOcean',
+    description: 'Ubah JPG ke WebP langsung di browser: gambar lebih ringan dengan kualitas setara, untuk mempercepat situs Anda. Gambar tidak keluar dari perangkat.',
+    headline: 'JPG ke WebP.',
+    subtitle: 'Perkecil gambar situs Anda dengan kualitas tetap terjaga — diproses di perangkat Anda sendiri.',
+    quickAnswer: 'Untuk mengubah JPG ke WebP, pilih gambar .jpg di alat di atas lalu unduh WebP yang biasanya lebih kecil dengan kualitas visual setara — dalam pengujian kami, 5% sampai 45% lebih kecil, tergantung seberapa terkompres JPG-nya. Semua browser modern menampilkan WebP, sehingga cocok untuk gambar web dan halaman yang lebih cepat dimuat. Konversi terjadi sepenuhnya di perangkat Anda.',
+    category: 'Alat Gambar',
+    faqs: [
+      {
+        question: 'cara merubah jpg ke webp',
+        answer: 'Seret file .jpg ke alat di bagian atas halaman lalu unduh file .webp-nya. Tanpa daftar akun dan tanpa batas harian, dan gambar tidak keluar dari perangkat Anda.'
+      },
+      {
+        question: 'Seberapa kecil hasilnya?',
+        answer: 'Tergantung seberapa terkompres JPG aslinya. Dalam pengujian kami, berkurang 5% sampai 45%: foto HP yang disimpan dengan kualitas tinggi hanya berkurang 5%, sedangkan gambar yang lebih sederhana mendekati setengahnya. WebP dibuat dengan kualitas 92%.'
+      },
+      {
+        question: 'Apakah layak mengubah foto yang sudah JPG?',
+        answer: 'Untuk web, ya: file lebih ringan berarti halaman lebih cepat, terutama di HP. Untuk arsip, tidak ada keuntungannya — dan ingat bahwa mengubah JPG ke WebP adalah kompresi kedua pada gambar yang sudah kehilangan sebagian informasi. Simpan aslinya jika gambar masih akan diedit.'
+      },
+      {
+        question: 'Apakah semua browser bisa menampilkan WebP?',
+        answer: 'Ya, semua browser modern — Chrome, Firefox, Safari, Edge, dan versi HP-nya. Yang perlu diwaspadai ada di luar browser: aplikasi perkantoran dan editor lama masih menolak format ini. Untuk gambar yang akan dimasukkan ke Word, tetap pakai JPG.'
+      },
+      {
+        question: 'Apakah gambar saya dikirim ke server?',
+        answer: 'Tidak. Konversi terjadi di browser Anda, di perangkat Anda sendiri.'
+      }
+    ],
+    content: `
+      <h2>Gambar lebih ringan, situs lebih cepat</h2>
+      <p>Di situs biasa, gambar adalah bagian terbesar dari berat setiap halaman. <strong>Ubah jpg ke webp</strong> mengurangi ukurannya dengan kualitas yang tidak terlihat bedanya — dalam pengujian kami 5% sampai 45%, tergantung seberapa keras JPG-nya sudah dikompres. Hasilnya langsung terasa pada waktu muat, terutama di koneksi seluler.</p>
+
+      <h2>Hati-hati dengan kompresi kedua</h2>
+      <p>Satu hal yang jarang dikatakan: JPG sudah format yang membuang sebagian informasi, jadi <strong>konversi jpg ke webp</strong> berarti mengompres ulang sesuatu yang sudah dikompres. Hasilnya bagus secara visual, tetapi simpan aslinya jika gambar masih akan diedit — mengulang siklus ini menumpuk penurunan kualitas.</p>
+
+      <h2>Di mana WebP belum cocok</h2>
+      <p>Browser menampilkan WebP tanpa masalah. Aplikasi perkantoran dan editor lama belum tentu. Untuk gambar yang akan masuk dokumen, bukan halaman web, JPG tetap pilihan aman — dan jika perlu kembali, ada <a href="/id/webp-ke-jpg/">WebP ke JPG</a>.</p>
+    `
+  },
+  {
+    en: 'webp-to-jpg',
+    slug: 'webp-ke-jpg',
+    name: 'WebP ke JPG',
+    title: 'Ubah WebP ke JPG Online Gratis — Tanpa Upload | ConvertOcean',
+    description: 'Ubah gambar WebP ke JPG langsung di browser, agar bisa dibuka di aplikasi lama dan formulir yang menolak WebP. Gambar tidak keluar dari perangkat.',
+    headline: 'WebP ke JPG.',
+    subtitle: 'Ubah gambar WebP menjadi JPG yang bisa dibuka di aplikasi apa pun — tanpa file keluar dari perangkat Anda.',
+    quickAnswer: 'Untuk mengubah WebP ke JPG, pilih gambar .webp di alat di atas lalu unduh JPG yang bisa dibuka di software apa pun, termasuk editor lama yang tidak mengenali WebP. Karena JPG tidak mendukung transparansi, area transparan diratakan ke latar putih. Konversi terjadi sepenuhnya di browser Anda.',
+    category: 'Alat Gambar',
+    faqs: [
+      {
+        question: 'cara ubah webp ke jpg',
+        answer: 'Seret file .webp ke alat di bagian atas halaman lalu unduh .jpg-nya. Hasilnya bisa dibuka di Word, PowerPoint, editor lama, dan formulir mana pun yang menolak WebP.'
+      },
+      {
+        question: 'cara mengubah file webp ke jpg',
+        answer: 'Kasus paling umum adalah gambar yang disimpan dari situs: browser memberikannya sebagai WebP, dan aplikasi tujuan tidak menerimanya. Mengubah ke JPG menyelesaikannya karena JPG dikenali di mana-mana — konsekuensinya, file biasanya lebih besar, karena WebP mengompres lebih baik.'
+      },
+      {
+        question: 'cara mengubah format webp ke jpg',
+        answer: 'Mengganti nama file dari .webp ke .jpg tidak mengubah formatnya — isinya tetap WebP, dan banyak sistem menolaknya. Gambar harus didekode lalu dikodekan ulang sebagai JPG, dan itulah yang dilakukan alat ini.'
+      },
+      {
+        question: 'Apa yang terjadi dengan latar transparan?',
+        answer: 'Diratakan ke putih, karena JPG tidak punya saluran transparansi. Untuk foto, tidak ada yang berubah. Untuk logo yang sudah dipotong, hasilnya ada kotak putih di sekelilingnya — dalam kasus itu gunakan <a href="/id/webp-ke-png/">WebP ke PNG</a>, yang mempertahankan transparansi.'
+      },
+      {
+        question: 'Apakah kualitasnya menurun?',
+        answer: 'Ada pengodean ulang, dan JPG dibuat dengan kualitas tinggi — perbedaannya tidak terlihat mata pada foto. Pada gambar dengan teks tajam atau bidang warna rata, JPG memunculkan noda di sekitar tepi; untuk itu PNG pilihan yang lebih baik.'
+      },
+      {
+        question: 'Apakah gambar saya dikirim ke server?',
+        answer: 'Tidak. Konversi terjadi di browser Anda, di perangkat Anda sendiri, dan gambar tidak disalin ke server mana pun.'
+      }
+    ],
+    content: `
+      <h2>Gambar yang Anda simpan tapi tidak bisa dipakai</h2>
+      <p>Hampir semua pencarian <strong>ubah webp ke jpg</strong> berawal dari sini: Anda menyimpan gambar dari situs, mencoba memasukkannya ke dokumen atau formulir, dan file-nya ditolak. WebP adalah format yang dipakai web modern, tetapi banyak aplikasi perkantoran dan sistem lama belum bisa membukanya.</p>
+      <p><strong>Konversi webp ke jpg</strong> mengembalikan format yang diterima software apa pun — baik untuk <strong>ubah foto webp ke jpg</strong> maupun <strong>ubah gambar webp ke jpg</strong> lainnya.</p>
+
+      <h2>JPG atau PNG?</h2>
+      <p>Tergantung isi gambarnya. Untuk foto, JPG: lebih kecil dan tanpa perbedaan yang terlihat. Untuk logo, tangkapan layar, dan grafis berteks — atau gambar apa pun yang berlatar transparan — <a href="/id/webp-ke-png/">WebP ke PNG</a> pilihan yang tepat, karena JPG meratakan transparansi ke putih dan membuat tepi teks buram.</p>
+
+      <h2>File akan menjadi lebih besar</h2>
+      <p>WebP ada karena kompresinya lebih baik. Saat <strong>convert webp ke jpg</strong>, perkirakan file yang lebih besar sebagai ganti kompatibilitas universal. Semua diproses di dalam browser, tanpa disalin ke server mana pun.</p>
+    `
+  },
+  {
+    en: 'heic-to-jpg',
+    slug: 'heic-ke-jpg',
+    name: 'HEIC ke JPG',
+    title: 'Ubah HEIC ke JPG Online Gratis — Foto iPhone | ConvertOcean',
+    description: 'Ubah foto HEIC dari iPhone ke JPG langsung di browser, agar bisa dibuka di Windows, Android, dan formulir yang menolak HEIC. Foto tidak keluar dari perangkat.',
+    headline: 'HEIC ke JPG.',
+    subtitle: 'Ubah foto iPhone menjadi JPG yang bisa dibuka di mana saja — tanpa foto keluar dari perangkat Anda.',
+    quickAnswer: 'Untuk mengubah HEIC ke JPG, pilih foto .heic di alat di atas: dekoder sumber terbuka mengubahnya menjadi JPG berkualitas 92% yang bisa dibuka di Windows, Android, dan formulir unggah mana pun. Dekoder diunduh satu kali (sekitar 1 MB) saat file pertama, lalu tersimpan di cache. Foto tidak keluar dari perangkat Anda.',
+    category: 'Alat Gambar',
+    faqs: [
+      {
+        question: 'cara mengubah heic ke jpg',
+        answer: 'Seret foto .heic ke alat di bagian atas halaman lalu unduh JPG-nya. Pada konversi pertama ada unduhan dekoder sekali saja, sekitar 1 MB; setelah itu konversi langsung. Tanpa daftar akun dan tanpa instal aplikasi.'
+      },
+      {
+        question: 'cara ubah heic ke jpg',
+        answer: 'HEIC adalah format bawaan iPhone sejak 2017. Formatnya hemat tempat, tetapi Windows, banyak HP Android, dan sebagian besar situs unggah tidak mengenalinya — itulah sebabnya foto tidak bisa dibuka atau ditolak saat diunggah. Mengubahnya ke JPG menyelesaikan masalah karena JPG diterima di mana-mana.'
+      },
+      {
+        question: 'cara mengubah heic ke jpg di iphone',
+        answer: 'Bisa dilakukan di sini lewat Safari. Tetapi jika masalahnya berulang, ada cara yang lebih langsung: buka Pengaturan › Kamera › Format, pilih "Paling Kompatibel", dan iPhone akan memotret langsung dalam JPG. Ini tidak mengubah foto lama — untuk itu, gunakan alat ini.'
+      },
+      {
+        question: 'cara mengubah format heic ke jpg di android',
+        answer: 'Buka halaman ini di browser Android, ketuk area pilih file, ambil foto .heic dari file manager atau unduhan, lalu unduh JPG-nya. Tidak perlu aplikasi tambahan.'
+      },
+      {
+        question: 'cara ubah heic ke jpg di laptop',
+        answer: 'Seret foto .heic dari folder ke alat ini di browser laptop — Windows maupun Mac — lalu unduh JPG-nya. Windows sering tidak bisa membuka HEIC tanpa ekstensi tambahan; mengubahnya ke JPG menghindari masalah itu.'
+      },
+      {
+        question: 'Apakah cukup mengganti nama file .heic menjadi .jpg?',
+        answer: 'Tidak. Ekstensi hanyalah nama, dan isinya tetap HEIC; aplikasi yang membukanya akan menolak atau menampilkan error. Gambar harus didekode lalu dikodekan ulang, dan itulah yang dilakukan alat ini.'
+      },
+      {
+        question: 'Apakah foto saya dikirim ke server?',
+        answer: 'Tidak. Dekode terjadi di perangkat Anda, di dalam browser. Foto membawa metadata seperti lokasi dan model HP, dan tidak ada yang disalin ke server mana pun.'
+      }
+    ],
+    content: `
+      <h2>Kenapa iPhone membuat file yang tidak bisa dibuka</h2>
+      <p>Sejak 2017 iPhone memotret dalam HEIC secara bawaan. Formatnya secara teknis lebih baik dari JPG — kualitas sama dengan kira-kira setengah ukurannya — tetapi Windows, banyak HP Android, dan sebagian besar formulir unggah tidak mengenalinya. Hasilnya situasi yang akrab: foto sudah ada di laptop, tetapi tidak mau terbuka.</p>
+      <p><strong>Ubah heic ke jpg</strong> menyelesaikannya dengan mengganti format ke yang diterima semua orang — <strong>konversi heic ke jpg</strong> untuk satu foto atau beberapa foto berturut-turut, tanpa batas harian.</p>
+
+      <h2>Mencegah masalahnya dari sumber</h2>
+      <p>Jika ini sering terjadi, ubah pengaturan iPhone: Pengaturan › Kamera › Format › "Paling Kompatibel". Foto baru akan langsung dalam JPG. Foto lama tetap HEIC dan perlu dikonversi.</p>
+
+      <h2>Dekoder berjalan di perangkat Anda</h2>
+      <p>HEIC tidak didukung langsung oleh browser, jadi alat ini memuat dekoder sumber terbuka sekitar 1 MB saat foto pertama. Setelah itu dekoder tersimpan di cache dan konversi langsung. Yang terpenting: dekoder berjalan di perangkat Anda — foto, dan metadata lokasi yang dibawanya, tidak disalin ke server mana pun.</p>
+    `
+  },
+  {
+    en: 'heic-to-png',
+    slug: 'heic-ke-png',
+    name: 'HEIC ke PNG',
+    title: 'Ubah HEIC ke PNG Online Gratis — Tanpa Upload | ConvertOcean',
+    description: 'Ubah foto HEIC dari iPhone ke PNG tanpa kehilangan kualitas langsung di browser, agar bisa diedit di aplikasi apa pun.',
+    headline: 'HEIC ke PNG.',
+    subtitle: 'Ubah foto iPhone menjadi PNG tanpa kehilangan kualitas, yang diterima editor apa pun — tanpa foto keluar dari perangkat Anda.',
+    quickAnswer: 'Untuk mengubah HEIC ke PNG, pilih file .heic di alat di atas lalu unduh PNG tanpa kehilangan kualitas, yang diterima editor dan platform mana pun. Dekoder sumber terbuka dimuat satu kali (sekitar 1 MB) saat file pertama dan berjalan sepenuhnya di browser Anda. File PNG biasanya lebih besar dari HEIC aslinya, karena PNG menyimpan setiap piksel apa adanya.',
+    category: 'Alat Gambar',
+    faqs: [
+      {
+        question: 'Kapan memilih PNG daripada JPG?',
+        answer: 'Pilih PNG ketika gambar masih akan diedit, atau berisi teks, tangkapan layar, atau grafis dengan tepi tajam — PNG tanpa kehilangan kualitas dan tidak memunculkan noda seperti JPG. Untuk foto yang hanya akan dikirim atau dicetak, <a href="/id/heic-ke-jpg/">HEIC ke JPG</a> menghasilkan file yang jauh lebih kecil.'
+      },
+      {
+        question: 'Apakah file PNG lebih besar dari foto aslinya?',
+        answer: 'Ya, biasanya jauh lebih besar. HEIC adalah format kompresi yang sangat efisien, sedangkan PNG menyimpan setiap piksel tanpa perkiraan. Itulah harga tidak kehilangan informasi apa pun.'
+      },
+      {
+        question: 'Kenapa perlu mengunduh dekoder?',
+        answer: 'Karena browser tidak bisa membuka HEIC secara langsung — ini format milik Apple. Alat ini memuat dekoder sumber terbuka sekitar 1 MB saat konversi pertama, yang lalu tersimpan di cache. Dekoder berjalan di perangkat Anda, dan itulah yang memungkinkan konversi tanpa mengirim foto ke mana pun.'
+      },
+      {
+        question: 'Apakah foto saya dikirim ke server?',
+        answer: 'Tidak. Dekode dan pembuatan PNG terjadi di perangkat Anda. Foto membawa metadata seperti lokasi dan model HP, dan tidak ada yang disalin ke server mana pun.'
+      }
+    ],
+    content: `
+      <h2>HEIC ke format yang diterima editor</h2>
+      <p>HEIC adalah standar foto iPhone sejak 2017, dan hampir tidak ada editor gambar yang membukanya langsung. <strong>Ubah heic ke png</strong> menyelesaikannya tanpa kehilangan kualitas: PNG menyimpan setiap piksel persis seperti aslinya, sehingga tepat ketika gambar masih akan diolah.</p>
+
+      <h2>PNG atau JPG untuk foto HP</h2>
+      <p>Jika foto hanya akan dikirim, dicetak, atau dilampirkan, <a href="/id/heic-ke-jpg/">JPG</a> menghasilkan file yang jauh lebih kecil tanpa perbedaan yang terlihat. <strong>Heic ke png</strong> masuk akal ketika gambar akan diedit, dipotong, atau berisi teks — kasus di mana kompresi JPG menumpuk setiap kali disimpan.</p>
+
+      <h2>Dekoder, dan kenapa diperlukan</h2>
+      <p>Tidak ada browser yang membaca HEIC secara langsung. Alat ini memuat dekoder sumber terbuka sekitar 1 MB saat konversi pertama dan menyimpannya di cache. Dekoder berjalan di perangkat Anda — itulah yang memungkinkan <strong>konversi heic ke png</strong> tanpa menyalin foto ke server mana pun.</p>
+    `
+  },
+  {
+    en: 'avif-to-jpg',
+    slug: 'avif-ke-jpg',
+    name: 'AVIF ke JPG',
+    title: 'Ubah AVIF ke JPG Online Gratis — Tanpa Upload | ConvertOcean',
+    description: 'Ubah gambar AVIF ke JPG langsung di browser, agar bisa dibuka di aplikasi atau formulir apa pun yang menolak AVIF.',
+    headline: 'AVIF ke JPG.',
+    subtitle: 'Ubah gambar AVIF menjadi JPG yang diterima di mana saja — memakai dekoder bawaan browser Anda.',
+    quickAnswer: 'Untuk mengubah AVIF ke JPG, pilih file .avif di alat di atas: browser mendekodenya dengan mesin AVIF bawaannya dan membuat JPG berkualitas 92% yang bisa dibuka di software, aplikasi email, atau formulir unggah mana pun. Area transparan diratakan ke putih, karena JPG tidak mendukung transparansi. Tidak ada yang keluar dari perangkat Anda.',
+    category: 'Alat Gambar',
+    faqs: [
+      {
+        question: 'Apa itu file AVIF?',
+        answer: 'Format gambar modern yang berasal dari codec video AV1, dengan kompresi lebih baik dari WebP. Situs memakainya agar lebih cepat dimuat — dan karena masih baru, aplikasi perkantoran, editor lama, dan banyak formulir belum menerimanya.'
+      },
+      {
+        question: 'Apakah perlu mengunduh dekoder?',
+        answer: 'Tidak. Berbeda dengan HEIC, AVIF didukung langsung oleh browser modern (Chrome/Edge 85+, Firefox 93+, Safari 16.4+), jadi konversinya memakai mesin yang sudah ada di browser. Tidak ada unduhan tambahan. Di browser yang lebih lama, perbarui browser dulu.'
+      },
+      {
+        question: 'Apa yang terjadi dengan transparansi?',
+        answer: 'Diratakan ke putih, karena JPG tidak punya saluran transparansi. Untuk foto, tidak ada bedanya; untuk logo berlatar transparan, hasilnya ada kotak putih di sekelilingnya.'
+      },
+      {
+        question: 'Apakah gambar saya dikirim ke server?',
+        answer: 'Tidak. Dekode dan pengodean ulang terjadi di browser Anda, di perangkat Anda sendiri, dan gambar tidak disalin ke server mana pun.'
+      }
+    ],
+    content: `
+      <h2>Format yang terlalu baru untuk software lain</h2>
+      <p>AVIF lahir dari codec video AV1 dan mengompres lebih baik dari format gambar mana pun sebelumnya — itulah sebabnya situs cepat mengadopsinya. Masalahnya muncul kemudian: Anda menyimpan gambarnya, dan editor, Word, atau formulir unggah tidak mengenalinya.</p>
+      <p><strong>Ubah avif ke jpg</strong> menyelesaikannya dengan mengganti ke format yang sudah ada selama tiga puluh tahun dan diterima semua software.</p>
+
+      <h2>Tanpa unduhan tambahan</h2>
+      <p>Berbeda dengan HEIC yang butuh dekoder sendiri, AVIF sudah dibaca langsung oleh browser modern. <strong>Konversi avif ke jpg</strong> memakai mesin yang dibawa browser Anda, jadi tidak ada penantian atau unduhan tambahan.</p>
+
+      <h2>Transparansi</h2>
+      <p>AVIF mendukung transparansi; JPG tidak. Area transparan diratakan ke putih saat konversi. Untuk foto, hasil <strong>avif ke jpg</strong> tidak terlihat bedanya.</p>
+    `
+  },
+  {
+    en: 'jpeg-to-jpg',
+    slug: 'jpeg-ke-jpg',
+    name: 'JPEG ke JPG',
+    title: 'Ubah JPEG ke JPG Online Gratis — Atau JPG ke JPEG | ConvertOcean',
+    description: 'Ubah .jpeg ke .jpg, atau .jpg ke .jpeg, langsung di browser — untuk formulir dan aplikasi yang hanya menerima salah satu ejaan.',
+    headline: 'JPEG ke JPG.',
+    subtitle: 'Pilih file .jpeg dan terima .jpg, atau pilih .jpg dan terima .jpeg — dikodekan ulang di browser Anda sendiri.',
+    quickAnswer: 'JPEG dan JPG adalah format yang persis sama — .jpg hanyalah ejaan tiga huruf peninggalan DOS. Untuk mengubah JPEG ke JPG, pilih file .jpeg di alat di atas lalu unduh .jpg hasil pengodean ulang, siap untuk formulir unggah dan aplikasi lama yang hanya menerima ekstensi tiga huruf. Semua terjadi di browser Anda. Arah sebaliknya juga bisa: pilih .jpg dan Anda menerima .jpeg.',
+    category: 'Alat Gambar',
+    faqs: [
+      {
+        question: 'cara mengubah jpeg ke jpg',
+        answer: 'Seret file .jpeg ke alat lalu unduh .jpg-nya. Ini pengodean ulang sungguhan, bukan sekadar ganti nama — penting karena beberapa sistem memeriksa isi file, bukan hanya namanya.'
+      },
+      {
+        question: 'cara ubah jpg ke jpeg',
+        answer: 'Dengan alat yang sama: seret file .jpg dan unduh .jpeg-nya. Ekstensi hasil selalu yang belum dimiliki file Anda, dan tombol unduh menunjukkannya sebelum disimpan.'
+      },
+      {
+        question: 'cara mengubah jpg ke jpeg di hp',
+        answer: 'Buka halaman ini di browser HP, ketuk area pilih file, ambil foto dari galeri, lalu unduh hasilnya. Tidak perlu instal aplikasi.'
+      },
+      {
+        question: 'Apa bedanya JPEG dan JPG?',
+        answer: 'Tidak ada bedanya dalam isi: format, kompresi, dan kualitasnya sama. Perbedaannya sejarah — MS-DOS dan Windows lama membatasi ekstensi tiga karakter, sehingga .jpeg menjadi .jpg di PC, sementara Mac dan Unix tetap memakai ejaan lengkap. Keduanya bertahan sampai sekarang.'
+      },
+      {
+        question: 'cara ganti jpeg ke jpg',
+        answer: 'Mengganti nama file sering berhasil, karena isinya identik — tetapi tidak selalu. Beberapa formulir dan sistem memeriksa tanda tangan internal file atau menolak file yang riwayatnya tidak cocok, dan di situ ganti nama gagal. Pengodean ulang menyelesaikannya dengan pasti.'
+      },
+      {
+        question: 'Apakah kualitasnya berubah?',
+        answer: 'Ada pengodean ulang dengan kualitas tinggi — perbedaannya tidak terlihat mata pada foto. Efek sampingnya, metadata EXIF ikut terhapus, termasuk lokasi dan model kamera, yang biasanya justru baik sebelum foto diunggah ke tempat umum.'
+      },
+      {
+        question: 'Bagaimana kalau fotonya harus di bawah 200 KB?',
+        answer: 'Pencarian "kompres jpeg ke jpg" biasanya berarti itu: format dan ukuran sekaligus. Untuk batas KB, gunakan <a href="/id/ubah-ukuran-gambar/">Ubah Ukuran Gambar</a> dalam mode ukuran file dan pilih JPG sebagai hasilnya.'
+      }
+    ],
+    content: `
+      <h2>Dua nama, satu format</h2>
+      <p>JPEG dan JPG adalah format gambar yang sama. Ejaan ganda berasal dari MS-DOS yang membatasi ekstensi tiga karakter: <em>.jpeg</em> menjadi <em>.jpg</em> di PC, sementara Mac dan Unix tetap memakai ejaan lengkap. Batasannya sudah lama hilang; kedua ejaan tetap ada.</p>
+
+      <h2>Kenapa konversi masih diperlukan</h2>
+      <p>Karena sistem memeriksa ekstensi. Formulir yang hanya menerima <em>.jpg</em> menolak <em>.jpeg</em> yang identik, dan aplikasi lama melakukan hal yang sama. <strong>Ubah jpeg ke jpg</strong> menyelesaikan masalah yang pada dasarnya soal nama — tetapi masalah yang nyata, apalagi di portal pendaftaran.</p>
+
+      <h2>Ganti nama kadang cukup, kadang tidak</h2>
+      <p>Karena isinya sama, mengganti ekstensi manual sering berhasil. Sering — tidak selalu. Sistem yang memeriksa tanda tangan internal file tetap menolak. <strong>Konversi jpeg ke jpg</strong> dengan pengodean ulang menghilangkan keraguan itu — dan sekaligus menghapus metadata EXIF, yang baik sebelum foto diunggah ke tempat umum.</p>
     `
   }
 ];
