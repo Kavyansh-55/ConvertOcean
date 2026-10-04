@@ -779,7 +779,10 @@ async function stylesheetsFor(path) {
   say(/id="dropZone"/.test(conv) && /id="fileInput"/.test(conv), '/pt/conversor-de-arquivos/ carries the working converter');
   say(/"FAQPage"/.test(conv) && !/Supports Excel \(\.xlsx/.test(conv), 'with a Portuguese FAQ and translated converter labels');
   const ocr = (await get('/pt/imagem-para-texto/')).body;
-  say(/document\.documentElement\.lang === 'pt' \? 'por' : 'eng'/.test(ocr), '/pt/imagem-para-texto/ loads the Portuguese OCR model');
+  /* The language → model map replaced the pt-only ternary on 2026-10-04,
+     when Indonesian (ind) joined; either shape means Portuguese loads 'por'. */
+  say(/document\.documentElement\.lang === 'pt' \? 'por' : 'eng'|\{ pt: 'por', id: 'ind' \}\[document\.documentElement\.lang\]/.test(ocr),
+      '/pt/imagem-para-texto/ loads the Portuguese OCR model');
   const cat = (await get('/pt/ferramentas-pdf/')).body;
   say(/class="category-intro"/.test(cat) && /"FAQPage"/.test(cat), '/pt/ferramentas-pdf/ has its intro and FAQ');
   const contato = (await get('/pt/contato/')).body;
@@ -961,6 +964,33 @@ async function stylesheetsFor(path) {
   say(!/Step 1: Upload/.test(ocr) && /an LSTM/.test(ocr), 'OCR guide: LSTM recognition, no "Upload" step');
   const pj = (await get('/guides/png-vs-jpg/')).body;
   say(!/up to 80%|25-30% smaller/.test(pj) && /25–34% smaller/.test(pj), 'png-vs-jpg guide cites Google’s WebP figure');
+}
+
+/* ------------------------------------------ Indonesian locale (2026-10-04) */
+{
+  /* /id/ was 301'd to English since the 28-locale cleanup; the rule had to go
+     or no Indonesian page could ever be indexed. */
+  const home = await get('/id/');
+  say(home.status === 200 && /<html[^>]*lang="id"/.test(home.body) && /Konversi file\. Tanpa mengirim apa pun\./.test(home.body),
+      '/id/ serves the Indonesian homepage (200, lang=id), not a redirect');
+  const kp = (await get('/id/kompres-pdf/')).body;
+  const cp = (await get('/compress-pdf/')).body;
+  say(/hreflang="id" href="https:\/\/convertocean\.com\/id\/kompres-pdf\/"/.test(kp)
+      && /hreflang="en" href="https:\/\/convertocean\.com\/compress-pdf\/"/.test(kp)
+      && /hreflang="id" href="https:\/\/convertocean\.com\/id\/kompres-pdf\/"/.test(cp),
+      'hreflang pairs /compress-pdf/ ↔ /id/kompres-pdf/ in both directions');
+  say(/kompres pdf sesuai ukuran yang diinginkan/.test(kp) && /og:locale" content="id_ID"/.test(kp),
+      '/id/kompres-pdf/ carries its researched question and og:locale id_ID');
+  const sm = (await get('/sitemap.xml')).body;
+  const idUrls = (sm.match(/<loc>https:\/\/convertocean\.com\/id\//g) || []).length;
+  say(idUrls >= 47, `sitemap lists the Indonesian pages (${idUrls})`);
+  /* Old 28-locale-era URLs used English slugs under /id/. */
+  const old = await fetch(ORIGIN + '/id/merge-pdf/' + bust(), { redirect: 'manual', signal: AbortSignal.timeout(25000) });
+  say(old.status === 301 && /\/id\/gabungkan-pdf\/(\?|$)/.test(old.headers.get('location') || ''),
+      `/id/merge-pdf/ 301s to /id/gabungkan-pdf/ (got ${old.status} → ${old.headers.get('location')})`);
+  const ocr = (await get('/id/gambar-ke-teks/')).body;
+  say(/\{ pt: 'por', id: 'ind' \}\[document\.documentElement\.lang\]/.test(ocr) && /<html[^>]*lang="id"/.test(ocr),
+      '/id/gambar-ke-teks/ ships the Indonesian OCR model choice');
 }
 
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');

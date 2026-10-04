@@ -189,17 +189,17 @@ const contactSchema = {
         <form id="contactForm">
           <div class="form-group">
             <label for="contactName" class="form-label">Nome</label>
-            <input type="text" id="contactName" class="form-input" placeholder="Seu nome" required />
+            <input type="text" id="contactName" name="name" autocomplete="name" class="form-input" placeholder="Seu nome…" required />
           </div>
 
           <div class="form-group">
             <label for="contactEmail" class="form-label">E-mail</label>
-            <input type="email" id="contactEmail" class="form-input" placeholder="voce@exemplo.com.br" required />
+            <input type="email" id="contactEmail" name="email" autocomplete="email" spellcheck="false" class="form-input" placeholder="voce@exemplo.com.br" required />
           </div>
 
           <div class="form-group">
             <label for="contactReason" class="form-label">Assunto</label>
-            <select id="contactReason" class="select-input" required>
+            <select id="contactReason" name="topic" class="select-input" required>
               <option value="Dúvida">Dúvida geral</option>
               <option value="Erro">Erro em uma ferramenta</option>
               <option value="Tradução">Erro de português</option>
@@ -212,7 +212,7 @@ const contactSchema = {
 
           <div class="form-group">
             <label for="contactMessage" class="form-label">Mensagem</label>
-            <textarea id="contactMessage" class="form-input text-area" placeholder="Escreva a sua mensagem…" required></textarea>
+            <textarea id="contactMessage" name="message" class="form-input text-area" placeholder="Escreva a sua mensagem…" required></textarea>
           </div>
 
           <button type="submit" class="button button-primary" style="width: 100%; margin-top: var(--spacing-sm);">Enviar mensagem</button>

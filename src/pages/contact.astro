@@ -182,17 +182,17 @@ const contactSchema = {
         <form id="contactForm">
           <div class="form-group">
             <label for="contactName" class="form-label">Name</label>
-            <input type="text" id="contactName" class="form-input" placeholder="Your name" required />
+            <input type="text" id="contactName" name="name" autocomplete="name" class="form-input" placeholder="Your name…" required />
           </div>
 
           <div class="form-group">
             <label for="contactEmail" class="form-label">Email Address</label>
-            <input type="email" id="contactEmail" class="form-input" placeholder="you@example.com" required />
+            <input type="email" id="contactEmail" name="email" autocomplete="email" spellcheck="false" class="form-input" placeholder="you@example.com" required />
           </div>
 
           <div class="form-group">
             <label for="contactReason" class="form-label">Reason for Inquiry</label>
-            <select id="contactReason" class="select-input" required>
+            <select id="contactReason" name="topic" class="select-input" required>
               <option value="General Support">General Support / FAQ Inquiry</option>
               <option value="Bug Report">Bug Report / Tool Malfunction</option>
               <option value="Feature Request">Feature Request / New Tool Idea</option>
@@ -203,7 +203,7 @@ const contactSchema = {
 
           <div class="form-group">
             <label for="contactMessage" class="form-label">Message</label>
-            <textarea id="contactMessage" class="form-input text-area" placeholder="Write your message here…" required></textarea>
+            <textarea id="contactMessage" name="message" class="form-input text-area" placeholder="Write your message here…" required></textarea>
           </div>
 
           <button type="submit" class="button button-primary" style="width: 100%; margin-top: var(--spacing-sm);">Send Message</button>

@@ -183,17 +183,17 @@ const contactSchema = {
         <form id="contactForm">
           <div class="form-group">
             <label for="contactName" class="form-label">Nama</label>
-            <input type="text" id="contactName" class="form-input" placeholder="Nama Anda" required />
+            <input type="text" id="contactName" name="name" autocomplete="name" class="form-input" placeholder="Nama Anda…" required />
           </div>
 
           <div class="form-group">
             <label for="contactEmail" class="form-label">Email</label>
-            <input type="email" id="contactEmail" class="form-input" placeholder="anda@contoh.co.id" required />
+            <input type="email" id="contactEmail" name="email" autocomplete="email" spellcheck="false" class="form-input" placeholder="anda@contoh.co.id" required />
           </div>
 
           <div class="form-group">
             <label for="contactReason" class="form-label">Topik</label>
-            <select id="contactReason" class="select-input" required>
+            <select id="contactReason" name="topic" class="select-input" required>
               <option value="Pertanyaan">Pertanyaan umum</option>
               <option value="Bug">Masalah pada alat</option>
               <option value="Terjemahan">Kesalahan bahasa Indonesia</option>
@@ -206,7 +206,7 @@ const contactSchema = {
 
           <div class="form-group">
             <label for="contactMessage" class="form-label">Pesan</label>
-            <textarea id="contactMessage" class="form-input text-area" placeholder="Tulis pesan Anda…" required></textarea>
+            <textarea id="contactMessage" name="message" class="form-input text-area" placeholder="Tulis pesan Anda…" required></textarea>
           </div>
 
           <button type="submit" class="button button-primary" style="width: 100%; margin-top: var(--spacing-sm);">Kirim pesan</button>
