@@ -741,8 +741,11 @@ async function stylesheetsFor(path) {
 
   const sm = (await get('/sitemap.xml')).body;
   const ptLocs = (sm.match(/<loc>[^<]*\/pt\/[^<]*<\/loc>/g) || []).length;
-  say(ptLocs === 85 && sm.includes('/pt/guias/escanear-documento/'),
-      `sitemap.xml lists 85 Portuguese URLs including the guide (found ${ptLocs}; 87 before two were merged 2026-10-01)`);
+  /* A floor, not an exact count: scheduled guides add Portuguese URLs on
+     their own dates (publish.ts), and an exact number would fail the daily
+     publish run the first morning one appeared. 86 since /pt/pdf-para-jpg/. */
+  say(ptLocs >= 86 && sm.includes('/pt/guias/escanear-documento/'),
+      `sitemap.xml lists at least 86 Portuguese URLs including the guide (found ${ptLocs})`);
 }
 
 /* ------------------------------------------------- 2026-09-27 PT parity fixes
@@ -1106,6 +1109,11 @@ async function stylesheetsFor(path) {
   const pj = await get('/pdf-to-jpg/');
   say(pj.status === 200 && /id="pjFormat"/.test(pj.body) && /pdf\.js\/3\.4\.120\/pdf\.min\.js/.test(pj.body)
       && /jszip\/3\.10\.1/.test(pj.body), '/pdf-to-jpg/ ships its controls, pdf.js and JSZip');
+  const pjPt = await get('/pt/pdf-para-jpg/');
+  const pjId = await get('/id/pdf-ke-jpg/');
+  say(pjPt.status === 200 && pjId.status === 200 && /id="pjFormat"/.test(pjPt.body) && /kompres pdf ke jpg/.test(pjId.body)
+      && /href="\/pt\/pdf-para-jpg\/"/.test((await get('/pt/')).body),
+      'PDF to JPG exists in pt and id, and the Portuguese footer links to it');
 }
 
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');

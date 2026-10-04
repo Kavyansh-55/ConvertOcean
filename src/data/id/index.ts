@@ -2128,6 +2128,32 @@ export const idTools: LocaleTool[] = [
       <h2>Batas kalkulator ini</h2>
       <p><strong>Kalkulator ppn online</strong> ini untuk menghitung, bukan untuk membuat faktur pajak. PPN besaran tertentu, fasilitas pembebasan, dan PPnBM punya aturan sendiri. Semua perhitungan terjadi di browser Anda.</p>
     `
+  },
+  {
+    en: 'pdf-to-jpg',
+    slug: 'pdf-ke-jpg',
+    name: 'PDF ke JPG',
+    title: 'PDF ke JPG Online Gratis — Tanpa Upload File | ConvertOcean',
+    description: 'Ubah setiap halaman PDF menjadi gambar JPG atau PNG langsung di browser, 96, 150 atau 300 DPI. Banyak halaman diunduh dalam ZIP. PDF tidak keluar dari perangkat.',
+    headline: 'PDF ke JPG.',
+    subtitle: 'Ubah setiap halaman PDF menjadi gambar JPG atau PNG dengan resolusi pilihan Anda, tanpa file keluar dari perangkat.',
+    quickAnswer: 'Untuk mengubah PDF ke JPG, pilih file di atas, pilih JPG atau PNG dan resolusinya, lalu klik Konversi & Unduh. Setiap halaman menjadi satu gambar; PDF satu halaman diunduh sebagai satu gambar, PDF yang lebih panjang dalam ZIP. 150 DPI cocok untuk layar dan formulir; 300 DPI untuk cetak.',
+    category: 'Alat Dokumen',
+    faqs: [
+      { question: 'Bagaimana cara mengubah PDF ke JPG?', answer: 'Pilih PDF, biarkan format JPG, pilih resolusi, lalu klik Konversi & Unduh. Setiap halaman menjadi gambar tersendiri.' },
+      { question: 'Bisakah PDF dikompres menjadi JPG?', answer: 'Ya, inilah yang biasanya dimaksud dengan "kompres pdf ke jpg": setiap halaman disimpan sebagai JPG. Pilih 96 atau 150 DPI agar file kecil. Jika yang dibutuhkan tetap PDF yang lebih kecil, gunakan Kompres PDF.' },
+      { question: 'Resolusi mana yang dipilih?', answer: '150 DPI tajam di layar dan ukurannya cukup kecil untuk kebanyakan formulir. Pilih 300 DPI untuk dicetak, dan 96 DPI jika ukuran file paling penting.' },
+      { question: 'Apakah PDF saya diunggah?', answer: 'Tidak. Halaman dibuat oleh browser Anda, jadi PDF tidak keluar dari perangkat.' },
+      { question: 'Bisakah PDF berpassword diubah?', answer: 'Tidak. Buka PDF dengan passwordnya, simpan salinan tanpa proteksi, lalu ubah salinan itu.' }
+    ],
+    content: `
+      <h2>Setiap halaman menjadi satu gambar</h2>
+      <p>Alat <strong>pdf ke jpg</strong> ini menggambar setiap halaman PDF di browser Anda lalu menyimpannya sebagai gambar. PDF satu halaman menjadi satu JPG; PDF dengan banyak halaman menjadi ZIP berisi satu gambar per halaman, bernomor urut — cara paling mudah untuk <strong>pisahkan pdf ke jpg</strong>, satu file per halaman.</p>
+      <h2>Kompres PDF ke JPG</h2>
+      <p>Banyak yang mencari <strong>kompres pdf ke jpg</strong> karena formulir meminta gambar, bukan PDF. Pilih JPG dan 150 DPI — tajam di layar dan ukurannya kecil. Jika formulir tetap meminta PDF dengan batas ukuran, gunakan <a href="/id/kompres-pdf/">Kompres PDF</a> dengan pilihan Tentukan ukuran.</p>
+      <h2>JPG atau PNG</h2>
+      <p>Untuk halaman hasil scan dan foto, JPG jauh lebih kecil. Untuk halaman berisi teks, grafik atau gambar garis, PNG menjaga tepinya tetap tajam. Keduanya berlatar putih, seperti kertas.</p>
+    `
   }
 ];
 

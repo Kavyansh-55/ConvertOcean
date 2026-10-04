@@ -693,6 +693,32 @@ const ptToolsBatch2: PtTool[] = [
     `
   },
   {
+    en: 'pdf-to-jpg',
+    slug: 'pdf-para-jpg',
+    name: 'PDF para JPG',
+    title: 'Converter PDF para JPG Online Grátis — Sem Enviar o Arquivo | ConvertOcean',
+    description: 'Transforme cada página de um PDF em imagem JPG ou PNG direto no navegador, em 96, 150 ou 300 DPI. Várias páginas baixam num ZIP. O PDF não sai do seu dispositivo.',
+    headline: 'PDF para JPG.',
+    subtitle: 'Transforme cada página de um PDF em imagem JPG ou PNG, na resolução que você escolher, sem que o arquivo saia do seu dispositivo.',
+    quickAnswer: 'Para converter PDF em JPG, selecione o arquivo acima, escolha JPG ou PNG e a resolução, e clique em Converter e baixar. Cada página vira uma imagem; um PDF de uma página baixa como uma imagem só, e um PDF maior baixa num ZIP. 150 DPI serve para tela e formulários; 300 DPI é qualidade de impressão.',
+    category: 'Ferramentas de Documentos',
+    faqs: [
+      { question: 'Como converter PDF em JPG?', answer: 'Selecione o PDF, mantenha JPG como formato, escolha a resolução e clique em Converter e baixar. Cada página vira uma imagem separada.' },
+      { question: 'Qual resolução escolher?', answer: '150 DPI fica nítido na tela e gera arquivos pequenos o bastante para a maioria dos formulários. Use 300 DPI para imprimir e 96 DPI quando o tamanho do arquivo importa mais.' },
+      { question: 'JPG ou PNG?', answer: 'JPG gera arquivos bem menores para documentos digitalizados e fotos. PNG mantém texto e desenhos perfeitamente nítidos, mas é maior. Os dois saem com fundo branco, como o papel.' },
+      { question: 'O PDF é enviado para algum servidor?', answer: 'Não. As páginas são geradas pelo seu navegador, então o PDF não sai do seu dispositivo.' },
+      { question: 'Funciona com PDF protegido por senha?', answer: 'Não. Abra o PDF com a senha, salve uma cópia sem proteção e converta essa cópia.' }
+    ],
+    content: `
+      <h2>Cada página vira uma imagem</h2>
+      <p>O <strong>conversor de pdf para jpg</strong> desenha cada página do PDF no seu navegador e salva o resultado como imagem. Um PDF de uma página vira um único JPG; um PDF com várias páginas vira um ZIP com uma imagem por página, numeradas em ordem.</p>
+      <h2>Qual resolução usar</h2>
+      <p>150 DPI é o equilíbrio para quase tudo: fica nítido na tela e no celular e gera arquivos que cabem nos limites dos formulários online. 300 DPI é para impressão, com arquivos bem maiores. 96 DPI serve quando o menor arquivo possível é o que importa.</p>
+      <h2>JPG ou PNG</h2>
+      <p>Para páginas digitalizadas e fotos, JPG gera arquivos muito menores. Para páginas só de texto, gráficos ou desenhos, PNG mantém as bordas perfeitamente nítidas. Em ambos o fundo sai branco, como o papel.</p>
+    `
+  },
+  {
     en: 'docx-to-txt',
     slug: 'word-para-txt',
     name: 'Word para TXT',

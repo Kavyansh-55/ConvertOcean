@@ -216,6 +216,7 @@ const pt: Record<string, string> = {
   'PDF to Word': 'PDF para Word',
   'TXT to PDF': 'TXT para PDF',
   'PDF to TXT': 'PDF para TXT',
+  'PDF to JPG': 'PDF para JPG',
   'CSV to JSON': 'CSV para JSON',
   'JSON to CSV': 'JSON para CSV',
   'XLSX to CSV': 'XLSX para CSV',

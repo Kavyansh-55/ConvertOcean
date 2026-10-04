@@ -133,10 +133,6 @@ export const intentMismatch: { term: string; kd: string; volume: string; wants: 
     wants: 'same as `gabungkan pdf dan jpg`.' },
   { term: 'cara gabungkan pdf ke word', kd: 'Easy', volume: '<100',
     wants: 'a merged Word file. Nothing here merges into Word from PDF.' },
-  { term: 'pisahkan pdf ke jpg', kd: 'n/a', volume: '>100',
-    wants: 'PDF pages as JPG images. There is no PDF-to-JPG tool yet (also missing in Portuguese research).' },
-  { term: 'kompres pdf ke jpg', kd: 'Easy', volume: '>1000',
-    wants: 'PDF to JPG — no tool yet.' },
   { term: 'kompres powerpoint ke word', kd: 'n/a', volume: '<100',
     wants: 'PowerPoint to Word — no tool.' },
   { term: 'kompres powerpoint ke jpg', kd: 'n/a', volume: '<100',
@@ -1131,6 +1127,17 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'kalkulator ppn 10 persen', kd: 'n/a', volume: '<100' },
       { term: 'kalkulator ppn online', kd: 'n/a', volume: '<100' },
       { term: 'kalkulator ppn 2025', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    /* Moved from intentMismatch 2026-10-04: /pdf-to-jpg/ now exists. */
+    slug: 'pdf-ke-jpg',
+    en: 'pdf-to-jpg',
+    primary: 'kompres pdf ke jpg',
+    phrase: [
+      { term: 'kompres pdf ke jpg', kd: 'Easy', volume: '>1000' },
+      { term: 'pisahkan pdf ke jpg', kd: 'n/a', volume: '>100' }
     ],
     questions: []
   }
