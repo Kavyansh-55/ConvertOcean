@@ -1076,6 +1076,9 @@ async function stylesheetsFor(path) {
     ['2026-11-02', '/guides/resize-image-in-cm/'],
     ['2026-11-04', '/pt/guias/redimensionar-imagem-em-cm/'],
     ['2026-11-06', '/id/panduan/ubah-ukuran-gambar-cm/'],
+    ['2026-11-09', '/guides/excel-csv-leading-zeros-long-numbers/'],
+    ['2026-11-11', '/pt/guias/excel-zero-a-esquerda-csv/'],
+    ['2026-11-13', '/id/panduan/excel-nik-jadi-e-plus-15/'],
   ];
   const map = (await get('/sitemap.xml')).body;
   const wrong = [];
