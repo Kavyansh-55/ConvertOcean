@@ -1062,17 +1062,17 @@ async function stylesheetsFor(path) {
   const today = (process.env.CO_BUILD_DATE || new Date().toISOString()).slice(0, 10);
   const SCHEDULE = [
     ['2026-10-06', '/guides/combine-pdf-and-jpg/'],
-    ['2026-10-06', '/id/panduan/gabungkan-pdf-dan-jpg/'],
-    ['2026-10-07', '/guides/how-to-calculate-percentage-in-excel/'],
-    ['2026-10-07', '/id/panduan/kwitansi-jual-beli-tanah/'],
-    ['2026-10-08', '/pt/guias/como-calcular-porcentagem-no-excel/'],
-    ['2026-10-08', '/id/panduan/cara-hitung-persentase-di-excel/'],
-    ['2026-10-10', '/pt/guias/como-calcular-porcentagem-na-calculadora/'],
-    ['2026-10-12', '/guides/combine-word-powerpoint-and-pdf/'],
-    ['2026-10-13', '/id/panduan/gabungkan-word-ppt-dan-pdf/'],
-    ['2026-10-15', '/guides/jpg-to-png-transparent-background/'],
-    ['2026-10-16', '/pt/guias/jpg-para-png-sem-fundo/'],
-    ['2026-10-17', '/id/panduan/jpg-ke-png-transparan/'],
+    ['2026-10-08', '/id/panduan/gabungkan-pdf-dan-jpg/'],
+    ['2026-10-10', '/guides/how-to-calculate-percentage-in-excel/'],
+    ['2026-10-12', '/id/panduan/kwitansi-jual-beli-tanah/'],
+    ['2026-10-14', '/pt/guias/como-calcular-porcentagem-no-excel/'],
+    ['2026-10-16', '/id/panduan/cara-hitung-persentase-di-excel/'],
+    ['2026-10-18', '/pt/guias/como-calcular-porcentagem-na-calculadora/'],
+    ['2026-10-20', '/guides/combine-word-powerpoint-and-pdf/'],
+    ['2026-10-22', '/id/panduan/gabungkan-word-ppt-dan-pdf/'],
+    ['2026-10-24', '/guides/jpg-to-png-transparent-background/'],
+    ['2026-10-27', '/pt/guias/jpg-para-png-sem-fundo/'],
+    ['2026-10-30', '/id/panduan/jpg-ke-png-transparan/'],
   ];
   const map = (await get('/sitemap.xml')).body;
   const wrong = [];

@@ -2169,7 +2169,7 @@ export const idGuides: LocaleGuide[] = [
     description: 'Gabungkan PDF dan foto JPG jadi satu PDF dalam dua langkah: ubah foto ke PDF, lalu gabungkan. Dengan ukuran file nyata dan cara agar muat batas upload.',
     h1: 'Cara gabungkan PDF dan JPG jadi satu file.',
     readTime: '6 menit baca',
-    publishOn: '2026-10-06',
+    publishOn: '2026-10-08',
     intro: 'Formulir lamaran hanya menerima satu file, sementara Anda punya satu PDF dan beberapa foto — surat lamaran, ijazah yang difoto dengan HP, bukti transfer. Alat gabung PDF hanya menerima PDF, dan alat konversi gambar hanya membuat PDF baru, jadi tidak ada satu tombol yang langsung menyelesaikannya. Dua langkah bisa, dan keduanya berjalan di browser, sehingga dokumen tidak keluar dari perangkat Anda.',
     contentHtml: `
       <h2>Langkah 1: jadikan foto satu PDF</h2>
@@ -2236,7 +2236,7 @@ export const idGuides: LocaleGuide[] = [
     description: 'Apa yang harus ditulis di kwitansi jual beli tanah, kapan perlu meterai Rp10.000, dan kenapa kwitansi saja tidak cukup untuk balik nama sertifikat.',
     h1: 'Kwitansi jual beli tanah yang sah.',
     readTime: '8 menit baca',
-    publishOn: '2026-10-07',
+    publishOn: '2026-10-12',
     intro: 'Kwitansi adalah bukti bahwa uang sudah diterima. Dalam jual beli tanah, bukti itu penting — terutama untuk uang muka dan cicilan — tetapi kwitansi tidak memindahkan hak atas tanah. Panduan ini membahas apa yang membuat kwitansi tanah kuat sebagai bukti pembayaran, contoh penulisannya, dan langkah yang tetap harus ditempuh agar tanah benar-benar berpindah nama.',
     contentHtml: `
       <blockquote><strong>Bukan nasihat hukum.</strong> Panduan ini menjelaskan aturan umum. Untuk transaksi tanah, konsultasikan dengan PPAT atau notaris setempat sebelum membayar dalam jumlah besar.</blockquote>
@@ -2316,7 +2316,7 @@ export const idGuides: LocaleGuide[] = [
     description: 'Rumus persentase di Excel: bagian dari total, kenaikan dan penurunan, diskon dan PPN — plus kenapa sel menampilkan 0,15 atau 1500% dan bukan 15%.',
     h1: 'Cara hitung persentase di Excel.',
     readTime: '7 menit baca',
-    publishOn: '2026-10-08',
+    publishOn: '2026-10-16',
     intro: 'Excel tidak punya fungsi khusus persentase, dan memang tidak perlu. Di spreadsheet, persentase hanyalah angka biasa — 15% disimpan sebagai 0,15 — sehingga hampir semua hitungan persentase selesai dengan salah satu dari empat rumus pendek. Yang sering membuat bingung justru formatnya, jadi itu dibahas lebih dulu.',
     contentHtml: `
       <h2>Satu aturan penting: 15% itu 0,15</h2>
@@ -2403,7 +2403,7 @@ Diskon 15%:  =B2*(1-C2)     Rp 40.000 → Rp 34.000</span>
     description: 'Gabungkan dokumen Word, presentasi PPT dan PDF jadi satu file: ubah ke PDF dulu, lalu gabungkan. Apa yang terjadi pada ukuran halaman, font dan slide.',
     h1: 'Cara gabungkan Word, PPT dan PDF jadi satu PDF.',
     readTime: '6 menit baca',
-    publishOn: '2026-10-13',
+    publishOn: '2026-10-22',
     intro: 'Portal pengumpulan tugas atau berkas lamaran meminta satu file, sementara laporan Anda dalam Word, slide dalam PowerPoint, dan formulir bertanda tangan sudah berupa PDF. Alat gabung PDF hanya menerima PDF, jadi caranya dua langkah: ubah file Office ke PDF, lalu gabungkan ketiganya. Berikut yang terjadi di setiap langkah, diukur dengan file sungguhan — termasuk hal yang jarang dibahas: setiap halaman tetap memakai ukurannya sendiri.',
     contentHtml: `
       <h2>Langkah 1: ubah file Word dan PowerPoint ke PDF</h2>
@@ -2463,7 +2463,7 @@ Diskon 15%:  =B2*(1-C2)     Rp 40.000 → Rp 34.000</span>
     description: 'Mengubah JPG ke PNG tetap menyisakan latar putih. Kenapa begitu, dan alat bawaan Windows, Mac, iPhone dan Office yang benar-benar menghapus latar.',
     h1: 'JPG ke PNG transparan.',
     readTime: '6 menit baca',
-    publishOn: '2026-10-17',
+    publishOn: '2026-10-30',
     intro: 'Ini kejutan paling umum saat memakai konverter gambar: Anda mengubah JPG ke PNG karena PNG "mendukung transparan", tetapi latar putihnya masih ada. Tidak ada yang salah. Konverter mengubah format file, bukan gambarnya — dan menghapus latar adalah pekerjaan lain, yang kemungkinan sudah bisa dilakukan laptop atau HP Anda tanpa mengunggah apa pun.',
     contentHtml: `
       <h2>Kenapa latarnya tetap ada</h2>

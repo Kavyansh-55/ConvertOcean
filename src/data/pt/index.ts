@@ -3963,7 +3963,7 @@ export const ptGuides: PtGuide[] = [
     description: 'As fórmulas de porcentagem do Excel: parte de um total, aumento e queda, acréscimo e desconto — e por que a célula mostra 0,15 ou 1500% em vez de 15%.',
     h1: 'Como calcular porcentagem no Excel.',
     readTime: '7 min de leitura',
-    publishOn: '2026-10-08',
+    publishOn: '2026-10-14',
     intro: 'O Excel não tem uma função de porcentagem, e não precisa. Na planilha, porcentagem é um número comum — 15% fica guardado como 0,15 —, então quase toda conta de porcentagem se resolve com uma de quatro fórmulas curtas. O que confunde é a formatação, por isso ela vem primeiro.',
     contentHtml: `
       <h2>A regra que resolve quase tudo: 15% é 0,15</h2>
@@ -4055,7 +4055,7 @@ Desconto:   =B2*(1-C2)     R$ 40 → R$ 34</span>
     description: 'O jeito que funciona em qualquer calculadora, como usar a tecla % para acréscimo e desconto, e o teste de 5 segundos que mostra como a sua calculadora pensa.',
     h1: 'Como calcular porcentagem na calculadora.',
     readTime: '6 min de leitura',
-    publishOn: '2026-10-10',
+    publishOn: '2026-10-18',
     intro: 'A tecla % parece a resposta óbvia, mas ela não funciona igual em todas as calculadoras — e é por isso que tanta gente desconfia do resultado. Este guia mostra primeiro o jeito que dá certo em qualquer calculadora, de mesa ou de celular, e depois como usar a tecla % com segurança, testando antes como a sua se comporta.',
     contentHtml: `
       <h2>O jeito que funciona em qualquer calculadora</h2>
@@ -4118,7 +4118,7 @@ Desconto:   =B2*(1-C2)     R$ 40 → R$ 34</span>
     description: 'Converter JPG em PNG mantém o fundo branco. Por que isso acontece e quais ferramentas do Windows, Mac, iPhone e Office removem o fundo de verdade.',
     h1: 'JPG para PNG sem fundo.',
     readTime: '6 min de leitura',
-    publishOn: '2026-10-16',
+    publishOn: '2026-10-27',
     intro: 'É a surpresa mais comum com conversores de imagem: você transforma um JPG em PNG porque o PNG "aceita transparência", e o fundo branco continua lá. Não deu nada errado. Um conversor muda o formato do arquivo, não a imagem — e remover o fundo é outro trabalho, que o seu computador ou celular provavelmente já faz sem enviar nada para lugar nenhum.',
     contentHtml: `
       <h2>Por que o fundo continua</h2>
