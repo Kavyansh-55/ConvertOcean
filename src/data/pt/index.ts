@@ -4014,6 +4014,125 @@ Desconto:   =B2*(1-C2)     R$ 40 → R$ 34</span>
       { question: 'Como dar desconto de 10% no Excel?', answer: 'Multiplique por 1 menos a taxa: =B2*(1-10%). Para acrescentar 10%, use =B2*(1+10%).' },
       { question: 'Por que a fórmula dá erro com vírgula?', answer: 'No Excel em português a vírgula é a marca decimal, então os argumentos são separados por ponto e vírgula: =ARRED(B2/C2; 3), e não =ROUND(B2/C2, 3).' }
     ]
+  },
+  {
+    /* Standalone: "como calcular porcentagem na calculadora" and "como fazer
+       conta de porcentagem na calculadora" are both EASY at >1000, plus
+       "como calcular porcentagem no celular" (>100). The % key is not
+       standardised, so the guide teaches the multiplication that works on
+       every calculator and a known-answer test for the reader's own key,
+       rather than asserting one behaviour for every device. */
+    en: 'pt:porcentagem-na-calculadora',
+    standalone: { relatedTools: ['percentage-calculator', 'profit-margin-calculator'], relatedGuides: ['how-to-calculate-percentage-in-excel'] },
+    slug: 'como-calcular-porcentagem-na-calculadora',
+    title: 'Como Calcular Porcentagem na Calculadora (e no Celular) | ConvertOcean',
+    description: 'O jeito que funciona em qualquer calculadora, como usar a tecla % para acréscimo e desconto, e o teste de 5 segundos que mostra como a sua calculadora pensa.',
+    h1: 'Como calcular porcentagem na calculadora.',
+    readTime: '6 min de leitura',
+    publishOn: '2026-10-10',
+    intro: 'A tecla % parece a resposta óbvia, mas ela não funciona igual em todas as calculadoras — e é por isso que tanta gente desconfia do resultado. Este guia mostra primeiro o jeito que dá certo em qualquer calculadora, de mesa ou de celular, e depois como usar a tecla % com segurança, testando antes como a sua se comporta.',
+    contentHtml: `
+      <h2>O jeito que funciona em qualquer calculadora</h2>
+      <p>Porcentagem é uma fração de 100: 15% é 15 dividido por 100, ou seja, 0,15. Com isso, toda conta de porcentagem vira uma multiplicação, que qualquer calculadora faz do mesmo jeito.</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>O que você quer</th><th>Digite</th><th>Resultado</th></tr></thead>
+        <tbody>
+          <tr><td>15% de R$ 200</td><td><code class="g-code">200 × 0,15 =</code></td><td class="num">30</td></tr>
+          <tr><td>R$ 200 com 15% de acréscimo</td><td><code class="g-code">200 × 1,15 =</code></td><td class="num">230</td></tr>
+          <tr><td>R$ 200 com 15% de desconto</td><td><code class="g-code">200 × 0,85 =</code></td><td class="num">170</td></tr>
+          <tr><td>Quanto R$ 30 é de R$ 200, em %</td><td><code class="g-code">30 ÷ 200 × 100 =</code></td><td class="num">15</td></tr>
+          <tr><td>Aumento de R$ 80 para R$ 100, em %</td><td><code class="g-code">100 ÷ 80 =</code>, depois tire 1 e multiplique por 100</td><td class="num">25</td></tr>
+        </tbody>
+      </table></div>
+      <p>Os números 1,15 e 0,85 são o atalho que poupa uma conta: acrescentar 15% é ficar com 100% + 15% = 115% do valor; descontar 15% é ficar com 100% − 15% = 85%. Vale para qualquer taxa: 10% de desconto é <code class="g-code">× 0,90</code>, 7% de reajuste é <code class="g-code">× 1,07</code>.</p>
+
+      <h2>Usando a tecla %</h2>
+      <p>Na maioria das calculadoras de mesa comuns e nos aplicativos de calculadora dos celulares, a tecla % faz as contas de acréscimo e desconto direto:</p>
+      <ul>
+        <li><code class="g-code">200 × 15 %</code> → 30 (15% de 200)</li>
+        <li><code class="g-code">200 + 15 %</code> → 230 (200 com 15% a mais)</li>
+        <li><code class="g-code">200 − 15 %</code> → 170 (200 com 15% a menos)</li>
+      </ul>
+      <p>Mas a tecla % não segue uma norma, e existem calculadoras que fazem diferente — algumas apenas dividem o último número por 100, outras pedem para apertar <code class="g-code">=</code> antes ou depois do %. Por isso, antes de confiar nela numa conta que importa, faça o teste abaixo.</p>
+
+      <h2>O teste de 5 segundos</h2>
+      <p>Use uma conta cujo resultado você já sabe de cabeça: <strong>200 + 10 %</strong>.</p>
+      <ul>
+        <li><strong>Deu 220:</strong> a sua calculadora faz acréscimo e desconto com a tecla %, como na lista acima. Pode usar.</li>
+        <li><strong>Deu 200,1 ou 210 ou outro valor:</strong> a tecla % dela funciona de outro jeito. Use a multiplicação (<code class="g-code">200 × 1,10</code>), que dá certo sempre.</li>
+      </ul>
+      <p>Faça o mesmo com <strong>200 × 10 %</strong>, que deve dar 20. Dois testes e você sabe como a sua calculadora pensa.</p>
+
+      <h2>Conta de porcentagem no celular</h2>
+      <p>Os apps de calculadora que vêm no Android e no iPhone têm a tecla % e, em geral, seguem o comportamento da lista acima — mas faça o teste do 200 + 10 % mesmo assim, porque os apps de fabricantes diferentes não são idênticos.</p>
+      <p>Se a conta é sobre aumento ou queda entre dois valores, a <a href="/pt/calculadora-de-porcentagem/">calculadora de porcentagem</a> online faz as três contas mais comuns em campos separados e mostra a fórmula usada em cada uma.</p>
+
+      <h2>Os dois erros mais comuns</h2>
+      <ol>
+        <li><strong>Tirar a porcentagem do valor final.</strong> Uma conta de R$ 110 já com 10% de serviço não era de R$ 99. Os 10% foram calculados sobre o valor original, então divida: <code class="g-code">110 ÷ 1,10 = 100</code>.</li>
+        <li><strong>Somar porcentagens seguidas.</strong> Dois aumentos de 10% não dão 20%: <code class="g-code">100 × 1,10 × 1,10 = 121</code>, ou seja, 21%. E um aumento de 10% seguido de um desconto de 10% não volta ao preço original: <code class="g-code">100 × 1,10 × 0,90 = 99</code>.</li>
+      </ol>
+      <p>Para fazer essas mesmas contas numa planilha, veja <a href="/pt/guias/como-calcular-porcentagem-no-excel/">como calcular porcentagem no Excel</a>.</p>
+    `,
+    faqs: [
+      { question: 'Como calcular porcentagem na calculadora?', answer: 'Transforme a porcentagem em decimal e multiplique: 15% de 200 é 200 × 0,15 = 30. Para acrescentar 15%, multiplique por 1,15; para descontar 15%, por 0,85. Funciona em qualquer calculadora.' },
+      { question: 'Como usar a tecla % da calculadora?', answer: 'Na maioria das calculadoras comuns, 200 × 15 % dá 30, 200 + 15 % dá 230 e 200 − 15 % dá 170. Como a tecla % não é padronizada, teste antes com 200 + 10 %: se der 220, a sua funciona assim.' },
+      { question: 'Como calcular desconto na calculadora?', answer: 'Multiplique pelo que sobra: 15% de desconto em R$ 200 é 200 × 0,85 = 170. Ou, se a sua calculadora passar no teste, digite 200 − 15 %.' },
+      { question: 'Como calcular porcentagem no celular?', answer: 'Abra o app de calculadora e use a multiplicação (200 × 0,15) ou a tecla %, depois de confirmar com o teste 200 + 10 % = 220.' },
+      { question: 'Dois aumentos de 10% dão 20%?', answer: 'Não. Cada aumento incide sobre o valor já aumentado: 100 × 1,10 × 1,10 = 121, um aumento total de 21%.' }
+    ]
+  },
+  {
+    /* "jpg para png sem fundo" (>100) was an intent mismatch on the PT
+       converter page — conversion keeps the background. The honest answer,
+       with tools already on the reader's device. */
+    en: 'jpg-to-png-transparent-background',
+    slug: 'jpg-para-png-sem-fundo',
+    title: 'JPG para PNG Sem Fundo: O Que Realmente Funciona | ConvertOcean',
+    description: 'Converter JPG em PNG mantém o fundo branco. Por que isso acontece e quais ferramentas do Windows, Mac, iPhone e Office removem o fundo de verdade.',
+    h1: 'JPG para PNG sem fundo.',
+    readTime: '6 min de leitura',
+    publishOn: '2026-10-16',
+    intro: 'É a surpresa mais comum com conversores de imagem: você transforma um JPG em PNG porque o PNG "aceita transparência", e o fundo branco continua lá. Não deu nada errado. Um conversor muda o formato do arquivo, não a imagem — e remover o fundo é outro trabalho, que o seu computador ou celular provavelmente já faz sem enviar nada para lugar nenhum.',
+    contentHtml: `
+      <h2>Por que o fundo continua</h2>
+      <p>O JPG não consegue guardar transparência. Todo pixel dele tem uma cor, inclusive o branco ou cinza atrás do logotipo ou da assinatura. Ao converter para PNG, o conversor copia fielmente cada um desses pixels — é a função dele —, e o fundo chega ao PNG como cor sólida.</p>
+      <p>O PNG <em>pode</em> ter pixels transparentes, mas alguém precisa decidir quais pixels são fundo e torná-los transparentes. Isso é remoção de fundo, e um conversor de formato, inclusive o nosso, não faz isso. O <a href="/pt/jpg-para-png/">JPG para PNG</a> continua sendo a ferramenta certa quando você precisa de um PNG pelas bordas nítidas ou porque o formulário pede esse formato; ele só não recorta nada.</p>
+
+      <h2>Ferramentas que já vêm no sistema e removem o fundo</h2>
+      <p>Todas funcionam no seu próprio aparelho, o que importa para assinaturas, fotos de documento e RG.</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>Onde</th><th>Como</th><th>Melhor para</th></tr></thead>
+        <tbody>
+          <tr><td>Word ou PowerPoint (Windows e Mac)</td><td>Insira a imagem → Formato da Imagem → <strong>Remover Plano de Fundo</strong>; ou Cor → <strong>Definir Cor Transparente</strong> e clique no fundo. Depois clique com o botão direito → <strong>Salvar como Imagem</strong> → PNG.</td><td>Assinaturas e logotipos em fundo liso</td></tr>
+          <tr><td>Paint no Windows 11</td><td>Abra a imagem → <strong>Remover fundo</strong> no grupo Imagem → salve como PNG.</td><td>Pessoas e objetos em fotos</td></tr>
+          <tr><td>Mac</td><td>No Finder, clique com o botão direito na imagem → Ações Rápidas → <strong>Remover Fundo</strong> (macOS 13 ou mais recente). Ou, no Pré-Visualização, a ferramenta <strong>Alfa Instantâneo</strong>.</td><td>Fotos; Alfa Instantâneo para fundos lisos</td></tr>
+          <tr><td>iPhone e iPad</td><td>No app Fotos, toque e segure o objeto até ele se destacar, depois Compartilhar ou Copiar (iOS 16 ou mais recente).</td><td>Pessoas, animais, produtos</td></tr>
+        </tbody>
+      </table></div>
+      <p>Os nomes dos menus mudam um pouco entre versões, mas todos esses recursos fazem parte do sistema há várias versões. Removedores de fundo online também funcionam, mas a maioria envia a sua imagem para os servidores deles.</p>
+
+      <h2>Assinatura: o caso mais comum</h2>
+      <p>Uma assinatura fotografada em papel branco é o caso mais fácil, porque o fundo é uma cor só. Duas dicas deixam o resultado limpo:</p>
+      <ol>
+        <li><strong>Fotografe bem.</strong> Luz do dia, sem a sombra do celular sobre o papel, a folha ocupando quase todo o quadro, caneta escura. Fundo cinza e iluminado de forma desigual é o que deixa um contorno depois da remoção.</li>
+        <li><strong>Use Definir Cor Transparente</strong> no Word ou no PowerPoint em vez de Remover Plano de Fundo — numa folha branca e lisa ele remove exatamente o branco e preserva cada traço. Depois, Salvar como Imagem → PNG.</li>
+      </ol>
+      <p>Se o edital ou o formulário pedir a assinatura com um tamanho máximo, ajuste o PNG em <a href="/pt/redimensionar-imagem/">redimensionar imagem</a>; o <a href="/pt/guias/redimensionar-foto-assinatura/">guia de foto e assinatura para concursos</a> traz as medidas mais pedidas.</p>
+
+      <h2>Como conferir se o PNG ficou mesmo transparente</h2>
+      <p>Muitos visualizadores mostram áreas transparentes como branco, então um PNG transparente e um PNG com fundo branco podem parecer iguais. Dois testes rápidos: abra num editor que mostre a transparência como xadrez cinza e branco (Paint, Pré-Visualização, Photoshop, GIMP), ou coloque a imagem sobre um slide ou documento colorido — se o fundo sumiu, a cor aparece por trás.</p>
+
+      <h2>Mantenha em PNG</h2>
+      <p>Com o fundo transparente, guarde o arquivo em PNG (ou WebP). Converter de volta para JPG — até sem querer, num app que só salva JPG — preenche a área transparente com uma cor sólida, normalmente branca ou preta, porque o JPG não tem onde guardar a transparência.</p>
+    `,
+    faqs: [
+      { question: 'Por que meu PNG continua com fundo branco?', answer: 'Porque o JPG de origem tinha esse fundo. O JPG não guarda transparência, e a conversão para PNG copia todos os pixels, inclusive o fundo. Remover o fundo é uma etapa separada.' },
+      { question: 'Como deixar o fundo de um JPG transparente de graça?', answer: 'Use uma ferramenta que já está no seu aparelho: Remover Plano de Fundo ou Definir Cor Transparente no Word ou PowerPoint, Remover fundo no Paint do Windows 11, a ação rápida Remover Fundo no Mac, ou tocar e segurar no app Fotos do iPhone. Salve o resultado em PNG.' },
+      { question: 'Qual o melhor jeito de deixar uma assinatura sem fundo?', answer: 'Fotografe em papel branco com boa luz, use Definir Cor Transparente no Word ou PowerPoint e salve como PNG. O recurso remove exatamente o branco liso e mantém a tinta.' },
+      { question: 'Como saber se o PNG está transparente?', answer: 'Abra num editor que mostre um xadrez atrás das áreas transparentes, ou coloque a imagem sobre um fundo colorido. Se a cor aparecer, o fundo está transparente.' },
+      { question: 'Se eu converter o PNG para JPG, a transparência fica?', answer: 'Não. O JPG não guarda transparência, então as áreas transparentes são preenchidas com uma cor sólida, normalmente branca ou preta.' }
+    ]
   }
 ];
 

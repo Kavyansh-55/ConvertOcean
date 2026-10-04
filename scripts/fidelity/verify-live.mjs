@@ -1064,6 +1064,12 @@ async function stylesheetsFor(path) {
     ['2026-10-07', '/id/panduan/kwitansi-jual-beli-tanah/'],
     ['2026-10-08', '/pt/guias/como-calcular-porcentagem-no-excel/'],
     ['2026-10-08', '/id/panduan/cara-hitung-persentase-di-excel/'],
+    ['2026-10-10', '/pt/guias/como-calcular-porcentagem-na-calculadora/'],
+    ['2026-10-12', '/guides/combine-word-powerpoint-and-pdf/'],
+    ['2026-10-13', '/id/panduan/gabungkan-word-ppt-dan-pdf/'],
+    ['2026-10-15', '/guides/jpg-to-png-transparent-background/'],
+    ['2026-10-16', '/pt/guias/jpg-para-png-sem-fundo/'],
+    ['2026-10-17', '/id/panduan/jpg-ke-png-transparan/'],
   ];
   const map = (await get('/sitemap.xml')).body;
   const wrong = [];

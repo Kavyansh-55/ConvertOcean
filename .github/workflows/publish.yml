@@ -14,8 +14,12 @@
 #   CLOUDFLARE_API_TOKEN   a token with the "Edit Cloudflare Workers" template
 #   CLOUDFLARE_ACCOUNT_ID  from the Cloudflare dashboard's account home page
 #
-# Like every scheduled workflow in a public repo, GitHub disables it after 60
-# days without repository activity; see MAINTENANCE.md.
+# GitHub disables scheduled workflows in a public repo after 60 days without
+# repository activity. A daily deploy is not activity — only commits are — so
+# on the 1st and the 15th this workflow commits a one-line date file
+# (.github/heartbeat). That keeps both scheduled workflows running for months
+# with nobody touching the repo. It changes nothing on the site. Pull before
+# working locally again (MAINTENANCE.md).
 
 name: Publish scheduled guides
 
@@ -25,7 +29,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write   # only for the heartbeat commit
 
 concurrency:
   group: publish
@@ -37,6 +41,22 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
+      # Before the build, so a failed build cannot also cost the heartbeat;
+      # continue-on-error, so a failed push cannot cost the day's deploy.
+      - name: Heartbeat (1st and 15th)
+        if: github.event_name == 'schedule'
+        continue-on-error: true
+        run: |
+          day=$(date -u +%d)
+          if [ "$day" = "01" ] || [ "$day" = "15" ]; then
+            date -u +%Y-%m-%d > .github/heartbeat
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add .github/heartbeat
+            git commit -m 'chore: heartbeat (keeps the scheduled workflows enabled)' && git push
+          else
+            echo "not a heartbeat day ($day)"
+          fi
       - uses: actions/setup-node@v7
         with:
           node-version: 24

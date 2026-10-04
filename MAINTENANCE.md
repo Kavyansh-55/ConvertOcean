@@ -11,9 +11,10 @@ Every Monday a GitHub Action (`.github/workflows/live-check.yml`) runs about
 means the site is serving what this repo says.
 
 - **Run it by hand:** GitHub → Actions → *Live site check* → *Run workflow*.
-- **It stops after 60 quiet days.** GitHub disables scheduled jobs in a public
-  repo with no activity for 60 days and emails a warning first. Open the
-  Actions tab and click *Enable workflow*.
+- **It stays on by itself:** the publish workflow's twice-monthly heartbeat
+  commit (below) is repository activity, so GitHub's 60-day shutdown of
+  scheduled jobs does not trigger. If it ever does, GitHub emails a warning
+  first: open the Actions tab and click *Enable workflow*.
 - **If it fails:** open the run, read the `FAIL` lines. Each one names the page
   and what it expected. Usual causes, most likely first:
   1. The domain or the Cloudflare account needs attention (renewal, billing).
@@ -36,8 +37,10 @@ guides due that day appear without anyone doing anything.
   A green run means build, deploy and the live checks all passed.
 - **If a run fails, GitHub emails you.** Nothing breaks: the site stays as it
   was, and the guide simply appears the next morning a run succeeds.
-- **It also stops after 60 quiet days**, like the weekly check — re-enable it
-  the same way.
+- **It keeps itself switched on.** On the 1st and 15th it commits a one-line
+  date file (`.github/heartbeat`), which counts as repository activity, so
+  GitHub's 60-day shutdown never triggers for either workflow. Because of
+  those commits, run `git pull` before working on the site again.
 - **To see what is scheduled:** search the guide files in `src/data/` for
   `publishOn`. To publish one early, change its date to today and deploy.
 

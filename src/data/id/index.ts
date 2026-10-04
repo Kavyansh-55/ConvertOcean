@@ -2366,6 +2366,118 @@ Diskon 15%:  =B2*(1-C2)     Rp 40.000 → Rp 34.000</span>
       { question: 'Bagaimana menghitung harga sebelum PPN di Excel?', answer: 'Bagi dengan 1 ditambah tarifnya: =B2/(1+11%). Mengurangi 11% dari harga yang sudah termasuk PPN memberi hasil yang salah, karena PPN dihitung dari harga sebelum pajak.' },
       { question: 'Kenapa rumus Excel error kalau memakai koma?', answer: 'Dengan pengaturan Region Indonesia, koma adalah tanda desimal, sehingga argumen fungsi dipisahkan dengan titik koma: =ROUND(B2/C2; 3), bukan =ROUND(B2/C2, 3).' }
     ]
+  },
+  {
+    /* "gabungkan word dan pdf", "gabungkan word ke pdf", "gabung ppt ke pdf"
+       (EASY, >100 each) were intent mismatches on /id/gabungkan-pdf/ — the
+       merge tool takes PDFs only. Real runs of the Indonesian tools. */
+    en: 'combine-word-powerpoint-and-pdf',
+    slug: 'gabungkan-word-ppt-dan-pdf',
+    title: 'Cara Gabungkan Word, PPT dan PDF Jadi Satu PDF | ConvertOcean',
+    description: 'Gabungkan dokumen Word, presentasi PPT dan PDF jadi satu file: ubah ke PDF dulu, lalu gabungkan. Apa yang terjadi pada ukuran halaman, font dan slide.',
+    h1: 'Cara gabungkan Word, PPT dan PDF jadi satu PDF.',
+    readTime: '6 menit baca',
+    publishOn: '2026-10-13',
+    intro: 'Portal pengumpulan tugas atau berkas lamaran meminta satu file, sementara laporan Anda dalam Word, slide dalam PowerPoint, dan formulir bertanda tangan sudah berupa PDF. Alat gabung PDF hanya menerima PDF, jadi caranya dua langkah: ubah file Office ke PDF, lalu gabungkan ketiganya. Berikut yang terjadi di setiap langkah, diukur dengan file sungguhan — termasuk hal yang jarang dibahas: setiap halaman tetap memakai ukurannya sendiri.',
+    contentHtml: `
+      <h2>Langkah 1: ubah file Word dan PowerPoint ke PDF</h2>
+      <p>Ubah <code class="g-code">.docx</code> dengan <a href="/id/word-ke-pdf/">Word ke PDF</a> dan <code class="g-code">.pptx</code> dengan <a href="/id/ppt-ke-pdf/">PPT ke PDF</a>. Keduanya berjalan di browser, jadi file tetap di perangkat Anda.</p>
+      <ul>
+        <li><strong>Word ke PDF</strong> menghasilkan PDF berisi teks sungguhan: teks tetap bisa dipilih dan dicari, serta judul, huruf tebal, miring, daftar dan tabel ikut terbawa. Font Word yang persis dan tata letak rumit — kolom, header dan footer — bisa disederhanakan, jadi periksa hasilnya sebelum dikirim.</li>
+        <li><strong>PPT ke PDF</strong> membuat satu halaman per slide, dengan proporsi slide aslinya. Semua yang bergerak dibekukan: transisi, animasi, video dan audio.</li>
+        <li><strong>File lama <code class="g-code">.ppt</code> atau <code class="g-code">.doc</code></strong> adalah format lain yang lebih tua dan tidak bisa dibuka alat berbasis browser. Buka dulu di PowerPoint, Word atau LibreOffice (gratis), lalu simpan sebagai <code class="g-code">.pptx</code> atau <code class="g-code">.docx</code>.</li>
+      </ul>
+      <p>Kalau Office terpasang di laptop, File → Save As → PDF di Word dan PowerPoint menghasilkan PDF yang sama dengan font persis seperti aslinya — pakai yang tersedia. Langkah 2 tetap sama.</p>
+
+      <h2>Langkah 2: gabungkan ketiga PDF</h2>
+      <p>Buka <a href="/id/gabungkan-pdf/">Gabungkan PDF</a> dan tambahkan file sesuai urutan yang diinginkan. File digabung sesuai urutan ditambahkan, dan setiap baris menampilkan jumlah halamannya, sehingga Anda bisa memastikan tidak ada yang tertinggal sebelum menggabungkan.</p>
+      <figure class="g-figure">
+        <img src="/guides/img/gabung-office-queue.webp" alt="Antrean Gabungkan PDF: laporan.pdf (4 halaman), presentasi.pdf (3 halaman), formulir-ttd.pdf (2 halaman)" width="518" height="234" loading="lazy" decoding="async" />
+        <figcaption>Laporan, slide, lalu formulir bertanda tangan, berurutan: total sembilan halaman.</figcaption>
+      </figure>
+      <p>Tidak ada fitur geser untuk mengubah urutan. Kalau ada file yang salah tempat, hapus dengan ✕ lalu tambahkan lagi pada urutan yang benar.</p>
+
+      <h2>Apa yang terjadi pada ukuran halaman</h2>
+      <p>Bagian ini sering mengejutkan. Penggabungan tidak mengubah ukuran apa pun — setiap halaman tetap dengan ukuran dan orientasi aslinya. Kami mengukur setiap halaman file gabungan dari percobaan di atas:</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>Halaman</th><th>Dari</th><th>Ukuran (poin)</th><th>Artinya</th></tr></thead>
+        <tbody>
+          <tr><td>1–3</td><td>Dokumen Word</td><td class="num">595 × 842</td><td>A4, tegak</td></tr>
+          <tr><td>4</td><td>Dokumen Word</td><td class="num">842 × 595</td><td>A4, mendatar (bagian landscape di .docx)</td></tr>
+          <tr><td>5–7</td><td>Presentasi PowerPoint</td><td class="num">842 × 473</td><td>Slide layar lebar 16:9</td></tr>
+          <tr><td>8–9</td><td>PDF yang sudah ada</td><td class="num">612 × 792</td><td>US Letter, tegak</td></tr>
+        </tbody>
+      </table></div>
+      <p>Di layar ini tidak masalah — setiap penampil PDF menampilkan halaman sesuai ukurannya. Ada dua situasi yang perlu diperhatikan:</p>
+      <ul>
+        <li><strong>Saat mencetak.</strong> Pilih "Fit to page" (atau "Sesuaikan dengan halaman") di jendela cetak, agar slide lebar dan halaman Letter diperkecil ke kertas Anda, bukan terpotong.</li>
+        <li><strong>Portal yang memeriksa format.</strong> Sebagian sistem pengumpulan meminta semua halaman berukuran A4. Kalau begitu, ubah ukuran slide PowerPoint ke A4 sebelum dikonversi (Design → Slide Size), atau cetak slide ke PDF dengan kertas A4.</li>
+      </ul>
+
+      <h2>Ukuran file</h2>
+      <p>File Office yang isinya sebagian besar teks tetap kecil. Dalam percobaan kami, dokumen Word menjadi PDF 46 KB, tiga slide menjadi 136 KB, dan gabungan sembilan halaman 177 KB — penggabungan hampir tidak menambah ukuran. File hasil yang besar hampir selalu berasal dari foto di dalam dokumen atau slide. Kalau portal punya batas ukuran, kompres PDF yang sudah jadi dengan <a href="/id/kompres-pdf/">Kompres PDF</a> dan pilihan Tentukan ukuran; <a href="/id/panduan/gabungkan-pdf-dan-jpg/">panduan PDF dan JPG</a> memuat angka terukur untuk file yang banyak fotonya.</p>
+
+      <h2>Sebelum dikirim</h2>
+      <p>Gulir file gabungan sekali dari awal sampai akhir: jumlah halamannya harus sama dengan total di antrean, urutannya benar, dan halaman Word tampil seperti yang Anda maksud. Kalau ada halaman yang tata letaknya berubah — dua kolom yang menjadi satu kolom, misalnya — ekspor dokumen itu langsung dari Word lalu gabungkan lagi.</p>
+    `,
+    faqs: [
+      { question: 'Bisakah file Word dan PDF digabung langsung?', answer: 'Tidak dengan alat gabung PDF, yang hanya menerima PDF. Ubah file Word ke PDF dulu, lalu gabungkan kedua PDF itu.' },
+      { question: 'Apakah slide diubah menjadi A4 saat digabung?', answer: 'Tidak. Penggabungan mempertahankan ukuran asli setiap halaman, jadi slide 16:9 tetap lebar di samping halaman dokumen A4. Pilih Fit to page saat mencetak.' },
+      { question: 'Apakah animasi PowerPoint ikut ke PDF?', answer: 'Tidak. Halaman PDF bersifat diam: transisi, animasi, video dan audio dibekukan.' },
+      { question: 'Bagaimana dengan file .ppt atau .doc lama?', answer: 'Alat berbasis browser tidak bisa membukanya. Buka di PowerPoint, Word atau LibreOffice lalu simpan sebagai .pptx atau .docx terlebih dahulu.' },
+      { question: 'Apakah file saya diunggah?', answer: 'Tidak. Word ke PDF, PPT ke PDF dan Gabungkan PDF semuanya berjalan di browser, jadi file tetap di perangkat Anda.' }
+    ]
+  },
+  {
+    /* "ubah jpg ke png transparan online" (EASY, >100) was an intent mismatch
+       on /id/jpg-ke-png/ — conversion keeps the background. */
+    en: 'jpg-to-png-transparent-background',
+    slug: 'jpg-ke-png-transparan',
+    title: 'JPG ke PNG Transparan: Cara yang Benar-Benar Berhasil | ConvertOcean',
+    description: 'Mengubah JPG ke PNG tetap menyisakan latar putih. Kenapa begitu, dan alat bawaan Windows, Mac, iPhone dan Office yang benar-benar menghapus latar.',
+    h1: 'JPG ke PNG transparan.',
+    readTime: '6 menit baca',
+    publishOn: '2026-10-17',
+    intro: 'Ini kejutan paling umum saat memakai konverter gambar: Anda mengubah JPG ke PNG karena PNG "mendukung transparan", tetapi latar putihnya masih ada. Tidak ada yang salah. Konverter mengubah format file, bukan gambarnya — dan menghapus latar adalah pekerjaan lain, yang kemungkinan sudah bisa dilakukan laptop atau HP Anda tanpa mengunggah apa pun.',
+    contentHtml: `
+      <h2>Kenapa latarnya tetap ada</h2>
+      <p>JPG sama sekali tidak bisa menyimpan transparansi. Setiap pikselnya punya warna, termasuk putih atau abu-abu di belakang logo atau tanda tangan. Saat diubah ke PNG, konverter menyalin setiap piksel itu dengan setia — memang itu tugasnya — sehingga latar ikut masuk ke PNG sebagai warna padat.</p>
+      <p>PNG <em>bisa</em> menyimpan piksel transparan, tetapi harus ada yang menentukan piksel mana yang merupakan latar lalu membuatnya transparan. Itu namanya penghapusan latar, dan konverter format, termasuk milik kami, tidak melakukannya. <a href="/id/jpg-ke-png/">JPG ke PNG</a> tetap alat yang tepat jika Anda butuh PNG karena tepinya yang tajam atau karena formulir memintanya; hanya saja alat itu tidak memotong apa pun.</p>
+
+      <h2>Alat bawaan yang bisa menghapus latar</h2>
+      <p>Semuanya berjalan di perangkat Anda sendiri — penting untuk tanda tangan, pas foto dan dokumen.</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>Di mana</th><th>Caranya</th><th>Paling cocok untuk</th></tr></thead>
+        <tbody>
+          <tr><td>Word atau PowerPoint (Windows dan Mac)</td><td>Sisipkan gambar → Picture Format → <strong>Remove Background</strong>; atau Color → <strong>Set Transparent Color</strong> lalu klik latarnya. Kemudian klik kanan → <strong>Save as Picture</strong> → PNG.</td><td>Tanda tangan dan logo di latar polos</td></tr>
+          <tr><td>Paint di Windows 11</td><td>Buka gambar → <strong>Remove background</strong> di grup Image → simpan sebagai PNG.</td><td>Orang dan benda di foto</td></tr>
+          <tr><td>Mac</td><td>Di Finder, klik kanan gambar → Quick Actions → <strong>Remove Background</strong> (macOS 13 atau lebih baru). Atau di Preview, alat <strong>Instant Alpha</strong>.</td><td>Foto; Instant Alpha untuk latar polos</td></tr>
+          <tr><td>iPhone dan iPad</td><td>Di app Foto, sentuh dan tahan objek sampai terangkat, lalu Bagikan atau Salin (iOS 16 atau lebih baru).</td><td>Orang, hewan, produk</td></tr>
+        </tbody>
+      </table></div>
+      <p>Nama menu bisa sedikit berbeda antarversi dan bahasa, tetapi semua fitur ini sudah menjadi bagian sistem selama beberapa versi. Penghapus latar online juga bisa, tetapi kebanyakan mengunggah gambar Anda ke server mereka.</p>
+
+      <h2>Tanda tangan: kasus yang paling sering</h2>
+      <p>Tanda tangan yang difoto di kertas putih adalah kasus paling mudah, karena latarnya satu warna. Dua tips agar hasilnya bersih:</p>
+      <ol>
+        <li><strong>Foto dengan baik.</strong> Cahaya siang, tanpa bayangan HP di atas kertas, kertas memenuhi hampir seluruh bingkai, tinta gelap. Latar abu-abu yang cahayanya tidak rata itulah yang meninggalkan bekas garis tepi.</li>
+        <li><strong>Gunakan Set Transparent Color</strong> di Word atau PowerPoint, bukan Remove Background — pada kertas putih polos, fitur itu menghapus tepat warna putihnya dan mempertahankan setiap goresan tinta. Lalu Save as Picture → PNG.</li>
+      </ol>
+      <p>Jika formulir meminta tanda tangan dengan ukuran tertentu, ubah ukuran PNG-nya dengan <a href="/id/ubah-ukuran-gambar/">ubah ukuran gambar</a>.</p>
+
+      <h2>Cara memastikan PNG benar-benar transparan</h2>
+      <p>Banyak penampil gambar menampilkan area transparan sebagai putih, sehingga PNG transparan dan PNG berlatar putih bisa terlihat sama. Dua cara cepat: buka di editor yang menampilkan transparansi sebagai kotak-kotak abu-abu dan putih (Paint, Preview, Photoshop, GIMP), atau letakkan gambar di atas slide atau dokumen berwarna — jika latarnya hilang, warnanya akan terlihat di belakang.</p>
+
+      <h2>Simpan tetap sebagai PNG</h2>
+      <p>Setelah latarnya transparan, simpan file sebagai PNG (atau WebP). Mengubahnya kembali ke JPG — bahkan tanpa sengaja, lewat aplikasi yang hanya menyimpan JPG — akan mengisi area transparan dengan warna padat, biasanya putih atau hitam, karena JPG tidak punya tempat untuk menyimpan transparansi.</p>
+    `,
+    faqs: [
+      { question: 'Kenapa PNG saya masih berlatar putih?', answer: 'Karena JPG asalnya memang berlatar putih. JPG tidak bisa menyimpan transparansi, dan konversi ke PNG menyalin semua piksel, termasuk latar. Menghapus latar adalah langkah terpisah.' },
+      { question: 'Bagaimana membuat latar JPG transparan secara gratis?', answer: 'Gunakan alat yang sudah ada di perangkat: Remove Background atau Set Transparent Color di Word atau PowerPoint, Remove background di Paint Windows 11, quick action Remove Background di Mac, atau sentuh dan tahan di app Foto iPhone. Simpan hasilnya sebagai PNG.' },
+      { question: 'Bagaimana cara membuat tanda tangan transparan?', answer: 'Foto tanda tangan di kertas putih dengan cahaya yang baik, lalu gunakan Set Transparent Color di Word atau PowerPoint dan simpan sebagai PNG. Fitur itu menghapus tepat warna putih polos dan mempertahankan tinta.' },
+      { question: 'Bagaimana mengetahui PNG sudah transparan?', answer: 'Buka di editor yang menampilkan kotak-kotak di belakang area transparan, atau letakkan gambar di atas latar berwarna. Jika warnanya terlihat, latarnya sudah transparan.' },
+      { question: 'Jika PNG diubah ke JPG, apakah transparansinya tetap?', answer: 'Tidak. JPG tidak bisa menyimpan transparansi, sehingga area transparan diisi warna padat, biasanya putih atau hitam.' }
+    ]
   }
 ];
 export const idStaticPages: LocaleStaticPage[] = [

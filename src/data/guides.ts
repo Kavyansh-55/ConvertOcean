@@ -1764,6 +1764,115 @@ Remove:   =B2*(1-C2)     40 → 34</span>
       { question: 'How do I add 10% to a price in Excel?', answer: 'Multiply by 1 plus the rate: =B2*(1+10%). To take 10% off, use =B2*(1-10%).' },
       { question: 'How do I find the price before tax was added?', answer: 'Divide by 1 plus the rate: =B2/(1+8%). Subtracting 8% of the taxed price gives the wrong answer, because the tax was calculated on the smaller, untaxed price.' }
     ]
+  },
+  {
+    slug: 'combine-word-powerpoint-and-pdf',
+    title: 'How to Combine Word, PowerPoint and PDF Into One PDF | ConvertOcean',
+    description: 'Put a Word document, a PowerPoint deck and an existing PDF into one PDF: convert each to PDF, then merge. What happens to page sizes, fonts and slides.',
+    h1: 'How to Combine Word, PowerPoint and PDF Into One PDF.',
+    readTime: '6 min read',
+    publishOn: '2026-10-12',
+    relatedTools: ['word-to-pdf', 'pptx-to-pdf', 'merge-pdf'],
+    relatedGuides: ['combine-pdf-and-jpg', 'merge-multiple-pdf-files'],
+    intro: 'A submission portal wants one file: the report in Word, the slides in PowerPoint and a signed form that is already a PDF. A PDF merger only takes PDFs, so the job is two steps — turn the Office files into PDFs, then merge all three. Here is what each step does, measured on real files, including the part most guides skip: the pages keep their own sizes.',
+    contentHtml: `
+      <h2>Step 1: turn the Word and PowerPoint files into PDFs</h2>
+      <p>Convert the <code class="g-code">.docx</code> with <a href="/word-to-pdf/">Word to PDF</a> and the <code class="g-code">.pptx</code> with <a href="/pptx-to-pdf/">PowerPoint to PDF</a>. Both run in your browser, so the files stay on your device.</p>
+      <ul>
+        <li><strong>Word to PDF</strong> builds a real text PDF: text stays selectable and searchable, and headings, bold, italic, lists and tables carry over. Exact Word fonts and complex page layouts — columns, headers and footers — may be simplified, so look through the result before you send it.</li>
+        <li><strong>PowerPoint to PDF</strong> makes one page per slide, in the deck's own proportions. Anything that moves is frozen: transitions, build animations, embedded video and audio.</li>
+        <li><strong>An old <code class="g-code">.ppt</code> or <code class="g-code">.doc</code></strong> is a different, older format that browser tools cannot open. Open it in PowerPoint, Word or the free LibreOffice and save it as <code class="g-code">.pptx</code> or <code class="g-code">.docx</code> first.</li>
+      </ul>
+      <p>If you have Office installed, File → Save As → PDF in Word and PowerPoint gives you the same PDFs with the exact fonts — use whichever you have. Step 2 is the same either way.</p>
+
+      <h2>Step 2: merge the three PDFs</h2>
+      <p>Open <a href="/merge-pdf/">Merge PDF</a> and add the files in the order you want them in the final document. They join in the order you add them, and each row shows its page count, so you can check nothing went missing before you merge.</p>
+      <figure class="g-figure">
+        <img src="/guides/img/combine-office-queue.webp" alt="Merge PDF queue: report.pdf (4 pages), slides.pdf (3 pages), signed-form.pdf (2 pages)" width="518" height="234" loading="lazy" decoding="async" />
+        <figcaption>The report, the slides and the signed form, in that order: nine pages in total.</figcaption>
+      </figure>
+      <p>There is no drag-to-reorder. If a file lands in the wrong place, remove it with ✕ and add it again at the right moment.</p>
+
+      <h2>What happens to the page sizes</h2>
+      <p>This is the part that surprises people. Merging does not resize anything — each page keeps the size and orientation it had. We measured every page of the merged file from the run above:</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>Pages</th><th>From</th><th>Size (points)</th><th>What that is</th></tr></thead>
+        <tbody>
+          <tr><td>1–3</td><td>Word document</td><td class="num">595 × 842</td><td>A4, portrait</td></tr>
+          <tr><td>4</td><td>Word document</td><td class="num">842 × 595</td><td>A4, landscape (a landscape section in the .docx)</td></tr>
+          <tr><td>5–7</td><td>PowerPoint deck</td><td class="num">842 × 473</td><td>16:9 widescreen slides</td></tr>
+          <tr><td>8–9</td><td>The existing PDF</td><td class="num">612 × 792</td><td>US Letter, portrait</td></tr>
+        </tbody>
+      </table></div>
+      <p>On screen this is fine — every PDF viewer shows each page at its own size. It matters in two places:</p>
+      <ul>
+        <li><strong>Printing.</strong> Choose "Fit to page" (or "Fit to printable area") in the print dialog, so wide slides and Letter pages scale onto your paper instead of being cropped.</li>
+        <li><strong>Portals that check the format.</strong> A few submission systems expect every page to be A4. If yours does, set the PowerPoint slide size to A4 before converting (Design → Slide Size), or print the slides to PDF on A4 instead.</li>
+      </ul>
+
+      <h2>File size</h2>
+      <p>Office files with mostly text stay small. In our run the Word document became a 46 KB PDF, the three slides 136 KB, and the merged nine pages 177 KB — the merge adds almost nothing. Large results nearly always come from photos inside the document or the deck. If the portal has a limit, compress the finished PDF with <a href="/compress-pdf/">Compress PDF</a> and its Fit a size option; the <a href="/guides/combine-pdf-and-jpg/">PDF and JPG guide</a> has measured numbers for photo-heavy files.</p>
+
+      <h2>Before you submit</h2>
+      <p>Scroll through the merged file once: the page count should equal the sum shown in the queue, the order should be right, and the Word pages should look the way you meant. If a converted page lost its layout — a two-column page that became one column, say — export that document from Word itself and merge again.</p>
+    `,
+    faqs: [
+      { question: 'Can I merge a Word file and a PDF directly?', answer: 'Not with a PDF merger, which accepts only PDFs. Convert the Word file to PDF first, then merge the two PDFs.' },
+      { question: 'Will the slides be resized to A4 when I merge?', answer: 'No. Merging keeps every page at its original size, so 16:9 slides stay widescreen next to A4 document pages. Use Fit to page when printing.' },
+      { question: 'Do PowerPoint animations survive in the PDF?', answer: 'No. A PDF page is static: transitions, animations, video and audio are frozen at the slide\'s final state.' },
+      { question: 'Can I convert an old .ppt or .doc file?', answer: 'Not in a browser tool. Open it in PowerPoint, Word or LibreOffice and save it as .pptx or .docx first.' },
+      { question: 'Are my files uploaded?', answer: 'No. Word to PDF, PowerPoint to PDF and Merge PDF all run in your browser, so the files stay on your device.' }
+    ]
+  },
+  {
+    slug: 'jpg-to-png-transparent-background',
+    title: 'JPG to PNG Transparent Background: What Actually Works | ConvertOcean',
+    description: 'Converting a JPG to PNG keeps its background. Why that happens, and the built-in tools on Windows, Mac, iPhone and Office that really remove it.',
+    h1: 'JPG to PNG With a Transparent Background.',
+    readTime: '6 min read',
+    publishOn: '2026-10-15',
+    relatedTools: ['jpg-to-png', 'png-to-jpg', 'image-resizer'],
+    relatedGuides: ['png-vs-jpg', 'resize-photo-signature-for-online-forms'],
+    intro: 'The most common surprise with image converters: you turn a JPG into a PNG because PNG "supports transparency", and the white background is still there. Nothing went wrong. A converter changes the file format, not the picture — and removing a background is a different job, which your computer or phone can probably already do without uploading anything.',
+    contentHtml: `
+      <h2>Why the background stays</h2>
+      <p>A JPG cannot store transparency at all. Every pixel in it has a colour, including the white or grey behind your logo or signature. When you convert it to PNG, the converter copies every one of those pixels faithfully — that is its job — so the background arrives in the PNG as solid colour.</p>
+      <p>PNG <em>can</em> hold transparent pixels, but something has to decide which pixels are background and make them transparent. That is background removal, and a format converter, ours included, does not do it. <a href="/jpg-to-png/">JPG to PNG</a> is still the right tool when you need a PNG for its sharp edges or because a form asks for one; it just will not cut anything out.</p>
+
+      <h2>Built-in tools that remove a background</h2>
+      <p>These all run on your own device, which matters for signatures, ID photos and documents.</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>Where</th><th>How</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td>Word or PowerPoint (Windows and Mac)</td><td>Insert the picture → Picture Format → <strong>Remove Background</strong>; or Color → <strong>Set Transparent Color</strong> and click the background. Then right-click → <strong>Save as Picture</strong> → PNG.</td><td>Signatures and logos on a plain background</td></tr>
+          <tr><td>Paint on Windows 11</td><td>Open the image → <strong>Remove background</strong> in the Image group → save as PNG.</td><td>People and objects in photos</td></tr>
+          <tr><td>Mac</td><td>In Finder, right-click the image → Quick Actions → <strong>Remove Background</strong> (macOS 13 and later). Or in Preview, the <strong>Instant Alpha</strong> tool.</td><td>Photos; Instant Alpha for flat backgrounds</td></tr>
+          <tr><td>iPhone and iPad</td><td>In Photos, touch and hold the subject until it lifts, then Share or Copy (iOS 16 and later).</td><td>People, pets, products</td></tr>
+        </tbody>
+      </table></div>
+      <p>Menu names shift between versions, but every one of these has been part of the system for several releases. Online background removers work too, but most of them upload your image to their servers to do it.</p>
+
+      <h2>Signatures: the case most people actually have</h2>
+      <p>A signature photographed on white paper is the easiest case, because the background is one flat colour. Two tips make the result clean:</p>
+      <ol>
+        <li><strong>Photograph it well.</strong> Daylight, no shadow of your phone across the paper, the page filling most of the frame, dark ink. A grey, unevenly lit background is what makes background removal leave a halo.</li>
+        <li><strong>Use Set Transparent Color</strong> in Word or PowerPoint rather than Remove Background — on a flat white page it removes exactly the white and keeps every ink stroke. Save as Picture → PNG.</li>
+      </ol>
+      <p>If a form then asks for the signature in a size limit, resize the PNG with the <a href="/image-resizer/">image resizer</a>; the <a href="/guides/resize-photo-signature-for-online-forms/">signature and photo guide</a> covers typical dimensions.</p>
+
+      <h2>How to check the PNG really is transparent</h2>
+      <p>Many viewers draw transparent areas as white, so a transparent PNG and a white-background PNG can look identical. Two quick checks: open it in an editor that shows transparency as a grey-and-white checkerboard (Paint, Preview, Photoshop, GIMP), or drop it onto a coloured slide or document — if the background is gone, the colour shows through.</p>
+
+      <h2>Keep it a PNG</h2>
+      <p>Once the background is transparent, keep the file as PNG (or WebP). Converting it back to JPG — even by accident, through an app that only saves JPG — fills the transparent area with a solid colour again, usually white or black, because JPG has nowhere to store the transparency.</p>
+    `,
+    faqs: [
+      { question: 'Why does my PNG still have a white background?', answer: 'Because the JPG it came from had one. A JPG cannot store transparency, and converting to PNG copies every pixel, background included. Removing the background is a separate step.' },
+      { question: 'How do I make a JPG background transparent for free?', answer: 'Use a tool already on your device: Remove Background or Set Transparent Color in Word or PowerPoint, Remove background in Paint on Windows 11, the Remove Background quick action on a Mac, or touch-and-hold in iPhone Photos. Save the result as PNG.' },
+      { question: 'What is the best way to make a signature transparent?', answer: 'Photograph it on white paper in good light, then use Set Transparent Color in Word or PowerPoint and save it as a PNG. It removes the flat white exactly and keeps the ink.' },
+      { question: 'How can I tell if a PNG is transparent?', answer: 'Open it in an editor that shows a checkerboard behind transparent areas, or place it on a coloured background. If the colour shows through, it is transparent.' },
+      { question: 'Will converting the PNG to JPG keep the transparency?', answer: 'No. JPG cannot store transparency, so the transparent areas are filled with a solid colour, usually white or black.' }
+    ]
   }
 ];
 
