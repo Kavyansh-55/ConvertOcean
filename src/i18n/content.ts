@@ -287,8 +287,10 @@ for (const code of PREFIXED_LOCALES as PrefixedLocale[]) {
      all 75 Portuguese pages once resolved to the English homepage. */
   link('/', code, `${root}/`);
   /* The guides index. Its section name is translated too — /guides/ becomes
-     /pt/guias/ — so it cannot be derived by prefixing. */
-  link('/guides/', code, `${root}/${guidesBase(code)}/`);
+     /pt/guias/ — so it cannot be derived by prefixing. A locale with no guides
+     yet has no index: an empty guides page is a thin page, and the nav's
+     guides link falls back to the English /guides/ instead. */
+  if (c.guides.length) link('/guides/', code, `${root}/${guidesBase(code)}/`);
 
   for (const t of c.tools) link(`/${t.en}/`, code, `${root}/${t.slug}/`);
   for (const g of c.guides) link(`/guides/${g.en}/`, code, `${root}/${guidesBase(code)}/${g.slug}/`);

@@ -1,0 +1,277 @@
+---
+/**
+ * Indonesian contact page — mirrors /pt/contato/ and src/pages/contact.astro:
+ * the same mailto form (no server behind it), the same channels, and a data
+ * request section that names UU PDP instead of the LGPD.
+ */
+import Layout from '../../layouts/Layout.astro';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'id';
+const SUPPORT_EMAIL = 'kavyanshtech7@gmail.com';
+const REPO = 'https://github.com/Kavyansh-55/ConvertOcean';
+const title = 'Hubungi Kami | ConvertOcean';
+const description =
+  'Cara menghubungi ConvertOcean: pertanyaan, kesalahan terjemahan, masalah pada alat, atau permintaan terkait data.';
+
+const contactSchema = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Hubungi kami — ConvertOcean",
+  "url": "https://convertocean.com/id/kontak/",
+  "inLanguage": "id",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "ConvertOcean",
+    "url": "https://convertocean.com",
+    "email": SUPPORT_EMAIL,
+    "contactPoint": [{
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "email": SUPPORT_EMAIL,
+      "availableLanguage": ["Indonesian", "English"]
+    }]
+  }
+};
+---
+
+<Layout title={title} description={description} lang={lang} category="Hubungi kami" categorySlug="contact">
+  <style>
+    .contact-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .contact-lead {
+      font-size: 20px;
+      color: var(--colors-body);
+      line-height: 1.6;
+      margin-bottom: var(--spacing-xl);
+    }
+    .contact-card {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xl);
+      margin-top: var(--spacing-lg);
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: var(--spacing-md);
+    }
+    .form-label {
+      font-size: 11px;
+      font-weight: var(--fw-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--colors-body);
+    }
+    .text-area {
+      min-height: 120px;
+      resize: vertical;
+      font-family: inherit;
+      padding: var(--spacing-sm);
+    }
+    .contact-privacy-note {
+      font-size: 12.5px;
+      color: var(--colors-mute);
+      line-height: 1.5;
+      margin-top: var(--spacing-md);
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .contact-channels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-lg);
+    }
+    @media (max-width: 620px) {
+      .contact-channels { grid-template-columns: 1fr; }
+    }
+    .channel {
+      background-color: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-lg);
+    }
+    .channel-label {
+      font-size: 11px;
+      font-weight: var(--fw-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--colors-mute);
+      margin: 0 0 6px;
+    }
+    .channel-value {
+      font-size: 16px;
+      font-weight: var(--fw-bold);
+      word-break: break-word;
+    }
+    .channel-value a { color: var(--colors-link); text-decoration: none; }
+    .channel-value a:hover { text-decoration: underline; }
+    .channel-note {
+      font-size: 13px;
+      color: var(--colors-body);
+      line-height: 1.55;
+      margin: 8px 0 0;
+    }
+
+    .contact-section { margin-top: var(--spacing-2xl); }
+    .contact-section h2 {
+      font-size: 22px;
+      font-weight: var(--fw-bold);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-xs);
+    }
+    .contact-section h2 + p, .contact-section h2 + ul { margin-top: 0; }
+    .contact-section h2:not(:first-child) { margin-top: var(--spacing-xl); }
+    .contact-section p,
+    .contact-section li {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--colors-body);
+    }
+    .contact-section ul { padding-left: 1.15rem; margin: 6px 0 0; }
+    .contact-section li { margin-bottom: 5px; }
+    .contact-section a { color: var(--colors-link); }
+
+    .submit-success {
+      background-color: var(--colors-link-bg-soft);
+      border: 1px solid var(--colors-link);
+      color: var(--colors-link-deep);
+      border-radius: var(--rounded-sm);
+      padding: var(--spacing-md);
+      font-size: 14px;
+      font-weight: 500;
+      display: none;
+      align-items: center;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-md);
+    }
+  </style>
+
+  <main id="main-content" tabindex="-1" class="app-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl); position: relative; z-index: 1;">
+    <div class="contact-container">
+      <div class="page-header">
+        <h1 class="page-title">Hubungi kami.</h1>
+        <p class="contact-lead">Pertanyaan, kesalahan, ide alat baru — semuanya langsung sampai ke orang yang membangun ConvertOcean. Tidak ada antrean tiket atau layanan pelanggan pihak ketiga di tengahnya. Silakan menulis dalam bahasa Indonesia atau Inggris.</p>
+      </div>
+
+      <div class="contact-channels">
+        <div class="channel">
+          <p class="channel-label">Email</p>
+          <p class="channel-value"><a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a></p>
+          <p class="channel-note">Saluran terbaik untuk urusan pribadi, permintaan terkait data, atau jika Anda ingin melampirkan tangkapan layar.</p>
+        </div>
+        <div class="channel">
+          <p class="channel-label">GitHub Issues</p>
+          <p class="channel-value"><a href={`${REPO}/issues`} rel="noopener">github.com/Kavyansh-55/ConvertOcean</a></p>
+          <p class="channel-note">Saluran terbaik untuk laporan bug dan permintaan alat. Kodenya terbuka (lisensi MIT): Anda bisa membaca kode yang menghasilkan file Anda — dan perbaikannya, saat dirilis.</p>
+        </div>
+      </div>
+
+      <!-- Contact Form Card -->
+      <div class="contact-card">
+        <div id="submitSuccess" class="submit-success">
+          <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span>Terima kasih! Aplikasi email Anda akan terbuka dengan pesan yang sudah siap — tinggal kirim.</span>
+        </div>
+
+        <form id="contactForm">
+          <div class="form-group">
+            <label for="contactName" class="form-label">Nama</label>
+            <input type="text" id="contactName" class="form-input" placeholder="Nama Anda" required />
+          </div>
+
+          <div class="form-group">
+            <label for="contactEmail" class="form-label">Email</label>
+            <input type="email" id="contactEmail" class="form-input" placeholder="anda@contoh.co.id" required />
+          </div>
+
+          <div class="form-group">
+            <label for="contactReason" class="form-label">Topik</label>
+            <select id="contactReason" class="select-input" required>
+              <option value="Pertanyaan">Pertanyaan umum</option>
+              <option value="Bug">Masalah pada alat</option>
+              <option value="Terjemahan">Kesalahan bahasa Indonesia</option>
+              <option value="Usulan">Usulan alat baru</option>
+              <option value="UU PDP">Permintaan terkait data (UU PDP)</option>
+              <option value="Kerja sama">Kerja sama atau media</option>
+              <option value="Keamanan">Masalah keamanan</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="contactMessage" class="form-label">Pesan</label>
+            <textarea id="contactMessage" class="form-input text-area" placeholder="Tulis pesan Anda…" required></textarea>
+          </div>
+
+          <button type="submit" class="button button-primary" style="width: 100%; margin-top: var(--spacing-sm);">Kirim pesan</button>
+        </form>
+
+        <p class="contact-privacy-note">
+          <span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <span><strong>Cara kerja formulir ini:</strong> tidak ada server di belakangnya. Saat Anda menekan Kirim, pesan disusun lalu diserahkan ke aplikasi email Anda sendiri — tidak ada yang disimpan atau dikirim ke kami sampai Anda sendiri yang mengirimnya. Jika perangkat Anda tidak punya aplikasi email yang diatur, tidak akan terjadi apa-apa; dalam hal itu, tulis langsung ke alamat di atas.</span>
+        </p>
+      </div>
+
+      <section class="contact-section">
+        <h2>Yang membantu kami menyelesaikan lebih cepat</h2>
+        <ul>
+          <li><strong>Masalah pada alat:</strong> sebutkan halamannya, apa yang Anda harapkan, dan apa yang terjadi. Jenis dan perkiraan ukuran file sangat membantu — tetapi <em>jangan kirim filenya</em>: file hampir selalu berisi data pribadi, dan kami tidak membutuhkannya untuk menyelidiki.</li>
+          <li><strong>Browser dan sistem operasi</strong> yang Anda pakai. Banyak masalah ternyata hanya terjadi di satu browser.</li>
+          <li><strong>Kesalahan bahasa Indonesia:</strong> halaman-halaman ini ditulis untuk pembaca Indonesia, tetapi kesalahan bisa lolos. Menyebutkan halaman dan kalimatnya sudah cukup.</li>
+          <li><strong>Alat yang belum ada:</strong> ceritakan apa yang sedang Anda coba lakukan, bukan hanya formatnya. Mengetahui tugasnya sering mengubah apa yang layak dibangun.</li>
+        </ul>
+
+        <h2>Permintaan terkait data</h2>
+        <p>Untuk permintaan terkait UU PDP — akses, perbaikan, atau penghapusan — gunakan alamat yang sama. Perlu diketahui sejak awal bahwa cakupannya minimal karena rancangannya: tidak ada akun, file tidak pernah sampai ke kami, dan kami tidak membentuk profil orang yang teridentifikasi. Rinciannya ada di <a href="/id/privasi/">kebijakan privasi</a>.</p>
+
+        <h2>Yang tidak bisa kami lakukan</h2>
+        <ul>
+          <li><strong>Memulihkan file yang sudah Anda konversi.</strong> Ini bukan aturan, melainkan akibat arsitekturnya: file tidak pernah sampai ke kami, jadi tidak ada salinannya. Begitu tab ditutup, file itu hilang.</li>
+          <li><strong>Melihat data Anda</strong> — karena itu kami tidak bisa memeriksa "konversi yang saya lakukan kemarin". Tidak ada yang dicatat tentang file Anda.</li>
+          <li><strong>Membuka dokumen yang dilindungi kata sandi atau DRM.</strong></li>
+          <li><strong>Memberi nasihat hukum, pajak, atau akuntansi.</strong> Kalkulator menampilkan rumus agar Anda bisa memeriksa perhitungannya, tetapi hasilnya tidak menggantikan tenaga profesional.</li>
+        </ul>
+
+        <h2>Waktu tanggapan</h2>
+        <p>ConvertOcean adalah proyek independen, bukan pusat layanan pelanggan, jadi perkirakan beberapa hari untuk balasan — sedikit lebih lama di akhir pekan. Semua pesan dibaca. Jika sebuah laporan menjadi perbaikan, perbaikannya berlaku untuk semua orang sekaligus: tidak ada akun atau paket di sini.</p>
+      </section>
+    </div>
+  </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify(contactSchema)} />
+
+  <script is:inline define:vars={{ SUPPORT_EMAIL }}>
+    // define:vars wraps this in an IIFE; bound with addEventListener for the
+    // same reason as the English page (an inline onsubmit could not see it).
+    (function () {
+      var form = document.getElementById('contactForm');
+      if (!form) return;
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var name = document.getElementById('contactName').value;
+        var email = document.getElementById('contactEmail').value;
+        var reason = document.getElementById('contactReason').value;
+        var message = document.getElementById('contactMessage').value;
+
+        var subject = encodeURIComponent('ConvertOcean [' + reason + '] - ' + name);
+        var body = encodeURIComponent(
+          'Nama: ' + name + '\nEmail: ' + email + '\nTopik: ' + reason + '\n\nPesan:\n' + message
+        );
+
+        var mailtoUrl = 'mailto:' + SUPPORT_EMAIL + '?subject=' + subject + '&body=' + body;
+
+        document.getElementById('submitSuccess').style.display = 'flex';
+        form.reset();
+        window.location.href = mailtoUrl;
+      });
+    })();
+  </script>
+</Layout>

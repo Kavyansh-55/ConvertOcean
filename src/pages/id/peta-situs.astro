@@ -1,0 +1,161 @@
+---
+/**
+ * The Indonesian HTML sitemap — same construction as the Portuguese one: built
+ * from the locale data, so it lists exactly the /id/ pages that exist and
+ * gives a crawler one complete path into the locale.
+ */
+import Layout from '../../layouts/Layout.astro';
+import CategoryIcon from '../../components/CategoryIcon.astro';
+import { getTools, getCategories } from '../../i18n/content';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'id';
+
+const title = 'Peta Situs — Semua Alat | ConvertOcean';
+const description =
+  'Semua alat ConvertOcean dalam bahasa Indonesia, dikelompokkan per kategori: PDF, gambar, spreadsheet, dokumen, dan alat bisnis.';
+
+const tools = getTools(lang);
+const categories = getCategories(lang);
+
+/** Tools grouped under the category they belong to, in category order. */
+const grouped = categories.map(cat => ({
+  cat,
+  items: tools
+    .filter(t => t.categorySlug === cat.en)
+    .sort((a, b) => a.name.localeCompare(b.name, 'id')),
+}));
+
+/* A tool whose category has no Indonesian page would silently vanish from
+   this list. Collect the leftovers and show them rather than drop them. */
+const grouix = new Set(categories.map(c => c.en));
+const ungrouped = tools
+  .filter(t => !grouix.has(t.categorySlug))
+  .sort((a, b) => a.name.localeCompare(b.name, 'id'));
+---
+
+<Layout title={title} description={description} lang={lang} category="Peta Situs" categorySlug="sitemap" band="bone">
+  <main id="main-content" tabindex="-1" class="band band--bone">
+    <div class="sm-wrap">
+      <h1 class="sm-title">Peta situs</h1>
+      <p class="sm-lead">
+        {tools.length} alat yang tersedia dalam bahasa Indonesia, per kategori.
+        Semuanya berjalan di dalam browser — file Anda tidak keluar dari
+        perangkat Anda.
+      </p>
+
+      <div class="sm-grid">
+        {grouped.map(({ cat, items }) => (
+          <section class="sm-card">
+            <h2 class="sm-card-title">
+              <CategoryIcon categorySlug={cat.en} />
+              <a href={`/id/${cat.slug}/`}>{cat.name}</a>
+              <span class="sm-count">({items.length})</span>
+            </h2>
+            <ul class="sm-links">
+              {items.map(t => (
+                <li><a href={`/id/${t.slug}/`}>{t.name}</a></li>
+              ))}
+            </ul>
+          </section>
+        ))}
+
+        {ungrouped.length > 0 && (
+          <section class="sm-card">
+            <h2 class="sm-card-title">Alat lainnya <span class="sm-count">({ungrouped.length})</span></h2>
+            <ul class="sm-links">
+              {ungrouped.map(t => (
+                <li><a href={`/id/${t.slug}/`}>{t.name}</a></li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+
+      <section class="sm-card sm-card--wide">
+        <h2 class="sm-card-title">Halaman</h2>
+        <ul class="sm-links">
+          <li><a href="/id/">Beranda</a></li>
+          <li><a href="/id/konverter-file/">Konverter file</a></li>
+          <li><a href="/id/tentang/">Tentang kami</a></li>
+          <li><a href="/id/privasi/">Kebijakan privasi</a></li>
+          <li><a href="/id/ketentuan/">Syarat dan ketentuan</a></li>
+          <li><a href="/id/kontak/">Hubungi kami</a></li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <style>
+    .sm-wrap { max-width: 980px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-lg); }
+    .sm-title {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-sm);
+    }
+    .sm-lead {
+      font-size: var(--fs-lead);
+      color: var(--colors-body);
+      max-width: 60ch;
+      margin: 0 0 var(--spacing-xl);
+    }
+    /* auto-fit, not a fixed two-up: the English sitemap had a card spanning two
+       columns, which made a single-column grid create an implicit second column
+       and scroll sideways at 390px. */
+    .sm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--spacing-lg);
+    }
+    .sm-card {
+      background: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-lg);
+    }
+    .sm-card--wide { margin-top: var(--spacing-lg); }
+    .sm-card-title {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      font-size: var(--fs-body);
+      font-weight: var(--fw-extrabold);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-md);
+    }
+    .sm-card-title a {
+      color: inherit;
+      text-decoration: none;
+      /* The category name is a link, so it needs the same 44px target as the
+         tool links below it (WCAG 2.5.8). Padding rather than height, so the
+         heading does not grow a visible gap. */
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      touch-action: manipulation;
+    }
+    .sm-card-title a:hover { text-decoration: underline; }
+    .sm-card-title a:focus-visible { outline: 2px solid var(--colors-link-deep); outline-offset: 2px; }
+    .sm-count { color: var(--colors-body); font-weight: var(--fw-bold); font-size: var(--fs-small); }
+    .sm-links { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+    .sm-links a {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      display: block;
+      /* 44px touch target (WCAG 2.5.8) without visually bulking the list. */
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 var(--spacing-xs);
+      margin-left: calc(var(--spacing-xs) * -1);
+      border-radius: var(--rounded-sm);
+      color: var(--colors-body);
+      text-decoration: none;
+      font-size: var(--fs-small);
+    }
+    .sm-links a:hover { color: var(--colors-ink); background: var(--colors-canvas-soft-2); }
+    .sm-links a:focus-visible { outline: 2px solid var(--colors-link-deep); outline-offset: 2px; }
+  </style>
+</Layout>

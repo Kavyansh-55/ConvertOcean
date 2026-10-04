@@ -1,0 +1,109 @@
+---
+/**
+ * Indonesian "about" page. Same brief as /pt/sobre/: written for a reader who
+ * has just landed from an Indonesian search result and is deciding whether to
+ * trust the site with a document, so it leads with the verifiable claim.
+ *
+ * The offline claim is narrower than the Portuguese page's "any tool": the
+ * offline suite (npm run offline) proves the PDF tools, while OCR and HEIC
+ * fetch an engine on first use. Only what is tested is said.
+ */
+import Layout from '../../layouts/Layout.astro';
+import { getTools } from '../../i18n/content';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'id';
+const title = 'Tentang ConvertOcean | Konverter File Privat';
+const description =
+  'Kenapa ConvertOcean memproses semuanya di browser, apa yang dimungkinkan, dan apa konsekuensinya. Kode terbuka dan bisa diperiksa.';
+const toolCount = getTools(lang).length;
+---
+
+<Layout title={title} description={description} lang={lang} band="bone" categorySlug="about">
+  <main id="main-content" tabindex="-1" class="band band--bone">
+    <article class="prose">
+      <h1>Tentang ConvertOcean</h1>
+      <p class="lead">
+        {toolCount} alat file dalam bahasa Indonesia yang berjalan sepenuhnya di
+        dalam browser Anda. Tidak ada file yang disalin ke server — dan kodenya
+        terbuka, agar hal ini bisa diperiksa, bukan sekadar dipercaya.
+      </p>
+
+      <h2>Keputusan yang mendefinisikan situs ini</h2>
+      <p>
+        Hampir semua konverter online bekerja dengan cara yang sama: Anda memilih
+        file, file disalin ke server, dikonversi di sana, lalu dikembalikan. Cara
+        itu mudah dibangun dan memungkinkan konversi yang canggih — tetapi berarti
+        kontrak, slip gaji, atau KTP Anda melewati infrastruktur orang lain.
+      </p>
+      <p>
+        Di sini langkah itu tidak ada. Konversi terjadi di memori browser Anda
+        sendiri, memakai JavaScript dan mesin yang dikompilasi ke WebAssembly.
+        File tidak pernah keluar dari perangkat Anda.
+      </p>
+
+      <h2>Konsekuensinya</h2>
+      <p>
+        Perlu dikatakan dengan jelas, karena ini sisi lain dari pilihan yang sama.
+        Berjalan di browser membatasi ketepatan beberapa konversi: PDF dengan tata
+        letak sangat rumit tidak menjadi Word yang sempurna, dan format biner lama
+        seperti .doc dan .ppt tidak bisa dibaca tanpa server. Ukuran file maksimum
+        bergantung pada memori perangkat Anda, bukan paket berbayar.
+      </p>
+      <p>
+        Setiap halaman menjelaskan batas alatnya sendiri, alih-alih
+        menyembunyikannya. Kami lebih suka Anda tahu di mana konversi gagal
+        sebelum mengandalkannya.
+      </p>
+
+      <h2>Kode terbuka</h2>
+      <p>
+        Klaim "tidak ada yang dikirim" hanya bernilai jika bisa diperiksa.
+        Repositorinya publik di{' '}
+        <a href="https://github.com/Kavyansh-55/ConvertOcean" rel="noopener">github.com/Kavyansh-55/ConvertOcean</a>.{' '}
+        Ada juga uji yang bisa dilakukan siapa saja: buka salah satu alat PDF,
+        putuskan koneksi internet, lalu pakai alatnya. Alat itu tetap bekerja,
+        karena tidak ada apa pun di seberang sana yang menunggu file Anda — dan
+        hal ini diuji otomatis di setiap rilis.
+      </p>
+
+      <h2>Gratis, dan alasannya</h2>
+      <p>
+        Tidak ada pendaftaran, langganan, watermark, atau batas harian. Karena
+        prosesnya berjalan di perangkat Anda, tidak ada biaya server per konversi
+        yang harus ditutup — situs ini dibiayai iklan di halaman, bukan oleh file
+        Anda.
+      </p>
+
+      <h2>Dalam bahasa Indonesia</h2>
+      <p>
+        Halaman bahasa Indonesia bukan terjemahan mesin dari versi bahasa Inggris:
+        halaman-halaman ini ditulis dari apa yang benar-benar dicari orang di
+        Indonesia, dari dokumen pendaftaran yang harus di bawah 1 MB sampai foto
+        HEIC dari iPhone yang tidak bisa dibuka di Windows. Jika ada yang salah
+        atau terdengar janggal, silakan lewat{' '}
+        <a href="/id/kontak/">halaman kontak</a>.
+      </p>
+    </article>
+  </main>
+
+  <style>
+    .prose { max-width: 70ch; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-lg); }
+    .prose h1 {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-md);
+    }
+    .prose h2 {
+      font-size: var(--fs-subheading);
+      font-weight: var(--fw-extrabold);
+      color: var(--colors-ink);
+      margin: var(--spacing-xl) 0 var(--spacing-sm);
+    }
+    .prose .lead { font-size: var(--fs-lead); color: var(--colors-body); }
+    .prose p { color: var(--colors-body); font-size: var(--fs-body); line-height: 1.65; }
+    .prose a { color: var(--colors-link-deep); }
+  </style>
+</Layout>

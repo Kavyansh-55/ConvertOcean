@@ -1,0 +1,275 @@
+---
+/**
+ * The Indonesian locale root. Same construction as /pt/ (see the comment
+ * there for why it is written, not a copy of the English homepage): Layout,
+ * CategoryCard and the shared tokens, nothing styled by hand.
+ *
+ * It leads with what the keyword research ranked highest — kompres pdf
+ * (>1M), gabungkan / pisahkan pdf and word ke pdf / pdf ke word (>100K each) —
+ * and with the registration-document workflow (CPNS, beasiswa, kampus), the
+ * Indonesian counterpart of the concurso workflow on /pt/.
+ */
+import Layout from '../../layouts/Layout.astro';
+import CategoryCard from '../../components/CategoryCard.astro';
+import CategoryIcon from '../../components/CategoryIcon.astro';
+import ToolSearch from '../../components/ToolSearch.astro';
+import { getTools, getCategories } from '../../i18n/content';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'id';
+
+const title = 'ConvertOcean — Konverter File Online Gratis, Tanpa Upload';
+const description =
+  'Konversi, gabungkan, pisahkan, dan kompres file langsung di browser. Tidak ada yang disalin ke server: dokumen Anda tidak keluar dari perangkat Anda.';
+
+const idTools = getTools(lang);
+const idCategories = getCategories(lang);
+
+const countFor = (enCategory: string) =>
+  idTools.filter(t => t.categorySlug === enCategory).length;
+
+/* Ordered by researched Indonesian volume, highest first. */
+const unggulan = [
+  'kompres-pdf', 'gabungkan-pdf', 'pisahkan-pdf', 'word-ke-pdf',
+  'pdf-ke-word', 'gambar-ke-pdf', 'excel-ke-pdf', 'pdf-ke-excel',
+  'png-ke-jpg', 'kompres-word', 'kompres-ppt', 'ubah-ukuran-gambar',
+];
+const populer = unggulan
+  .map(s => idTools.find(t => t.slug === s))
+  .filter((t): t is NonNullable<typeof t> => Boolean(t));
+
+const faqList = [
+  {
+    q: 'Apakah file saya dikirim ke server?',
+    a: 'Tidak. Seluruh konversi terjadi di dalam browser Anda, di perangkat Anda sendiri. Tidak ada file yang disalin ke server kami atau pihak ketiga, dan kode situs ini terbuka — klaim ini bisa diperiksa, bukan sekadar dipercaya.'
+  },
+  {
+    q: 'Apakah saya perlu membuat akun atau membayar?',
+    a: 'Tidak. Semua alat gratis, tanpa pendaftaran, tanpa watermark pada hasil, dan tanpa batas pemakaian harian. Tidak ada versi berbayar yang menyembunyikan fitur.'
+  },
+  {
+    q: 'Apakah bisa dipakai di HP?',
+    a: 'Bisa. Alat-alat ini berjalan di browser HP sama seperti di komputer, dan file tetap tidak keluar dari perangkat. Tidak perlu instal aplikasi.'
+  },
+  {
+    q: 'Apakah cocok untuk dokumen pendaftaran CPNS atau beasiswa?',
+    a: 'Ya, itu salah satu kegunaan paling umum. Portal pendaftaran biasanya meminta PDF atau JPG di bawah batas ukuran tertentu dan harus terbaca. Anda bisa mengubah foto dokumen menjadi PDF, menggabungkan dokumen menjadi satu file, mengompres sampai di bawah batas, dan memeriksa keterbacaannya sebelum mengunggah ke portal — tanpa dokumen pribadi Anda keluar dari perangkat.'
+  },
+  {
+    q: 'Apakah ada batas ukuran file?',
+    a: 'Ada. Setiap alat menyebutkan batasnya, antara 15 dan 25 MB per file tergantung alatnya. Alasannya, seluruh pemrosesan terjadi di memori perangkat Anda sendiri: batas itu mencegah tab browser macet karena file yang terlalu besar.'
+  }
+];
+---
+
+
+<Layout title={title} description={description} lang={lang} faqList={faqList} band="lime">
+  <main id="main-content" tabindex="-1">
+
+    <section class="band band--lime hero-band">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <h1 class="hero-title">Konversi file. Tanpa mengirim apa pun.</h1>
+          <p class="hero-sub">
+            Konversi, gabungkan, pisahkan, dan kompres PDF, gambar, spreadsheet, dan
+            dokumen langsung di browser. File Anda tidak keluar dari perangkat Anda —
+            dan kodenya terbuka untuk Anda periksa.
+          </p>
+          <ToolSearch lang={lang} />
+          <div class="hero-actions">
+            <a href="/id/alat-pdf/" class="button button-primary">Alat PDF</a>
+            <a href="/id/alat-gambar/" class="button button-secondary">Alat gambar</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band band--bone">
+      <div class="home-section">
+        <h2 class="home-section-title">Paling dicari</h2>
+        <p class="home-section-sub">Alat yang paling banyak dicari orang Indonesia.</p>
+        <div class="home-tool-grid">
+          {populer.map(tool => (
+            <a href={`/id/${tool.slug}/`} class="home-tool">
+              <span class="home-tool-icon" aria-hidden="true"><CategoryIcon icon={tool.icon} width="20" height="20" /></span>
+              <span class="home-tool-name">{tool.name}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="band band--paper">
+      <div class="home-section">
+        <h2 class="home-section-title">Dokumen pendaftaran CPNS, beasiswa, dan kampus</h2>
+        <p class="home-section-sub">
+          Portal pendaftaran hampir selalu meminta hal yang sama: PDF atau JPG, di
+          bawah batas ukuran tertentu, dan terbaca. Tiga langkah ini menyelesaikannya,
+          dan dokumen pribadi Anda tidak keluar dari perangkat Anda.
+        </p>
+        <ol class="home-steps">
+          <li>
+            <strong>1. Ubah foto menjadi PDF.</strong> Dokumen yang difoto menjadi
+            PDF yang rapi dengan <a href="/id/gambar-ke-pdf/">Gambar ke PDF</a>,{' '}
+            satu foto per halaman.
+          </li>
+          <li>
+            <strong>2. Gabungkan menjadi satu file.</strong> KTP, KK, ijazah, dan
+            transkrip sesuai urutan yang diminta panitia, dengan{' '}
+            <a href="/id/gabungkan-pdf/">Gabungkan PDF</a>.
+          </li>
+          <li>
+            <strong>3. Kompres sampai di bawah batas.</strong>{' '}
+            <a href="/id/kompres-pdf/">Kompres PDF</a> bisa diisi ukuran target dan
+            menampilkan ukuran akhir sebelum diunduh — periksa apakah teks masih terbaca.
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="band band--bone">
+      <div class="home-section">
+        <h2 class="home-section-title">Per kategori</h2>
+        <div class="grid-container-inner">
+          {idCategories.map(cat => (
+            <CategoryCard
+              href={`/id/${cat.slug}/`}
+              categorySlug={cat.en}
+              name={cat.name}
+              count={`(${countFor(cat.en)})`}
+              description={cat.subtitle}
+              action={`Buka ${cat.name}`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="band band--paper">
+      <div class="home-section">
+        <h2 class="home-section-title">Kenapa tidak ada yang dikirim</h2>
+        <p class="home-section-sub">
+          Kebanyakan konverter online menyalin file Anda ke server, mengonversinya di
+          sana, lalu mengembalikan hasilnya. Di sini langkah itu tidak ada:
+          pemrosesan terjadi di memori browser Anda sendiri.
+        </p>
+        <p class="home-section-sub">
+          Ini mengubah apa yang bisa Anda proses dengan tenang. Kontrak, slip gaji,
+          rekening koran, dokumen pendaftaran, dan foto berisi data lokasi tetap di
+          perangkat Anda dari awal sampai akhir. Dan karena repositorinya publik,
+          klaim ini bisa diperiksa, bukan sekadar dipercaya.
+        </p>
+        <p class="home-section-sub">
+          Konsekuensinya kami sampaikan terus terang: berjalan di browser membatasi
+          ketepatan beberapa konversi, dan setiap halaman menyebutkan batas itu
+          alih-alih menyembunyikannya.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <style>
+    /* Layout only. Every colour, size and radius comes from the tokens in
+       theme.css, through the band this section sits on. */
+    .hero-band { padding: var(--spacing-3xl) 0; }
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg);
+    }
+    .hero-copy { max-width: 46rem; }
+    .hero-title {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-md);
+    }
+    .hero-sub {
+      font-size: var(--fs-lead);
+      color: var(--colors-body);
+      margin: 0 0 var(--spacing-lg);
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); }
+
+    .home-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+    }
+    .home-section-title {
+      font-size: var(--fs-heading);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-sm);
+    }
+    .home-section-sub {
+      font-size: var(--fs-body);
+      color: var(--colors-body);
+      max-width: 60ch;
+      margin: 0 0 var(--spacing-md);
+    }
+
+    .home-tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-lg);
+    }
+    .home-tool {
+      /* Prevents the 300ms double-tap zoom delay on touch, as the nav
+         controls in theme.css already do. */
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
+      border-radius: var(--rounded-lg);
+      background: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      color: var(--colors-ink);
+      text-decoration: none;
+      font-weight: var(--fw-bold);
+      /* 44px minimum touch target (WCAG 2.5.8). */
+      min-height: 44px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .home-tool:hover { border-color: var(--colors-link); transform: translateY(-2px); }
+    .home-tool:focus-visible { outline: 2px solid var(--colors-link-deep); outline-offset: 2px; }
+    /* Line icons, as everywhere else on the site; the emoji this used to
+       render were a different visual language from the English pages. */
+    .home-tool-icon { display: inline-flex; color: var(--colors-ink); flex-shrink: 0; }
+    .home-tool-name { font-size: var(--fs-small); }
+
+    .home-steps {
+      margin: var(--spacing-lg) 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: var(--spacing-md);
+      max-width: 62ch;
+    }
+    .home-steps li {
+      color: var(--colors-body);
+      font-size: var(--fs-body);
+      padding-left: var(--spacing-md);
+      border-left: 3px solid var(--colors-hairline);
+    }
+    .home-steps strong { color: var(--colors-ink); }
+
+    .grid-container-inner {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-lg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .home-tool { transition: none; }
+      .home-tool:hover { transform: none; }
+    }
+  </style>
+</Layout>

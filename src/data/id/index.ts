@@ -27,9 +27,122 @@ import type { LocaleTool, LocaleGuide, LocaleCategory, LocaleStaticPage } from '
  * page whose logo points at an unbuilt homepage is a broken site, however
  * good the tool page is.
  */
-export const ID_READY = false;
+export const ID_READY = true;
 
-export const idCategories: LocaleCategory[] = [];
+export const idCategories: LocaleCategory[] = [
+  {
+    en: 'pdf-tools',
+    slug: 'alat-pdf',
+    name: 'Alat PDF',
+    title: 'Alat PDF Online Gratis — Kompres, Gabungkan, Pisahkan | ConvertOcean',
+    description: 'Kompres, gabungkan, pisahkan, dan konversi PDF langsung di browser. Tidak ada file yang keluar dari perangkat Anda.',
+    headline: 'Alat PDF.',
+    subtitle: 'Kompres, gabungkan, pisahkan, dan konversi PDF tanpa file keluar dari perangkat Anda.',
+    intro: `
+    <h2>Semua alat PDF, tanpa dokumen keluar dari perangkat.</h2>
+    <p>Mengurus PDF biasanya berupa rangkaian tugas kecil di sekitar dokumen yang sama: <a href="/id/gabungkan-pdf/">menggabungkan</a> beberapa file menjadi satu, <a href="/id/pisahkan-pdf/">memisahkan</a> per halaman, menjadi bagian sama besar, atau menjadi bagian di bawah ukuran tertentu, <a href="/id/kompres-pdf/">mengompres</a> sampai muat di batas portal, dan mengubahnya ke <a href="/id/pdf-ke-word/">Word</a> atau <a href="/id/pdf-ke-excel/">Excel</a>. Semua berjalan di browser Anda, jadi kontrak, rekening koran, dan dokumen pribadi tidak melewati server mana pun.</p>
+    <p>Untuk membuat PDF dari foto, mulai dari <a href="/id/gambar-ke-pdf/">Gambar ke PDF</a>.</p>
+    `,
+    faqs: [
+      { q: 'Bisakah menggabungkan PDF dengan foto atau file Word?', a: 'Tidak secara langsung: Gabungkan PDF hanya menyatukan file yang sudah PDF. Ubah dulu foto dengan Gambar ke PDF dan dokumen dengan Word ke PDF, lalu gabungkan semuanya sesuai urutan yang dibutuhkan.' },
+      { q: 'Apakah ada batas ukuran atau jumlah halaman?', a: 'Setiap alat menerima file hingga 25 MB, dan tidak ada batas jumlah pemakaian. Karena prosesnya terjadi di perangkat Anda, kecepatannya bergantung pada memori dan prosesor perangkat itu, bukan antrean di server.' },
+      { q: 'Apakah kompres PDF membuat teks tidak terbaca?', a: 'Kompresor terutama memperkecil gambar yang disimpan lebih besar dari tampilannya di halaman; teks, tautan, dan kolom formulir tetap seperti semula. Anda juga bisa menentukan ukuran target dalam KB untuk mencapai batas portal.' }
+    ]
+  },
+  {
+    en: 'image-tools',
+    slug: 'alat-gambar',
+    name: 'Alat Gambar',
+    title: 'Alat Gambar Online — Ubah Ukuran dan Konversi Foto | ConvertOcean',
+    description: 'Ubah ukuran, konversi, dan kompres gambar JPG, PNG, WebP, dan HEIC langsung di browser, tanpa ada yang keluar dari perangkat Anda.',
+    headline: 'Alat gambar.',
+    subtitle: 'Ubah ukuran, konversi, dan kompres foto tanpa foto keluar dari perangkat Anda.',
+    intro: `
+    <h2>Konversi, ubah ukuran, dan gabungkan gambar tanpa mengirim satu piksel pun.</h2>
+    <p>Setiap format punya tempatnya: JPG mengompres foto dengan baik, PNG menjaga tangkapan layar dan logo bertransparansi, dan WebP membuat gambar situs jauh lebih kecil. Alat-alat ini mengonversi di antara format itu — termasuk foto <a href="/id/heic-ke-jpg/">HEIC dari iPhone</a> —, <a href="/id/ubah-ukuran-gambar/">mengubah ukuran</a> dalam piksel atau sampai ukuran file tertentu dalam KB, <a href="/id/gabungkan-gambar/">menggabungkan gambar</a> menjadi satu, dan mengubah gambar menjadi <a href="/id/gambar-ke-pdf/">PDF</a> atau <a href="/id/gambar-ke-teks/">teks</a>.</p>
+    <p>Tidak ada yang dikirim — lebih penting dari kelihatannya, karena foto membawa metadata seperti lokasi.</p>
+    `,
+    faqs: [
+      { q: 'Format gambar apa yang terbaik untuk situs web?', a: 'Biasanya WebP: mendukung transparansi dan umumnya lebih kecil dari JPG yang setara. Untuk foto yang akan dicetak atau dikirim ke sistem lama, JPG tetap paling kompatibel.' },
+      { q: 'Apakah mengubah JPG ke PNG meningkatkan kualitas?', a: 'Tidak. PNG tidak kehilangan kualitas pada penyimpanan berikutnya, tetapi tidak mengembalikan detail yang sudah dibuang kompresi JPG. Gambarnya sama, hanya dalam file yang lebih besar.' },
+      { q: 'Bagaimana membuat foto di bawah batas KB?', a: 'Gunakan mode ukuran file di Ubah Ukuran Gambar: isi batasnya, misalnya 200 KB, dan alat mencari kualitas tertinggi yang masih muat, lalu menampilkan ukuran akhirnya sebelum diunduh.' }
+    ]
+  },
+  {
+    en: 'document-tools',
+    slug: 'alat-dokumen',
+    name: 'Alat Dokumen',
+    title: 'Alat Word, PowerPoint, dan TXT Online | ConvertOcean',
+    description: 'Konversi, gabungkan, pisahkan, dan kompres dokumen Word, PowerPoint, dan file teks langsung di browser.',
+    headline: 'Alat dokumen.',
+    subtitle: 'Word, PowerPoint, dan file teks — semuanya diproses di browser Anda sendiri.',
+    intro: `
+    <h2>Word, PowerPoint, dan teks — dikonversi di perangkat Anda sendiri.</h2>
+    <p>Dokumen terus berganti format: Word menjadi PDF untuk dikirim dengan <a href="/id/word-ke-pdf/">Word ke PDF</a>, PDF yang diterima kembali bisa diedit dengan <a href="/id/pdf-ke-word/">PDF ke Word</a>, presentasi menjadi PDF dengan <a href="/id/ppt-ke-pdf/">PPT ke PDF</a>. Anda juga bisa <a href="/id/gabungkan-word/">menggabungkan</a> dan <a href="/id/pisahkan-word/">memisahkan</a> dokumen Word, menggabungkan presentasi, serta <a href="/id/kompres-word/">mengompres Word</a> dan <a href="/id/kompres-ppt/">PPT</a>.</p>
+    <p>Semuanya dibaca dan disusun di dalam browser. Kontrak, laporan internal, dan skripsi yang belum diserahkan tidak disalin ke server mana pun.</p>
+    `,
+    faqs: [
+      { q: 'Bisakah mengambil teks dari dokumen hasil scan?', a: 'Tidak lewat konverter Word: dokumen hasil scan menyimpan gambar halaman, bukan teks. Gunakan Gambar ke Teks, yang menjalankan pengenalan teks (OCR) di perangkat Anda sendiri.' },
+      { q: 'Apakah format tetap saat menggabungkan dokumen Word?', a: 'Isi, tabel, dan gambar setiap file masuk utuh, dan setiap dokumen dimulai di halaman baru. Gaya bisa berbeda jika file-file itu mendefinisikan gaya yang sama dengan cara berbeda — dokumen akhir memakai gaya file pertama.' },
+      { q: 'Bisakah memperkecil ukuran file Word atau PowerPoint?', a: 'Bisa. Kompres Word dan Kompres PPT terutama memperkecil gambar yang tertanam, yang hampir selalu menjadi bagian terbesar file, dan mengembalikan dokumen yang tetap bisa diedit.' }
+    ]
+  },
+  {
+    en: 'excel-converter',
+    slug: 'konverter-excel',
+    name: 'Konverter Excel',
+    title: 'Konverter Excel Online — PDF, Gabungkan, Kompres | ConvertOcean',
+    description: 'Ubah Excel ke PDF dan PDF ke Excel, gabungkan, dan kompres spreadsheet langsung di browser, tanpa file keluar dari perangkat.',
+    headline: 'Konverter Excel.',
+    subtitle: 'Spreadsheet ke PDF dan sebaliknya — diproses di browser Anda, bukan di server.',
+    intro: `
+    <h2>Spreadsheet dikonversi tanpa angka keluar dari perangkat Anda.</h2>
+    <p>Spreadsheet menyimpan hal paling sensitif dalam sebuah usaha — gaji, daftar harga, data pelanggan. Alat-alat ini mengubah <a href="/id/excel-ke-pdf/">Excel ke PDF</a> dan <a href="/id/xls-ke-pdf/">XLS ke PDF</a> untuk dicetak, mengambil tabel dengan <a href="/id/pdf-ke-excel/">PDF ke Excel</a>, <a href="/id/gabungkan-excel/">menggabungkan</a> beberapa workbook, dan <a href="/id/kompres-excel/">mengompres</a> file yang membengkak.</p>
+    <p>Yang diekspor hanya hasil yang disimpan Excel untuk setiap rumus — bukan rumusnya —, jadi logika spreadsheet Anda tetap bersama Anda.</p>
+    `,
+    faqs: [
+      { q: 'Apakah rumus muncul di file hasil konversi?', a: 'Tidak. Konverter mengekspor hasil yang disimpan Excel untuk setiap rumus; rumus tidak dihitung ulang. Makro (.xlsm) dan koneksi ke data eksternal tidak dijalankan.' },
+      { q: 'Apakah print area Excel diikuti saat membuat PDF?', a: 'Tidak. Excel ke PDF memakai area data yang terpakai di setiap sheet — dari sel pertama sampai sel terakhir yang berisi — dan kolom tersembunyi tetap muncul di PDF. Untuk mengatur yang tampil, hapus baris dan kolom yang tidak perlu sebelum konversi.' },
+      { q: 'Kenapa spreadsheet saya sangat besar padahal hampir kosong?', a: 'Hampir selalu karena area terpakai: format yang diterapkan ke ribuan baris kosong membuat Excel menyimpan semuanya. Kompres Excel membuang kelebihan itu dan menampilkan ukuran sebelum dan sesudah.' }
+    ]
+  },
+  {
+    en: 'business-tools',
+    slug: 'alat-bisnis',
+    name: 'Alat Bisnis',
+    title: 'Kalkulator Persentase dan Alat Bisnis | ConvertOcean',
+    description: 'Hitung persentase, kenaikan, diskon, dan selisih langsung di browser, dengan rumus di samping setiap hasil.',
+    headline: 'Alat bisnis.',
+    subtitle: 'Perhitungan sehari-hari untuk usaha — angka Anda tidak keluar dari perangkat.',
+    intro: `
+    <h2>Perhitungan usaha sehari-hari, dengan privasi.</h2>
+    <p><a href="/id/kalkulator-persentase/">Kalkulator Persentase</a> menyelesaikan perhitungan yang paling sering muncul: persentase dari suatu nilai, kenaikan harga atau gaji, diskon, dan selisih antara dua angka. Setiap hasil ditampilkan bersama rumusnya, agar Anda bisa memeriksa perhitungannya.</p>
+    <p>Kalkulator margin laba, titik impas (BEP), template invoice, dan kwitansi tersedia dalam bahasa Inggris untuk saat ini, karena versi Indonesianya sedang disusun dari riset kata kunci lokal.</p>
+    `,
+    faqs: [
+      { q: 'Kenapa naik 25% lalu turun 25% tidak kembali ke angka semula?', a: 'Karena dasarnya berubah. Dari 100 naik 25% menjadi 125; turun 25% dari 125 adalah 31,25, sehingga hasilnya 93,75. Persentase selalu dihitung dari nilai awal masing-masing langkah.' },
+      { q: 'Apakah angka yang saya masukkan disimpan?', a: 'Tidak. Perhitungan terjadi di browser Anda dan tidak ada angka yang dikirim atau disimpan di server.' }
+    ]
+  },
+  {
+    en: 'developer-tools',
+    slug: 'alat-developer',
+    name: 'Alat Developer',
+    title: 'Penghitung Kata dan Alat Teks | ConvertOcean',
+    description: 'Hitung jumlah kata, karakter, dan waktu baca langsung di browser, tanpa teks dikirim ke server.',
+    headline: 'Alat developer.',
+    subtitle: 'Alat teks dan data — diproses di perangkat Anda, tidak pernah di server.',
+    intro: `
+    <h2>Alat teks yang tidak mengirim teks Anda ke mana pun.</h2>
+    <p><a href="/id/penghitung-kata/">Penghitung Kata</a> menghitung jumlah kata, karakter dengan dan tanpa spasi, kalimat, paragraf, waktu baca, dan kata yang paling sering muncul, langsung saat Anda mengetik. Berguna untuk esai, abstrak, dan teks dengan batas karakter.</p>
+    <p>Alat data untuk developer — format JSON, CSV ke JSON, XML ke JSON — tersedia dalam bahasa Inggris, karena istilah teknis itu memang dicari dalam bahasa Inggris.</p>
+    `,
+    faqs: [
+      { q: 'Apakah teks yang saya tempel disimpan?', a: 'Tidak. Penghitungan terjadi di browser Anda saat mengetik, dan tidak ada yang dikirim atau disimpan di server.' },
+      { q: 'Apakah teks bahasa Indonesia dihitung dengan benar?', a: 'Ya. Kata dihitung dari spasi, bukan dari kamus, jadi teks bahasa apa pun yang memakai spasi antar kata dihitung dengan cara yang sama.' }
+    ]
+  }
+];
 
 export const idTools: LocaleTool[] = [
   {
@@ -81,6 +194,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Angka Anda tidak keluar dari perangkat</h2>
       <p>Spreadsheet menyimpan hal paling sensitif dalam sebuah usaha: gaji, margin, daftar pelanggan. Konverter yang menyalin file ke server menjadikannya soal kepercayaan. Alat ini memproses spreadsheet di dalam browser, di perangkat Anda sendiri — dan kodenya terbuka, jadi klaim ini bisa diperiksa, bukan sekadar dipercaya.</p>
+
+      <h2>Langkah singkat</h2>
+      <p>Apa pun istilah yang Anda cari — <strong>cara ubah excel ke pdf</strong>, <strong>cara excel ke pdf</strong>, atau <strong>cara mengubah file excel ke pdf</strong> — langkahnya sama: seret file, pilih apakah semua sheet ikut, lalu unduh PDF-nya. Mengubah <strong>dari excel ke pdf</strong> di sini tidak membutuhkan Excel terpasang.</p>
     `
   },
   {
@@ -166,6 +282,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Diproses di perangkat Anda</h2>
       <p>Saat Anda <strong>convert png ke jpg</strong> di sini, konversi terjadi di browser Anda tanpa antrean dan tanpa batas harian, dan gambar tidak disalin ke server mana pun. Ini penting untuk gambar: foto membawa metadata seperti lokasi dan model HP, dan tangkapan layar membawa apa pun yang ada di layar Anda.</p>
+
+      <h2>Langkah singkat</h2>
+      <p>Baik Anda mencari <strong>cara mengubah png ke jpg</strong>, <strong>cara merubah png ke jpg</strong>, maupun cara <strong>ubah file png ke jpg</strong> — langkahnya sama: pilih gambar, unduh JPG-nya. <strong>Merubah png ke jpg</strong> berkali-kali pun tanpa batas harian.</p>
     `
   },
   {
@@ -210,6 +329,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Semuanya terjadi di perangkat Anda</h2>
       <p>Saat <strong>convert jpg ke png</strong> di sini, gambar diproses di dalam browser dan tidak disalin ke server mana pun — sama saja di laptop maupun saat <strong>ubah foto jpg ke png</strong> dari HP.</p>
+
+      <h2>Langkah singkat</h2>
+      <p><strong>Merubah jpg ke png</strong> atau <strong>ubah format jpg ke png</strong>: pilih gambar, unduh PNG-nya. <strong>Ubah jpg ke png gratis</strong>, tanpa daftar akun dan tanpa watermark.</p>
     `
   },
   {
@@ -403,6 +525,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Dokumen tidak keluar dari perangkat Anda</h2>
       <p>KTP, ijazah, transkrip, dan slip gaji adalah dokumen yang paling sering perlu dikompres — dan yang paling tidak boleh beredar. Di sini kompresi terjadi di dalam browser, dan file tidak disalin ke server mana pun.</p>
+
+      <h2>Ukuran target yang paling sering dicari</h2>
+      <p>Selain 1 MB dan 500 KB, batas yang sering diminta portal adalah <strong>kompres pdf 300 kb</strong> dan <strong>kompres pdf 100kb</strong>. Isi angkanya di "Tentukan ukuran". Untuk dokumen hasil scan yang banyak halamannya, 100 KB bisa saja tidak tercapai tanpa membuat teks buram — alat akan memberi tahu ukuran terkecil yang mungkin, dan memisahkan halaman yang tidak perlu biasanya menyelesaikannya.</p>
     `
   },
   {
@@ -458,6 +583,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>File .ppt lama butuh satu langkah dulu</h2>
       <p>Format biner .ppt tidak bisa dibaca di browser. Buka di PowerPoint atau LibreOffice, simpan sebagai .pptx, lalu kompres.</p>
+
+      <h2>Langkah singkat</h2>
+      <p><strong>Kompres ppt gratis</strong>: seret file .pptx, lalu unduh hasilnya — atau isi ukuran target untuk <strong>kompres ppt 1 mb</strong>, <strong>kompres ppt jadi 2 mb</strong>, atau <strong>kompres ppt jadi 5 mb</strong>.</p>
     `
   },
   {
@@ -507,6 +635,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Angka Anda tidak keluar dari perangkat</h2>
       <p>Spreadsheet menyimpan bagian paling sensitif dari sebuah usaha. Di sini pembacaan dan penulisan ulang terjadi di dalam browser, dan tidak ada yang disalin ke server.</p>
+
+      <h2>Langkah singkat</h2>
+      <p>Untuk <strong>kompres excel lebih kecil</strong>: seret file .xlsx, biarkan opsi pembuangan sel kosong menyala (kecuali file Anda template), lalu unduh hasilnya.</p>
     `
   },
   {
@@ -558,6 +689,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Diproses di perangkat Anda</h2>
       <p>Semua terjadi di browser, di perangkat Anda sendiri, dan dokumen tidak disalin ke server mana pun.</p>
+
+      <h2>Langkah singkat</h2>
+      <p><strong>Cara kompres word</strong> di sini: seret file .docx, lalu unduh hasilnya — atau isi ukuran target untuk <strong>kompres word 2 mb</strong>. Ini <strong>kompres word ukuran kecil online</strong> tanpa instalasi.</p>
     `
   },
   {
@@ -616,6 +750,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Dokumen tidak keluar dari perangkat Anda</h2>
       <p>Penggabungan dilakukan oleh browser Anda sendiri. Dokumen pribadi tidak disalin ke server mana pun — dan kode situs ini terbuka, jadi klaim ini bisa diperiksa, bukan sekadar dipercaya.</p>
+
+      <h2>Langkah singkat</h2>
+      <p>Untuk <strong>cara gabungkan pdf jadi 1 file</strong>: tambahkan file sesuai urutan, periksa daftarnya, lalu unduh. <strong>Gabungkan pdf ke pdf</strong> berapa pun jumlahnya, dalam satu langkah.</p>
     `
   },
   {
@@ -671,6 +808,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Dokumen tidak keluar dari perangkat Anda</h2>
       <p>Pemisahan terjadi di browser, di perangkat Anda sendiri. Kontrak, berkas, dan dokumen pribadi tidak disalin ke server mana pun.</p>
+
+      <h2>Langkah singkat</h2>
+      <p><strong>Pisahkan pdf secara online</strong>: pilih file, tandai halaman atau pilih cara pemisahan, lalu unduh. <strong>Pisahkan pdf free</strong> — tanpa daftar akun dan tanpa batas harian.</p>
     `
   },
   {
@@ -719,6 +859,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Tanpa aplikasi, tanpa instalasi, tanpa server</h2>
       <p>Alat <strong>gambar ke teks gratis</strong> yang berjalan di browser tidak perlu dipasang di HP maupun komputer. Dan yang terpenting, gambar tidak perlu dikirim ke mana pun: pengenalan terjadi di perangkat Anda. Struk, kontrak, dan dokumen hasil scan tidak disalin ke server mana pun.</p>
+
+      <h2>Langkah singkat</h2>
+      <p>Untuk <strong>convert gambar ke teks</strong> atau mengambil teks <strong>dari gambar ke teks</strong> yang bisa disalin: pilih gambar, tunggu pengenalan selesai, lalu klik Salin.</p>
     `
   },
   {
@@ -774,6 +917,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Kenapa konversi terjadi di browser Anda</h2>
       <p>Sebagian besar konverter online menyalin dokumen Anda ke server, mengonversinya di sana, lalu mengembalikan hasilnya. Di sini langkah itu tidak ada: <strong>pdf ke word gratis</strong> dan <strong>pdf ke word online</strong> yang diproses di memori browser Anda sendiri, tanpa file keluar dari perangkat.</p>
+
+      <h2>Langkah singkat</h2>
+      <p>Baik Anda mencari <strong>cara merubah pdf ke word</strong>, <strong>cara ubah pdf ke word</strong>, <strong>cara merubah file pdf ke word</strong>, atau sekadar <strong>cara pdf ke word</strong> — langkahnya sama: seret PDF ke alat di atas, tunggu konversi selesai, lalu unduh .docx-nya. <strong>Merubah pdf ke word</strong> di sini tidak membutuhkan Microsoft Word.</p>
     `
   },
   {
@@ -825,6 +971,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Tanpa daftar, tanpa watermark, tanpa server</h2>
       <p><strong>Word ke pdf online</strong> di sini gratis, tidak meminta akun, dan tidak menulis watermark. Dan berbeda dari konverter online yang paling dikenal, dokumen Anda tidak disalin ke server: prosesnya dilakukan browser Anda sendiri.</p>
+
+      <h2>Langkah singkat</h2>
+      <p>Untuk <strong>ubah file word ke pdf</strong>: seret file .docx, lalu unduh PDF-nya. Bagi yang mencari <strong>kompres word to pdf</strong> atau <strong>kompres word ke pdf gratis</strong>, langkah kedua — <a href="/id/kompres-pdf/">Kompres PDF</a> dengan ukuran target — juga gratis dan tanpa daftar akun.</p>
     `
   },
   {
@@ -967,6 +1116,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>File akan menjadi lebih besar</h2>
       <p>WebP ada karena kompresinya lebih baik. Saat <strong>convert webp ke jpg</strong>, perkirakan file yang lebih besar sebagai ganti kompatibilitas universal. Semua diproses di dalam browser, tanpa disalin ke server mana pun.</p>
+
+      <h2>Langkah singkat</h2>
+      <p><strong>Merubah webp ke jpg</strong>: pilih gambar .webp, unduh JPG-nya. Satu langkah, tanpa aplikasi.</p>
     `
   },
   {
@@ -1019,6 +1171,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Dekoder berjalan di perangkat Anda</h2>
       <p>HEIC tidak didukung langsung oleh browser, jadi alat ini memuat dekoder sumber terbuka sekitar 1 MB saat foto pertama. Setelah itu dekoder tersimpan di cache dan konversi langsung. Yang terpenting: dekoder berjalan di perangkat Anda — foto, dan metadata lokasi yang dibawanya, tidak disalin ke server mana pun.</p>
+
+      <h2>Langkah singkat</h2>
+      <p>Untuk <strong>convert heic ke jpg</strong>, <strong>ubah foto heic ke jpg</strong>, atau <strong>ubah file heic ke jpg</strong> — termasuk <strong>merubah heic ke jpg</strong> dari foto lama iPhone — pilih fotonya, tunggu dekoder dimuat pada foto pertama, lalu unduh JPG-nya.</p>
     `
   },
   {
@@ -1149,6 +1304,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Ganti nama kadang cukup, kadang tidak</h2>
       <p>Karena isinya sama, mengganti ekstensi manual sering berhasil. Sering — tidak selalu. Sistem yang memeriksa tanda tangan internal file tetap menolak. <strong>Konversi jpeg ke jpg</strong> dengan pengodean ulang menghilangkan keraguan itu — dan sekaligus menghapus metadata EXIF, yang baik sebelum foto diunggah ke tempat umum.</p>
+
+      <h2>Langkah singkat</h2>
+      <p>Baik Anda mencari <strong>cara ubah jpeg ke jpg</strong>, <strong>cara merubah jpeg ke jpg</strong>, <strong>convert jpeg ke jpg</strong>, <strong>ubah file jpeg ke jpg</strong>, atau <strong>ubah format jpeg ke jpg</strong> — termasuk <strong>ubah foto jpeg ke jpg</strong> dan <strong>merubah jpeg ke jpg</strong> dari galeri HP — langkahnya sama: pilih file, unduh hasilnya.</p>
     `
   },
   {
@@ -1204,6 +1362,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>File .ppt format lama</h2>
       <p>Format biner .ppt tidak bisa dibaca di browser. Buka file di PowerPoint atau LibreOffice, simpan sebagai .pptx, lalu konversi — satu langkah saja, dan setelah itu semuanya berjalan normal.</p>
+
+      <h2>Langkah singkat</h2>
+      <p><strong>Merubah ppt ke pdf</strong> atau <strong>konversi powerpoint ke pdf</strong>: seret file .pptx, lalu unduh PDF-nya. <strong>Ppt ke pdf gratis</strong>, tanpa watermark dan tanpa daftar akun.</p>
     `
   },
   {
@@ -1388,6 +1549,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Gabungkan word online, tanpa instalasi</h2>
       <p>Cara bawaan Word — Insert › Object › Text from File — satu file setiap kali. Untuk dua dokumen masih wajar; untuk delapan, tidak. <strong>Gabungkan word online</strong> di sini menerima semua sekaligus, dan dokumen tidak disalin ke server mana pun.</p>
+
+      <h2>Langkah singkat</h2>
+      <p><strong>Gabungkan word ke word</strong> atau <strong>gabungkan word dengan word</strong>: tambahkan file .docx, atur urutannya dengan ▲ dan ▼, lalu unduh satu dokumen gabungan.</p>
     `
   },
   {
@@ -1533,6 +1697,9 @@ export const idTools: LocaleTool[] = [
 
       <h2>Setelah konversi: ukuran dan penggabungan</h2>
       <p>Jika PDF melebihi batas portal, <a href="/id/kompres-pdf/">kompres PDF-nya</a>. Jika perlu disatukan dengan dokumen lain yang sudah PDF, gunakan <a href="/id/gabungkan-pdf/">Gabungkan PDF</a>. Kedua langkah itu tidak mengirim file ke mana pun — <strong>gambar ke pdf gratis</strong>, tanpa upload.</p>
+
+      <h2>Langkah singkat</h2>
+      <p>Baik Anda mencari <strong>cara ubah gambar ke pdf</strong>, <strong>cara merubah gambar ke pdf</strong>, <strong>konversi gambar ke pdf</strong>, atau <strong>gabungkan gambar ke pdf</strong> dan <strong>gabungkan gambar menjadi pdf</strong> — langkahnya sama: pilih semua gambar sesuai urutan, lalu unduh satu PDF.</p>
     `
   },
   {
@@ -1699,9 +1866,19 @@ export const idTools: LocaleTool[] = [
 
       <h2>Penghitung kata di Word dan Google Docs</h2>
       <p>Di Word, jumlahnya ada di status bar kiri bawah, dan rinciannya di tab Review › Word Count. Di Google Docs, Tools › Word count. Di sini penghitungannya langsung, dengan karakter tanpa spasi, waktu baca, dan frekuensi kata, tanpa perlu membuka dokumen — <strong>alat penghitung kata</strong> yang tidak menyimpan apa pun.</p>
+
+      <h2>Penghitung kata teks, tanpa aplikasi</h2>
+      <p>Ini <strong>web penghitung kata</strong> yang langsung bekerja: tidak ada <strong>aplikasi penghitung kata</strong> yang perlu dipasang. Cukup tempel teks — <strong>penghitung kata teks</strong> menghitung saat Anda mengetik.</p>
     `
   }
 ];
 
 export const idGuides: LocaleGuide[] = [];
-export const idStaticPages: LocaleStaticPage[] = [];
+export const idStaticPages: LocaleStaticPage[] = [
+  { en: 'file-converter', slug: 'konverter-file', title: 'Konverter File Online Gratis — Tanpa Upload | ConvertOcean', description: 'Konversi PDF, Word, Excel, PowerPoint, dan gambar langsung di browser.' },
+  { en: 'sitemap', slug: 'peta-situs', title: 'Peta Situs — Semua Alat | ConvertOcean', description: 'Semua alat dalam bahasa Indonesia, dikelompokkan per kategori.' },
+  { en: 'about', slug: 'tentang', title: 'Tentang ConvertOcean | Konverter File Privat', description: 'Kenapa semuanya diproses di browser, dan apa konsekuensinya.' },
+  { en: 'privacy', slug: 'privasi', title: 'Kebijakan Privasi | ConvertOcean', description: 'File Anda tidak keluar dari perangkat Anda.' },
+  { en: 'terms', slug: 'ketentuan', title: 'Syarat dan Ketentuan | ConvertOcean', description: 'Ketentuan penggunaan alat ConvertOcean.' },
+  { en: 'contact', slug: 'kontak', title: 'Hubungi Kami | ConvertOcean', description: 'Cara menghubungi kami: pertanyaan, kesalahan terjemahan, atau permintaan terkait data.' }
+];

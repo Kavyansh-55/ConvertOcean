@@ -54,6 +54,14 @@ const BANNED = [
   'fazer o upload do',
   'arquivo enviado',
   'arquivos enviados',
+  // Indonesian: "unggah" is fine for the reader's portal ("sebelum mengunggah
+  // ke portal") and in our denials; these phrasings would describe OUR flow.
+  'dengan mengunggah',
+  'unggah file anda ke',
+  'unggah dokumen anda ke',
+  'file yang diunggah',
+  'unggah di sini',
+  'setelah file diunggah',
 ];
 
 /* Lines that legitimately use the word: what competitors do, what other
