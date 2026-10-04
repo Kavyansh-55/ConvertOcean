@@ -49,6 +49,13 @@ const pt: Record<string, string> = {
   'Toggle dark mode': 'Alternar modo escuro',
   /* Image resizer presets shown on Indonesian pages only. */
   'Photo 3×4 cm (300 dpi)': 'Foto 3×4 cm (300 dpi)',
+  /* Rupiah is offered in every locale; the kuitansi labels render on /id/ only. */
+  'Rp – Indonesian Rupiah (IDR)': 'Rp – Rupia indonésia (IDR)',
+  'Stamp duty Rp10,000': 'Selo Rp10.000',
+  'Received by,': 'Recebido por,',
+  'In words:': 'Por extenso:',
+  'PPN 11% (non-luxury goods)': 'PPN 11% (bens não de luxo)',
+  'PPN 12% (luxury goods)': 'PPN 12% (bens de luxo)',
   'Photo 4×6 cm (300 dpi)': 'Foto 4×6 cm (300 dpi)',
   'Open navigation menu': 'Abrir menu de navegação',
 

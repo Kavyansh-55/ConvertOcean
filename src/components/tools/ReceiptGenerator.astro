@@ -8,7 +8,27 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
    in the currency list and no PIX, on the page built for "modelo de recibo".
    The English sample is unchanged. */
 const isPt = lang === 'pt';
-const sample = isPt ? {
+/* Indonesian pages (/id/kwitansi/) open on an Indonesian kuitansi: Rupiah,
+   bank transfer, and a total over Rp5.000.000 so the stamp-duty box shows —
+   UU 10/2020: a receipt stating more than Rp5.000.000 carries Rp10.000 bea
+   meterai. Fictional .example addresses, as everywhere else. */
+const isId = lang === 'id';
+const sample = isId ? {
+  No: 'KW-2026-001',
+  PayMethod: 'Bank Transfer',
+  TaxModel: 'none',
+  CustomTaxLabel: 'Pajak',
+  TaxRate: 0,
+  VendorName: 'Studio Contoh',
+  VendorAddress: 'Jl. Melati No. 12\nJakarta Selatan 12345\nhalo@studiocontoh.example',
+  ClientName: 'Budi Santoso',
+  ClientAddress: 'Jl. Merdeka No. 45\nBandung 40111\nbudi@contoh.example',
+  Notes: 'Pembayaran untuk jasa di atas telah diterima lunas. Terima kasih.',
+  LineItems: [
+    { desc: 'Pembuatan website company profile', qty: 1, rate: 3500000 },
+    { desc: 'Paket perawatan bulanan', qty: 2, rate: 1250000 }
+  ]
+} : isPt ? {
   No: 'REC-2026-001',
   PayMethod: 'PIX',
   TaxModel: 'none',
@@ -269,6 +289,36 @@ const sample = isPt ? {
     line-height: 1.6;
     white-space: pre-wrap;
   }
+  /* Indonesian kuitansi: amount in words, signature, stamp-duty box. Paper
+     colours, like the rest of the printed sheet. */
+  .rcpt-id-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--spacing-md);
+    margin: 0 0 var(--spacing-md);
+  }
+  .rcpt-id-words {
+    font-size: 12px;
+    font-style: italic;
+    color: #171717;
+    max-width: 60%;
+  }
+  .rcpt-id-sign { text-align: center; min-width: 170px; }
+  .rcpt-id-meterai {
+    display: inline-block;
+    border: 1px dashed #888888;
+    color: #888888;
+    font-size: 10px;
+    padding: 14px 10px;
+    margin-bottom: 6px;
+  }
+  .rcpt-id-signline {
+    border-top: 1px solid #171717;
+    padding-top: 4px;
+    font-size: 11px;
+    color: #171717;
+  }
   .pdf-thankyou {
     font-size: 12px;
     font-weight: 500;
@@ -378,7 +428,8 @@ const sample = isPt ? {
         <div class="form-group">
           <label class="form-label" for="rcptCurrency">{t('Currency', lang)}</label>
           <select id="rcptCurrency" class="select-input">
-            <option value="$" selected={!isPt}>{t('$ – US Dollar (USD)', lang)}</option>
+            <option value="$" selected={!isPt && !isId}>{t('$ – US Dollar (USD)', lang)}</option>
+            <option value="Rp" selected={isId}>{t('Rp – Indonesian Rupiah (IDR)', lang)}</option>
             <option value="R$" selected={isPt}>{t('R$ – Real Brasileiro (BRL)', lang)}</option>
             <option value="&euro;">{t('€ – Euro (EUR)', lang)}</option>
             <option value="&pound;">{t('£ – British Pound (GBP)', lang)}</option>
@@ -399,6 +450,7 @@ const sample = isPt ? {
           <label class="form-label" for="rcptTaxSelect">{t('Tax Configuration', lang)}</label>
           <select id="rcptTaxSelect" class="select-input">
             <option value="none" selected>{t('No Tax', lang)}</option>
+            {isId && <option value="PPN">PPN (11%)</option>}
             <option value="GST">GST (18%)</option>
             <option value="IGST">IGST (18%)</option>
             <option value="VAT">VAT (15%)</option>
@@ -421,10 +473,11 @@ const sample = isPt ? {
           <label class="form-label" for="rcptPayMethod">{t('Payment Method', lang)}</label>
           <select id="rcptPayMethod" class="select-input">
             <option value="PIX" selected={isPt}>PIX</option>
+            {isId && <option value="QRIS">QRIS</option>}
             <option value="Cash">{t('Cash', lang)}</option>
-            <option value="Credit Card" selected={!isPt}>{t('Credit Card', lang)}</option>
+            <option value="Credit Card" selected={!isPt && !isId}>{t('Credit Card', lang)}</option>
             <option value="Debit Card">{t('Debit Card', lang)}</option>
-            <option value="Bank Transfer">{t('Bank Transfer', lang)}</option>
+            <option value="Bank Transfer" selected={isId}>{t('Bank Transfer', lang)}</option>
             <option value="PayPal">PayPal</option>
             <option value="Check">{t('Check', lang)}</option>
           </select>
@@ -490,7 +543,7 @@ const sample = isPt ? {
       </div>
     </div>
 
-    <div class="actions-bar" style="margin-bottom: 20px; display: flex; gap: var(--spacing-sm);">
+    <div class="actions-bar" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: var(--spacing-sm);">
       <button id="rcptBtnDownload" class="button button-primary">{t('Download Receipt PDF', lang)}</button>
       <button id="rcptBtnClear" class="button button-danger">{t('Clear Form', lang)}</button>
     </div>
@@ -566,6 +619,19 @@ const sample = isPt ? {
             </table>
           </div>
 
+          {isId && (
+            /* A kuitansi states the amount in words ("terbilang") and carries
+               the receiver's signature — and, over Rp5.000.000, a Rp10.000
+               meterai, which the box marks; it shows only when it applies. */
+            <div class="rcpt-id-block">
+              <div class="rcpt-id-words" id="rcptPdfWords"></div>
+              <div class="rcpt-id-sign">
+                <div class="rcpt-id-meterai" id="rcptPdfMeterai">{t('Stamp duty Rp10,000', lang)}</div>
+                <div class="rcpt-id-signline">{t('Received by,', lang)}</div>
+              </div>
+            </div>
+          )}
+
           <div class="receipt-pdf-footer">
             <div>
               <div class="address-col-title">{t('Notes', lang)}</div>
@@ -631,11 +697,35 @@ const sample = isPt ? {
     /* Brazilian receipts read "R$ 5.000,00", not "R$5000.00". English keeps
        its existing format exactly. */
     const PT_MONEY = document.documentElement.lang === 'pt';
+    /* Indonesian: "Rp 6.000.000" — Rupiah is written without cents; any other
+       currency keeps two decimals in Indonesian grouping. */
+    const ID_MONEY = document.documentElement.lang === 'id';
     function fmt(n) {
+      if (ID_MONEY) {
+        const d = rcptCurrSym === 'Rp' ? 0 : 2;
+        return rcptCurrSym + ' ' + n.toLocaleString('id-ID', { minimumFractionDigits: d, maximumFractionDigits: d });
+      }
       return PT_MONEY
         ? rcptCurrSym + ' ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         : rcptCurrSym + n.toFixed(2);
     }
+
+    /* Rupiah in words, for the "terbilang" line: 6000000 → "enam juta". */
+    function terbilang(n) {
+      const s = ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas'];
+      n = Math.floor(n);
+      if (n < 12) return s[n];
+      if (n < 20) return terbilang(n - 10) + ' belas';
+      if (n < 100) return terbilang(Math.floor(n / 10)) + ' puluh ' + terbilang(n % 10);
+      if (n < 200) return 'seratus ' + terbilang(n - 100);
+      if (n < 1000) return terbilang(Math.floor(n / 100)) + ' ratus ' + terbilang(n % 100);
+      if (n < 2000) return 'seribu ' + terbilang(n - 1000);
+      if (n < 1e6) return terbilang(Math.floor(n / 1000)) + ' ribu ' + terbilang(n % 1000);
+      if (n < 1e9) return terbilang(Math.floor(n / 1e6)) + ' juta ' + terbilang(n % 1e6);
+      if (n < 1e12) return terbilang(Math.floor(n / 1e9)) + ' miliar ' + terbilang(n % 1e9);
+      return terbilang(Math.floor(n / 1e12)) + ' triliun ' + terbilang(n % 1e12);
+    }
+    window.coTerbilang = terbilang;
 
     function updatePreview() {
       $('rcptPdfVendorTitle').textContent = rcptData.VendorName || "Business Name";
@@ -672,6 +762,14 @@ const sample = isPt ? {
         $('rcptPdfTaxAmount').textContent = fmt(tax);
       }
       $('rcptPdfGrandTotal').textContent = fmt(grand);
+
+      const words = $('rcptPdfWords');
+      if (words) {
+        const rp = rcptCurrSym === 'Rp';
+        const w = rp ? terbilang(Math.round(grand)).replace(/\s+/g, ' ').trim() : '';
+        words.textContent = w ? __t('In words:') + ' ' + w.charAt(0).toUpperCase() + w.slice(1) + ' rupiah' : '';
+        $('rcptPdfMeterai').style.visibility = rp && grand > 5000000 ? 'visible' : 'hidden';
+      }
 
       // Render Tax IDs
       const vendorTaxIdContainer = $('rcptVendorTaxIdContainer');
@@ -753,6 +851,11 @@ const sample = isPt ? {
       const customTaxGroup = $('rcptCustomTaxGroup');
       if (t === 'GST' || t === 'IGST') {
         rcptData.TaxRate = 0.18;
+        customTaxGroup.style.display = 'none';
+      } else if (t === 'PPN') {
+        /* PMK 131/2024: 12% × DPP nilai lain 11/12 = an effective 11% on
+           everything that is not a luxury good. */
+        rcptData.TaxRate = 0.11;
         customTaxGroup.style.display = 'none';
       } else if (t === 'VAT') {
         rcptData.TaxRate = 0.15;

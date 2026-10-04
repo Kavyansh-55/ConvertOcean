@@ -1,6 +1,9 @@
 ---
 import { t } from '../../i18n/ui';
 const { slug, headline, subtitle, lang = 'en'} = Astro.props;
+/* Indonesian pages open in Rupiah, at Rupiah scale (same ratios: BEP 200 unit). */
+const isId = lang === 'id';
+const k = isId ? 1000 : 1;
 ---
 
 <style>
@@ -166,7 +169,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
       <label class="form-label" for="beCurrency" style="font-size: 13px; font-weight: 500;">{t('Currency', lang)}</label>
       <select id="beCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink);">
-        <option value="$" selected>{t('$ – US Dollar (USD)', lang)}</option>
+        <option value="$" selected={!isId}>{t('$ – US Dollar (USD)', lang)}</option>
+        <option value="Rp" selected={isId}>{t('Rp – Indonesian Rupiah (IDR)', lang)}</option>
         <option value="€">{t('€ – Euro (EUR)', lang)}</option>
         <option value="£">{t('£ – British Pound (GBP)', lang)}</option>
         <option value="₹">{t('₹ – Indian Rupee (INR)', lang)}</option>
@@ -188,45 +192,45 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div id="beFieldsUnits">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="beFixed1" id="beLblFixed1">{t('Total Fixed Costs ($)', lang)}</label>
-        <input type="number" id="beFixed1" class="form-input" value="5000" min="0" step="0.01" />
+        <input type="number" id="beFixed1" class="form-input" value={5000 * k} min="0" step="0.01" />
       </div>
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="beVar1" id="beLblVar1">{t('Variable Cost per Unit ($)', lang)}</label>
-        <input type="number" id="beVar1" class="form-input" value="14" min="0" step="0.01" />
+        <input type="number" id="beVar1" class="form-input" value={14 * k} min="0" step="0.01" />
       </div>
       <div class="form-group">
         <label class="form-label" for="bePrice1" id="beLblPrice1">{t('Selling Price per Unit ($)', lang)}</label>
-        <input type="number" id="bePrice1" class="form-input" value="39" min="0" step="0.01" />
+        <input type="number" id="bePrice1" class="form-input" value={39 * k} min="0" step="0.01" />
       </div>
     </div>
 
     <div id="beFieldsProfit" style="display:none;">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="beFixed2" id="beLblFixed2">{t('Total Fixed Costs ($)', lang)}</label>
-        <input type="number" id="beFixed2" class="form-input" value="5000" min="0" step="0.01" />
+        <input type="number" id="beFixed2" class="form-input" value={5000 * k} min="0" step="0.01" />
       </div>
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="beVar2" id="beLblVar2">{t('Variable Cost per Unit ($)', lang)}</label>
-        <input type="number" id="beVar2" class="form-input" value="14" min="0" step="0.01" />
+        <input type="number" id="beVar2" class="form-input" value={14 * k} min="0" step="0.01" />
       </div>
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="bePrice2" id="beLblPrice2">{t('Selling Price per Unit ($)', lang)}</label>
-        <input type="number" id="bePrice2" class="form-input" value="39" min="0" step="0.01" />
+        <input type="number" id="bePrice2" class="form-input" value={39 * k} min="0" step="0.01" />
       </div>
       <div class="form-group">
         <label class="form-label" for="beProfit2" id="beLblProfit2">{t('Target Profit ($)', lang)}</label>
-        <input type="number" id="beProfit2" class="form-input" value="2500" min="0" step="0.01" />
+        <input type="number" id="beProfit2" class="form-input" value={2500 * k} min="0" step="0.01" />
       </div>
     </div>
 
     <div id="beFieldsPrice" style="display:none;">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="beFixed3" id="beLblFixed3">{t('Total Fixed Costs ($)', lang)}</label>
-        <input type="number" id="beFixed3" class="form-input" value="5000" min="0" step="0.01" />
+        <input type="number" id="beFixed3" class="form-input" value={5000 * k} min="0" step="0.01" />
       </div>
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="beVar3" id="beLblVar3">{t('Variable Cost per Unit ($)', lang)}</label>
-        <input type="number" id="beVar3" class="form-input" value="14" min="0" step="0.01" />
+        <input type="number" id="beVar3" class="form-input" value={14 * k} min="0" step="0.01" />
       </div>
       <div class="form-group">
         <label class="form-label" for="beUnits3">{t('Expected Units Sold', lang)}</label>
@@ -278,7 +282,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
   (function() {
     const $ = id => document.getElementById(id);
     let mode = 'units';
-    let currSym = '$';
+    let currSym = $('beCurrency').value;
 
     // Currency selector
     $('beCurrency').addEventListener('change', function() {
@@ -308,7 +312,14 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       });
     });
 
+    /* Indonesian pages: "Rp 7.800.000" — Rupiah without cents, Indonesian
+       grouping for every currency. */
+    const ID_MONEY = document.documentElement.lang === 'id';
     function fmt(n) {
+      if (ID_MONEY) {
+        const d = currSym === 'Rp' ? 0 : 2;
+        return currSym + ' ' + n.toLocaleString('id-ID', { minimumFractionDigits: d, maximumFractionDigits: d });
+      }
       return currSym + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
     function fmtUnits(n) { const u = Math.ceil(n); return __tf(u === 1 ? '{0} unit' : '{0} units', u.toLocaleString()); }
@@ -435,6 +446,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       $(id).addEventListener('input', calculate);
     });
 
+    updateCurrencyLabels();
     window.addEventListener('load', calculate);
   })();
 </script>

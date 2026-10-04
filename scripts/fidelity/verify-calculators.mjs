@@ -226,6 +226,31 @@ try {
 
     await page.close();
   }
+
+  /* --------------------------------------- Indonesian calculators (2026-10-04)
+     /id/ pages open in Rupiah at Rupiah scale with the same ratios as English,
+     so the answers are the English ones × 1000; the PPN page is 11% / 12% and
+     drops the US state picker. */
+  {
+    const read = async (path, ids) => {
+      const page = await browser.newPage();
+      await page.goto(ORIGIN + path, { waitUntil: 'networkidle2', timeout: 45000 });
+      await new Promise((r) => setTimeout(r, 600));
+      const out = await page.evaluate((list) => Object.fromEntries(list.map((id) => [id, (document.getElementById(id)?.textContent || '').trim()])), ids);
+      out.usPicker = await page.$('#taxUsState') !== null;
+      await page.close();
+      return out;
+    };
+    const be = await read('/id/cara-menghitung-bep/', ['beResMain', 'beResRevenue', 'beResCM']);
+    say(be.beResMain.startsWith('200 ') && be.beResRevenue === 'Rp 7.800.000' && be.beResCM === 'Rp 25.000',
+        `/id/ BEP: ${be.beResMain}, ${be.beResRevenue}, margin kontribusi ${be.beResCM}`);
+    const pm = await read('/id/rumus-margin-keuntungan/', ['pmResMargin', 'pmResMarkup', 'pmResProfit']);
+    say(pm.pmResMargin === '40.00%' && pm.pmResMarkup === '66.67%' && pm.pmResProfit === 'Rp 40.000',
+        `/id/ margin: ${pm.pmResMargin}, markup ${pm.pmResMarkup}, laba ${pm.pmResProfit}`);
+    const tx = await read('/id/kalkulator-ppn/', ['taxResTax', 'taxResGrand']);
+    say(tx.taxResTax === 'Rp 110.000' && tx.taxResGrand === 'Rp 1.110.000' && !tx.usPicker,
+        `/id/ PPN 11% of Rp 1.000.000: ${tx.taxResTax} → ${tx.taxResGrand}; US state picker ${tx.usPicker ? 'present' : 'absent'}`);
+  }
 } finally {
   await browser.close();
   if (server) server.kill();

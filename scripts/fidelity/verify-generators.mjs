@@ -177,6 +177,78 @@ try {
     await page.close();
   }
 
+  /* ------------------------------------------ Indonesian kuitansi + invoice
+     /id/kwitansi/ and /id/contoh-invoice/ (2026-10-04): Rupiah without cents,
+     the total in words ("terbilang"), and on the receipt a Rp10.000 meterai
+     box that appears only above Rp5.000.000 (UU 10/2020). The PDF must still
+     render with the new signature block in it. */
+  {
+    const page = await browser.newPage();
+    await page.goto(ORIGIN + '/id/kwitansi/', { waitUntil: 'networkidle2', timeout: 45000 });
+    await new Promise((r) => setTimeout(r, 900));
+    const a = await page.evaluate(() => ({
+      grand: document.getElementById('rcptPdfGrandTotal').textContent.trim(),
+      words: document.getElementById('rcptPdfWords').textContent.trim(),
+      meterai: getComputedStyle(document.getElementById('rcptPdfMeterai')).visibility,
+      cur: document.getElementById('rcptCurrency').value,
+      method: document.getElementById('rcptPdfMethod').textContent.trim(),
+      tb: [11, 100, 1000, 1500, 21000, 110000, 1000000, 2500000000].map((n) => window.coTerbilang(n).replace(/\s+/g, ' ').trim()),
+    }));
+    say(a.cur === 'Rp' && a.grand === 'Rp 6.000.000', `kwitansi opens in Rupiah without cents (${a.cur}, ${a.grand})`);
+    say(a.words === 'Terbilang: Enam juta rupiah', `the total is written in words ("${a.words}")`);
+    say(a.meterai === 'visible', 'the Rp10.000 meterai box shows for a total over Rp5.000.000');
+    say(a.method === 'Transfer Bank', `payment method reads in Indonesian (${a.method})`);
+    const want = ['sebelas', 'seratus', 'seribu', 'seribu lima ratus', 'dua puluh satu ribu', 'seratus sepuluh ribu', 'satu juta', 'dua miliar lima ratus juta'];
+    const wrong = want.map((w, i) => (a.tb[i] === w ? null : `${a.tb[i]} ≠ ${w}`)).filter(Boolean);
+    say(wrong.length === 0, `terbilang spells 11 … 2.500.000.000 correctly${wrong.length ? ' — ' + wrong.join('; ') : ''}`);
+
+    /* Below the threshold the box must go: one item of Rp2.000.000. */
+    await page.evaluate(() => {
+      const rows = document.querySelectorAll('#rcptItemEditRows tr');
+      for (let i = rows.length - 1; i >= 1; i--) rows[i].querySelector('.item-delete-btn')?.click();
+      const inputs = document.querySelectorAll('#rcptItemEditRows tr')[0].querySelectorAll('input');
+      const set = (el, v) => { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); };
+      set(inputs[1], '1'); set(inputs[2], '2000000');
+    });
+    await new Promise((r) => setTimeout(r, 500));
+    const b = await page.evaluate(() => ({
+      words: document.getElementById('rcptPdfWords').textContent.trim(),
+      meterai: getComputedStyle(document.getElementById('rcptPdfMeterai')).visibility,
+    }));
+    say(b.meterai === 'hidden' && b.words === 'Terbilang: Dua juta rupiah', `under Rp5.000.000 the meterai box hides (${b.meterai}; "${b.words}")`);
+
+    const cdp = await page.createCDPSession();
+    const dir = join(DL, 'id-kwitansi');
+    mkdirSync(dir, { recursive: true });
+    await cdp.send('Page.setDownloadBehavior', { behavior: 'allow', downloadPath: dir });
+    await page.click('#rcptBtnDownload');
+    let pdf = null;
+    for (let i = 0; i < 60 && !pdf; i++) {
+      await new Promise((r) => setTimeout(r, 500));
+      pdf = readdirSync(dir).find((f) => f.endsWith('.pdf'));
+    }
+    const head = pdf ? readFileSync(join(dir, pdf)).subarray(0, 5).toString() : '';
+    say(head === '%PDF-', `the Indonesian kwitansi downloads as a PDF (${pdf || 'none'})`);
+    await page.close();
+  }
+  {
+    const page = await browser.newPage();
+    await page.goto(ORIGIN + '/id/contoh-invoice/', { waitUntil: 'networkidle2', timeout: 45000 });
+    await new Promise((r) => setTimeout(r, 900));
+    const a = await page.evaluate(() => ({
+      grand: document.getElementById('pdfGrandTotal').textContent.trim(),
+      words: document.getElementById('pdfWords').textContent.trim(),
+      ppn: !!document.querySelector('#inputTaxSelect option[value="PPN"]'),
+    }));
+    say(a.grand === 'Rp 8.900.000' && a.words === 'Terbilang: Delapan juta sembilan ratus ribu rupiah',
+        `contoh invoice totals in Rupiah with terbilang (${a.grand}; "${a.words}")`);
+    await page.select('#inputTaxSelect', 'PPN');
+    await new Promise((r) => setTimeout(r, 400));
+    const g = await page.evaluate(() => document.getElementById('pdfGrandTotal').textContent.trim());
+    say(a.ppn && g === 'Rp 9.879.000', `PPN (11%) adds 11% (${g})`);
+    await page.close();
+  }
+
   /* -------------------------------------------------------- image OCR */
   {
     const page = await browser.newPage();
@@ -275,6 +347,10 @@ try {
     await page.setCacheEnabled(false);
     const models = [];
     page.on('request', (r) => { const m = r.url().match(/\/([a-z_]+)\.traineddata/); if (m) models.push(m[1]); });
+    /* Tesseract caches models in IndexedDB, so on a second run nothing is
+       requested and this check would see "none". Clear it first. */
+    const cdp = await page.createCDPSession();
+    await cdp.send('Storage.clearDataForOrigin', { origin: ORIGIN, storageTypes: 'indexeddb' });
     await page.goto(ORIGIN + '/id/gambar-ke-teks/', { waitUntil: 'networkidle2', timeout: 45000 });
     await new Promise((r) => setTimeout(r, 600));
 

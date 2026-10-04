@@ -9,7 +9,25 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
    imply a nota fiscal, which only SEFAZ or a municipal system can issue.
    The English sample is unchanged. */
 const isPt = lang === 'pt';
-const sample = isPt ? {
+/* Indonesian pages (/id/contoh-invoice/) open on an Indonesian service
+   invoice in Rupiah, with no PPN (a small vendor that is not a PKP charges
+   none) and no real bank numbers — the "DP" and payment terms are the kind
+   of detail researched queries ask for ("contoh invoice dp"). */
+const isId = lang === 'id';
+const sample = isId ? {
+  TaxModel: 'none',
+  TaxRate: 0,
+  CustomTaxLabel: 'Pajak',
+  VendorName: 'Studio Contoh',
+  VendorAddress: 'Jl. Melati No. 12\nJakarta Selatan 12345\ntagihan@studiocontoh.example',
+  ClientName: 'PT Klien Contoh',
+  ClientAddress: 'Jl. Sudirman No. 88\nJakarta Pusat 10220\nkeuangan@klien.example',
+  Terms: 'Pembayaran melalui transfer bank paling lambat 14 hari setelah tanggal invoice.\nDP 50% telah diterima; sisa tagihan dibayar saat pekerjaan selesai.',
+  LineItems: [
+    { desc: 'Pembuatan website company profile (5 halaman)', qty: 1, rate: 7500000 },
+    { desc: 'Optimasi kecepatan website (jam)', qty: 4, rate: 350000 }
+  ]
+} : isPt ? {
   TaxModel: 'none',
   TaxRate: 0,
   CustomTaxLabel: 'Imposto',
@@ -138,7 +156,7 @@ const sample = isPt ? {
   .item-edit-table :global(th) {
     text-align: left;
     font-family: var(--font-sans);
-    font-size: 11px;
+    font-size: 12px; /* was 11px: under the 12px floor verify-mobile enforces */
     color: var(--colors-mute);
     text-transform: uppercase;
     padding-bottom: 6px;
@@ -285,6 +303,13 @@ const sample = isPt ? {
     line-height: 1.6;
     white-space: pre-wrap;
   }
+  /* Indonesian invoices state the total in words ("terbilang"). */
+  .inv-id-words {
+    font-size: 12px;
+    font-style: italic;
+    color: #171717;
+    margin: 0 0 var(--spacing-md);
+  }
   .pdf-thankyou {
     font-size: 12px;
     font-weight: 500;
@@ -384,6 +409,7 @@ const sample = isPt ? {
           <label class="form-label" for="inputTaxSelect">{t('Tax Configuration', lang)}</label>
           <select id="inputTaxSelect" class="select-input">
             <option value="none" selected>{t('No Tax', lang)}</option>
+            {isId && <option value="PPN">PPN (11%)</option>}
             <option value="GST">GST (18%)</option>
             <option value="IGST">IGST (18%)</option>
             <option value="VAT">VAT (15%)</option>
@@ -405,7 +431,8 @@ const sample = isPt ? {
         <div class="form-group">
           <label class="form-label" for="invCurrency">{t('Currency', lang)}</label>
           <select id="invCurrency" class="select-input">
-            <option value="$" selected={!isPt}>{t('$ – US Dollar (USD)', lang)}</option>
+            <option value="$" selected={!isPt && !isId}>{t('$ – US Dollar (USD)', lang)}</option>
+            <option value="Rp" selected={isId}>{t('Rp – Indonesian Rupiah (IDR)', lang)}</option>
             <option value="R$" selected={isPt}>{t('R$ – Real Brasileiro (BRL)', lang)}</option>
             <option value="&euro;">{t('€ – Euro (EUR)', lang)}</option>
             <option value="&pound;">{t('£ – British Pound (GBP)', lang)}</option>
@@ -497,7 +524,7 @@ const sample = isPt ? {
       </div>
     </div>
 
-    <div class="actions-bar" style="margin-bottom: 20px; display: flex; gap: var(--spacing-sm);">
+    <div class="actions-bar" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: var(--spacing-sm);">
       <button id="btnDownload" class="button button-primary">{t('Download Invoice PDF', lang)}</button>
       <button id="btnClearForm" class="button button-danger">{t('Clear Form', lang)}</button>
     </div>
@@ -578,6 +605,7 @@ const sample = isPt ? {
               </tr>
             </table>
           </div>
+          {isId && <div class="inv-id-words" id="pdfWords"></div>}
 
           <div class="invoice-pdf-footer">
             <div>
@@ -664,10 +692,33 @@ const sample = isPt ? {
     /* Brazilian receipts read "R$ 5.000,00", not "R$5000.00". English keeps
        its existing format exactly. */
     const PT_MONEY = document.documentElement.lang === 'pt';
+    /* Indonesian: "Rp 8.900.000" — Rupiah without cents. */
+    const ID_MONEY = document.documentElement.lang === 'id';
     function fmt(n) {
+      if (ID_MONEY) {
+        const d = invCurrSym === 'Rp' ? 0 : 2;
+        return invCurrSym + ' ' + n.toLocaleString('id-ID', { minimumFractionDigits: d, maximumFractionDigits: d });
+      }
       return PT_MONEY
         ? invCurrSym + ' ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         : invCurrSym + n.toFixed(2);
+    }
+
+    /* Rupiah in words: 8900000 → "delapan juta sembilan ratus ribu". Same
+       routine as the receipt generator. */
+    function terbilang(n) {
+      const s = ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas'];
+      n = Math.floor(n);
+      if (n < 12) return s[n];
+      if (n < 20) return terbilang(n - 10) + ' belas';
+      if (n < 100) return terbilang(Math.floor(n / 10)) + ' puluh ' + terbilang(n % 10);
+      if (n < 200) return 'seratus ' + terbilang(n - 100);
+      if (n < 1000) return terbilang(Math.floor(n / 100)) + ' ratus ' + terbilang(n % 100);
+      if (n < 2000) return 'seribu ' + terbilang(n - 1000);
+      if (n < 1e6) return terbilang(Math.floor(n / 1000)) + ' ribu ' + terbilang(n % 1000);
+      if (n < 1e9) return terbilang(Math.floor(n / 1e6)) + ' juta ' + terbilang(n % 1e6);
+      if (n < 1e12) return terbilang(Math.floor(n / 1e9)) + ' miliar ' + terbilang(n % 1e9);
+      return terbilang(Math.floor(n / 1e12)) + ' triliun ' + terbilang(n % 1e12);
     }
 
     function updatePreviewPage() {
@@ -713,6 +764,11 @@ const sample = isPt ? {
         document.getElementById('pdfTaxAmount').textContent = fmt(taxAmount);
       }
       document.getElementById('pdfGrandTotal').textContent = fmt(grandTotal);
+      const words = document.getElementById('pdfWords');
+      if (words) {
+        const w = invCurrSym === 'Rp' ? terbilang(Math.round(grandTotal)).replace(/\s+/g, ' ').trim() : '';
+        words.textContent = w ? __t('In words:') + ' ' + w.charAt(0).toUpperCase() + w.slice(1) + ' rupiah' : '';
+      }
 
       // Render Tax IDs
       const pdfVendorTaxIdContainer = document.getElementById('pdfVendorTaxIdContainer');
@@ -792,6 +848,11 @@ const sample = isPt ? {
       const customTaxGroup = document.getElementById('customTaxGroup');
       if (taxType === 'GST' || taxType === 'IGST') {
         invoiceData.TaxRate = 0.18;
+        customTaxGroup.style.display = 'none';
+      } else if (taxType === 'PPN') {
+        /* PMK 131/2024: 12% × DPP nilai lain 11/12 = effective 11% for
+           anything that is not a luxury good. */
+        invoiceData.TaxRate = 0.11;
         customTaxGroup.style.display = 'none';
       } else if (taxType === 'VAT') {
         invoiceData.TaxRate = 0.15;

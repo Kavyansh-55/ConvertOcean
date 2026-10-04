@@ -110,16 +110,17 @@ export const idCategories: LocaleCategory[] = [
     en: 'business-tools',
     slug: 'alat-bisnis',
     name: 'Alat Bisnis',
-    title: 'Kalkulator Persentase dan Alat Bisnis | ConvertOcean',
-    description: 'Hitung persentase, kenaikan, diskon, dan selisih langsung di browser, dengan rumus di samping setiap hasil.',
+    title: 'Kwitansi, Invoice, Kalkulator PPN dan BEP | ConvertOcean',
+    description: 'Buat kwitansi dan invoice PDF dalam Rupiah, hitung PPN, BEP, margin keuntungan, dan persentase langsung di browser.',
     headline: 'Alat bisnis.',
     subtitle: 'Perhitungan sehari-hari untuk usaha — angka Anda tidak keluar dari perangkat.',
     intro: `
-    <h2>Perhitungan usaha sehari-hari, dengan privasi.</h2>
-    <p><a href="/id/kalkulator-persentase/">Kalkulator Persentase</a> menyelesaikan perhitungan yang paling sering muncul: persentase dari suatu nilai, kenaikan harga atau gaji, diskon, dan selisih antara dua angka. Setiap hasil ditampilkan bersama rumusnya, agar Anda bisa memeriksa perhitungannya.</p>
-    <p>Kalkulator margin laba, titik impas (BEP), template invoice, dan kwitansi tersedia dalam bahasa Inggris untuk saat ini, karena versi Indonesianya sedang disusun dari riset kata kunci lokal.</p>
+    <h2>Dokumen dan perhitungan usaha sehari-hari, dengan privasi.</h2>
+    <p>Buat <a href="/id/kwitansi/">kwitansi</a> dan <a href="/id/contoh-invoice/">invoice</a> PDF dalam Rupiah — terbilang ditulis otomatis, dan kwitansi di atas Rp5.000.000 mendapat kotak meterai. Hitung <a href="/id/kalkulator-ppn/">PPN 11% atau 12%</a>, <a href="/id/cara-menghitung-bep/">titik impas (BEP)</a> dalam unit dan rupiah, <a href="/id/rumus-margin-keuntungan/">margin keuntungan</a>, dan <a href="/id/kalkulator-persentase/">persentase</a>.</p>
+    <p>Setiap kalkulator menampilkan rumusnya di samping hasil. Nama klien, nominal, dan biaya usaha tidak keluar dari browser Anda.</p>
     `,
     faqs: [
+      { q: 'Apakah invoice dari sini bisa menggantikan faktur pajak?', a: 'Tidak. Faktur pajak resmi dibuat oleh Pengusaha Kena Pajak melalui sistem DJP (Coretax). Invoice di sini adalah dokumen tagihan, dengan opsi PPN 11% untuk PKP.' },
       { q: 'Kenapa naik 25% lalu turun 25% tidak kembali ke angka semula?', a: 'Karena dasarnya berubah. Dari 100 naik 25% menjadi 125; turun 25% dari 125 adalah 31,25, sehingga hasilnya 93,75. Persentase selalu dihitung dari nilai awal masing-masing langkah.' },
       { q: 'Apakah angka yang saya masukkan disimpan?', a: 'Tidak. Perhitungan terjadi di browser Anda dan tidak ada angka yang dikirim atau disimpan di server.' }
     ]
@@ -1869,6 +1870,253 @@ export const idTools: LocaleTool[] = [
 
       <h2>Penghitung kata teks, tanpa aplikasi</h2>
       <p>Ini <strong>web penghitung kata</strong> yang langsung bekerja: tidak ada <strong>aplikasi penghitung kata</strong> yang perlu dipasang. Cukup tempel teks — <strong>penghitung kata teks</strong> menghitung saat Anda mengetik.</p>
+    `
+  },
+  {
+    en: 'receipt-generator',
+    slug: 'kwitansi',
+    name: 'Kwitansi',
+    title: 'Kwitansi Online Gratis — Contoh Kwitansi Pembayaran PDF | ConvertOcean',
+    description: 'Buat kwitansi pembayaran PDF langsung di browser: Rupiah, terbilang otomatis, tanda tangan, dan kotak meterai untuk nominal di atas Rp5.000.000. Data tidak keluar dari perangkat.',
+    headline: 'Kwitansi.',
+    subtitle: 'Isi data pembayaran, dapatkan kwitansi PDF yang rapi — lengkap dengan terbilang, tempat tanda tangan, dan kotak meterai bila diperlukan.',
+    quickAnswer: 'Untuk membuat kwitansi, isi nama penerima dan pembayar, rincian pembayaran, dan metode bayar di alat di atas, lalu unduh PDF-nya. Jumlah uang otomatis ditulis dengan huruf (terbilang), ada tempat tanda tangan penerima, dan kotak "Meterai Rp10.000" muncul bila totalnya di atas Rp5.000.000, sesuai UU No. 10 Tahun 2020. Semua dibuat di browser Anda — data pembayaran tidak dikirim ke server.',
+    category: 'Alat Bisnis',
+    faqs: [
+      {
+        question: 'kwitansi adalah',
+        answer: 'Kwitansi adalah surat bukti penerimaan uang: penerima menyatakan telah menerima sejumlah uang dari pembayar untuk keperluan tertentu, lalu menandatanganinya. Kwitansi dipakai sebagai bukti pembayaran — untuk jasa, sewa, cicilan, uang muka, atau jual beli.'
+      },
+      {
+        question: 'cara menulis kwitansi',
+        answer: 'Kwitansi yang lengkap memuat: nomor kwitansi; nama pembayar ("telah terima dari"); jumlah uang dalam huruf (terbilang) dan dalam angka; keperluan pembayaran ("untuk pembayaran"); tempat dan tanggal; serta tanda tangan dan nama penerima. Di alat ini, terbilang ditulis otomatis dari total, jadi angka dan hurufnya selalu cocok.'
+      },
+      {
+        question: 'penulisan kwitansi yang benar',
+        answer: 'Hal yang paling sering salah adalah terbilang yang tidak sama dengan angkanya. Tulis terbilang dengan huruf lengkap dan akhiri dengan "rupiah" — misalnya Rp6.000.000 menjadi "enam juta rupiah". Untuk nominal di atas Rp5.000.000, kwitansi juga terkena bea meterai Rp10.000. Menurut KBBI, ejaan bakunya sebenarnya "kuitansi".'
+      },
+      {
+        question: 'cara mengisi kwitansi',
+        answer: 'Isi nama dan alamat Anda sebagai penerima, nama pembayar, lalu tambahkan baris rincian pembayaran beserta jumlahnya. Pilih metode pembayaran — transfer bank, QRIS, atau tunai — dan tanggalnya. Pratinjaunya menampilkan kwitansi persis seperti PDF yang akan diunduh. Setelah dicetak, tanda tangani di atas nama penerima.'
+      },
+      {
+        question: 'cara mengisi kwitansi pembayaran',
+        answer: 'Untuk pembayaran jasa atau barang, tulis setiap item di baris tersendiri dengan jumlah dan harga satuannya; total dan terbilangnya dihitung otomatis. Jika ada pajak yang dipungut, pilih PPN (11%) di pengaturan pajak; untuk pembayaran biasa tanpa pajak, biarkan "Tanpa Pajak".'
+      },
+      {
+        question: 'kuitansi atau kwitansi',
+        answer: 'Menurut KBBI, kata bakunya adalah "kuitansi" — diserap dari bahasa Belanda kwitantie, dengan "kw" disesuaikan menjadi "ku". "Kwitansi" adalah bentuk tidak baku yang lebih sering dipakai sehari-hari. Keduanya merujuk pada dokumen yang sama; untuk surat resmi, gunakan "kuitansi".'
+      },
+      {
+        question: 'contoh kwitansi jual beli tanah yang sah',
+        answer: 'Kwitansi bisa menjadi bukti pembayaran jual beli tanah, tetapi kwitansi saja tidak memindahkan hak atas tanah. Peralihan hak karena jual beli dibuktikan dengan Akta Jual Beli (AJB) yang dibuat di hadapan PPAT, lalu didaftarkan ke kantor pertanahan. Untuk nilai di atas Rp5.000.000, kwitansinya terkena meterai Rp10.000 dan perlu ditandatangani penerima. Kami bukan penasihat hukum; untuk transaksi tanah, gunakan PPAT.'
+      },
+      {
+        question: 'Kapan kwitansi wajib pakai meterai?',
+        answer: 'Menurut UU No. 10 Tahun 2020 tentang Bea Meterai, dokumen yang menyebutkan penerimaan uang dengan nilai lebih dari Rp5.000.000 dikenai bea meterai Rp10.000. Alat ini menampilkan kotak "Meterai Rp10.000" di dekat tanda tangan secara otomatis bila total melewati batas itu; tempelkan meterai di sana setelah dicetak, atau gunakan e-meterai.'
+      },
+      {
+        question: 'Apakah data kwitansi saya dikirim ke server?',
+        answer: 'Tidak. Kwitansi disusun dan PDF dibuat di browser Anda, di perangkat Anda sendiri. Nama, alamat, dan nominal pembayaran tidak disalin ke server mana pun.'
+      }
+    ],
+    content: `
+      <h2>Apa itu kwitansi?</h2>
+      <p><strong>Apa itu kwitansi</strong>: bukti tertulis bahwa uang telah diterima, ditandatangani oleh penerimanya. Berbeda dari invoice yang menagih, kwitansi diterbitkan setelah pembayaran terjadi.</p>
+
+      <h2>Contoh kwitansi pembayaran yang lengkap</h2>
+      <p>Alat ini membuat <strong>kwitansi pembayaran</strong> yang siap cetak: nomor, tanggal, data penerima dan pembayar, rincian pembayaran, total dalam angka, dan total dalam huruf — terbilang yang ditulis otomatis, sehingga tidak pernah berbeda dari angkanya. Gunakan contoh di atas sebagai <strong>contoh kwitansi</strong> dan <strong>contoh kwitansi pembayaran</strong>, lalu ganti isinya dengan data Anda.</p>
+
+      <h2>Meterai: kapan perlu</h2>
+      <p>UU No. 10 Tahun 2020 menetapkan bea meterai Rp10.000 untuk dokumen yang menyebutkan penerimaan uang lebih dari Rp5.000.000. Kotak meterai di kwitansi ini muncul hanya bila totalnya melewati batas itu, tepat di atas tanda tangan penerima.</p>
+
+      <h2>Kwitansi jual beli motor dan tanah</h2>
+      <p>Untuk <strong>kwitansi jual beli motor</strong>, tulis jenis motor, nomor polisi, dan nomor rangka di baris rincian — itu yang membuat kwitansi bisa dicocokkan dengan BPKB. Gunakan contoh ini sebagai <strong>contoh kwitansi jual beli motor</strong>. Untuk <strong>kwitansi jual beli tanah</strong>, perlu diingat bahwa kwitansi hanya membuktikan pembayaran: peralihan hak atas tanah memerlukan Akta Jual Beli di hadapan PPAT. Kwitansi tetap berguna sebagai <strong>contoh kwitansi jual beli tanah</strong> untuk uang muka atau pelunasan, berdampingan dengan akta itu.</p>
+
+      <h2>Kuitansi atau kwitansi?</h2>
+      <p>Pertanyaan <strong>kwitansi atau kuitansi</strong> sering muncul. Ejaan baku menurut KBBI adalah "kuitansi"; "kwitansi" lebih umum dalam percakapan. Halaman ini memakai "kwitansi" karena itulah yang dicari, dan PDF-nya bisa diberi judul mana pun yang Anda pilih.</p>
+
+      <h2>Yang tidak dilakukan alat ini</h2>
+      <p>Hasilnya PDF, bukan file Word yang bisa diedit, dan alat ini membuat kwitansi yang sudah terisi — bukan blanko kwitansi kosong untuk ditulis tangan. Membuat kwitansi tidak membutuhkan akun, dan datanya tidak keluar dari perangkat Anda.</p>
+
+      <h2>Langkah singkat</h2>
+      <p>Untuk <strong>cara membuat kwitansi</strong> atau <strong>cara isi kwitansi</strong>: isi data, periksa pratinjau, unduh PDF, cetak, lalu tanda tangani. Untuk <strong>kwitansi jual beli tanah yang sah</strong>, tambahkan meterai bila nilainya di atas Rp5.000.000 dan lengkapi dengan AJB.</p>
+    `
+  },
+  {
+    en: 'invoice-generator',
+    slug: 'contoh-invoice',
+    name: 'Contoh Invoice',
+    title: 'Contoh Invoice — Buat Invoice Tagihan PDF Gratis | ConvertOcean',
+    description: 'Buat invoice tagihan PDF langsung di browser dari contoh invoice jasa: Rupiah, terbilang otomatis, PPN 11% opsional, DP dan pelunasan. Data tidak keluar dari perangkat.',
+    headline: 'Contoh Invoice.',
+    subtitle: 'Mulai dari contoh invoice jasa yang sudah terisi, ganti dengan data Anda, dan unduh PDF yang siap dikirim.',
+    quickAnswer: 'Untuk membuat invoice, isi data usaha Anda dan klien, nomor serta tanggal invoice, jatuh tempo, rincian pekerjaan, dan ketentuan pembayaran di alat di atas, lalu unduh PDF-nya. Total dalam Rupiah ditulis juga dengan huruf (terbilang), dan PPN 11% bisa ditambahkan bila Anda PKP. Contoh yang terbuka saat halaman dimuat adalah invoice jasa dengan DP. Semua dibuat di browser Anda.',
+    category: 'Alat Bisnis',
+    faqs: [
+      {
+        question: 'Apa isi invoice yang benar?',
+        answer: 'Invoice yang lengkap memuat: nomor dan tanggal invoice; jatuh tempo; nama dan alamat penagih serta klien; rincian barang atau jasa dengan jumlah, harga satuan, dan subtotal; pajak bila ada; total; serta cara dan batas waktu pembayaran. Contoh di atas sudah memuat semuanya — ganti saja isinya.'
+      },
+      {
+        question: 'contoh invoice yang ada dp',
+        answer: 'Ada dua cara yang umum. Invoice DP: satu baris "DP 50% — [nama proyek]" dengan nilai DP-nya. Invoice pelunasan: satu baris "Pelunasan [nama proyek], setelah DP Rp…" dengan nilai sisanya, dan sebutkan DP yang sudah dibayar di bagian ketentuan — seperti contoh di halaman ini.'
+      },
+      {
+        question: 'Apa beda invoice dan kwitansi?',
+        answer: 'Invoice adalah tagihan: dikirim sebelum pembayaran, meminta klien membayar. Kwitansi adalah bukti penerimaan: diterbitkan setelah uang diterima. Setelah invoice dibayar, buat kwitansinya dengan <a href="/id/kwitansi/">Kwitansi</a>.'
+      },
+      {
+        question: 'Apakah perlu mencantumkan PPN?',
+        answer: 'Hanya bila Anda Pengusaha Kena Pajak (PKP). Sejak 2025 (PMK 131/2024), PPN untuk barang dan jasa yang bukan barang mewah dihitung 12% dari dasar 11/12 harga — efektifnya 11% — dan itulah opsi "PPN (11%)" di alat ini. Faktur pajak resmi tetap harus dibuat di sistem DJP (Coretax); invoice dari alat ini adalah dokumen tagihan, bukan faktur pajak.'
+      },
+      {
+        question: 'Apakah data invoice saya dikirim ke server?',
+        answer: 'Tidak. Invoice disusun dan PDF dibuat di browser Anda, di perangkat Anda sendiri. Data klien dan nilai proyek tidak disalin ke server mana pun.'
+      }
+    ],
+    content: `
+      <h2>Contoh invoice tagihan jasa yang siap dipakai</h2>
+      <p>Saat halaman dimuat, alat ini sudah berisi <strong>contoh invoice jasa</strong>: pembuatan website dan optimasi, dengan ketentuan pembayaran 14 hari dan catatan DP. Ganti nama usaha, klien, dan rinciannya — hasilnya <strong>contoh invoice tagihan</strong> yang bisa langsung dikirim sebagai PDF. Cocok sebagai <strong>contoh invoice tagihan jasa</strong>, <strong>contoh invoice tagihan jasa proyek</strong>, maupun <strong>contoh invoice sederhana</strong> untuk usaha kecil.</p>
+
+      <h2>Contoh invoice pembayaran, penagihan, DP, dan pelunasan</h2>
+      <p><strong>Contoh invoice pembayaran</strong> dan <strong>contoh invoice penagihan</strong> pada dasarnya dokumen yang sama: tagihan dengan jatuh tempo. Untuk <strong>contoh invoice dp</strong>, buat satu baris berisi nilai DP. Untuk <strong>contoh invoice pelunasan</strong>, tagihkan sisa nilainya sebagai satu baris dan catat DP yang sudah dibayar di bagian ketentuan. Total selalu ditulis juga dengan huruf, sehingga klien bisa mencocokkan angkanya.</p>
+
+      <h2>Invoice bukan faktur pajak</h2>
+      <p>Faktur pajak resmi hanya bisa dibuat lewat sistem DJP. Invoice dari alat ini adalah dokumen tagihan — dengan opsi PPN 11% untuk PKP — dan tidak menggantikan faktur pajak. Hasilnya PDF, bukan template Excel.</p>
+    `
+  },
+  {
+    en: 'break-even-calculator',
+    slug: 'cara-menghitung-bep',
+    name: 'Kalkulator BEP',
+    title: 'Cara Menghitung BEP — Kalkulator BEP Unit dan Rupiah | ConvertOcean',
+    description: 'Cara menghitung BEP unit dan BEP rupiah dengan rumus dan contoh, plus kalkulator BEP yang menampilkan rumusnya di setiap hasil.',
+    headline: 'Cara Menghitung BEP.',
+    subtitle: 'Hitung titik impas dalam unit dan rupiah, unit untuk target laba, atau harga yang dibutuhkan — dengan rumus di setiap hasil.',
+    quickAnswer: 'Cara menghitung BEP: bagi total biaya tetap dengan margin kontribusi per unit (harga jual dikurangi biaya variabel per unit). Dengan biaya tetap Rp5.000.000, harga Rp39.000, dan biaya variabel Rp14.000, BEP = 5.000.000 ÷ 25.000 = 200 unit. BEP rupiah = BEP unit × harga = Rp7.800.000. Kalkulator di atas menghitung keduanya dan menampilkan rumusnya.',
+    category: 'Alat Bisnis',
+    faqs: [
+      {
+        question: 'cara menghitung bep',
+        answer: 'BEP unit = Biaya Tetap ÷ (Harga Jual per Unit − Biaya Variabel per Unit). Selisih harga dan biaya variabel disebut margin kontribusi: bagian dari setiap penjualan yang menutup biaya tetap. Saat jumlah margin kontribusi sama dengan biaya tetap, usaha balik modal — tidak untung, tidak rugi.'
+      },
+      {
+        question: 'cara menghitung bep unit dan bep rupiah',
+        answer: 'BEP unit = Biaya Tetap ÷ Margin Kontribusi per Unit. BEP rupiah = BEP unit × Harga Jual — atau langsung Biaya Tetap ÷ Rasio Margin Kontribusi (margin kontribusi dibagi harga). Contoh: biaya tetap Rp5.000.000, margin kontribusi Rp25.000, harga Rp39.000 → 200 unit dan Rp7.800.000. Hasil unit dibulatkan ke atas, karena 199,2 unit tidak bisa dijual.'
+      },
+      {
+        question: 'cara menghitung bep dan contohnya',
+        answer: 'Usaha kopi kemasan: sewa dan gaji Rp5.000.000 per bulan (biaya tetap), bahan dan kemasan Rp14.000 per botol (biaya variabel), harga jual Rp39.000. Margin kontribusi Rp25.000; BEP = 5.000.000 ÷ 25.000 = 200 botol per bulan, atau Rp7.800.000 penjualan. Botol ke-201 dan seterusnya mulai menghasilkan laba.'
+      },
+      {
+        question: 'cara menghitung hpp dan bep',
+        answer: 'HPP per unit — biaya bahan, kemasan, dan tenaga langsung untuk satu unit — kira-kira sama dengan biaya variabel per unit dalam rumus BEP. Hitung HPP dulu, masukkan sebagai biaya variabel per unit, lalu kalkulator menghitung BEP-nya. Biaya yang tidak berubah dengan jumlah produksi (sewa, gaji tetap) masuk ke biaya tetap.'
+      },
+      {
+        question: 'cara menghitung bep pkwu',
+        answer: 'Untuk tugas PKWU, tuliskan langkahnya: (1) kelompokkan biaya menjadi biaya tetap dan biaya variabel per unit; (2) hitung margin kontribusi = harga − biaya variabel; (3) BEP unit = biaya tetap ÷ margin kontribusi; (4) BEP rupiah = BEP unit × harga. Kalkulator ini menampilkan rumus yang sama dengan angka Anda, jadi bisa dipakai untuk memeriksa jawaban.'
+      },
+      {
+        question: 'Bagaimana jika harga jual lebih kecil dari biaya variabel?',
+        answer: 'Maka BEP tidak pernah tercapai: setiap unit yang terjual menambah rugi. Kalkulator akan memberi tahu hal itu alih-alih menampilkan angka negatif. Naikkan harga atau turunkan biaya variabel.'
+      }
+    ],
+    content: `
+      <h2>Rumus BEP unit dan BEP rupiah</h2>
+      <p>Inti dari <strong>cara menghitung bep unit</strong> adalah margin kontribusi: harga jual dikurangi biaya variabel per unit. BEP unit = biaya tetap ÷ margin kontribusi. Untuk <strong>cara menghitung bep rupiah</strong>, kalikan BEP unit dengan harga jual. Kalkulator di atas menghitung <strong>cara menghitung bep unit dan bep rupiah</strong> sekaligus dan menampilkan rumusnya dengan angka Anda.</p>
+
+      <h2>BEP untuk usaha dan produksi</h2>
+      <p>Untuk <strong>cara menghitung bep usaha</strong>, pisahkan biaya yang tetap setiap bulan (sewa, gaji, cicilan alat) dari biaya yang naik-turun dengan jumlah produksi (bahan, kemasan, ongkos kirim per unit). Pemisahan inilah yang paling sering keliru — biaya yang salah tempat membuat BEP meleset jauh. Untuk <strong>cara menghitung bep produksi</strong> dan <strong>cara menghitung bep penjualan</strong>, logikanya sama.</p>
+
+      <h2>Tiga mode kalkulator</h2>
+      <p>Selain titik impas, kalkulator ini bisa menghitung jumlah unit yang dibutuhkan untuk mencapai target laba, dan harga jual yang dibutuhkan agar balik modal pada jumlah penjualan tertentu — <strong>cara menghitung bep harga</strong>. Hasil unit selalu dibulatkan ke atas. Semua perhitungan terjadi di browser Anda.</p>
+    `
+  },
+  {
+    en: 'profit-margin-calculator',
+    slug: 'rumus-margin-keuntungan',
+    name: 'Kalkulator Margin Keuntungan',
+    title: 'Rumus Margin Keuntungan — Kalkulator Margin dan Markup | ConvertOcean',
+    description: 'Rumus margin keuntungan dan markup dengan contoh dalam Rupiah, plus kalkulator yang menghitung margin, harga jual, atau biaya dan menampilkan rumusnya.',
+    headline: 'Rumus Margin Keuntungan.',
+    subtitle: 'Hitung margin dan markup dari biaya dan harga jual, harga jual dari target margin, atau biaya maksimal dari harga dan margin.',
+    quickAnswer: 'Rumus margin keuntungan: (Harga Jual − Biaya) ÷ Harga Jual × 100%. Barang dengan biaya Rp60.000 dijual Rp100.000 punya margin 40% — sedangkan markup-nya (laba dibagi biaya) 66,67%. Kalkulator di atas menghitung keduanya, juga harga jual dari target margin, dan menampilkan rumusnya di setiap hasil.',
+    category: 'Alat Bisnis',
+    faqs: [
+      {
+        question: 'rumus margin keuntungan',
+        answer: 'Margin = (Harga Jual − Biaya) ÷ Harga Jual × 100%. Dengan biaya Rp60.000 dan harga jual Rp100.000: laba Rp40.000, margin 40%. Margin dihitung terhadap harga jual, sehingga tidak pernah melebihi 100%.'
+      },
+      {
+        question: 'Apa beda margin dan markup?',
+        answer: 'Margin membagi laba dengan harga jual; markup membagi laba dengan biaya. Laba Rp40.000 dari biaya Rp60.000 dan harga Rp100.000 adalah margin 40% tetapi markup 66,67%. Mencampur keduanya adalah kesalahan harga yang paling umum: "untung 40%" dari biaya menghasilkan margin hanya 28,6%.'
+      },
+      {
+        question: 'Bagaimana menentukan harga jual dari margin yang diinginkan?',
+        answer: 'Harga Jual = Biaya ÷ (1 − Margin). Untuk margin 40% dari biaya Rp60.000: 60.000 ÷ 0,6 = Rp100.000. Jangan menghitung 60.000 + 40% — itu markup, dan hasilnya Rp84.000 dengan margin hanya 28,6%.'
+      },
+      {
+        question: 'rumus margin keuntungan excel',
+        answer: 'Dengan biaya di A2 dan harga jual di B2: margin =(B2-A2)/B2, lalu format sel sebagai persen. Markup =(B2-A2)/A2. Harga jual dari target margin di C2: =A2/(1-C2). Di Excel berbahasa Indonesia, pemisah argumen fungsi biasanya titik koma, tetapi rumus di atas tidak memakai fungsi, jadi bisa langsung dipakai.'
+      },
+      {
+        question: 'Apakah angka saya disimpan?',
+        answer: 'Tidak. Perhitungan terjadi di browser Anda dan tidak ada angka yang dikirim atau disimpan di server.'
+      }
+    ],
+    content: `
+      <h2>Rumus margin keuntungan dan markup</h2>
+      <p><strong>Rumus margin keuntungan</strong> membandingkan laba dengan harga jual: (harga jual − biaya) ÷ harga jual. Markup membandingkan laba yang sama dengan biaya. Keduanya benar, tetapi menjawab pertanyaan berbeda — dan tertukar adalah sumber kesalahan harga yang paling sering.</p>
+
+      <h2>Margin kotor dan margin bersih</h2>
+      <p>Kalkulator ini menghitung margin kotor: harga jual dikurangi biaya barang atau jasanya. Margin bersih mengurangi juga biaya operasional (sewa, gaji, iklan) dan pajak — rumusnya sama, hanya biayanya yang lebih lengkap. Masukkan total biaya per unit bila Anda ingin melihat margin bersih per unit.</p>
+
+      <h2>Tiga arah perhitungan</h2>
+      <p>Dari biaya dan harga jual ke margin; dari biaya dan target margin ke harga jual; dari harga jual dan target margin ke biaya maksimal. Setiap hasil menampilkan rumusnya, dan untuk <strong>rumus margin keuntungan excel</strong> lihat pertanyaan di bawah.</p>
+    `
+  },
+  {
+    en: 'sales-tax-calculator',
+    slug: 'kalkulator-ppn',
+    name: 'Kalkulator PPN',
+    title: 'Kalkulator PPN 11% dan 12% — Hitung PPN Online | ConvertOcean',
+    description: 'Kalkulator PPN online: tambahkan PPN ke harga atau pisahkan PPN dari harga yang sudah termasuk pajak, dengan tarif efektif 11% atau 12% sesuai PMK 131/2024.',
+    headline: 'Kalkulator PPN.',
+    subtitle: 'Tambahkan PPN ke harga, atau pisahkan PPN dari total yang sudah termasuk pajak — dengan rumus di setiap hasil.',
+    quickAnswer: 'Untuk menghitung PPN, masukkan harga sebelum pajak dan pilih tarif: PPN 11% untuk barang dan jasa yang bukan barang mewah, atau 12% untuk barang mewah. Sejak 1 Januari 2025 (PMK 131/2024), PPN non-mewah dihitung 12% × DPP nilai lain 11/12, yang hasilnya sama dengan 11% dari harga. Rp1.000.000 + PPN 11% = Rp1.110.000. Mode "Keluarkan Pajak" memisahkan PPN dari total.',
+    category: 'Alat Bisnis',
+    faqs: [
+      {
+        question: 'PPN 11% atau 12%?',
+        answer: 'Keduanya, tergantung barangnya. Sejak 1 Januari 2025, tarif PPN adalah 12%. Untuk barang dan jasa yang bukan barang mewah, PMK 131/2024 menetapkan Dasar Pengenaan Pajak berupa nilai lain sebesar 11/12 dari harga, sehingga PPN-nya 12% × 11/12 = 11% dari harga. Tarif 12% penuh berlaku untuk barang mewah yang dikenai PPnBM.'
+      },
+      {
+        question: 'Bagaimana cara menghitung PPN 11 persen?',
+        answer: 'PPN = harga sebelum pajak × 11%. Rp1.000.000 × 11% = Rp110.000, sehingga totalnya Rp1.110.000. Secara resmi perhitungannya ditulis 12% × (11/12 × Rp1.000.000) = 12% × Rp916.667 = Rp110.000 — hasilnya sama.'
+      },
+      {
+        question: 'Bagaimana memisahkan PPN dari harga yang sudah termasuk pajak?',
+        answer: 'Bagi totalnya dengan 1,11 (untuk 11%): Rp1.110.000 ÷ 1,11 = Rp1.000.000 harga sebelum pajak, dan PPN-nya Rp110.000. Jangan mengurangi 11% dari total — Rp1.110.000 − 11% = Rp987.900, yang salah. Mode "Keluarkan Pajak" di kalkulator melakukan pembagian yang benar.'
+      },
+      {
+        question: 'Bagaimana dengan kalkulator ppn 10 persen?',
+        answer: 'Tarif 10% berlaku sampai 31 Maret 2022; UU HPP menaikkannya menjadi 11% mulai 1 April 2022. Untuk menghitung transaksi lama, pilih "Tarif Kustom" dan isi 10.'
+      },
+      {
+        question: 'Apakah kalkulator ini membuat faktur pajak?',
+        answer: 'Tidak. Kalkulator ini menghitung angka PPN untuk perencanaan harga dan pengecekan. Faktur pajak resmi dibuat oleh PKP melalui sistem DJP (Coretax). Untuk kasus khusus — PPN besaran tertentu, fasilitas dibebaskan, atau barang mewah dengan PPnBM — rujuk aturan DJP atau konsultan pajak.'
+      }
+    ],
+    content: `
+      <h2>Kalkulator PPN 11 persen dan 12 persen</h2>
+      <p><strong>Kalkulator ppn</strong> ini punya dua tombol tarif: <strong>kalkulator ppn 11 persen</strong> untuk barang dan jasa umum, dan <strong>kalkulator ppn 12 persen</strong> untuk barang mewah. Keduanya mengikuti PMK 131/2024 yang berlaku sejak 1 Januari 2025: tarif PPN 12%, dengan DPP nilai lain 11/12 untuk yang bukan barang mewah — <strong>kalkulator ppn 2025</strong> yang menghitung sesuai aturan itu.</p>
+
+      <h2>Menambahkan atau memisahkan PPN</h2>
+      <p>Mode tambah menghitung PPN dari harga sebelum pajak. Mode keluarkan memisahkan PPN dari harga yang sudah termasuk pajak dengan membagi, bukan mengurangi — kesalahan paling umum saat menghitung PPN dari harga jual. Setiap hasil menampilkan rumusnya, dan Rupiah ditulis tanpa sen.</p>
+
+      <h2>Batas kalkulator ini</h2>
+      <p><strong>Kalkulator ppn online</strong> ini untuk menghitung, bukan untuk membuat faktur pajak. PPN besaran tertentu, fasilitas pembebasan, dan PPnBM punya aturan sendiri. Semua perhitungan terjadi di browser Anda.</p>
     `
   }
 ];

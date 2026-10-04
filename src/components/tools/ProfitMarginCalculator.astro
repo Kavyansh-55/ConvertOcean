@@ -1,6 +1,9 @@
 ---
 import { t } from '../../i18n/ui';
 const { slug, headline, subtitle, lang = 'en'} = Astro.props;
+/* Indonesian pages open in Rupiah, at Rupiah scale (same 40% margin). */
+const isId = lang === 'id';
+const k = isId ? 1000 : 1;
 ---
 
 <style>
@@ -163,7 +166,8 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
       <label class="form-label" for="pmCurrency" style="font-size: 13px; font-weight: 500;">{t('Currency', lang)}</label>
       <select id="pmCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink);">
-        <option value="$" selected>{t('$ – US Dollar (USD)', lang)}</option>
+        <option value="$" selected={!isId}>{t('$ – US Dollar (USD)', lang)}</option>
+        <option value="Rp" selected={isId}>{t('Rp – Indonesian Rupiah (IDR)', lang)}</option>
         <option value="€">{t('€ – Euro (EUR)', lang)}</option>
         <option value="£">{t('£ – British Pound (GBP)', lang)}</option>
         <option value="₹">{t('₹ – Indian Rupee (INR)', lang)}</option>
@@ -185,18 +189,18 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div id="pmFieldsMargin">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="pmCost1" id="pmLblCost1">{t('Cost Price ($)', lang)}</label>
-        <input type="number" id="pmCost1" class="form-input" value="60" min="0" step="0.01" />
+        <input type="number" id="pmCost1" class="form-input" value={60 * k} min="0" step="0.01" />
       </div>
       <div class="form-group">
         <label class="form-label" for="pmRevenue1" id="pmLblRevenue1">{t('Selling Price / Revenue ($)', lang)}</label>
-        <input type="number" id="pmRevenue1" class="form-input" value="100" min="0" step="0.01" />
+        <input type="number" id="pmRevenue1" class="form-input" value={100 * k} min="0" step="0.01" />
       </div>
     </div>
 
     <div id="pmFieldsSelling" style="display:none;">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="pmCost2" id="pmLblCost2">{t('Cost Price ($)', lang)}</label>
-        <input type="number" id="pmCost2" class="form-input" value="60" min="0" step="0.01" />
+        <input type="number" id="pmCost2" class="form-input" value={60 * k} min="0" step="0.01" />
       </div>
       <div class="form-group">
         <label class="form-label" for="pmMargin2">{t('Desired Profit Margin (%)', lang)}</label>
@@ -207,7 +211,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div id="pmFieldsCost" style="display:none;">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="pmRevenue3" id="pmLblRevenue3">{t('Revenue / Selling Price ($)', lang)}</label>
-        <input type="number" id="pmRevenue3" class="form-input" value="100" min="0" step="0.01" />
+        <input type="number" id="pmRevenue3" class="form-input" value={100 * k} min="0" step="0.01" />
       </div>
       <div class="form-group">
         <label class="form-label" for="pmMargin3">{t('Desired Profit Margin (%)', lang)}</label>
@@ -263,7 +267,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
   (function() {
     const $ = id => document.getElementById(id);
     let mode = 'margin';
-    let currSym = '$';
+    let currSym = $('pmCurrency').value;
 
     // Currency selector
     $('pmCurrency').addEventListener('change', function() {
@@ -293,7 +297,16 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       });
     });
 
-    function fmt(n) { return currSym + n.toFixed(2); }
+    /* Indonesian pages: "Rp 7.800.000" — Rupiah without cents, Indonesian
+       grouping for every currency. */
+    const ID_MONEY = document.documentElement.lang === 'id';
+    function fmt(n) {
+      if (ID_MONEY) {
+        const d = currSym === 'Rp' ? 0 : 2;
+        return currSym + ' ' + n.toLocaleString('id-ID', { minimumFractionDigits: d, maximumFractionDigits: d });
+      }
+      return currSym + n.toFixed(2);
+    }
 
     function calculate() {
       let cost = 0, revenue = 0, profit = 0, marginPct = 0, markupPct = 0;
@@ -357,6 +370,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       $(id).addEventListener('input', calculate);
     });
 
+    updateCurrencyLabels();
     window.addEventListener('load', calculate);
   })();
 </script>
