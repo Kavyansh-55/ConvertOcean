@@ -1248,7 +1248,7 @@ const rawTools: ToolData[] = [
     slug: 'image-resizer',
     name: 'Image Resizer',
     title: 'Image Resizer - Exact Pixels or KB Size | ConvertOcean',
-    description: 'Free image resizer and compressor in one: set exact pixel dimensions, or compress a photo to a target size in KB for online forms. 100% private, in-browser.',
+    description: 'Free image resizer and image compressor in one: set exact pixel dimensions, or compress a photo to a target size in KB for online forms. Private, in-browser.',
     headline: 'Image Resizer.',
     subtitle: 'Resize images to exact pixel dimensions or compress them to a target file size in KB — built for exam forms, job portals, and upload limits.',
     quickAnswer: 'To resize an image for a form upload, either set exact pixel dimensions (for example 200×230 for a photo or 140×60 for a signature) or set a target file size like 20 KB — the resizer re-encodes the image locally in your browser and shows the final size before you download. Nothing is uploaded.',
