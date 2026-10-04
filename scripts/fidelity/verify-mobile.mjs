@@ -286,8 +286,14 @@ const lostBrowser = (e) => /Connection closed|Target closed|Session closed|Proto
 try {
   console.log(`\nmobile: ${ORIGIN}\n`);
 
+  /* CO_MOBILE_ONLY="/a/,/b/" sweeps just those pages — new guides, say,
+     without the full run. Git Bash rewrites "/a/" into
+     "C:/Program Files/Git/a/", so that prefix is stripped back off. */
+  const only = (process.env.CO_MOBILE_ONLY || '').split(',')
+    .map((s) => s.trim().replace(/^.*\/Git(?=\/)/, '')).filter(Boolean);
+  if (only.length) console.log(`  (only: ${only.join(' ')})\n`);
   let pagesOnThisBrowser = 0;
-  for (const path of PAGES) {
+  for (const path of only.length ? only : PAGES) {
     /* Every run went bad somewhere around page 45-55 — a dead browser, then a
        hung one — so wear never gets the chance to build: a fresh browser
        every 20 pages. */

@@ -515,6 +515,16 @@ export const idTools: LocaleTool[] = [
       <p>Hampir semua pencarian <strong>kompres pdf</strong> berasal dari satu situasi: portal pendaftaran — CPNS, beasiswa, sekolah, lamaran kerja — menolak file karena terlalu besar. Karena itu alat ini punya mode ukuran target. Isi batasnya, dan alat mencari pengaturan paling ringan yang masih muat, bukan langsung mengompres sekeras mungkin. Ini cara paling aman untuk <strong>kompres pdf 1 mb</strong>, <strong>kompres pdf 500kb</strong>, <strong>kompres pdf 200kb</strong>, maupun <strong>kompres pdf 2 mb</strong>.</p>
       <p>Gratis, tanpa daftar akun, tanpa watermark — <strong>kompres pdf online</strong> di sini berarti alat lengkapnya, bukan versi percobaan.</p>
 
+      <p>Angka nyata, bukan janji: kami membuat dokumen uji tiga halaman yang menyerupai hasil foto dokumen dengan HP — halaman A4 pada 300 DPI dengan tekstur kertas, teks, stempel dan sebuah foto, sekitar 3 MB per halaman — lalu menjadikannya PDF 9 MB dengan <a href="/id/gambar-ke-pdf/">Gambar ke PDF</a> dan memasukkannya ke alat ini:</p>
+      <ul>
+        <li><strong>Ringan:</strong> 2,1 MB. <strong>Disarankan:</strong> 631 KB. <strong>Kuat:</strong> 303 KB.</li>
+        <li><strong>Tentukan ukuran 1 MB:</strong> 1.018 KB, pada 197 DPI.</li>
+        <li><strong>Tentukan ukuran 500 KB:</strong> 496 KB, pada 147 DPI.</li>
+        <li><strong>Tentukan ukuran 200 KB:</strong> 193 KB, pada 90 DPI — tulisan kecil masih terbaca, tetapi tampak lebih lembut.</li>
+        <li><strong>Tentukan ukuran 100 KB:</strong> tidak tercapai. Alat berhenti di 137 KB dan memberi tahu, alih-alih memberikan halaman yang terlalu buram untuk dibaca.</li>
+      </ul>
+      <p>Dokumen Anda akan berbeda — lebih banyak foto atau latar berwarna berarti lebih berat, halaman cetakan polos lebih ringan — tetapi polanya sama: 1 MB mudah untuk beberapa halaman hasil scan, 200 KB mengorbankan ketajaman yang terlihat, dan di bawah itu jumlah halaman yang menentukan bisa atau tidaknya.</p>
+
       <h2>Di mana berat file Anda</h2>
       <p>Inilah yang menentukan seberapa kecil file bisa dibuat, dan hampir tidak ada yang memeriksanya dulu. Buka PDF dan coba pilih satu kalimat. Jika teks tersorot, dokumen pada dasarnya teks: ia sudah kecil dan kompresi hanya mengurangi sedikit. Jika kursor hanya menggambar kotak, setiap halaman adalah foto — dan di situlah ukurannya bisa turun drastis.</p>
 
@@ -2121,7 +2131,243 @@ export const idTools: LocaleTool[] = [
   }
 ];
 
-export const idGuides: LocaleGuide[] = [];
+export const idGuides: LocaleGuide[] = [
+  {
+    /* "gabungkan pdf dan jpg" and "gabungkan pdf dan foto" are both EASY at
+       >1000, recorded as intent mismatches on /id/gabungkan-pdf/ because the
+       merge tool takes PDFs only. The honest answer is two steps, shown here
+       with real runs of the Indonesian tools. */
+    en: 'combine-pdf-and-jpg',
+    slug: 'gabungkan-pdf-dan-jpg',
+    title: 'Cara Gabungkan PDF dan JPG (Foto) Jadi Satu File | ConvertOcean',
+    description: 'Gabungkan PDF dan foto JPG jadi satu PDF dalam dua langkah: ubah foto ke PDF, lalu gabungkan. Dengan ukuran file nyata dan cara agar muat batas upload.',
+    h1: 'Cara gabungkan PDF dan JPG jadi satu file.',
+    readTime: '6 menit baca',
+    publishOn: '2026-10-06',
+    intro: 'Formulir lamaran hanya menerima satu file, sementara Anda punya satu PDF dan beberapa foto — surat lamaran, ijazah yang difoto dengan HP, bukti transfer. Alat gabung PDF hanya menerima PDF, dan alat konversi gambar hanya membuat PDF baru, jadi tidak ada satu tombol yang langsung menyelesaikannya. Dua langkah bisa, dan keduanya berjalan di browser, sehingga dokumen tidak keluar dari perangkat Anda.',
+    contentHtml: `
+      <h2>Langkah 1: jadikan foto satu PDF</h2>
+      <p>Buka <a href="/id/gambar-ke-pdf/">Gambar ke PDF</a> lalu pilih fotonya. JPG, PNG dan WebP bisa, dan beberapa foto bisa dipilih sekaligus. Setiap foto ditaruh di satu halaman A4, di tengah dan diperkecil agar muat — foto kecil tidak diperbesar, dan foto HP yang tersimpan miring keluar dalam posisi tegak.</p>
+      <figure class="g-figure">
+        <img src="/guides/img/gabung-pdf-foto-1.webp" alt="Alat Gambar ke PDF dengan dua gambar, ijazah.jpg dan lampiran-foto.jpg, masing-masing sekitar 3.000 KB, dan tombol Konversi &amp; Unduh PDF" width="576" height="326" loading="lazy" decoding="async" />
+        <figcaption>Dua gambar seukuran foto kamera HP, masing-masing sekitar 3 MB, siap dijadikan satu PDF. Tanda ✕ menghapus foto yang salah pilih.</figcaption>
+      </figure>
+      <p>Urutan halaman mengikuti urutan daftar. Tidak ada fitur geser untuk mengubah urutan, jadi kalau urutan penting, tambahkan foto satu per satu sesuai urutan yang diinginkan; kalau salah, hapus dengan ✕ lalu tambahkan lagi. Tekan <strong>Konversi &amp; Unduh PDF</strong>, dan Anda mendapat <code class="g-code">images-to-pdf.pdf</code>.</p>
+
+      <h2>Langkah 2: gabungkan dengan PDF yang lain</h2>
+      <p>Buka <a href="/id/gabungkan-pdf/">Gabungkan PDF</a>. Tambahkan dulu PDF yang harus berada di depan — surat lamaran atau formulirnya — lalu PDF foto yang baru dibuat. File digabung sesuai urutan ditambahkan, dan setiap baris menampilkan jumlah halamannya, cara cepat untuk memastikan tidak ada yang tertinggal.</p>
+      <figure class="g-figure">
+        <img src="/guides/img/gabung-pdf-foto-2.webp" alt="Alat Gabungkan PDF dengan surat-lamaran.pdf (1 halaman) di atas images-to-pdf.pdf (2 halaman)" width="512" height="591" loading="lazy" decoding="async" />
+        <figcaption>Surat lamaran satu halaman di depan, lalu dua halaman foto. Hasilnya bernama merged_document.pdf, kecuali Anda menggantinya.</figcaption>
+      </figure>
+      <p>Ganti <strong>Nama File Hasil</strong> jika formulir meminta format nama tertentu (misalnya <code class="g-code">nama-lengkap-lamaran.pdf</code>), lalu tekan <strong>Gabungkan &amp; Unduh</strong>.</p>
+      <p>Foto juga bisa diselipkan di tengah — misalnya di antara halaman 1 dan 2 sebuah dokumen. <a href="/id/pisahkan-pdf/">Pisahkan PDF</a> bisa menyimpan setiap halaman sebagai PDF tersendiri (dikemas dalam ZIP); tambahkan halaman-halaman itu dan PDF foto ke Gabungkan PDF dengan urutan yang Anda mau.</p>
+
+      <h2>Kenapa filenya besar, dan cara agar muat batas upload</h2>
+      <p>Kami menjalankan langkah-langkah di atas dengan satu surat satu halaman dan dua gambar uji yang dibuat menyerupai foto dokumen dari HP — ukuran A4 pada 300 DPI, sekitar 3 MB per JPG, sebesar hasil kamera HP:</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>File</th><th>Ukuran</th></tr></thead>
+        <tbody>
+          <tr><td>Surat lamaran (1 halaman, teks)</td><td class="num">3 KB</td></tr>
+          <tr><td>Dua foto, format JPG</td><td class="num">3.009 KB + 3.005 KB</td></tr>
+          <tr><td>Foto sebagai PDF (langkah 1)</td><td class="num">6.018 KB</td></tr>
+          <tr><td>PDF gabungan (langkah 2)</td><td class="num">6.016 KB</td></tr>
+        </tbody>
+      </table></div>
+      <p>Foto dimasukkan ke PDF apa adanya — persis byte demi byte, kecuali foto HP yang miring, yang digambar ulang dalam posisi tegak — sehingga ukuran PDF sebesar fotonya: di sini 6 MB untuk tiga halaman. Hasilnya tetap tajam, tetapi banyak formulir online membatasi file 1 atau 2 MB, bahkan ada yang 500 KB.</p>
+      <p>Solusinya ada di akhir, bukan di awal: kompres PDF yang sudah jadi dengan <a href="/id/kompres-pdf/">Kompres PDF</a> dan pilihan <strong>Tentukan ukuran</strong>, yang mencari pengaturan paling ringan yang masih muat di bawah angka yang Anda masukkan. Mengecilkan setiap foto lebih dulu juga bisa, tetapi lebih lama dan pengaturannya harus ditebak.</p>
+      <p>Seberapa kecil dokumen hasil scan bisa dikompres tergantung banyaknya detail. Pada dokumen uji tiga halaman berukuran 9 MB yang dibuat dengan cara yang sama, Tentukan ukuran mencapai 1 MB di sekitar 200 DPI, 500 KB di sekitar 150 DPI, dan 200 KB di 90 DPI — tulisan kecil masih terbaca, tetapi tampak lebih lembut. Target 100 KB tidak tercapai: alat ini memberi tahu hal itu dan berhenti di 137 KB, alih-alih memberikan file yang tidak terbaca.</p>
+
+      <h2>Cara lain</h2>
+      <ul>
+        <li><strong>Microsoft Word.</strong> Sisipkan foto ke dokumen (Insert → Pictures), lalu File → Save As → PDF. Hasilnya setara dengan langkah 1, dan Word bisa menurunkan resolusi gambar saat menyimpan, tergantung pengaturannya. PDF yang sudah Anda punya tetap harus digabungkan terpisah.</li>
+        <li><strong>Cetak ke PDF di Windows.</strong> Pilih foto di File Explorer, klik kanan → Print (di Windows 11 ada di Show more options), lalu pilih Microsoft Print to PDF. Hasilnya satu PDF berisi foto — sama dengan langkah 1. Langkah 2 tetap penggabungan.</li>
+        <li><strong>Situs yang mengunggah file.</strong> Kebanyakan layanan "gabung PDF dan JPG" online mengirim file Anda ke server mereka untuk diproses. Untuk ijazah, KTP atau slip gaji, menyimpan file tetap di perangkat sendiri adalah pilihan yang lebih aman.</li>
+      </ul>
+
+      <h2>Sebelum dikirim</h2>
+      <p>Buka PDF gabungannya dan gulir sekali dari awal sampai akhir. Pastikan semua halaman ada dan urutannya benar, tidak ada foto yang miring, dan ukurannya di bawah batas formulir. Kalau foto terlalu gelap atau buram untuk dibaca, tidak ada langkah PDF yang bisa memperbaikinya — foto ulang di tempat terang, dokumen rata, dan memenuhi bingkai kamera.</p>
+    `,
+    faqs: [
+      { question: 'Bisakah PDF dan JPG digabung langsung?', answer: 'Dengan kebanyakan alat tidak bisa dalam satu langkah, karena alat gabung PDF hanya menerima PDF. Ubah foto ke PDF dulu dengan Gambar ke PDF, lalu gabungkan PDF itu dengan PDF lainnya.' },
+      { question: 'Bagaimana cara mengatur urutan halaman?', answer: 'Kedua alat menyimpan urutan saat file ditambahkan. Tambahkan satu per satu sesuai urutan yang diinginkan; jika ada yang salah tempat, hapus dengan ✕ lalu tambahkan lagi.' },
+      { question: 'Kenapa PDF gabungannya besar sekali?', answer: 'Foto dimasukkan ke PDF tanpa dikompres ulang, jadi PDF sebesar fotonya. Kompres PDF yang sudah jadi dengan pilihan Tentukan ukuran agar muat batas upload.' },
+      { question: 'Apakah kualitas foto berkurang?', answer: 'Tidak saat diubah dan digabung: foto dimasukkan apa adanya, dan hanya foto HP yang miring yang digambar ulang tegak dengan kualitas JPEG tinggi. Kualitas baru berubah jika PDF dikompres sesudahnya, dan Tentukan ukuran memakai pengaturan paling ringan yang memenuhi batas Anda.' },
+      { question: 'Apakah file saya diunggah ke server?', answer: 'Tidak. Gambar ke PDF, Gabungkan PDF dan Kompres PDF semuanya berjalan di browser, jadi file tetap di perangkat Anda.' }
+    ]
+  },
+  {
+    /* Standalone: an Indonesian legal-practical question with no English
+       counterpart. "contoh kwitansi jual beli tanah yang sah" is EASY at
+       >1000. Sources checked 2026-10-04: PP 24/1997 Pasal 37 (1)-(2) and
+       Pasal 38 (1) (pasal.id and two law-journal citations); UU 10/2020 bea
+       meterai Rp10.000 above Rp5.000.000; PPh final 2.5% (PP 34/2016);
+       BPHTB at most 5%, set by each region (UU 1/2022 Pasal 47). */
+    en: 'id:kwitansi-jual-beli-tanah',
+    standalone: { relatedTools: ['receipt-generator', 'invoice-generator'], relatedGuides: [] },
+    slug: 'kwitansi-jual-beli-tanah',
+    title: 'Kwitansi Jual Beli Tanah yang Sah: Isi, Meterai, AJB | ConvertOcean',
+    description: 'Apa yang harus ditulis di kwitansi jual beli tanah, kapan perlu meterai Rp10.000, dan kenapa kwitansi saja tidak cukup untuk balik nama sertifikat.',
+    h1: 'Kwitansi jual beli tanah yang sah.',
+    readTime: '8 menit baca',
+    publishOn: '2026-10-07',
+    intro: 'Kwitansi adalah bukti bahwa uang sudah diterima. Dalam jual beli tanah, bukti itu penting — terutama untuk uang muka dan cicilan — tetapi kwitansi tidak memindahkan hak atas tanah. Panduan ini membahas apa yang membuat kwitansi tanah kuat sebagai bukti pembayaran, contoh penulisannya, dan langkah yang tetap harus ditempuh agar tanah benar-benar berpindah nama.',
+    contentHtml: `
+      <blockquote><strong>Bukan nasihat hukum.</strong> Panduan ini menjelaskan aturan umum. Untuk transaksi tanah, konsultasikan dengan PPAT atau notaris setempat sebelum membayar dalam jumlah besar.</blockquote>
+
+      <h2>Apa yang dibuktikan kwitansi, dan apa yang tidak</h2>
+      <p>Kwitansi membuktikan satu hal: si penerima sudah menerima sejumlah uang dari si pembayar, untuk keperluan yang tertulis. Itu sebabnya kwitansi berguna saat membayar uang tanda jadi, uang muka (DP), atau cicilan tanah.</p>
+      <p>Yang tidak bisa dilakukan kwitansi adalah memindahkan hak atas tanah. Peraturan Pemerintah Nomor 24 Tahun 1997 tentang Pendaftaran Tanah, Pasal 37 ayat (1), menyatakan bahwa peralihan hak atas tanah melalui jual beli <em>"hanya dapat didaftarkan jika dibuktikan dengan akta yang dibuat oleh PPAT yang berwenang"</em>. Akta itu adalah Akta Jual Beli (AJB). Tanpa AJB, sertifikat tidak bisa dibalik nama ke pembeli, dan di atas kertas tanah masih milik penjual.</p>
+      <p>Ayat (2) pasal yang sama memberi pengecualian sempit: dalam keadaan tertentu yang ditetapkan Menteri, Kepala Kantor Pertanahan dapat mendaftar peralihan hak milik antarperorangan WNI dengan akta yang bukan buatan PPAT, jika menurutnya kebenarannya cukup. Itu wewenang pejabat, bukan hak pembeli — jangan merencanakan transaksi dengan mengandalkannya.</p>
+
+      <h2>Isi kwitansi tanah yang kuat sebagai bukti</h2>
+      <p>Kwitansi biasa cukup menulis "untuk pembayaran tanah". Untuk tanah, itu terlalu kabur: tanah yang mana, berapa harga totalnya, dan berapa yang masih kurang? Tulis semuanya:</p>
+      <ul>
+        <li><strong>Nomor dan tanggal</strong> kwitansi.</li>
+        <li><strong>Nama lengkap dan alamat</strong> pembayar (pembeli) dan penerima (penjual) — sebaiknya sesuai KTP, dan penjual sebaiknya nama yang tercantum di sertifikat.</li>
+        <li><strong>Jumlah uang</strong> dalam angka <em>dan</em> huruf (terbilang). Angka dan huruf yang tidak sama membuat kwitansi mudah dipersoalkan, jadi pastikan keduanya persis sama.</li>
+        <li><strong>Untuk pembayaran apa</strong>: uang muka, cicilan ke berapa, atau pelunasan.</li>
+        <li><strong>Identitas tanahnya</strong>: jenis dan nomor sertifikat (misalnya SHM No. …), luas, letak (jalan, desa/kelurahan, kecamatan, kabupaten/kota), dan atas nama siapa.</li>
+        <li><strong>Harga total yang disepakati dan sisa yang belum dibayar</strong>, plus kapan sisa itu dilunasi.</li>
+        <li><strong>Tanda tangan penerima</strong>, di atas meterai bila nilainya di atas Rp5.000.000 (lihat di bawah).</li>
+        <li><strong>Dua orang saksi</strong> yang ikut tanda tangan. Tidak diwajibkan untuk kwitansi, tetapi sangat membantu jika kelak terjadi sengketa.</li>
+      </ul>
+
+      <h2>Contoh penulisan</h2>
+      <p>Nama, nomor sertifikat dan alamat di bawah ini hanya contoh:</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <tbody>
+          <tr><th>Nomor</th><td>KW-2026-014</td></tr>
+          <tr><th>Telah terima dari</th><td>Budi Santoso, Jl. Kenanga No. 8, Kota Contoh</td></tr>
+          <tr><th>Uang sejumlah</th><td class="num">Rp50.000.000</td></tr>
+          <tr><th>Terbilang</th><td>Lima puluh juta rupiah</td></tr>
+          <tr><th>Untuk pembayaran</th><td>Uang muka pembelian sebidang tanah SHM No. 1234/Desa Sukamaju, luas 200 m², terletak di Jl. Melati, Kecamatan Contoh, Kabupaten Contoh, atas nama Ahmad Hidayat, dengan harga total Rp250.000.000. Sisa Rp200.000.000 dilunasi paling lambat 31 Desember 2026 pada saat penandatanganan Akta Jual Beli di hadapan PPAT.</td></tr>
+          <tr><th>Tanggal dan tempat</th><td>Kota Contoh, 5 Oktober 2026</td></tr>
+          <tr><th>Penerima</th><td>Ahmad Hidayat — tanda tangan di atas meterai Rp10.000</td></tr>
+          <tr><th>Saksi</th><td>Dua nama, dengan tanda tangan</td></tr>
+        </tbody>
+      </table></div>
+      <p>Kalimat terakhir di bagian "untuk pembayaran" yang paling penting: kwitansi itu sendiri menyebut bahwa transaksinya belum selesai dan akan dituntaskan dengan AJB. <a href="/id/kwitansi/">Generator kwitansi</a> kami menulis terbilang secara otomatis dan menampilkan kotak meterai begitu nominalnya di atas Rp5.000.000. Tulis identitas tanah, harga total dan sisa pembayaran di kolom <strong>Catatan</strong>, yang ikut tercetak di kwitansi.</p>
+
+      <h2>Kapan perlu meterai</h2>
+      <p>Menurut Undang-Undang Nomor 10 Tahun 2020 tentang Bea Meterai, dokumen yang menyebutkan penerimaan uang dengan nilai lebih dari Rp5.000.000 dikenai bea meterai Rp10.000. Kwitansi uang muka tanah hampir selalu melewati batas itu. Tempel meterai, lalu penerima menandatanganinya sehingga tanda tangan mengenai meterai.</p>
+      <p>Meterai adalah pajak atas dokumen, bukan syarat sah sebuah pembayaran. Kwitansi tanpa meterai tetap membuktikan uang diterima, tetapi bea meterainya harus dilunasi (dengan pemeteraian kemudian) sebelum dokumen itu dipakai sebagai alat bukti di pengadilan. Lebih mudah menempelnya sejak awal.</p>
+
+      <h2>Langkah lengkap sampai sertifikat berganti nama</h2>
+      <ol>
+        <li><strong>Periksa sertifikat.</strong> Minta fotokopi sertifikat dan cocokkan nama, luas dan letaknya. PPAT biasanya mengecek keasliannya ke Kantor Pertanahan sebelum akta dibuat.</li>
+        <li><strong>Bayar uang muka dengan kwitansi</strong> seperti contoh di atas. Kalau pembayaran dicicil atau sertifikat belum siap, notaris dapat membuat Perjanjian Pengikatan Jual Beli (PPJB) yang mengatur harga, jadwal bayar dan kewajiban kedua pihak.</li>
+        <li><strong>Lunasi pajak.</strong> Penjual membayar PPh final pengalihan hak atas tanah sebesar 2,5% dari nilai transaksi (PP 34/2016). Pembeli membayar BPHTB, yang tarifnya paling tinggi 5% dan ditetapkan oleh masing-masing daerah (UU 1/2022). BPHTB harus lunas sebelum AJB ditandatangani.</li>
+        <li><strong>Tanda tangani AJB di hadapan PPAT.</strong> Penjual dan pembeli hadir (atau wakilnya dengan surat kuasa), disaksikan sedikitnya dua orang saksi, sesuai Pasal 38 ayat (1) PP 24/1997. Pelunasan biasanya dilakukan pada hari ini, dan kwitansi pelunasan dibuat terpisah.</li>
+        <li><strong>Balik nama di Kantor Pertanahan.</strong> PPAT mendaftarkan AJB-nya. Setelah selesai, sertifikat tercatat atas nama pembeli.</li>
+      </ol>
+      <p>Untuk tanah yang belum bersertifikat (misalnya masih girik atau letter C), jalurnya berbeda dan biasanya melibatkan kantor desa atau kelurahan lebih dulu. Tanyakan ke PPAT setempat sebelum membayar uang muka.</p>
+
+      <h2>Kesalahan yang sering terjadi</h2>
+      <ul>
+        <li><strong>Membayar lunas hanya dengan kwitansi.</strong> Uangnya tercatat, tetapi tanahnya tidak berpindah. Kalau penjual meninggal, pindah, atau menjual lagi ke orang lain, pembeli harus menempuh jalur yang jauh lebih panjang.</li>
+        <li><strong>Penerima bukan pemilik di sertifikat.</strong> Kalau uang diterima kerabat atau perantara, kwitansi tidak membuktikan bahwa pemilik tanahnya menerima pembayaran. Bayar kepada pemilik yang namanya tercantum, atau kepada orang yang punya surat kuasa darinya.</li>
+        <li><strong>Identitas tanah tidak ditulis.</strong> "Untuk pembayaran tanah" tanpa nomor sertifikat dan letak sulit dikaitkan dengan bidang tanah tertentu.</li>
+        <li><strong>Angka dan terbilang berbeda.</strong> Satu nol yang hilang bisa jadi sengketa. Bacakan terbilangnya sebelum ditandatangani.</li>
+      </ul>
+    `,
+    faqs: [
+      { question: 'Apakah kwitansi jual beli tanah sah?', answer: 'Sah sebagai bukti pembayaran. Tetapi kwitansi tidak memindahkan hak atas tanah: menurut Pasal 37 ayat (1) PP 24/1997, peralihan hak karena jual beli hanya dapat didaftarkan dengan akta PPAT, yaitu Akta Jual Beli (AJB).' },
+      { question: 'Apakah kwitansi jual beli tanah harus pakai meterai?', answer: 'Untuk nilai di atas Rp5.000.000, dokumen penerimaan uang dikenai bea meterai Rp10.000 (UU 10/2020). Tanpa meterai, kwitansi tetap membuktikan pembayaran, tetapi bea meterainya harus dilunasi sebelum dipakai sebagai alat bukti di pengadilan.' },
+      { question: 'Apa saja yang ditulis di kwitansi jual beli tanah?', answer: 'Nomor, tanggal, nama dan alamat pembayar dan penerima, jumlah dalam angka dan terbilang, keterangan pembayaran (DP, cicilan atau pelunasan), identitas tanah (nomor sertifikat, luas, letak, atas nama), harga total dan sisa pembayaran, tanda tangan penerima di atas meterai, dan sebaiknya dua saksi.' },
+      { question: 'Apakah perlu saksi di kwitansi tanah?', answer: 'Tidak diwajibkan untuk kwitansi, tetapi dianjurkan. Untuk AJB, Pasal 38 ayat (1) PP 24/1997 mensyaratkan paling sedikit dua orang saksi.' },
+      { question: 'Bisakah balik nama sertifikat hanya dengan kwitansi?', answer: 'Pada umumnya tidak. Balik nama membutuhkan AJB yang dibuat di hadapan PPAT. Pasal 37 ayat (2) PP 24/1997 memberi pengecualian sempit atas kebijakan Kepala Kantor Pertanahan, yang tidak bisa diandalkan.' }
+    ]
+  },
+  {
+    /* Written for Indonesian spreadsheets, not translated: semicolons
+       between arguments, comma decimals, Rupiah, and PPN 11% as the
+       working-backwards example (the DPP mistake is a real one). Targets
+       "cara hitung persentase di excel" (EASY, >100). */
+    en: 'how-to-calculate-percentage-in-excel',
+    slug: 'cara-hitung-persentase-di-excel',
+    title: 'Cara Hitung Persentase di Excel: Rumus dan Contoh | ConvertOcean',
+    description: 'Rumus persentase di Excel: bagian dari total, kenaikan dan penurunan, diskon dan PPN — plus kenapa sel menampilkan 0,15 atau 1500% dan bukan 15%.',
+    h1: 'Cara hitung persentase di Excel.',
+    readTime: '7 menit baca',
+    publishOn: '2026-10-08',
+    intro: 'Excel tidak punya fungsi khusus persentase, dan memang tidak perlu. Di spreadsheet, persentase hanyalah angka biasa — 15% disimpan sebagai 0,15 — sehingga hampir semua hitungan persentase selesai dengan salah satu dari empat rumus pendek. Yang sering membuat bingung justru formatnya, jadi itu dibahas lebih dulu.',
+    contentHtml: `
+      <h2>Satu aturan penting: 15% itu 0,15</h2>
+      <p>Format persen tidak mengubah angka; ia hanya mengubah tampilannya, yaitu dikali 100 lalu diberi tanda %. Sel berisi 0,15 tampil sebagai 15%. Artinya hanya ada satu cara untuk salah: mengalikan 100 sendiri <em>dan</em> memakai format persen.</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>Yang Anda lakukan</th><th>Isi sel</th><th>Tampil sebagai</th></tr></thead>
+        <tbody>
+          <tr><td>Mengetik <code class="g-code">15%</code></td><td class="num">0,15</td><td class="num">15%</td></tr>
+          <tr><td><code class="g-code">=30/200</code>, lalu format %</td><td class="num">0,15</td><td class="num">15%</td></tr>
+          <tr><td><code class="g-code">=30/200*100</code>, lalu format %</td><td class="num">15</td><td class="num">1500%</td></tr>
+          <tr><td>Mengetik <code class="g-code">15</code> di sel General, lalu format %</td><td class="num">15</td><td class="num">1500%</td></tr>
+        </tbody>
+      </table></div>
+      <p>Jadi: bagi lalu format, atau kalikan 100 lalu biarkan sebagai angka biasa. Jangan keduanya. Dengan pengaturan bawaan Excel, mengetik 15 di sel yang <em>sudah</em> berformat persen menghasilkan 15% — yang membuatnya membengkak adalah memberi format sesudahnya.</p>
+      <p>Format persen ada di tombol <strong>%</strong> pada tab Home (Beranda), atau tekan <strong>Ctrl+Shift+%</strong>.</p>
+
+      <h2>Persentase dari total</h2>
+      <p>Bagi bagiannya dengan totalnya. Misalnya penjualan per cabang di kolom B dan totalnya di B6:</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th></th><th>A</th><th>B</th><th>C (rumus)</th><th>C (tampil)</th></tr></thead>
+        <tbody>
+          <tr><td>2</td><td>Jakarta</td><td class="num">12.400</td><td><code class="g-code">=B2/$B$6</code></td><td class="num">29,5%</td></tr>
+          <tr><td>3</td><td>Bandung</td><td class="num">9.300</td><td><code class="g-code">=B3/$B$6</code></td><td class="num">22,1%</td></tr>
+          <tr><td>4</td><td>Surabaya</td><td class="num">15.500</td><td><code class="g-code">=B4/$B$6</code></td><td class="num">36,9%</td></tr>
+          <tr><td>5</td><td>Medan</td><td class="num">4.800</td><td><code class="g-code">=B5/$B$6</code></td><td class="num">11,4%</td></tr>
+          <tr><td>6</td><td>Total</td><td class="num">42.000</td><td><code class="g-code">=SUM(C2:C5)</code></td><td class="num">100,0%</td></tr>
+        </tbody>
+      </table></div>
+      <p>Tanda dolar pada <code class="g-code">$B$6</code> mengunci sel total, sehingga rumus cukup ditulis sekali lalu ditarik ke bawah. Tanpa tanda dolar, baris berikutnya akan membagi dengan B7 yang kosong, dan muncul <code class="g-code">#DIV/0!</code>.</p>
+      <p>Perhatikan satu hal di tabel itu: keempat persentase yang tampil — 29,5, 22,1, 36,9 dan 11,4 — jumlahnya 99,9, tetapi baris total menunjukkan 100,0%. Keduanya benar. Sel menyimpan nilai lengkap (0,295238…), sedangkan tampilan membulatkan masing-masing secara terpisah. Kalau laporan harus pas di atas kertas, bulatkan nilai yang disimpan, bukan hanya tampilannya:</p>
+      <span class="g-formula">=ROUND(B2/$B$6; 3)</span>
+      <p>Angka desimal di sini menghitung desimal dari <em>pecahan</em>, bukan dari persentase. Untuk satu angka di belakang koma pada persentase, gunakan 3 — <code class="g-code">=ROUND(0,295238; 1)</code> menghasilkan 0,3, yang tampil sebagai 30%.</p>
+
+      <h2>Persentase kenaikan atau penurunan</h2>
+      <p>Nilai baru dikurangi nilai lama, dibagi nilai lama:</p>
+      <span class="g-formula">=(C2-B2)/B2</span>
+      <p>Nilai lama selalu jadi pembagi. Kalau tertukar, rumusnya menjawab pertanyaan lain. Itu juga sebabnya naik dan turun tidak saling menutup: harga Rp 80.000 naik ke Rp 100.000 adalah <strong>+25%</strong>, tetapi Rp 100.000 turun kembali ke Rp 80.000 adalah <strong>−20%</strong>, karena masing-masing diukur dari titik awalnya sendiri. Hasil negatif berarti turun.</p>
+      <p>Jika nilai lama bisa nol, lindungi rumusnya agar lembar kerja tidak penuh error: <code class="g-code">=IF(B2=0; ""; (C2-B2)/B2)</code>. Tidak ada persentase perubahan dari angka nol.</p>
+
+      <h2>Menambah atau mengurangi persentase: diskon dan PPN</h2>
+      <p>Untuk menaikkan harga 15%, kalikan dengan 1 ditambah tarifnya; untuk diskon 15%, kalikan dengan 1 dikurangi tarifnya. Dengan harga di B2 dan tarif (diketik 15%) di C2:</p>
+      <span class="g-formula">Naik 15%:    =B2*(1+C2)     Rp 40.000 → Rp 46.000
+Diskon 15%:  =B2*(1-C2)     Rp 40.000 → Rp 34.000</span>
+      <p>Kesalahan paling umum terjadi saat menghitung mundur. Harga Rp 111.000 yang <em>sudah termasuk</em> PPN 11% tidak berarti harga sebelum pajaknya Rp 98.790 — itu hasil dari 111.000 dikurangi 11% dari 111.000. PPN dihitung dari harga yang lebih kecil, jadi caranya membagi:</p>
+      <span class="g-formula">=B2/(1+C2)     Rp 111.000 → Rp 100.000</span>
+      <p>Rp 100.000 itulah harga sebelum PPN, dan PPN-nya Rp 11.000. (Tarif 11% di sini adalah tarif efektif untuk barang dan jasa non-mewah sejak 2025: PPN 12% dikali DPP nilai lain 11/12.) Untuk hitungan PPN yang cepat tanpa spreadsheet, ada <a href="/id/kalkulator-ppn/">kalkulator PPN</a>. Diskon pun sama: barang seharga Rp 34.000 setelah diskon 15% harga awalnya <code class="g-code">=34000/(1-15%)</code>, yaitu Rp 40.000.</p>
+
+      <h2>Berapa X% dari suatu angka</h2>
+      <p>Untuk mencari 15% dari 240, kalikan: <code class="g-code">=240*15%</code>, atau <code class="g-code">=A2*B2</code> dengan tarif di B2. Hasilnya 36. Biarkan sel ini sebagai angka biasa — hasilnya adalah nilai, bukan persentase, dan format % akan menampilkannya sebagai 3600%.</p>
+
+      <h2>Kenapa Excel menolak koma di rumus</h2>
+      <p>Di Indonesia, koma adalah tanda desimal, sehingga koma tidak bisa sekaligus memisahkan argumen fungsi. Di Windows, Excel mengambil pemisah itu dari pengaturan Region, dan untuk Indonesia nilainya titik koma. Tutorial berbahasa Inggris dengan <code class="g-code">=ROUND(B2, 3)</code> harus ditulis begini:</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>Tutorial berbahasa Inggris</th><th>Excel dengan pengaturan Indonesia</th></tr></thead>
+        <tbody>
+          <tr><td><code class="g-code">=ROUND(B2/C2, 3)</code></td><td><code class="g-code">=ROUND(B2/C2; 3)</code></td></tr>
+          <tr><td><code class="g-code">=IF(B2=0, "", (C2-B2)/B2)</code></td><td><code class="g-code">=IF(B2=0; ""; (C2-B2)/B2)</code></td></tr>
+          <tr><td><code class="g-code">=B2*1.11</code></td><td><code class="g-code">=B2*1,11</code></td></tr>
+        </tbody>
+      </table></div>
+      <p>Kalau Excel Anda memakai pengaturan Region Inggris (titik sebagai desimal), justru koma yang dipakai. Rumus yang hanya berisi <code class="g-code">/ * + -</code> berjalan di mana pun, karena tidak ada argumen yang perlu dipisahkan.</p>
+
+      <h2>Di Google Spreadsheet</h2>
+      <p>Semua rumus di atas berlaku sama di Google Spreadsheet. Format persen ada di menu Format → Angka, dan pemisah argumen mengikuti lokal spreadsheet (diatur dari menu File), bukan pengaturan komputer.</p>
+
+      <h2>Cara memeriksa hasil</h2>
+      <p>Kalau angka terasa janggal, bandingkan dengan hitungan di kepala: 10% dari 200 adalah 20, dan Rp 50.000 menjadi Rp 100.000 berarti naik 100%, bukan 50%. Atau masukkan angka yang sama ke <a href="/id/kalkulator-persentase/">kalkulator persentase</a>, yang menampilkan rumus untuk setiap jawabannya. Untuk harga jual dan modal, beda margin dan markup adalah jebakan tersendiri — lihat <a href="/id/rumus-margin-keuntungan/">rumus margin keuntungan</a>.</p>
+    `,
+    faqs: [
+      { question: 'Apa rumus persentase di Excel?', answer: 'Untuk bagian dari total, bagi bagiannya dengan totalnya lalu beri format %: =B2/$B$6. Excel tidak punya fungsi khusus persentase; 15% disimpan sebagai 0,15.' },
+      { question: 'Bagaimana cara menghitung persentase kenaikan di Excel?', answer: 'Gunakan =(baru-lama)/lama, misalnya =(C2-B2)/B2, lalu beri format %. Nilai lama selalu menjadi pembagi; hasil negatif berarti turun.' },
+      { question: 'Kenapa Excel menampilkan 1500% dan bukan 15%?', answer: 'Sel berisi 15, bukan 0,15. Format % mengalikan tampilan dengan 100, jadi hapus *100 dari rumus atau biarkan sel sebagai angka biasa.' },
+      { question: 'Bagaimana menghitung harga sebelum PPN di Excel?', answer: 'Bagi dengan 1 ditambah tarifnya: =B2/(1+11%). Mengurangi 11% dari harga yang sudah termasuk PPN memberi hasil yang salah, karena PPN dihitung dari harga sebelum pajak.' },
+      { question: 'Kenapa rumus Excel error kalau memakai koma?', answer: 'Dengan pengaturan Region Indonesia, koma adalah tanda desimal, sehingga argumen fungsi dipisahkan dengan titik koma: =ROUND(B2/C2; 3), bukan =ROUND(B2/C2, 3).' }
+    ]
+  }
+];
 export const idStaticPages: LocaleStaticPage[] = [
   { en: 'file-converter', slug: 'konverter-file', title: 'Konverter File Online Gratis — Tanpa Upload | ConvertOcean', description: 'Konversi PDF, Word, Excel, PowerPoint, dan gambar langsung di browser.' },
   { en: 'sitemap', slug: 'peta-situs', title: 'Peta Situs — Semua Alat | ConvertOcean', description: 'Semua alat dalam bahasa Indonesia, dikelompokkan per kategori.' },

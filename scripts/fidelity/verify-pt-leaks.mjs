@@ -40,13 +40,23 @@ const urls = [...sm.matchAll(new RegExp(`<loc>([^<]*\/${LOC}\/[^<]*)<\/loc>`, 'g
   .map(m => m[1].replace('https://convertocean.com', O));
 if (urls.length < FLOOR) { console.log(`only ${urls.length} /${LOC}/ URLs in the sitemap — not a real run`); process.exit(1); }
 
-const b = await puppeteer.launch({
+/* A browser that dies mid-scan (2026-10-04: "Navigating frame was detached",
+   twice) used to end the run with nothing reported. It is relaunched on a
+   profile of its own — a dead one can hold the old profile's lock — and the
+   page is read again, once. Same approach as verify-mobile.mjs. */
+let launches = 0;
+const launch = () => puppeteer.launch({
   executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
-  headless: 'new', args: [NO_TRACKING, '--no-sandbox'], userDataDir: browserProfile(`${LOC}-leaks`),
+  headless: 'new', args: [NO_TRACKING, '--no-sandbox'], protocolTimeout: 60000,
+  userDataDir: browserProfile(launches++ ? `${LOC}-leaks-r${launches - 1}` : `${LOC}-leaks`),
 });
+let b = await launch();
 const hits = new Map(); // line -> [pages]
 try {
   for (const u of urls) {
+   let text;
+   for (let attempt = 0; ; attempt++) {
+   try {
     const p = await b.newPage();
     await p.setCacheEnabled(false);
     await p.goto(u, { waitUntil: 'networkidle2', timeout: 60000 });
@@ -54,7 +64,7 @@ try {
        the first version of this scan used it — so every panel a tool shows
        only after a file is loaded went unchecked, and /pt/comprimir-excel/
        passed with an English paragraph in its options panel. */
-    const text = await p.evaluate(() => {
+    text = await p.evaluate(() => {
       const t = [];
       const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
         acceptNode(n) {
@@ -69,6 +79,14 @@ try {
       return t.join('\n');
     });
     await p.close();
+    break;
+   } catch (e) {
+    if (attempt >= 1) throw e;
+    console.log(`  (browser dropped at ${u.replace(O, '')} — relaunching, reading again)`);
+    try { await b.close(); } catch {}
+    b = await launch();
+   }
+   }
     for (const raw of text.split('\n')) {
       const line = raw.trim();
       const words = line.toLowerCase().match(/[a-zà-ú']+/g) || [];
@@ -83,7 +101,7 @@ try {
     }
   }
 } finally {
-  await b.close();
+  try { await b.close(); } catch {}
 }
 
 const sorted = [...hits.entries()].sort((a, b) => b[1].length - a[1].length);

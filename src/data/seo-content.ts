@@ -1537,6 +1537,17 @@ export const compressPdfContent = `
   <h3>Compressing a PDF to 100 KB, 200 KB, or an Email Limit.</h3>
   <p>Upload forms and mail servers impose hard caps — commonly 100 KB or 200 KB on government and exam portals, 25 MB for Gmail attachments and 20 MB for Outlook. Use <strong>Fit a size</strong>, enter the limit, and the tool searches for the gentlest setting that still comes in under it, then reports what it actually achieved. If a number is not physically reachable — a forty-page scan will not become 100 KB and remain readable — it says so and gives you the smallest size it could reach. That is more useful than a file that meets the number and cannot be read.</p>
 
+  <h3>What It Reached on a Test Document.</h3>
+  <p>To give real numbers rather than promises, we built a three-page test document the way a phone scan comes out — A4 pages at 300 DPI with paper grain, printed text, a stamp and a photograph, about 3 MB per page — combined it into a 9 MB PDF with <a href="/image-to-pdf/">Image to PDF</a>, and ran it through this tool:</p>
+  <ul>
+    <li><strong>Light:</strong> 2.1 MB. <strong>Recommended:</strong> 631 KB. <strong>Strong:</strong> 303 KB.</li>
+    <li><strong>Fit a size, 1 MB:</strong> 1,018 KB, at 197 DPI.</li>
+    <li><strong>Fit a size, 500 KB:</strong> 496 KB, at 147 DPI.</li>
+    <li><strong>Fit a size, 200 KB:</strong> 193 KB, at 90 DPI — small print still readable, but visibly softer.</li>
+    <li><strong>Fit a size, 100 KB:</strong> not reachable. The tool stopped at 137 KB and said so, rather than returning pages too blurred to read.</li>
+  </ul>
+  <p>A real document will land somewhere else — more photographs or coloured backgrounds weigh more, plain printed pages less — but the pattern holds: 1 MB is easy for a few scanned pages, 200 KB costs visible sharpness, and below that the page count decides whether it is possible at all.</p>
+
   <h3>When a PDF Will Not Get Smaller.</h3>
   <p>A text-only PDF is already efficient: its size is in embedded fonts and structure, not images, and there is no large win hiding in one. The same is true of a file whose images are already at the right resolution, of vector-only diagrams and charts, and of bilevel fax-encoded scans, which are smaller than any JPEG of them would be. The tool will tell you this instead of shaving off 2% and calling it compression. If the file is simply long rather than heavy, <a href="/split-pdf/">Split PDF</a> is the right tool — compression cannot remove pages you still need.</p>
 

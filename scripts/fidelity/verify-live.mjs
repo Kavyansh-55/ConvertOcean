@@ -1049,5 +1049,51 @@ async function stylesheetsFor(path) {
   say(long.length === 0, `shortened titles fit 70 characters, brand once${long.length ? ' — ' + long.join('; ') : ''}`);
 }
 
+/* ------------------------------------- Scheduled guides (2026-10-04) */
+{
+  /* Each guide must be live from its publishOn morning and absent before it.
+     .github/workflows/publish.yml runs this right after its daily deploy, so a
+     morning whose build failed (guide due, not there) or a guide leaking out
+     early both fail here. CO_BUILD_DATE stands in for "today" when this is
+     pointed at a local build made with the same variable. */
+  const today = (process.env.CO_BUILD_DATE || new Date().toISOString()).slice(0, 10);
+  const SCHEDULE = [
+    ['2026-10-06', '/guides/combine-pdf-and-jpg/'],
+    ['2026-10-06', '/id/panduan/gabungkan-pdf-dan-jpg/'],
+    ['2026-10-07', '/guides/how-to-calculate-percentage-in-excel/'],
+    ['2026-10-07', '/id/panduan/kwitansi-jual-beli-tanah/'],
+    ['2026-10-08', '/pt/guias/como-calcular-porcentagem-no-excel/'],
+    ['2026-10-08', '/id/panduan/cara-hitung-persentase-di-excel/'],
+  ];
+  const map = (await get('/sitemap.xml')).body;
+  const wrong = [];
+  for (const [date, path] of SCHEDULE) {
+    const due = date <= today;
+    const r = await get(path);
+    const listed = map.includes(`https://convertocean.com${path}<`);
+    if (due && (r.status !== 200 || !listed)) wrong.push(`${path} due ${date}: ${r.status}${listed ? '' : ', not in sitemap'}`);
+    if (!due && (r.status === 200 || listed)) wrong.push(`${path} not due until ${date}, but live`);
+  }
+  say(wrong.length === 0, `scheduled guides follow their dates (as of ${today})${wrong.length ? ' — ' + wrong.join('; ') : ''}`);
+
+  /* The overlays carried only a display date, and the page parsed it for
+     schema.org: every Portuguese guide shipped "NaN-NaN-NaN". */
+  const nan = [];
+  for (const g of ['png-ou-jpg', 'juntar-varios-pdf', 'redimensionar-foto-assinatura', 'escanear-documento']) {
+    const d = ((await get(`/pt/guias/${g}/`)).body.match(/"datePublished":"([^"]*)"/) || [])[1];
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d || '')) nan.push(`${g}: ${d}`);
+  }
+  say(nan.length === 0, `Portuguese guides publish a real datePublished${nan.length ? ' — ' + nan.join('; ') : ''}`);
+
+  /* Compress PDF pages state what the tool reached on a measured test
+     document, in each language. */
+  const cEn = (await get('/compress-pdf/')).body;
+  const cId = (await get('/id/kompres-pdf/')).body;
+  const cPt = (await get('/pt/comprimir-pdf/')).body;
+  say(/What It Reached on a Test Document/.test(cEn) && /1,018 KB, at 197 DPI/.test(cEn)
+      && /1\.018 KB, pada 197 DPI/.test(cId) && /1\.018 KB, a 197 DPI/.test(cPt),
+      'Compress PDF pages carry the measured test-document results (en, id, pt)');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);

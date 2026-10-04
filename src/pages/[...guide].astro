@@ -73,12 +73,11 @@ const localeRoot = lang === 'en' ? '' : `/${lang}`;
 // Format FAQ list for Layout.astro standard schema
 const faqList = guide.faqs.map(f => ({ q: f.question, a: f.answer }));
 
-// Article schema data — publishDate like "July 8, 2026" parsed to ISO for schema.org.
-// Local getters (not toISOString) so the calendar date survives the build machine's timezone.
-const pubDate = new Date(guide.publishDate);
+// Article schema data. publishOn is already YYYY-MM-DD in every locale; parsing
+// the display string instead gave every Portuguese guide "NaN-NaN-NaN".
 const articleData = {
   headline: guide.h1.replace(/\.$/, ''),
-  datePublished: `${pubDate.getFullYear()}-${String(pubDate.getMonth() + 1).padStart(2, '0')}-${String(pubDate.getDate()).padStart(2, '0')}`
+  datePublished: guide.publishOn
 };
 ---
 
@@ -352,6 +351,80 @@ const articleData = {
       padding: var(--spacing-xl);
       margin: var(--spacing-xl) 0;
       /* elevation removed — separation comes from colour, not shadow */
+    }
+
+    /* Elements the October 2026 guides use: tables that scroll sideways on a
+       phone instead of widening the page, formula lines, and screenshots of
+       real tool runs. Prefixed g- so no existing guide changes, and :global
+       because guide bodies are set:html (the scoped-CSS trap, CLAUDE.md). */
+    .guide-body :global(.g-table-wrap){
+      overflow-x: auto;
+      margin: var(--spacing-md) 0 var(--spacing-lg);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-sm);
+    }
+    .guide-body :global(.g-table){
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .guide-body :global(.g-table th),
+    .guide-body :global(.g-table td){
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--colors-hairline);
+      text-align: left;
+      vertical-align: top;
+    }
+    .guide-body :global(.g-table tr:last-child td){
+      border-bottom: 0;
+    }
+    .guide-body :global(.g-table th){
+      background-color: var(--colors-canvas-soft-2);
+      color: var(--colors-ink);
+      font-weight: var(--fw-bold);
+    }
+    .guide-body :global(.g-table .num){
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .guide-body :global(.g-formula){
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--colors-ink);
+      background-color: var(--colors-canvas-soft-2);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      margin: var(--spacing-sm) 0 var(--spacing-md);
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .guide-body :global(code.g-code){
+      font-family: var(--font-mono);
+      font-size: 0.92em;
+      color: var(--colors-ink);
+      background-color: var(--colors-canvas-soft-2);
+      padding: 1px 5px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .guide-body :global(.g-figure){
+      margin: var(--spacing-lg) 0;
+    }
+    .guide-body :global(.g-figure img){
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-md);
+    }
+    .guide-body :global(.g-figure figcaption){
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--colors-body);
+      margin-top: var(--spacing-xs);
     }
 
     /* FAQ accordion integration */

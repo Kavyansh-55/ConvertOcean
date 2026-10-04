@@ -238,6 +238,17 @@ const ptToolsSeed: PtTool[] = [
       <h2>Sem perder qualidade: depende do documento</h2>
       <p>Em PDFs de texto, o texto é vetorial e permanece nítido e selecionável em qualquer nível. Em páginas digitalizadas não existe compressão sem perdas: as imagens são recomprimidas e há degradação, proporcional ao nível escolhido. Dizemos isso abertamente porque descobrir depois que a banca recusou um documento ilegível é bem pior do que escolher um nível mais leve agora.</p>
 
+      <h2>O que a ferramenta alcançou num documento de teste</h2>
+      <p>Para dar números reais em vez de promessas, montamos um documento de teste de três páginas do jeito que sai a foto de um documento no celular — páginas A4 a 300 DPI com textura de papel, texto impresso, um carimbo e uma fotografia, cerca de 3 MB por página —, juntamos tudo num PDF de 9 MB com <a href="/pt/imagem-para-pdf/">Imagem para PDF</a> e passamos por esta ferramenta:</p>
+      <ul>
+        <li><strong>Leve:</strong> 2,1 MB. <strong>Recomendado:</strong> 631 KB. <strong>Forte:</strong> 303 KB.</li>
+        <li><strong>Definir um tamanho de 1 MB:</strong> 1.018 KB, a 197 DPI.</li>
+        <li><strong>Definir um tamanho de 500 KB:</strong> 496 KB, a 147 DPI.</li>
+        <li><strong>Definir um tamanho de 200 KB:</strong> 193 KB, a 90 DPI — letra miúda ainda legível, mas visivelmente mais suave.</li>
+        <li><strong>Definir um tamanho de 100 KB:</strong> não foi possível. A ferramenta parou em 137 KB e avisou, em vez de devolver páginas borradas demais para ler.</li>
+      </ul>
+      <p>Para o limite de 2 MB comum nos editais, sobrou folga: o nível Recomendado já deixou esse arquivo em 631 KB. Um documento real vai cair em outro ponto — mais fotos ou fundos coloridos pesam mais, páginas de texto impresso pesam menos —, mas o padrão se mantém: 1 MB é fácil para poucas páginas digitalizadas, 200 KB custa nitidez visível e, abaixo disso, o número de páginas decide se é possível.</p>
+
       <h2>Arquivos muito grandes</h2>
       <p>O processamento é local, então o limite é a memória do seu aparelho e não uma regra nossa. Para documentos de centenas de megabytes, divida antes em <a href="/pt/dividir-pdf/">dividir PDF</a>, comprima cada parte e junte novamente se preciso.</p>
 
@@ -3623,7 +3634,7 @@ export const ptGuides: PtGuide[] = [
     description: 'A diferença real entre PNG e JPG, qual escolher para imprimir, para o Instagram e para logotipos — com o teste que decide em dois segundos.',
     h1: 'PNG ou JPG: qual a diferença, e qual usar.',
     readTime: '6 min de leitura',
-    publishDate: '24 de setembro de 2026',
+    publishOn: '2026-09-24',
     intro: 'PNG e JPG resolvem problemas diferentes, e escolher errado custa qualidade ou megabytes. Este guia explica a diferença em termos práticos e responde às três perguntas que realmente aparecem: qual imprime melhor, qual usar no Instagram e o que fazer com fundo transparente.',
     contentHtml: `
       <h2>A diferença em uma frase</h2>
@@ -3691,7 +3702,7 @@ export const ptGuides: PtGuide[] = [
     description: 'Como deixar foto e assinatura nas medidas e no tamanho de arquivo que o edital exige, sem perder legibilidade — e sem que os documentos saiam do seu computador.',
     h1: 'Redimensionar foto e assinatura para formulários online.',
     readTime: '7 min de leitura',
-    publishDate: '24 de setembro de 2026',
+    publishOn: '2026-09-24',
     intro: 'Inscrições de concurso, vestibular e processos seletivos quase sempre exigem duas coisas ao mesmo tempo: medidas exatas em pixels e um limite de tamanho em KB. São exigências diferentes, e tentar resolver as duas com o mesmo ajuste é o motivo mais comum de o envio ser recusado várias vezes seguidas.',
     contentHtml: `
       <h2>Dois requisitos, dois ajustes</h2>
@@ -3761,7 +3772,7 @@ export const ptGuides: PtGuide[] = [
     description: 'Como reunir vários PDF em um único arquivo, na ordem certa, incluindo fotos e documentos digitalizados — sem que nada saia do seu computador.',
     h1: 'Como juntar vários PDF em um só.',
     readTime: '5 min de leitura',
-    publishDate: '24 de setembro de 2026',
+    publishOn: '2026-09-24',
     intro: 'Reunir vários documentos em um único PDF é a exigência mais comum de sistemas que aceitam um anexo só — editais, processos, envios a clientes. O procedimento é simples; o que costuma dar errado é a ordem, o tamanho final e o que fazer quando alguns dos arquivos são fotos.',
     contentHtml: `
       <h2>O procedimento</h2>
@@ -3825,7 +3836,7 @@ export const ptGuides: PtGuide[] = [
     description: 'Como escanear documento pelo celular sem instalar nada — no iPhone, no Android e pelo WhatsApp — e deixar o PDF legível e abaixo de 2 MB para concurso.',
     h1: 'Como escanear documento pelo celular — e deixar o PDF pronto para enviar.',
     readTime: '8 min de leitura',
-    publishDate: '27 de setembro de 2026',
+    publishOn: '2026-09-27',
     intro: 'O celular já substituiu o scanner, e na maioria dos aparelhos não é preciso instalar nada: o iPhone escaneia pelo app Notas, o Android pelo Google Drive e os dois pelo WhatsApp. O que costuma dar errado vem depois — o PDF que passa de 2 MB, o RG com frente e verso em arquivos separados, a página fora de ordem. Este guia cobre as duas partes.',
     contentHtml: `
       <h2>O que muda entre escanear e tirar uma foto</h2>
@@ -3912,6 +3923,96 @@ export const ptGuides: PtGuide[] = [
         question: 'Qual o tamanho máximo do PDF para concurso?',
         answer: 'Depende do edital, mas 2 MB por arquivo é um limite comum. Se o seu PDF passar disso, escaneie em 200 dpi e em preto e branco, e passe o resultado pelo comprimir PDF. Confira sempre o limite no próprio edital, porque ele varia entre concursos e entre documentos do mesmo concurso.'
       }
+    ]
+  },
+  {
+    /* Written for Brazilian Excel, not translated: semicolons between
+       arguments, comma decimals, SOMA/ARRED/SE, and the 10% restaurant
+       service charge as the working-backwards example. Targets "como calcular
+       porcentagem no excel" (EASY, >1000) — an Excel question, which the
+       calculator page cannot answer in depth. */
+    en: 'how-to-calculate-percentage-in-excel',
+    slug: 'como-calcular-porcentagem-no-excel',
+    title: 'Como Calcular Porcentagem no Excel (Com Exemplos) | ConvertOcean',
+    description: 'As fórmulas de porcentagem do Excel: parte de um total, aumento e queda, acréscimo e desconto — e por que a célula mostra 0,15 ou 1500% em vez de 15%.',
+    h1: 'Como calcular porcentagem no Excel.',
+    readTime: '7 min de leitura',
+    publishOn: '2026-10-08',
+    intro: 'O Excel não tem uma função de porcentagem, e não precisa. Na planilha, porcentagem é um número comum — 15% fica guardado como 0,15 —, então quase toda conta de porcentagem se resolve com uma de quatro fórmulas curtas. O que confunde é a formatação, por isso ela vem primeiro.',
+    contentHtml: `
+      <h2>A regra que resolve quase tudo: 15% é 0,15</h2>
+      <p>O formato de porcentagem não muda o número; muda só a forma de mostrar, multiplicando por 100 e colocando o sinal de %. Uma célula com 0,15 aparece como 15%. Isso deixa um único jeito de errar: fazer a multiplicação por 100 <em>e</em> aplicar o formato.</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>O que você fez</th><th>A célula guarda</th><th>Aparece como</th></tr></thead>
+        <tbody>
+          <tr><td>Digitou <code class="g-code">15%</code></td><td class="num">0,15</td><td class="num">15%</td></tr>
+          <tr><td><code class="g-code">=30/200</code> e depois o formato %</td><td class="num">0,15</td><td class="num">15%</td></tr>
+          <tr><td><code class="g-code">=30/200*100</code> e depois o formato %</td><td class="num">15</td><td class="num">1500%</td></tr>
+          <tr><td>Digitou <code class="g-code">15</code> numa célula Geral e depois o formato %</td><td class="num">15</td><td class="num">1500%</td></tr>
+        </tbody>
+      </table></div>
+      <p>Ou seja: ou você divide e formata, ou multiplica por 100 e deixa a célula como número comum. Nunca os dois. Na configuração padrão do Excel, digitar 15 numa célula que <em>já</em> está formatada como porcentagem resulta em 15% — o problema é formatar depois.</p>
+      <p>O formato fica no botão <strong>%</strong> (Estilo de Porcentagem) da guia Página Inicial, ou no atalho <strong>Ctrl+Shift+%</strong>.</p>
+
+      <h2>Porcentagem de um total</h2>
+      <p>Divida a parte pelo total. Com as vendas por região na coluna B e o total em B6:</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th></th><th>A</th><th>B</th><th>C (fórmula)</th><th>C (aparece)</th></tr></thead>
+        <tbody>
+          <tr><td>2</td><td>Sudeste</td><td class="num">12.400</td><td><code class="g-code">=B2/$B$6</code></td><td class="num">29,5%</td></tr>
+          <tr><td>3</td><td>Sul</td><td class="num">9.300</td><td><code class="g-code">=B3/$B$6</code></td><td class="num">22,1%</td></tr>
+          <tr><td>4</td><td>Nordeste</td><td class="num">15.500</td><td><code class="g-code">=B4/$B$6</code></td><td class="num">36,9%</td></tr>
+          <tr><td>5</td><td>Norte</td><td class="num">4.800</td><td><code class="g-code">=B5/$B$6</code></td><td class="num">11,4%</td></tr>
+          <tr><td>6</td><td>Total</td><td class="num">42.000</td><td><code class="g-code">=SOMA(C2:C5)</code></td><td class="num">100,0%</td></tr>
+        </tbody>
+      </table></div>
+      <p>Os cifrões em <code class="g-code">$B$6</code> travam o total, e aí dá para escrever a fórmula uma vez e arrastar para baixo. Sem eles, a linha seguinte dividiria por B7, que está vazia, e apareceria <code class="g-code">#DIV/0!</code>.</p>
+      <p>Repare num detalhe da tabela: as quatro porcentagens como aparecem — 29,5, 22,1, 36,9 e 11,4 — somam 99,9, mas o total diz 100,0%. As duas coisas estão certas. As células guardam o valor inteiro (0,295238…), e a tela arredonda cada uma separadamente. Se o relatório precisa fechar no papel, arredonde o valor guardado, não só a exibição:</p>
+      <span class="g-formula">=ARRED(B2/$B$6; 3)</span>
+      <p>O número de casas se refere à <em>fração</em>, não à porcentagem. Para uma casa decimal na porcentagem são 3 — <code class="g-code">=ARRED(0,295238; 1)</code> dá 0,3, que aparece como 30%.</p>
+
+      <h2>Porcentagem de aumento ou de queda</h2>
+      <p>Valor novo menos o antigo, dividido pelo antigo:</p>
+      <span class="g-formula">=(C2-B2)/B2</span>
+      <p>O valor antigo vai embaixo. Se inverter, a conta responde outra pergunta. É também por isso que aumento e queda não se compensam: R$ 80 subindo para R$ 100 é <strong>+25%</strong>, mas R$ 100 caindo de volta para R$ 80 é <strong>−20%</strong>, porque cada um é medido a partir do próprio ponto de partida. Resultado negativo é queda; dá para pintá-lo de vermelho com a formatação condicional.</p>
+      <p>Se o valor antigo puder ser zero, proteja a fórmula para a planilha não encher de erro: <code class="g-code">=SE(B2=0; ""; (C2-B2)/B2)</code>. Não existe variação percentual a partir do nada.</p>
+
+      <h2>Acrescentar ou descontar uma porcentagem</h2>
+      <p>Para aumentar um preço em 15%, multiplique por 1 mais a taxa; para dar 15% de desconto, por 1 menos a taxa. Com o preço em B2 e a taxa (digitada como 15%) em C2:</p>
+      <span class="g-formula">Acréscimo:  =B2*(1+C2)     R$ 40 → R$ 46
+Desconto:   =B2*(1-C2)     R$ 40 → R$ 34</span>
+      <p>O erro mais comum é fazer o caminho de volta. Uma conta de restaurante de R$ 110 que <em>já inclui</em> os 10% de serviço não era de R$ 99 — tirar 10% de 110 dá 11, e 110 − 11 = 99. Os 10% foram calculados sobre o valor menor, então é preciso dividir:</p>
+      <span class="g-formula">=B2/(1+C2)     R$ 110 → R$ 100</span>
+      <p>Com desconto vale o mesmo: um produto vendido a R$ 34 com 15% de desconto custava <code class="g-code">=34/(1-15%)</code>, ou seja, R$ 40.</p>
+
+      <h2>Quanto é X% de um valor</h2>
+      <p>Para saber quanto é 15% de 240, multiplique: <code class="g-code">=240*15%</code>, ou <code class="g-code">=A2*B2</code> com a taxa em B2. Dá 36. Deixe essa célula como número comum — o resultado é um valor, não uma porcentagem, e o formato % mostraria 3600%.</p>
+
+      <h2>Por que o Excel recusa a vírgula na fórmula</h2>
+      <p>No Brasil a vírgula é a marca decimal, então ela não pode separar os argumentos de uma função. O Excel em português usa ponto e vírgula, e os nomes das funções também são traduzidos. Um tutorial em inglês com <code class="g-code">=ROUND(B2, 3)</code> vira, aqui:</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>Tutorial em inglês</th><th>Excel no Brasil</th></tr></thead>
+        <tbody>
+          <tr><td><code class="g-code">=ROUND(B2/C2, 3)</code></td><td><code class="g-code">=ARRED(B2/C2; 3)</code></td></tr>
+          <tr><td><code class="g-code">=SUM(C2:C5)</code></td><td><code class="g-code">=SOMA(C2:C5)</code></td></tr>
+          <tr><td><code class="g-code">=IF(B2=0, "", (C2-B2)/B2)</code></td><td><code class="g-code">=SE(B2=0; ""; (C2-B2)/B2)</code></td></tr>
+          <tr><td><code class="g-code">=B2*1.15</code></td><td><code class="g-code">=B2*1,15</code></td></tr>
+        </tbody>
+      </table></div>
+      <p>No Windows, quem define o separador é a configuração de Região do sistema, que no Brasil vem com ponto e vírgula. Fórmulas só com <code class="g-code">/ * + -</code> funcionam em qualquer lugar, porque não têm argumentos para separar.</p>
+
+      <h2>No Google Planilhas</h2>
+      <p>Todas as fórmulas acima funcionam iguais no Google Planilhas, com <code class="g-code">SOMA</code>, <code class="g-code">ARRED</code> e <code class="g-code">SE</code>. O formato fica em Formatar → Número → Porcentagem, e o separador segue a localidade da planilha (Arquivo → Configurações), não a do computador.</p>
+
+      <h2>Como conferir um resultado</h2>
+      <p>Quando um número parece estranho, compare com uma conta de cabeça: 10% de 200 é 20, e R$ 50 virando R$ 100 é +100%, não +50%. Ou coloque os mesmos valores na <a href="/pt/calculadora-de-porcentagem/">calculadora de porcentagem</a>, que mostra a fórmula usada em cada resposta.</p>
+    `,
+    faqs: [
+      { question: 'Qual a fórmula de porcentagem no Excel?', answer: 'Para a parte de um total, divida a parte pelo total e aplique o formato %: =B2/$B$6. O Excel não tem função própria de porcentagem; porcentagem é só um número, e 15% fica guardado como 0,15.' },
+      { question: 'Como calcular porcentagem de aumento no Excel?', answer: '=(novo-antigo)/antigo, por exemplo =(C2-B2)/B2, com o formato %. O valor antigo vai embaixo; resultado negativo indica queda.' },
+      { question: 'Por que o Excel mostra 1500% em vez de 15%?', answer: 'A célula guarda 15, não 0,15. O formato % multiplica a exibição por 100, então tire o *100 da fórmula ou deixe a célula como número comum.' },
+      { question: 'Como dar desconto de 10% no Excel?', answer: 'Multiplique por 1 menos a taxa: =B2*(1-10%). Para acrescentar 10%, use =B2*(1+10%).' },
+      { question: 'Por que a fórmula dá erro com vírgula?', answer: 'No Excel em português a vírgula é a marca decimal, então os argumentos são separados por ponto e vírgula: =ARRED(B2/C2; 3), e não =ROUND(B2/C2, 3).' }
     ]
   }
 ];
