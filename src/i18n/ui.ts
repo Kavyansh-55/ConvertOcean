@@ -53,6 +53,17 @@ const pt: Record<string, string> = {
   'Rp – Indonesian Rupiah (IDR)': 'Rp – Rupia indonésia (IDR)',
   'Stamp duty Rp10,000': 'Selo Rp10.000',
   'Received by,': 'Recebido por,',
+  'Image format': 'Formato da imagem',
+  'Resolution': 'Resolução',
+  '96 DPI — screen, smallest files': '96 DPI — tela, arquivos menores',
+  '150 DPI — sharp on screen, good for forms': '150 DPI — nítido na tela, bom para formulários',
+  '300 DPI — print quality, large files': '300 DPI — qualidade de impressão, arquivos grandes',
+  'Convert & Download': 'Converter e baixar',
+  '{0} pages. One page downloads as an image; several download as a ZIP.': '{0} páginas. Uma página baixa como imagem; várias baixam num ZIP.',
+  'This PDF is password-protected. Open it, remove the password, and try again.': 'Este PDF tem senha. Abra-o, remova a senha e tente de novo.',
+  'Rendering page {0} of {1}…': 'Gerando a página {0} de {1}…',
+  'Creating ZIP…': 'Criando o ZIP…',
+  'Could not render this PDF. Try a lower resolution.': 'Não foi possível gerar as imagens deste PDF. Tente uma resolução menor.',
   'Source code (GitHub)': 'Código-fonte (GitHub)',
   'In words:': 'Por extenso:',
   'PPN 11% (non-luxury goods)': 'PPN 11% (bens não de luxo)',
@@ -753,6 +764,7 @@ export function dictionaryFor(lang: Locale, scope?: string): Record<string, stri
  * would silently fall back to English at runtime.
  */
 const RUNTIME_KEYS = [
+  '{0} pages. One page downloads as an image; several download as a ZIP.', 'This PDF is password-protected. Open it, remove the password, and try again.', 'Rendering page {0} of {1}…', 'Creating ZIP…', 'Could not render this PDF. Try a lower resolution.',
   'Reading the document…', 'Reading statement…', 'Reading photo…',
   'Copy', 'Download', 'Download CSV', 'Download Excel',
   'Description', 'Currency', 'Format', 'Resize Image',

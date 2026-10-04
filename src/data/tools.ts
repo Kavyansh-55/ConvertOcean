@@ -265,6 +265,26 @@ const rawTools: ToolData[] = [
     relatedTools: ['txt-to-pdf', 'merge-pdf', 'split-pdf', 'excel-to-pdf']
   },
   {
+    slug: 'pdf-to-jpg',
+    name: 'PDF to JPG',
+    title: 'PDF to JPG Converter - Free, Private, In Your Browser | ConvertOcean',
+    description: 'Convert every PDF page to a JPG or PNG image in your browser, at 96, 150 or 300 DPI. One page downloads as an image, several as a ZIP. Nothing is uploaded.',
+    headline: 'PDF to JPG.',
+    subtitle: 'Turn each page of a PDF into a JPG or PNG image, at the resolution you choose, without the file leaving your device.',
+    quickAnswer: 'To convert a PDF to JPG, select it above, choose JPG or PNG and a resolution, and press Convert & Download. Each page becomes one image; a one-page PDF downloads as a single image and a longer one as a ZIP. 150 DPI suits screens and upload forms; 300 DPI is print quality.',
+    icon: '📄',
+    category: 'Document Tools',
+    categorySlug: 'document-tools',
+    faqs: [
+      { question: 'How do I convert a PDF to JPG?', answer: 'Select the PDF, keep JPG as the format, pick a resolution and press Convert & Download. Every page becomes its own image.' },
+      { question: 'Which resolution should I choose?', answer: '150 DPI is sharp on screen and keeps files small enough for most upload forms. Choose 300 DPI for printing, and 96 DPI when the smallest file matters most.' },
+      { question: 'JPG or PNG?', answer: 'JPG makes much smaller files for scans and photos. PNG keeps text and line drawings perfectly crisp but is larger. Both have a white background, like the paper.' },
+      { question: 'Is my PDF uploaded?', answer: 'No. The pages are rendered by your browser, so the PDF never leaves your device.' },
+      { question: 'Can it convert a password-protected PDF?', answer: 'No. Remove the password first by opening the PDF with it and saving an unprotected copy, then convert that copy.' }
+    ],
+    relatedTools: ['image-to-pdf', 'compress-pdf', 'split-pdf', 'pdf-to-txt']
+  },
+  {
     slug: 'image-to-text',
     name: 'Image to Text OCR',
     title: 'Private Image to Text OCR Converter - ConvertOcean',
