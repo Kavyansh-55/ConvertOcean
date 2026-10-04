@@ -600,6 +600,9 @@ export const idUi: Record<string, string> = {
    converters and JSON formatter are not localised (no Indonesian demand —
    see src/data/id/keywords.ts), so their messages are not translated here. */
 export const idRuntime: Record<string, string> = {
+  "Download Excel": "Unduh Excel",
+  /* The OCR link a scanned PDF gets on PDF ke Word / PDF ke Excel. */
+  "/image-to-text/": "/id/gambar-ke-teks/",
   "Total Fixed Costs ({0})": "Total Biaya Tetap ({0})",
   "Variable Cost per Unit ({0})": "Biaya Variabel per Unit ({0})",
   "Selling Price per Unit ({0})": "Harga Jual per Unit ({0})",

@@ -131,6 +131,18 @@ const PAGES = [
   '/pt/guias/escanear-documento/', // the longest PT guide: nested h3s, ordered steps
   '/guides/photos-to-pdf-scanning/', // an English guide: same template, never measured on a phone
 
+  /* The Indonesian locale: the same overflow risk as Portuguese, and its own
+     labels — "Pas Foto 3×4 cm (300 dpi)" chips, "Seret dan lepas…" drop zones. */
+  '/id/',                        // the locale homepage
+  '/id/peta-situs/',             // dense link lists
+  '/id/konverter-file/',         // auto-fill card grid
+  '/id/kontak/',                 // the contact form
+  '/id/kompres-pdf/',            // CompressPdf
+  '/id/ubah-ukuran-gambar/',     // ImageResizer with the pas foto chips
+  '/id/pisahkan-pdf/',           // SplitPdf
+  '/id/kompres-ppt/',            // CompressOffice
+  '/id/gabungkan-pdf/',          // MergePdf
+
   /* One per component. The comment is the component, because that is the unit
      this list is really covering. */
   '/excel-to-pdf/',              // ExcelToPdf
