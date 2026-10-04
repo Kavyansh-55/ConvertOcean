@@ -1930,6 +1930,59 @@ Remove:   =B2*(1-C2)     40 → 34</span>
       { question: 'Why does my resized photo look stretched?', answer: 'Its shape did not match the target. Crop to the right ratio first (3:4 for a 3 × 4 cm photo), then resize, or turn on Lock ratio.' },
       { question: 'Does changing the DPI make a photo sharper?', answer: 'No. Changing only the DPI tag changes the claimed print size, not the detail. Sharpness depends on the number of pixels.' }
     ]
+  },
+  {
+    slug: 'excel-csv-leading-zeros-long-numbers',
+    title: 'Excel Removes Leading Zeros in CSV: How to Stop It | ConvertOcean',
+    description: 'Why Excel turns 00123 into 123 and a 16-digit number into 1.23E+15, how to open a CSV without losing data, and the setting that stops it.',
+    h1: 'Why Excel Drops Leading Zeros and Long Numbers in a CSV.',
+    readTime: '6 min read',
+    publishOn: '2026-11-09',
+    relatedTools: ['csv-to-xlsx', 'xlsx-to-csv', 'csv-to-json'],
+    relatedGuides: ['xlsx-vs-xls-vs-csv', 'how-to-calculate-percentage-in-excel'],
+    intro: 'You open a CSV and the ZIP codes have lost their leading zeros, the phone numbers start with 9 instead of 09, and a column of 16-digit account numbers reads 1.23457E+15. Worse, if you save the file now, the damage is permanent. Here is what Excel is doing, how to open the file safely, and the one setting that stops it for good.',
+    contentHtml: `
+      <h2>What Excel is doing</h2>
+      <p>A CSV is plain text; it does not say which columns are numbers. When you double-click one, Excel guesses, and anything made only of digits becomes a number. Two kinds of data do not survive that:</p>
+      <ul>
+        <li><strong>Codes with a leading zero.</strong> As a number, <code class="g-code">00123</code> is just 123, so the zeros are dropped. ZIP and postal codes, phone numbers, product SKUs and employee IDs are hit.</li>
+        <li><strong>Numbers longer than 15 digits.</strong> Excel stores numbers to 15 significant digits. A 16-digit card or account number such as <code class="g-code">4111111111111234</code> is shown as <code class="g-code">4.11111E+15</code>, and its 16th digit is replaced by a zero — <code class="g-code">4111111111111230</code>. That is not a display issue; the digit is gone from the cell.</li>
+      </ul>
+      <p><strong>Do not save over the CSV.</strong> Saving writes the damaged values back to the file. If you already did, go back to the original export; the lost zeros and digits cannot be rebuilt from the saved copy.</p>
+
+      <h2>Open the CSV without losing anything</h2>
+      <p>Instead of double-clicking, import it and tell Excel which columns are text:</p>
+      <ol>
+        <li>Open a blank workbook and go to <strong>Data → From Text/CSV</strong>, then pick the file.</li>
+        <li>In the preview, click <strong>Transform Data</strong>.</li>
+        <li>Select each code or ID column, set its data type to <strong>Text</strong>, and choose <strong>Replace current</strong> if asked.</li>
+        <li><strong>Close &amp; Load.</strong> The zeros and every digit stay as they were.</li>
+      </ol>
+      <p>Prefer the older wizard? Turn it on under File → Options → Data → <em>Show legacy data import wizards</em>, then use Data → Get Data → Legacy Wizards → From Text, and mark those columns as <strong>Text</strong> in step 3.</p>
+
+      <h2>Stop it permanently (Microsoft 365 and Excel 2024)</h2>
+      <p>Recent versions of Excel have a switch for exactly this, under <strong>File → Options → Data → Automatic data conversion</strong>. Turn off the options to remove leading zeros and to keep only the first 15 digits of long numbers, and double-clicked CSVs keep them as text from then on. One trade-off: values kept as text cannot be used in calculations until you convert them, which is what you want for IDs anyway. Older versions of Excel do not have this setting; use the import method above.</p>
+
+      <h2>Convert the CSV to Excel first</h2>
+      <p>Another way round it: turn the CSV into an .xlsx before Excel ever guesses. Our <a href="/csv-to-xlsx/">CSV to XLSX converter</a> treats a value as a number only when nothing is lost by doing so — anything with a leading zero, or more than 15 significant digits, is stored as text, while ordinary quantities stay numbers you can add up. It runs in your browser, so a customer list or payroll export never leaves your device.</p>
+
+      <h2>Typing or pasting codes by hand</h2>
+      <ul>
+        <li>Format the column as <strong>Text</strong> (Home → Number format → Text) <em>before</em> typing or pasting. Formatting afterwards does not bring the zeros back.</li>
+        <li>For a single cell, start with an apostrophe: <code class="g-code">'00123</code>. The apostrophe is not shown or exported.</li>
+        <li>If you only need the look of a fixed length — always five digits, say — a custom number format such as <code class="g-code">00000</code> displays 123 as 00123. The cell still holds 123, so this is for display, not for IDs you will export.</li>
+      </ul>
+
+      <h2>Google Sheets does it too</h2>
+      <p>Sheets also turns digit strings into numbers. When importing, untick <strong>Convert text to numbers, dates, and formulas</strong>, or format the column as <strong>Format → Number → Plain text</strong> before pasting.</p>
+    `,
+    faqs: [
+      { question: 'Why does Excel remove the leading zeros in my CSV?', answer: 'A CSV does not mark columns as text, so Excel reads digit-only values as numbers, and as a number 00123 is 123. Import the file with Data → From Text/CSV and set those columns to Text.' },
+      { question: 'Why is my 16-digit number showing as 1.23E+15?', answer: 'Excel stores numbers to 15 significant digits. A longer value is shown in scientific notation and the digits after the 15th are replaced with zeros. Keep such columns as text when importing.' },
+      { question: 'Can I get the lost digits back?', answer: 'Not from a file that was saved after Excel converted it. Go back to the original CSV or export and open it with the import method instead.' },
+      { question: 'How do I stop Excel converting numbers permanently?', answer: 'In Microsoft 365 and Excel 2024, go to File → Options → Data → Automatic data conversion and turn off removing leading zeros and keeping only the first 15 digits.' },
+      { question: 'How do I keep a leading zero when typing?', answer: 'Format the column as Text before typing, or start the entry with an apostrophe, such as \'00123.' }
+    ]
   }
 ];
 

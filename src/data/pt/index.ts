@@ -4214,6 +4214,57 @@ Desconto:   =B2*(1-C2)     R$ 40 → R$ 34</span>
       { question: 'Por que a foto ficou esticada?', answer: 'O formato dela não batia com o tamanho pedido. Recorte na proporção certa antes (3:4 para uma foto 3 × 4) e depois redimensione, ou ative Manter proporção.' },
       { question: 'Mudar o DPI deixa a foto mais nítida?', answer: 'Não. Mudar só o DPI altera o tamanho de impressão informado, não o detalhe. A nitidez depende da quantidade de pixels.' }
     ]
+  },
+  {
+    en: 'excel-csv-leading-zeros-long-numbers',
+    slug: 'excel-zero-a-esquerda-csv',
+    title: 'Excel Tira o Zero à Esquerda do CSV: Como Evitar | ConvertOcean',
+    description: 'Por que o Excel tira o zero do CPF e do CEP e transforma números longos em 1,23E+15, como abrir o CSV sem perder dados e a opção que resolve.',
+    h1: 'Excel tirando o zero à esquerda do CSV: como evitar.',
+    readTime: '6 min de leitura',
+    publishOn: '2026-11-11',
+    intro: 'Você abre um CSV e o CPF que começava com 0 perdeu o zero, o CEP 01310-100 virou outra coisa, e uma coluna de números de cartão aparece como 4,11111E+15. Pior: se salvar o arquivo agora, o estrago fica permanente. Veja o que o Excel está fazendo, como abrir o arquivo com segurança e a opção que acaba com isso de vez.',
+    contentHtml: `
+      <h2>O que o Excel está fazendo</h2>
+      <p>Um CSV é texto puro; ele não diz quais colunas são números. Ao abrir com dois cliques, o Excel tenta adivinhar, e tudo que só tem dígitos vira número. Dois tipos de dado não sobrevivem a isso:</p>
+      <ul>
+        <li><strong>Códigos com zero à esquerda.</strong> Como número, <code class="g-code">01234567890</code> é só 1234567890, e o zero some. CPF que começa com 0, CEP, telefone, código de produto e matrícula são os mais atingidos.</li>
+        <li><strong>Números com mais de 15 dígitos.</strong> O Excel guarda números com 15 dígitos significativos. Um número de cartão de 16 dígitos como <code class="g-code">4111111111111234</code> aparece como <code class="g-code">4,11111E+15</code>, e o 16º dígito é trocado por zero — <code class="g-code">4111111111111230</code>. Não é só a exibição: o dígito some da célula.</li>
+      </ul>
+      <p><strong>Não salve por cima do CSV.</strong> Salvar grava os valores estragados no arquivo. Se já salvou, volte à exportação original; os zeros e dígitos perdidos não podem ser recuperados da cópia salva.</p>
+
+      <h2>Abrir o CSV sem perder nada</h2>
+      <p>Em vez de dar dois cliques, importe o arquivo e diga ao Excel quais colunas são texto:</p>
+      <ol>
+        <li>Abra uma pasta de trabalho em branco e vá em <strong>Dados → De Texto/CSV</strong>, e escolha o arquivo.</li>
+        <li>Na visualização, clique em <strong>Transformar Dados</strong>.</li>
+        <li>Selecione cada coluna de código (CPF, CEP, telefone), mude o tipo de dado para <strong>Texto</strong> e escolha <strong>Substituir atual</strong> se perguntar.</li>
+        <li><strong>Fechar e Carregar.</strong> Os zeros e todos os dígitos continuam lá.</li>
+      </ol>
+
+      <h2>Acabar com isso de vez (Microsoft 365 e Excel 2024)</h2>
+      <p>As versões recentes do Excel têm uma opção exatamente para isso, em <strong>Arquivo → Opções → Dados → Conversão automática de dados</strong>. Desligue as opções de remover zeros à esquerda e de manter só os 15 primeiros dígitos, e os CSVs abertos com dois cliques passam a manter esses valores como texto. A contrapartida: valores guardados como texto não entram em contas até serem convertidos — o que, para CPF e códigos, é exatamente o desejado. Versões mais antigas não têm essa opção; use a importação acima.</p>
+
+      <h2>Converta o CSV para Excel antes</h2>
+      <p>Outra saída é transformar o CSV em .xlsx antes que o Excel tente adivinhar. O nosso <a href="/pt/csv-para-xlsx/">conversor de CSV para XLSX</a> só trata um valor como número quando nada se perde com isso — tudo que tem zero à esquerda ou mais de 15 dígitos significativos vira texto, enquanto quantidades comuns continuam números que dá para somar. Ele lê os separadores do Brasil (ponto e vírgula, vírgula decimal) e roda no seu navegador, então uma lista de clientes ou uma folha de pagamento não sai do seu computador.</p>
+
+      <h2>Digitando ou colando códigos</h2>
+      <ul>
+        <li>Formate a coluna como <strong>Texto</strong> (Página Inicial → Formato de Número → Texto) <em>antes</em> de digitar ou colar. Formatar depois não traz os zeros de volta.</li>
+        <li>Para uma célula só, comece com um apóstrofo: <code class="g-code">'01234567890</code>. O apóstrofo não aparece nem é exportado.</li>
+        <li>Se só precisa da aparência de tamanho fixo — sempre 11 dígitos, por exemplo —, o formato personalizado <code class="g-code">00000000000</code> mostra 1234567890 como 01234567890. A célula continua guardando o número sem o zero, então serve para exibir, não para exportar.</li>
+      </ul>
+
+      <h2>O Google Planilhas também faz isso</h2>
+      <p>O Planilhas também transforma sequências de dígitos em números. Na importação, desmarque <strong>Converter texto em números, datas e fórmulas</strong>, ou formate a coluna em <strong>Formatar → Número → Texto simples</strong> antes de colar.</p>
+    `,
+    faqs: [
+      { question: 'Por que o Excel tira o zero à esquerda do CSV?', answer: 'O CSV não marca colunas como texto, então o Excel lê valores só com dígitos como números, e como número 01234 é 1234. Importe com Dados → De Texto/CSV e defina essas colunas como Texto.' },
+      { question: 'Por que meu número aparece como 1,23E+15?', answer: 'O Excel guarda números com 15 dígitos significativos. Um valor maior aparece em notação científica, e os dígitos depois do 15º viram zero. Mantenha essas colunas como texto na importação.' },
+      { question: 'Dá para recuperar os dígitos perdidos?', answer: 'Não de um arquivo que foi salvo depois da conversão. Volte ao CSV ou à exportação original e abra com o método de importação.' },
+      { question: 'Como desligar a conversão automática do Excel?', answer: 'No Microsoft 365 e no Excel 2024, vá em Arquivo → Opções → Dados → Conversão automática de dados e desligue a remoção de zeros à esquerda e a limitação a 15 dígitos.' },
+      { question: 'Como manter o zero à esquerda ao digitar um CPF?', answer: 'Formate a coluna como Texto antes de digitar, ou comece com um apóstrofo, como \'01234567890.' }
+    ]
   }
 ];
 

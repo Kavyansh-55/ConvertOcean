@@ -2561,6 +2561,54 @@ Diskon 15%:  =B2*(1-C2)     Rp 40.000 → Rp 34.000</span>
       { question: 'Kenapa foto saya jadi melar?', answer: 'Bentuknya tidak sama dengan ukuran tujuan. Potong dulu sesuai rasionya (3:4 untuk pas foto 3 × 4), baru ubah ukuran, atau aktifkan Kunci rasio.' },
       { question: 'Apakah mengubah DPI membuat foto lebih tajam?', answer: 'Tidak. Mengubah angka DPI saja hanya mengubah ukuran cetak yang diklaim, bukan detailnya. Ketajaman bergantung pada jumlah piksel.' }
     ]
+  },
+  {
+    en: 'excel-csv-leading-zeros-long-numbers',
+    slug: 'excel-nik-jadi-e-plus-15',
+    title: 'NIK di Excel Jadi E+15 dan Angka 0 Hilang: Solusinya | ConvertOcean',
+    description: 'Kenapa Excel mengubah NIK 16 digit menjadi 3,17E+15 dan menghapus angka 0 di depan nomor HP, serta cara membuka CSV tanpa kehilangan data.',
+    h1: 'NIK di Excel jadi E+15 dan angka 0 hilang: cara mengatasinya.',
+    readTime: '6 menit baca',
+    publishOn: '2026-11-13',
+    intro: 'Anda membuka data peserta dalam CSV, lalu kolom NIK berubah menjadi 3,17101E+15, nomor HP 0812… kehilangan angka 0 di depannya, dan kode pos atau nomor rekening ikut rusak. Lebih buruk lagi, jika file disimpan sekarang, kerusakannya permanen. Berikut yang sebenarnya dilakukan Excel, cara membuka file dengan aman, dan pengaturan yang menghentikannya.',
+    contentHtml: `
+      <h2>Apa yang dilakukan Excel</h2>
+      <p>CSV adalah teks biasa; file ini tidak menandai kolom mana yang berisi angka. Saat dibuka dengan klik dua kali, Excel menebak, dan semua yang hanya berisi digit diubah menjadi angka. Dua jenis data tidak selamat:</p>
+      <ul>
+        <li><strong>Kode dengan angka 0 di depan.</strong> Sebagai angka, <code class="g-code">081234567890</code> hanyalah 81234567890, sehingga angka 0 hilang. Nomor HP, kode pos, kode barang dan nomor induk sering terkena.</li>
+        <li><strong>Angka lebih dari 15 digit — termasuk NIK.</strong> Excel menyimpan angka sampai 15 digit signifikan. NIK berisi 16 digit, sehingga <code class="g-code">3171012345678901</code> tampil sebagai <code class="g-code">3,17101E+15</code>, dan digit ke-16 diganti nol menjadi <code class="g-code">3171012345678900</code>. Ini bukan sekadar tampilan: digit itu benar-benar hilang dari sel. Nomor kartu kredit dan banyak nomor rekening mengalami hal yang sama.</li>
+      </ul>
+      <p><strong>Jangan simpan menimpa file CSV.</strong> Menyimpan akan menulis nilai yang sudah rusak ke file. Jika terlanjur, kembali ke file ekspor aslinya; nol dan digit yang hilang tidak bisa dipulihkan dari salinan yang sudah disimpan.</p>
+
+      <h2>Membuka CSV tanpa kehilangan data</h2>
+      <p>Jangan klik dua kali; impor filenya dan beri tahu Excel kolom mana yang berupa teks:</p>
+      <ol>
+        <li>Buka workbook kosong, pilih <strong>Data → From Text/CSV</strong>, lalu pilih filenya.</li>
+        <li>Di jendela pratinjau, klik <strong>Transform Data</strong>.</li>
+        <li>Pilih setiap kolom NIK, nomor HP atau kode, ubah tipe datanya menjadi <strong>Text</strong>, lalu pilih <strong>Replace current</strong> jika ditanya.</li>
+        <li>Klik <strong>Close &amp; Load</strong>. Angka 0 dan semua digit tetap utuh.</li>
+      </ol>
+
+      <h2>Menghentikannya permanen (Microsoft 365 dan Excel 2024)</h2>
+      <p>Versi Excel terbaru punya pengaturan khusus untuk ini, di <strong>File → Options → Data → Automatic data conversion</strong>. Matikan opsi untuk menghapus angka 0 di depan dan opsi untuk menyimpan hanya 15 digit pertama, maka CSV yang dibuka dengan klik dua kali akan menyimpan nilai-nilai itu sebagai teks. Konsekuensinya: nilai yang disimpan sebagai teks tidak bisa langsung dihitung — dan untuk NIK atau nomor HP, memang itu yang diinginkan. Versi Excel yang lebih lama tidak punya pengaturan ini; gunakan cara impor di atas.</p>
+
+      <h2>Mengetik atau menempel NIK secara manual</h2>
+      <ul>
+        <li>Ubah format kolom menjadi <strong>Text</strong> (Home → Number Format → Text) <em>sebelum</em> mengetik atau menempel. Mengubah format sesudahnya tidak mengembalikan digit yang hilang.</li>
+        <li>Untuk satu sel, awali dengan tanda petik satu: <code class="g-code">'3171012345678901</code>. Tanda petik tidak ditampilkan dan tidak ikut diekspor.</li>
+        <li>Format angka kustom seperti <code class="g-code">0000000000000000</code> tidak menolong untuk NIK: digit ke-16 sudah hilang sebelum format diterapkan. Untuk NIK, satu-satunya cara aman adalah teks.</li>
+      </ul>
+
+      <h2>Google Spreadsheet juga begitu</h2>
+      <p>Google Spreadsheet juga mengubah deretan digit menjadi angka. Saat mengimpor, hapus centang pada opsi untuk mengonversi teks menjadi angka, tanggal dan rumus, atau ubah format kolom menjadi <strong>teks biasa</strong> (Format → Angka) sebelum menempel data.</p>
+    `,
+    faqs: [
+      { question: 'Kenapa NIK di Excel berubah menjadi E+15?', answer: 'NIK berisi 16 digit, sedangkan Excel menyimpan angka hanya sampai 15 digit signifikan. Nilainya ditampilkan dalam notasi ilmiah dan digit ke-16 diganti nol. Simpan kolom NIK sebagai teks saat mengimpor.' },
+      { question: 'Bagaimana agar angka 0 di depan nomor HP tidak hilang?', answer: 'Impor CSV lewat Data → From Text/CSV dan ubah kolom itu menjadi Text, atau format kolom sebagai Text sebelum mengetik, atau awali dengan tanda petik satu.' },
+      { question: 'Apakah digit NIK yang hilang bisa dikembalikan?', answer: 'Tidak dari file yang sudah disimpan setelah diubah Excel. Kembali ke file CSV atau ekspor aslinya dan buka dengan cara impor.' },
+      { question: 'Bagaimana mematikan konversi otomatis di Excel?', answer: 'Di Microsoft 365 dan Excel 2024, buka File → Options → Data → Automatic data conversion, lalu matikan penghapusan angka 0 di depan dan pembatasan 15 digit.' },
+      { question: 'Apakah format angka kustom bisa memperbaiki NIK?', answer: 'Tidak. Digit ke-16 sudah hilang sebelum format diterapkan. Untuk NIK, simpan sebagai teks.' }
+    ]
   }
 ];
 export const idStaticPages: LocaleStaticPage[] = [
