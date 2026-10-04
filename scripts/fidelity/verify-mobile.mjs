@@ -338,6 +338,23 @@ try {
           await new Promise((r) => setTimeout(r, 1500));
         }
 
+        /* Measure the page in its settled state. Layout.astro reveals every
+           [data-reveal] block after 3s with a 0.6s slide; a file-loaded page
+           is measured right inside that window, and a button mid-slide reads
+           43.9999px tall through the fractional transform. That failed
+           /merge-images/, then /split-excel/ and /pdf-to-excel/, at random
+           (2026-10-04). Reveal everything as the failsafe would, then wait
+           for the finite animations to end — never for spinners. */
+        await page.evaluate(async () => {
+          document.querySelectorAll('[data-reveal], [data-reveal-stagger]').forEach((e) => e.classList.add('is-visible'));
+          await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+          const finite = document.getAnimations().filter((a) => Number.isFinite(a.effect?.getComputedTiming().endTime));
+          await Promise.race([
+            Promise.all(finite.map((a) => a.finished.catch(() => {}))),
+            new Promise((r) => setTimeout(r, 2000)),
+          ]);
+        });
+
         const found = await page.evaluate((vw) => {
           const out = { overflow: null, zoomers: [], smallTaps: [], tinyText: [], flush: [] };
 
