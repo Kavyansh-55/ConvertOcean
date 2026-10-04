@@ -1101,5 +1101,12 @@ async function stylesheetsFor(path) {
       'Compress PDF pages carry the measured test-document results (en, id, pt)');
 }
 
+/* ---------------------------------------------- PDF to JPG (2026-10-04) */
+{
+  const pj = await get('/pdf-to-jpg/');
+  say(pj.status === 200 && /id="pjFormat"/.test(pj.body) && /pdf\.js\/3\.4\.120\/pdf\.min\.js/.test(pj.body)
+      && /jszip\/3\.10\.1/.test(pj.body), '/pdf-to-jpg/ ships its controls, pdf.js and JSZip');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
