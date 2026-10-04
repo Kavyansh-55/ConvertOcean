@@ -76,5 +76,32 @@ carried a font dropped in the Satoshi migration.
   deploy" is the full sequence including live verification and a dated entry
   in `SEO-ROADMAP.md`.
 
+## Scheduled guides and the daily publisher
+
+Guides publish themselves. Each guide has `publishOn: 'YYYY-MM-DD'`;
+`src/data/publish.ts` leaves it out of the build (page, links, sitemap,
+hreflang) until that date. `.github/workflows/publish.yml` builds and deploys
+`main` every day at 00:30 UTC and then runs `verify-live.mjs`; on the 1st and
+15th it also commits `.github/heartbeat` so GitHub never disables the schedule.
+**Run `git pull` before working** — the repo gains those commits on its own.
+
+- **Where guides live:** English in `src/data/guides.ts`; Portuguese in
+  `ptGuides` (`src/data/pt/index.ts`); Indonesian in `idGuides`
+  (`src/data/id/index.ts`). A translation sets `en:` to the English slug and
+  must not publish before that original. A locale-only guide sets
+  `standalone` and joins no hreflang cluster.
+- **Every new guide also goes in the `SCHEDULE` list in
+  `scripts/fidelity/verify-live.mjs`** — the daily run checks each guide is
+  live from its date and absent before it.
+- **Test any date:** `CO_BUILD_DATE=2026-11-20 npm run build`, and the same
+  variable for `verify-live.mjs` against a local server on port 4321.
+- **Pick topics from keyword data, never from imagination,** and never one a
+  tool page already answers (that competes with our own page). Verify every
+  fact; describe test material honestly. Quality over count — thin AI-written
+  content is the reason AdSense said "low value content".
+- **Before deploying, read every `FAIL` line** of the local `verify-live.mjs`
+  run. The 14 canonical/hreflang/redirect checks only pass on the real domain;
+  anything else is a real failure.
+
 `SEO-ROADMAP.md` is the living plan and the log of every deploy. It is kept
 locally and deliberately not published; a fresh clone will not have it.
