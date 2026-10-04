@@ -20,6 +20,7 @@
 
 import { tools, type ToolData } from '../data/tools';
 import { guides, type GuideData } from '../data/guides';
+import { isPublished, displayDate } from '../data/publish';
 import { DEFAULT_LOCALE, LOCALES, LOCALE_CODES, PREFIXED_LOCALES, normalizePath, guidesBase, type Locale } from './config';
 import { ptTools, ptGuides, ptCategories, ptStaticPages } from '../data/pt';
 import { idTools, idGuides, idCategories, idStaticPages, ID_READY } from '../data/id';
@@ -46,6 +47,10 @@ export interface LocaleTool {
 }
 
 export interface LocaleGuide {
+  /**
+   * The English guide this one localises. For a standalone guide (below) it
+   * is only an identity key — written `<locale>:<slug>` — with no English page.
+   */
   en: string;
   slug: string;
   title: string;
@@ -53,14 +58,23 @@ export interface LocaleGuide {
   h1: string;
   readTime: string;
   /**
-   * Written in Portuguese, e.g. "24 de setembro de 2026".
+   * The local date as YYYY-MM-DD: schema.org datePublished, the reader's date
+   * (formatted per locale), and the schedule — a future date is not built yet.
    *
-   * Without it the page inherits the English guide's date string — "July 10,
-   * 2026" — rendered under a Portuguese label. The schema.org datePublished is
-   * parsed from the ENGLISH base date, so it stays valid either way; this is
-   * only what the reader sees.
+   * Until 2026-10-04 the overlays carried only a display string ("24 de
+   * setembro de 2026") and the guide page parsed THAT for datePublished, so
+   * every Portuguese guide shipped "NaN-NaN-NaN" as its structured-data date.
    */
+  publishOn?: string;
+  /** Display override; normally derived from publishOn. */
   publishDate?: string;
+  /**
+   * A guide written for this locale's searches with no English original —
+   * "kwitansi jual beli tanah", "porcentagem no Excel". It joins no hreflang
+   * cluster (there is nothing to pair it with) and names its own neighbours,
+   * by English tool slug and by guide identity key.
+   */
+  standalone?: { relatedTools: string[]; relatedGuides?: string[] };
   intro: string;
   contentHtml: string;
   faqs: { question: string; answer: string }[];
@@ -104,12 +118,19 @@ interface LocaleContent {
   staticPages: LocaleStaticPage[];
 }
 
+/* A localised guide is built when its own date has come and, for a
+   translation, when its English original is built too — otherwise the route
+   would emit a page whose base guide does not exist yet. */
+const publishedEnglish = new Set(guides.map(g => g.slug));
+const live = (list: LocaleGuide[]) =>
+  list.filter(g => isPublished(g) && (g.standalone ? true : publishedEnglish.has(g.en)));
+
 const CONTENT: Record<PrefixedLocale, LocaleContent> = {
-  pt: { tools: ptTools, guides: ptGuides, categories: ptCategories, staticPages: ptStaticPages },
+  pt: { tools: ptTools, guides: live(ptGuides), categories: ptCategories, staticPages: ptStaticPages },
   /* Content is written ahead of launch; ID_READY holds it back until /id/ has
      its homepage and static pages, so nothing links to an unbuilt page. */
   id: ID_READY
-    ? { tools: idTools, guides: idGuides, categories: idCategories, staticPages: idStaticPages }
+    ? { tools: idTools, guides: live(idGuides), categories: idCategories, staticPages: idStaticPages }
     : { tools: [], guides: [], categories: [], staticPages: [] }
 };
 
@@ -195,22 +216,53 @@ function mergeTool(base: ToolData, overlay: LocaleTool, lang: Locale): ToolData 
 export function getGuides(lang: Locale): GuideData[] {
   if (lang === DEFAULT_LOCALE) return guides;
   const byEn = guideByEn.get(lang)!;
-  return guides
+  const translated = guides
     .filter(g => byEn.has(g.slug))
     .map(g => mergeGuide(g, byEn.get(g.slug)!, lang));
+  const standalone = localeGuides(lang)
+    .filter(g => g.standalone)
+    .map(g => standaloneGuide(g, lang));
+  return [...translated, ...standalone];
 }
 
 export function getGuide(slug: string, lang: Locale): GuideData | undefined {
   if (lang === DEFAULT_LOCALE) return guides.find(g => g.slug === slug);
   const overlay = localeGuides(lang).find(g => g.slug === slug);
   if (!overlay) return undefined;
+  if (overlay.standalone) return standaloneGuide(overlay, lang);
   const base = guides.find(g => g.slug === overlay.en);
   return base ? mergeGuide(base, overlay, lang) : undefined;
 }
 
-function mergeGuide(base: GuideData, overlay: LocaleGuide, lang: Locale): GuideData {
+/** English tool slugs and guide identity keys, mapped to this locale's slugs. */
+function localNeighbours(lang: Locale, toolsEn: string[], guidesEn: string[]) {
   const tByEn = toolByEn.get(lang)!;
   const gByEn = guideByEn.get(lang)!;
+  return {
+    relatedTools: toolsEn.filter(s => tByEn.has(s)).map(s => tByEn.get(s)!.slug),
+    relatedGuides: guidesEn.filter(s => gByEn.has(s)).map(s => gByEn.get(s)!.slug)
+  };
+}
+
+function standaloneGuide(g: LocaleGuide, lang: Locale): GuideData {
+  if (!g.publishOn) throw new Error(`standalone guide ${g.en} needs publishOn (YYYY-MM-DD)`);
+  return {
+    slug: g.slug,
+    title: g.title,
+    description: g.description,
+    h1: g.h1,
+    readTime: g.readTime,
+    publishOn: g.publishOn,
+    publishDate: g.publishDate ?? displayDate(g.publishOn, lang as 'pt' | 'id'),
+    intro: g.intro,
+    contentHtml: g.contentHtml,
+    faqs: g.faqs,
+    ...localNeighbours(lang, g.standalone!.relatedTools, g.standalone!.relatedGuides ?? [])
+  };
+}
+
+function mergeGuide(base: GuideData, overlay: LocaleGuide, lang: Locale): GuideData {
+  const publishOn = overlay.publishOn ?? base.publishOn;
   return {
     ...base,
     slug: overlay.slug,
@@ -218,16 +270,12 @@ function mergeGuide(base: GuideData, overlay: LocaleGuide, lang: Locale): GuideD
     description: overlay.description,
     h1: overlay.h1,
     readTime: overlay.readTime,
-    publishDate: overlay.publishDate ?? base.publishDate,
+    publishOn,
+    publishDate: overlay.publishDate ?? displayDate(publishOn, lang as 'pt' | 'id'),
     intro: overlay.intro,
     contentHtml: overlay.contentHtml,
     faqs: overlay.faqs,
-    relatedTools: base.relatedTools
-      .filter(s => tByEn.has(s))
-      .map(s => tByEn.get(s)!.slug),
-    relatedGuides: base.relatedGuides
-      .filter(s => gByEn.has(s))
-      .map(s => gByEn.get(s)!.slug)
+    ...localNeighbours(lang, base.relatedTools, base.relatedGuides)
   };
 }
 
@@ -293,7 +341,12 @@ for (const code of PREFIXED_LOCALES as PrefixedLocale[]) {
   if (c.guides.length) link('/guides/', code, `${root}/${guidesBase(code)}/`);
 
   for (const t of c.tools) link(`/${t.en}/`, code, `${root}/${t.slug}/`);
-  for (const g of c.guides) link(`/guides/${g.en}/`, code, `${root}/${guidesBase(code)}/${g.slug}/`);
+  /* A standalone guide has no English page to pair with, so it joins no
+     cluster: its page carries no hreflang, which is correct for a page that
+     exists in one language only. */
+  for (const g of c.guides) {
+    if (!g.standalone) link(`/guides/${g.en}/`, code, `${root}/${guidesBase(code)}/${g.slug}/`);
+  }
   for (const cat of ACTIVE_CATEGORIES.get(code)!) link(`/${cat.en}/`, code, `${root}/${cat.slug}/`);
   for (const p of c.staticPages) link(`/${p.en}/`, code, `${root}/${p.slug}/`);
 }

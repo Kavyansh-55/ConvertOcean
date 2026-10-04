@@ -11,6 +11,7 @@ import {
   rate,
   byCombinedRank
 } from './us-sales-tax-rates';
+import { isPublished, displayDate, isoFromEnglishDate } from './publish';
 
 /* The sales-tax guide states rates in prose and FAQs, and those figures are
    read from the same rows as the table, so a data refresh cannot leave the
@@ -31,7 +32,13 @@ export interface GuideData {
   description: string;
   h1: string;
   readTime: string;
+  /** What the reader sees: "July 10, 2026". */
   publishDate: string;
+  /**
+   * The same date as YYYY-MM-DD — schema.org datePublished, and the schedule:
+   * a guide whose publishOn is in the future is not built yet (see publish.ts).
+   */
+  publishOn: string;
   relatedTools: string[];
   relatedGuides: string[];
   intro: string;
@@ -39,7 +46,10 @@ export interface GuideData {
   faqs: { question: string; answer: string }[];
 }
 
-export const guides: GuideData[] = [
+/** As written. A scheduled guide may give publishOn alone; publishDate is derived. */
+type GuideSource = Omit<GuideData, 'publishDate' | 'publishOn'> & { publishDate?: string; publishOn?: string };
+
+const allGuides: GuideSource[] = [
   {
     slug: 'pdf-to-word-without-losing-formatting',
     title: 'Convert PDF to Word Without Losing Formatting | ConvertOcean',
@@ -1609,5 +1619,160 @@ fs.writeFileSync('people.json', JSON.stringify(out, null, 2));</code></pre>
       { question: 'Why did compressing my PDF not make it smaller?', answer: 'Usually because there is nothing oversized in it. Text-only PDFs and documents whose images are already at a sensible resolution have little to remove. A compressor that still reports a big saving on such a file may have degraded it.' },
       { question: 'How can I tell if my PDF is a scan?', answer: 'Try to select a sentence. If individual words highlight, the text is real text. If the whole page selects as one block or nothing selects, each page is an image, and the file size comes from those images.' }
     ]
+  },
+  {
+    slug: 'combine-pdf-and-jpg',
+    title: 'How to Combine PDF and JPG Files Into One PDF | ConvertOcean',
+    description: 'Put a PDF and photos (JPG, PNG) into one PDF in two steps: turn the photos into a PDF, then merge. With real file sizes and how to get under an upload limit.',
+    h1: 'How to Combine PDF and JPG Files Into One PDF.',
+    readTime: '6 min read',
+    publishOn: '2026-10-06',
+    relatedTools: ['image-to-pdf', 'merge-pdf', 'compress-pdf'],
+    relatedGuides: ['merge-multiple-pdf-files', 'why-is-my-pdf-so-big', 'photos-to-pdf-scanning'],
+    intro: 'An application form asks for one file, and you have a PDF and a couple of photos — a cover letter, a certificate photographed on a phone, a picture of a receipt. A PDF merger only joins PDFs, and an image converter only makes new ones, so no single button does this. Two steps do, and both run in your browser, so the documents never leave your device.',
+    contentHtml: `
+      <h2>Step 1: turn the photos into one PDF</h2>
+      <p>Open <a href="/image-to-pdf/">Image to PDF</a> and choose the photos. JPG, PNG and WebP all work, and you can pick several at once. Each photo goes on its own A4 page, centred and scaled to fit — a small image is never stretched up, and a phone photo taken sideways comes out the right way round.</p>
+      <figure class="g-figure">
+        <img src="/guides/img/combine-pdf-jpg-1.webp" alt="Image to PDF with two page images added, certificate.jpg and photo-attachment.jpg, each about 3,000 KB, and the Convert and Download PDF button" width="576" height="326" loading="lazy" decoding="async" />
+        <figcaption>Two page images at phone-camera resolution, about 3 MB each, ready to become one PDF. The ✕ removes a photo you picked by mistake.</figcaption>
+      </figure>
+      <p>The pages follow the order of the list. There is no drag-to-reorder, so if the order matters, add the photos one at a time in the order you want them; to fix a mistake, remove it with ✕ and add it again. Press <strong>Convert &amp; Download PDF</strong> and you get <code class="g-code">images-to-pdf.pdf</code>.</p>
+
+      <h2>Step 2: merge it with your other PDF</h2>
+      <p>Open <a href="/merge-pdf/">Merge PDF</a>. Add the PDF that should come first — the letter, the form — and then the PDF you just made. The files join in the order you add them, and each row shows its page count, which is a quick way to check that nothing went missing.</p>
+      <figure class="g-figure">
+        <img src="/guides/img/combine-pdf-jpg-2.webp" alt="Merge PDF with cover-letter.pdf (1 page) listed above images-to-pdf.pdf (2 pages)" width="512" height="590" loading="lazy" decoding="async" />
+        <figcaption>The one-page letter first, then the two photo pages. The merged file is saved as merged_document.pdf unless you rename it.</figcaption>
+      </figure>
+      <p>Change the output name if the form expects one (for example <code class="g-code">surname-application.pdf</code>), then press <strong>Merge &amp; Download</strong>.</p>
+      <p>Photos can also go in the middle — between page 1 and page 2 of a document, say. <a href="/split-pdf/">Split PDF</a> can save every page as its own PDF (they arrive in a ZIP); add those pages and the photo PDF to Merge PDF in the order you want them.</p>
+
+      <h2>Why the file is so big, and how to get it under a limit</h2>
+      <p>We ran exactly these steps with a one-page letter and two test images made to resemble phone photos of documents — A4 at 300 DPI, about 3 MB each as JPG, the size a phone camera produces:</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>File</th><th>Size</th></tr></thead>
+        <tbody>
+          <tr><td>Letter (1 page, text)</td><td class="num">3 KB</td></tr>
+          <tr><td>Two photos, as JPG</td><td class="num">3,009 KB + 3,005 KB</td></tr>
+          <tr><td>Photos as PDF (step 1)</td><td class="num">6,018 KB</td></tr>
+          <tr><td>Merged PDF (step 2)</td><td class="num">6,016 KB</td></tr>
+        </tbody>
+      </table></div>
+      <p>The photos are placed in the PDF as they are — byte for byte, apart from a sideways phone photo, which is redrawn upright — so the PDF is as big as the photos: here, 6 MB for three pages. That keeps them sharp, but most upload forms cap files at 1 or 2 MB, and some at 500 KB.</p>
+      <p>The fix is the last step, not the first: compress the finished PDF with <a href="/compress-pdf/">Compress PDF</a> and its <strong>Fit a size</strong> option, which looks for the gentlest setting that still fits under the number you give it. Shrinking each photo beforehand also works, but it is slower and you have to guess at the settings.</p>
+      <p>How far a scanned document can go depends on how much detail it has. On a 9 MB, three-page test document built the same way, Fit a size reached 1 MB at about 200 DPI, 500 KB at about 150 DPI and 200 KB at 90 DPI, where small print is still readable but visibly softer. It could not reach 100 KB — the tool said so and stopped at 137 KB rather than handing back an unreadable file.</p>
+
+      <h2>Other ways to do it</h2>
+      <ul>
+        <li><strong>Microsoft Word.</strong> Insert the photos into a document (Insert → Pictures), then File → Save As → PDF. That turns the photos into a PDF — the equivalent of step 1 — and Word may lower the picture resolution as it saves, depending on its settings. Your existing PDF still has to be merged separately.</li>
+        <li><strong>Windows print to PDF.</strong> Select the photos in File Explorer, right-click → Print (on Windows 11 it is under Show more options), and choose Microsoft Print to PDF. It makes one PDF of the photos — the equivalent of step 1. Step 2 is still a merge.</li>
+        <li><strong>Upload sites.</strong> Most online "PDF and JPG merger" services send your files to their server to do the work. For a certificate, an ID or a payslip, keeping the files on your own device is the safer default.</li>
+      </ul>
+
+      <h2>Before you submit</h2>
+      <p>Open the merged PDF and scroll through it once. Check that every page is there in the right order, that no photo came out sideways, and that the size is under the form's limit. If a photo is too dark or blurry to read, no PDF step will rescue it — retake it in daylight, flat, and filling the frame. The <a href="/guides/photos-to-pdf-scanning/">phone scanning guide</a> covers how.</p>
+    `,
+    faqs: [
+      { question: 'Can I merge a PDF and a JPG directly?', answer: 'Not in one step with most tools, because a PDF merger only accepts PDFs. Convert the photos to a PDF with Image to PDF first, then merge that PDF with your other one.' },
+      { question: 'How do I control the order of pages?', answer: 'Both tools keep the order in which files are added. Add them one at a time in the order you want; remove a misplaced file with ✕ and add it again.' },
+      { question: 'Why is my merged PDF so large?', answer: 'Photos are placed in the PDF without recompression, so the PDF is as big as the photos. Compress the finished PDF with the Fit a size option to get under an upload limit.' },
+      { question: 'Will the photos lose quality?', answer: 'Not when they are converted and merged: they are embedded as they are, and only a sideways phone photo is redrawn upright, at high JPEG quality. Quality changes if you compress the PDF afterwards, and Fit a size uses the lightest setting that meets your limit.' },
+      { question: 'Are my files uploaded anywhere?', answer: 'No. Image to PDF, Merge PDF and Compress PDF all run in your browser, so the files stay on your device.' }
+    ]
+  },
+  {
+    slug: 'how-to-calculate-percentage-in-excel',
+    title: 'How to Calculate Percentage in Excel (With Formulas) | ConvertOcean',
+    description: 'The Excel formulas for a percentage of a total, percentage change, and adding or removing a percentage — and why a cell shows 0.15 or 1500% instead of 15%.',
+    h1: 'How to Calculate Percentage in Excel.',
+    readTime: '7 min read',
+    publishOn: '2026-10-07',
+    relatedTools: ['percentage-calculator', 'profit-margin-calculator', 'sales-tax-calculator'],
+    relatedGuides: ['how-to-calculate-profit-margin', 'us-sales-tax-by-state'],
+    intro: 'Excel has no percentage function, and it does not need one. A percentage in a spreadsheet is an ordinary number — 15% is stored as 0.15 — so almost every percentage question comes down to one of four short formulas. The part that trips people up is the formatting, so that comes first.',
+    contentHtml: `
+      <h2>The one rule: 15% is stored as 0.15</h2>
+      <p>Percent formatting does not change a number; it changes how the number is shown, multiplying it by 100 and adding a % sign. A cell holding 0.15 displays as 15%. That gives you exactly one way to go wrong: doing the multiplication yourself <em>and</em> applying the format.</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>What you did</th><th>Cell holds</th><th>Shows as</th></tr></thead>
+        <tbody>
+          <tr><td>Typed <code class="g-code">15%</code></td><td class="num">0.15</td><td class="num">15%</td></tr>
+          <tr><td><code class="g-code">=30/200</code>, then Percent Style</td><td class="num">0.15</td><td class="num">15%</td></tr>
+          <tr><td><code class="g-code">=30/200*100</code>, then Percent Style</td><td class="num">15</td><td class="num">1500%</td></tr>
+          <tr><td>Typed <code class="g-code">15</code> in a General cell, then Percent Style</td><td class="num">15</td><td class="num">1500%</td></tr>
+        </tbody>
+      </table></div>
+      <p>So: either divide and format, or multiply by 100 and leave the cell as a plain number. Never both. With Excel's default settings, typing 15 into a cell that is <em>already</em> formatted as a percentage gives you 15% — it is formatting afterwards that inflates it.</p>
+      <p>Percent Style is the <strong>%</strong> button on the Home tab, or <strong>Ctrl+Shift+%</strong> on Windows.</p>
+
+      <h2>Percentage of a total</h2>
+      <p>Divide the part by the whole. With regional sales in column B and the total in B6:</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th></th><th>A</th><th>B</th><th>C (formula)</th><th>C (shows)</th></tr></thead>
+        <tbody>
+          <tr><td>2</td><td>North</td><td class="num">12,400</td><td><code class="g-code">=B2/$B$6</code></td><td class="num">29.5%</td></tr>
+          <tr><td>3</td><td>South</td><td class="num">9,300</td><td><code class="g-code">=B3/$B$6</code></td><td class="num">22.1%</td></tr>
+          <tr><td>4</td><td>East</td><td class="num">15,500</td><td><code class="g-code">=B4/$B$6</code></td><td class="num">36.9%</td></tr>
+          <tr><td>5</td><td>West</td><td class="num">4,800</td><td><code class="g-code">=B5/$B$6</code></td><td class="num">11.4%</td></tr>
+          <tr><td>6</td><td>Total</td><td class="num">42,000</td><td><code class="g-code">=SUM(C2:C5)</code></td><td class="num">100.0%</td></tr>
+        </tbody>
+      </table></div>
+      <p>The dollar signs in <code class="g-code">$B$6</code> lock the total, so you can write the formula once and drag it down. Without them, the row below would divide by B7, which is empty, and you would see <code class="g-code">#DIV/0!</code>.</p>
+      <p>Notice something in that table: the four percentages as displayed — 29.5, 22.1, 36.9 and 11.4 — add up to 99.9, yet the total row says 100.0%. Both are right. The cells hold the full values (0.295238…), and the display rounds each one separately. If a report has to add up on paper, round the stored value rather than the display:</p>
+      <span class="g-formula">=ROUND(B2/$B$6, 3)</span>
+      <p>The digits argument counts decimal places of the <em>fraction</em>, not of the percentage. For one decimal place in the percentage you need 3 — <code class="g-code">=ROUND(0.295238, 1)</code> gives 0.3, which displays as 30%.</p>
+
+      <h2>Percentage change: increase or decrease</h2>
+      <p>New minus old, divided by old:</p>
+      <span class="g-formula">=(C2-B2)/B2</span>
+      <p>The old value goes underneath. Swap them and you answer a different question. That is also why changes are not symmetrical: 80 rising to 100 is <strong>+25%</strong>, but 100 falling back to 80 is <strong>−20%</strong>, because each is measured against its own starting point. A negative result is a decrease; Excel shows it with a minus sign, which you can colour red with conditional formatting.</p>
+      <p>If the old value can be zero, wrap the formula so the sheet stays readable: <code class="g-code">=IF(B2=0, "", (C2-B2)/B2)</code>. There is no meaningful percentage change from nothing.</p>
+
+      <h2>Add or remove a percentage</h2>
+      <p>To raise a price by 15%, multiply by 1 plus the rate; to take 15% off, multiply by 1 minus it. With the price in B2 and the rate (typed as 15%) in C2:</p>
+      <span class="g-formula">Add:      =B2*(1+C2)     40 → 46
+Remove:   =B2*(1-C2)     40 → 34</span>
+      <p>Working backwards is where most mistakes happen. If 54 is a price that <em>already includes</em> 8% tax, the price before tax is not 54 minus 8% of 54 — that gives 49.68. Divide instead:</p>
+      <span class="g-formula">=B2/(1+C2)     54 → 50</span>
+      <p>The same applies to a discount: an item selling at 34 after 15% off was <code class="g-code">=34/(1-15%)</code>, which is 40.</p>
+
+      <h2>A percentage of a number</h2>
+      <p>To find 15% of 240, multiply: <code class="g-code">=240*15%</code> or <code class="g-code">=A2*B2</code> with the rate in B2. The answer is 36. Leave this cell as an ordinary number — it is an amount, not a percentage, and Percent Style would show 3600%.</p>
+
+      <h2>If Excel rejects the comma in a formula</h2>
+      <p>Formulas like <code class="g-code">=ROUND(B2, 3)</code> separate their arguments with a comma only where the comma is not the decimal mark. On Windows, Excel takes the separator from the Region settings, and in much of the world it is a semicolon. These are the values Windows itself ships for each region:</p>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>Region</th><th>Decimal mark</th><th>Write the formula as</th></tr></thead>
+        <tbody>
+          <tr><td>US, UK, India, Australia, Canada, Mexico</td><td class="num">.</td><td><code class="g-code">=ROUND(B2/C2, 3)</code></td></tr>
+          <tr><td>Brazil, Portugal, Indonesia, Germany, France, Spain, Italy, Netherlands</td><td class="num">,</td><td><code class="g-code">=ROUND(B2/C2; 3)</code></td></tr>
+        </tbody>
+      </table></div>
+      <p>Simple formulas that only use <code class="g-code">/ * + -</code> work everywhere, because they have no arguments to separate. In Brazilian and Portuguese Excel the function names are translated too — <code class="g-code">ROUND</code> is <code class="g-code">ARRED</code> and <code class="g-code">SUM</code> is <code class="g-code">SOMA</code>.</p>
+
+      <h2>Google Sheets</h2>
+      <p>Every formula above works unchanged in Google Sheets. The percent format is under Format → Number → Percent, and the argument separator follows the spreadsheet's locale (File → Settings), not your computer's.</p>
+
+      <h2>Checking a result</h2>
+      <p>When a number looks wrong, check it against one you can do in your head: 10% of 200 is 20, and 50 rising to 100 is +100%, not +50%. Or put the same figures into the <a href="/percentage-calculator/">percentage calculator</a>, which shows the formula it used for each answer. For prices and costs, the difference between margin and markup is its own trap — the <a href="/guides/how-to-calculate-profit-margin/">profit margin guide</a> covers it.</p>
+    `,
+    faqs: [
+      { question: 'How do I calculate a percentage of a total in Excel?', answer: 'Divide the part by the total and apply Percent Style: =B2/$B$6. The dollar signs lock the total so the formula can be filled down a column.' },
+      { question: 'What is the Excel formula for percentage increase?', answer: '=(new-old)/old, for example =(C2-B2)/B2. The old value goes underneath. A negative result is a decrease.' },
+      { question: 'Why does Excel show 1500% instead of 15%?', answer: 'The cell holds 15, not 0.15. Percent Style multiplies the display by 100, so either remove the *100 from your formula or leave the cell as a plain number.' },
+      { question: 'How do I add 10% to a price in Excel?', answer: 'Multiply by 1 plus the rate: =B2*(1+10%). To take 10% off, use =B2*(1-10%).' },
+      { question: 'How do I find the price before tax was added?', answer: 'Divide by 1 plus the rate: =B2/(1+8%). Subtracting 8% of the taxed price gives the wrong answer, because the tax was calculated on the smaller, untaxed price.' }
+    ]
   }
 ];
+
+/** Every guide with both dates filled in, scheduled ones included. Tests and tooling. */
+export const allGuidesWithDates: GuideData[] = allGuides.map((g) => {
+  const publishOn = g.publishOn ?? isoFromEnglishDate(g.publishDate!);
+  return { ...g, publishOn, publishDate: g.publishDate ?? displayDate(publishOn, 'en') };
+});
+
+/** The guides this build publishes. Everything on the site lists these. */
+export const guides: GuideData[] = allGuidesWithDates.filter(isPublished);
+

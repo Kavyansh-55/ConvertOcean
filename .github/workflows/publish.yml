@@ -1,0 +1,57 @@
+# Publishes scheduled guides: rebuilds main every morning and deploys it.
+#
+# A guide whose publishOn date (src/data/guides.ts, src/data/pt/index.ts,
+# src/data/id/index.ts) is in the future is left out of the build, so it
+# appears on the first morning its date has come — with no one at a keyboard.
+# See src/data/publish.ts. On a day with nothing due the deploy uploads no
+# changed files.
+#
+# It deploys main exactly as it is. main only ever receives merges that were
+# approved for deployment (MAINTENANCE.md), so this adds no new path to
+# production — it re-runs the approved one on a timer.
+#
+# Needs two repository secrets (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN   a token with the "Edit Cloudflare Workers" template
+#   CLOUDFLARE_ACCOUNT_ID  from the Cloudflare dashboard's account home page
+#
+# Like every scheduled workflow in a public repo, GitHub disables it after 60
+# days without repository activity; see MAINTENANCE.md.
+
+name: Publish scheduled guides
+
+on:
+  schedule:
+    - cron: '30 0 * * *'   # every day 00:30 UTC (06:00 IST)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install
+        run: npm ci
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      - name: Build (guides due today and earlier)
+        run: npm run build
+      - name: Deploy to Cloudflare
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Verify production
+        run: node scripts/fidelity/verify-live.mjs

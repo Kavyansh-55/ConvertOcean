@@ -20,6 +20,27 @@ means the site is serving what this repo says.
   2. A Cloudflare dashboard setting was changed (redirects, bot rules).
   3. A deploy went out without the change a check was written for.
 
+## Scheduled guides (the daily publish)
+
+Guides can be written ahead and published on a date. Each has a `publishOn`
+date (`YYYY-MM-DD`); until that day it is not built at all — no page, no
+link, no sitemap entry. Every morning at 06:00 IST a second GitHub Action
+(`.github/workflows/publish.yml`) rebuilds `main` and deploys it, so the
+guides due that day appear without anyone doing anything.
+
+- **One-time setup:** it needs two secrets in GitHub → Settings → Secrets and
+  variables → Actions: `CLOUDFLARE_API_TOKEN` (Cloudflare → My Profile → API
+  Tokens → Create Token → the *Edit Cloudflare Workers* template) and
+  `CLOUDFLARE_ACCOUNT_ID` (on the right of the Cloudflare dashboard home).
+- **Check it works:** Actions → *Publish scheduled guides* → *Run workflow*.
+  A green run means build, deploy and the live checks all passed.
+- **If a run fails, GitHub emails you.** Nothing breaks: the site stays as it
+  was, and the guide simply appears the next morning a run succeeds.
+- **It also stops after 60 quiet days**, like the weekly check — re-enable it
+  the same way.
+- **To see what is scheduled:** search the guide files in `src/data/` for
+  `publishOn`. To publish one early, change its date to today and deploy.
+
 ## Updating the US sales tax rates (every January and July)
 
 The Tax Foundation republishes state rates around February (January 1 data)
