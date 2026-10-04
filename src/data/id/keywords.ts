@@ -71,13 +71,8 @@ export const noDemand: { en: string; seen: string }[] = [
   { en: 'xml-to-xlsx', seen: 'no keyword ideas (earlier spreadsheet)' },
   { en: 'pdf-to-txt', seen: '10 keywords, all <100 (`pdf ke txt`, `ubah pdf ke txt`…)' },
 
-  { en: 'invoice-generator', seen: '`pembuat faktur` family: 7 keywords, all <100, and `aplikasi pembuat faktur pajak` is regulated. Re-research as `contoh invoice` / `template invoice` / `format invoice` before deciding' },
-  { en: 'receipt-generator', seen: '`buat tanda terima` family: 9 keywords, all <100. "tanda terima" is a delivery acknowledgment; re-research as `kwitansi` (`contoh kwitansi`, `kwitansi pembayaran`) before deciding' },
-  { en: 'profit-margin-calculator', seen: '`hitung margin laba`: 3 keywords, all <100. Re-research `rumus margin keuntungan` / `cara menghitung margin` before deciding' },
-  { en: 'break-even-calculator', seen: '`hitung titik impas`: 5 keywords, all <100. Indonesians say BEP — re-research `cara menghitung bep` / `rumus bep` before deciding' },
 
   { en: 'csv-to-pdf', seen: '22 keywords, all <100 (`ubah csv ke pdf`, `csv ke pdf`…); its questions are PDF-to-CSV, the other direction' },
-  { en: 'sales-tax-calculator', seen: '`kalkulator/hitung pajak penjualan` returns only property and gold sale tax (rumah, tanah, emas), all <100 — a different tax this calculator does not model. Re-research as PPN (`kalkulator ppn`, `cara menghitung ppn`) and verify current PPN rules from DJP before building' },
 
   { en: 'xls-to-json', seen: 'no keyword ideas (screenshot labelled XLSX ke JSON)' },
   { en: 'xls-to-csv', seen: '21 keywords, all <100 (`xls ke csv`, `ubah xls ke csv`…)' },
@@ -195,7 +190,14 @@ export const intentMismatch: { term: string; kd: string; volume: string; wants: 
   { term: 'cara menyimpan gambar dari pdf ke galeri hp', kd: 'Easy', volume: '<100', wants: 'images extracted from a PDF — no tool.' },
   { term: 'cara ubah ukuran gambar di word', kd: 'Easy', volume: '<100', wants: 'resizing a picture inside a Word document — a Word feature.' },
   { term: 'pengubah ukuran gambar untuk windows', kd: 'n/a', volume: '<100', wants: 'desktop software.' },
-  { term: 'software pengubah ukuran gambar', kd: 'n/a', volume: '<100', wants: 'desktop software.' }
+  { term: 'software pengubah ukuran gambar', kd: 'n/a', volume: '<100', wants: 'desktop software.' },
+
+  { term: 'kwitansi kosong', kd: 'Easy', volume: '>1000',
+    wants: 'a blank form to fill by hand. The tool makes a filled kuitansi (terbilang automatic); a cleared form prints "Rp 0", not a proper blank — said on the page, not claimed.' },
+  { term: 'format kwitansi word yang bisa diedit', kd: 'Easy', volume: '>100', wants: 'an editable Word file; the tool outputs PDF.' },
+  { term: 'contoh invoice excel', kd: 'Easy', volume: '>1000', wants: 'an Excel template; the tool outputs PDF.' },
+  { term: 'contoh invoice yang ada pph 23', kd: 'n/a', volume: '<100', wants: 'PPh 23 withholding, which the buyer deducts; the tool only adds tax.' },
+  { term: 'cara menghitung roi dan bep', kd: 'Easy', volume: '<100', wants: 'ROI, which the calculator does not compute.' }
 ];
 
 /* A real query, filed under a different page than the export put it. */
@@ -1025,6 +1027,112 @@ export const pageKeywords: PageKeywords[] = [
       { term: 'cara mengubah foto jpg ke jpeg', kd: 'Easy', volume: '<100' },
       { term: 'cara mengubah file jpeg ke jpg', kd: 'n/a', volume: '<100' }
     ]
+  },
+
+  {
+    /* KBBI's standard spelling is "kuitansi" (from Dutch kwitantie); people
+       search "kwitansi", so the page targets that and answers the spelling
+       question. Stamp duty: UU 10/2020 — over Rp5.000.000, Rp10.000 meterai. */
+    slug: 'kwitansi',
+    en: 'receipt-generator',
+    primary: 'kwitansi',
+    phrase: [
+      { term: 'kwitansi', kd: 'Easy', volume: '>10,000' },
+      { term: 'contoh kwitansi', kd: 'Easy', volume: '>10,000' },
+      { term: 'kwitansi pembayaran', kd: 'Easy', volume: '>10,000' },
+      { term: 'contoh kwitansi pembayaran', kd: 'Easy', volume: '>1000' },
+      { term: 'kwitansi jual beli motor', kd: 'Easy', volume: '>1000' },
+      { term: 'kuitansi atau kwitansi', kd: 'Easy', volume: '>1000' },
+      { term: 'contoh kwitansi jual beli motor', kd: 'Easy', volume: '>1000' },
+      { term: 'kwitansi jual beli tanah', kd: 'Easy', volume: '>1000' },
+      { term: 'contoh kwitansi jual beli tanah', kd: 'Easy', volume: '>1000' },
+      { term: 'kwitansi atau kuitansi', kd: 'n/a', volume: '>1000' }
+    ],
+    questions: [
+      { term: 'cara menulis kwitansi', kd: 'Easy', volume: '>1000' },
+      { term: 'kwitansi adalah', kd: 'Easy', volume: '>1000' },
+      { term: 'penulisan kwitansi yang benar', kd: 'Easy', volume: '>1000' },
+      { term: 'cara mengisi kwitansi', kd: 'Easy', volume: '>1000' },
+      /* Answered truthfully: a kuitansi proves payment; it does not transfer
+         land — that takes an AJB made before a PPAT. */
+      { term: 'contoh kwitansi jual beli tanah yang sah', kd: 'Easy', volume: '>1000' },
+      { term: 'apa itu kwitansi', kd: 'Easy', volume: '>1000' },
+      { term: 'kwitansi jual beli tanah yang sah', kd: 'Easy', volume: '>100' },
+      { term: 'cara isi kwitansi', kd: 'Medium', volume: '>100' },
+      { term: 'cara mengisi kwitansi pembayaran', kd: 'Easy', volume: '>100' },
+      { term: 'cara membuat kwitansi', kd: 'n/a', volume: '>100' }
+    ]
+  },
+  {
+    slug: 'contoh-invoice',
+    en: 'invoice-generator',
+    primary: 'contoh invoice',
+    phrase: [
+      { term: 'contoh invoice', kd: 'Easy', volume: '>10,000' },
+      { term: 'contoh invoice tagihan', kd: 'Easy', volume: '>1000' },
+      { term: 'contoh invoice pembayaran', kd: 'Medium', volume: '>1000' },
+      { term: 'contoh invoice jasa', kd: 'Easy', volume: '>1000' },
+      { term: 'contoh invoice penagihan', kd: 'Easy', volume: '>1000' },
+      { term: 'contoh invoice dp', kd: 'Easy', volume: '>100' },
+      { term: 'contoh invoice tagihan jasa', kd: 'Easy', volume: '>100' },
+      { term: 'contoh invoice sederhana', kd: 'Easy', volume: '>100' },
+      { term: 'contoh invoice tagihan jasa proyek', kd: 'Easy', volume: '>100' },
+      { term: 'contoh invoice pelunasan', kd: 'n/a', volume: '>100' }
+    ],
+    questions: [
+      { term: 'contoh invoice yang benar', kd: 'n/a', volume: '<100' },
+      { term: 'contoh invoice yang ada dp', kd: 'n/a', volume: '<100' },
+      { term: 'contoh invoice yang bisa di edit', kd: 'n/a', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'cara-menghitung-bep',
+    en: 'break-even-calculator',
+    primary: 'cara menghitung bep',
+    phrase: [
+      { term: 'cara menghitung bep', kd: 'Easy', volume: '>1000' },
+      { term: 'cara menghitung bep rupiah', kd: 'Easy', volume: '>100' },
+      { term: 'cara menghitung bep unit', kd: 'Easy', volume: '>100' },
+      { term: 'cara menghitung bep usaha', kd: 'Easy', volume: '>100' },
+      { term: 'cara menghitung bep unit dan bep rupiah', kd: 'Easy', volume: '>100' },
+      { term: 'cara menghitung bep produksi', kd: 'Easy', volume: '<100' },
+      { term: 'cara menghitung bep harga', kd: 'Easy', volume: '<100' },
+      { term: 'cara menghitung bep penjualan', kd: 'n/a', volume: '<100' }
+    ],
+    questions: [
+      { term: 'cara menghitung bep dan contohnya', kd: 'Easy', volume: '<100' },
+      { term: 'cara menghitung bep pkwu', kd: 'Easy', volume: '<100' },
+      { term: 'cara menghitung hpp dan bep', kd: 'Easy', volume: '<100' },
+      { term: 'bagaimana cara menghitung bep', kd: 'Easy', volume: '<100' }
+    ]
+  },
+  {
+    slug: 'rumus-margin-keuntungan',
+    en: 'profit-margin-calculator',
+    primary: 'rumus margin keuntungan',
+    phrase: [
+      { term: 'rumus margin keuntungan', kd: 'Easy', volume: '>100' },
+      { term: 'rumus margin keuntungan excel', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
+  },
+  {
+    /* PMK 131/2024 (from 1 Jan 2025): 12% × DPP nilai lain 11/12 = effective
+       11% for non-luxury goods; full 12% for luxury (PPnBM) goods. 10% was the
+       rate before UU HPP raised it to 11% on 1 April 2022. */
+    slug: 'kalkulator-ppn',
+    en: 'sales-tax-calculator',
+    primary: 'kalkulator ppn',
+    phrase: [
+      { term: 'kalkulator ppn', kd: 'Medium', volume: '>100' },
+      { term: 'kalkulator ppn 11 persen', kd: 'Easy', volume: '>100' },
+      { term: 'kalkulator ppn 11', kd: 'Easy', volume: '<100' },
+      { term: 'kalkulator ppn 12 persen', kd: 'n/a', volume: '<100' },
+      { term: 'kalkulator ppn 10 persen', kd: 'n/a', volume: '<100' },
+      { term: 'kalkulator ppn online', kd: 'n/a', volume: '<100' },
+      { term: 'kalkulator ppn 2025', kd: 'n/a', volume: '<100' }
+    ],
+    questions: []
   }
 ];
 

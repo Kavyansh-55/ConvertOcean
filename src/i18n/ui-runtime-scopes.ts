@@ -420,6 +420,7 @@ export const runtimeScopes: Record<string, string[]> = {
     "Your browser could not decode this AVIF file. AVIF needs Chrome/Edge 85+, Firefox 93+, or Safari 16.4+ — on an older browser, try updating it first. If your browser is current, the file itself may be damaged.",
   ],
   "InvoiceGenerator": [
+    "In words:",
     "Item {0} description",
     "Item {0} quantity",
     "Item {0} unit price",
@@ -642,6 +643,7 @@ export const runtimeScopes: Record<string, string[]> = {
     "Selling Price = Cost ÷ (1 − Margin/100) = {0} ÷ {1} = {2}",
   ],
   "ReceiptGenerator": [
+    "In words:",
     "Rate",
   ],
   "SalesTaxCalculator": [

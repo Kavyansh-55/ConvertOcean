@@ -3,6 +3,11 @@ import { t } from '../../i18n/ui';
 import { stateSalesTaxRates, AS_OF, US_AVERAGE_COMBINED } from '../../data/us-sales-tax-rates';
 
 const { slug, headline, subtitle, lang = 'en'} = Astro.props;
+/* Indonesian pages (/id/kalkulator-ppn/) are a PPN calculator: PMK 131/2024
+   taxes non-luxury goods at 12% of a DPP nilai lain of 11/12 — an effective
+   11% of the price — and luxury goods at the full 12%. The US state picker
+   means nothing there and is left out. */
+const isId = lang === 'id';
 ---
 
 <style>
@@ -186,7 +191,11 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
 
     <div class="tax-panel-title">{t('Country / Region', lang)} <span style="text-transform: none; font-weight: 400;">{t('— sales tax, VAT & GST', lang)}</span></div>
     <div class="preset-grid" id="taxPresetGrid">
-      <button class="preset-btn active" data-rate={US_AVERAGE_COMBINED.toFixed(2)}>US Avg {US_AVERAGE_COMBINED.toFixed(2)}%</button>
+      {isId && [
+        <button class="preset-btn active" data-rate="11">{t('PPN 11% (non-luxury goods)', lang)}</button>,
+        <button class="preset-btn" data-rate="12">{t('PPN 12% (luxury goods)', lang)}</button>
+      ]}
+      {!isId && <button class="preset-btn active" data-rate={US_AVERAGE_COMBINED.toFixed(2)}>US Avg {US_AVERAGE_COMBINED.toFixed(2)}%</button>}
       <button class="preset-btn" data-rate="20">UK VAT 20%</button>
       <button class="preset-btn" data-rate="5">CA GST 5%</button>
       <button class="preset-btn" data-rate="13">CA HST 13%</button>
@@ -198,6 +207,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     </div>
     <p class="tax-state-note">{t('Any country works — pick a preset, or type your own rate below. Currency is set separately.', lang)}</p>
 
+    {!isId && <Fragment>
     <div class="tax-panel-title">{t('United States — rate by state', lang)} <span style="text-transform: none; font-weight: 400;">{t('(optional)', lang)}</span></div>
     <div class="form-group" style="margin-bottom: 0; display: flex; flex-direction: column; gap: var(--spacing-xxs);">
       <label class="form-label" for="taxUsState" style="font-size: 13px; font-weight: 500;">{t('US buyers: pick a state to load its combined rate', lang)}</label>
@@ -213,12 +223,14 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         {t('State rate plus the average local rate, as of', lang)} {AS_OF}. {t('Local rates vary by address, so treat this as an estimate', lang)} &mdash; <a href="/guides/us-sales-tax-by-state/">{t('see the full rate table and how to find your exact rate', lang)}</a>.
       </p>
     </div>
+    </Fragment>}
 
     <div class="tax-panel-title">{t('Currency & Values', lang)}</div>
     <div class="form-group" style="margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xxs);">
       <label class="form-label" for="taxCurrency" style="font-size: 13px; font-weight: 500;">{t('Currency', lang)}</label>
       <select id="taxCurrency" class="select-input" style="height: 40px; border-radius: 6px; border: 1px solid var(--colors-hairline); padding: 0 var(--spacing-sm); font-size: 14px; background-color: var(--colors-canvas); color: var(--colors-ink);">
-        <option value="$" selected>{t('$ – US Dollar (USD)', lang)}</option>
+        <option value="$" selected={!isId}>{t('$ – US Dollar (USD)', lang)}</option>
+        <option value="Rp" selected={isId}>{t('Rp – Indonesian Rupiah (IDR)', lang)}</option>
         <option value="&euro;">{t('€ – Euro (EUR)', lang)}</option>
         <option value="&pound;">{t('£ – British Pound (GBP)', lang)}</option>
         <option value="&#8377;">{t('₹ – Indian Rupee (INR)', lang)}</option>
@@ -239,22 +251,22 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div id="taxFieldsAdd">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="taxPrice1" id="taxLblPrice1">{t('Pre-Tax Price ($)', lang)}</label>
-        <input type="number" id="taxPrice1" class="form-input" value="100" min="0" step="0.01" />
+        <input type="number" id="taxPrice1" class="form-input" value={isId ? 1000000 : 100} min="0" step="0.01" />
       </div>
       <div class="form-group">
         <label class="form-label" for="taxRate1">{t('Tax Rate (%)', lang)}</label>
-        <input type="number" id="taxRate1" class="form-input" value="7.53" min="0" max="100" step="0.01" />
+        <input type="number" id="taxRate1" class="form-input" value={isId ? 11 : 7.53} min="0" max="100" step="0.01" />
       </div>
     </div>
 
     <div id="taxFieldsRemove" style="display:none;">
       <div class="form-group" style="margin-bottom: var(--spacing-md);">
         <label class="form-label" for="taxTotal2" id="taxLblTotal2">{t('Total Price (Tax Inclusive) ($)', lang)}</label>
-        <input type="number" id="taxTotal2" class="form-input" value="107.53" min="0" step="0.01" />
+        <input type="number" id="taxTotal2" class="form-input" value={isId ? 1110000 : 107.53} min="0" step="0.01" />
       </div>
       <div class="form-group">
         <label class="form-label" for="taxRate2">{t('Tax Rate (%)', lang)}</label>
-        <input type="number" id="taxRate2" class="form-input" value="7.53" min="0" max="100" step="0.01" />
+        <input type="number" id="taxRate2" class="form-input" value={isId ? 11 : 7.53} min="0" max="100" step="0.01" />
       </div>
     </div>
 
@@ -312,7 +324,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
   (function() {
     const $ = id => document.getElementById(id);
     let taxMode = 'add';
-    let currSym = '$';
+    let currSym = $('taxCurrency').value;
 
     // Currency selector (setCurrency is defined below, alongside the state picker)
     $('taxCurrency').addEventListener('change', function() {
@@ -339,9 +351,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     });
 
     // US state selector — loads that state's combined (state + average local) rate.
+    /* Absent on Indonesian pages, where the picker is not rendered. */
     const stateSelect = $('taxUsState');
     const stateNote = $('taxStateNote');
-    const stateNoteDefault = stateNote.innerHTML;
+    const stateNoteDefault = stateNote ? stateNote.innerHTML : '';
 
     function setCurrency(sym) {
       currSym = sym;
@@ -353,13 +366,13 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     // The note names a state, so it must stop naming one the moment the rate
     // stops being that state's rate — otherwise it mislabels the number.
     function clearStateSelection() {
-      if (stateSelect.value !== '') {
+      if (stateSelect && stateSelect.value !== '') {
         stateSelect.value = '';
         stateNote.innerHTML = stateNoteDefault;
       }
     }
 
-    stateSelect.addEventListener('change', function() {
+    if (stateSelect) stateSelect.addEventListener('change', function() {
       const opt = this.options[this.selectedIndex];
       const rate = parseFloat(opt.dataset.rate);
       if (isNaN(rate)) {
@@ -417,7 +430,16 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       });
     });
 
-    function fmt(n) { return currSym + n.toFixed(2); }
+    /* Indonesian pages: "Rp 7.800.000" — Rupiah without cents, Indonesian
+       grouping for every currency. */
+    const ID_MONEY = document.documentElement.lang === 'id';
+    function fmt(n) {
+      if (ID_MONEY) {
+        const d = currSym === 'Rp' ? 0 : 2;
+        return currSym + ' ' + n.toLocaleString('id-ID', { minimumFractionDigits: d, maximumFractionDigits: d });
+      }
+      return currSym + n.toFixed(2);
+    }
 
     function calculate() {
       let base = 0, tax = 0, total = 0, rate = 0;
@@ -463,6 +485,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
       $(id).addEventListener('input', calculate);
     });
 
+    setCurrency(currSym);
     window.addEventListener('load', calculate);
   })();
 </script>

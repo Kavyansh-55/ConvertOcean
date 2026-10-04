@@ -993,5 +993,30 @@ async function stylesheetsFor(path) {
       '/id/gambar-ke-teks/ ships the Indonesian OCR model choice');
 }
 
+/* ------------------------------- Indonesian business pages (2026-10-04) */
+{
+  /* Researched with the local words (kwitansi, contoh invoice, cara
+     menghitung bep, rumus margin keuntungan, kalkulator ppn); the generators
+     open in Rupiah with terbilang, the receipt carries the meterai box. */
+  const kw = (await get('/id/kwitansi/')).body;
+  say(/id="rcptPdfWords"/.test(kw) && /id="rcptPdfMeterai"/.test(kw) && /<option value="Rp" selected/.test(kw)
+      && /UU No\. 10 Tahun 2020/.test(kw) && /penulisan kwitansi yang benar/.test(kw),
+      '/id/kwitansi/ ships terbilang, the meterai box, Rupiah and its researched questions');
+  const inv = (await get('/id/contoh-invoice/')).body;
+  say(/id="pdfWords"/.test(inv) && /<option value="PPN"[^>]*>PPN \(11%\)<\/option>/.test(inv) && /contoh invoice tagihan/.test(inv),
+      '/id/contoh-invoice/ ships terbilang, PPN (11%) and its researched terms');
+  const ppn = (await get('/id/kalkulator-ppn/')).body;
+  say(/data-rate="11"/.test(ppn) && /data-rate="12"/.test(ppn) && !/id="taxUsState"/.test(ppn) && /PMK 131\/2024/.test(ppn),
+      '/id/kalkulator-ppn/ offers PPN 11% / 12% and no US state picker');
+  const bep = (await get('/id/cara-menghitung-bep/')).body;
+  const rm = (await get('/id/rumus-margin-keuntungan/')).body;
+  say(/cara menghitung bep unit dan bep rupiah/.test(bep) && /<option value="Rp" selected/.test(bep)
+      && /rumus margin keuntungan excel/.test(rm) && /<option value="Rp" selected/.test(rm),
+      '/id/ BEP and margin pages open in Rupiah with their researched terms');
+  const en = (await get('/receipt-generator/')).body;
+  say(!/id="rcptPdfMeterai"/.test(en) && /<option value="\$" selected/.test(en),
+      'the English receipt generator is unchanged: dollars, no Indonesian kuitansi block');
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);

@@ -142,6 +142,9 @@ const PAGES = [
   '/id/pisahkan-pdf/',           // SplitPdf
   '/id/kompres-ppt/',            // CompressOffice
   '/id/gabungkan-pdf/',          // MergePdf
+  '/id/kwitansi/',               // ReceiptGenerator with terbilang, signature, meterai box
+  '/id/contoh-invoice/',         // InvoiceGenerator in Rupiah
+  '/id/kalkulator-ppn/',         // SalesTaxCalculator without the US picker
 
   /* One per component. The comment is the component, because that is the unit
      this list is really covering. */
@@ -255,21 +258,50 @@ async function ensureServer() {
 }
 
 const server = await ensureServer();
-const browser = await puppeteer.launch({
+let launches = 0;
+const launch = () => puppeteer.launch({
   executablePath: browserPath(), headless: 'new',
   args: [NO_TRACKING, '--no-sandbox', '--disable-dev-shm-usage'],
-  /* Ours, so puppeteer never tries to delete it — see browserProfile(). */
-  userDataDir: browserProfile('mobile'),
+  /* Ours, so puppeteer never tries to delete it — see browserProfile(). A
+     relaunch gets a profile of its own: a browser that died can leave its
+     lock on the old one, and the first relaunch tried timed out on it. */
+  userDataDir: browserProfile(launches++ ? `mobile-r${launches - 1}` : 'mobile'),
+  /* A wedged browser should fail in a minute, not the default three: one
+     hung on Target.createTarget and stalled the run before it aborted. */
+  protocolTimeout: 60000,
 });
+let browser = await launch();
+const relaunch = async () => {
+  try { await browser.close(); } catch {}
+  try { browser.process()?.kill(); } catch {}
+  browser = await launch();
+};
+/* Over ~360 page loads the browser process itself has dropped mid-run
+   (2026-10-04: "Connection closed" in page.close(), twice, at different
+   pages), which aborted the sweep and left every later page unchecked. A
+   lost connection says nothing about the page, so relaunch and measure that
+   width again — once. Any other error is still the page's problem. */
+const lostBrowser = (e) => /Connection closed|Target closed|Session closed|Protocol ?error|detached Frame|createTarget timed out/i.test(String(e));
 
 try {
   console.log(`\nmobile: ${ORIGIN}\n`);
 
+  let pagesOnThisBrowser = 0;
   for (const path of PAGES) {
+    /* Every run went bad somewhere around page 45-55 — a dead browser, then a
+       hung one — so wear never gets the chance to build: a fresh browser
+       every 20 pages. */
+    if (++pagesOnThisBrowser > 20) { await relaunch(); pagesOnThisBrowser = 1; }
     const problems = [];
 
     for (const width of WIDTHS) {
-      const page = await browser.newPage();
+     for (let attempt = 0; attempt < 2; attempt++) {
+      if (!browser.connected) await relaunch();
+      let page;
+      try { page = await browser.newPage(); } catch (e) {
+        if (attempt === 0 && lostBrowser(e)) { await relaunch(); continue; }
+        throw e;
+      }
       /* 768 counts as touch: that is an iPad in portrait, not a small desktop
          window, and the floors have to hold at the boundary rather than one
          pixel below it. */
@@ -278,6 +310,18 @@ try {
       try {
         await page.goto(ORIGIN + path, { waitUntil: 'networkidle2', timeout: 45000 });
         await new Promise((r) => setTimeout(r, 700));
+        /* Negative control for the relaunch above: CO_MOBILE_DROP_AT=/path/
+           kills this run's own browser process (never anyone else's) once,
+           at 320px, so the recovery is proven rather than assumed. Git Bash
+           rewrites "/id/kwitansi/" in an env var to
+           "C:/Program Files/Git/id/kwitansi/", and the first control run
+           silently never fired; a bare endsWith then also fired on "/". */
+        const dropAt = process.env.CO_MOBILE_DROP_AT;
+        if (dropAt && (dropAt === path || dropAt.endsWith('/Git' + path))
+            && width === WIDTHS[0] && attempt === 0) {
+          browser.process()?.kill();
+          await new Promise((r) => setTimeout(r, 500));
+        }
 
         const reveal = REVEAL[path];
         if (reveal) {
@@ -396,9 +440,20 @@ try {
         if (found.tinyText.length) problems.push(`${width}: ${found.tinyText.length} sub-12px text — ${found.tinyText[0]}`);
         if (found.flush.length) problems.push(`${width}: ${found.flush.length} text flush to the edge — ${found.flush[0]}`);
       } catch (e) {
+        if (attempt === 0 && (lostBrowser(e) || !browser.connected)) {
+          console.log(`        (browser dropped at ${path} ${width}px — relaunching, measuring again)`);
+          await relaunch();
+          continue;
+        }
         problems.push(`${width}: ${String(e).slice(0, 60)}`);
       }
-      await page.close();
+      try { await page.close(); } catch (e) {
+        if (!lostBrowser(e)) throw e;
+        console.log(`        (browser dropped closing ${path} ${width}px — relaunching)`);
+        await relaunch();
+      }
+      break;
+     }
     }
 
     const state = REVEAL[path] ? ' (with a file loaded)' : '';
@@ -407,7 +462,7 @@ try {
     for (const p of problems.slice(1)) console.log(`        ${p}`);
   }
 } finally {
-  await browser.close();
+  try { await browser.close(); } catch {}
   if (server) server.kill();
 }
 

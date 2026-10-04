@@ -10,6 +10,12 @@
  * words Indonesians use as-is stay English: file, PDF, Word, Excel, online.
  */
 export const idUi: Record<string, string> = {
+  "Rp – Indonesian Rupiah (IDR)": "Rp – Rupiah Indonesia (IDR)",
+  "Stamp duty Rp10,000": "Meterai Rp10.000",
+  "Received by,": "Penerima,",
+  "In words:": "Terbilang:",
+  "PPN 11% (non-luxury goods)": "PPN 11% (barang non-mewah)",
+  "PPN 12% (luxury goods)": "PPN 12% (barang mewah)",
   "Photo 3×4 cm (300 dpi)": "Pas Foto 3×4 cm (300 dpi)",
   "Photo 4×6 cm (300 dpi)": "Pas Foto 4×6 cm (300 dpi)",
   "Home": "Beranda",
@@ -183,12 +189,12 @@ export const idUi: Record<string, string> = {
   "AVIF to PNG": "AVIF ke PNG",
   "Image to Text OCR": "Gambar ke Teks",
   "Image to PDF": "Gambar ke PDF",
-  "Invoice Generator": "Template Invoice",
-  "Receipt Generator": "Kwitansi Online",
-  "Profit Margin Calculator": "Kalkulator Margin Laba",
+  "Invoice Generator": "Contoh Invoice",
+  "Receipt Generator": "Kwitansi",
+  "Profit Margin Calculator": "Kalkulator Margin Keuntungan",
   "Break-Even Calculator": "Kalkulator BEP",
   "Percentage Calculator": "Kalkulator Persentase",
-  "Sales Tax Calculator": "Kalkulator Pajak",
+  "Sales Tax Calculator": "Kalkulator PPN",
   "OFX to CSV": "OFX ke CSV",
   "QFX to CSV": "QFX ke CSV",
   "QBO to CSV": "QBO ke CSV",
@@ -600,6 +606,7 @@ export const idUi: Record<string, string> = {
    converters and JSON formatter are not localised (no Indonesian demand —
    see src/data/id/keywords.ts), so their messages are not translated here. */
 export const idRuntime: Record<string, string> = {
+  "<strong>{0}: {1}%</strong> — state rate plus the <em>average</em> local rate. Local rates vary by address, so use this to estimate and confirm the exact rate with the state revenue department before filing. <a href=\"/guides/us-sales-tax-by-state/\">Full rate table for all 50 states</a>.": "<strong>{0}: {1}%</strong> — tarif negara bagian ditambah rata-rata tarif <em>lokal</em>. Tarif lokal berbeda per alamat, jadi pakai ini untuk memperkirakan, lalu pastikan tarif pastinya ke dinas pendapatan negara bagian sebelum melapor. <a href=\"/guides/us-sales-tax-by-state/\">Tabel tarif lengkap untuk 50 negara bagian</a> (dalam bahasa Inggris).",
   "Download Excel": "Unduh Excel",
   /* The OCR link a scanned PDF gets on PDF ke Word / PDF ke Excel. */
   "/image-to-text/": "/id/gambar-ke-teks/",
