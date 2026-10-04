@@ -3,6 +3,7 @@ import { t } from '../i18n/ui';
 import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
 import { guides } from '../data/guides';
+import { comparisonsForTool } from '../data/comparisons';
 import { getTool, getTools, getGuides, localeTools } from '../i18n/content';
 import { guidesBase, LOCALES, PREFIXED_LOCALES, type Locale } from '../i18n/config';
 import CategoryIcon from '../components/CategoryIcon.astro';
@@ -182,6 +183,9 @@ const relatedToolsData = getTools(lang).filter(t => toolData.relatedTools.includ
 const relatedGuides = getGuides(lang).filter(g => g.relatedTools.includes(toolData.slug));
 
 const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }));
+
+// The /vs/ pages exist in English only, so other locales get no links to them.
+const compareWith = lang === 'en' ? comparisonsForTool(enSlug, toolData.categorySlug) : [];
 ---
 
 <Layout title={toolData.title} description={toolData.description} lang={lang} toolName={toolData.name} category={toolData.category} categorySlug={toolData.categorySlug} isTool={true} runtimeScope={runtimeScope} faqList={faqList} band="cobalt">
@@ -327,6 +331,46 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
       margin-top: var(--spacing-xl);
     }
 
+    /* Comparison links — English only, see compareWith. */
+    .compare-section {
+      margin-top: var(--spacing-3xl);
+    }
+    .compare-title {
+      font-size: var(--fs-heading);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      text-wrap: balance;
+    }
+    .compare-lede {
+      color: var(--colors-body);
+      margin: var(--spacing-xs) 0 var(--spacing-md);
+      max-width: 60ch;
+    }
+    .compare-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+    }
+    .compare-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 var(--spacing-md);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-md);
+      color: var(--colors-ink);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .compare-link:hover {
+      border-color: var(--colors-ink);
+    }
+    .compare-link:focus-visible {
+      outline: 2px solid var(--colors-ink);
+      outline-offset: 2px;
+    }
+
     /* Related Guides Section Conforming to DESIGN.md */
     .related-guides-section {
       margin-top: var(--spacing-3xl);
@@ -453,6 +497,18 @@ const faqList = (toolData.faqs || []).map(f => ({ q: f.question, a: f.answer }))
                 </svg>
               </span>
             </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {compareWith.length > 0 && (
+      <section class="compare-section" data-reveal>
+        <h2 class="compare-title">How ConvertOcean Compares.</h2>
+        <p class="compare-lede">Side-by-side with the tools people usually reach for: what each one uploads, what it charges, and where it is genuinely better.</p>
+        <div class="compare-links">
+          {compareWith.map(c => (
+            <a href={`/vs/${c.slug}/`} class="compare-link" translate="no">ConvertOcean vs {c.competitorName}</a>
           ))}
         </div>
       </section>

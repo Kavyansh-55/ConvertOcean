@@ -31,7 +31,7 @@ export const seoContentMap: Record<string, SEOData> = {
   },
   'json-formatter': {
     title: 'JSON Formatter & Validator Online - Free & Private | ConvertOcean',
-    description: 'Format, validate, and minify JSON instantly in your browser. Syntax highlighting, real-time error detection with line numbers, key count, nesting depth — 100% client-side with no uploads.',
+    description: 'Format, validate and minify JSON in your browser: syntax highlighting, error detection with line numbers, key count and nesting depth. 100% client-side.',
     content: `
 <div class="content-card">
   <h2>Format, Validate, and Debug JSON Without Leaving Your Browser.</h2>

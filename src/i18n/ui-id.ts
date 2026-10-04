@@ -13,6 +13,7 @@ export const idUi: Record<string, string> = {
   "Rp – Indonesian Rupiah (IDR)": "Rp – Rupiah Indonesia (IDR)",
   "Stamp duty Rp10,000": "Meterai Rp10.000",
   "Received by,": "Penerima,",
+  "Source code (GitHub)": "Kode sumber (GitHub)",
   "In words:": "Terbilang:",
   "PPN 11% (non-luxury goods)": "PPN 11% (barang non-mewah)",
   "PPN 12% (luxury goods)": "PPN 12% (barang mewah)",

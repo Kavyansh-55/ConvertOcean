@@ -213,7 +213,7 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
         div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: var(--colors-canvas-soft); border: 1px solid var(--colors-hairline); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--rounded-md); margin-bottom: var(--spacing-sm);';
         div.innerHTML = `
           <div class="image-item-left" style="display: flex; align-items: center; gap: var(--spacing-md); overflow: hidden;">
-            <img src="${item.dataUrl}" class="image-thumb" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; flex-shrink: 0; object-fit: cover; border-radius: 4px; border: 1px solid var(--colors-hairline); background: #000;" />
+            <img src="${item.dataUrl}" alt="" class="image-thumb" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; flex-shrink: 0; object-fit: cover; border-radius: 4px; border: 1px solid var(--colors-hairline); background: #000;" />
             <div style="display: flex; flex-direction: column; min-width: 0;">
               <div class="image-name" style="font-size: 14px; font-weight: 500; color: var(--colors-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.file.name}</div>
               <div class="image-size" style="font-size: 12px; color: var(--colors-mute);">${sizeKb} KB</div>

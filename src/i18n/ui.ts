@@ -53,6 +53,7 @@ const pt: Record<string, string> = {
   'Rp – Indonesian Rupiah (IDR)': 'Rp – Rupia indonésia (IDR)',
   'Stamp duty Rp10,000': 'Selo Rp10.000',
   'Received by,': 'Recebido por,',
+  'Source code (GitHub)': 'Código-fonte (GitHub)',
   'In words:': 'Por extenso:',
   'PPN 11% (non-luxury goods)': 'PPN 11% (bens não de luxo)',
   'PPN 12% (luxury goods)': 'PPN 12% (bens de luxo)',

@@ -1018,5 +1018,36 @@ async function stylesheetsFor(path) {
       'the English receipt generator is unchanged: dollars, no Indonesian kuitansi block');
 }
 
+/* ----------------------------------------- On-page pass (2026-10-04) */
+{
+  /* The TinyWow comparison was built on "ConvertOcean has no ads" while the
+     site loads AdSense — false the moment ads serve. */
+  const tw = (await get('/vs/tinywow/')).body;
+  say(!/no ads|no advertising|without advertising/i.test(tw) && /Does ConvertOcean show ads\?/.test(tw),
+      '/vs/tinywow/ no longer claims ConvertOcean has no ads, and says it is ad-supported');
+  /* Comparison pages had no in-content links, only the footer column. */
+  const cp = (await get('/compress-pdf/')).body;
+  const cpMain = (cp.match(/<main[\s\S]*<\/main>/) || [''])[0];
+  say(/href="\/vs\/smallpdf\/"/.test(cpMain) && /href="\/vs\/pdf24\/"/.test(cpMain),
+      '/compress-pdf/ links to its comparison pages from the page content');
+  const ptc = (await get('/pt/comprimir-pdf/')).body;
+  say(!/compare-section/.test(ptc), '/pt/comprimir-pdf/ has no links to the English-only /vs/ pages');
+  const home = (await get('/')).body;
+  say(/"sameAs":\["https:\/\/github\.com\/Kavyansh-55\/ConvertOcean","https:\/\/www\.producthunt\.com\/products\/convertocean"\]/.test(home)
+      && /producthunt\.com\/products\/convertocean" class="footer-link"/.test(home),
+      'Product Hunt is in the Organization sameAs and the footer');
+  const rz = (await get('/pt/redimensionar-imagem/')).body;
+  const rzDesc = (rz.match(/<meta name="description" content="([^"]*)"/) || [])[1] || '';
+  say(rzDesc.length > 0 && !/centímetros/.test(rzDesc),
+      '/pt/redimensionar-imagem/ no longer promises resizing by centimetres');
+  const titleOf = (h) => ((h.match(/<title>([^<]*)<\/title>/) || [])[1] || '').replace(/&amp;/g, '&');
+  const long = [];
+  for (const u of ['/pdf-tools/', '/business-tools/', '/vs/cloudconvert/', '/percentage-calculator/', '/pt/guias/escanear-documento/']) {
+    const tt = titleOf((await get(u)).body);
+    if (!tt || tt.length > 70 || (tt.match(/ConvertOcean/g) || []).length > 1) long.push(`${u} (${tt.length}) ${tt}`);
+  }
+  say(long.length === 0, `shortened titles fit 70 characters, brand once${long.length ? ' — ' + long.join('; ') : ''}`);
+}
+
 console.log(bad ? `\n${bad} check(s) failed` : '\nall live checks passed');
 process.exit(bad ? 1 : 0);
