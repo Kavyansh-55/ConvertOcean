@@ -1873,6 +1873,63 @@ Remove:   =B2*(1-C2)     40 → 34</span>
       { question: 'How can I tell if a PNG is transparent?', answer: 'Open it in an editor that shows a checkerboard behind transparent areas, or place it on a coloured background. If the colour shows through, it is transparent.' },
       { question: 'Will converting the PNG to JPG keep the transparency?', answer: 'No. JPG cannot store transparency, so the transparent areas are filled with a solid colour, usually white or black.' }
     ]
+  },
+  {
+    slug: 'resize-image-in-cm',
+    title: 'How to Resize an Image in cm: Centimetres to Pixels | ConvertOcean',
+    description: 'An image has no size in centimetres until you choose a DPI. The formula, a ready table for 2x3, 3x4, 4x6, 10x15 cm and A4, and how to crop and resize.',
+    h1: 'How to Resize an Image in Centimetres.',
+    readTime: '5 min read',
+    publishOn: '2026-11-02',
+    relatedTools: ['image-resizer', 'image-to-pdf'],
+    relatedGuides: ['resize-photo-signature-for-online-forms', 'png-vs-jpg'],
+    intro: 'Forms and print shops ask for photos in centimetres — 3 × 4 cm, 4 × 6 cm, 10 × 15 cm — but an image file is measured in pixels. The two are linked by one number, the resolution in DPI (dots per inch). Once you know it, converting is a one-line sum, and the table below has already done it for the common sizes.',
+    contentHtml: `
+      <h2>The formula</h2>
+      <p>One inch is exactly 2.54 cm, and DPI is pixels per inch. So:</p>
+      <span class="g-formula">pixels = centimetres ÷ 2.54 × DPI</span>
+      <p>A 3 cm side at 300 DPI is 3 ÷ 2.54 × 300 = 354.3, so 354 pixels. Round to the nearest whole pixel.</p>
+      <p>Which DPI? <strong>300 DPI</strong> is the standard for printing photos and documents — sharp at reading distance. <strong>150 DPI</strong> is enough for something that will only be seen on a screen, or when a form caps the file size. If a form asks for a size in centimetres and nothing else, 300 DPI is the safe assumption.</p>
+
+      <h2>Common sizes, already converted</h2>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>Size (cm)</th><th>At 300 DPI (print)</th><th>At 150 DPI (screen)</th></tr></thead>
+        <tbody>
+          <tr><td>2 × 3</td><td class="num">236 × 354 px</td><td class="num">118 × 177 px</td></tr>
+          <tr><td>3 × 4</td><td class="num">354 × 472 px</td><td class="num">177 × 236 px</td></tr>
+          <tr><td>4 × 6</td><td class="num">472 × 709 px</td><td class="num">236 × 354 px</td></tr>
+          <tr><td>5 × 7</td><td class="num">591 × 827 px</td><td class="num">295 × 413 px</td></tr>
+          <tr><td>10 × 15</td><td class="num">1181 × 1772 px</td><td class="num">591 × 886 px</td></tr>
+          <tr><td>A4 (21 × 29.7)</td><td class="num">2480 × 3508 px</td><td class="num">1240 × 1754 px</td></tr>
+        </tbody>
+      </table></div>
+
+      <h2>Step 1: crop to the right shape</h2>
+      <p>A 3 × 4 cm photo has a 3:4 shape; a phone photo is usually 3:4 or 9:16, and a landscape shot is the other way round. Resizing alone cannot change the shape without stretching the picture. Crop first: every phone's photo editor has a crop tool with ratio presets, and so do Windows Photos and Mac Preview. Pick the ratio for your size:</p>
+      <ul>
+        <li>3 × 4 cm → crop to <strong>3:4</strong></li>
+        <li>2 × 3 cm and 4 × 6 cm → crop to <strong>2:3</strong></li>
+        <li>10 × 15 cm → crop to <strong>2:3</strong></li>
+        <li>5 × 7 cm → crop to <strong>5:7</strong> (or use a free crop and check the numbers)</li>
+      </ul>
+
+      <h2>Step 2: resize to the pixels</h2>
+      <p>Open the <a href="/image-resizer/">image resizer</a>, type the width and height from the table, and download. Because the photo is already the right shape, the picture is not distorted. If the shape is slightly off, turn on <strong>Lock ratio</strong> so the picture keeps its proportions — one side will then come out a few pixels different from the table, which is fine for printing.</p>
+      <p>The resizer works in your browser, so an ID photo or a signature never leaves your device.</p>
+
+      <h2>Why changing the DPI number alone does nothing</h2>
+      <p>Image files carry a DPI tag, and some apps let you change it without touching the pixels. That only changes what an app <em>claims</em> the print size is; the picture has exactly the same detail. A 600 × 800 photo tagged as 300 DPI prints at 5.1 × 6.8 cm; tagged as 72 DPI, the same file claims to be 21 × 28 cm and would print soft. What decides print quality is the number of pixels, which is why the table above is in pixels.</p>
+
+      <h2>When a form also limits the file size</h2>
+      <p>Many forms ask for both a size and a maximum file size, such as 3 × 4 cm and under 200 KB. Resize first, then compress to the limit — the <a href="/guides/resize-photo-signature-for-online-forms/">photo and signature guide</a> covers how to get under a KB limit without making the face blurry.</p>
+    `,
+    faqs: [
+      { question: 'How many pixels is 3x4 cm?', answer: '354 × 472 pixels at 300 DPI, the usual print resolution. At 150 DPI, for screen use, it is 177 × 236 pixels.' },
+      { question: 'How do I convert centimetres to pixels?', answer: 'Divide the centimetres by 2.54 to get inches, then multiply by the DPI: pixels = cm ÷ 2.54 × DPI. At 300 DPI, 1 cm is about 118 pixels.' },
+      { question: 'What DPI should I use?', answer: '300 DPI for anything printed, including ID photos. 150 DPI is enough for images only shown on screen.' },
+      { question: 'Why does my resized photo look stretched?', answer: 'Its shape did not match the target. Crop to the right ratio first (3:4 for a 3 × 4 cm photo), then resize, or turn on Lock ratio.' },
+      { question: 'Does changing the DPI make a photo sharper?', answer: 'No. Changing only the DPI tag changes the claimed print size, not the detail. Sharpness depends on the number of pixels.' }
+    ]
   }
 ];
 

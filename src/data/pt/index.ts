@@ -4159,6 +4159,61 @@ Desconto:   =B2*(1-C2)     R$ 40 → R$ 34</span>
       { question: 'Como saber se o PNG está transparente?', answer: 'Abra num editor que mostre um xadrez atrás das áreas transparentes, ou coloque a imagem sobre um fundo colorido. Se a cor aparecer, o fundo está transparente.' },
       { question: 'Se eu converter o PNG para JPG, a transparência fica?', answer: 'Não. O JPG não guarda transparência, então as áreas transparentes são preenchidas com uma cor sólida, normalmente branca ou preta.' }
     ]
+  },
+  {
+    /* "redimensionar imagem em cm" (EASY, >100): the tool works in pixels,
+       so the honest answer is the conversion, with a table. */
+    en: 'resize-image-in-cm',
+    slug: 'redimensionar-imagem-em-cm',
+    title: 'Redimensionar Imagem em cm: de Centímetros para Pixels | ConvertOcean',
+    description: 'Uma imagem só tem tamanho em centímetros depois de escolher o DPI. A fórmula, uma tabela pronta para 3x4, 5x7, 10x15 e A4, e como recortar e redimensionar.',
+    h1: 'Como redimensionar imagem em centímetros.',
+    readTime: '5 min de leitura',
+    publishOn: '2026-11-04',
+    intro: 'Editais, cadastros e gráficas pedem fotos em centímetros — 3 × 4 cm, 10 × 15 cm —, mas um arquivo de imagem é medido em pixels. Os dois se ligam por um único número, a resolução em DPI (pontos por polegada). Sabendo isso, a conversão é uma conta de uma linha, e a tabela abaixo já faz essa conta para os tamanhos mais pedidos.',
+    contentHtml: `
+      <h2>A fórmula</h2>
+      <p>Uma polegada tem exatamente 2,54 cm, e DPI é a quantidade de pixels por polegada. Então:</p>
+      <span class="g-formula">pixels = centímetros ÷ 2,54 × DPI</span>
+      <p>Um lado de 3 cm a 300 DPI dá 3 ÷ 2,54 × 300 = 354,3, ou seja, 354 pixels. Arredonde para o pixel inteiro mais próximo.</p>
+      <p>Qual DPI usar? <strong>300 DPI</strong> é o padrão para imprimir fotos e documentos. <strong>150 DPI</strong> basta para o que só vai ser visto na tela, ou quando o formulário limita o tamanho do arquivo. Se o edital pede o tamanho em centímetros e mais nada, 300 DPI é a escolha segura.</p>
+
+      <h2>Tamanhos mais pedidos, já convertidos</h2>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>Tamanho (cm)</th><th>A 300 DPI (impressão)</th><th>A 150 DPI (tela)</th></tr></thead>
+        <tbody>
+          <tr><td>3 × 4 (foto de documento)</td><td class="num">354 × 472 px</td><td class="num">177 × 236 px</td></tr>
+          <tr><td>5 × 7</td><td class="num">591 × 827 px</td><td class="num">295 × 413 px</td></tr>
+          <tr><td>10 × 15</td><td class="num">1181 × 1772 px</td><td class="num">591 × 886 px</td></tr>
+          <tr><td>A4 (21 × 29,7)</td><td class="num">2480 × 3508 px</td><td class="num">1240 × 1754 px</td></tr>
+        </tbody>
+      </table></div>
+
+      <h2>Passo 1: recorte no formato certo</h2>
+      <p>Uma foto 3 × 4 tem formato 3:4; a foto do celular costuma ser 3:4 ou 9:16, e uma foto deitada é ao contrário. Só redimensionar não muda o formato sem esticar a imagem. Recorte antes: o editor de fotos de qualquer celular tem recorte com proporções prontas, assim como o app Fotos do Windows e a Pré-Visualização do Mac.</p>
+      <ul>
+        <li>3 × 4 cm → recorte em <strong>3:4</strong></li>
+        <li>10 × 15 cm → recorte em <strong>2:3</strong></li>
+        <li>5 × 7 cm → recorte em <strong>5:7</strong> (ou recorte livre e confira os números)</li>
+      </ul>
+
+      <h2>Passo 2: redimensione para os pixels</h2>
+      <p>Abra o <a href="/pt/redimensionar-imagem/">redimensionar imagem</a>, digite a largura e a altura da tabela e baixe. Como a foto já está no formato certo, ela não fica distorcida. Se o formato estiver um pouco diferente, ative <strong>Manter proporção</strong> para manter as proporções — um dos lados pode sair alguns pixels diferente da tabela, o que não atrapalha a impressão.</p>
+      <p>A ferramenta funciona no seu navegador, então a foto de documento ou a assinatura não sai do seu dispositivo.</p>
+
+      <h2>Por que mudar só o DPI não adianta</h2>
+      <p>Arquivos de imagem guardam uma informação de DPI, e alguns programas deixam mudar esse número sem mexer nos pixels. Isso muda apenas o tamanho de impressão que o programa <em>informa</em>; a imagem continua com o mesmo detalhe. Uma foto de 600 × 800 pixels marcada com 300 DPI imprime em 5,1 × 6,8 cm; marcada com 72 DPI, o mesmo arquivo diz ter 21 × 28 cm e sairia borrado. O que decide a qualidade é a quantidade de pixels — por isso a tabela está em pixels.</p>
+
+      <h2>Quando o edital também limita o tamanho do arquivo</h2>
+      <p>Muitos editais pedem as duas coisas, como 3 × 4 cm e no máximo 200 KB. Redimensione primeiro e depois comprima até o limite — o <a href="/pt/guias/redimensionar-foto-assinatura/">guia de foto e assinatura para concursos</a> mostra como ficar abaixo do limite sem deixar o rosto borrado.</p>
+    `,
+    faqs: [
+      { question: 'Quantos pixels tem uma foto 3x4?', answer: '354 × 472 pixels a 300 DPI, a resolução usual de impressão. A 150 DPI, para uso em tela, são 177 × 236 pixels.' },
+      { question: 'Como converter centímetros em pixels?', answer: 'Divida os centímetros por 2,54 para ter polegadas e multiplique pelo DPI: pixels = cm ÷ 2,54 × DPI. A 300 DPI, 1 cm tem cerca de 118 pixels.' },
+      { question: 'Qual DPI devo usar?', answer: '300 DPI para tudo que vai ser impresso, inclusive fotos de documento. 150 DPI basta para imagens vistas só na tela.' },
+      { question: 'Por que a foto ficou esticada?', answer: 'O formato dela não batia com o tamanho pedido. Recorte na proporção certa antes (3:4 para uma foto 3 × 4) e depois redimensione, ou ative Manter proporção.' },
+      { question: 'Mudar o DPI deixa a foto mais nítida?', answer: 'Não. Mudar só o DPI altera o tamanho de impressão informado, não o detalhe. A nitidez depende da quantidade de pixels.' }
+    ]
   }
 ];
 

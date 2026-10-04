@@ -2504,6 +2504,63 @@ Diskon 15%:  =B2*(1-C2)     Rp 40.000 → Rp 34.000</span>
       { question: 'Bagaimana mengetahui PNG sudah transparan?', answer: 'Buka di editor yang menampilkan kotak-kotak di belakang area transparan, atau letakkan gambar di atas latar berwarna. Jika warnanya terlihat, latarnya sudah transparan.' },
       { question: 'Jika PNG diubah ke JPG, apakah transparansinya tetap?', answer: 'Tidak. JPG tidak bisa menyimpan transparansi, sehingga area transparan diisi warna padat, biasanya putih atau hitam.' }
     ]
+  },
+  {
+    /* "ubah ukuran gambar cm" (>100): the tool works in pixels, so the honest
+       answer is the conversion — with the pas foto sizes Indonesian forms use
+       and the resizer's built-in 3x4 / 4x6 presets. */
+    en: 'resize-image-in-cm',
+    slug: 'ubah-ukuran-gambar-cm',
+    title: 'Ubah Ukuran Gambar ke cm: Centimeter ke Piksel | ConvertOcean',
+    description: 'Gambar baru punya ukuran cm setelah DPI ditentukan. Rumusnya, tabel siap pakai untuk pas foto 2x3, 3x4, 4x6 dan A4, serta cara memotong dan mengubah ukuran.',
+    h1: 'Cara ubah ukuran gambar ke centimeter.',
+    readTime: '5 menit baca',
+    publishOn: '2026-11-06',
+    intro: 'Formulir pendaftaran dan tempat cetak meminta foto dalam centimeter — pas foto 2 × 3, 3 × 4, 4 × 6 — padahal file gambar diukur dalam piksel. Keduanya dihubungkan oleh satu angka, yaitu resolusi dalam DPI (titik per inci). Setelah tahu itu, konversinya cukup satu hitungan, dan tabel di bawah sudah menghitungnya untuk ukuran yang paling sering diminta.',
+    contentHtml: `
+      <h2>Rumusnya</h2>
+      <p>Satu inci tepat 2,54 cm, dan DPI adalah jumlah piksel per inci. Jadi:</p>
+      <span class="g-formula">piksel = centimeter ÷ 2,54 × DPI</span>
+      <p>Sisi 3 cm pada 300 DPI = 3 ÷ 2,54 × 300 = 354,3, jadi 354 piksel. Bulatkan ke piksel terdekat.</p>
+      <p>DPI berapa? <strong>300 DPI</strong> adalah standar untuk mencetak foto dan dokumen. <strong>150 DPI</strong> cukup untuk gambar yang hanya dilihat di layar, atau jika formulir membatasi ukuran file. Jika formulir hanya menyebut ukuran dalam cm, 300 DPI adalah pilihan aman.</p>
+
+      <h2>Ukuran yang paling sering diminta</h2>
+      <div class="g-table-wrap"><table class="g-table">
+        <thead><tr><th>Ukuran (cm)</th><th>300 DPI (cetak)</th><th>150 DPI (layar)</th></tr></thead>
+        <tbody>
+          <tr><td>Pas foto 2 × 3</td><td class="num">236 × 354 px</td><td class="num">118 × 177 px</td></tr>
+          <tr><td>Pas foto 3 × 4</td><td class="num">354 × 472 px</td><td class="num">177 × 236 px</td></tr>
+          <tr><td>Pas foto 4 × 6</td><td class="num">472 × 709 px</td><td class="num">236 × 354 px</td></tr>
+          <tr><td>10 × 15 (4R)</td><td class="num">1181 × 1772 px</td><td class="num">591 × 886 px</td></tr>
+          <tr><td>A4 (21 × 29,7)</td><td class="num">2480 × 3508 px</td><td class="num">1240 × 1754 px</td></tr>
+        </tbody>
+      </table></div>
+
+      <h2>Langkah 1: potong sesuai bentuknya</h2>
+      <p>Pas foto 3 × 4 berbentuk 3:4; foto dari HP biasanya 3:4 atau 9:16, dan foto mendatar kebalikannya. Mengubah ukuran saja tidak bisa mengubah bentuk tanpa membuat gambar melar. Potong dulu: editor foto di setiap HP punya alat potong dengan pilihan rasio, begitu juga Foto di Windows dan Preview di Mac.</p>
+      <ul>
+        <li>Pas foto 3 × 4 → potong <strong>3:4</strong></li>
+        <li>Pas foto 2 × 3 dan 4 × 6 → potong <strong>2:3</strong></li>
+        <li>10 × 15 → potong <strong>2:3</strong></li>
+      </ul>
+
+      <h2>Langkah 2: ubah ke ukuran pikselnya</h2>
+      <p>Buka <a href="/id/ubah-ukuran-gambar/">Ubah Ukuran Gambar</a>. Untuk pas foto 3 × 4 dan 4 × 6 sudah ada tombol siap pakai (300 dpi); untuk ukuran lain, ketik lebar dan tinggi dari tabel, lalu unduh. Karena bentuknya sudah sesuai, gambar tidak melar. Kalau bentuknya sedikit berbeda, aktifkan <strong>Kunci rasio</strong> agar proporsinya terjaga — satu sisi mungkin berbeda beberapa piksel dari tabel, dan itu tidak masalah untuk dicetak.</p>
+      <p>Alat ini berjalan di browser, jadi pas foto atau tanda tangan Anda tidak keluar dari perangkat.</p>
+
+      <h2>Kenapa mengubah angka DPI saja tidak berguna</h2>
+      <p>File gambar menyimpan keterangan DPI, dan beberapa aplikasi bisa mengubah angka itu tanpa menyentuh pikselnya. Yang berubah hanya ukuran cetak yang <em>diklaim</em> aplikasi; detail gambarnya tetap sama. Foto 600 × 800 piksel bertanda 300 DPI tercetak 5,1 × 6,8 cm; bertanda 72 DPI, file yang sama mengaku berukuran 21 × 28 cm dan hasil cetaknya buram. Yang menentukan kualitas adalah jumlah piksel — karena itu tabel di atas dalam piksel.</p>
+
+      <h2>Jika formulir juga membatasi ukuran file</h2>
+      <p>Banyak formulir meminta keduanya, misalnya pas foto 3 × 4 dan maksimal 200 KB. Ubah ukurannya dulu, lalu kecilkan ukuran file dengan mode ukuran file di <a href="/id/ubah-ukuran-gambar/">Ubah Ukuran Gambar</a>: isi batas KB-nya, dan alat mencari kualitas tertinggi yang masih muat.</p>
+    `,
+    faqs: [
+      { question: 'Berapa piksel ukuran pas foto 3x4?', answer: '354 × 472 piksel pada 300 DPI, resolusi cetak yang umum. Pada 150 DPI, untuk layar, ukurannya 177 × 236 piksel.' },
+      { question: 'Berapa piksel pas foto 4x6?', answer: '472 × 709 piksel pada 300 DPI. Pada 150 DPI, 236 × 354 piksel.' },
+      { question: 'Bagaimana mengubah centimeter ke piksel?', answer: 'Bagi centimeter dengan 2,54 untuk mendapat inci, lalu kalikan DPI: piksel = cm ÷ 2,54 × DPI. Pada 300 DPI, 1 cm sekitar 118 piksel.' },
+      { question: 'Kenapa foto saya jadi melar?', answer: 'Bentuknya tidak sama dengan ukuran tujuan. Potong dulu sesuai rasionya (3:4 untuk pas foto 3 × 4), baru ubah ukuran, atau aktifkan Kunci rasio.' },
+      { question: 'Apakah mengubah DPI membuat foto lebih tajam?', answer: 'Tidak. Mengubah angka DPI saja hanya mengubah ukuran cetak yang diklaim, bukan detailnya. Ketajaman bergantung pada jumlah piksel.' }
+    ]
   }
 ];
 export const idStaticPages: LocaleStaticPage[] = [

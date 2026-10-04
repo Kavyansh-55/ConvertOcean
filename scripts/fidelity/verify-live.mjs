@@ -1073,6 +1073,9 @@ async function stylesheetsFor(path) {
     ['2026-10-24', '/guides/jpg-to-png-transparent-background/'],
     ['2026-10-27', '/pt/guias/jpg-para-png-sem-fundo/'],
     ['2026-10-30', '/id/panduan/jpg-ke-png-transparan/'],
+    ['2026-11-02', '/guides/resize-image-in-cm/'],
+    ['2026-11-04', '/pt/guias/redimensionar-imagem-em-cm/'],
+    ['2026-11-06', '/id/panduan/ubah-ukuran-gambar-cm/'],
   ];
   const map = (await get('/sitemap.xml')).body;
   const wrong = [];
