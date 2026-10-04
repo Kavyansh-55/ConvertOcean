@@ -168,6 +168,7 @@ const sample = isId ? {
     color: #171717;
   }
   .receipt-pdf-container {
+    --inv-accent: #171717;
     width: 700px;
     min-height: 800px;
     padding: 40px;
@@ -181,10 +182,41 @@ const sample = isId ? {
   .receipt-pdf-header {
     display: flex;
     justify-content: space-between;
-    border-bottom: 2px solid #171717;
+    border-bottom: 2px solid var(--inv-accent);
     padding-bottom: var(--spacing-lg);
     margin-bottom: var(--spacing-xl);
   }
+  /* Optional logo, scaled down in the browser before it is placed. */
+  .pdf-logo {
+    display: block;
+    max-height: 56px;
+    max-width: 180px;
+    object-fit: contain;
+    margin-bottom: 8px;
+  }
+  .pdf-logo[hidden] { display: none; }
+  /* Templates, as on the invoice generator. The class is toggled at runtime,
+     so it is wrapped in :global() (the scoped-CSS note in CLAUDE.md). */
+  .receipt-pdf-container:global(.tpl-modern) .receipt-pdf-header {
+    background: var(--inv-accent);
+    margin: -40px -40px var(--spacing-xl);
+    padding: 32px 40px;
+    border-bottom: 0;
+  }
+  .receipt-pdf-container:global(.tpl-modern) .pdf-brand-title { color: #ffffff; }
+  .receipt-pdf-container:global(.tpl-modern) .pdf-doc-type,
+  .receipt-pdf-container:global(.tpl-modern) .receipt-pdf-header .pdf-meta-text { color: rgba(255, 255, 255, 0.85); }
+  .receipt-pdf-container:global(.tpl-modern) .receipt-pdf-table th {
+    background: var(--inv-accent);
+    color: #ffffff;
+    border-bottom: 0;
+    padding: 8px 6px;
+  }
+  .receipt-pdf-container:global(.tpl-minimal) .receipt-pdf-header { border-bottom: 1px solid #d4d4d4; }
+  .receipt-pdf-container:global(.tpl-minimal) .pdf-brand-title { font-weight: 600; font-size: 20px; letter-spacing: -0.6px; }
+  .receipt-pdf-container:global(.tpl-minimal) .receipt-pdf-table th { border-bottom: 1px solid #d4d4d4; }
+  .receipt-pdf-container:global(.tpl-minimal) .receipt-pdf-table tr:last-child td { border-bottom: 1px solid #d4d4d4; }
+  .receipt-pdf-container:global(.tpl-minimal) .pdf-totals-table tr.grand-total td { border-top: 1px solid #171717; }
   .pdf-brand-title {
     font-size: 24px;
     font-weight: 700;
@@ -234,7 +266,7 @@ const sample = isId ? {
     font-size: 10px;
     text-transform: uppercase;
     color: #888888;
-    border-bottom: 1px solid #171717;
+    border-bottom: 1px solid var(--inv-accent);
     padding: var(--spacing-xs) 6px;
     text-align: left;
   }
@@ -268,7 +300,7 @@ const sample = isId ? {
     font-weight: var(--fw-bold);
     color: #171717;
     font-size: 16px;
-    border-top: 2px solid #171717;
+    border-top: 2px solid var(--inv-accent);
     padding-top: var(--spacing-sm);
   }
   .pdf-totals-table td.right-align {
@@ -485,6 +517,37 @@ const sample = isId ? {
       </div>
     </div>
 
+    <!-- Card: Design -->
+    <div class="form-card">
+      <div class="form-card-title">{t('Design', lang)}</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="rcptTemplate">{t('Template', lang)}</label>
+          <select id="rcptTemplate" class="select-input" name="template">
+            <option value="classic" selected>{t('Classic', lang)}</option>
+            <option value="modern">{t('Modern (colour header)', lang)}</option>
+            <option value="minimal">{t('Minimal (prints cheaply)', lang)}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rcptAccent">{t('Accent colour', lang)}</label>
+          <select id="rcptAccent" class="select-input" name="accent-colour">
+            <option value="#171717" selected>{t('Charcoal', lang)}</option>
+            <option value="#1d4ed8">{t('Blue', lang)}</option>
+            <option value="#047857">{t('Green', lang)}</option>
+            <option value="#b91c1c">{t('Red', lang)}</option>
+            <option value="#6d28d9">{t('Purple', lang)}</option>
+            <option value="#c2410c">{t('Orange', lang)}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="rcptLogo">{t('Logo (optional, stays on your device)', lang)}</label>
+        <input type="file" id="rcptLogo" class="form-input" accept="image/png,image/jpeg,image/webp" />
+      </div>
+      <button type="button" class="button button-secondary" id="rcptLogoRemove" style="display: none; height: 34px; font-size: 13px;">{t('Remove logo', lang)}</button>
+    </div>
+
     <div class="form-card">
       <div class="form-card-title">{t('From (Business / Seller)', lang)}</div>
       <div class="form-group">
@@ -554,6 +617,7 @@ const sample = isId ? {
       <div class="receipt-pdf-container" id="receiptPdfContainer">
         <div class="receipt-pdf-header">
           <div>
+            <img id="rcptPdfLogo" class="pdf-logo" alt="" hidden />
             <div class="pdf-brand-title" id="rcptPdfVendorTitle">{sample.VendorName}</div>
             <div class="pdf-meta-text" id="rcptPdfVendorSub">{t('Payment Receipt', lang)}</div>
           </div>
@@ -950,5 +1014,54 @@ const sample = isId ? {
       $('rcptCustomTaxGroup').style.display = 'none';
       renderEditorTable(); updatePreview();
     });
+  })();
+</script>
+
+<script is:inline>
+  /* Template, accent colour and logo — the invoice generator's Design card.
+     The logo is scaled onto a canvas no larger than 400 x 160. */
+  (function () {
+    const box = document.getElementById('receiptPdfContainer');
+    const tpl = document.getElementById('rcptTemplate');
+    const acc = document.getElementById('rcptAccent');
+    const logo = document.getElementById('rcptLogo');
+    const img = document.getElementById('rcptPdfLogo');
+    const rm = document.getElementById('rcptLogoRemove');
+    if (!box || !tpl) return;
+    const apply = () => {
+      box.classList.remove('tpl-modern', 'tpl-minimal');
+      if (tpl.value !== 'classic') box.classList.add('tpl-' + tpl.value);
+      box.style.setProperty('--inv-accent', tpl.value === 'minimal' ? '#171717' : acc.value);
+      acc.disabled = tpl.value === 'minimal';
+    };
+    tpl.addEventListener('change', apply);
+    acc.addEventListener('change', apply);
+    logo.addEventListener('change', () => {
+      const f = logo.files && logo.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        const im = new Image();
+        im.onload = () => {
+          const k = Math.min(1, 400 / im.width, 160 / im.height);
+          const cv = document.createElement('canvas');
+          cv.width = Math.max(1, Math.round(im.width * k));
+          cv.height = Math.max(1, Math.round(im.height * k));
+          cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height);
+          img.src = cv.toDataURL('image/png');
+          img.hidden = false;
+          rm.style.display = 'inline-flex';
+        };
+        im.src = r.result;
+      };
+      r.readAsDataURL(f);
+    });
+    rm.addEventListener('click', () => {
+      img.removeAttribute('src');
+      img.hidden = true;
+      logo.value = '';
+      rm.style.display = 'none';
+    });
+    apply();
   })();
 </script>
