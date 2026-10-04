@@ -32,7 +32,7 @@ const SAME_EXTRA = [
   /^\.json$/,
   /^([^A-Za-z]|&[a-z]+;)+$/,                          // punctuation and entities between expressions
 ];
-const SAME = /^(ConvertOcean|OpenStreetMap|GitHub|PDF|JPG|JPEG|PNG|WebP|AVIF|HEIC|SVG|CSV|JSON|XML|XLSX?|DOCX?|PPTX?|TXT|OFX|QFX|QBO|EXIF|OCR|DPI|KB|MB|px|pt|Excel|Word|PowerPoint|Twitter\/X \d+|Instagram \d+|LinkedIn \d+|Meta Desc \d+|Excel \(\.xlsx\)|CSV \(\.csv\)|[A-Z]{2,5}(\s*[·/,]\s*[A-Z]{2,5})*|[\d\s.,%×x:/()+\-–—→←#·]+|&[a-z]+;|[✕×✓…•·|—–→←↓↑]+)$/;
+const SAME = /^(ConvertOcean|OpenStreetMap|GitHub|Product Hunt|PDF|JPG|JPEG|PNG|WebP|AVIF|HEIC|SVG|CSV|JSON|XML|XLSX?|DOCX?|PPTX?|TXT|OFX|QFX|QBO|EXIF|OCR|DPI|KB|MB|px|pt|Excel|Word|PowerPoint|Twitter\/X \d+|Instagram \d+|LinkedIn \d+|Meta Desc \d+|Excel \(\.xlsx\)|CSV \(\.csv\)|[A-Z]{2,5}(\s*[·/,]\s*[A-Z]{2,5})*|[\d\s.,%×x:/()+\-–—→←#·]+|&[a-z]+;|[✕×✓…•·|—–→←↓↑]+)$/;
 
 function templateOf(src) {
   let t = src.replace(/^---[\s\S]*?\n---/, '');

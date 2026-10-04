@@ -399,7 +399,7 @@ export const guides: GuideData[] = [
   },
   {
     slug: 'how-ocr-works',
-    title: 'How OCR Extracts Text From Images - Optical Character Recognition | ConvertOcean',
+    title: 'How OCR Works: Extracting Text From Images | ConvertOcean',
     description: 'Understand the optical character recognition (OCR) pipeline. Learn how machines identify, isolate, and digitize text characters from images and screenshots.',
     h1: 'How OCR Extracts Text From Images.',
     readTime: '6 min read',
@@ -576,7 +576,7 @@ export const guides: GuideData[] = [
   {
     slug: 'csv-to-json',
     title: 'How to Convert CSV to JSON: Developer Guide | ConvertOcean',
-    description: 'Learn when and how to convert CSV to JSON: header mapping, data types, delimiters, nested structures, and the parsing pitfalls that corrupt data — with examples.',
+    description: 'When and how to convert CSV to JSON: header mapping, data types, delimiters, nested structures, and the parsing pitfalls that corrupt data — with examples.',
     h1: 'How to Convert CSV to JSON: A Developer Guide.',
     readTime: '6 min read',
     publishDate: 'July 9, 2026',
@@ -675,7 +675,7 @@ export const guides: GuideData[] = [
   {
     slug: 'how-to-calculate-break-even-point',
     title: 'How to Calculate Break-Even Point: Formula & Examples | ConvertOcean',
-    description: 'Learn the break-even point formula step by step — contribution margin, worked café example, target-profit volumes, and the three levers that lower your break-even.',
+    description: 'The break-even point formula step by step — contribution margin, a worked café example, target-profit volumes, and the three levers that lower your break-even.',
     h1: 'How to Calculate Break-Even Point (Formula + Examples).',
     readTime: '6 min read',
     publishDate: 'July 18, 2026',

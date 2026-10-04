@@ -28,7 +28,7 @@ export const comparisons: ComparisonData[] = [
   {
     slug: 'smallpdf',
     competitorName: 'Smallpdf',
-    title: 'ConvertOcean vs Smallpdf - 100% Free & Private Alternative | ConvertOcean',
+    title: 'ConvertOcean vs Smallpdf - Free & Private Alternative',
     description: 'Compare ConvertOcean and Smallpdf. Discover why our client-side, zero-upload WebAssembly engine is the securest, free alternative to cloud converters.',
     h1: 'ConvertOcean vs Smallpdf.',
     subtitle: 'The privacy-first alternative for offline-ready, free file conversions.',
@@ -124,7 +124,7 @@ export const comparisons: ComparisonData[] = [
   {
     slug: 'ilovepdf',
     competitorName: 'iLovePDF',
-    title: 'ConvertOcean vs iLovePDF - Secure Offline PDF Editor Comparison | ConvertOcean',
+    title: 'ConvertOcean vs iLovePDF - Private PDF Tools Compared',
     description: 'Compare ConvertOcean and iLovePDF. Read why our local browser sandboxing provides superior security and offline capabilities over cloud tools.',
     h1: 'ConvertOcean vs iLovePDF.',
     subtitle: 'High-security client-side file tools with zero remote uploads.',
@@ -214,7 +214,7 @@ export const comparisons: ComparisonData[] = [
   {
     slug: 'adobe-acrobat',
     competitorName: 'Adobe Acrobat',
-    title: 'ConvertOcean vs Adobe Acrobat - Free Private PDF Converter | ConvertOcean',
+    title: 'ConvertOcean vs Adobe Acrobat - Free Private PDF Converter',
     description: 'Compare ConvertOcean and Adobe Acrobat. Learn why our web-based offline engine is the simplest, signup-free alternative to Acrobat tools.',
     h1: 'ConvertOcean vs Adobe Acrobat.',
     subtitle: 'Clean, open-access web tools without subscription friction.',
@@ -304,7 +304,7 @@ export const comparisons: ComparisonData[] = [
   {
     slug: 'cloudconvert',
     competitorName: 'CloudConvert',
-    title: 'ConvertOcean vs CloudConvert - Secure Local File Converter Alternative | ConvertOcean',
+    title: 'ConvertOcean vs CloudConvert - Private File Converter Alternative',
     description: 'Compare ConvertOcean and CloudConvert. Find out why local browser-based compilation is faster and more secure than cloud-queue converters.',
     h1: 'ConvertOcean vs CloudConvert.',
     subtitle: 'Instant client-side conversions with no upload queues or limits.',
@@ -394,7 +394,7 @@ export const comparisons: ComparisonData[] = [
   {
     slug: 'zamzar',
     competitorName: 'Zamzar',
-    title: 'ConvertOcean vs Zamzar - No-Upload Alternative | ConvertOcean',
+    title: 'ConvertOcean vs Zamzar - No-Upload Alternative',
     description: 'Compare ConvertOcean and Zamzar. See why in-browser, zero-upload conversion beats upload queues and inbox links for private documents — free and unlimited.',
     h1: 'ConvertOcean vs Zamzar.',
     subtitle: 'Convert files instantly in your browser instead of waiting on upload queues and download links.',
@@ -490,7 +490,7 @@ export const comparisons: ComparisonData[] = [
   {
     slug: 'convertio',
     competitorName: 'Convertio',
-    title: 'ConvertOcean vs Convertio - Private Alternative | ConvertOcean',
+    title: 'ConvertOcean vs Convertio - Private Alternative',
     description: 'Compare ConvertOcean and Convertio. Local in-browser conversion with no 100MB caps, queues, or uploads — see which converter fits which job. Free forever.',
     h1: 'ConvertOcean vs Convertio.',
     subtitle: 'Local processing with no upload caps, conversion minutes, or accounts.',
@@ -586,8 +586,8 @@ export const comparisons: ComparisonData[] = [
   {
     slug: 'iloveimg',
     competitorName: 'iLoveIMG',
-    title: 'ConvertOcean vs iLoveIMG - Private Image Tools | ConvertOcean',
-    description: 'Compare ConvertOcean and iLoveIMG for resizing, compressing & converting images. See why in-browser, zero-upload image editing beats cloud tools — free & unlimited.',
+    title: 'ConvertOcean vs iLoveIMG - Private Image Tools',
+    description: 'Compare ConvertOcean and iLoveIMG for resizing, compressing and converting images: in-browser, zero-upload image tools vs cloud processing — both free.',
     h1: 'ConvertOcean vs iLoveIMG.',
     subtitle: 'Resize, compress, and convert images in your browser — nothing uploaded.',
     intro: 'iLoveIMG is a popular cloud image toolkit for resizing, compressing, and converting photos. It works well, but every image is uploaded to their servers first. ConvertOcean does the same everyday image jobs — resize to exact pixels or a target file size, convert between JPG/PNG/WebP, OCR — entirely inside your browser, so your photos, ID scans, and screenshots never leave your device.',
@@ -683,7 +683,7 @@ export const comparisons: ComparisonData[] = [
     slug: 'pdf24',
     competitorName: 'PDF24',
     title: 'ConvertOcean vs PDF24 - Private Browser PDF Tools | ConvertOcean',
-    description: 'Compare ConvertOcean and PDF24 Tools. Both are free — see the real difference: in-browser processing with no uploads vs cloud tools, plus images, data & business tools.',
+    description: 'ConvertOcean vs PDF24 Tools: both are free. The real difference is in-browser processing with no uploads vs cloud tools, plus images, data and business tools.',
     h1: 'ConvertOcean vs PDF24.',
     subtitle: 'Free PDF tools that run in your browser with nothing uploaded — plus images, data, and business tools.',
     intro: 'PDF24 Tools is a genuinely free and well-stocked PDF toolkit — credit where it is due. The honest difference is not price; it is architecture and scope. PDF24\'s online tools upload your files to their servers to process, while ConvertOcean runs every conversion inside your browser with zero uploads — and covers images, spreadsheets, developer data, and business calculators alongside PDFs.',
@@ -779,7 +779,7 @@ export const comparisons: ComparisonData[] = [
     slug: 'sejda',
     competitorName: 'Sejda',
     title: 'ConvertOcean vs Sejda - No Hourly Limits, No Upload',
-    description: 'Compare ConvertOcean and Sejda PDF. Sejda is a serious, privacy-conscious PDF suite — see where its free hourly and page limits bite, and where its editor genuinely wins.',
+    description: 'ConvertOcean vs Sejda PDF: Sejda is a serious, privacy-conscious suite. See where its free hourly and page limits bite, and where its editor genuinely wins.',
     h1: 'ConvertOcean vs Sejda.',
     subtitle: 'Unlimited free conversions in your browser, versus a strong PDF suite with a metered free tier.',
     intro: 'Sejda is one of the more respectable names in this category: it deletes uploaded files after two hours, states plainly that it does not access your files without permission, and sells a desktop app that genuinely processes documents locally. So this is not a privacy-versus-no-privacy comparison. The real differences are metering and architecture — Sejda\'s free tier is capped by the hour and by the page, and its local processing sits behind a paid plan, while ConvertOcean does every conversion in your browser, unmetered, for free.',
@@ -891,13 +891,13 @@ export const comparisons: ComparisonData[] = [
   {
     slug: 'tinywow',
     competitorName: 'TinyWow',
-    title: 'ConvertOcean vs TinyWow - No Ads, No CAPTCHAs, No Upload',
-    description: 'Compare ConvertOcean and TinyWow. Both are free — the difference is ads, CAPTCHAs, and whether your file is uploaded to a server or converted in your browser.',
+    title: 'ConvertOcean vs TinyWow - No CAPTCHAs, No Upload, No Paid Tier',
+    description: 'ConvertOcean vs TinyWow: both are free and ad-supported. The differences are CAPTCHAs, a paid tier, and whether your file is uploaded or stays in your browser.',
     h1: 'ConvertOcean vs TinyWow.',
-    subtitle: 'Free file conversion without advertising, CAPTCHAs, or an upload step.',
-    intro: 'TinyWow is genuinely free and enormously broad — several hundred tools spanning PDFs, images, video, and AI writing, most of them usable without an account. Its economics are the familiar ones: advertising, CAPTCHAs, and a paid tier to remove both. ConvertOcean takes the opposite route. Because conversions run in your browser rather than on our servers, there is no per-file cost to recover, which is why there are no ads, no CAPTCHAs, and no upload.',
+    subtitle: 'Free file conversion without CAPTCHAs, a paid tier, or an upload step.',
+    intro: 'TinyWow is genuinely free and enormously broad — several hundred tools spanning PDFs, images, video, and AI writing, most of them usable without an account. Its economics are the familiar ones: advertising, CAPTCHAs, and a paid tier to remove both. ConvertOcean is free and ad-supported too, so ads are not the difference. The architecture is: conversions run in your browser rather than on our servers, so there is no per-file server cost to protect with CAPTCHAs or sell back as a subscription — and no upload.',
     pros: [
-      'No advertising anywhere in the interface.',
+      'No paid tier — every tool is free, with nothing held back for subscribers.',
       'No CAPTCHAs between you and your file.',
       'Nothing uploaded — conversions run inside your browser tab.',
       'No account, no email, and no queue for "priority processing".',
@@ -921,12 +921,6 @@ export const comparisons: ComparisonData[] = [
         feature: 'Processing Location',
         convertocean: 'Your browser (on-device)',
         competitor: 'TinyWow cloud servers',
-        isConvertoceanBetter: true
-      },
-      {
-        feature: 'Advertising',
-        convertocean: 'None',
-        competitor: 'Ad-supported on the free tier',
         isConvertoceanBetter: true
       },
       {
@@ -956,10 +950,10 @@ export const comparisons: ComparisonData[] = [
     ],
     sections: [
       {
-        title: 'Free, But You Pay in Attention.',
+        title: 'Free on Both — the Difference Is the Server.',
         paragraphs: [
           'TinyWow\'s free tier is real — you can convert a file today without paying or registering. What it asks for instead is your attention and your patience: advertising around the tools, and CAPTCHAs to clear before your download. Its paid plans are sold explicitly on removing those, promising no advertisements, skipping all CAPTCHAs, and priority processing, at roughly $20 per month or $15 per month billed annually.',
-          'That tells you something useful about the underlying model. When files are processed on a company\'s servers, every conversion costs them compute and bandwidth, and something has to cover it — ads, CAPTCHAs that deter automation, or a subscription. ConvertOcean does not carry that cost, because the conversion happens on your machine. There is nothing to recover, so nothing is inserted between you and your file.'
+          'That tells you something useful about the underlying model. When files are processed on a company\'s servers, every conversion costs them compute and bandwidth, and something has to cover it — ads, CAPTCHAs that deter automation, or a subscription. ConvertOcean does not carry that per-file cost, because the conversion happens on your machine. The site is still supported by ads, but there is no CAPTCHA to clear before a download and no queue to skip, because nothing about your file depends on our servers.'
         ]
       },
       {
@@ -973,22 +967,22 @@ export const comparisons: ComparisonData[] = [
         title: 'When TinyWow Is the Better Choice.',
         paragraphs: [
           'TinyWow wins clearly on breadth, and it is not close. It offers several hundred tools, including whole categories ConvertOcean deliberately does not enter: video editing and conversion, AI writing and paraphrasing, image generation, and various one-off web utilities. Those genuinely cannot run comfortably in a browser tab — video transcoding and large language models need server hardware, which is precisely why they sit on the other side of the architectural line.',
-          'So if you need a video trimmed, an essay paraphrased, or the long tail of miscellaneous web utilities in one place, TinyWow is the better destination and an ad break is a fair trade. Choose ConvertOcean for document, image, and data conversion you would rather keep on your own machine — and for a working session with no ads, no CAPTCHAs, and no upload.'
+          'So if you need a video trimmed, an essay paraphrased, or the long tail of miscellaneous web utilities in one place, TinyWow is the better destination and an ad break is a fair trade. Choose ConvertOcean for document, image, and data conversion you would rather keep on your own machine — with no CAPTCHAs and no upload.'
         ]
       }
     ],
     faqs: [
       {
         q: 'Is TinyWow really free?',
-        a: 'Yes, the core tools are free without an account. The free tier is supported by advertising and CAPTCHAs, and TinyWow sells paid plans — around $20 per month, or $15 per month billed annually — whose main benefit is removing ads, skipping CAPTCHAs, and getting priority processing. ConvertOcean is free with no ads and no CAPTCHAs.'
+        a: 'Yes, the core tools are free without an account. The free tier is supported by advertising and CAPTCHAs, and TinyWow sells paid plans — around $20 per month, or $15 per month billed annually — whose main benefit is removing ads, skipping CAPTCHAs, and getting priority processing. ConvertOcean is also free and ad-supported, but it has no CAPTCHAs and no paid tier.'
       },
       {
         q: 'Does TinyWow keep my files?',
         a: 'TinyWow states that all files, both processed and unprocessed, are deleted after 1 hour. Your file is still uploaded to its servers first. ConvertOcean converts inside your browser, so no upload happens and there is no retention period at all.'
       },
       {
-        q: 'Why does ConvertOcean have no ads if it is free?',
-        a: 'Because conversions run on your device, not on our servers, so each conversion costs us nothing in compute or bandwidth. Services that process files in the cloud have real per-file costs, which is generally what ads, CAPTCHAs, and subscriptions are there to cover.'
+        q: 'Does ConvertOcean show ads?',
+        a: 'Yes. ConvertOcean is free and supported by advertising, and the privacy policy states plainly what its advertising and analytics cookies collect. What it does not do is upload your file: conversions run on your device, so each one costs us nothing in compute or bandwidth. That is why there are no CAPTCHAs and no paid tier — services that process files in the cloud have real per-file costs to cover.'
       },
       {
         q: 'Does TinyWow have more tools than ConvertOcean?',
@@ -1001,3 +995,19 @@ export const comparisons: ComparisonData[] = [
     ]
   }
 ];
+
+/* Which comparison pages a tool page links to. Until 2026-10-04 the /vs/
+   pages were linked only from the footer's Compare column and the HTML
+   sitemap — never from page content, where a link carries more weight. These
+   are the competitors that actually make that kind of tool. Matched on the
+   slug for PDF tools because most of them sit in other categories
+   (pdf-to-word is a document tool). */
+export function comparisonsForTool(slug: string, categorySlug: string): ComparisonData[] {
+  const pick = (slugs: string[]) => slugs
+    .map((s) => comparisons.find((c) => c.slug === s))
+    .filter((c): c is ComparisonData => !!c);
+  if (slug.includes('pdf')) return pick(['smallpdf', 'ilovepdf', 'adobe-acrobat', 'sejda', 'pdf24']);
+  if (categorySlug === 'image-tools') return pick(['iloveimg', 'tinywow', 'cloudconvert']);
+  if (categorySlug === 'document-tools' || categorySlug === 'excel-converter') return pick(['cloudconvert', 'zamzar', 'convertio']);
+  return [];
+}
