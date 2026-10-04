@@ -55,6 +55,10 @@ const CASES = [
   ['/word-to-pdf/',    'pdfMakeFonts',   'vfs_fonts.js'],
   ['/pdf-to-txt/',     'pdfjsLib',       'pdf.min.js'],
   ['/pdf-to-word/',    'pdfjsLib',       'pdf.min.js'],
+  /* PDF to JPG (2026-10-04) renders with pdf.js and zips several pages with
+     JSZip; either one missing is the tool failing. */
+  ['/pdf-to-jpg/',     'pdfjsLib',       'pdf.min.js'],
+  ['/pdf-to-jpg/',     'JSZip',          'jszip.min.js'],
   ['/image-to-pdf/',   'jspdf',          'jspdf.umd.min.js'],
   ['/excel-to-pdf/',   'jspdfAutoTable', 'jspdf.plugin.autotable.min.js'],
   ['/excel-to-pdf/',   'XLSX',           'xlsx.full.min.js'],
