@@ -591,6 +591,15 @@ export const runtimeScopes: Record<string, string[]> = {
     "This is an OpenDocument spreadsheet (.ods). Open it in Excel or LibreOffice and save as .xlsx, then convert that file.",
     "This workbook is password-protected, so its contents are encrypted and cannot be read here. Open it in Excel, save a copy without a password (File → Info → Protect Workbook → Encrypt with Password, then clear it), and convert that copy.",
   ],
+  "PdfToJpg": [
+    "Could not render this PDF. Try a lower resolution.",
+    "Creating ZIP…",
+    "Failed to read PDF file.",
+    "Loading PDF data structure…",
+    "Rendering page {0} of {1}…",
+    "This PDF is password-protected. Open it, remove the password, and try again.",
+    "{0} pages. One page downloads as an image; several download as a ZIP.",
+  ],
   "PdfToTxt": [
     "/image-to-text/",
     "Failed to parse PDF pages.",

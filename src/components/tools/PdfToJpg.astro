@@ -1,0 +1,154 @@
+---
+/* PDF to JPG / PNG. Each page is rendered with pdf.js (the same pinned build
+   the other PDF tools use) at the chosen resolution and encoded by the
+   browser; one page downloads as an image, several as a ZIP. Nothing leaves
+   the device. */
+import { t } from '../../i18n/ui';
+import CategoryIcon from '../CategoryIcon.astro';
+const { headline, subtitle, lang = 'en' } = Astro.props;
+---
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<div class="page-header">
+  <h1 class="page-title">{headline}</h1>
+  <p class="page-description">{subtitle}</p>
+</div>
+
+<div id="errorBanner" class="error-banner">
+  <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
+  <span id="errorMessage"></span>
+</div>
+
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-bar-container"><div id="progressBarFill" class="progress-bar-fill"></div></div>
+  <div id="progressLabel" class="progress-label">{t('Processing file…', lang)}</div>
+</div>
+
+<div id="dropZone" class="upload-card" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-icon"><CategoryIcon icon="📄" width="40" height="40" /></div>
+  <div class="upload-text-primary">{t('Drag and drop file here, or click to browse', lang)}</div>
+  <div class="upload-text-secondary">{t('PDF (Max 25MB)', lang)}</div>
+  <button type="button" class="upload-cta">{t('Choose file', lang)}</button>
+  <input type="file" id="fileInput" class="file-input" accept=".pdf" />
+</div>
+
+<div id="pjOptions" class="panel-card" style="display: none; margin-top: var(--spacing-md);">
+  <div class="form-group">
+    <label class="form-label" for="pjFormat">{t('Image format', lang)}</label>
+    <select id="pjFormat" class="form-input" name="image-format">
+      <option value="jpeg" selected>JPG</option>
+      <option value="png">PNG</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="pjDpi">{t('Resolution', lang)}</label>
+    <select id="pjDpi" class="form-input" name="resolution">
+      <option value="96">{t('96 DPI — screen, smallest files', lang)}</option>
+      <option value="150" selected>{t('150 DPI — sharp on screen, good for forms', lang)}</option>
+      <option value="300">{t('300 DPI — print quality, large files', lang)}</option>
+    </select>
+  </div>
+  <p id="pjInfo" style="font-size: 14px; margin: var(--spacing-sm) 0 0;"></p>
+</div>
+
+<div id="actionControls" class="panel-card" style="display: none; margin-top: var(--spacing-md); flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);">
+  <span id="fileNameDisplay" style="font-weight:600; font-size:14px;"></span>
+  <div class="button-group">
+    <button class="button button-primary" id="btnDownload">{t('Convert & Download', lang)}</button>
+    <button class="button button-danger" id="btnClear">{t('Clear', lang)}</button>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    const $ = (id) => document.getElementById(id);
+    const dropZone = $('dropZone'), fileInput = $('fileInput');
+    const errorBanner = $('errorBanner'), errorMessage = $('errorMessage');
+    const progressOverlay = $('progressOverlay'), progressBarFill = $('progressBarFill'), progressLabel = $('progressLabel');
+    const options = $('pjOptions'), info = $('pjInfo'), actions = $('actionControls'), nameEl = $('fileNameDisplay');
+    let bytes = null, pageCount = 0, baseName = '';
+
+    const showProgress = (p, l) => { progressOverlay.style.display = 'flex'; progressBarFill.style.width = p + '%'; progressLabel.textContent = l; };
+    const hideProgress = () => { progressOverlay.style.display = 'none'; };
+    const showError = (m) => { errorMessage.textContent = m; errorBanner.style.display = 'flex'; window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    const hideError = () => { errorBanner.style.display = 'none'; };
+
+    ['dragenter', 'dragover'].forEach((ev) => dropZone.addEventListener(ev, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); }));
+    ['dragleave', 'drop'].forEach((ev) => dropZone.addEventListener(ev, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); }));
+    dropZone.addEventListener('drop', (e) => { const f = e.dataTransfer.files[0]; if (f) load(f); });
+    fileInput.addEventListener('change', (e) => { const f = e.target.files[0]; if (f) load(f); });
+
+    async function load(file) {
+      const tooLarge = window.coFileTooLarge && window.coFileTooLarge(file, 25);
+      if (tooLarge) { showError(tooLarge); return; }
+      hideError();
+      showProgress(10, __t('Loading PDF data structure…'));
+      try {
+        const buf = new Uint8Array(await file.arrayBuffer());
+        // pdf.js hands the buffer to its worker, so it gets a copy each time.
+        const pdf = await pdfjsLib.getDocument({ data: buf.slice(), isEvalSupported: false }).promise;
+        bytes = buf; pageCount = pdf.numPages; baseName = file.name.replace(/\.[^/.]+$/, '');
+        nameEl.textContent = file.name;
+        info.textContent = __tf('{0} pages. One page downloads as an image; several download as a ZIP.', pageCount);
+        options.style.display = 'block';
+        actions.style.display = 'flex';
+        dropZone.style.display = 'none';
+      } catch (err) {
+        showError(/password/i.test(String(err && err.name) + String(err && err.message))
+          ? __t('This PDF is password-protected. Open it, remove the password, and try again.')
+          : __t('Failed to read PDF file.'));
+      }
+      hideProgress();
+    }
+
+    const toBlob = (canvas, type) => new Promise((res) => canvas.toBlob(res, type, 0.9));
+
+    $('btnDownload').addEventListener('click', async () => {
+      if (!bytes) return;
+      hideError();
+      const type = $('pjFormat').value === 'png' ? 'image/png' : 'image/jpeg';
+      const ext = type === 'image/png' ? 'png' : 'jpg';
+      const scale = Number($('pjDpi').value) / 72;
+      try {
+        const pdf = await pdfjsLib.getDocument({ data: bytes.slice(), isEvalSupported: false }).promise;
+        const files = [];
+        for (let i = 1; i <= pdf.numPages; i++) {
+          showProgress(Math.round((i - 1) / pdf.numPages * 90) + 5, __tf('Rendering page {0} of {1}…', i, pdf.numPages));
+          const page = await pdf.getPage(i);
+          const vp = page.getViewport({ scale });
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.floor(vp.width); canvas.height = Math.floor(vp.height);
+          const ctx = canvas.getContext('2d');
+          // JPG has no transparency: paint white first, as paper.
+          ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+          await page.render({ canvasContext: ctx, viewport: vp }).promise;
+          const blob = await toBlob(canvas, type);
+          if (!blob) throw new Error('canvas too large');
+          files.push({ name: pdf.numPages === 1 ? `${baseName}.${ext}` : `${baseName}-page-${String(i).padStart(String(pdf.numPages).length, '0')}.${ext}`, blob });
+          canvas.width = canvas.height = 0;
+          page.cleanup();
+        }
+        if (files.length === 1) {
+          window.downloadBlob(files[0].blob, files[0].name, type);
+        } else {
+          showProgress(96, __t('Creating ZIP…'));
+          if (typeof JSZip === 'undefined') throw new Error('zip unavailable');
+          const zip = new JSZip();
+          files.forEach((f) => zip.file(f.name, f.blob));
+          window.downloadBlob(await zip.generateAsync({ type: 'blob' }), `${baseName}-${ext}.zip`, 'application/zip');
+        }
+      } catch (err) {
+        showError(__t('Could not render this PDF. Try a lower resolution.'));
+      }
+      hideProgress();
+    });
+
+    $('btnClear').addEventListener('click', () => {
+      bytes = null; fileInput.value = '';
+      options.style.display = 'none'; actions.style.display = 'none'; dropZone.style.display = 'flex';
+    });
+  })();
+</script>
