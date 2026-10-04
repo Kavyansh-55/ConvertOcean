@@ -229,10 +229,10 @@ const isJsonOutput = ['csv-to-json', 'xml-to-json', 'xlsx-to-json', 'xls-to-json
       const parsed = parseCsv(text);
       /* A semicolon file uses the comma as its decimal mark (Excel in Brazil
          and most of Europe), and on the Portuguese pages 15/03/2026 is a
-         date. See coerceValue in scripts/tabular.js. */
+         date — as it is in Indonesia. See coerceValue in scripts/tabular.js. */
       const opts = {
         decimalComma: sniffDelimiter(String(text).replace(/^\uFEFF/, '')) === ';',
-        dayFirst: document.documentElement.lang === 'pt',
+        dayFirst: ['pt', 'id'].includes(document.documentElement.lang),
       };
       if (!parsed.length) return { rows: [], types: [] };
 

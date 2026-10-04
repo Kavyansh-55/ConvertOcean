@@ -4,9 +4,8 @@ import Layout from '../layouts/Layout.astro';
 import { guides } from '../data/guides';
 import { tools } from '../data/tools';
 import CategoryIcon from '../components/CategoryIcon.astro';
-import { ptGuides } from '../data/pt';
-import { getGuide, getGuides, getTools, localeHref } from '../i18n/content';
-import { guidesBase, type Locale } from '../i18n/config';
+import { getGuide, getGuides, getTools, localeHref, localeGuides } from '../i18n/content';
+import { guidesBase, LOCALES, PREFIXED_LOCALES, type Locale } from '../i18n/config';
 
 /**
  * One route file for every locale's guides, via a rest parameter:
@@ -28,11 +27,11 @@ export function getStaticPaths() {
     params: { guide: `guides/${g.slug}` },
     props: { lang: 'en' as Locale, slug: g.slug }
   }));
-  const portuguese = ptGuides.map(g => ({
-    params: { guide: `pt/guias/${g.slug}` },
-    props: { lang: 'pt' as Locale, slug: g.slug }
-  }));
-  return [...english, ...portuguese];
+  const localised = PREFIXED_LOCALES.flatMap(lang => localeGuides(lang).map(g => ({
+    params: { guide: `${LOCALES[lang].prefix}/${guidesBase(lang)}/${g.slug}` },
+    props: { lang, slug: g.slug }
+  })));
+  return [...english, ...localised];
 }
 
 const { lang = 'en' as Locale, slug } = Astro.props;

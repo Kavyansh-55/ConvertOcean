@@ -162,8 +162,16 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
     <div id="rzDimFields">
       <div class="resizer-panel-title" style="border: none; padding: 0;">{t('Common Form Presets', lang)}</div>
       <div class="preset-chips" style="margin-bottom: var(--spacing-sm);">
-        <button class="preset-chip" data-w="200" data-h="230">{t('Form Photo 200×230', lang)}</button>
-        <button class="preset-chip" data-w="140" data-h="60">{t('Signature 140×60', lang)}</button>
+        {lang === 'id' ? [
+          /* Indonesian forms ask for pas foto in cm; these are 3×4 and 4×6 cm
+             at 300 dpi (px = cm × 300 ÷ 2.54). The 200×230 / 140×60 pair is
+             the Indian exam-form standard and means nothing there. */
+          <button class="preset-chip" data-w="354" data-h="472">{t('Photo 3×4 cm (300 dpi)', lang)}</button>,
+          <button class="preset-chip" data-w="472" data-h="709">{t('Photo 4×6 cm (300 dpi)', lang)}</button>
+        ] : [
+          <button class="preset-chip" data-w="200" data-h="230">{t('Form Photo 200×230', lang)}</button>,
+          <button class="preset-chip" data-w="140" data-h="60">{t('Signature 140×60', lang)}</button>
+        ]}
         <button class="preset-chip" data-w="1280" data-h="720">HD 1280×720</button>
         <button class="preset-chip" data-w="1920" data-h="1080">Full HD 1920×1080</button>
       </div>

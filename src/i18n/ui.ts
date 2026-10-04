@@ -25,6 +25,7 @@
  */
 import type { Locale } from './config';
 import { ptRuntime } from './ui-runtime-pt';
+import { idUi, idRuntime } from './ui-id';
 import { runtimeScopes } from './ui-runtime-scopes';
 
 const pt: Record<string, string> = {
@@ -46,6 +47,9 @@ const pt: Record<string, string> = {
   'ConvertOcean — convert files, upload nothing. 67 free tools that run inside your browser tab.':
     'ConvertOcean — converta arquivos sem enviar nada. 67 ferramentas gratuitas que funcionam dentro da aba do navegador.',
   'Toggle dark mode': 'Alternar modo escuro',
+  /* Image resizer presets shown on Indonesian pages only. */
+  'Photo 3×4 cm (300 dpi)': 'Foto 3×4 cm (300 dpi)',
+  'Photo 4×6 cm (300 dpi)': 'Foto 4×6 cm (300 dpi)',
   'Open navigation menu': 'Abrir menu de navegação',
 
   // ---- Tool page furniture --------------------------------------------
@@ -681,7 +685,10 @@ const pt: Record<string, string> = {
 
 /* ptRuntime holds the strings scripts build after load (errors, progress,
    results); merged here so t() and the browser dictionary see one table. */
-const dictionaries: Record<string, Record<string, string>> = { pt: { ...pt, ...ptRuntime } };
+const dictionaries: Record<string, Record<string, string>> = {
+  pt: { ...pt, ...ptRuntime },
+  id: { ...idUi, ...idRuntime }
+};
 
 /**
  * Translate an interface string. Returns the English original when the locale

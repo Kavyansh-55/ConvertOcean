@@ -172,8 +172,10 @@ const { slug, headline, subtitle, lang = 'en'} = Astro.props;
              ç, ã, õ or ê: it read INFORMAÇÃO CORAÇÃO VOCÊ AÇÕES as INFORMAGAO
              CORACAO VOCE ACOES — 0 of 4 — on /pt/imagem-para-texto/. The
              Portuguese model reads unaccented English words just as well.
-             Guarded by the Portuguese OCR check in verify-generators.mjs. */
-          const OCR_LANG = document.documentElement.lang === 'pt' ? 'por' : 'eng';
+             Guarded by the Portuguese OCR check in verify-generators.mjs.
+             Indonesian pages load Tesseract's Indonesian model for the same
+             reason: its word list is what breaks ties between similar shapes. */
+          const OCR_LANG = { pt: 'por', id: 'ind' }[document.documentElement.lang] || 'eng';
           await worker.loadLanguage(OCR_LANG);
           await worker.initialize(OCR_LANG);
           const { data: { text } } = await worker.recognize(file);

@@ -22,6 +22,10 @@
  *   node scripts/fidelity/verify-pt-parity.mjs
  *   node scripts/fidelity/verify-pt-parity.mjs --control
  *   node scripts/fidelity/verify-pt-parity.mjs compress-pdf exif-viewer
+ *   node scripts/fidelity/verify-pt-parity.mjs --locale id     (npm run id-parity)
+ *
+ * --locale id runs the same comparison for Indonesian, over the tools that
+ * have an /id/ page. "PT" in the names below means "the locale under test".
  */
 import puppeteer from 'puppeteer-core';
 import { readFileSync, existsSync, mkdtempSync } from 'node:fs';
@@ -33,10 +37,12 @@ import * as TESTING_PATHS from '../testing-paths.mjs';
 const ORIGIN = process.env.CO_ORIGIN || 'http://localhost:4321';
 const FIX = TESTING_PATHS.FIXTURES;
 const CONTROL = process.argv.includes('--control');
-const only = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+const li = process.argv.indexOf('--locale');
+const LOC = li > -1 ? process.argv[li + 1] : 'pt';
+const only = process.argv.slice(2).filter((a, i, all) => !a.startsWith('--') && all[i - 1] !== '--locale');
 
 /* English slug → Portuguese slug, from the Portuguese data. */
-const ptData = readFileSync('src/data/pt/index.ts', 'utf8');
+const ptData = readFileSync(`src/data/${LOC}/index.ts`, 'utf8');
 const PT = new Map([...ptData.matchAll(/^\s+en: '([a-z0-9-]+)',\s*\r?\n\s+slug: '([a-z0-9-]+)'/gm)].map((m) => [m[1], m[2]]));
 
 /* Same in both languages by nature. Each entry says why. */
@@ -109,7 +115,7 @@ async function drive(page, url, recipe, fixtureOverride) {
   await page.setRequestInterception(true);
   page.on('request', (r) => (BLOCK.test(r.url()) ? r.abort() : r.continue()));
   await page.goto(url, { waitUntil: 'load', timeout: 60_000 });
-  if (CONTROL && url.includes('/pt/')) {
+  if (CONTROL && url.includes(`/${LOC}/`)) {
     await page.evaluate(() => { window.__t = (s) => s; window.__tf = function (s) {
       let o = s; for (let i = 1; i < arguments.length; i++) o = o.split('{' + (i - 1) + '}').join(String(arguments[i])); return o; }; });
   }
@@ -167,7 +173,7 @@ const browser = await puppeteer.launch({
      profile locked, and the launch then hangs without a word. */
   headless: 'new', args: [TESTING_PATHS.NO_TRACKING, '--no-sandbox', '--disable-dev-shm-usage'], userDataDir: mkdtempSync(join(tmpdir(), 'co-parity-')),
 });
-console.log(`comparing ${todo.length} tools, EN vs PT, normal and wrong-file paths…`);
+console.log(`comparing ${todo.length} tools, EN vs ${LOC.toUpperCase()}, normal and wrong-file paths…`);
 
 let leaksTotal = 0, compared = 0;
 const leaksByText = new Map();
@@ -179,7 +185,7 @@ try {
       try {
         const [a, b] = await Promise.all([
           drive(en, `${ORIGIN}/${recipe.slug}/`, recipe, wrong),
-          drive(pt, `${ORIGIN}/pt/${PT.get(recipe.slug)}/`, recipe, wrong),
+          drive(pt, `${ORIGIN}/${LOC}/${PT.get(recipe.slug)}/`, recipe, wrong),
         ]);
         const enSet = new Set([...a.texts, ...a.alerts]);
         const leaks = [...b.texts, ...b.alerts].filter((t) => enSet.has(t) && !isAllowed(t));
@@ -202,7 +208,7 @@ try {
   await browser.close();
 }
 
-console.log(`\n${compared} EN/PT runs compared, ${leaksByText.size} distinct English strings on Portuguese pages`);
+console.log(`\n${compared} EN/${LOC.toUpperCase()} runs compared, ${leaksByText.size} distinct English strings on /${LOC}/ pages`);
 for (const [t, where] of [...leaksByText].sort((x, y) => y[1].length - x[1].length)) {
   console.log(`  ${JSON.stringify(t.slice(0, 100))}  ← ${[...new Set(where)].slice(0, 4).join(', ')}`);
 }

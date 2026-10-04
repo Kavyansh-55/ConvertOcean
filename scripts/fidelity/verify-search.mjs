@@ -45,7 +45,7 @@ async function typeQuery(page, q) {
 
 try {
   /* Width: the field must be wide enough to read its placeholder everywhere. */
-  for (const path of ['/', '/pt/']) {
+  for (const path of ['/', '/pt/', '/id/']) {
     for (const w of [1850, 1440, 1121, 768, 390]) {
       const page = await open(path, w);
       const m = await page.evaluate(() => {
@@ -73,9 +73,9 @@ try {
   /* The nav band: between the desktop links appearing and the bar's room
      running out, nothing may push the page sideways. Was 28-118px over
      from 1121px to ~1240px, worst in Portuguese, before 2026-10-02. */
-  for (const path of ['/', '/pt/', '/merge-pdf/', '/pt/juntar-pdf/']) {
+  for (const path of ['/', '/pt/', '/merge-pdf/', '/pt/juntar-pdf/', '/id/', '/id/gabungkan-pdf/']) {
     const over = [];
-    for (const w of [1121, 1180, 1240, 1259, 1260, 1300, 1440]) {
+    for (const w of [1121, 1180, 1240, 1259, 1260, 1280, 1299, 1300, 1320, 1440]) {
       const page = await open(path, w);
       const ov = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
       if (ov > 0) over.push(`${w}px +${ov}`);
@@ -176,6 +176,22 @@ try {
     r = await typeQuery(page, 'zzqx');
     const empty = await page.$eval('#searchEmpty', (e) => e.textContent.trim());
     say(/Nenhuma ferramenta/.test(empty), 'the no-match message is Portuguese');
+    await page.close();
+  }
+
+  /* Indonesian: Indonesian names, /id/ links, English slug words work too. */
+  {
+    const page = await open('/id/');
+    const ph = await page.$eval('#searchInput', (e) => e.placeholder);
+    say(/^Cari di antara \d+ alat/.test(ph), `/id/ placeholder is Indonesian ("${ph}")`);
+    let r = await typeQuery(page, 'pdf ke word');
+    say(r.length > 0 && r[0].name === 'PDF ke Word' && r[0].href === '/id/pdf-ke-word/',
+        `"pdf ke word" finds PDF ke Word on an /id/ link → ${r[0] && r[0].href}`);
+    r = await typeQuery(page, 'compress pdf');
+    say(r.length > 0 && r[0].href === '/id/kompres-pdf/', `English words still work on /id/ ("compress pdf" → ${r[0] && r[0].href})`);
+    r = await typeQuery(page, 'zzqx');
+    const empty = await page.$eval('#searchEmpty', (e) => e.textContent.trim());
+    say(/Tidak ada alat/.test(empty), 'the no-match message is Indonesian');
     await page.close();
   }
 

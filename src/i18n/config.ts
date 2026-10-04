@@ -14,7 +14,7 @@
  * English and never be indexed.
  */
 
-export type Locale = 'en' | 'pt';
+export type Locale = 'en' | 'pt' | 'id';
 
 export interface LocaleConfig {
   /** Path segment the locale lives under. Empty for the default, which is at the root. */
@@ -50,7 +50,10 @@ export const DEFAULT_LOCALE: Locale = 'en';
 
 export const LOCALES: Record<Locale, LocaleConfig> = {
   en: { prefix: '', hreflang: 'en', label: 'English', short: 'EN', ogLocale: 'en_US' },
-  pt: { prefix: 'pt', hreflang: 'pt', label: 'Português', short: 'PT', ogLocale: 'pt_BR' }
+  pt: { prefix: 'pt', hreflang: 'pt', label: 'Português', short: 'PT', ogLocale: 'pt_BR' },
+  /* Indonesia is the only market for Bahasa Indonesia, so the bare code and
+     id_ID agree. Malay (ms) is a sibling language, not a region of this one. */
+  id: { prefix: 'id', hreflang: 'id', label: 'Bahasa Indonesia', short: 'ID', ogLocale: 'id_ID' }
 };
 
 /** Every locale code, default first. */
@@ -118,7 +121,8 @@ export function localeUrl(lang: Locale, path: string, site = 'https://convertoce
  */
 const GUIDES_SEGMENT: Record<Locale, string> = {
   en: 'guides',
-  pt: 'guias'
+  pt: 'guias',
+  id: 'panduan'
 };
 
 export function guidesBase(lang: Locale): string {

@@ -1,0 +1,112 @@
+---
+/**
+ * Indonesian privacy policy.
+ *
+ * The substance of src/pages/privacy.astro, not its wording: the claims must be
+ * identical because they describe the same software, but the phrasing is
+ * written for an Indonesian reader and names UU No. 27 Tahun 2022 tentang
+ * Pelindungan Data Pribadi (UU PDP), the law they will be thinking of.
+ */
+import Layout from '../../layouts/Layout.astro';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'id';
+const title = 'Kebijakan Privasi | ConvertOcean';
+const description =
+  'File Anda tidak keluar dari perangkat Anda. Cara kerja ConvertOcean, apa yang dikumpulkan, dan apa yang tidak pernah dikumpulkan.';
+---
+
+<Layout title={title} description={description} lang={lang} band="bone" categorySlug="privacy">
+  <main id="main-content" tabindex="-1" class="band band--bone">
+    <article class="prose">
+      <h1>Kebijakan privasi</h1>
+      <p class="lead">
+        Privasi di sini bukan janji dalam kebijakan — melainkan akibat dari cara
+        situs ini dibangun. Konversi terjadi di dalam browser Anda, jadi tidak ada
+        kiriman file yang bisa kami tangkap.
+      </p>
+
+      <h2>1. Diproses 100% di perangkat Anda</h2>
+      <p>
+        ConvertOcean mengonversi, mengompres, memisahkan, dan menyusun file
+        sepenuhnya di browser Anda, memakai JavaScript dan mesin yang dikompilasi
+        ke WebAssembly. File Anda <strong>tidak disalin ke server mana pun, serta
+        tidak diproses atau disimpan di luar perangkat Anda</strong>. Seluruh
+        pekerjaan dilakukan oleh prosesor perangkat Anda sendiri.
+      </p>
+
+      <h2>2. Yang tidak pernah sampai ke kami</h2>
+      <p>
+        Data file Anda tidak pernah sampai ke kami karena tidak pernah keluar dari
+        perangkat Anda. Kami tidak mengumpulkan, menerima, atau menyimpan:
+      </p>
+      <ul>
+        <li>isi file apa pun yang dibuka di sebuah alat;</li>
+        <li>nama file Anda, maupun teks yang diketik di penghitung kata atau kalkulator;</li>
+        <li>identitas Anda — tidak ada pendaftaran, email, verifikasi, atau metode pembayaran.</li>
+      </ul>
+      <p>
+        Hal ini dijamin oleh arsitekturnya, bukan hanya oleh teks halaman ini. Kode
+        situs ini terbuka dan bisa diperiksa di{' '}
+        <a href="https://github.com/Kavyansh-55/ConvertOcean" rel="noopener">github.com/Kavyansh-55/ConvertOcean</a>.
+      </p>
+
+      <h2>3. Yang dikumpulkan: statistik penggunaan anonim</h2>
+      <p>
+        Kami memakai Google Analytics untuk memahami alat mana yang berguna. Layanan
+        ini mencatat data penjelajahan umum — halaman yang dikunjungi, perkiraan
+        wilayah, jenis perangkat — serta peristiwa yang menunjukkan <em>bahwa</em>{' '}
+        sesuatu terjadi, tidak pernah <em>apa</em> isinya: bahwa sebuah file
+        dipilih, dan bahwa sebuah hasil dibuat dan diunduh. Isi maupun nama file
+        tidak ikut dalam peristiwa itu, karena informasi tersebut tidak ada di sisi
+        kami.
+      </p>
+
+      <h2>4. Iklan</h2>
+      <p>
+        Situs ini dapat menampilkan iklan dari pihak ketiga, yang memakai cookie
+        untuk mengukur kinerja dan membatasi pengulangan. Cookie tersebut tidak
+        punya akses ke file Anda — cookie hidup di lapisan halaman, sedangkan file
+        tidak pernah keluar dari memori browser.
+      </p>
+
+      <h2>5. Hak Anda (UU PDP)</h2>
+      <p>
+        Undang-Undang Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi memberi
+        Anda hak untuk mengetahui data pribadi apa yang diproses, memperbaikinya,
+        meminta penghapusannya, dan menarik persetujuan. Dalam praktiknya, di sini
+        cakupan itu minimal karena rancangannya: kami tidak menyimpan akun, tidak
+        menyimpan file, dan tidak membentuk profil orang yang teridentifikasi.
+        Untuk permintaan apa pun, gunakan{' '}
+        <a href="/id/kontak/">halaman kontak</a>.
+      </p>
+
+      <h2>6. Perubahan</h2>
+      <p>
+        Kebijakan ini dapat diperbarui. Perubahan penting pada cara data diproses
+        akan dicantumkan di sini, dan arsitektur yang dijelaskan di atas —
+        pemrosesan lokal — adalah bagian yang tidak berubah.
+      </p>
+    </article>
+  </main>
+
+  <style>
+    .prose { max-width: 70ch; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-lg); }
+    .prose h1 {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-md);
+    }
+    .prose h2 {
+      font-size: var(--fs-subheading);
+      font-weight: var(--fw-extrabold);
+      color: var(--colors-ink);
+      margin: var(--spacing-xl) 0 var(--spacing-sm);
+    }
+    .prose .lead { font-size: var(--fs-lead); color: var(--colors-body); }
+    .prose p, .prose li { color: var(--colors-body); font-size: var(--fs-body); line-height: 1.65; }
+    .prose a { color: var(--colors-link-deep); }
+  </style>
+</Layout>

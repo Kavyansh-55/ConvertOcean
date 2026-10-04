@@ -1,31 +1,25 @@
 ---
 /**
- * Portuguese contact page — mirrors src/pages/contact.astro.
- *
- * The first version skipped the form on the premise that "a form needs
- * somewhere to post to". It does not: the English form has no server behind
- * it — Send assembles the message and hands it to the reader's own email
- * program via mailto, and the note under the form says so. That is as honest
- * about where the message goes as a bare address, so the Portuguese page now
- * carries the same channels, form and structure as the English one, with the
- * Portuguese-only sections (LGPD requests) kept.
+ * Indonesian contact page — mirrors /pt/contato/ and src/pages/contact.astro:
+ * the same mailto form (no server behind it), the same channels, and a data
+ * request section that names UU PDP instead of the LGPD.
  */
 import Layout from '../../layouts/Layout.astro';
 import type { Locale } from '../../i18n/config';
 
-const lang: Locale = 'pt';
+const lang: Locale = 'id';
 const SUPPORT_EMAIL = 'kavyanshtech7@gmail.com';
 const REPO = 'https://github.com/Kavyansh-55/ConvertOcean';
-const title = 'Fale Conosco | ConvertOcean';
+const title = 'Hubungi Kami | ConvertOcean';
 const description =
-  'Como entrar em contato com o ConvertOcean: dúvidas, erros de tradução, problemas em uma ferramenta ou solicitações sobre dados.';
+  'Cara menghubungi ConvertOcean: pertanyaan, kesalahan terjemahan, masalah pada alat, atau permintaan terkait data.';
 
 const contactSchema = {
   "@context": "https://schema.org",
   "@type": "ContactPage",
-  "name": "Fale conosco — ConvertOcean",
-  "url": "https://convertocean.com/pt/contato/",
-  "inLanguage": "pt-BR",
+  "name": "Hubungi kami — ConvertOcean",
+  "url": "https://convertocean.com/id/kontak/",
+  "inLanguage": "id",
   "mainEntity": {
     "@type": "Organization",
     "name": "ConvertOcean",
@@ -35,13 +29,13 @@ const contactSchema = {
       "@type": "ContactPoint",
       "contactType": "customer support",
       "email": SUPPORT_EMAIL,
-      "availableLanguage": ["Portuguese", "English"]
+      "availableLanguage": ["Indonesian", "English"]
     }]
   }
 };
 ---
 
-<Layout title={title} description={description} lang={lang} category="Fale conosco" categorySlug="contact">
+<Layout title={title} description={description} lang={lang} category="Hubungi kami" categorySlug="contact">
   <style>
     .contact-container {
       max-width: 600px;
@@ -162,20 +156,20 @@ const contactSchema = {
   <main id="main-content" tabindex="-1" class="app-container" style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-4xl); position: relative; z-index: 1;">
     <div class="contact-container">
       <div class="page-header">
-        <h1 class="page-title">Fale conosco.</h1>
-        <p class="contact-lead">Dúvidas, erros, ideias de ferramentas novas — tudo chega direto a quem constrói o ConvertOcean. Não há fila de chamados nem central terceirizada no meio. Lemos em português e em inglês.</p>
+        <h1 class="page-title">Hubungi kami.</h1>
+        <p class="contact-lead">Pertanyaan, kesalahan, ide alat baru — semuanya langsung sampai ke orang yang membangun ConvertOcean. Tidak ada antrean tiket atau layanan pelanggan pihak ketiga di tengahnya. Silakan menulis dalam bahasa Indonesia atau Inggris.</p>
       </div>
 
       <div class="contact-channels">
         <div class="channel">
-          <p class="channel-label">E-mail</p>
+          <p class="channel-label">Email</p>
           <p class="channel-value"><a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a></p>
-          <p class="channel-note">O melhor canal para assuntos privados, pedidos sobre dados ou quando você quer mandar uma captura de tela.</p>
+          <p class="channel-note">Saluran terbaik untuk urusan pribadi, permintaan terkait data, atau jika Anda ingin melampirkan tangkapan layar.</p>
         </div>
         <div class="channel">
           <p class="channel-label">GitHub Issues</p>
           <p class="channel-value"><a href={`${REPO}/issues`} rel="noopener">github.com/Kavyansh-55/ConvertOcean</a></p>
-          <p class="channel-note">O melhor canal para erros e pedidos de ferramentas. O código é aberto (licença MIT): dá para ler o código que gerou o seu arquivo — e a correção, quando sair.</p>
+          <p class="channel-note">Saluran terbaik untuk laporan bug dan permintaan alat. Kodenya terbuka (lisensi MIT): Anda bisa membaca kode yang menghasilkan file Anda — dan perbaikannya, saat dirilis.</p>
         </div>
       </div>
 
@@ -183,69 +177,69 @@ const contactSchema = {
       <div class="contact-card">
         <div id="submitSuccess" class="submit-success">
           <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
-          <span>Obrigado! O seu programa de e-mail vai abrir com a mensagem pronta — é só enviar.</span>
+          <span>Terima kasih! Aplikasi email Anda akan terbuka dengan pesan yang sudah siap — tinggal kirim.</span>
         </div>
 
         <form id="contactForm">
           <div class="form-group">
-            <label for="contactName" class="form-label">Nome</label>
-            <input type="text" id="contactName" name="name" autocomplete="name" class="form-input" placeholder="Seu nome…" required />
+            <label for="contactName" class="form-label">Nama</label>
+            <input type="text" id="contactName" name="name" autocomplete="name" class="form-input" placeholder="Nama Anda…" required />
           </div>
 
           <div class="form-group">
-            <label for="contactEmail" class="form-label">E-mail</label>
-            <input type="email" id="contactEmail" name="email" autocomplete="email" spellcheck="false" class="form-input" placeholder="voce@exemplo.com.br" required />
+            <label for="contactEmail" class="form-label">Email</label>
+            <input type="email" id="contactEmail" name="email" autocomplete="email" spellcheck="false" class="form-input" placeholder="anda@contoh.co.id" required />
           </div>
 
           <div class="form-group">
-            <label for="contactReason" class="form-label">Assunto</label>
+            <label for="contactReason" class="form-label">Topik</label>
             <select id="contactReason" name="topic" class="select-input" required>
-              <option value="Dúvida">Dúvida geral</option>
-              <option value="Erro">Erro em uma ferramenta</option>
-              <option value="Tradução">Erro de português</option>
-              <option value="Sugestão">Sugestão de ferramenta nova</option>
-              <option value="LGPD">Solicitação sobre dados (LGPD)</option>
-              <option value="Parceria">Parceria ou imprensa</option>
-              <option value="Segurança">Problema de segurança</option>
+              <option value="Pertanyaan">Pertanyaan umum</option>
+              <option value="Bug">Masalah pada alat</option>
+              <option value="Terjemahan">Kesalahan bahasa Indonesia</option>
+              <option value="Usulan">Usulan alat baru</option>
+              <option value="UU PDP">Permintaan terkait data (UU PDP)</option>
+              <option value="Kerja sama">Kerja sama atau media</option>
+              <option value="Keamanan">Masalah keamanan</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="contactMessage" class="form-label">Mensagem</label>
-            <textarea id="contactMessage" name="message" class="form-input text-area" placeholder="Escreva a sua mensagem…" required></textarea>
+            <label for="contactMessage" class="form-label">Pesan</label>
+            <textarea id="contactMessage" name="message" class="form-input text-area" placeholder="Tulis pesan Anda…" required></textarea>
           </div>
 
-          <button type="submit" class="button button-primary" style="width: 100%; margin-top: var(--spacing-sm);">Enviar mensagem</button>
+          <button type="submit" class="button button-primary" style="width: 100%; margin-top: var(--spacing-sm);">Kirim pesan</button>
         </form>
 
         <p class="contact-privacy-note">
           <span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>
-          <span><strong>Como este formulário funciona:</strong> não há servidor por trás dele. Ao clicar em Enviar, a mensagem é montada e entregue ao seu próprio programa de e-mail — nada é gravado nem enviado para nós até você mesmo enviar. Se o aparelho não tiver um programa de e-mail configurado, nada vai acontecer; nesse caso, escreva direto para o endereço acima.</span>
+          <span><strong>Cara kerja formulir ini:</strong> tidak ada server di belakangnya. Saat Anda menekan Kirim, pesan disusun lalu diserahkan ke aplikasi email Anda sendiri — tidak ada yang disimpan atau dikirim ke kami sampai Anda sendiri yang mengirimnya. Jika perangkat Anda tidak punya aplikasi email yang diatur, tidak akan terjadi apa-apa; dalam hal itu, tulis langsung ke alamat di atas.</span>
         </p>
       </div>
 
       <section class="contact-section">
-        <h2>O que ajuda a resolver mais rápido</h2>
+        <h2>Yang membantu kami menyelesaikan lebih cepat</h2>
         <ul>
-          <li><strong>Um problema em uma ferramenta:</strong> diga qual página, o que você esperava e o que aconteceu. O tipo e o tamanho aproximado do arquivo ajudam muito — mas <em>não mande o arquivo</em>: ele quase sempre contém dados pessoais, e nós não precisamos dele para investigar.</li>
-          <li><strong>O navegador e o sistema</strong> que você usa. Uma parte surpreendente dos problemas acontece em um navegador só.</li>
-          <li><strong>Um erro de português:</strong> a tradução do site foi escrita por pessoa, não gerada automaticamente, mas erros passam. Indicar a página e o trecho já basta.</li>
-          <li><strong>Uma ferramenta que falta:</strong> diga o que você estava tentando fazer, não só o formato. Saber a tarefa costuma mudar o que vale a pena construir.</li>
+          <li><strong>Masalah pada alat:</strong> sebutkan halamannya, apa yang Anda harapkan, dan apa yang terjadi. Jenis dan perkiraan ukuran file sangat membantu — tetapi <em>jangan kirim filenya</em>: file hampir selalu berisi data pribadi, dan kami tidak membutuhkannya untuk menyelidiki.</li>
+          <li><strong>Browser dan sistem operasi</strong> yang Anda pakai. Banyak masalah ternyata hanya terjadi di satu browser.</li>
+          <li><strong>Kesalahan bahasa Indonesia:</strong> halaman-halaman ini ditulis untuk pembaca Indonesia, tetapi kesalahan bisa lolos. Menyebutkan halaman dan kalimatnya sudah cukup.</li>
+          <li><strong>Alat yang belum ada:</strong> ceritakan apa yang sedang Anda coba lakukan, bukan hanya formatnya. Mengetahui tugasnya sering mengubah apa yang layak dibangun.</li>
         </ul>
 
-        <h2>Solicitações sobre dados</h2>
-        <p>Para pedidos relacionados à LGPD — acesso, correção ou exclusão —, use o mesmo endereço. Vale saber de antemão que o conjunto é mínimo por construção: não há cadastro, os arquivos nunca chegam até nós e não formamos perfil de pessoa identificada. Os detalhes estão na <a href="/pt/privacidade/">política de privacidade</a>.</p>
+        <h2>Permintaan terkait data</h2>
+        <p>Untuk permintaan terkait UU PDP — akses, perbaikan, atau penghapusan — gunakan alamat yang sama. Perlu diketahui sejak awal bahwa cakupannya minimal karena rancangannya: tidak ada akun, file tidak pernah sampai ke kami, dan kami tidak membentuk profil orang yang teridentifikasi. Rinciannya ada di <a href="/id/privasi/">kebijakan privasi</a>.</p>
 
-        <h2>O que não conseguimos fazer</h2>
+        <h2>Yang tidak bisa kami lakukan</h2>
         <ul>
-          <li><strong>Recuperar um arquivo que você converteu.</strong> Não é uma regra, é consequência da arquitetura: o arquivo nunca chegou até nós, então não existe cópia. Fechou a aba, ele some.</li>
-          <li><strong>Ver os seus dados</strong> — por isso não dá para consultar "a conversão que fiz ontem". Nada sobre os seus arquivos é registrado.</li>
-          <li><strong>Desbloquear documentos protegidos por senha ou por DRM.</strong></li>
-          <li><strong>Dar orientação jurídica, fiscal ou contábil.</strong> As calculadoras mostram a fórmula para você conferir a conta, mas o resultado não substitui um profissional.</li>
+          <li><strong>Memulihkan file yang sudah Anda konversi.</strong> Ini bukan aturan, melainkan akibat arsitekturnya: file tidak pernah sampai ke kami, jadi tidak ada salinannya. Begitu tab ditutup, file itu hilang.</li>
+          <li><strong>Melihat data Anda</strong> — karena itu kami tidak bisa memeriksa "konversi yang saya lakukan kemarin". Tidak ada yang dicatat tentang file Anda.</li>
+          <li><strong>Membuka dokumen yang dilindungi kata sandi atau DRM.</strong></li>
+          <li><strong>Memberi nasihat hukum, pajak, atau akuntansi.</strong> Kalkulator menampilkan rumus agar Anda bisa memeriksa perhitungannya, tetapi hasilnya tidak menggantikan tenaga profesional.</li>
         </ul>
 
-        <h2>Prazo de resposta</h2>
-        <p>O ConvertOcean é um projeto independente, não uma central de atendimento, então conte com alguns dias para a resposta — um pouco mais nos fins de semana. Todas as mensagens são lidas. Se um relato vira correção, ela vale para todo mundo de uma vez: não há contas nem planos por aqui.</p>
+        <h2>Waktu tanggapan</h2>
+        <p>ConvertOcean adalah proyek independen, bukan pusat layanan pelanggan, jadi perkirakan beberapa hari untuk balasan — sedikit lebih lama di akhir pekan. Semua pesan dibaca. Jika sebuah laporan menjadi perbaikan, perbaikannya berlaku untuk semua orang sekaligus: tidak ada akun atau paket di sini.</p>
       </section>
     </div>
   </main>
@@ -269,7 +263,7 @@ const contactSchema = {
 
         var subject = encodeURIComponent('ConvertOcean [' + reason + '] - ' + name);
         var body = encodeURIComponent(
-          'Nome: ' + name + '\nE-mail: ' + email + '\nAssunto: ' + reason + '\n\nMensagem:\n' + message
+          'Nama: ' + name + '\nEmail: ' + email + '\nTopik: ' + reason + '\n\nPesan:\n' + message
         );
 
         var mailtoUrl = 'mailto:' + SUPPORT_EMAIL + '?subject=' + subject + '&body=' + body;

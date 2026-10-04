@@ -713,7 +713,7 @@ select:focus-visible,
 
 /* Above the point where the links would start to crowd, take the wider
    step — the bar has the room, and DESIGN.md asks for a generous rhythm. */
-@media (min-width: 1260px) {
+@media (min-width: 1300px) {
   .nav-brand {
     margin-inline-end: var(--spacing-lg);
   }
@@ -1041,8 +1041,12 @@ select:focus-visible,
    "Ferramentas de Imagem") need ~1,240px, so /pt/ overflowed by 118px at
    1121 and still by 79px at 1160, pushing the theme toggle off-screen;
    English tool pages overflowed by 28px at 1121. Every locale's widest
-   bar fits from 1260. `npm run search` sweeps this band. */
-@media (max-width: 1259px) {
+   bar fits from 1260. `npm run search` sweeps this band.
+
+   Raised to 1299px on 2026-10-04: the Indonesian locale added a third
+   language pill (EN · PT · ID) on every page that exists in all three, and
+   /pt/ tool pages then overflowed by 25px at 1260. They fit at 1300. */
+@media (max-width: 1299px) {
   .nav-links {
     display: none;
   }

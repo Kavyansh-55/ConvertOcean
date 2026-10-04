@@ -265,6 +265,62 @@ try {
     await page.close();
   }
 
+  /* ---------------------------------------------- image OCR, Indonesian
+     /id/gambar-ke-teks/ must load Tesseract's Indonesian model (ind), whose
+     word list breaks ties between similar letter shapes. Indonesian has no
+     accents to test, so the proof is the model request itself plus the
+     words coming back. */
+  {
+    const page = await browser.newPage();
+    await page.setCacheEnabled(false);
+    const models = [];
+    page.on('request', (r) => { const m = r.url().match(/\/([a-z_]+)\.traineddata/); if (m) models.push(m[1]); });
+    await page.goto(ORIGIN + '/id/gambar-ke-teks/', { waitUntil: 'networkidle2', timeout: 45000 });
+    await new Promise((r) => setTimeout(r, 600));
+
+    const words = ['PENGUMUMAN', 'PENDAFTARAN', 'PERSYARATAN', 'KETERANGAN'];
+    const png = await page.evaluate((ws) => {
+      const c = document.createElement('canvas');
+      c.width = 900; c.height = 320;
+      const g = c.getContext('2d');
+      g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+      g.fillStyle = '#000'; g.font = 'bold 64px Arial';
+      ws.forEach((w, i) => g.fillText(w, 40, 80 + i * 70));
+      return c.toDataURL('image/png');
+    }, words);
+    const imgPath = join(DL, 'ocr-sample-id.png');
+    writeFileSync(imgPath, Buffer.from(png.split(',')[1], 'base64'));
+    await (await page.$('input[type=file]')).uploadFile(imgPath);
+
+    let text = '';
+    const deadline = Date.now() + 120000;
+    while (Date.now() < deadline) {
+      text = await page.evaluate(() => document.getElementById('txtOutput')?.value || '');
+      if (text && text.trim().length > 3) break;
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+    const found = words.filter((w) => text.toUpperCase().includes(w));
+    say(models.includes('ind') && !models.includes('eng'),
+        `Indonesian OCR loads the Indonesian model (requested: ${models.join(', ') || 'none'})`);
+    say(found.length >= 3,
+        `Indonesian OCR reads ${found.length}/${words.length} words (${found.join(', ') || 'none'})`);
+    await page.close();
+  }
+
+  /* ------------------------------------- Indonesian pas foto presets
+     /id/ubah-ukuran-gambar/ replaces the Indian 200×230 / 140×60 chips with
+     pas foto 3×4 and 4×6 cm at 300 dpi; pressing them must set the fields. */
+  {
+    const page = await browser.newPage();
+    await page.goto(ORIGIN + '/id/ubah-ukuran-gambar/', { waitUntil: 'networkidle2', timeout: 45000 });
+    const chips = await page.$$eval('.preset-chip[data-w]', (els) => els.map((e) => [e.textContent.trim(), e.dataset.w, e.dataset.h]));
+    const has34 = chips.some(([t, w, h]) => /3×4 cm/.test(t) && w === '354' && h === '472');
+    const has46 = chips.some(([t, w, h]) => /4×6 cm/.test(t) && w === '472' && h === '709');
+    const indian = chips.some(([, w, h]) => (w === '200' && h === '230') || (w === '140' && h === '60'));
+    say(has34 && has46 && !indian, `Indonesian resizer offers pas foto 3×4 / 4×6 cm, not the Indian exam sizes (${chips.map((c) => c[0]).join(' | ')})`);
+    await page.close();
+  }
+
   /* ------------------------------------------- English generator defaults
      The English site targets US/UK/CA/AU, and both generators opened on a
      Bengaluru vendor, GST 18% and HDFC/IFSC bank details (2026-09-28). The

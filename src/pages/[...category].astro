@@ -2,8 +2,8 @@
 import { t } from '../i18n/ui';
 import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
-import { getTools, activePtCategories, type PtCategory } from '../i18n/content';
-import type { Locale } from '../i18n/config';
+import { getTools, getCategories, type PtCategory } from '../i18n/content';
+import { LOCALES, PREFIXED_LOCALES, type Locale } from '../i18n/config';
 import CategoryIcon from '../components/CategoryIcon.astro';
 
 /**
@@ -22,11 +22,11 @@ export function getStaticPaths() {
     params: { category },
     props: { lang: 'en' as Locale, enCategory: category, ptCategory: null as PtCategory | null }
   }));
-  const portuguese = activePtCategories.map(c => ({
-    params: { category: `pt/${c.slug}` },
-    props: { lang: 'pt' as Locale, enCategory: c.en, ptCategory: c }
-  }));
-  return [...english, ...portuguese];
+  const localised = PREFIXED_LOCALES.flatMap(lang => getCategories(lang).map(c => ({
+    params: { category: `${LOCALES[lang].prefix}/${c.slug}` },
+    props: { lang, enCategory: c.en, ptCategory: c as PtCategory | null }
+  })));
+  return [...english, ...localised];
 }
 
 const { lang = 'en' as Locale, enCategory, ptCategory } = Astro.props;

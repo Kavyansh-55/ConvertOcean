@@ -1,0 +1,193 @@
+---
+/**
+ * The "konverter file" page — the Indonesian counterpart of /file-converter/
+ * and /pt/conversor-de-arquivos/: the working UniversalFileConverter on top,
+ * then every Indonesian conversion page grouped by what the reader converts
+ * FROM, because that is how the queries are phrased ("pdf ke word").
+ *
+ * Built from the locale data, so it lists exactly the pages that exist. The
+ * Portuguese page's "works offline" FAQ is not carried over: no suite tests
+ * this converter offline.
+ */
+import Layout from '../../layouts/Layout.astro';
+import UniversalFileConverter from '../../components/tools/UniversalFileConverter.astro';
+import CategoryIcon from '../../components/CategoryIcon.astro';
+import { getTools } from '../../i18n/content';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'id';
+const title = 'Konverter File Online Gratis — Tanpa Upload | ConvertOcean';
+const description =
+  'Konversi PDF, Word, Excel, PowerPoint, gambar, dan data langsung di browser. File tidak keluar dari perangkat Anda.';
+const headline = 'Konverter File';
+const subtitle =
+  'Konversi spreadsheet dan data antarformat langsung di browser — dan pilih di bawah salah satu konverter khusus untuk PDF, Word, dan gambar. Tanpa daftar akun dan tanpa batas pemakaian.';
+
+const tools = getTools(lang);
+
+/* Grouped by what the reader is converting FROM, which is how the search
+   queries are phrased — "pdf ke word", "gambar ke pdf". */
+const groups = [
+  { title: 'Dari PDF', match: (s: string) => s.startsWith('pdf-ke') },
+  { title: 'Ke PDF', match: (s: string) => s.endsWith('-ke-pdf') },
+  { title: 'Gambar', match: (s: string) => /^(jpg|jpeg|png|webp|heic|avif|gambar)-ke|^ubah-ukuran|-gambar$/.test(s) },
+  { title: 'Kompres', match: (s: string) => s.startsWith('kompres-') },
+  { title: 'Gabungkan dan pisahkan', match: (s: string) => /^(gabungkan|pisahkan)-/.test(s) },
+];
+
+const seen = new Set<string>();
+const sections = groups.map(g => {
+  const items = tools
+    .filter(t => !seen.has(t.slug) && g.match(t.slug))
+    .sort((a, b) => a.name.localeCompare(b.name, 'id'));
+  items.forEach(t => seen.add(t.slug));
+  return { title: g.title, items };
+}).filter(s => s.items.length > 0);
+
+/* Anything the groups above did not claim still gets a home — a tool silently
+   missing from this page is the same quiet omission the locale keeps hitting. */
+const rest = tools
+  .filter(t => !seen.has(t.slug))
+  .sort((a, b) => a.name.localeCompare(b.name, 'id'));
+
+/* Written for this page, not keyword-targeted: they answer what the converter
+   above actually does, which is Excel, CSV and TXT in; PDF, JSON, CSV and
+   XLSX out. Everything else goes through the dedicated tools below. */
+const faqList = [
+  {
+    q: 'Bagaimana ConvertOcean mengonversi file tanpa mengirimnya ke server?',
+    a: 'Konverter berjalan di dalam browser Anda sendiri, dengan JavaScript dan WebAssembly. Saat halaman dimuat, kode konversinya sudah ada di perangkat Anda; file dibaca dan dikonversi di memori tab dan tidak pernah dikirim lewat internet.'
+  },
+  {
+    q: 'Format apa yang diterima konverter di halaman ini?',
+    a: 'Konverter ini membaca spreadsheet Excel (.xlsx, .xls), CSV, dan file teks (.txt), menampilkan pratinjau data, lalu mengekspor ke PDF, JSON, CSV, atau XLSX. Untuk PDF, Word, PowerPoint, dan gambar, gunakan konverter khusus di bawah — masing-masing punya opsi sendiri untuk formatnya.'
+  },
+  {
+    q: 'Apakah perlu membuat akun atau membayar?',
+    a: 'Tidak. Tidak ada pendaftaran, langganan, watermark, atau batas harian. Semua alat di situs ini gratis dan langsung bisa dipakai sejak pertama kali.'
+  },
+  {
+    q: 'Apakah file saya tersimpan di suatu tempat?',
+    a: 'Tidak. Isi file hanya ada di memori sementara tab selama konversi, dan hilang saat tab ditutup. Tidak ada yang disimpan di server, dan kode situs ini terbuka bagi siapa saja yang ingin memeriksa.'
+  }
+];
+---
+
+<Layout band="lime" title={title} description={description} lang={lang} category="Konverter File" categorySlug="file-converter" runtimeScope="UniversalFileConverter" faqList={faqList}>
+  <style>
+    .pillar-intro {
+      max-width: 800px;
+      margin: var(--spacing-3xl) auto 0;
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--colors-body);
+    }
+    .pillar-intro h2 {
+      font-size: 22px;
+      font-weight: var(--fw-bold);
+      color: var(--colors-ink);
+      letter-spacing: -0.88px;
+      margin-bottom: var(--spacing-md);
+      font-family: var(--font-sans);
+    }
+    .pillar-intro p { margin-bottom: var(--spacing-md); }
+    .fc-group { margin-top: var(--spacing-xl); }
+    .fc-group-title {
+      font-size: 17px;
+      font-weight: var(--fw-bold);
+      color: var(--colors-ink);
+      letter-spacing: -0.5px;
+      margin: 0 0 var(--spacing-sm);
+      font-family: var(--font-sans);
+    }
+    .fc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: var(--spacing-sm);
+    }
+    .fc-item {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      /* 44px touch target (WCAG 2.5.8). */
+      min-height: 44px;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-lg);
+      background: var(--colors-canvas);
+      color: var(--colors-ink);
+      text-decoration: none;
+      font-size: var(--fs-small);
+      font-weight: var(--fw-bold);
+      transition: border-color 0.2s;
+    }
+    .fc-item:hover { border-color: var(--colors-link); }
+    .fc-item:focus-visible { outline: 2px solid var(--colors-link-deep); outline-offset: 2px; }
+    .fc-item-icon { display: inline-flex; color: var(--colors-ink); flex-shrink: 0; }
+    @media (prefers-reduced-motion: reduce) { .fc-item { transition: none; } }
+  </style>
+  <main id="main-content" tabindex="-1" class="page-container" style="max-width: 1000px; margin: 0 auto; padding-block: var(--spacing-xl) var(--spacing-4xl);">
+    <UniversalFileConverter slug="file-converter" headline={headline} subtitle={subtitle} lang={lang} />
+
+    <!-- Every conversion on the site, grouped by source format -->
+    <section class="pillar-intro" data-reveal>
+      <h2>Semua konverter, menurut format asal.</h2>
+      <p>
+        Konverter di atas menangani spreadsheet dan data. Untuk PDF, Word,
+        PowerPoint, dan gambar, setiap konversi punya halaman sendiri dengan opsi
+        yang tepat untuk formatnya — dan tidak satu pun mengirim file ke mana pun.
+      </p>
+
+      {sections.map(sec => (
+        <section class="fc-group">
+          <h3 class="fc-group-title">{sec.title}</h3>
+          <div class="fc-grid">
+            {sec.items.map(t => (
+              <a href={`/id/${t.slug}/`} class="fc-item">
+                <span class="fc-item-icon" aria-hidden="true"><CategoryIcon icon={t.icon} width="18" height="18" /></span>
+                <span>{t.name}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+
+      {rest.length > 0 && (
+        <section class="fc-group">
+          <h3 class="fc-group-title">Alat lainnya</h3>
+          <div class="fc-grid">
+            {rest.map(t => (
+              <a href={`/id/${t.slug}/`} class="fc-item">
+                <span class="fc-item-icon" aria-hidden="true"><CategoryIcon icon={t.icon} width="18" height="18" /></span>
+                <span>{t.name}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" style="margin-top: var(--spacing-3xl);">
+      <h2 class="faq-title" style="font-size: 20px; margin-bottom: var(--spacing-lg);">Pertanyaan yang sering diajukan</h2>
+      <div class="faq-container">
+        {faqList.map(faq => (
+          <div class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false">
+              {faq.q}
+              <svg class="faq-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+            <div class="faq-answer">
+              {faq.a}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+</Layout>

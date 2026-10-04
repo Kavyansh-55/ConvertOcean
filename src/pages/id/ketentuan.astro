@@ -1,0 +1,99 @@
+---
+/**
+ * Indonesian terms and conditions — the substance of src/pages/terms.astro.
+ * Never says the reader sends their file anywhere: the promise is that nothing is,
+ * and the English page carried exactly that slip for months.
+ */
+import Layout from '../../layouts/Layout.astro';
+import type { Locale } from '../../i18n/config';
+
+const lang: Locale = 'id';
+const title = 'Syarat dan Ketentuan | ConvertOcean';
+const description =
+  'Ketentuan penggunaan alat ConvertOcean: layanan gratis, diproses di perangkat Anda, tanpa jaminan tersirat.';
+---
+
+<Layout title={title} description={description} lang={lang} band="bone" categorySlug="terms">
+  <main id="main-content" tabindex="-1" class="band band--bone">
+    <article class="prose">
+      <h1>Syarat dan ketentuan</h1>
+      <p class="lead">
+        Dengan memakai alat di situs ini, Anda menyetujui ketentuan di bawah.
+      </p>
+
+      <h2>1. Layanan gratis</h2>
+      <p>
+        ConvertOcean menyediakan konversi, kompresi, pemisahan, dan pembuatan file
+        secara gratis sepenuhnya. Tidak ada langganan, batas pemakaian, watermark
+        pada hasil, maupun keharusan mendaftar.
+      </p>
+
+      <h2>2. Penggunaan sumber daya perangkat Anda</h2>
+      <p>
+        Alat-alat ini menjalankan pemrosesan langsung di browser Anda. Saat memilih
+        file, Anda mengizinkan situs memakai memori dan prosesor{' '}
+        <strong>perangkat Anda sendiri</strong> untuk melakukan konversi. Tidak ada
+        yang disalin ke server — itulah sebabnya file yang sangat besar bergantung
+        pada kemampuan perangkat Anda, bukan pada batas yang kami tetapkan.
+      </p>
+
+      <h2>3. Kepemilikan data Anda</h2>
+      <p>
+        Karena seluruh pemrosesan bersifat lokal, kami tidak menerima, menyimpan,
+        atau memeriksa file Anda. Kepemilikan dan tanggung jawab atas isinya
+        sepenuhnya tetap milik Anda.
+      </p>
+
+      <h2>4. Penafian jaminan</h2>
+      <p>
+        Alat-alat ini disediakan <strong>"sebagaimana adanya"</strong>, tanpa jaminan
+        apa pun. Karena konversi terjadi sepenuhnya di browser, kami tidak menjamin
+        bahwa:
+      </p>
+      <ul>
+        <li>setiap format atau struktur tata letak akan dikonversi dengan ketepatan sempurna;</li>
+        <li>tab browser akan sanggup memproses kumpulan data yang sangat besar;</li>
+        <li>situs akan berjalan tanpa gangguan di setiap konfigurasi atau browser lama.</li>
+      </ul>
+      <p>
+        Setiap halaman alat menjelaskan secara terbuka di mana batas ketepatan
+        konversinya, alih-alih menyembunyikannya.
+      </p>
+
+      <h2>5. Batasan tanggung jawab</h2>
+      <p>
+        Dalam keadaan apa pun ConvertOcean, pengembang, atau kontributornya tidak
+        bertanggung jawab atas kerugian — termasuk kehilangan data atau keuntungan —
+        yang timbul dari penggunaan atau ketidakmampuan menggunakan alat-alat ini.
+        Selalu periksa file hasil sebelum dipakai untuk keperluan penting, terutama
+        bila ada tenggat atau persyaratan resmi.
+      </p>
+
+      <h2>6. Perubahan</h2>
+      <p>
+        Ketentuan ini dapat direvisi sewaktu-waktu. Penggunaan situs secara
+        berkelanjutan berarti menyetujui versi yang berlaku.
+      </p>
+    </article>
+  </main>
+
+  <style>
+    .prose { max-width: 70ch; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-lg); }
+    .prose h1 {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: var(--ls-heading);
+      color: var(--colors-ink);
+      margin: 0 0 var(--spacing-md);
+    }
+    .prose h2 {
+      font-size: var(--fs-subheading);
+      font-weight: var(--fw-extrabold);
+      color: var(--colors-ink);
+      margin: var(--spacing-xl) 0 var(--spacing-sm);
+    }
+    .prose .lead { font-size: var(--fs-lead); color: var(--colors-body); }
+    .prose p, .prose li { color: var(--colors-body); font-size: var(--fs-body); line-height: 1.65; }
+    .prose a { color: var(--colors-link-deep); }
+  </style>
+</Layout>

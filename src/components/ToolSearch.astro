@@ -28,9 +28,11 @@ const tools = getTools(lang).map(tool => ({
   // English slug words help a Portuguese reader who types "pdf to word".
   keys: `${tool.slug.replace(/-/g, ' ')} ${(tool.enSlug ?? '').replace(/-/g, ' ')}`,
 }));
-const placeholder = lang === 'en'
-  ? `Search ${tools.length} tools…`
-  : `Buscar entre ${tools.length} ferramentas…`;
+const placeholder = {
+  en: `Search ${tools.length} tools…`,
+  pt: `Buscar entre ${tools.length} ferramentas…`,
+  id: `Cari di antara ${tools.length} alat…`,
+}[lang];
 ---
 
 <div class="tool-search" id="searchContainer" data-tools={JSON.stringify(tools)}>

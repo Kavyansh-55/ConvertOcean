@@ -15,6 +15,7 @@
  *
  *   npm run pt-leaks
  *   CO_ORIGIN=https://convertocean.com npm run pt-leaks
+ *   npm run id-leaks                    (Indonesian: the same scan over /id/)
  */
 import puppeteer from 'puppeteer-core';
 import { browserProfile, NO_TRACKING } from '../testing-paths.mjs';
@@ -25,15 +26,23 @@ const EN = new Set(('the and your you to of for with this that is are it in on f
   'download drag drop click browse here output upload preview settings quality size page pages').split(' '));
 const PT = new Set(('o a os as e de do da dos das para com um uma seu sua que não no na em por ao é são ' +
   'arquivo arquivos página escolha baixe converta').split(' '));
+/* Indonesian uses "file" and "online" natively ("Pilih file"), so a line is
+   only English if English words dominate these. */
+const ID = new Set(('yang dan di ke dari untuk dengan ini itu tidak anda atau akan bisa juga pada dalam ' +
+  'sebagai saat jika agar atau sudah lalu unduh pilih seret ubah gabungkan pisahkan kompres halaman').split(' '));
+const LOC = process.argv[2] || process.env.CO_LOCALE || 'pt';
+const NATIVE = { pt: PT, id: ID }[LOC];
+const FLOOR = { pt: 80, id: 40 }[LOC];
+if (!NATIVE) { console.log(`unknown CO_LOCALE ${LOC}`); process.exit(1); }
 
 const sm = await (await fetch(O + '/sitemap.xml')).text();
-const urls = [...sm.matchAll(/<loc>([^<]*\/pt\/[^<]*)<\/loc>/g)]
+const urls = [...sm.matchAll(new RegExp(`<loc>([^<]*\/${LOC}\/[^<]*)<\/loc>`, 'g'))]
   .map(m => m[1].replace('https://convertocean.com', O));
-if (urls.length < 80) { console.log(`only ${urls.length} /pt/ URLs in the sitemap — not a real run`); process.exit(1); }
+if (urls.length < FLOOR) { console.log(`only ${urls.length} /${LOC}/ URLs in the sitemap — not a real run`); process.exit(1); }
 
 const b = await puppeteer.launch({
   executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
-  headless: 'new', args: [NO_TRACKING, '--no-sandbox'], userDataDir: browserProfile('pt-leaks'),
+  headless: 'new', args: [NO_TRACKING, '--no-sandbox'], userDataDir: browserProfile(`${LOC}-leaks`),
 });
 const hits = new Map(); // line -> [pages]
 try {
@@ -65,8 +74,8 @@ try {
       const words = line.toLowerCase().match(/[a-zà-ú']+/g) || [];
       if (words.length < 3) continue;
       const en = words.filter(w => EN.has(w)).length;
-      const pt = words.filter(w => PT.has(w)).length;
-      if (en >= 2 && en > pt * 2) {
+      const native = words.filter(w => NATIVE.has(w)).length;
+      if (en >= 2 && en > native * 2) {
         const key = line.slice(0, 140);
         if (!hits.has(key)) hits.set(key, []);
         hits.get(key).push(u.replace(O, ''));
@@ -78,7 +87,7 @@ try {
 }
 
 const sorted = [...hits.entries()].sort((a, b) => b[1].length - a[1].length);
-console.log(`${urls.length} PT pages scanned; ${sorted.length} distinct English-looking lines`);
+console.log(`${urls.length} ${LOC.toUpperCase()} pages scanned; ${sorted.length} distinct English-looking lines`);
 for (const [line, pages] of sorted) {
   console.log(`[${pages.length}] ${line}`);
   console.log(`      e.g. ${pages.slice(0, 3).join(' ')}`);

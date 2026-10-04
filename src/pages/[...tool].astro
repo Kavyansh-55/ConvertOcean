@@ -3,9 +3,8 @@ import { t } from '../i18n/ui';
 import Layout from '../layouts/Layout.astro';
 import { tools } from '../data/tools';
 import { guides } from '../data/guides';
-import { ptTools } from '../data/pt';
-import { getTool, getTools, getGuides } from '../i18n/content';
-import { guidesBase, type Locale } from '../i18n/config';
+import { getTool, getTools, getGuides, localeTools } from '../i18n/content';
+import { guidesBase, LOCALES, PREFIXED_LOCALES, type Locale } from '../i18n/config';
 import CategoryIcon from '../components/CategoryIcon.astro';
 
 import ExcelToPdf from '../components/tools/ExcelToPdf.astro';
@@ -68,11 +67,11 @@ export function getStaticPaths() {
     params: { tool: t.slug },
     props: { lang: 'en' as Locale, slug: t.slug, enSlug: t.slug }
   }));
-  const portuguese = ptTools.map(t => ({
-    params: { tool: `pt/${t.slug}` },
-    props: { lang: 'pt' as Locale, slug: t.slug, enSlug: t.en }
-  }));
-  return [...english, ...portuguese];
+  const localised = PREFIXED_LOCALES.flatMap(lang => localeTools(lang).map(t => ({
+    params: { tool: `${LOCALES[lang].prefix}/${t.slug}` },
+    props: { lang, slug: t.slug, enSlug: t.en }
+  })));
+  return [...english, ...localised];
 }
 
 const { lang = 'en' as Locale, slug, enSlug } = Astro.props;
