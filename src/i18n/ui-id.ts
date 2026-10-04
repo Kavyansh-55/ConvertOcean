@@ -164,6 +164,7 @@ export const idUi: Record<string, string> = {
   "PDF to Word": "PDF ke Word",
   "TXT to PDF": "TXT ke PDF",
   "PDF to TXT": "PDF ke TXT",
+  "PDF to JPG": "PDF ke JPG",
   "CSV to JSON": "CSV ke JSON",
   "JSON to CSV": "JSON ke CSV",
   "XLSX to CSV": "XLSX ke CSV",

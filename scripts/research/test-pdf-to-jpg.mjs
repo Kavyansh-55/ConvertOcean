@@ -15,6 +15,7 @@ const say = (ok, m) => { if (!ok) bad++; console.log(`${ok ? 'OK  ' : 'FAIL'}  $
 const isJpg = (b) => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
 const isPng = (b) => b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47;
 
+const PATH = process.env.PJ_PATH || '/pdf-to-jpg/';
 async function run(file, fmt, dpi, tag) {
   const dl = join(OUT, 'pj-' + tag); rmSync(dl, { recursive: true, force: true }); mkdirSync(dl, { recursive: true });
   const p = await b.newPage();
@@ -22,7 +23,7 @@ async function run(file, fmt, dpi, tag) {
   p.on('pageerror', (e) => errs.push(String(e)));
   const c = await p.createCDPSession();
   await c.send('Page.setDownloadBehavior', { behavior: 'allow', downloadPath: dl });
-  await p.goto('http://localhost:4321/pdf-to-jpg/', { waitUntil: 'networkidle2' });
+  await p.goto('http://localhost:4321' + PATH.replace(/^.*\/Git(?=\/)/, ''), { waitUntil: 'networkidle2' });
   await (await p.$('#fileInput')).uploadFile(resolve(file));
   await p.waitForSelector('#actionControls', { visible: true, timeout: 30000 });
   const info = await p.$eval('#pjInfo', (e) => e.textContent);
@@ -37,7 +38,7 @@ async function run(file, fmt, dpi, tag) {
 }
 
 const two = await run('testing/fixtures/torture.pdf', 'jpeg', '150', 'two');
-say(/2 pages/.test(two.info), `2-page PDF is read (${two.info})`);
+say(/^2 /.test(two.info), `2-page PDF is read (${two.info})`);
 say(two.got && two.got.endsWith('.zip'), `several pages download as a ZIP (${two.got})`);
 if (two.got && two.got.endsWith('.zip')) {
   const zip = await JSZip.loadAsync(readFileSync(two.path));
